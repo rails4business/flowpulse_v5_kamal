@@ -20,10 +20,22 @@ production_default: &production_default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   host: <%= ENV["DB_HOST"] %>
   port: <%= ENV.fetch("DB_PORT", 5432) %>
-  database: <%= ENV["DB_NAME"] %>
+  database: <%= ENV["DB_NAME"] || "flowpulse_v_5_production" %>
   username: <%= ENV["DB_USERNAME"] %>
   password: <%= ENV["POSTGRES_PASSWORD"] %>
 
 production:
   primary:
     <<: *production_default
+  cache:
+    <<: *production_default
+    database: <%= "#{ENV["DB_NAME"] || "flowpulse_v_5_production"}_cache" %>
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *production_default
+    database: <%= "#{ENV["DB_NAME"] || "flowpulse_v_5_production"}_queue" %>
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *production_default
+    database: <%= "#{ENV["DB_NAME"] || "flowpulse_v_5_production"}_cable" %>
+    migrations_paths: db/cable_migrate
