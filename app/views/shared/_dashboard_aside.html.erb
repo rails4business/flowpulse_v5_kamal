@@ -1,0 +1,39 @@
+<% superadmin = Current.user&.superadmin? %>
+<% items = [
+  { key: :dashboard, title: "Dashboard", subtitle: "Panoramica interna", path: dashboard_path },
+  { key: :resources, title: "Risorse", subtitle: "Eventi, transazioni, contatti", path: resources_path },
+  { key: :lavoro, title: "Lavoro", subtitle: "Creator, ruoli, attitudini, servizi", path: lavoro_path },
+  { key: :salute, title: "Salute", subtitle: "Percorsi e corsi", path: salute_path },
+  { key: :pages, title: "Elenco pagine", subtitle: "Prototipi e viste collegate", path: elenco_pagine_path }
+] %>
+
+<aside class="dashboard-aside">
+  <div class="dashboard-aside__intro">
+    <p>Workspace</p>
+    <h2>Dashboard</h2>
+    <span><%= superadmin ? "Link interni sbloccati" : "Link interni in attesa di sblocco" %></span>
+  </div>
+
+  <nav class="dashboard-aside__nav" aria-label="Navigazione dashboard">
+    <% items.each do |item| %>
+      <% active = current_section == item[:key] %>
+      <% if superadmin %>
+        <%= link_to item[:path], class: "dashboard-aside__item #{active ? "is-active" : ""}" do %>
+          <strong><%= item[:title] %></strong>
+          <span><%= item[:subtitle] %></span>
+        <% end %>
+      <% elsif active %>
+        <div class="dashboard-aside__item is-active">
+          <strong><%= item[:title] %></strong>
+          <span><%= item[:subtitle] %></span>
+        </div>
+      <% else %>
+        <div class="dashboard-aside__item is-locked">
+          <strong><%= item[:title] %></strong>
+          <span><%= item[:subtitle] %></span>
+          <em>Bloccato</em>
+        </div>
+      <% end %>
+    <% end %>
+  </nav>
+</aside>

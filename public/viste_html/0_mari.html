@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowpulse – Mari dell'Essere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sea-bg: #0d4f9f;
+    --land-base: #8a5a3b;
+    --land-border: rgba(255,255,255,0.12);
+    --grid-line: rgba(255,255,255,0.04);
+    
+    --color-salute: #00b4d8; /* Azzurro */
+    --color-lavoro: #2a9d8f; /* Verde */
+    --color-risorse: #e63946;  /* Rosso */
+  }
+  
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Inter', sans-serif;
+    color: white;
+  }
+
+  svg {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+  }
+
+  /* SFONDO MARE (Gradienti Dinamici) */
+  .sea-background {
+    fill: url(#sea-grad);
+    transition: all 0.8s ease;
+  }
+
+  /* TERRAFERMA (Negative Space) */
+  .landmass-mask {
+    fill: var(--land-base);
+    stroke: var(--land-border);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 30px rgba(0,0,0,0.9));
+  }
+
+  /* GRIGLIA NAUTICA */
+  .nautical-grid {
+    fill: none;
+    stroke: var(--grid-line);
+    stroke-width: 1;
+  }
+
+  /* PARALLELI DIVISORI */
+  .parallel-line {
+    fill: none;
+    stroke: rgba(255,255,255,0.1);
+    stroke-width: 2;
+    stroke-dasharray: 10 15;
+    pointer-events: none;
+    transition: stroke 0.5s ease;
+  }
+
+  /* ISOLE SFUMATE */
+  .ghost-island {
+    fill: var(--land-base);
+    opacity: 0.3;
+    stroke: rgba(255,255,255,0.2);
+    stroke-width: 1;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  /* HITBOXES */
+  .sea-zone {
+    fill: rgba(255,255,255,0.001);
+    cursor: pointer;
+    pointer-events: all;
+  }
+
+  /* GLOWS */
+  .sea-glow {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+
+  /* INTERAZIONI HOVER */
+  .sea-zone.salute:hover ~ #glow-salute-el,
+  .sea-zone.salute:hover ~ .title-wrapper #title-salute { opacity: 1; transform: scale(1.1); }
+  .sea-zone.salute:hover ~ .nautical-features .parallel-top { stroke: var(--color-salute); opacity: 0.8; }
+  .sea-zone.salute:hover ~ .nautical-features .island-salute { opacity: 0.8; stroke: var(--color-salute); }
+
+  .sea-zone.lavoro:hover ~ #glow-lavoro-el,
+  .sea-zone.lavoro:hover ~ .title-wrapper #title-lavoro { opacity: 1; transform: scale(1.1); }
+  .sea-zone.lavoro:hover ~ .nautical-features .parallel-mid { stroke: var(--color-lavoro); opacity: 0.8; }
+  .sea-zone.lavoro:hover ~ .nautical-features .parallel-top { stroke: var(--color-lavoro); opacity: 0.8; } /* Il mare in mezzo illumina entrambi i confini */
+  .sea-zone.lavoro:hover ~ .nautical-features .island-lavoro { opacity: 0.8; stroke: var(--color-lavoro); }
+
+  .sea-zone.risorse:hover ~ #glow-risorse-el,
+  .sea-zone.risorse:hover ~ .title-wrapper #title-risorse { opacity: 1; transform: scale(1.1); }
+  .sea-zone.risorse:hover ~ .nautical-features .parallel-mid { stroke: var(--color-risorse); opacity: 0.8; }
+  .sea-zone.risorse:hover ~ .nautical-features .island-risorse { opacity: 0.8; stroke: var(--color-risorse); }
+
+  /* TITOLI MARI */
+  .sea-title-group {
+    opacity: 0.65;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+  }
+
+  .sea-title { font-size: 20px; font-weight: 800; fill: #fff; text-anchor: middle; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+  .sea-subtitle { font-size: 8px; font-weight: 300; fill: rgba(255,255,255,0.7); text-anchor: middle; }
+  .sea-icon { font-size: 28px; text-anchor: middle; }
+
+  /* OVERLAY UI TITOLO */
+  .ui-overlay {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    pointer-events: none;
+  }
+  .ui-overlay h1 { margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -1.5px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); background: linear-gradient(90deg, #fff, #a0b2c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .ui-overlay h2 { margin: 5px 0 0 0; font-size: 20px; color: rgba(255,255,255,0.9); font-weight: 400; }
+  .ui-overlay p { margin: 15px 0 0 0; font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 300; max-width: 300px; line-height: 1.4; border-left: 2px solid rgba(255,255,255,0.2); padding-left: 15px;}
+
+  /* ROSA DEI VENTI */
+  .compass-rose {
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  .map-border {
+    fill: none;
+    stroke: rgba(255,255,255,0.35);
+    stroke-width: 2;
+  }
+
+  .globe-ring {
+    fill: none;
+    stroke: rgba(255,255,255,0.18);
+    stroke-width: 10;
+    opacity: 0.45;
+  }
+
+  .star {
+    fill: rgba(255,255,255,0.85);
+    opacity: 0.85;
+  }
+
+  .continent {
+    fill: var(--land-base);
+    stroke: var(--land-border);
+    stroke-width: 1.5;
+  }
+
+  @media (max-width: 700px) {
+    .ui-overlay {
+      top: 18px;
+      left: 8px;
+      right: 8px;
+    }
+
+    .ui-overlay h1 {
+      font-size: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    .ui-overlay h2 {
+      margin-top: 4px;
+      max-width: 170px;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .ui-overlay p {
+      display: none;
+    }
+
+    .sea-icon {
+      font-size: 20px;
+    }
+
+    .sea-title {
+      font-size: 15px;
+    }
+
+    .sea-subtitle {
+      font-size: 6px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="ui-overlay">
+  <h1>Flowpulse</h1>
+  <h2>pronto per la tua odissea per ritornare a casa</h2>
+  <p><strong>Mari dell'Essere</strong><br>Esplora gli oceani che circondano la tua vita.</p>
+</div>
+
+<svg id="mari-world" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- GRADIENTE MARE CENTRALE -->
+    <radialGradient id="sea-grad" cx="50%" cy="50%" r="35%">
+      <stop offset="0%" stop-color="#1a7fbf"/>
+      <stop offset="100%" stop-color="#0d4f9f"/>
+    </radialGradient>
+
+    <clipPath id="globe-clip">
+      <circle cx="500" cy="300" r="240" />
+    </clipPath>
+
+    <!-- GLOWS -->
+    <radialGradient id="glow-salute" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="var(--color-salute)" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="glow-lavoro" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="var(--color-lavoro)" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="glow-risorse" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="var(--color-risorse)" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+
+  <!-- BACKGROUND MARE -->
+  <rect width="1000" height="600" fill="#000" />
+
+  <!-- STELLE NELLO SPAZIO -->
+  <g class="stars" style="pointer-events:none;">
+    <circle class="star" cx="80" cy="60" r="1.8" />
+    <circle class="star" cx="920" cy="90" r="1.3" />
+    <circle class="star" cx="780" cy="40" r="1.5" />
+    <circle class="star" cx="150" cy="520" r="1.2" />
+    <circle class="star" cx="880" cy="520" r="2" />
+    <circle class="star" cx="520" cy="560" r="1.1" />
+    <circle class="star" cx="240" cy="140" r="1.4" />
+    <circle class="star" cx="650" cy="520" r="1.3" />
+    <circle class="star" cx="100" cy="350" r="1.5" />
+    <circle class="star" cx="920" cy="300" r="1.1" />
+  </g>
+
+  <g clip-path="url(#globe-clip)">
+    <rect width="1000" height="600" class="sea-background" />
+    <circle cx="500" cy="300" r="240" class="map-border" />
+    <circle cx="500" cy="300" r="248" class="globe-ring" />
+
+    <!-- CONTINENTI STILIZZATI -->
+  <g class="continents" style="pointer-events:none;">
+  </g>
+
+  <!-- GRIGLIA NAUTICA (Meridiani e Paralleli) -->
+  <path class="nautical-grid" d="M 100 0 L 100 600 M 300 0 L 300 600 M 500 0 L 500 600 M 700 0 L 700 600 M 900 0 L 900 600" />
+  <path class="nautical-grid" d="M 0 100 L 1000 100 M 0 300 L 1000 300 M 0 500 L 1000 500" />
+
+  <!-- ROSA DEI VENTI -->
+  <g class="compass-rose" transform="translate(850, 450) scale(1.5)">
+    <circle cx="0" cy="0" r="40" fill="none" stroke="#fff" stroke-width="2"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#fff" stroke-width="1"/>
+    <path d="M 0 -45 L 5 -10 L 45 0 L 5 10 L 0 45 L -5 10 L -45 0 L -5 -10 Z" fill="#fff" />
+  </g>
+
+  <!-- HITBOXES MARI -->
+  <!-- Dividiamo logicamente lo schermo in 3 mari -->
+  <path class="sea-zone salute" d="M0,0 L1000,0 L1000,165 L0,165 Z" onclick="window.location.href='1_carta_nautica.html?mare=salute'"/>
+  <path class="sea-zone lavoro" d="M0,165 L1000,165 L1000,330 L0,330 Z" onclick="window.location.href='1_carta_nautica.html?mare=lavoro'"/>
+  <path class="sea-zone risorse" d="M0,330 L1000,330 L1000,600 L0,600 Z" onclick="window.location.href='1_carta_nautica.html?mare=risorse'"/>
+
+  <!-- GLOW RENDERERS -->
+  <circle cx="500" cy="110" r="350" fill="url(#glow-salute)" class="sea-glow" id="glow-salute-el"/>
+  <circle cx="500" cy="320" r="350" fill="url(#glow-lavoro)" class="sea-glow" id="glow-lavoro-el"/>
+  <circle cx="500" cy="510" r="350" fill="url(#glow-risorse)" class="sea-glow" id="glow-risorse-el"/>
+
+  <!-- TERRAFERMA NEGATIVE SPACE (L'uomo al centro) -->
+  <g style="pointer-events: none;">
+    <path class="landmass-mask" fill-rule="evenodd" d="
+      M 0 0 L 1000 0 L 1000 600 L 0 600 Z 
+      M 500 70 
+      C 470 70, 450 100, 450 130 
+      C 450 150, 350 140, 320 160 
+      C 280 190, 300 230, 330 240 
+      C 380 250, 430 230, 440 270 
+      C 440 350, 350 420, 340 510 
+      C 330 570, 400 590, 440 530 
+      C 470 470, 490 420, 500 420 
+      C 510 420, 530 470, 560 530 
+      C 600 590, 670 570, 660 510 
+      C 650 420, 560 350, 560 270 
+      C 570 230, 620 250, 670 240 
+      C 700 230, 720 190, 680 160 
+      C 650 140, 550 150, 550 130 
+      C 550 100, 530 70, 500 70 Z
+    "/>
+  </g>
+
+  <!-- ELEMENTI NAUTICI E ISOLE -->
+  <g class="nautical-features" style="pointer-events: none;">
+    <!-- Paralleli divisori dei mari -->
+    <path class="parallel-line parallel-top" d="M 240 165 L 760 165" />
+   
+    <path class="parallel-line parallel-mid" d="M 240 330 L 760 330" />
+   
+    <!-- Isolette sfumate (indicanti i luoghi da esplorare) -->
+    <!-- Isole in Salute (Alto) -->
+    <path class="ghost-island island-salute" d="M 480 110 C 490 105, 510 105, 515 115 C 520 125, 490 130, 480 120 Z" />
+    <path class="ghost-island island-salute" d="M 460 140 C 470 135, 480 145, 470 150 C 460 155, 455 145, 460 140 Z" />
+    
+    <!-- Isole in Lavoro (Medio) -->
+    <path class="ghost-island island-lavoro" d="M 470 290 C 490 280, 530 285, 540 300 C 550 320, 500 330, 470 310 C 450 290, 470 280, 470 290 Z" />
+    <path class="ghost-island island-lavoro" d="M 410 260 C 420 250, 440 260, 430 270 Z" />
+    <path class="ghost-island island-lavoro" d="M 570 250 C 590 240, 600 260, 580 270 Z" />
+
+    <!-- Isole in Tempo (Basso) -->
+    <!-- REMOVED -->
+  </g>
+
+  <!-- TITOLI DEGLI OCEANI -->
+  <g class="title-wrapper">
+    <!-- Salute (Testa) -->
+    <g class="sea-title-group" id="title-salute" style="transform-origin: 500px 120px;">
+      <text class="sea-icon" x="500" y="100">🧠</text>
+      <text class="sea-title" x="500" y="130" fill="#00b4d8">Salute e Principi</text>
+      <text class="sea-subtitle" x="500" y="145" fill="#00b4d8">La rotta per navigare</text>
+    </g>
+
+    <!-- Lavoro (Torace) -->
+    <g class="sea-title-group" id="title-lavoro" style="transform-origin: 500px 230px;">
+      <text class="sea-icon" x="500" y="210">❤️</text>
+      <text class="sea-title" x="500" y="240" fill="#2a9d8f">Lavoro e Relazioni</text>
+      <text class="sea-subtitle" x="500" y="255" fill="#2a9d8f">Le correnti del successo</text>
+    </g>
+
+    <!-- Risorse (Bacino) -->
+    <g class="sea-title-group" id="title-risorse" style="transform-origin: 500px 390px;">
+      <text class="sea-icon" x="500" y="370">🎯</text>
+      <text class="sea-title" x="500" y="400" fill="#e63946">Risorse e Stile di Vita</text>
+      <text class="sea-subtitle" x="500" y="415" fill="#e63946">Gestisci progetti, energia e abilità</text>
+    </g>
+  </g>
+
+</svg>
+
+<script>
+  const worldMap = document.getElementById('mari-world');
+
+  function updateWorldViewBox() {
+    if (!worldMap) return;
+
+    if (window.innerWidth <= 700) {
+      worldMap.setAttribute('viewBox', '210 20 580 560');
+    } else {
+      worldMap.setAttribute('viewBox', '0 0 1000 600');
+    }
+  }
+
+  updateWorldViewBox();
+  window.addEventListener('resize', updateWorldViewBox);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Event System - Outdoor Experience</title>
+
+<style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+  }
+
+  /* ================= HEADER ================= */
+  header{
+    background:#0f172a;
+    color:white;
+    padding:20px;
+    text-align:center;
+  }
+
+  .tabs{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    padding:10px;
+    background:#111827;
+  }
+
+  .tab{
+    padding:10px 15px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#1f2937;
+    color:#cbd5e1;
+  }
+
+  .tab.active{
+    background:#3b82f6;
+    color:white;
+  }
+
+  .view{
+    display:none;
+  }
+
+  .view.active{
+    display:block;
+  }
+
+  /* ================= CLIENT VIEW ================= */
+  .client{
+    background:#f5f7fb;
+    min-height:100vh;
+  }
+
+  .container{
+    max-width:900px;
+    margin:30px auto;
+    padding:0 20px;
+  }
+
+  .event-box{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.05);
+  }
+
+  .info{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    font-size:14px;
+    color:#374151;
+  }
+
+  .badge{
+    background:#eef2ff;
+    color:#3730a3;
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:12px;
+  }
+
+  .step{
+    display:flex;
+    gap:15px;
+    padding:15px;
+    border-left:3px solid #3b82f6;
+    margin:15px 0;
+    background:#f9fafb;
+    border-radius:12px;
+  }
+
+  .time{
+    font-weight:bold;
+    width:90px;
+    color:#2563eb;
+  }
+
+  .tag{
+    display:inline-block;
+    margin-top:5px;
+    font-size:11px;
+    background:#e0f2fe;
+    padding:3px 8px;
+    border-radius:8px;
+  }
+
+  /* ================= ADMIN ================= */
+  .admin{
+    background:#0b1220;
+    color:white;
+    min-height:100vh;
+    padding:20px;
+  }
+
+  .box{
+    background:#111827;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:15px;
+  }
+
+  .role{
+    background:#1f2937;
+    padding:8px;
+    border-radius:8px;
+    margin-top:5px;
+    font-size:13px;
+  }
+
+  /* ================= OPERATOR ================= */
+  .operator{
+    background:#111827;
+    color:white;
+    min-height:100vh;
+    padding:20px;
+  }
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>Postura Corretta in Vetta</h2>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchView('client')">Clienti</div>
+  <div class="tab" onclick="switchView('admin')">Admin</div>
+  <div class="tab" onclick="switchView('operator')">Operatori</div>
+</div>
+
+<!-- ================= CLIENT VIEW ================= -->
+<div id="client" class="view active client">
+
+  <div class="container">
+
+    <div class="event-box">
+
+      <div class="info">
+        <div>📅 12 Maggio 2026</div>
+        <div>🕘 09:00 - 14:00</div>
+        <div>📍 Hub: Rifugio A</div>
+        <div class="badge">15 partecipanti</div>
+      </div>
+
+      <h3>Programma della giornata</h3>
+
+      <!-- A -->
+      <div class="step">
+        <div class="time">09:00</div>
+        <div>
+          <strong>A) Camminata verso la vetta</strong>
+
+          <p>🥾 Partenza: Rifugio A</p>
+          <p>📍 Arrivo: Vetta Monte</p>
+
+          <p>Escursione guidata con gruppo e progressione tecnica.</p>
+
+          <span class="tag">Durata: 2 ore</span>
+        </div>
+      </div>
+
+      <!-- B -->
+      <div class="step">
+        <div class="time">11:15</div>
+        <div>
+          <strong>B) Postura Corretta in Vetta</strong>
+
+          <p>📍 Location: Vetta Monte</p>
+
+          <p>Esercizi di respirazione, equilibrio e postura in quota.</p>
+
+          <span class="tag">Durata: 15 min</span>
+        </div>
+      </div>
+
+      <!-- C -->
+      <div class="step">
+        <div class="time">11:45</div>
+        <div>
+          <strong>C) Pranzo al Rifugio</strong>
+
+          <p>📍 Location: Rifugio B</p>
+
+          <p>Momento conviviale e recupero energetico.</p>
+
+          <span class="tag">Durata: 1 ora</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= ADMIN VIEW ================= -->
+<div id="admin" class="view admin">
+
+  <h2>Admin Dashboard</h2>
+
+  <div class="box">
+    <h3>Evento</h3>
+    <p>15 partecipanti confermati</p>
+  </div>
+
+  <div class="box">
+    <h3>Experience A</h3>
+    <div class="role">🥾 Guida: Marco Rossi</div>
+  </div>
+
+  <div class="box">
+    <h3>Experience B</h3>
+    <div class="role">🧠 Trainer: Laura Bianchi</div>
+  </div>
+
+  <div class="box">
+    <h3>Experience C</h3>
+    <div class="role">🍽 Responsabile rifugio: Gianni Verdi</div>
+  </div>
+
+</div>
+
+<!-- ================= OPERATOR VIEW ================= -->
+<div id="operator" class="view operator">
+
+  <h2>Operator Dashboard</h2>
+
+  <div class="box">
+    <strong>A) Camminata</strong>
+    <p>Ruolo: Guida</p>
+    <p>📍 Rifugio A → Vetta Monte</p>
+  </div>
+
+  <div class="box">
+    <strong>B) Postura</strong>
+    <p>Ruolo: Trainer</p>
+    <p>📍 Vetta Monte</p>
+  </div>
+
+  <div class="box">
+    <strong>C) Rifugio</strong>
+    <p>Ruolo: Gestione pranzo</p>
+    <p>📍 Rifugio B</p>
+  </div>
+
+</div>
+
+<script>
+function switchView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<% content_for :title, "Salute" %>
+
+<section class="dashboard-shell dashboard-shell--health dashboard-shell--with-aside">
+  <%= render "shared/dashboard_aside", current_section: :salute %>
+
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <p>Salute</p>
+      <h1>Percorsi e corsi</h1>
+      <span>Una dashboard per scegliere tra journey progressivi e contenuti formativi piu strutturati.</span>
+    </header>
+
+    <section class="dashboard-grid">
+      <%= link_to view_page_path("percorsi-salute"), class: "dashboard-card" do %>
+        <span>01</span>
+        <h2>Percorsi</h2>
+        <p>Rotte guidate, stazioni iniziali e avanzamento passo passo.</p>
+      <% end %>
+
+      <%= link_to view_page_path("corsi-salute"), class: "dashboard-card" do %>
+        <span>02</span>
+        <h2>Corsi</h2>
+        <p>Moduli, lezioni, esercizi e contenuti ordinati per tema.</p>
+      <% end %>
+    </section>
+  </main>
+</section>

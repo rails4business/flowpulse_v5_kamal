@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Weekly Class Plan</title>
+
+<style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#0b1220;
+    color:white;
+  }
+
+  h1{
+    text-align:center;
+    padding:20px;
+  }
+
+  .week{
+    display:flex;
+    gap:15px;
+    padding:20px;
+    overflow-x:auto;
+  }
+
+  .day-column{
+    min-width:220px;
+    background:#111827;
+    border-radius:16px;
+    padding:10px;
+    flex-shrink:0;
+  }
+
+  .day-title{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:10px;
+    font-size:16px;
+    color:#93c5fd;
+  }
+
+  .card{
+    border-radius:12px;
+    padding:10px;
+    margin-bottom:10px;
+    color:#111;
+    box-shadow:0 6px 15px rgba(0,0,0,0.25);
+    transition:0.2s;
+  }
+
+  .card:hover{
+    transform:scale(1.03);
+  }
+
+  .class-name{
+    font-weight:bold;
+    font-size:15px;
+  }
+
+  .time{
+    font-size:13px;
+    margin-top:4px;
+    font-weight:bold;
+  }
+
+  /* colori corsi */
+  .yoga{ background:#a7f3d0; }
+  .hiit{ background:#fde68a; }
+  .spinning{ background:#fca5a5; }
+  .pilates{ background:#c7d2fe; }
+  .functional{ background:#67e8f9; }
+
+</style>
+</head>
+
+<body>
+
+<h1>Weekly Class Plan</h1>
+
+<div class="week">
+
+  <!-- LUNEDÌ -->
+  <div class="day-column">
+    <div class="day-title">Lunedì</div>
+
+    <div class="card yoga">
+      <div class="class-name">Yoga</div>
+      <div class="time">08:00 - 09:00</div>
+    </div>
+
+    <div class="card hiit">
+      <div class="class-name">HIIT</div>
+      <div class="time">18:30 - 19:15</div>
+    </div>
+  </div>
+
+  <!-- MARTEDÌ -->
+  <div class="day-column">
+    <div class="day-title">Martedì</div>
+
+    <div class="card spinning">
+      <div class="class-name">Spinning</div>
+      <div class="time">19:00 - 19:45</div>
+    </div>
+
+    <div class="card functional">
+      <div class="class-name">Functional</div>
+      <div class="time">20:00 - 20:45</div>
+    </div>
+  </div>
+
+  <!-- MERCOLEDÌ -->
+  <div class="day-column">
+    <div class="day-title">Mercoledì</div>
+
+    <div class="card pilates">
+      <div class="class-name">Pilates</div>
+      <div class="time">10:00 - 11:00</div>
+    </div>
+
+    <div class="card yoga">
+      <div class="class-name">Yoga</div>
+      <div class="time">18:00 - 19:00</div>
+    </div>
+  </div>
+
+  <!-- GIOVEDÌ -->
+  <div class="day-column">
+    <div class="day-title">Giovedì</div>
+
+    <div class="card functional">
+      <div class="class-name">Functional</div>
+      <div class="time">18:00 - 18:45</div>
+    </div>
+
+    <div class="card hiit">
+      <div class="class-name">HIIT</div>
+      <div class="time">19:30 - 20:15</div>
+    </div>
+  </div>
+
+  <!-- VENERDÌ -->
+  <div class="day-column">
+    <div class="day-title">Venerdì</div>
+
+    <div class="card spinning">
+      <div class="class-name">Spinning</div>
+      <div class="time">19:00 - 19:45</div>
+    </div>
+  </div>
+
+  <!-- SABATO -->
+  <div class="day-column">
+    <div class="day-title">Sabato</div>
+
+    <div class="card yoga">
+      <div class="class-name">Yoga</div>
+      <div class="time">09:00 - 10:00</div>
+    </div>
+
+    <div class="card hiit">
+      <div class="class-name">HIIT</div>
+      <div class="time">11:00 - 11:45</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

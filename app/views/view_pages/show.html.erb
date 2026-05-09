@@ -1,0 +1,9 @@
+<% content_for :title, @page.fetch(:title) %>
+
+<section class="view-page-shell">
+  <iframe
+    title="<%= @page.fetch(:title) %>"
+    src="<%= @iframe_src %>"
+    loading="eager"
+  ></iframe>
+</section>

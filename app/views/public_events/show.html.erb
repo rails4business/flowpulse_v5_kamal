@@ -1,0 +1,275 @@
+<% content_for :title, @event[:title] %>
+
+<section class="dashboard-shell dashboard-shell--public-event-detail">
+  <header class="dashboard-header">
+    <p><%= link_to "Torna alle Esperienze", eventi_path %></p>
+    <h1><%= @event[:title] %></h1>
+    <span><%= @event[:description] %></span>
+  </header>
+
+  <div class="event-detail-container">
+    <div class="event-detail-header">
+      <% unless @event[:category] == "service" %>
+        <div class="event-detail-date">
+          <span><%= @event[:month] %></span>
+          <strong><%= @event[:day] %></strong>
+          <small><%= @event[:weekday] %></small>
+        </div>
+      <% end %>
+      <div class="event-detail-info">
+        <% if @event[:category] == "service" %>
+          <p class="event-date"><strong><%= @event[:request_label] %></strong></p>
+        <% else %>
+          <p class="event-date"><strong><%= @event[:date] %></strong></p>
+        <% end %>
+        <p class="event-location"><strong><%= @event[:location] %></strong></p>
+        <div class="event-detail-tags">
+          <% if @event[:event_kind].present? %>
+            <span><%= @event[:event_kind] %> · <%= @event[:schedule_label] %></span>
+          <% end %>
+          <span><%= @event[:format] %></span>
+          <span><%= @event[:brand] %></span>
+          <span><%= @event[:icon] %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="event-detail-content">
+      <h2>Dettagli Evento</h2>
+      <p><%= @event[:details] %></p>
+    </div>
+
+    <% if @event[:sessions].present? %>
+      <section class="event-detail-schedule">
+        <h2>Calendario</h2>
+        <div class="event-detail-schedule__list">
+          <% @event[:sessions].each do |session| %>
+            <article class="event-detail-schedule__item">
+              <strong><%= session[:label] %></strong>
+              <span><%= session[:date] %></span>
+              <span><%= session[:time] %></span>
+              <span><%= session[:location] %></span>
+            </article>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <div class="event-detail-meta-grid">
+      <p><strong>Organizzazione</strong><span><%= @event[:organizer] %></span></p>
+      <p><strong>Durata</strong><span><%= @event[:duration] %></span></p>
+      <% if @event[:category] == "service" %>
+        <p><strong>Formula</strong><span><%= @event[:service_mode] %></span></p>
+        <p><strong>Prezzo</strong><span><%= @event[:price_label] %></span></p>
+      <% else %>
+        <% if @event[:schedule_label].present? %>
+          <p><strong>Struttura</strong><span><%= @event[:schedule_label] %></span></p>
+        <% end %>
+        <p><strong>Partecipanti</strong><span><%= @event[:participants] %></span></p>
+        <p><strong>Orario</strong><span><%= @event[:time] %></span></p>
+      <% end %>
+    </div>
+
+    <div class="event-actions">
+      <%= link_to(@event[:category] == "service" ? "Richiedi appuntamento" : "Iscriviti", "#", class: "btn btn-primary") %>
+      <%= link_to "Condividi", "#", class: "btn btn-secondary" %>
+    </div>
+  </div>
+</section>
+
+<style>
+  .event-detail-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .event-detail-header {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .event-detail-date {
+    min-width: 108px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 1rem 0.75rem;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #eff8ff 0%, #dff3f6 100%);
+    color: #0f172a;
+  }
+
+  .event-detail-date span {
+    color: #0284c7;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+
+  .event-detail-date strong {
+    font-size: 2rem;
+    line-height: 0.95;
+  }
+
+  .event-detail-date small {
+    color: #5f7284;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .event-detail-info p {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .event-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .event-detail-tags span {
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .event-detail-content h2 {
+    margin: 0 0 1rem 0;
+    color: #fff;
+  }
+
+  .event-detail-content p {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    font-size: 1rem;
+  }
+
+  .event-detail-schedule {
+    margin-top: 1.75rem;
+  }
+
+  .event-detail-schedule h2 {
+    margin: 0 0 1rem;
+    color: #fff;
+  }
+
+  .event-detail-schedule__list {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .event-detail-schedule__item {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .event-detail-schedule__item strong {
+    color: #fff;
+    font-size: 0.92rem;
+  }
+
+  .event-detail-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .event-detail-meta-grid p {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 1rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  .event-detail-meta-grid strong {
+    color: #fff;
+    font-size: 0.85rem;
+  }
+
+  .event-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background: #00b4d8;
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    background: #0099b8;
+    color: #fff;
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .dashboard-header p a {
+    color: #00b4d8;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .dashboard-header p a:hover {
+    color: #0099b8;
+  }
+
+  @media (max-width: 720px) {
+    .event-detail-header {
+      flex-direction: column;
+    }
+
+    .event-detail-date {
+      width: 100%;
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+
+    .event-detail-meta-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

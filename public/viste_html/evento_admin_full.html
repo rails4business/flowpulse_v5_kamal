@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Event Platform Complete</title>
+
+<style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f5f7fb;
+  }
+
+  header{
+    background:#0f172a;
+    color:white;
+    padding:20px;
+    text-align:center;
+  }
+
+  /* TABS */
+  .tabs{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    padding:10px;
+    background:#111827;
+  }
+
+  .tab{
+    padding:10px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#1f2937;
+    color:#cbd5e1;
+    font-size:13px;
+  }
+
+  .tab.active{
+    background:#3b82f6;
+    color:white;
+  }
+
+  .view{
+    display:none;
+    padding:20px;
+    max-width:1000px;
+    margin:0 auto;
+  }
+
+  .view.active{
+    display:block;
+  }
+
+  /* CARDS */
+  .card{
+    background:white;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+  }
+
+  .title{ font-weight:bold; }
+
+  .meta{
+    font-size:13px;
+    color:#6b7280;
+    margin-top:5px;
+  }
+
+  /* PILL USERS */
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:12px;
+    margin-right:6px;
+    margin-top:6px;
+  }
+
+  .clientPill{ background:#d1fae5; color:#065f46; }
+  .operatorPill{ background:#dbeafe; color:#1e3a8a; }
+  .adminPill{ background:#fee2e2; color:#991b1b; }
+  .proPill{ background:#fef3c7; color:#92400e; }
+
+  /* BADGE ROLES */
+  .badge{
+    display:inline-block;
+    font-size:11px;
+    padding:4px 8px;
+    border-radius:8px;
+    margin-top:8px;
+  }
+
+  .event{ background:#dbeafe; color:#1e3a8a; }
+  .activity{ background:#d1fae5; color:#065f46; }
+
+  .price{ color:#16a34a; font-weight:bold; }
+  .cost{ color:#dc2626; font-weight:bold; }
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>Event Platform - Full System</h2>
+</header>
+
+<div class="tabs">
+
+  <div class="tab active" onclick="switchView('events')">Eventi</div>
+  <div class="tab" onclick="switchView('activities')">Attività</div>
+  <div class="tab" onclick="switchView('contacts')">Contatti</div>
+  <div class="tab" onclick="switchView('pricing')">Pricing</div>
+
+</div>
+
+<!-- ================= EVENTS ================= -->
+<div id="events" class="view active">
+
+  <div class="card">
+    <div class="title">Postura in Vetta</div>
+    <div class="meta">📍 Rifugio A</div>
+
+    <span class="pill clientPill">👤 11 clienti</span>
+    <span class="pill operatorPill">🧭 2 operatori</span>
+    <span class="pill adminPill">⚙ 1 organizzatore</span>
+
+    <div class="badge event">Evento attivo</div>
+  </div>
+
+</div>
+
+<!-- ================= ACTIVITIES ================= -->
+<div id="activities" class="view">
+
+  <div class="card">
+    <div class="title">Camminata (A)</div>
+    <div class="meta">🥾 Rifugio → Vetta</div>
+
+    <span class="pill operatorPill">Marco Rossi (guida)</span>
+    <span class="pill clientPill">11 partecipanti</span>
+
+    <div class="badge activity">Experience</div>
+  </div>
+
+  <div class="card">
+    <div class="title">Postura (B)</div>
+    <div class="meta">🧠 Vetta Monte</div>
+
+    <span class="pill proPill">Laura Bianchi (trainer)</span>
+
+    <div class="badge activity">Attività tecnica</div>
+  </div>
+
+</div>
+
+<!-- ================= CONTACTS ================= -->
+<div id="contacts" class="view">
+
+  <div class="card">
+    <div class="title">Marco Rossi</div>
+    <div class="meta">📞 333 111 222 | 🧭 Guida</div>
+    <span class="pill operatorPill">Operatore</span>
+  </div>
+
+  <div class="card">
+    <div class="title">Laura Bianchi</div>
+    <div class="meta">📞 333 222 333 | 🧠 Trainer</div>
+    <span class="pill proPill">Professionista</span>
+  </div>
+
+  <div class="card">
+    <div class="title">Gianni Verdi</div>
+    <div class="meta">📞 333 444 555 | 🍽 Rifugio</div>
+    <span class="pill operatorPill">Operatore</span>
+  </div>
+
+</div>
+
+<!-- ================= PRICING ================= -->
+<div id="pricing" class="view">
+
+  <div class="card">
+    <div class="title">Evento Postura in Vetta</div>
+
+    <div class="meta">👥 11 clienti</div>
+    <div class="price">+605€ revenue</div>
+
+    <div class="cost">-120€ guida</div>
+    <div class="cost">-80€ trainer</div>
+    <div class="cost">-150€ rifugio</div>
+
+    <div class="price">💰 Margine: +255€</div>
+
+    <div class="badge event">Analisi completa evento</div>
+  </div>
+
+</div>
+
+<script>
+function switchView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

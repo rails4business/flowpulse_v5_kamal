@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Calendario</title>
+
+<style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f5f7fb;
+  }
+
+  header{
+    background:#0f172a;
+    color:white;
+    padding:20px;
+    text-align:center;
+  }
+
+  .tabs{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    padding:10px;
+    background:#111827;
+  }
+
+  .tab{
+    padding:10px 15px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#1f2937;
+    color:#cbd5e1;
+  }
+
+  .tab.active{
+    background:#3b82f6;
+    color:white;
+  }
+
+  .view{
+    display:none;
+    padding:20px;
+    max-width:900px;
+    margin:0 auto;
+  }
+
+  .view.active{
+    display:block;
+  }
+
+  /* ================= ITEM ================= */
+
+  .item{
+    display:flex;
+    gap:15px;
+    background:white;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+    align-items:center;
+  }
+
+  /* CALENDAR ICON */
+  .date{
+    width:75px;
+    height:85px;
+    background:#eef2ff;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    flex-shrink:0;
+  }
+
+  .month{
+    font-size:11px;
+    color:#4f46e5;
+    font-weight:bold;
+  }
+
+  .day{
+    font-size:22px;
+    font-weight:bold;
+    color:#111827;
+  }
+
+  .weekday{
+    font-size:11px;
+    color:#6b7280;
+  }
+
+  .content{
+    flex:1;
+  }
+
+  .title{
+    font-weight:bold;
+    font-size:16px;
+  }
+
+  .meta{
+    font-size:13px;
+    color:#6b7280;
+    margin-top:5px;
+  }
+
+  /* TIME */
+  .time{
+    font-weight:bold;
+    color:#2563eb;
+    font-size:13px;
+    margin-top:5px;
+  }
+
+  .tag{
+    display:inline-block;
+    margin-top:8px;
+    font-size:11px;
+    padding:4px 8px;
+    border-radius:8px;
+  }
+
+  .eventTag{
+    background:#dbeafe;
+    color:#1e3a8a;
+  }
+
+  .activityTag{
+    background:#d1fae5;
+    color:#065f46;
+  }
+
+  .routineTag{
+    background:#fef3c7;
+    color:#92400e;
+  }
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>Calendario Eventi, Attività & Routine</h2>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchView(event, 'events')">Eventi</div>
+  <div class="tab" onclick="switchView(event, 'activities')">Attività</div>
+  <div class="tab" onclick="switchView(event, 'routines')">Routine</div>
+</div>
+
+<!-- ================= EVENTI ================= -->
+<div id="events" class="view active">
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Postura Corretta in Vetta</div>
+      <div class="meta">📍 Rifugio A | 👥 15 partecipanti</div>
+      <div class="time">⏰ 09:00 - 14:00</div>
+      <div class="tag eventTag">Evento organizzato</div>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="date">
+      <div class="month">GIU</div>
+      <div class="day">20</div>
+      <div class="weekday">Ven</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Weekend Trekking Alpino</div>
+      <div class="meta">📍 Monte X | 2 giorni</div>
+      <div class="time">⏰ 08:00 - giorno successivo</div>
+      <div class="tag eventTag">Evento organizzato</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= ATTIVITÀ ================= -->
+<div id="activities" class="view">
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Partecipazione Camminata (A)</div>
+      <div class="meta">🥾 Cliente | Evento: Postura in Vetta</div>
+      <div class="time">⏰ 09:00 - 11:00</div>
+      <div class="tag activityTag">Attività evento</div>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Ruolo Guida - Camminata</div>
+      <div class="meta">🧭 Marco Rossi | Evento: Postura in Vetta</div>
+      <div class="time">⏰ 09:00 - 11:00</div>
+      <div class="tag activityTag">Attività operatore</div>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">13</div>
+      <div class="weekday">Mar</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Allenamento core autonomo</div>
+      <div class="meta">💪 Attività personale</div>
+      <div class="time">⏰ 18:00 - 18:45</div>
+      <div class="tag activityTag">Attività autonoma</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= ROUTINE ================= -->
+<div id="routines" class="view">
+
+  <div class="item">
+    <div class="date">
+      <div class="month">OGNI</div>
+      <div class="day">AM</div>
+      <div class="weekday">Giorno</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Risveglio posturale</div>
+      <div class="meta">🌅 Routine personale | Mobilità dolce</div>
+      <div class="time">⏰ 07:30 - 07:45</div>
+      <div class="tag routineTag">Routine quotidiana</div>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="date">
+      <div class="month">LUN</div>
+      <div class="day">MER</div>
+      <div class="weekday">VEN</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Respiro e decompressione</div>
+      <div class="meta">🫁 Routine guidata | Togliere tensioni</div>
+      <div class="time">⏰ 13:00 - 13:10</div>
+      <div class="tag routineTag">Routine settimanale</div>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="date">
+      <div class="month">OGNI</div>
+      <div class="day">PM</div>
+      <div class="weekday">Giorno</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Check corpo serale</div>
+      <div class="meta">🧭 Autovalutazione | Recettori e sensazioni</div>
+      <div class="time">⏰ 21:15 - 21:25</div>
+      <div class="tag routineTag">Routine di monitoraggio</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchView(event, id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

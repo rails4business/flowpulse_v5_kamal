@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Value Calendar</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0f172a;
+    color: #e2e8f0;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+/* DAY BLOCK */
+.day {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.day-title {
+    font-size: 13px;
+    color: #93c5fd;
+    margin-bottom: 8px;
+}
+
+/* EVENT */
+.event {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: #0b1220;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.event:hover {
+    background: #111c33;
+}
+
+/* LEFT */
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* META */
+.meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.sub {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* TAG */
+.tag {
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 999px;
+    background: #334155;
+    margin-left: 6px;
+}
+
+/* RIGHT */
+.right {
+    text-align: right;
+}
+
+.amount {
+    font-weight: bold;
+}
+
+.type {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+/* MODAL */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    width: 420px;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h2>Value Calendar</h2>
+    <div id="calendar"></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" id="modalContent"></div>
+</div>
+
+<script>
+
+// ================= DATA =================
+const data = [
+    {
+        date: "2026-05-01",
+        events: [
+            {
+                name: "Netflix",
+                type: "consumption",
+                category: "Casa",
+                counterpartyType: "business",
+                logo: "https://logo.clearbit.com/netflix.com",
+                amount: -9.99,
+                valueIn: "Streaming access"
+            },
+            {
+                name: "Cliente X",
+                type: "work",
+                category: "Lavoro",
+                counterpartyType: "person",
+                logo: "https://i.pravatar.cc/40?img=3",
+                amount: 300,
+                valueIn: "2h lavoro professionale"
+            }
+        ]
+    },
+    {
+        date: "2026-05-02",
+        events: [
+            {
+                name: "Enel Energia",
+                type: "utility",
+                category: "Casa",
+                counterpartyType: "business",
+                logo: "https://logo.clearbit.com/enel.com",
+                amount: -85.5,
+                valueIn: "Elettricità"
+            }
+        ]
+    }
+];
+
+// ================= RENDER =================
+function render() {
+    const cal = document.getElementById("calendar");
+
+    data.forEach(day => {
+
+        const dayEl = document.createElement("div");
+        dayEl.className = "day";
+
+        let html = `<div class="day-title">${day.date}</div>`;
+
+        day.events.forEach(ev => {
+
+            const isPerson = ev.counterpartyType === "person";
+
+            html += `
+                <div class="event" onclick='openModal(${JSON.stringify(ev)})'>
+
+                    <div class="left">
+                        <img class="avatar" src="${ev.logo}" />
+
+                        <div class="meta">
+                            <div class="name">
+                                ${ev.name}
+                                <span class="tag">${ev.category}</span>
+                            </div>
+                            <div class="sub">${ev.valueIn}</div>
+                        </div>
+                    </div>
+
+                    <div class="right">
+                        <div class="amount">
+                            ${ev.amount > 0 ? "+" : ""}${ev.amount} €
+                        </div>
+                        <div class="type">${ev.type}</div>
+                    </div>
+
+                </div>
+            `;
+        });
+
+        dayEl.innerHTML = html;
+        cal.appendChild(dayEl);
+    });
+}
+
+// ================= MODAL =================
+function openModal(ev) {
+    const modal = document.getElementById("modal");
+    const content = document.getElementById("modalContent");
+
+    content.innerHTML = `
+        <div class="close" onclick="closeModal(event)">✕</div>
+
+        <h3>${ev.name}</h3>
+
+        <p><b>Categoria:</b> ${ev.category}</p>
+        <p><b>Tipo:</b> ${ev.type}</p>
+        <p><b>Valore:</b> ${ev.amount} €</p>
+        <p><b>Ricevuto:</b> ${ev.valueIn}</p>
+    `;
+
+    modal.style.display = "flex";
+}
+
+function closeModal(e) {
+    if (e.target.id === "modal") {
+        document.getElementById("modal").style.display = "none";
+    }
+}
+
+render();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<% mare = params[:mare].presence || "salute" %>
+
+<section class="mari-home-frame">
+  <iframe
+    title="Mari"
+    src="/viste_html/0_mari.html?mare=<%= ERB::Util.url_encode(mare) %>"
+    loading="eager"
+  ></iframe>
+</section>
+
+<script>
+  (() => {
+    const root = document.documentElement;
+    const header = document.getElementById("site-header");
+
+    if (!header) return;
+
+    const syncMariHeight = () => {
+      root.style.setProperty("--site-header-height", `${header.offsetHeight}px`);
+    };
+
+    syncMariHeight();
+    window.addEventListener("resize", syncMariHeight);
+  })();
+</script>

@@ -1,0 +1,59 @@
+# Kamal deployment config for Flowpulse V5
+# Copy this file to config/deploy.yml and replace the placeholder values.
+# Recommended first setup:
+# - Hetzner single server
+# - GitHub Container Registry
+# - Kamal built-in SSL proxy
+
+service: flowpulse_v_5
+image: <YOUR_GITHUB_USERNAME>/flowpulse_v_5
+
+# Hetzner server public IP
+servers:
+  web:
+    - 178.105.106.247
+
+# GitHub Container Registry
+registry:
+  server: ghcr.io
+  username: marcobeffa
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# SSL via Kamal built-in proxy
+proxy:
+  ssl: true
+  host: flowpulse.net
+
+# Environment variables
+env:
+  secret:
+    - RAILS_MASTER_KEY
+  clear:
+    SOLID_QUEUE_IN_PUMA: true
+    RAILS_LOG_TO_STDOUT: true
+    # Optional when you want generated URLs to use your public host
+    # APP_HOST: <YOUR_DOMAIN.COM>
+
+# Storage volume for Active Storage and local sqlite files if used
+volumes:
+  - "flowpulse_v_5_storage:/rails/storage"
+
+# Fingerprinted assets
+asset_path: /rails/public/assets
+
+# Build configuration
+builder:
+  arch: amd64
+
+# Optional: use a remote amd64 builder later if needed from Apple Silicon
+# builder:
+#   arch: amd64
+#   remote: ssh://root@<YOUR_BUILDER_IP>
+
+# Handy aliases
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"

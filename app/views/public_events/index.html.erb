@@ -1,0 +1,71 @@
+<% content_for :title, "Esperienze" %>
+
+<section class="dashboard-shell dashboard-shell--public-events">
+  <header class="dashboard-header">
+    <p>Pronte per nuove aperture</p>
+    <h1>Esperienze</h1>
+    <span>Qui si vedono le esperienze da vivere, gli eventi gia fissati, le avventure nate sul momento, i servizi prenotabili e i corsi settimanali a cui iscriversi.</span>
+  </header>
+
+  <nav class="resources-tabs" aria-label="Tab esperienze">
+    <% @tabs.each do |key, tab| %>
+      <%= link_to tab.fetch(:label), eventi_path(tab: key), class: "resources-tab #{@active_tab == key ? "is-active" : ""}" %>
+    <% end %>
+  </nav>
+
+  <section class="events-panel">
+    <div class="events-stack">
+      <% @items.each do |event| %>
+        <%= link_to evento_path(event[:id]), class: "event-row-card #{'event-row-card--service' if event[:category] == 'service'}" do %>
+          <% unless event[:category] == "service" %>
+            <div class="event-row-date">
+              <span class="event-row-date__month"><%= event[:month] %></span>
+              <strong class="event-row-date__day"><%= event[:day] %></strong>
+              <span class="event-row-date__weekday"><%= event[:weekday] %></span>
+            </div>
+          <% end %>
+
+          <div class="event-row-main">
+            <div class="event-row-topline">
+              <div class="event-row-tags">
+                <% if event[:event_kind].present? %>
+                  <span class="event-row-structure"><%= event[:event_kind] %> · <%= event[:schedule_label] %></span>
+                <% end %>
+                <span class="event-row-type"><%= event[:format] %></span>
+                <span class="event-row-icon-chip"><%= event[:icon] %></span>
+              </div>
+              <% if event[:category] == "service" %>
+                <span class="event-row-action"><%= event[:request_label] %></span>
+              <% else %>
+                <span class="event-row-time"><%= event[:time] %></span>
+              <% end %>
+            </div>
+
+            <h2><%= event[:title] %></h2>
+            <p><%= event[:description] %></p>
+
+            <div class="event-row-meta">
+              <span><strong>Brand</strong> <%= event[:brand] %></span>
+              <span><strong>Organizzazione</strong> <%= event[:organizer] %></span>
+              <span><strong>Luogo</strong> <%= event[:location] %></span>
+              <span><strong>Durata</strong> <%= event[:duration] %></span>
+              <% if event[:event_kind].present? %>
+                <span><strong>Struttura</strong> <%= event[:schedule_label] %></span>
+              <% end %>
+              <% if event[:category] == "service" %>
+                <span><strong>Formula</strong> <%= event[:service_mode] %></span>
+                <span><strong>Prezzo</strong> <%= event[:price_label] %></span>
+              <% else %>
+                <span><strong>Partecipanti</strong> <%= event[:participants] %></span>
+              <% end %>
+              <% if event[:category] == "course" %>
+                <span><strong>Orario</strong> <%= event[:time] %></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+  </section>
+</section>

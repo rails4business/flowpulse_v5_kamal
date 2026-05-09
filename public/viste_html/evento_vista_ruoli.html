@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Event Platform</title>
+
+<style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f5f7fb;
+  }
+
+  header{
+    background:#0f172a;
+    color:white;
+    padding:20px;
+    text-align:center;
+  }
+
+  .tabs{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    padding:10px;
+    background:#111827;
+  }
+
+  .tab{
+    padding:10px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#1f2937;
+    color:#cbd5e1;
+    font-size:13px;
+  }
+
+  .tab.active{
+    background:#3b82f6;
+    color:white;
+  }
+
+  .view{
+    display:none;
+    padding:20px;
+    max-width:1000px;
+    margin:0 auto;
+  }
+
+  .view.active{
+    display:block;
+  }
+
+  /* CARD */
+  .item{
+    display:flex;
+    gap:15px;
+    background:white;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+  }
+
+  .date{
+    width:75px;
+    height:85px;
+    background:#eef2ff;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .month{ font-size:11px; color:#4f46e5; font-weight:bold; }
+  .day{ font-size:22px; font-weight:bold; }
+  .weekday{ font-size:11px; color:#6b7280; }
+
+  .content{ flex:1; }
+
+  .title{ font-weight:bold; }
+  .meta{ font-size:13px; color:#6b7280; margin-top:4px; }
+  .time{ font-size:13px; color:#2563eb; margin-top:4px; }
+
+  .tag{
+    display:inline-block;
+    margin-top:6px;
+    font-size:11px;
+    padding:4px 8px;
+    border-radius:8px;
+  }
+
+  .eventTag{ background:#dbeafe; color:#1e3a8a; }
+  .roleTag{ background:#fef3c7; color:#92400e; }
+  .clientTag{ background:#d1fae5; color:#065f46; }
+  .staffTag{ background:#e0e7ff; color:#3730a3; }
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>Event Platform - Multi Role System</h2>
+</header>
+
+<div class="tabs">
+
+  <div class="tab active" onclick="switchView('client')">Clienti</div>
+  <div class="tab" onclick="switchView('pro')">Professionisti</div>
+
+  <div class="tab" onclick="switchView('org_clients')">Org - Clienti</div>
+  <div class="tab" onclick="switchView('org_staff')">Org - Operatori</div>
+
+</div>
+
+<!-- ================= CLIENTI ================= -->
+<div id="client" class="view active">
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Postura in Vetta</div>
+      <div class="meta">📍 Rifugio A</div>
+      <div class="time">⏰ 09:00 - 14:00</div>
+      <div class="tag clientTag">La tua partecipazione</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= PROFESSIONISTI ================= -->
+<div id="pro" class="view">
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Camminata (A)</div>
+      <div class="meta">🧑‍🏫 Ruolo: Guida gruppo 15 persone</div>
+      <div class="time">⏰ 09:00 - 11:00</div>
+      <div class="tag roleTag">Assegnazione professionista</div>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Postura Vetta (B)</div>
+      <div class="meta">🧠 Trainer tecnico</div>
+      <div class="time">⏰ 11:15 - 11:30</div>
+      <div class="tag roleTag">Sessione guidata</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= ORGANIZZATORE - CLIENTI ================= -->
+<div id="org_clients" class="view">
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Partecipanti Evento</div>
+      <div class="meta">👥 15 iscritti confermati</div>
+      <div class="tag eventTag">Overview clienti</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= ORGANIZZATORE - STAFF ================= -->
+<div id="org_staff" class="view">
+
+  <div class="item">
+    <div class="date">
+      <div class="month">MAG</div>
+      <div class="day">12</div>
+      <div class="weekday">Lun</div>
+    </div>
+
+    <div class="content">
+      <div class="title">Staff assegnato</div>
+      <div class="meta">🥾 1 guida | 🧠 1 trainer | 🍽 1 rifugio</div>
+      <div class="tag staffTag">Gestione operatori</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

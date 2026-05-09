@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<title>SaaS Workflow Prototype</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f5f7fb;
+}
+
+/* TOP BAR */
+.topbar {
+  background: #111827;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pills {
+  display: flex;
+  gap: 8px;
+}
+
+.pill {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: #374151;
+}
+
+.pill.admin { background: #ef4444; }
+.pill.operator { background: #3b82f6; }
+.pill.resp { background: #10b981; }
+
+/* layout */
+.container {
+  display: flex;
+  height: calc(100vh - 50px);
+}
+
+/* LEFT */
+.left {
+  width: 320px;
+  background: white;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.project {
+  padding: 10px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+/* CENTER */
+.center {
+  flex: 1;
+  padding: 15px;
+}
+
+/* RIGHT */
+.right {
+  width: 300px;
+  background: white;
+  border-left: 1px solid #ddd;
+  padding: 10px;
+}
+
+/* cards */
+.card {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* badges */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  color: white;
+}
+
+.todo { background: #f59e0b; }
+.doing { background: #3b82f6; }
+.done { background: #10b981; }
+
+/* contacts */
+.contact {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+.contact:hover {
+  background: #f3f4f6;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+
+  <div><b>Workflow SaaS Prototype</b></div>
+
+  <div class="pills">
+    <div class="pill admin">Admin</div>
+    <div class="pill operator">Operator</div>
+    <div class="pill resp">Responsabile</div>
+  </div>
+
+</div>
+
+<div class="container">
+
+<!-- LEFT: PROGETTI -->
+<div class="left">
+
+  <h3>📁 Progetti</h3>
+
+  <div class="project" onclick="loadProject('lavoro')">
+    Progetto Lavoro
+  </div>
+
+  <div class="project" onclick="loadProject('terapia')">
+    Percorso Terapeutico
+  </div>
+
+  <hr />
+
+  <h4>📇 Contatti</h4>
+
+  <div class="contact" onclick="showContact('Mario Rossi','Cliente')">
+    Mario Rossi <small>(Cliente)</small>
+  </div>
+
+  <div class="contact" onclick="showContact('Laura Bianchi','Medico')">
+    Laura Bianchi <small>(Medico)</small>
+  </div>
+
+  <div class="contact" onclick="showContact('Marco Verdi','Programmatore')">
+    Marco Verdi <small>(Dev)</small>
+  </div>
+
+</div>
+
+<!-- CENTER: WORKFLOW -->
+<div class="center" id="center">
+
+  <h2>Seleziona un progetto</h2>
+
+</div>
+
+<!-- RIGHT: DETAIL -->
+<div class="right">
+
+  <h3>Dettaglio</h3>
+  <div id="detail">
+    Nessun elemento selezionato
+  </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* DATA SaaS */
+const projects = {
+
+  lavoro: [
+    { title:"Richiesta cliente", status:"done", owner:"Admin" },
+    { title:"Analisi responsabile", status:"done", owner:"Responsabile" },
+    { title:"Sviluppo software", status:"doing", owner:"Operator" },
+    { title:"Comunicazione", status:"todo", owner:"Operator" }
+  ],
+
+  terapia: [
+    { title:"Valutazione iniziale", status:"done", owner:"Medico" },
+    { title:"Diagnosi", status:"doing", owner:"Medico" },
+    { title:"Riabilitazione", status:"todo", owner:"Fisioterapista" },
+    { title:"Follow-up", status:"todo", owner:"Nutrizionista" }
+  ]
+};
+
+/* LOAD PROJECT */
+function loadProject(name) {
+
+  const data = projects[name];
+
+  let html = `<h2>📊 ${name.toUpperCase()}</h2>`;
+
+  data.forEach(e => {
+    html += `
+      <div class="card" onclick="selectEvent('${e.title}','${e.owner}','${e.status}')">
+        <b>${e.title}</b><br/>
+        <span class="badge ${e.status}">${e.status}</span>
+        <small> - ${e.owner}</small>
+      </div>
+    `;
+  });
+
+  document.getElementById("center").innerHTML = html;
+}
+
+/* EVENT DETAIL */
+function selectEvent(title, owner, status) {
+  document.getElementById("detail").innerHTML = `
+    <b>${title}</b><br/><br/>
+    👤 Owner: ${owner}<br/>
+    📌 Status: ${status}
+  `;
+}
+
+/* CONTACT */
+function showContact(name, role) {
+  document.getElementById("detail").innerHTML = `
+    <b>Contatto</b><br/><br/>
+    👤 ${name}<br/>
+    🧩 Ruolo: ${role}
+  `;
+}
+
+</script>
+
+</body>
+</html>

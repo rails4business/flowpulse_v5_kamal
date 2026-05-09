@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Viaggio Metropolitana Avanzato</title>
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+<style>
+body { font-family:sans-serif; margin:0; padding:20px; background:#f5f5f5; }
+h2 { margin-top:0; }
+#tabs { display:flex; gap:10px; margin-bottom:20px; }
+.tab { padding:10px 20px; background:white; border-radius:6px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+.tab.active { background:#1e88e5; color:white; }
+#content > div { display:none; }
+#content > div.active { display:block; }
+
+#tracciato { display:flex; flex-wrap:wrap; margin-bottom:20px; gap:8px; }
+.stazione { padding:6px 10px; border-radius:6px; color:white; font-weight:bold; font-size:13px; }
+
+#scelte { display:flex; flex-wrap:wrap; gap:12px; }
+.card { background:white; padding:10px 16px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); cursor:pointer; transition:transform 0.1s; }
+.card:hover { transform:scale(1.05); }
+
+#cy { width:100%; height:500px; background:white; border-radius:8px; }
+</style>
+</head>
+<body>
+
+<div id="tabs">
+  <div class="tab active" data-tab="viaggio">Viaggio</div>
+  <div class="tab" data-tab="mappa">Admin / Mappa</div>
+</div>
+
+<div id="content">
+  <div id="viaggio" class="active">
+    <h2>Stazioni percorse:</h2>
+    <div id="tracciato"></div>
+    <h2>Prossime scelte:</h2>
+    <div id="scelte"></div>
+  </div>
+
+  <div id="mappa">
+    <h2>Mappa Completa:</h2>
+    <div id="cy"></div>
+  </div>
+</div>
+
+<script>
+/* ===== TABS ===== */
+const tabs = document.querySelectorAll('.tab');
+const contents = document.querySelectorAll('#content > div');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    contents.forEach(c => c.classList.remove('active'));
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ===== METRO DATA ===== */
+const linee = {
+  "Rossa":["Brenta","Lodi","Duomo","Cadorna"],
+  "Verde":["Garibaldi","Duomo","Cadorna","Bovisa"],
+  "Blu":["Garibaldi","Bovisa"]
+};
+
+const colori = { "Rossa":"#e53935","Verde":"#43a047","Blu":"#1e88e5" };
+
+/* crea mappa stazione -> linee */
+const stazioneLinee = {};
+for(let linea in linee){
+  linee[linea].forEach(staz=>{
+    if(!stazioneLinee[staz]) stazioneLinee[staz]=[];
+    stazioneLinee[staz].push(linea);
+  });
+}
+
+/* ===== STATO VIAGGIO ===== */
+let percorso = []; // {stazione,linea}
+
+/* ===== FUNZIONI ===== */
+function aggiornaTracciato(){
+  const tracciatoDiv = document.getElementById('tracciato');
+  tracciatoDiv.innerHTML='';
+  percorso.forEach(t=>{
+    const span=document.createElement('span');
+    span.className='stazione';
+    span.style.backgroundColor=colori[t.linea];
+    span.textContent=t.stazione;
+    tracciatoDiv.appendChild(span);
+  });
+}
+
+function aggiornaScelte(){
+  const scelteDiv=document.getElementById('scelte');
+  scelteDiv.innerHTML='';
+
+  // prima scelta: linea iniziale
+  if(percorso.length===0){
+    Object.keys(linee).forEach(linea=>{
+      const card=document.createElement('div');
+      card.className='card';
+      card.style.borderTop=`4px solid ${colori[linea]}`;
+      card.textContent=linea;
+      card.onclick=()=>{
+        percorso.push({stazione:linee[linea][0],linea:linea});
+        aggiornaTracciato();
+        aggiornaScelte();
+      };
+      scelteDiv.appendChild(card);
+    });
+    return;
+  }
+
+  const ultima = percorso[percorso.length-1];
+  const lineeAttuali = stazioneLinee[ultima.stazione];
+
+  // genera opzioni per tutte le linee presenti nella stazione
+  lineeAttuali.forEach(linea=>{
+    const idx = linee[linea].indexOf(ultima.stazione);
+
+    // avanti
+    if(idx < linee[linea].length-1){
+      const card=document.createElement('div');
+      card.className='card';
+      card.style.borderTop=`4px solid ${colori[linea]}`;
+      const nextStaz=linee[linea][idx+1];
+      card.textContent=`Avanti: ${nextStaz} (${linea})`;
+      card.onclick=()=>{ percorso.push({stazione:nextStaz,linea:linea}); aggiornaTracciato(); aggiornaScelte(); };
+      scelteDiv.appendChild(card);
+    }
+
+    // indietro
+    if(idx > 0){
+      const card=document.createElement('div');
+      card.className='card';
+      card.style.borderTop=`4px solid ${colori[linea]}`;
+      const prevStaz=linee[linea][idx-1];
+      card.textContent=`Indietro: ${prevStaz} (${linea})`;
+      card.onclick=()=>{ percorso.push({stazione:prevStaz,linea:linea}); aggiornaTracciato(); aggiornaScelte(); };
+      scelteDiv.appendChild(card);
+    }
+
+    // cambio linea (mostra solo se differente dalla linea corrente)
+    if(percorso.length>0 && linea!==ultima.linea){
+      const card=document.createElement('div');
+      card.className='card';
+      card.style.borderTop=`4px solid ${colori[linea]}`;
+      const nextIdx = linee[linea].indexOf(ultima.stazione);
+      card.textContent=`Cambia a ${linea}: ${ultima.stazione}`;
+      card.onclick=()=>{ percorso.push({stazione:ultima.stazione,linea:linea}); aggiornaTracciato(); aggiornaScelte(); };
+      scelteDiv.appendChild(card);
+    }
+  });
+}
+
+/* ===== INIT VIAGGIO ===== */
+aggiornaTracciato();
+aggiornaScelte();
+
+/* ===== MAPPA CYTOSCAPE ===== */
+const elements = [
+  { data:{ id:"Brenta", label:"Brenta" }, position:{x:100,y:200} },
+  { data:{ id:"Lodi", label:"Lodi" }, position:{x:250,y:200} },
+  { data:{ id:"Duomo", label:"Duomo" }, position:{x:400,y:200} },
+  { data:{ id:"Cadorna", label:"Cadorna" }, position:{x:550,y:200} },
+  { data:{ id:"Garibaldi", label:"Garibaldi" }, position:{x:400,y:50} },
+  { data:{ id:"Bovisa", label:"Bovisa" }, position:{x:400,y:350} },
+  // linee
+  { data:{ source:"Brenta", target:"Lodi", color:"#e53935" } },
+  { data:{ source:"Lodi", target:"Duomo", color:"#e53935" } },
+  { data:{ source:"Duomo", target:"Cadorna", color:"#e53935" } },
+  { data:{ source:"Garibaldi", target:"Duomo", color:"#43a047" } },
+  { data:{ source:"Duomo", target:"Cadorna", color:"#43a047" } },
+  { data:{ source:"Garibaldi", target:"Bovisa", color:"#1e88e5" } }
+];
+
+const cy = cytoscape({
+  container: document.getElementById('cy'),
+  elements: elements,
+  layout:{name:'preset'},
+  style:[
+    { selector:'node', style:{ 'label':'data(label)','background-color':'#fff','border-width':2,'border-color':'#333','width':26,'height':26,'text-valign':'bottom','text-halign':'center','font-size':11,'color':'#222','text-margin-y':6 } },
+    { selector:'edge', style:{ 'width':5,'line-color':'data(color)','curve-style':'bezier' } }
+  ]
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<title>Isola del Brand - 4 Regioni</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #071a26;
+    font-family: sans-serif;
+  }
+
+  svg {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .sea {
+    fill: #071a26;
+  }
+
+  /* regioni */
+  .region {
+    stroke: rgba(255,255,255,0.3);
+    stroke-width: 2;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .region:hover {
+    filter: brightness(1.2);
+  }
+
+  text {
+    fill: white;
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  /* contorno isola */
+  .outline {
+    fill: none;
+    stroke: #2ecc71;
+    stroke-width: 4;
+  }
+</style>
+</head>
+
+<body>
+
+<svg viewBox="0 0 1000 600">
+
+  <!-- mare -->
+  <rect class="sea" width="1000" height="600"/>
+
+  <defs>
+
+    <!-- MASCHERA ISOLA -->
+    <clipPath id="islandClip">
+      <path d="M200,300
+               C180,180 320,100 450,130
+               C600,160 720,120 800,220
+               C880,320 820,450 650,480
+               C500,510 350,520 250,430
+               C180,380 220,340 200,300 Z"/>
+    </clipPath>
+
+  </defs>
+
+  <!-- REGIONI (tagli geometrici dentro l'isola) -->
+  <g clip-path="url(#islandClip)">
+
+    <!-- Regione 1: WebApp -->
+    <rect class="region" x="150" y="120" width="350" height="250"
+          fill="#3498db"
+          onclick="goToMetro('WebApp')" />
+
+    <!-- Regione 2: YouTube -->
+    <rect class="region" x="500" y="120" width="350" height="250"
+          fill="#e74c3c"
+          onclick="goToMetro('YouTube')" />
+
+    <!-- Regione 3: Instagram -->
+    <rect class="region" x="150" y="370" width="350" height="250"
+          fill="#9b59b6"
+          onclick="goToMetro('Instagram')" />
+
+    <!-- Regione 4: E-commerce -->
+    <rect class="region" x="500" y="370" width="350" height="250"
+          fill="#f39c12"
+          onclick="goToMetro('E-commerce')" />
+
+  </g>
+
+  <!-- CONTORNO ISOLA (sopra tutto) -->
+  <path class="outline"
+        d="M200,300
+           C180,180 320,100 450,130
+           C600,160 720,120 800,220
+           C880,320 820,450 650,480
+           C500,510 350,520 250,430
+           C180,380 220,340 200,300 Z"/>
+
+  <!-- LABEL -->
+  <text x="300" y="250">WebApp</text>
+  <text x="650" y="250">YouTube</text>
+  <text x="300" y="450">Instagram</text>
+  <text x="650" y="450">E-commerce</text>
+
+</svg>
+
+<script>
+function goToMetro(isola) {
+  const params = new URLSearchParams(window.location.search);
+  params.set('isola', isola);
+  window.location.href = `3_metro.html?${params.toString()}`;
+}
+</script>
+
+</body>
+</html>

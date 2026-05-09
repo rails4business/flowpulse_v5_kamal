@@ -1,0 +1,32 @@
+<% content_for :title, "Risorse" %>
+
+<section class="dashboard-shell dashboard-shell--resources dashboard-shell--with-aside">
+  <%= render "shared/dashboard_aside", current_section: :resources %>
+
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <p>Risorse</p>
+      <h1>Materiali, transazioni, contatti, abilita ed energia</h1>
+      <span>Una pagina unica per organizzare i pezzi vivi del lavoro: eventi, soldi, luoghi, persone, attenzione e capacita operative.</span>
+    </header>
+
+    <nav class="resources-tabs" aria-label="Tab risorse">
+      <% @tabs.each do |tab| %>
+        <%= link_to tab.fetch(:label), resources_path(tab: tab.fetch(:key)), class: "resources-tab #{@active_tab == tab.fetch(:key) ? 'is-active' : ''}" %>
+      <% end %>
+    </nav>
+
+    <section class="resources-panel">
+      <div class="resources-grid">
+        <% @resources.each do |resource| %>
+          <%= link_to resource_path(resource.fetch(:id), tab: @active_tab), class: "resource-card" do %>
+            <span class="resource-card__icon"><%= resource.fetch(:icon) %></span>
+            <span class="resource-card__type"><%= resource.fetch(:type) %></span>
+            <h2><%= resource.fetch(:title) %></h2>
+            <p><%= resource.fetch(:description) %></p>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  </main>
+</section>

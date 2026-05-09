@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<title>Flowpulse Journey</title>
+
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+window.mermaid = mermaid;
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: "base"
+});
+</script>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f5f7fb;
+}
+
+/* TOP */
+.topbar {
+  background: #111827;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* layout */
+.container {
+  display: flex;
+  height: calc(100vh - 50px);
+}
+
+/* LEFT */
+.left {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+}
+
+.project {
+  padding: 10px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* CENTER */
+.center {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* RIGHT */
+.right {
+  width: 320px;
+  background: white;
+  border-left: 1px solid #ddd;
+  padding: 10px;
+}
+
+/* cards */
+.card {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  cursor: pointer;
+}
+
+/* badges */
+.badge {
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: 10px;
+  color: white;
+}
+
+.todo { background: #f59e0b; }
+.doing { background: #3b82f6; }
+.done { background: #10b981; }
+
+/* mermaid box */
+.mermaid-box {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div><b>Flowpulse Journey</b></div>
+</div>
+
+<div class="container">
+
+<!-- LEFT -->
+<div class="left">
+  <h3>🌊 Scegli il mare</h3>
+  <div class="project" onclick="load('salute')">Salute e Principi</div>
+  <div class="project" onclick="load('lavoro')">Lavoro e Relazioni</div>
+  <div class="project" onclick="load('tempo')">Tempo e Stile di Vita</div>
+</div>
+
+<!-- CENTER -->
+<div class="center">
+
+  <div id="dashboard">
+    <h2>Seleziona un mare o usa ?mare=salute</h2>
+  </div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+
+  <h3>Dettaglio</h3>
+  <div id="detail">Nessun elemento selezionato</div>
+
+  <h3>🌿 Percorso</h3>
+  <div class="mermaid-box">
+    <pre class="mermaid" id="diagram">
+gitGraph
+  commit id:"Avvio"
+    </pre>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* DATA */
+const data = {
+  salute: {
+    title: "Mare Salute",
+    events: [
+      { t:"Ingresso Salute", s:"done", o:"Utente" },
+      { t:"Valutazione", s:"doing", o:"Utente" },
+      { t:"Scelta percorso", s:"todo", o:"Utente" }
+    ],
+    mermaid: `
+gitGraph
+  commit id:"Ingresso"
+  commit id:"Valutazione"
+  commit id:"Scelta percorso"
+    `
+  },
+  lavoro: {
+    title: "Mare Lavoro",
+    events: [
+      { t:"Ingresso Lavoro", s:"done", o:"Utente" },
+      { t:"Brief", s:"doing", o:"Utente" },
+      { t:"Decisione", s:"todo", o:"Utente" }
+    ],
+    mermaid: `
+gitGraph
+  commit id:"Ingresso"
+  commit id:"Brief"
+  commit id:"Decisione"
+    `
+  },
+  tempo: {
+    title: "Mare Tempo",
+    events: [
+      { t:"Ingresso Tempo", s:"done", o:"Utente" },
+      { t:"Pianificazione", s:"doing", o:"Utente" },
+      { t:"Avanzamento", s:"todo", o:"Utente" }
+    ],
+    mermaid: `
+gitGraph
+  commit id:"Ingresso"
+  commit id:"Pianificazione"
+  commit id:"Avanzamento"
+    `
+  }
+};
+
+/* LOAD */
+function load(key) {
+  const p = data[key] || data.salute;
+  document.querySelector('.topbar div b').textContent = `Flowpulse: ${p.title}`;
+
+  let html = `<h2>📊 ${p.title}</h2>`;
+  p.events.forEach(e => {
+    html += `
+      <div class="card" onclick="select('${e.t}','${e.o}','${e.s}')">
+        <b>${e.t}</b><br/>
+        <span class="badge ${e.s}">${e.s}</span>
+        <small> - ${e.o}</small>
+      </div>
+    `;
+  });
+
+  document.getElementById("dashboard").innerHTML = html;
+  document.getElementById("diagram").textContent = p.mermaid;
+
+  setTimeout(() => {
+    mermaid.init(undefined, document.querySelectorAll(".mermaid"));
+  }, 100);
+}
+
+/* DETAIL */
+function select(t, o, s) {
+  document.getElementById("detail").innerHTML =
+    `<b>${t}</b><br>👤 ${o}<br>📌 ${s}`;
+}
+
+/* INIT */
+window.addEventListener("load", () => {
+  const params = new URLSearchParams(window.location.search);
+  const mare = params.get("mare") || "salute";
+  load(mare);
+});
+
+</script>
+
+</body>
+</html>
