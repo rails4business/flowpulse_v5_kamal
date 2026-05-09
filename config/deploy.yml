@@ -50,6 +50,6 @@ accessories:
         POSTGRES_DB: flowpulse_v_5_production
         POSTGRES_USER: flowpulse
       secret:
-        - DB_PASSWORD
+        - POSTGRES_PASSWORD
     directories:
       - data:/var/lib/postgresql/data
