@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate existing database
-if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+# If running the rails server then optionally create or migrate existing database.
+# This can be disabled during deploys to avoid boot loops while stabilizing multi-db setup.
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ] && [ "${RUN_DB_PREPARE_ON_BOOT:-true}" != "false" ]; then
   ./bin/rails db:prepare
 fi
 
