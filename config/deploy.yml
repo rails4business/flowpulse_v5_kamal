@@ -20,7 +20,7 @@ env:
     - RAILS_MASTER_KEY
     - POSTGRES_PASSWORD
   clear:
-    SOLID_QUEUE_IN_PUMA: true
+    SOLID_QUEUE_IN_PUMA: false
     RAILS_LOG_TO_STDOUT: true
     DB_HOST: flowpulse_v_5-db
     DB_PORT: 5432
