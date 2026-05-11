@@ -5,7 +5,9 @@ module Admin
     end
 
     def elenco_pagine
-      # La logica dell'elenco pagine
+        @registered_pages = ViewPagesController::PAGES
+      @html_files = Dir.children(Rails.root.join("public", "viste_html")).select { |file| file.ends_with?(".html") }.sort
+ 
     end
   end
 end

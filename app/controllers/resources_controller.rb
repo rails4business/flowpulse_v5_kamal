@@ -22,7 +22,7 @@ class ResourcesController < ApplicationController
     @resource = find_resource(params[:id])
 
     unless @resource
-      redirect_to resources_path, alert: "Risorsa non trovata"
+      redirect_to admin_risorse_index_path, alert: "Risorsa non trovata"
       return
     end
 

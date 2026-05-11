@@ -80,7 +80,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, dashboard_path
-    assert_includes response.body, resources_path
+    assert_includes response.body, admin_risorse_index_path
     assert_not_includes response.body, "Disponibile quando sbloccato dal superadmin"
   end
 

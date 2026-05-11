@@ -12,7 +12,7 @@
 
     <nav class="resources-tabs" aria-label="Tab risorse">
       <% @tabs.each do |tab| %>
-        <%= link_to tab.fetch(:label), resources_path(tab: tab.fetch(:key)), class: "resources-tab #{@active_tab == tab.fetch(:key) ? 'is-active' : ''}" %>
+        <%= link_to tab.fetch(:label), admin_risorse_index_path(tab: tab.fetch(:key)), class: "resources-tab #{@active_tab == tab.fetch(:key) ? 'is-active' : ''}" %>
       <% end %>
     </nav>
 
@@ -36,8 +36,7 @@
     <section class="resources-panel">
       <div class="resources-grid">
         <% @resources.each do |resource| %>
-          <%= link_to resource_path(resource.fetch(:id), tab: @active_tab), class: "resource-card" do %>
-            <span class="resource-card__icon"><%= resource.fetch(:icon) %></span>
+         <%= link_to admin_risorse_path(resource.fetch(:id), tab: @active_tab), class: "resource-card" do %>   <span class="resource-card__icon"><%= resource.fetch(:icon) %></span>
             <span class="resource-card__type"><%= resource.fetch(:type) %></span>
             <h2><%= resource.fetch(:title) %></h2>
             <p><%= resource.fetch(:description) %></p>

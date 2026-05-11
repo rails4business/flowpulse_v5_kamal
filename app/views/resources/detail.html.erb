@@ -11,7 +11,7 @@
     </header>
 
     <p class="resource-back">
-      <%= link_to "Torna a risorse", resources_path(tab: @resource.fetch(:tab)) %>
+      <%= link_to "Torna a risorse", admin_risorse_index_path(tab: @resource.fetch(:tab)) %>
     </p>
 
     <section class="resource-detail-card">

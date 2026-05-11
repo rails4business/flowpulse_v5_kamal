@@ -3,9 +3,9 @@ class PublicEventsController < ApplicationController
 
   TABS = {
     "eventi" => { label: "Eventi", internal: false },
+    "servizi" => { label: "Servizi", internal: false },
     "corsi" => { label: "Corsi", internal: false },
-    "percorsi" => { label: "Percorsi", internal: false },
-    "servizi" => { label: "Servizi", internal: false }
+    "percorsi" => { label: "Percorsi", internal: false }
   }.freeze
 
   def index
@@ -269,15 +269,18 @@ class PublicEventsController < ApplicationController
         description: "Percorso settimanale a iscrizione per capire il corpo e lavorare con continuita.",
         details: "Un corso ricorrente, pensato per chi vuole seguire un ciclo di incontri e non una singola esperienza.",
         icon: "Corso",
-        month: "MAG",
-        day: "21",
-        weekday: "Mercoledi",
-        date: "Dal 21 Maggio 2026",
+        season_start: "Autunno",
+        season_end: "Primavera",
         time: "19:00 - 20:30",
         brand: "PosturaCorretta",
         organizer: "Professionista singolo + gruppo",
         location: "Milano, sala studio",
         format: "Corso settimanale",
+        pricing: "€95/mese oppure €28 a lezione",
+        weekly_slots: [
+          { day: "Lun", time: "19:00 - 20:30" },
+          { day: "Mer", time: "19:00 - 20:30" }
+        ],
         sessions: [
           { label: "Incontro 1", date: "21 Maggio 2026", time: "19:00 - 20:30", location: "Milano, sala studio" },
           { label: "Incontro 2", date: "28 Maggio 2026", time: "19:00 - 20:30", location: "Milano, sala studio" },
@@ -293,15 +296,18 @@ class PublicEventsController < ApplicationController
         description: "Ciclo settimanale per chi vuole allenare corpo, esperienza e relazione con il territorio.",
         details: "Una formula di gruppo, con iscrizione settimanale o a ciclo, per chi vuole continuita piu che evento singolo.",
         icon: "Settimana",
-        month: "MAG",
-        day: "26",
-        weekday: "Lunedi",
-        date: "Dal 26 Maggio 2026",
+        season_start: "Settembre",
+        season_end: "Giugno",
         time: "18:30 - 20:00",
         brand: "Inside Adventure",
         organizer: "Organizzazione di gruppo",
         location: "Lecco, base outdoor",
         format: "Corso settimanale outdoor",
+        pricing: "€110/mese oppure €32 a lezione",
+        weekly_slots: [
+          { day: "Mar", time: "18:30 - 20:00" },
+          { day: "Gio", time: "18:30 - 20:00" }
+        ],
         sessions: [
           { label: "Incontro 1", date: "26 Maggio 2026", time: "18:30 - 20:00", location: "Lecco, base outdoor" },
           { label: "Incontro 2", date: "2 Giugno 2026", time: "18:30 - 20:00", location: "Lecco, base outdoor" },
