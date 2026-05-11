@@ -2,121 +2,165 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8" />
-<title>Isola del Brand - 4 Regioni</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Isola del Brand - Flowpulse</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-  body {
-    margin: 0;
-    background: #071a26;
-    font-family: sans-serif;
-  }
-
-  svg {
-    width: 100vw;
-    height: 100vh;
-  }
-
-  .sea {
-    fill: #071a26;
-  }
-
-  /* regioni */
-  .region {
-    stroke: rgba(255,255,255,0.3);
-    stroke-width: 2;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .region:hover {
-    filter: brightness(1.2);
-  }
-
-  text {
-    fill: white;
-    font-size: 14px;
-    pointer-events: none;
-  }
-
-  /* contorno isola */
-  .outline {
-    fill: none;
-    stroke: #2ecc71;
-    stroke-width: 4;
-  }
+  body { font-family: 'Inter', sans-serif; background-color: #000814; color: #fff; }
+  .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+  .glass-dark { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(30px); border-right: 1px solid rgba(255, 255, 255, 0.1); }
+  
+  .sea-bg { background: radial-gradient(circle at center, #0d4f9f 0%, #000814 100%); }
+  
+  /* STILI ISOLA E REGIONI */
+  .island-mask { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 2; }
+  .region { stroke: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.4s; }
+  .region:hover { filter: brightness(1.2) saturate(1.2); }
+  .region-label { fill: white; font-size: 10px; font-weight: 800; text-anchor: middle; pointer-events: none; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+  
+  /* Animazione onde */
+  @keyframes ripple { from { transform: scale(1); opacity: 0.3; } to { transform: scale(1.1); opacity: 0; } }
+  .ripple { fill: none; stroke: rgba(255,255,255,0.1); animation: ripple 4s infinite; }
 </style>
 </head>
+<body class="h-screen flex flex-col overflow-hidden">
 
-<body>
+  <!-- Nav Unificata -->
+  <nav class="h-16 glass flex items-center px-6 border-b border-white/10 z-50">
+    <div class="flex items-center gap-2 text-[10px] font-extrabold tracking-widest text-white/40 uppercase">
+      <a href="/mari" class="hover:text-sky-400">MARI</a>
+      <span class="text-white/10">/</span>
+      <a href="1_carta_nautica.html" class="hover:text-sky-400">1 CARTA</a>
+      <span id="arc-node" class="hidden"><span class="text-white/10">/</span> <a id="arc-link" href="#" class="hover:text-sky-400">ARCIPELAGO</a></span>
+      <span class="text-white/10">/</span>
+      <span class="text-sky-400 font-black">2 ISOLA</span>
+    </div>
+  </nav>
 
-<svg viewBox="0 0 1000 600">
+  <div class="flex-1 flex overflow-hidden relative">
+    
+    <!-- Sidebar Tailwind -->
+    <aside class="w-80 glass-dark p-8 flex flex-col gap-8 z-20 relative">
+      <header>
+        <div class="text-sky-500 text-[10px] font-black uppercase tracking-widest mb-2">Vista Regionale</div>
+        <h1 id="island-title" class="text-3xl font-black tracking-tight mb-2">Nome Isola</h1>
+        <p class="text-white/30 text-xs italic">Seleziona una regione per configurare le tue **Esperienze**.</p>
+      </header>
 
-  <!-- mare -->
-  <rect class="sea" width="1000" height="600"/>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-white/40">Regioni Isola</label>
+          <textarea id="region-list" class="w-full h-48 bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-white/80 focus:border-sky-500 outline-none transition-all">WebApp&#10;YouTube&#10;Instagram&#10;E-commerce&#10;Community</textarea>
+        </div>
+        
+        <button onclick="generateRegions()" class="w-full py-4 bg-white text-black rounded-xl font-black uppercase text-xs hover:bg-sky-400 transition-all shadow-xl shadow-white/5">
+          Rigenera Territorio
+        </button>
+      </div>
 
-  <defs>
+      <div class="mt-auto p-5 bg-sky-500/10 rounded-2xl border border-sky-500/20">
+        <p class="text-[11px] text-sky-400/80 leading-relaxed font-bold">
+          <i class="material-icons text-sm align-middle mr-1">info</i>
+          Le regioni Voronoi sono generate algoritmicamente in base ai punti di interesse del brand.
+        </p>
+      </div>
+    </aside>
 
-    <!-- MASCHERA ISOLA -->
-    <clipPath id="islandClip">
-      <path d="M200,300
-               C180,180 320,100 450,130
-               C600,160 720,120 800,220
-               C880,320 820,450 650,480
-               C500,510 350,520 250,430
-               C180,380 220,340 200,300 Z"/>
-    </clipPath>
+    <!-- Mappa SVG (Isola con Forma Organica) -->
+    <main class="flex-1 sea-bg relative">
+      <svg id="voronoi-svg" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+        <defs>
+          <!-- LA MASCHERA A FORMA DI ISOLA -->
+          <clipPath id="islandClip">
+            <path id="islandPath" d="M500,150 C650,150 800,250 850,400 C900,550 750,700 500,700 C250,700 100,550 150,400 C200,250 350,150 500,150 Z" />
+          </clipPath>
+        </defs>
 
-  </defs>
+        <!-- Ripple Effect intorno all'isola -->
+        <path class="ripple" d="M500,130 C680,130 840,240 890,400 C940,560 780,720 500,720 C220,720 60,560 110,400 C160,240 320,130 500,130 Z" />
+        
+        <!-- Il Gruppo delle Regioni clippato dalla forma dell'isola -->
+        <g clip-path="url(#islandClip)" id="regions-container"></g>
+        
+        <!-- Bordo dell'isola per definizione -->
+        <path class="island-mask" d="M500,150 C650,150 800,250 850,400 C900,550 750,700 500,700 C250,700 100,550 150,400 C200,250 350,150 500,150 Z" />
+      </svg>
+    </main>
+  </div>
 
-  <!-- REGIONI (tagli geometrici dentro l'isola) -->
-  <g clip-path="url(#islandClip)">
+  <script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const isola = params.get("isola") || "Isola";
+    const arc = params.get("arcipelago");
 
-    <!-- Regione 1: WebApp -->
-    <rect class="region" x="150" y="120" width="350" height="250"
-          fill="#3498db"
-          onclick="goToMetro('WebApp')" />
+    document.getElementById('island-title').textContent = isola;
+    if(arc) {
+      const a = document.getElementById('arc-link');
+      a.textContent = arc.toUpperCase(); a.href = `2_brand_arcipelago.html?${params.toString()}`;
+      document.getElementById('arc-node').classList.remove('hidden');
+    }
 
-    <!-- Regione 2: YouTube -->
-    <rect class="region" x="500" y="120" width="350" height="250"
-          fill="#e74c3c"
-          onclick="goToMetro('YouTube')" />
+    function generateRegions() {
+      const names = document.getElementById('region-list').value.split('\n').filter(n => n.trim());
+      const container = document.getElementById('regions-container');
+      container.innerHTML = '';
 
-    <!-- Regione 3: Instagram -->
-    <rect class="region" x="150" y="370" width="350" height="250"
-          fill="#9b59b6"
-          onclick="goToMetro('Instagram')" />
+      // Generatore di numeri pseudo-casuali basato sul nome dell'isola (Seed)
+      let seed = 0;
+      for (let i = 0; i < isola.length; i++) seed += isola.charCodeAt(i);
+      function seededRandom() {
+        seed = (seed * 9301 + 49297) % 233280;
+        return seed / 233280;
+      }
 
-    <!-- Regione 4: E-commerce -->
-    <rect class="region" x="500" y="370" width="350" height="250"
-          fill="#f39c12"
-          onclick="goToMetro('E-commerce')" />
+      const n = names.length;
+      const points = [];
+      const centerX = 500, centerY = 420;
+      const radius = 250;
 
-  </g>
+      names.forEach((name, i) => {
+        const angle = (i / n) * Math.PI * 2;
+        const dist = radius * (0.4 + seededRandom() * 0.4); 
+        points.push([
+          centerX + Math.cos(angle) * dist,
+          centerY + Math.sin(angle) * dist
+        ]);
+      });
 
-  <!-- CONTORNO ISOLA (sopra tutto) -->
-  <path class="outline"
-        d="M200,300
-           C180,180 320,100 450,130
-           C600,160 720,120 800,220
-           C880,320 820,450 650,480
-           C500,510 350,520 250,430
-           C180,380 220,340 200,300 Z"/>
+      const delaunay = d3.Delaunay.from(points);
+      const voronoi = delaunay.voronoi([0, 0, 1000, 800]);
 
-  <!-- LABEL -->
-  <text x="300" y="250">WebApp</text>
-  <text x="650" y="250">YouTube</text>
-  <text x="300" y="450">Instagram</text>
-  <text x="650" y="450">E-commerce</text>
+      names.forEach((name, i) => {
+        const path = voronoi.renderCell(i);
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        group.onclick = () => {
+          const p = new URLSearchParams(params.toString());
+          p.set('regione', name);
+          window.location.href = `3a_viaggiatori_start.html?${p.toString()}`;
+        };
 
-</svg>
+        const poly = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        poly.setAttribute("d", path);
+        poly.setAttribute("class", "region");
+        poly.setAttribute("fill", `hsl(${200 + seededRandom() * 40}, 60%, ${25 + seededRandom() * 15}%)`);
+        
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        const centroid = points[i];
+        label.setAttribute("x", centroid[0]);
+        label.setAttribute("y", centroid[1]);
+        label.setAttribute("class", "region-label");
+        label.textContent = name;
 
-<script>
-function goToMetro(isola) {
-  const params = new URLSearchParams(window.location.search);
-  params.set('isola', isola);
-  window.location.href = `3_metro.html?${params.toString()}`;
-}
-</script>
+        group.appendChild(poly);
+        group.appendChild(label);
+        container.appendChild(group);
+      });
+    }
 
+    generateRegions();
+  </script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_08_083000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_11_121053) do
   create_table "profiles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "display_name"
@@ -33,6 +33,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_08_083000) do
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "demo_access"
     t.string "email_address", null: false
     t.string "password_digest", null: false
     t.boolean "superadmin", default: false, null: false

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viaggiatori Start - Flowpulse</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #000814; color: #fff; }
+    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-dark { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(30px); border-left: 1px solid rgba(255, 255, 255, 0.1); }
+    
+    /* Animazione drawer */
+    #sidebar { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-open { transform: translateX(0) !important; }
+    
+    .material-icons { font-family: 'Material Icons' !important; vertical-align: middle; }
+    
+    /* Line Colors */
+    .line-accademia { --line-color: #e53935; }
+    .line-risorse { --line-color: #1e88e5; }
+    .line-progetto { --line-color: #7c3aed; }
+  </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+
+  <!-- Overlay per mobile -->
+  <div id="overlay" class="fixed inset-0 bg-black/60 opacity-0 invisible z-[90] transition-opacity duration-300" onclick="toggleSidebar(false)"></div>
+
+  <!-- Top Nav -->
+  <nav class="sticky top-0 z-[100] h-16 glass flex items-center px-6 gap-4 border-b border-white/10">
+    <div class="flex items-center gap-2 text-[10px] font-extrabold tracking-widest text-white/40 uppercase">
+      <a href="/mari" class="hover:text-sky-400">MARI</a>
+      <span class="text-white/10">/</span>
+      <a href="1_carta_nautica.html" class="hover:text-sky-400">CARTA</a>
+      <span id="arc-sep" class="hidden text-white/10">/</span>
+      <a id="arc-link" href="#" class="hidden hover:text-sky-400">ARCIPELAGO</a>
+      <span class="text-white/10">/</span>
+      <a id="isola-link" href="#" class="hover:text-sky-400">ISOLA</a>
+      <span class="text-white/10">/</span>
+      <span class="text-sky-400">DASHBOARD</span>
+    </div>
+    <button onclick="toggleSidebar(true)" class="ml-auto lg:hidden text-white/60 hover:text-white">
+      <i class="material-icons">tune</i>
+    </button>
+  </nav>
+
+  <div class="flex min-h-[calc(100vh-4rem)] relative">
+    <!-- Main Content -->
+    <main class="flex-1 p-8 lg:p-12 max-w-5xl mx-auto w-full">
+      <header class="mb-12">
+        <span class="text-sky-500 font-bold uppercase tracking-widest text-xs mb-3 block">PosturaCorretta · Esperienze</span>
+        <h1 class="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6">Orientamento<br>Viaggiatori</h1>
+        <p class="text-white/50 text-lg leading-relaxed max-w-2xl">
+          Seleziona la tua linea per scoprire le **Esperienze** disponibili e iniziare il tuo percorso guidato nell'Accademia.
+        </p>
+      </header>
+
+      <!-- Line Selection -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12" id="line-grid">
+        <!-- Generato via JS -->
+      </div>
+
+      <!-- Stations -->
+      <section class="glass rounded-3xl p-8 lg:p-10">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 id="st-title" class="text-2xl font-extrabold mb-1">Ingressi Esperienze</h2>
+            <p class="text-white/40 text-sm italic">Scegli il punto di avvio del tuo viaggio</p>
+          </div>
+          <i class="material-icons text-white/10 text-6xl">explore</i>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="station-list">
+          <!-- Generato via JS -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Sidebar / Drawer -->
+    <aside id="sidebar" class="fixed top-0 right-0 h-screen w-full max-w-[380px] glass-dark p-10 z-[100] translate-x-full lg:translate-x-0 lg:sticky lg:h-[calc(100vh-4rem)] flex flex-col gap-8 shadow-2xl">
+      <button onclick="toggleSidebar(false)" class="lg:hidden flex items-center gap-2 text-xs font-bold uppercase text-white/40 mb-4">
+        <i class="material-icons">arrow_back</i> Chiudi
+      </button>
+
+      <div class="flex items-center gap-3 text-2xl font-black italic tracking-tighter">
+        <i class="material-icons text-sky-500 text-3xl">adjust</i> Viaggiatori
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-white/5 rounded-2xl p-6 border border-white/5">
+          <h4 class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-4">Riepilogo Rotta</h4>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between"><span class="text-white/40">Isola</span><span id="cfg-isola" class="font-bold">-</span></div>
+            <div class="flex justify-between"><span class="text-white/40">Linea</span><span id="cfg-line" class="font-bold text-sky-400">-</span></div>
+            <div class="flex justify-between"><span class="text-white/40">Esperienza</span><span id="cfg-stat" class="font-bold text-sky-400">-</span></div>
+          </div>
+        </div>
+
+        <a id="go-btn" href="3_viaggiatori_dashboard.html" class="flex items-center justify-center gap-3 w-full py-5 bg-white text-black rounded-2xl font-black uppercase text-sm hover:bg-sky-400 hover:scale-[1.02] transition-all shadow-xl shadow-white/5">
+          Inizia Viaggio <i class="material-icons">arrow_forward</i>
+        </a>
+      </div>
+
+      <p class="mt-auto text-center text-xs text-white/30 leading-relaxed">
+        Configura la tua dashboard viaggiatori per sbloccare le esperienze dell'Accademia.
+      </p>
+    </aside>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const isola = params.get("isola") || "PosturaCorretta";
+    const arc = params.get("arcipelago");
+
+    document.getElementById('isola-link').textContent = isola.toUpperCase();
+    document.getElementById('isola-link').href = `2_brand_isola_regioni.html?${params.toString()}`;
+    document.getElementById('cfg-isola').textContent = isola;
+
+    if(arc) {
+      const a = document.getElementById('arc-link');
+      a.textContent = arc.toUpperCase(); a.href = `2_brand_arcipelago.html?${params.toString()}`;
+      a.classList.remove('hidden'); document.getElementById('arc-sep').classList.remove('hidden');
+    }
+
+    const lines = [
+      { id: "accademia", label: "Accademia", color: "#e53935", icon: "school", stations: ["Igiene Posturale", "Fisioterapia"] },
+      { id: "risorse", label: "Risorse", color: "#1e88e5", icon: "library_books", stations: ["Esperienze Online", "Workshop"] },
+      { id: "progetto", label: "Progetto", color: "#7c3aed", icon: "rocket_launch", stations: ["Rete Professionale", "Manifesto"] }
+    ];
+
+    let active = lines[0];
+    let stat = active.stations[0];
+
+    function toggleSidebar(open) {
+      if(window.innerWidth >= 1024) return;
+      document.getElementById('sidebar').classList.toggle('sidebar-open', open);
+      document.getElementById('overlay').classList.toggle('opacity-100', open);
+      document.getElementById('overlay').classList.toggle('visible', open);
+    }
+
+    function render() {
+      const grid = document.getElementById('line-grid'); grid.innerHTML = '';
+      lines.forEach(l => {
+        const div = document.createElement('div');
+        div.className = `glass relative rounded-2xl p-6 cursor-pointer transition-all duration-300 border-l-4 ${l.id === active.id ? 'border-sky-500 ring-2 ring-sky-500/20' : 'border-transparent opacity-60 hover:opacity-100'}`;
+        div.style.borderLeftColor = l.color;
+        div.innerHTML = `<i class="material-icons mb-4 text-3xl" style="color:${l.color}">${l.icon}</i><h3 class="font-bold text-xl">${l.label}</h3>`;
+        div.onclick = () => { active = l; stat = l.stations[0]; render(); toggleSidebar(true); };
+        grid.appendChild(div);
+      });
+
+      const list = document.getElementById('station-list'); list.innerHTML = '';
+      document.getElementById('st-title').textContent = `Esperienze ${active.label}`;
+      active.stations.forEach(s => {
+        const item = document.createElement('div');
+        item.className = `flex items-center gap-4 p-5 rounded-xl border transition-all cursor-pointer ${s === stat ? 'bg-sky-500/10 border-sky-500' : 'bg-white/5 border-white/5 hover:border-white/20'}`;
+        item.innerHTML = `<div class="w-2 h-2 rounded-full" style="background:${active.color}"></div><span class="font-bold">${s}</span>`;
+        item.onclick = () => { stat = s; render(); toggleSidebar(true); };
+        list.appendChild(item);
+      });
+
+      document.getElementById('cfg-line').textContent = active.label;
+      document.getElementById('cfg-stat').textContent = stat;
+      const p = new URLSearchParams(params.toString()); p.set("linea", active.id); p.set("esperienza", stat);
+      document.getElementById('go-btn').href = `3_viaggiatori_dashboard.html?${p.toString()}`;
+    }
+
+    render();
+  </script>
+</body>
+</html>

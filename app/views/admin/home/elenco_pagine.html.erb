@@ -1,0 +1,31 @@
+<% content_for :title, "Elenco pagine" %>
+
+<section class="dashboard-shell dashboard-shell--resources dashboard-shell--with-aside">
+  <%= render "shared/dashboard_aside", current_section: :pages %>
+
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <p>Prototipi</p>
+      <h1>Elenco pagine</h1>
+      <span>Inventario delle viste controller e dei prototipi HTML agganciati al workspace. Per ora resta una pagina interna di orientamento e collegamento rapido.</span>
+    </header>
+
+    <section class="prototype-list">
+      <h2>Pagine con controller</h2>
+      <div class="prototype-grid">
+        <% @registered_pages.each do |slug, page| %>
+          <%= link_to page.fetch(:title), view_page_path(slug) %>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="prototype-list">
+      <h2>Viste HTML</h2>
+      <div class="prototype-grid">
+        <% @html_files.each do |file| %>
+          <a href="/viste_html/<%= file %>" target="_blank"><%= file %></a>
+        <% end %>
+      </div>
+    </section>
+  </main>
+</section>

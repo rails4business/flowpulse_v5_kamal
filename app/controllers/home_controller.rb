@@ -1,11 +1,21 @@
 class HomeController < ApplicationController
   allow_unauthenticated_access
-  before_action :require_authentication, only: [:dashboard]
+  before_action :require_authentication, only: [:dashboard, :dashboard_role]
 
   def index
   end
 
   def dashboard
+    redirect_to dashboard_home_path
+  end
+
+
+  def dashboard_role
+    if superadmin? && params[:role].presence_in(available_dashboard_roles.map(&:first))
+      session[:dashboard_role] = params[:role]
+    end
+
+    redirect_to dashboard_home_path
   end
 
   def progetti
@@ -17,12 +27,4 @@ class HomeController < ApplicationController
   def salute
   end
 
-  def elenco_pagine
-    @registered_pages = ViewPagesController::PAGES
-    # Prende tutti i file html dentro public/viste_html
-    @html_files = Dir.glob(Rails.root.join('public', 'viste_html', '*.html')).map do |path|
-      # Prende solo il nome del file
-      File.basename(path)
-    end.sort
-  end
 end

@@ -3,9 +3,9 @@ class PublicEventsController < ApplicationController
 
   TABS = {
     "eventi" => { label: "Eventi", internal: false },
-    "avventure" => { label: "Avventure", internal: false },
-    "servizi" => { label: "Servizi", internal: false },
-    "corsi" => { label: "Corsi", internal: false }
+    "corsi" => { label: "Corsi", internal: false },
+    "percorsi" => { label: "Percorsi", internal: false },
+    "servizi" => { label: "Servizi", internal: false }
   }.freeze
 
   def index
@@ -16,7 +16,7 @@ class PublicEventsController < ApplicationController
 
   def show
     @event = mock_public_event(params[:id])
-    redirect_to eventi_path unless @event
+    redirect_to esperienze_path unless @event
   end
 
   private
@@ -26,13 +26,14 @@ class PublicEventsController < ApplicationController
   end
 
   def normalized_tab(tab)
-    TABS.key?(tab) ? tab : "eventi"
+    t = tab.to_s.downcase
+    TABS.key?(t) ? t : "eventi"
   end
 
   def items_for(tab)
     case tab
-    when "avventure"
-      mock_public_adventures
+    when "percorsi"
+      mock_public_percorsi
     when "servizi"
       mock_public_services
     when "corsi"
@@ -42,89 +43,139 @@ class PublicEventsController < ApplicationController
     end
   end
 
+  def mock_public_percorsi
+    [
+      {
+        id: 401,
+        category: "percorso",
+        title: "Schiena Sana 360",
+        description: "Un percorso completo per eliminare il dolore e ritrovare la mobilita.",
+        month: "GIU",
+        day: "10",
+        weekday: "MER",
+        time: "Flessibile",
+        brand: "PosturaCorretta",
+        sub_brand: "Salute Integrata",
+        category_tags: [
+          { icon: "💙", label: "Postura", color: "blue" },
+          { icon: "🧘", label: "Benessere", color: "purple" }
+        ],
+        organizer: "Marco",
+        location: "Online + Studio",
+        event_kind: "Percorso",
+        format: "Salute 360",
+        participants: "Iscrizioni aperte",
+        duration: "12 settimane",
+        price_label: "€290"
+      }
+    ]
+  end
+
+  def mock_public_progetti
+    [
+      {
+        id: 501,
+        category: "progetto",
+        title: "Mappe del Territorio",
+        description: "Creazione di itinerari esperienziali tra natura e cultura locale.",
+        month: "LUG",
+        day: "01",
+        weekday: "MER",
+        time: "In corso",
+        brand: "Flowpulse",
+        sub_brand: "Mappe",
+        category_tags: [
+          { icon: "🗺️", label: "Territorio", color: "slate" },
+          { icon: "🌲", label: "Natura", color: "green" }
+        ],
+        organizer: "Team Flowpulse",
+        location: "Vari territori",
+        event_kind: "Progetto",
+        format: "Collaborativo",
+        participants: "8 partner attivi",
+        duration: "Annuale",
+        price_label: "Bando aperto"
+      }
+    ]
+  end
+
   def mock_public_experiences
     [
       {
         id: 1,
         category: "experience",
         title: "Postura in Vetta",
-        description: "Esperienza pubblica tra cammino, postura e riattivazione del corpo in gruppo.",
-        details: "Un format Flowpulse che mette insieme cammino, postura, educazione e relazione con il territorio.",
-        icon: "Esperienza",
+        description: "Camminata in montagna con esercizi semplici di postura e recupero.",
         month: "MAG",
-        day: "15",
-        weekday: "Giovedi",
-        date: "15 Maggio 2026",
-        time: "08:30 - 13:30",
+        day: "16",
+        weekday: "SAB",
+        time: "09:30 - 14:00",
         brand: "PosturaCorretta",
-        organizer: "Professionista singolo + gruppo",
-        location: "Rifugio A, Monte Bar",
-        event_kind: "Evento",
-        schedule_label: "1 giornata",
-        sessions: [
-          { label: "Giornata 1", date: "15 Maggio 2026", time: "08:30 - 13:30", location: "Rifugio A, Monte Bar" }
+        sub_brand: "Stop al Dolore",
+        category_tags: [
+          { icon: "🚶", label: "Movimento", color: "red" },
+          { icon: "🌲", label: "Natura", color: "green" },
+          { icon: "💙", label: "Postura", color: "blue" }
         ],
+        organizer: "Marco",
+        location: "Monte Maddalena",
+        event_kind: "Evento",
         format: "PosturaCorretta in vetta",
-        participants: "18 partecipanti",
-        duration: "5 ore"
+        participants: "8 posti disponibili",
+        duration: "4 ore e 30",
+        price_label: "€15"
       },
       {
         id: 2,
         category: "experience",
         title: "Inside Adventure Lab",
-        description: "Esperienza aperta per esplorare brand, corpo e avventura educativa sul territorio.",
-        details: "Una giornata pubblica dove esperienza, creator e professionisti lavorano nello stesso formato.",
-        icon: "Rotta",
+        description: "Esplorazione del territorio con attivita di gruppo e condivisione.",
         month: "MAG",
         day: "20",
-        weekday: "Martedi",
-        date: "20 Maggio 2026",
+        weekday: "MER",
         time: "10:00 - 17:30",
         brand: "Inside Adventure",
-        organizer: "Organizzazione di gruppo",
+        sub_brand: "Wild Experience",
+        category_tags: [
+          { icon: "🌲", label: "Natura", color: "green" },
+          { icon: "🛶", label: "Acqua", color: "blue" }
+        ],
+        organizer: "Team IA",
         location: "Lago di Como",
         event_kind: "Seminario",
-        schedule_label: "3 giornate",
-        sessions: [
-          { label: "Giornata 1", date: "20 Maggio 2026", time: "10:00 - 17:30", location: "Lago di Como" },
-          { label: "Giornata 2", date: "21 Maggio 2026", time: "10:00 - 17:30", location: "Lago di Como" },
-          { label: "Giornata 3", date: "22 Maggio 2026", time: "10:00 - 16:00", location: "Lago di Como" }
-        ],
-        format: "Inside Adventure in spiaggetta",
-        participants: "24 partecipanti",
-        duration: "7 ore e 30"
+        format: "Inside Adventure Lab",
+        participants: "24 posti",
+        duration: "7 ore e 30",
+        price_label: "Gratis"
       },
       {
         id: 3,
         category: "experience",
-        title: "Sapienza Visione dal vivo",
-        description: "Esperienza piu raccolta con parte formativa, confronto e osservazione guidata.",
-        details: "Una tappa pubblica pensata per raccontare principi, strumenti e applicazioni concrete.",
-        icon: "Visione",
+        title: "Sapienza Visione",
+        description: "Parte formativa, confronto e osservazione guidata.",
         month: "GIU",
         day: "01",
-        weekday: "Lunedi",
-        date: "1 Giugno 2026",
+        weekday: "LUN",
         time: "18:45 - 21:00",
         brand: "Sapienza Visione",
-        organizer: "Professionista singolo",
+        sub_brand: "Studio dal vivo",
+        category_tags: [
+          { icon: "🧘", label: "Meditazione", color: "purple" },
+          { icon: "👥", label: "Comunita", color: "slate" }
+        ],
+        organizer: "Anna",
         location: "Milano, studio centrale",
         event_kind: "Seminario",
-        schedule_label: "3 serate",
-        sessions: [
-          { label: "Serata 1", date: "1 Giugno 2026", time: "18:45 - 21:00", location: "Milano, studio centrale" },
-          { label: "Serata 2", date: "8 Giugno 2026", time: "18:45 - 21:00", location: "Milano, studio centrale" },
-          { label: "Serata 3", date: "15 Giugno 2026", time: "18:45 - 21:00", location: "Milano, studio centrale" }
-        ],
-        format: "Sapienza Visione in sala",
-        participants: "12 partecipanti",
-        duration: "2 ore e 15"
+        format: "Sapienza Visione live",
+        participants: "12 posti",
+        duration: "2 ore e 15",
+        price_label: "€40"
       }
     ]
   end
 
   def mock_public_event(id)
-    (mock_public_experiences + mock_public_adventures + mock_public_services + mock_public_courses).find { |e| e[:id].to_s == id.to_s }
+    (mock_public_experiences + mock_public_percorsi + mock_public_progetti + mock_public_services + mock_public_courses).find { |e| e[:id].to_s == id.to_s }
   end
 
   def mock_public_adventures

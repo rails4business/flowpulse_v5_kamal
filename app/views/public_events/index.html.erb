@@ -1,71 +1,183 @@
 <% content_for :title, "Esperienze" %>
 
 <section class="dashboard-shell dashboard-shell--public-events">
-  <header class="dashboard-header">
-    <p>Pronte per nuove aperture</p>
-    <h1>Esperienze</h1>
-    <span>Qui si vedono le esperienze da vivere, gli eventi gia fissati, le avventure nate sul momento, i servizi prenotabili e i corsi settimanali a cui iscriversi.</span>
-  </header>
+  <section class="experiences-hero">
+    <div class="experiences-hero__intro">
+      <p>Pronte per nuove aperture</p>
+      <h1>Esperienze</h1>
+      <span>Qui si vedono le esperienze da vivere, gli eventi gia fissati, le avventure nate sul momento, i servizi prenotabili e i corsi settimanali a cui iscriversi.</span>
+    </div>
+    <a href="/viste_html/0_aggiorna_home_flowpulse_mvp_eventi_routine.html" class="experiences-hero__action" target="_blank" rel="noreferrer">Proponi</a>
+  </section>
 
-  <nav class="resources-tabs" aria-label="Tab esperienze">
+  <nav class="experiences-tabs" aria-label="Tab esperienze">
     <% @tabs.each do |key, tab| %>
-      <%= link_to tab.fetch(:label), eventi_path(tab: key), class: "resources-tab #{@active_tab == key ? "is-active" : ""}" %>
+      <%= link_to tab.fetch(:label), esperienze_path(tab: key), class: "experiences-tab #{@active_tab == key ? "is-active" : ""}" %>
     <% end %>
   </nav>
 
-  <section class="events-panel">
-    <div class="events-stack">
+  <section class="mt-6 mb-8">
+    <div class="flex flex-wrap gap-2 p-1.5 bg-slate-100 rounded-2xl w-fit">
+      <button onclick="showSubTab('all')" id="subtab-all" class="subtab-btn px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-white shadow-sm text-slate-950">
+        Tutti
+      </button>
+      <button onclick="showSubTab('categories')" id="subtab-categories" class="subtab-btn px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">
+        Categorie
+      </button>
+      <button onclick="showSubTab('brands')" id="subtab-brands" class="subtab-btn px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">
+        Brand
+      </button>
+    </div>
+  </section>
+
+  <script>
+    function showSubTab(tabId) {
+      // Hide all panels
+      document.querySelectorAll('.subtab-panel').forEach(p => p.classList.add('hidden'));
+      // Show selected panel
+      document.getElementById('panel-' + tabId).classList.remove('hidden');
+      
+      // Update button styles
+      document.querySelectorAll('.subtab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'shadow-sm', 'text-slate-950');
+        btn.classList.add('text-slate-400');
+      });
+      const activeBtn = document.getElementById('subtab-' + tabId);
+      activeBtn.classList.add('bg-white', 'shadow-sm', 'text-slate-950');
+      activeBtn.classList.remove('text-slate-400');
+    }
+  </script>
+
+  <section class="events-panel experiences-panel">
+    <!-- PANNELLO TUTTI -->
+    <div id="panel-all" class="subtab-panel space-y-4">
       <% @items.each do |event| %>
-        <%= link_to evento_path(event[:id]), class: "event-row-card #{'event-row-card--service' if event[:category] == 'service'}" do %>
-          <% unless event[:category] == "service" %>
-            <div class="event-row-date">
-              <span class="event-row-date__month"><%= event[:month] %></span>
-              <strong class="event-row-date__day"><%= event[:day] %></strong>
-              <span class="event-row-date__weekday"><%= event[:weekday] %></span>
+        <% 
+          c = if event[:brand].to_s.include?("PosturaCorretta")
+                { bg_l: "bg-blue-50", bg_d: "bg-blue-600", border: "border-blue-100", text: "text-blue-700", h_border: "hover:border-blue-400", h_shadow: "hover:shadow-blue-500/5", text_m: "text-blue-600" }
+              elsif event[:brand].to_s.include?("Inside Adventure")
+                { bg_l: "bg-emerald-50", bg_d: "bg-emerald-600", border: "border-emerald-100", text: "text-emerald-700", h_border: "hover:border-emerald-400", h_shadow: "hover:shadow-emerald-500/5", text_m: "text-emerald-600" }
+              else
+                { bg_l: "bg-rose-50", bg_d: "bg-rose-600", border: "border-rose-100", text: "text-rose-700", h_border: "hover:border-rose-400", h_shadow: "hover:shadow-rose-500/5", text_m: "text-rose-600" }
+              end
+        %>
+        
+        <%= link_to esperienza_path(event[:id]), class: "group bg-white rounded-3xl border border-slate-200 p-5 flex gap-6 #{c[:h_border]} hover:shadow-xl #{c[:h_shadow]} transition-all" do %>
+          <!-- CALENDAR BLOCK -->
+          <div class="w-20 shrink-0 rounded-2xl <%= c[:bg_l] %> border <%= c[:border] %> text-center overflow-hidden flex flex-col h-fit">
+            <div class="<%= c[:bg_d] %> text-white text-[10px] font-black py-1 uppercase tracking-widest"><%= event[:month] %></div>
+            <div class="py-3 bg-white">
+              <div class="text-3xl font-black text-slate-900 leading-none"><%= event[:day] %></div>
+              <div class="text-[9px] font-black text-slate-400 mt-1 uppercase tracking-widest"><%= event[:weekday] %></div>
             </div>
-          <% end %>
+          </div>
 
-          <div class="event-row-main">
-            <div class="event-row-topline">
-              <div class="event-row-tags">
-                <% if event[:event_kind].present? %>
-                  <span class="event-row-structure"><%= event[:event_kind] %> · <%= event[:schedule_label] %></span>
-                <% end %>
-                <span class="event-row-type"><%= event[:format] %></span>
-                <span class="event-row-icon-chip"><%= event[:icon] %></span>
+          <!-- CONTENT BLOCK -->
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
+              <div class="space-y-2">
+                <!-- RIGA 1: BRAND & SUB-BRAND -->
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-2.5 py-1 rounded-md bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider"><%= event[:brand] %></span>
+                  <% if event[:sub_brand].present? %>
+                    <span class="px-2.5 py-1 rounded-md <%= c[:bg_l] %> <%= c[:text] %> border <%= c[:border] %> text-[10px] font-black uppercase tracking-wider"><%= event[:sub_brand] %></span>
+                  <% end %>
+                </div>
+                <!-- RIGA 2: CATEGORIE CON ICONE -->
+                <div class="flex flex-wrap gap-2">
+                  <% (event[:category_tags] || []).each do |tag| %>
+                    <span class="px-2 py-1 rounded-full bg-white border border-<%= tag[:color] %>-300 text-<%= tag[:color] %>-700 text-[9px] font-black uppercase flex items-center gap-1">
+                      <span><%= tag[:icon] %></span>
+                      <span><%= tag[:label] %></span>
+                    </span>
+                  <% end %>
+                </div>
               </div>
-              <% if event[:category] == "service" %>
-                <span class="event-row-action"><%= event[:request_label] %></span>
-              <% else %>
-                <span class="event-row-time"><%= event[:time] %></span>
-              <% end %>
+              
+              <div class="text-right">
+                <div class="text-lg font-black text-slate-900 leading-none <%= c[:text_m] %>"><%= event[:time] %></div>
+                <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Orario previsto</div>
+              </div>
             </div>
 
-            <h2><%= event[:title] %></h2>
-            <p><%= event[:description] %></p>
+            <h2 class="text-xl font-black text-slate-900 leading-tight group-hover:<%= c[:text_m] %> transition-colors"><%= event[:title] %></h2>
+            <p class="text-sm text-slate-500 mt-2 leading-relaxed line-clamp-2"><%= event[:description] %></p>
 
-            <div class="event-row-meta">
-              <span><strong>Brand</strong> <%= event[:brand] %></span>
-              <span><strong>Organizzazione</strong> <%= event[:organizer] %></span>
-              <span><strong>Luogo</strong> <%= event[:location] %></span>
-              <span><strong>Durata</strong> <%= event[:duration] %></span>
-              <% if event[:event_kind].present? %>
-                <span><strong>Struttura</strong> <%= event[:schedule_label] %></span>
-              <% end %>
-              <% if event[:category] == "service" %>
-                <span><strong>Formula</strong> <%= event[:service_mode] %></span>
-                <span><strong>Prezzo</strong> <%= event[:price_label] %></span>
-              <% else %>
-                <span><strong>Partecipanti</strong> <%= event[:participants] %></span>
-              <% end %>
-              <% if event[:category] == "course" %>
-                <span><strong>Orario</strong> <%= event[:time] %></span>
-              <% end %>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-2 gap-x-4 mt-5 pt-4 border-t border-slate-100">
+              <div>
+                <span class="block text-[8px] font-black text-slate-300 uppercase tracking-widest">Struttura</span>
+                <span class="text-[11px] font-bold text-slate-600 truncate block"><%= event[:event_kind] %></span>
+              </div>
+              <div>
+                <span class="block text-[8px] font-black text-slate-300 uppercase tracking-widest">Format</span>
+                <span class="text-[11px] font-bold text-slate-600 truncate block"><%= event[:format] %></span>
+              </div>
+              <div>
+                <span class="block text-[8px] font-black text-slate-300 uppercase tracking-widest">Luogo</span>
+                <span class="text-[11px] font-bold text-slate-600 truncate block"><%= event[:location] %></span>
+              </div>
+              <div>
+                <span class="block text-[8px] font-black text-slate-300 uppercase tracking-widest">Organizzatore</span>
+                <span class="text-[11px] font-bold text-slate-600 truncate block"><%= event[:organizer] %></span>
+              </div>
+              <div class="text-right">
+                <span class="block text-[8px] font-black text-slate-300 uppercase tracking-widest">Disponibilità</span>
+                <span class="text-[11px] font-black <%= c[:text_m] %>"><%= event[:participants] %></span>
+              </div>
             </div>
           </div>
         <% end %>
       <% end %>
     </div>
 
+    <!-- PANNELLO CATEGORIE -->
+    <div id="panel-categories" class="subtab-panel hidden">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <% [
+          { icon: "🚶‍♂️", title: "Movimento", count: 4, color: "red" },
+          { icon: "🍴", title: "Cibo", count: 2, color: "orange" },
+          { icon: "🪗", title: "Musica", count: 3, color: "pink" },
+          { icon: "🧘", title: "Meditazione", count: 1, color: "purple" },
+          { icon: "🌲", title: "Natura", count: 5, color: "green" },
+          { icon: "💙", title: "Postura", count: 4, color: "blue" },
+          { icon: "💻", title: "Lavoro", count: 2, color: "amber" },
+          { icon: "🗺️", title: "Mappe", count: 2, color: "slate" }
+        ].each do |cat| %>
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 hover:border-<%= cat[:color] %>-400 transition-all cursor-pointer group text-center">
+            <div class="text-3xl mb-2 group-hover:scale-110 transition-transform"><%= cat[:icon] %></div>
+            <h3 class="text-sm font-black text-slate-900 leading-tight"><%= cat[:title] %></h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase mt-1"><%= cat[:count] %> Eventi</p>
+          </div>
+        <% end %>
+      </div>
+      <div class="p-8 border-2 border-dashed border-slate-200 rounded-3xl text-center">
+        <p class="text-slate-400 font-bold text-sm uppercase tracking-widest">Seleziona una categoria per filtrare gli eventi</p>
+      </div>
+    </div>
+
+    <!-- PANNELLO BRAND -->
+    <div id="panel-brands" class="subtab-panel hidden">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <% [
+          { id: "pc", icon: "💙", title: "PosturaCorretta", desc: "La tua guida per la salute del corpo.", color: "blue", events: 8 },
+          { id: "gdc", icon: "🌿", title: "Giardino del Corpo", desc: "Esperienze in natura e rigenerazione.", color: "emerald", events: 5 },
+          { id: "fp", icon: "🗺️", title: "Flowpulse", desc: "Mappe, sistemi e organizzazione.", color: "amber", events: 3 }
+        ].each do |brand| %>
+          <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:border-<%= brand[:color] %>-400 transition-all cursor-pointer group">
+            <div class="bg-<%= brand[:color] %>-50 p-6 text-center border-b border-<%= brand[:color] %>-100">
+              <div class="text-5xl mb-4 group-hover:scale-110 transition-transform"><%= brand[:icon] %></div>
+              <h3 class="text-xl font-black text-<%= brand[:color] %>-900"><%= brand[:title] %></h3>
+            </div>
+            <div class="p-6">
+              <p class="text-sm text-slate-600 leading-relaxed mb-4"><%= brand[:desc] %></p>
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= brand[:events] %> Eventi attivi</span>
+                <span class="px-4 py-2 rounded-xl bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest">Esplora</span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </section>
 </section>

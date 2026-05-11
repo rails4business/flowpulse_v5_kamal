@@ -1,0 +1,47 @@
+<section id="weekplan" class="mt-8">
+  <div class="mb-6 flex items-center justify-between">
+    <h2 class="text-2xl font-extrabold tracking-tight text-slate-950">Pianificazione Settimanale</h2>
+    <span class="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-700">Week Plan</span>
+  </div>
+
+  <div class="flex gap-4 overflow-x-auto pb-4">
+    <% days = [
+      { name: "Lunedì", events: [
+        { title: "Rails 4 B", time: "09:00 - 18:00", color: "bg-amber-100 border-amber-200 text-amber-800" },
+        { title: "PosturaCorretta Calvisano", time: "18:30 - 21:00", color: "bg-blue-100 border-blue-200 text-blue-800" }
+      ]},
+      { name: "Martedì", events: [
+        { title: "Eventi GDC", time: "08:00 - 10:00", color: "bg-emerald-100 border-emerald-200 text-emerald-800" }
+      ]},
+      { name: "Mercoledì", events: [] },
+      { name: "Giovedì", events: [
+        { title: "Eventi GDC", time: "08:00 - 10:00", color: "bg-emerald-100 border-emerald-200 text-emerald-800" }
+      ]},
+      { name: "Venerdì", events: [] },
+      { name: "Sabato", events: [
+        { title: "Eventi GDC", time: "10:00 - 13:00", color: "bg-emerald-100 border-emerald-200 text-emerald-800" }
+      ]},
+      { name: "Domenica", events: [
+        { title: "Eventi GDC", time: "10:00 - 13:00", color: "bg-emerald-100 border-emerald-200 text-emerald-800" }
+      ]}
+    ] %>
+
+    <% days.each do |day| %>
+      <div class="min-w-[200px] flex-1 rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+        <h3 class="mb-4 text-center text-xs font-black uppercase tracking-widest text-slate-400"><%= day[:name] %></h3>
+        <div class="space-y-3">
+          <% if day[:events].any? %>
+            <% day[:events].each do |event| %>
+              <div class="rounded-xl border p-3 shadow-sm transition hover:scale-[1.02] <%= event[:color] %>">
+                <div class="text-sm font-black leading-tight"><%= event[:title] %></div>
+                <div class="mt-1 text-[10px] font-bold opacity-70"><%= event[:time] %></div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="flex h-20 items-center justify-center rounded-xl border border-dashed border-slate-200 text-[10px] font-bold uppercase tracking-widest text-slate-300">Libero</div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>

@@ -1,171 +1,170 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<title>Weekly Class Plan</title>
-
-<style>
-  body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background:#0b1220;
-    color:white;
-  }
-
-  h1{
-    text-align:center;
-    padding:20px;
-  }
-
-  .week{
-    display:flex;
-    gap:15px;
-    padding:20px;
-    overflow-x:auto;
-  }
-
-  .day-column{
-    min-width:220px;
-    background:#111827;
-    border-radius:16px;
-    padding:10px;
-    flex-shrink:0;
-  }
-
-  .day-title{
-    text-align:center;
-    font-weight:bold;
-    margin-bottom:10px;
-    font-size:16px;
-    color:#93c5fd;
-  }
-
-  .card{
-    border-radius:12px;
-    padding:10px;
-    margin-bottom:10px;
-    color:#111;
-    box-shadow:0 6px 15px rgba(0,0,0,0.25);
-    transition:0.2s;
-  }
-
-  .card:hover{
-    transform:scale(1.03);
-  }
-
-  .class-name{
-    font-weight:bold;
-    font-size:15px;
-  }
-
-  .time{
-    font-size:13px;
-    margin-top:4px;
-    font-weight:bold;
-  }
-
-  /* colori corsi */
-  .yoga{ background:#a7f3d0; }
-  .hiit{ background:#fde68a; }
-  .spinning{ background:#fca5a5; }
-  .pilates{ background:#c7d2fe; }
-  .functional{ background:#67e8f9; }
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Plan - Flowpulse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #1e293b; }
+    .time-grid {
+      display: grid;
+      grid-template-rows: repeat(14, 1fr);
+      height: 100%;
+      position: relative;
+    }
+    
+    /* Utility per posizionamento (riga 1 = 08:00) */
+    .start-08 { grid-row-start: 1; }
+    .start-09 { grid-row-start: 2; }
+    .start-10 { grid-row-start: 3; }
+    .start-15 { grid-row-start: 8; }
+    .start-17 { grid-row-start: 10; }
+    
+    .span-1 { grid-row-end: span 1; }
+    .span-2 { grid-row-end: span 2; }
+    .span-3 { grid-row-end: span 3; }
+    .span-4 { grid-row-end: span 4; }
+    .span-11 { grid-row-end: span 11; }
+  </style>
 </head>
+<body class="h-screen flex flex-col p-4 overflow-hidden">
 
-<body>
+  <header class="mb-4 flex justify-between items-center border-b pb-4">
+    <div>
+      <h1 class="text-2xl font-black tracking-tighter text-slate-900 italic">Weekly Plan</h1>
+      <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em]">Flowpulse & PosturaCorretta</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 text-[8px] font-bold">
+      <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span> RAILS 4B</div>
+      <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400"></span> POSTURACORRETTA</div>
+      <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> EVENTI GDC</div>
+      <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-400"></span> PITTURA</div>
+      <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-400"></span> FISARMONICA</div>
+    </div>
+  </header>
 
-<h1>Weekly Class Plan</h1>
-
-<div class="week">
-
-  <!-- LUNEDÌ -->
-  <div class="day-column">
-    <div class="day-title">Lunedì</div>
-
-    <div class="card yoga">
-      <div class="class-name">Yoga</div>
-      <div class="time">08:00 - 09:00</div>
+  <div class="flex-1 flex gap-2 overflow-hidden">
+    <!-- Orari -->
+    <div class="w-10 flex flex-col pt-10 text-[8px] font-bold text-slate-300 text-right pr-2">
+      <div class="flex-1">08:00</div><div class="flex-1">09:00</div><div class="flex-1">10:00</div><div class="flex-1">11:00</div>
+      <div class="flex-1">12:00</div><div class="flex-1">13:00</div><div class="flex-1">14:00</div><div class="flex-1">15:00</div>
+      <div class="flex-1">16:00</div><div class="flex-1">17:00</div><div class="flex-1">18:00</div><div class="flex-1">19:00</div>
+      <div class="flex-1">20:00</div><div class="flex-1">21:00</div>
     </div>
 
-    <div class="card hiit">
-      <div class="class-name">HIIT</div>
-      <div class="time">18:30 - 19:15</div>
+    <!-- Griglia -->
+    <div class="flex-1 grid grid-cols-7 gap-2 h-full">
+      
+      <!-- LUNEDÌ -->
+      <div class="flex flex-col h-full">
+        <div class="text-center text-[10px] font-black uppercase tracking-widest text-slate-900 mb-2">Lun</div>
+        <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
+          <div class="start-09 span-11 bg-amber-100 border border-amber-300 rounded-lg p-2 shadow-sm z-10">
+            <div class="text-[9px] font-black text-amber-900">RAILS 4 B</div>
+            <div class="text-[7px] font-bold text-amber-600">09:00-20:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARTEDÌ -->
+      <div class="flex flex-col h-full">
+        <div class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Mar</div>
+        <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
+          <div class="start-08 span-3 bg-emerald-100 border border-emerald-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-emerald-900 leading-tight">EVENTI GDC</div>
+            <div class="text-[7px] font-bold text-emerald-600">08:30-11:30</div>
+          </div>
+          <div class="start-15 span-1 bg-rose-100 border border-rose-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-rose-900 leading-tight">FISARMONICA</div>
+          </div>
+          <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
+            <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MERCOLEDÌ -->
+      <div class="flex flex-col h-full">
+        <div class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Mer</div>
+        <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
+          <div class="start-15 span-1 bg-rose-100 border border-rose-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-rose-900 leading-tight">FISARMONICA</div>
+          </div>
+          <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
+            <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GIOVEDÌ -->
+      <div class="flex flex-col h-full">
+        <div class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Gio</div>
+        <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
+          <div class="start-08 span-3 bg-emerald-100 border border-emerald-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-emerald-900 leading-tight">EVENTI GDC</div>
+            <div class="text-[7px] font-bold text-emerald-600">08:30-11:30</div>
+          </div>
+          <div class="start-15 span-1 bg-rose-100 border border-rose-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-rose-900 leading-tight">FISARMONICA</div>
+          </div>
+          <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
+            <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VENERDÌ -->
+      <div class="flex flex-col h-full">
+        <div class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Ven</div>
+        <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
+          <div class="start-10 span-2 bg-violet-100 border border-violet-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-violet-900 leading-tight">PITTURA</div>
+            <div class="text-[7px] font-bold text-violet-600">10:00-12:00</div>
+          </div>
+          <div class="start-15 span-1 bg-rose-100 border border-rose-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-rose-900 leading-tight">FISARMONICA</div>
+          </div>
+          <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
+            <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SABATO -->
+      <div class="flex flex-col h-full">
+        <div class="text-center text-[10px] font-black uppercase tracking-widest text-sky-600 mb-2">Sab</div>
+        <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
+          <div class="start-09 span-3 bg-emerald-100 border border-emerald-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-emerald-900 leading-tight">EVENTI GDC</div>
+            <div class="text-[7px] font-bold text-emerald-600">09:00-12:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOMENICA -->
+      <div class="flex flex-col h-full">
+        <div class="text-center text-[10px] font-black uppercase tracking-widest text-sky-600 mb-2">Dom</div>
+        <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
+          <div class="start-09 span-3 bg-emerald-100 border border-emerald-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-emerald-900 leading-tight">EVENTI GDC</div>
+            <div class="text-[7px] font-bold text-emerald-600">09:00-12:00</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- MARTEDÌ -->
-  <div class="day-column">
-    <div class="day-title">Martedì</div>
-
-    <div class="card spinning">
-      <div class="class-name">Spinning</div>
-      <div class="time">19:00 - 19:45</div>
-    </div>
-
-    <div class="card functional">
-      <div class="class-name">Functional</div>
-      <div class="time">20:00 - 20:45</div>
-    </div>
-  </div>
-
-  <!-- MERCOLEDÌ -->
-  <div class="day-column">
-    <div class="day-title">Mercoledì</div>
-
-    <div class="card pilates">
-      <div class="class-name">Pilates</div>
-      <div class="time">10:00 - 11:00</div>
-    </div>
-
-    <div class="card yoga">
-      <div class="class-name">Yoga</div>
-      <div class="time">18:00 - 19:00</div>
-    </div>
-  </div>
-
-  <!-- GIOVEDÌ -->
-  <div class="day-column">
-    <div class="day-title">Giovedì</div>
-
-    <div class="card functional">
-      <div class="class-name">Functional</div>
-      <div class="time">18:00 - 18:45</div>
-    </div>
-
-    <div class="card hiit">
-      <div class="class-name">HIIT</div>
-      <div class="time">19:30 - 20:15</div>
-    </div>
-  </div>
-
-  <!-- VENERDÌ -->
-  <div class="day-column">
-    <div class="day-title">Venerdì</div>
-
-    <div class="card spinning">
-      <div class="class-name">Spinning</div>
-      <div class="time">19:00 - 19:45</div>
-    </div>
-  </div>
-
-  <!-- SABATO -->
-  <div class="day-column">
-    <div class="day-title">Sabato</div>
-
-    <div class="card yoga">
-      <div class="class-name">Yoga</div>
-      <div class="time">09:00 - 10:00</div>
-    </div>
-
-    <div class="card hiit">
-      <div class="class-name">HIIT</div>
-      <div class="time">11:00 - 11:45</div>
-    </div>
-  </div>
-
-</div>
+  <footer class="mt-4 pt-2 border-t text-[8px] font-bold text-slate-300 uppercase tracking-widest flex justify-between">
+    <span>Agenda Personale & Lavoro</span>
+    <span>Sincronizzazione Flowpulse</span>
+  </footer>
 
 </body>
 </html>

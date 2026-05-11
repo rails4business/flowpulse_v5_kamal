@@ -42,6 +42,41 @@
     color:white;
   }
 
+  .proto-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    padding:12px 16px;
+    background:#e9eef6;
+    border-bottom:1px solid #d6dfeb;
+  }
+
+  .proto-tab{
+    display:grid;
+    gap:3px;
+    min-width:200px;
+    padding:12px 14px;
+    border-radius:12px;
+    background:white;
+    color:#172033;
+    text-decoration:none;
+    box-shadow:0 4px 14px rgba(15,23,42,0.05);
+  }
+
+  .proto-tab strong { font-size:14px; }
+
+  .proto-tab span{
+    color:#64748b;
+    font-size:12px;
+    line-height:1.35;
+  }
+
+  .proto-tab.is-active{
+    background:#dbeafe;
+    color:#1e3a8a;
+  }
+
   .view{
     display:none;
     padding:20px;
@@ -110,6 +145,29 @@
 <header>
   <h2>Event Platform - Full System</h2>
 </header>
+
+<nav class="proto-tabs" aria-label="Prototipi evento collegati">
+  <a href="4_calendario_eventi_attività.html" class="proto-tab">
+    <strong>4 Calendario eventi</strong>
+    <span>Vista madre con eventi, attività e routine</span>
+  </a>
+  <a href="evento_admin_full.html" class="proto-tab is-active">
+    <strong>Evento Admin Full</strong>
+    <span>Panoramica completa amministrativa</span>
+  </a>
+  <a href="evento_cliente_org_operatori.html" class="proto-tab">
+    <strong>Cliente / Org / Operatori</strong>
+    <span>Vista multi-ruolo dell'evento</span>
+  </a>
+  <a href="evento_costi_ruoli.html" class="proto-tab">
+    <strong>Costi e ruoli</strong>
+    <span>Economica e riparti operativi</span>
+  </a>
+  <a href="evento_vista_ruoli.html" class="proto-tab">
+    <strong>Vista ruoli</strong>
+    <span>Agenda e persone coinvolte</span>
+  </a>
+</nav>
 
 <div class="tabs">
 

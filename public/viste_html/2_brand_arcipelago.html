@@ -3,275 +3,126 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Arcipelago del Brand</title>
-
+<title>Arcipelago del Brand - Flowpulse</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: #071a26;
-    font-family: Arial, sans-serif;
-    color: white;
-    overflow: hidden;
+  :root {
+    --sea-dark: #0d4f9f;
+    --sea-light: #1a7fbf;
+    --land-base: #8a5a3b;
+    --land-border: rgba(255,255,255,0.15);
+    --accent: #ffd166;
+    --glass-bg: rgba(15, 28, 46, 0.7);
   }
 
-  svg {
-    width: 100vw;
-    height: 100vh;
-    display: block;
-  }
-
-  .sea {
-    fill: url(#seaGradient);
-  }
+  body { margin: 0; background: #000; font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
+  svg { width: 100vw; height: 100vh; display: block; }
+  .sea { fill: url(#seaGradient); }
 
   .route {
-    stroke: rgba(255, 217, 128, 0.55);
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-dasharray: 10 8;
+    stroke: rgba(255, 217, 128, 0.3); stroke-width: 2.5; stroke-dasharray: 8 6;
+    animation: dash 40s linear infinite;
+  }
+  @keyframes dash { to { stroke-dashoffset: -1000; } }
+
+  /* FIX VIBRAZIONE: L'hover è gestito sul gruppo, non sul path per evitare flicker */
+  .island-group { cursor: pointer; pointer-events: all; }
+  .island { stroke: var(--land-border); stroke-width: 2; transition: all 0.3s ease; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
+  .island-group:hover .island { filter: brightness(1.3) drop-shadow(0 15px 25px rgba(0,0,0,0.8)); transform: scale(1.03); }
+
+  .coastline { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 1.5; stroke-dasharray: 5 8; pointer-events: none; }
+  .shoal { fill: rgba(255, 255, 255, 0.1); pointer-events: none; }
+  .speck { fill: #7fbf8f; stroke: rgba(255,255,255,0.5); stroke-width: 1; pointer-events: none; }
+
+  text { fill: white; font-weight: 800; text-anchor: middle; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  .label-main { font-size: 26px; }
+  .label-small { font-size: 14px; }
+
+  .ui-header {
+    position: absolute; top: 40px; left: 40px; background: var(--glass-bg); backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 25px 35px; box-shadow: 0 15px 45px rgba(0,0,0,0.5); z-index: 100;
   }
 
-  .island {
-    stroke: #f8fafc;
-    stroke-width: 5;
-    cursor: pointer;
-    filter: drop-shadow(0 12px 16px rgba(0,0,0,0.42));
-    transition: filter 0.2s ease, transform 0.2s ease;
+  .nautical-breadcrumb {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4);
   }
-
-  .island:hover {
-    filter: drop-shadow(0 16px 22px rgba(0,0,0,0.65)) brightness(1.12);
-  }
-
-  .coastline {
-    fill: none;
-    stroke: rgba(255,255,255,0.34);
-    stroke-width: 2;
-    stroke-dasharray: 7 9;
-    pointer-events: none;
-  }
-
-  .shoal {
-    fill: rgba(255, 255, 255, 0.16);
-    stroke: rgba(255,255,255,0.22);
-    stroke-width: 1;
-    pointer-events: none;
-  }
-
-  .depth-line {
-    fill: none;
-    stroke: rgba(116, 208, 255, 0.16);
-    stroke-width: 1.4;
-    stroke-dasharray: 5 8;
-  }
-
-  .speck {
-    fill: #7fbf8f;
-    stroke: rgba(255,255,255,0.7);
-    stroke-width: 2;
-    pointer-events: none;
-  }
-
-  text {
-    fill: white;
-    font-weight: 800;
-    text-anchor: middle;
-    pointer-events: none;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.75);
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    opacity: 0.85;
-  }
-
-  .label-main {
-    font-size: 27px;
-  }
-
-  .label-small {
-    font-size: 17px;
-  }
+  .breadcrumb-node { display: flex; align-items: center; gap: 6px; text-decoration: none; color: inherit; }
+  .node-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .node-line { width: 15px; height: 1px; background: rgba(255,255,255,0.15); }
+  .breadcrumb-node.active { color: var(--accent); }
+  .ui-header h1 { margin: 0; font-size: 28px; font-weight: 800; background: linear-gradient(90deg, #fff, #a0b2c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 </style>
 </head>
-
 <body>
-<svg viewBox="0 0 1000 600">
+<div class="ui-header">
+  <div class="nautical-breadcrumb">
+    <a href="/mari" class="breadcrumb-node"><div class="node-dot"></div><span>0 Mari</span></a>
+    <div class="node-line"></div>
+    <a href="1_carta_nautica.html" class="breadcrumb-node"><div class="node-dot"></div><span>1 Carta</span></a>
+    <div class="node-line"></div>
+    <div class="breadcrumb-node active"><div class="node-dot"></div><span>2 Arcipelago</span></div>
+  </div>
+  <h1 id="arc-title">Arcipelago</h1>
+  <p>Scegli una destinazione nel gruppo di isole</p>
+</div>
+
+<svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
   <defs>
     <radialGradient id="seaGradient" cx="50%" cy="45%" r="75%">
-      <stop offset="0%" stop-color="#12324a"/>
-      <stop offset="100%" stop-color="#071a26"/>
+      <stop offset="0%" stop-color="var(--sea-light)"/><stop offset="100%" stop-color="var(--sea-dark)"/>
     </radialGradient>
   </defs>
-
-  <rect class="sea" width="1000" height="600" />
-
-  <path class="depth-line" d="M90,175 C230,110 385,140 505,95 C665,35 795,92 920,62" />
-  <path class="depth-line" d="M70,495 C215,430 350,515 505,470 C705,410 790,505 930,445" />
-  <path class="depth-line" d="M110,300 C250,250 390,330 520,272 C680,200 800,290 930,230" />
-
-  <text class="title" x="500" y="55">Il Corpo un mondo da scoprire</text>
-  <text class="subtitle" x="500" y="82">Scegli un'isola dell'arcipelago</text>
-
+  <rect class="sea" width="100%" height="100%" />
   <g id="routes"></g>
   <g id="islands"></g>
 </svg>
 
 <script>
+const params = new URLSearchParams(window.location.search);
+const arcName = params.get('arcipelago') || 'Il Corpo un mondo da scoprire';
+document.getElementById('arc-title').textContent = arcName;
+
 const islands = [
-  {
-    id: 'postura_fisiologia',
-    name: 'Postura e Fisiologia',
-    label: ['Postura e', 'Fisiologia'],
-    x: 500,
-    y: 285,
-    scale: 1.05,
-    color: '#2563eb',
-    main: true,
-    coast: 'M-105,8 C-120,-55 -62,-106 5,-98 C78,-90 121,-35 105,30 C88,98 5,124 -66,92 C-112,70 -95,35 -105,8 Z',
-    shape: 'M-92,8 C-105,-48 -52,-92 5,-86 C62,-80 101,-31 91,24 C81,80 0,102 -57,78 C-94,62 -82,29 -92,8 Z',
-    specks: [[-118,70,12], [96,-68,10], [122,62,8]]
-  },
-  {
-    id: 'stile_di_vita',
-    name: 'Stile di vita',
-    label: ['Stile di vita'],
-    x: 260,
-    y: 360,
-    scale: 0.78,
-    color: '#7c3aed',
-    coast: 'M-93,-8 C-80,-78 10,-95 80,-46 C112,4 85,74 17,92 C-54,111 -111,58 -93,-8 Z',
-    shape: 'M-76,-6 C-65,-60 9,-76 62,-38 C86,0 66,58 13,73 C-43,88 -91,46 -76,-6 Z',
-    specks: [[-98,38,9], [70,68,7]]
-  },
-  {
-    id: 'percorso_salute',
-    name: 'Percorso Salute',
-    label: ['Percorso', 'Salute'],
-    x: 510,
-    y: 445,
-    scale: 0.76,
-    color: '#3b82c4',
-    coast: 'M-86,0 C-94,-66 -16,-100 52,-65 C107,-36 99,42 46,82 C-18,128 -91,74 -86,0 Z',
-    shape: 'M-70,0 C-76,-52 -12,-80 42,-53 C86,-28 79,33 37,65 C-14,100 -73,58 -70,0 Z',
-    specks: [[-90,-45,8], [76,58,9]]
-  },
-  {
-    id: 'cura_patologia',
-    name: 'Cura Patologia',
-    label: ['Cura', 'Patologia'],
-    x: 715,
-    y: 250,
-    scale: 0.58,
-    color: '#ef4444',
-    coast: 'M-75,-6 C-67,-62 8,-83 58,-45 C93,-6 68,62 7,74 C-57,86 -86,43 -75,-6 Z',
-    shape: 'M-58,-5 C-52,-48 7,-63 45,-34 C70,-5 51,47 5,56 C-44,65 -66,32 -58,-5 Z',
-    specks: [[-74,40,7]]
-  },
-  {
-    id: 'prevenzione',
-    name: 'Prevenzione',
-    label: ['Prevenzione'],
-    x: 805,
-    y: 365,
-    scale: 0.56,
-    color: '#f59e0b',
-    coast: 'M-70,4 C-80,-46 -22,-82 36,-64 C92,-47 91,23 47,59 C-6,101 -63,65 -70,4 Z',
-    shape: 'M-54,3 C-62,-35 -17,-62 28,-49 C70,-36 69,17 36,45 C-5,77 -49,50 -54,3 Z',
-    specks: [[68,-42,7], [-70,-28,6]]
-  },
-  {
-    id: 'cura_benessere',
-    name: 'Cura del benessere',
-    label: ['Cura del', 'benessere'],
-    x: 715,
-    y: 475,
-    scale: 0.6,
-    color: '#22c55e',
-    coast: 'M-76,0 C-88,-50 -25,-80 31,-69 C86,-58 98,4 58,51 C22,94 -50,83 -76,0 Z',
-    shape: 'M-59,0 C-68,-38 -19,-61 24,-52 C66,-44 75,3 44,39 C17,71 -39,63 -59,0 Z',
-    specks: [[-78,50,7], [67,36,6]]
-  }
+  { id: 'fisiologia', name: 'Postura e Fisiologia', label: ['Postura e', 'Fisiologia'], x: 500, y: 285, scale: 1.1, color: '#1a7fbf', main: true, coast: 'M-105,8 C-120,-55 -62,-106 5,-98 C78,-90 121,-35 105,30 C88,98 5,124 -66,92 C-112,70 -95,35 -105,8 Z', shape: 'M-92,8 C-105,-48 -52,-92 5,-86 C62,-80 101,-31 91,24 C81,80 0,102 -57,78 C-94,62 -82,29 -92,8 Z' },
+  { id: 'stile', name: 'Stile di vita', label: ['Stile di vita'], x: 260, y: 360, scale: 0.8, color: '#2a9d8f', coast: 'M-93,-8 C-80,-78 10,-95 80,-46 C112,4 85,74 17,92 C-54,111 -111,58 -93,-8 Z', shape: 'M-76,-6 C-65,-60 9,-76 62,-38 C86,0 66,58 13,73 C-43,88 -91,46 -76,-6 Z' },
+  { id: 'salute', name: 'Percorso Salute', label: ['Percorso', 'Salute'], x: 510, y: 445, scale: 0.8, color: '#3b82c4', coast: 'M-86,0 C-94,-66 -16,-100 52,-65 C107,-36 99,42 46,82 C-18,128 -91,74 -86,0 Z', shape: 'M-70,0 C-76,-52 -12,-80 42,-53 C86,-28 79,33 37,65 C-14,100 -73,58 -70,0 Z' },
+  { id: 'patologia', name: 'Cura Patologia', label: ['Cura', 'Patologia'], x: 715, y: 250, scale: 0.6, color: '#e76f51', coast: 'M-75,-6 C-67,-62 8,-83 58,-45 C93,-6 68,62 7,74 C-57,86 -86,43 -75,-6 Z', shape: 'M-58,-5 C-52,-48 7,-63 45,-34 C70,-5 51,47 5,56 C-44,65 -66,32 -58,-5 Z' }
 ];
 
-const mainIsland = islands.find((island) => island.main);
-const routesContainer = document.getElementById('routes');
+const mainIsland = islands.find(i => i.main);
+const routes = document.getElementById('routes');
 const islandsContainer = document.getElementById('islands');
 
-function paramsFor(island) {
-  const params = new URLSearchParams(window.location.search);
-  params.set('arcipelago', 'Il Corpo un mondo da scoprire');
-  params.set('isola', island.name);
-  params.set('porto', island.id);
-  return params;
-}
+islands.forEach(island => {
+  if (!island.main) {
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    r.setAttribute('class', 'route'); r.setAttribute('x1', mainIsland.x); r.setAttribute('y1', mainIsland.y);
+    r.setAttribute('x2', island.x); r.setAttribute('y2', island.y);
+    routes.appendChild(r);
+  }
 
-function openIsland(island) {
-  window.location.href = `2_brand_isola_regioni.html?${paramsFor(island).toString()}`;
-}
-
-islands
-  .filter((island) => !island.main)
-  .forEach((island) => {
-    const route = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    route.setAttribute('class', 'route');
-    route.setAttribute('x1', mainIsland.x);
-    route.setAttribute('y1', mainIsland.y);
-    route.setAttribute('x2', island.x);
-    route.setAttribute('y2', island.y);
-    routesContainer.appendChild(route);
-  });
-
-islands.forEach((island) => {
   const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  group.addEventListener('click', () => openIsland(island));
+  group.setAttribute('class', 'island-group');
+  group.setAttribute('transform', `translate(${island.x}, ${island.y})`);
+  group.onclick = () => {
+    const nextParams = new URLSearchParams(window.location.search);
+    nextParams.set('isola', island.name);
+    nextParams.set('arcipelago', arcName);
+    window.location.href = `2_brand_isola_regioni.html?${nextParams.toString()}`;
+  };
 
   const shoal = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  shoal.setAttribute('class', 'shoal');
-  shoal.setAttribute('d', island.coast);
-  shoal.setAttribute('transform', `translate(${island.x}, ${island.y}) scale(${island.scale})`);
-  group.appendChild(shoal);
-
-  const coast = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  coast.setAttribute('class', 'coastline');
-  coast.setAttribute('d', island.coast);
-  coast.setAttribute('transform', `translate(${island.x}, ${island.y}) scale(${island.scale * 1.12})`);
-  group.appendChild(coast);
+  shoal.setAttribute('class', 'shoal'); shoal.setAttribute('d', island.coast); shoal.setAttribute('transform', `scale(${island.scale})`); group.appendChild(shoal);
 
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('class', 'island');
-  path.setAttribute('d', island.shape);
-  path.setAttribute('fill', island.color);
-  path.setAttribute('transform', `translate(${island.x}, ${island.y}) scale(${island.scale})`);
-  group.appendChild(path);
-
-  island.specks.forEach(([x, y, r]) => {
-    const speck = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    speck.setAttribute('class', 'speck');
-    speck.setAttribute('cx', island.x + x * island.scale);
-    speck.setAttribute('cy', island.y + y * island.scale);
-    speck.setAttribute('r', r * island.scale);
-    group.appendChild(speck);
-  });
+  path.setAttribute('class', 'island'); path.setAttribute('d', island.shape); path.setAttribute('fill', island.color); path.setAttribute('transform', `scale(${island.scale})`); group.appendChild(path);
 
   const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  text.setAttribute('class', island.main ? 'label-main' : 'label-small');
-  text.setAttribute('x', island.x);
-  text.setAttribute('y', island.y - ((island.label.length - 1) * 10));
-
-  island.label.forEach((line, index) => {
-    const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-    tspan.setAttribute('x', island.x);
-    tspan.setAttribute('dy', index === 0 ? 0 : 25);
-    tspan.textContent = line;
-    text.appendChild(tspan);
+  text.setAttribute('class', island.main ? 'label-main' : 'label-small'); text.setAttribute('y', island.main ? 10 : 5);
+  island.label.forEach((line, idx) => {
+    const ts = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    ts.setAttribute('x', 0); ts.setAttribute('dy', idx === 0 ? 0 : 25); ts.textContent = line; text.appendChild(ts);
   });
-
   group.appendChild(text);
   islandsContainer.appendChild(group);
 });

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viaggiatori Dashboard - Flowpulse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #000814; color: #fff; }
+    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-dark { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(30px); border-left: 1px solid rgba(255, 255, 255, 0.1); }
+    #cy { width: 100%; height: 100%; }
+  </style>
+</head>
+<body class="h-screen overflow-hidden">
+
+  <div class="flex h-full">
+    <!-- Area Mappa (Il Tracciato) -->
+    <section class="flex-1 relative bg-gradient-to-br from-[#0d4f9f] to-[#000814]">
+      <div id="cy"></div>
+      <div class="absolute bottom-8 left-8 glass p-4 rounded-xl z-10 text-[10px] font-bold uppercase tracking-widest text-white/40">
+        Tracciato Esperienza: <span id="line-name" class="text-sky-400">Accademia</span>
+      </div>
+    </section>
+
+    <!-- Sidebar Focus (Una tappa alla volta) -->
+    <aside class="w-[420px] glass-dark flex flex-col p-12 gap-8 z-20">
+      <header>
+        <div class="flex items-center gap-2 text-[9px] font-black tracking-[0.2em] text-white/20 uppercase mb-4">
+          <a href="/mari">MARI</a><span>/</span>
+          <a href="1_carta_nautica.html">CARTA</a><span>/</span>
+          <a id="back-link" href="#">DASHBOARD</a>
+        </div>
+        <h2 id="step-counter" class="text-sky-500 text-[10px] font-black uppercase tracking-widest mb-2">Tappa 1 di 4</h2>
+        <h1 id="step-title" class="text-4xl font-black tracking-tight leading-tight">Inizio Viaggio</h1>
+      </header>
+
+      <!-- Focus Area -->
+      <section class="flex-1 flex flex-col justify-center">
+        <div id="focus-card" class="glass p-8 rounded-3xl border-l-4 border-sky-500 shadow-2xl">
+          <p class="text-white/60 leading-relaxed mb-8">
+            Benvenuto nella prima tappa della tua esperienza. Il tracciato sulla mappa ti mostrerà il percorso completo man mano che avanzi.
+          </p>
+          
+          <button id="next-btn" onclick="nextStep()" class="w-full py-5 bg-white text-black rounded-2xl font-black uppercase text-sm flex items-center justify-center gap-3 hover:bg-sky-400 transition-all shadow-xl shadow-white/5">
+            Prossimo Passo <i class="material-icons">arrow_forward</i>
+          </button>
+        </div>
+      </section>
+
+      <footer class="pt-6 border-t border-white/10 flex items-center justify-between">
+        <button onclick="prevStep()" class="text-[10px] font-bold uppercase text-white/30 hover:text-white flex items-center gap-2">
+          <i class="material-icons text-sm">arrow_back</i> Indietro
+        </button>
+        <div class="flex gap-1" id="dots-container">
+          <!-- Dots -->
+        </div>
+      </footer>
+    </aside>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const lineaId = params.get("linea") || "accademia";
+    
+    const config = {
+      accademia: { color: "#e53935", stations: ["Igiene Posturale", "Valutazione", "Tensioni", "Recettori"] },
+      risorse: { color: "#1e88e5", stations: ["Esperienze Online", "Workshop", "E-Book", "Community"] },
+      progetto: { color: "#7c3aed", stations: ["Manifesto", "Insegnanti", "Centri", "Collaborazioni"] }
+    };
+
+    const activeLine = config[lineaId] || config.accademia;
+    document.getElementById('line-name').textContent = activeLine.label || lineaId.toUpperCase();
+    document.getElementById('line-name').style.color = activeLine.color;
+    document.getElementById('back-link').href = `3a_viaggiatori_start.html?${params.toString()}`;
+
+    let currentIndex = 0;
+
+    function render() {
+      const s = activeLine.stations[currentIndex];
+      document.getElementById('step-title').textContent = s;
+      document.getElementById('step-counter').textContent = `Tappa ${currentIndex + 1} di ${activeLine.stations.length}`;
+      
+      const nextBtn = document.getElementById('next-btn');
+      if (currentIndex === activeLine.stations.length - 1) {
+        nextBtn.innerHTML = `Percorso Completato <i class="material-icons">check_circle</i>`;
+        nextBtn.classList.add('bg-emerald-500', 'text-white');
+      } else {
+        nextBtn.innerHTML = `Prossimo Passo <i class="material-icons">arrow_forward</i>`;
+        nextBtn.classList.remove('bg-emerald-500', 'text-white');
+      }
+
+      // Render Dots
+      const dots = document.getElementById('dots-container');
+      dots.innerHTML = activeLine.stations.map((_, i) => `
+        <div class="w-1.5 h-1.5 rounded-full transition-all ${i === currentIndex ? 'bg-sky-500 w-4' : 'bg-white/20'}"></div>
+      `).join('');
+
+      updateMap();
+    }
+
+    function nextStep() {
+      if (currentIndex < activeLine.stations.length - 1) {
+        currentIndex++;
+        render();
+      }
+    }
+
+    function prevStep() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        render();
+      }
+    }
+
+    // Cytoscape Logic per il Tracciato
+    const cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: [
+        ...activeLine.stations.map((s, i) => ({ data: { id: s, label: s } })),
+        ...activeLine.stations.slice(0,-1).map((s, i) => ({
+          data: { id: `e${i}`, source: s, target: activeLine.stations[i+1] }
+        }))
+      ],
+      style: [
+        { selector: 'node', style: { 'background-color': '#000814', 'border-width': 2, 'border-color': 'rgba(255,255,255,0.2)', 'label': 'data(label)', 'color': 'rgba(255,255,255,0.4)', 'font-size': 8, 'text-valign': 'bottom', 'text-margin-y': 6, 'width': 8, 'height': 8 } },
+        { selector: 'edge', style: { 'width': 1, 'line-color': 'rgba(255,255,255,0.1)', 'curve-style': 'bezier', 'target-arrow-shape': 'none' } },
+        { selector: 'node.visited', style: { 'background-color': activeLine.color, 'border-color': activeLine.color, 'color': '#fff', 'width': 12, 'height': 12, 'font-size': 10 } },
+        { selector: 'edge.active', style: { 'line-color': activeLine.color, 'width': 3, 'opacity': 0.8 } },
+        { selector: 'node.current', style: { 'border-width': 4, 'border-color': '#fff', 'background-color': activeLine.color, 'width': 16, 'height': 16, 'font-size': 12, 'font-weight': 'bold' } }
+      ],
+      layout: { name: 'grid', rows: 1, padding: 100 },
+      userZoomingEnabled: false, userPanningEnabled: false
+    });
+
+    function updateMap() {
+      cy.batch(() => {
+        cy.elements().removeClass('visited current active');
+        activeLine.stations.forEach((s, i) => {
+          const el = cy.getElementById(s);
+          if (i < currentIndex) {
+            el.addClass('visited');
+            if (i > 0) cy.edges().filter(e => e.data('target') === s).addClass('active');
+          }
+          if (i === currentIndex) {
+            el.addClass('current');
+            if (i > 0) cy.edges().filter(e => e.data('target') === s).addClass('active');
+          }
+        });
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>

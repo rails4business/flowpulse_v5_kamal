@@ -1,0 +1,196 @@
+<% content_for :title, "Dashboard Esperienze" %>
+<% active_section = params[:section].presence_in(%w[eventi categorie brand]) || "eventi" %>
+
+<section class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+  <aside class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-24 lg:self-start">
+    <div class="border-b border-slate-100 pb-4">
+      <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500">Dashboard Esperienze</p>
+      <h2 class="mt-2 text-xl font-extrabold text-slate-950">Esperienze</h2>
+      <span class="mt-2 block text-sm text-slate-500">Scoperta tra eventi attivi, categorie di ingresso e brand da esplorare.</span>
+    </div>
+
+    <nav class="mt-4 grid gap-2" aria-label="Sezioni esperienze">
+      <% [
+        ["eventi", "Eventi", "Partecipa o organizza"],
+        ["categorie", "Categorie", "Scegli il tipo di esperienza"],
+        ["brand", "Brand", "Esplora i mondi attivi"]
+      ].each do |key, title, subtitle| %>
+        <% active = active_section == key %>
+        <%= link_to viaggiatori_path(section: key), class: "block rounded-xl border px-4 py-3 transition #{active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-slate-50 text-slate-900 hover:border-slate-300 hover:bg-slate-100'}" do %>
+          <strong class="block text-sm font-extrabold"><%= title %></strong>
+          <span class="mt-1 block text-sm <%= active ? 'text-slate-200' : 'text-slate-500' %>"><%= subtitle %></span>
+        <% end %>
+      <% end %>
+    </nav>
+
+    <% if superadmin? %>
+      <div class="mt-4 border-t border-slate-100 pt-4">
+        <strong class="block text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500">Simula dashboard</strong>
+        <%= form_with url: dashboard_role_path, method: :patch, class: "mt-3" do %>
+          <%= select_tag :role, options_for_select(available_dashboard_roles.map { |value, label| [label, value] }, active_dashboard_role), class: "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900", onchange: "this.form.requestSubmit()" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mt-4 grid gap-2 border-t border-slate-100 pt-4">
+      <%= link_to "Torna alla landing", root_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+      <%= link_to "Apri Esperienze", esperienze_path, class: "inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800" %>
+    </div>
+  </aside>
+
+  <main class="min-w-0">
+    <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Dashboard Esperienze</p>
+      <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">Esperienze come viaggi</h1>
+      <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Qui teniamo insieme la scoperta: eventi attivi, categorie di ingresso e brand da esplorare con una struttura piu leggibile da dashboard.</span>
+    </header>
+
+    <% if active_section == "eventi" %>
+      <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mvp-travel-section__intro">
+          <div>
+            <h2>Eventi</h2>
+            <p>Scegli una categoria, trova un evento, partecipa o organizzalo.</p>
+          </div>
+          <span class="mvp-pill">Prossimo passo: Esperienze</span>
+        </div>
+
+        <div class="mvp-event-grid">
+          <article class="mvp-event-card">
+            <div class="mvp-event-date mvp-event-date--blue">
+              <span class="mvp-event-date__month">MAG</span>
+              <strong>16</strong>
+              <small>SAB</small>
+            </div>
+            <div class="mvp-event-card__body">
+              <div class="mvp-event-card__chips">
+                <span class="mvp-chip mvp-chip--dark">PosturaCorretta</span>
+                <span class="mvp-chip mvp-chip--soft-blue">Stop al Dolore</span>
+              </div>
+              <h3>PosturaCorretta in Vetta</h3>
+              <p>Camminata in montagna con esercizi semplici di postura e recupero.</p>
+              <div class="mvp-event-card__meta">
+                <span>Sab 16 Mag · 09:30</span>
+                <span>Monte Maddalena</span>
+                <span>Marco</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="mvp-event-card">
+            <div class="mvp-event-date mvp-event-date--amber">
+              <span class="mvp-event-date__month">MAG</span>
+              <strong>23</strong>
+              <small>SAB</small>
+            </div>
+            <div class="mvp-event-card__body">
+              <div class="mvp-event-card__chips">
+                <span class="mvp-chip mvp-chip--green">Giardino del Corpo</span>
+              </div>
+              <h3>PosturaCorretta con la Forchetta</h3>
+              <p>Prodotti locali, movimento leggero e condivisione.</p>
+              <div class="mvp-event-card__meta">
+                <span>Sab 23 Mag · 18:30</span>
+                <span>Azienda agricola partner</span>
+                <span>Da trovare</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="mvp-event-card">
+            <div class="mvp-event-date mvp-event-date--rose">
+              <span class="mvp-event-date__month">GIU</span>
+              <strong>06</strong>
+              <small>SAB</small>
+            </div>
+            <div class="mvp-event-card__body">
+              <div class="mvp-event-card__chips">
+                <span class="mvp-chip mvp-chip--green">Giardino del Corpo</span>
+              </div>
+              <h3>Fisarmonica e fuoco</h3>
+              <p>Serata semplice con musica, racconti e comunita.</p>
+              <div class="mvp-event-card__meta">
+                <span>Sab 06 Giu · 20:00</span>
+                <span>Location da confermare</span>
+                <span>Anna</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    <% elsif active_section == "categorie" %>
+      <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mvp-travel-section__intro">
+          <div>
+            <h2>Categorie</h2>
+            <p>Scegli il tipo di esperienza che vuoi vivere o organizzare.</p>
+          </div>
+          <span class="mvp-pill">8 ingressi</span>
+        </div>
+
+        <div class="mvp-category-grid">
+          <% [
+            ["🚶‍♂️", "Movimento", "4 eventi", "red"],
+            ["🍴", "Cibo", "2 eventi", "amber"],
+            ["🪗", "Musica", "3 eventi", "rose"],
+            ["🧘", "Meditazione", "1 evento", "violet"],
+            ["🌲", "Natura", "5 eventi", "green"],
+            ["💙", "Postura", "4 eventi", "blue"],
+            ["💻", "Lavoro", "2 eventi", "yellow"],
+            ["🗺️", "Mappe", "2 eventi", "slate"]
+          ].each do |icon, title, count, tone| %>
+            <article class="mvp-category-card mvp-category-card--<%= tone %>">
+              <span><%= icon %></span>
+              <h3><%= title %></h3>
+              <p><%= count %></p>
+            </article>
+          <% end %>
+        </div>
+      </section>
+    <% else %>
+      <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mvp-travel-section__intro">
+          <div>
+            <h2>Brand</h2>
+            <p>I brand sono mondi di esperienze. Ogni brand puo avere percorsi o sotto-brand.</p>
+          </div>
+          <span class="mvp-pill">3 mondi attivi</span>
+        </div>
+
+        <div class="mvp-brand-stack">
+          <article class="mvp-brand-card">
+            <div>
+              <span class="mvp-chip mvp-chip--dark">Brand</span>
+              <h3>PosturaCorretta</h3>
+              <p>Postura, movimento, salute e fisiologia.</p>
+              <div class="mvp-brand-tags">
+                <span>Stop al Dolore</span>
+                <span>Benessere Integrato</span>
+                <span>Postura e Fisiologia</span>
+              </div>
+            </div>
+            <strong>💙</strong>
+          </article>
+
+          <article class="mvp-brand-card">
+            <div>
+              <span class="mvp-chip mvp-chip--green">Brand</span>
+              <h3>Giardino del Corpo</h3>
+              <p>Natura, musica, cibo, comunita e rigenerazione.</p>
+            </div>
+            <strong>🌿</strong>
+          </article>
+
+          <article class="mvp-brand-card">
+            <div>
+              <span class="mvp-chip mvp-chip--amber">Brand</span>
+              <h3>Flowpulse</h3>
+              <p>Mappe, creator, lavoro e organizzazione eventi.</p>
+            </div>
+            <strong>🗺️</strong>
+          </article>
+        </div>
+      </section>
+    <% end %>
+  </main>
+</section>

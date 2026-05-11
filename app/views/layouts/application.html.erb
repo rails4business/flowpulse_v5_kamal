@@ -23,15 +23,15 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-slate-50 text-slate-950">
+  <body class="min-h-screen bg-white text-slate-950">
     <header id="site-header" class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
       <nav class="mx-auto flex w-full max-w-7xl items-center justify-between gap-5 px-4 py-3 sm:px-6 lg:px-8" aria-label="Navigazione principale">
         <%= link_to "Flowpulse", root_path, class: "text-xl font-extrabold tracking-tight text-slate-950" %>
 
         <div class="hidden items-center gap-1 md:flex">
-          <%= link_to "Esperienze", eventi_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <%= link_to "Esperienze", esperienze_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <%= link_to "Progetti", progetti_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
-          <%= link_to "Percorsi", root_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <%= link_to "Percorsi", mondi_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
         </div>
 
         <div class="flex items-center gap-2">
@@ -49,7 +49,17 @@
                   <p class="truncate text-xs text-slate-500"><%= Current.user.email_address %></p>
                 </div>
                 <div class="my-1 border-t border-slate-100"></div>
-                <%= link_to "Dashboard", dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+                <div class="px-3 py-2">
+                  <p class="text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500">Ruolo attivo</p>
+                  <p class="mt-1 text-sm font-semibold text-slate-900"><%= active_dashboard_role_label %></p>
+                  <% if superadmin? %>
+                    <%= form_with url: dashboard_role_path, method: :patch, class: "dashboard-role-form mt-2" do %>
+                      <%= select_tag :role, options_for_select(available_dashboard_roles.map { |value, label| [label, value] }, active_dashboard_role), class: "dashboard-role-select", onchange: "this.form.requestSubmit()" %>
+                    <% end %>
+                  <% end %>
+                </div>
+                <div class="my-1 border-t border-slate-100"></div>
+                <%= link_to "Dashboard", dashboard_home_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
                 <%= link_to "Profilo", "#", class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
                 <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
               </div>
@@ -74,7 +84,7 @@
       </div>
     <% end %>
 
-    <main class="<%= controller_name == "home" && action_name == "index" ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8" %>">
+    <main class="<%= ((controller_name == "home" && action_name == "index") || (controller_name == "pages" && %w[mvp_home mari viaggiatori].include?(action_name))) ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8" %>">
       <%= yield %>
     </main>
   </body>

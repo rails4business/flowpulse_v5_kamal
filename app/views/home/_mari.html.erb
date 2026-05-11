@@ -1,11 +1,50 @@
-<% mare = params[:mare].presence || "salute" %>
+<section class="mari-home-shell" data-current-sea="salute">
+  <aside class="mari-home-intro">
+    <div class="mari-home-intro__content">
+      <h2>L'odissea sono i viaggi che facciamo per ritornare a casa</h2>
+      <p><strong>Viaggia tra i mari dell'Essere</strong><br>Disegna o segui le rotte della tua vita.</p>
 
-<section class="mari-home-frame">
-  <iframe
-    title="Mari"
-    src="/viste_html/0_mari.html?mare=<%= ERB::Util.url_encode(mare) %>"
-    loading="eager"
-  ></iframe>
+      <nav class="mari-home-seas" aria-label="Mari dell'Essere">
+        <a href="/viste_html/1_carta_nautica.html?mare=salute" class="mari-home-sea mari-home-sea--salute">
+          <strong>Salute e Principi</strong>
+          <span>La rotta per navigare</span>
+        </a>
+
+        <a href="/viste_html/1_carta_nautica.html?mare=lavoro" class="mari-home-sea mari-home-sea--lavoro">
+          <strong>Lavoro e Relazioni</strong>
+          <span>Le correnti del successo</span>
+        </a>
+
+        <a href="/viste_html/1_carta_nautica.html?mare=risorse" class="mari-home-sea mari-home-sea--risorse">
+          <strong>Risorse e Stile di Vita</strong>
+          <span>Gestisci progetti, energia e abilita</span>
+        </a>
+      </nav>
+    </div>
+  </aside>
+
+  <section class="mari-home-frame">
+    <div class="mari-home-image-stage">
+      <div class="mari-home-glow mari-home-glow--salute"></div>
+      <div class="mari-home-glow mari-home-glow--lavoro"></div>
+      <div class="mari-home-glow mari-home-glow--risorse"></div>
+      <div class="mari-home-image-links" aria-label="Link sui mari">
+        <a href="/viste_html/1_carta_nautica.html?mare=salute" class="mari-home-image-link mari-home-image-link--salute">
+          <strong>Salute e Principi</strong>
+          <span>La rotta per navigare</span>
+        </a>
+        <a href="/viste_html/1_carta_nautica.html?mare=lavoro" class="mari-home-image-link mari-home-image-link--lavoro">
+          <strong>Lavoro e Relazioni</strong>
+          <span>Le correnti del successo</span>
+        </a>
+        <a href="/viste_html/1_carta_nautica.html?mare=risorse" class="mari-home-image-link mari-home-image-link--risorse">
+          <strong>Risorse e Stile di Vita</strong>
+          <span>Gestisci progetti, energia e abilita</span>
+        </a>
+      </div>
+      <%= image_tag "mondo_uomo.png", alt: "Mondo uomo Flowpulse", class: "mari-home-image" %>
+    </div>
+  </section>
 </section>
 
 <script>
