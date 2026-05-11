@@ -2,7 +2,7 @@
 
 <section class="dashboard-shell dashboard-shell--public-event-detail">
   <header class="dashboard-header">
-    <p><%= link_to "Torna alle Esperienze", esperienze_path %></p>
+    <p><%= verified_link_to "Torna alle Esperienze", esperienze_path %></p>
     <h1><%= @event[:title] %></h1>
     <span><%= @event[:description] %></span>
   </header>
@@ -71,8 +71,8 @@
     </div>
 
     <div class="event-actions">
-      <%= link_to(@event[:category] == "service" ? "Richiedi appuntamento" : "Iscriviti", "#", class: "btn btn-primary") %>
-      <%= link_to "Condividi", "#", class: "btn btn-secondary" %>
+      <%= verified_link_to(@event[:category] == "service" ? "Richiedi appuntamento" : "Iscriviti", "#", class: "btn btn-primary") %>
+      <%= verified_link_to "Condividi", "#", class: "btn btn-secondary" %>
     </div>
   </div>
 </section>

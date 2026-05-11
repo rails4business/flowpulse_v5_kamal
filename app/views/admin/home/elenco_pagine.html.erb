@@ -14,7 +14,7 @@
       <h2>Pagine con controller</h2>
       <div class="prototype-grid">
         <% @registered_pages.each do |slug, page| %>
-          <%= link_to page.fetch(:title), view_page_path(slug) %>
+          <%= verified_link_to page.fetch(:title), view_page_path(slug) %>
         <% end %>
       </div>
     </section>

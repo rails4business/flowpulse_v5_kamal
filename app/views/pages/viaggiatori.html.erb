@@ -16,7 +16,7 @@
         ["brand", "Brand", "Esplora i mondi attivi"]
       ].each do |key, title, subtitle| %>
         <% active = active_section == key %>
-        <%= link_to viaggiatori_path(section: key), class: "block rounded-xl border px-4 py-3 transition #{active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-slate-50 text-slate-900 hover:border-slate-300 hover:bg-slate-100'}" do %>
+        <%= verified_link_to viaggiatori_path(section: key), class: "block rounded-xl border px-4 py-3 transition #{active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-slate-50 text-slate-900 hover:border-slate-300 hover:bg-slate-100'}" do %>
           <strong class="block text-sm font-extrabold"><%= title %></strong>
           <span class="mt-1 block text-sm <%= active ? 'text-slate-200' : 'text-slate-500' %>"><%= subtitle %></span>
         <% end %>
@@ -33,8 +33,8 @@
     <% end %>
 
     <div class="mt-4 grid gap-2 border-t border-slate-100 pt-4">
-      <%= link_to "Torna alla landing", root_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
-      <%= link_to "Apri Esperienze", esperienze_path, class: "inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800" %>
+      <%= verified_link_to "Torna alla landing", root_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+      <%= verified_link_to "Apri Esperienze", esperienze_path, class: "inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800" %>
     </div>
   </aside>
 

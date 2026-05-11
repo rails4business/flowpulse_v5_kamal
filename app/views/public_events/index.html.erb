@@ -14,7 +14,7 @@
 
   <nav class="experiences-tabs" aria-label="Tab esperienze">
     <% @tabs.each do |key, tab| %>
-      <%= link_to tab.fetch(:label), esperienze_path(tab: key), class: "experiences-tab #{@active_tab == key ? "is-active" : ""}" %>
+      <%= verified_link_to tab.fetch(:label), esperienze_path(tab: key), class: "experiences-tab #{@active_tab == key ? "is-active" : ""}" %>
     <% end %>
   </nav>
 
@@ -61,7 +61,7 @@
               end
         %>
 
-        <%= link_to esperienza_path(event[:id]), class: "group bg-white rounded-3xl border border-slate-200 p-5 flex gap-6 #{c[:h_border]} hover:shadow-xl #{c[:h_shadow]} transition-all" do %>
+        <%= verified_link_to esperienza_path(event[:id]), class: "group bg-white rounded-3xl border border-slate-200 p-5 flex gap-6 #{c[:h_border]} hover:shadow-xl #{c[:h_shadow]} transition-all" do %>
 
           <% if @active_tab == "percorsi" %>
             <div class="w-28 shrink-0 rounded-2xl <%= c[:bg_l] %> border <%= c[:border] %> text-center overflow-hidden flex flex-col h-fit">

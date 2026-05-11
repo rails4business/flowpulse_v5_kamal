@@ -1,39 +1,38 @@
 Rails.application.routes.draw do
   resource :session
-  resources :users, only: %i[ new create ]
+  resources :users, only: %i[new create]
   resources :passwords, param: :token
-  
-  # Area Admin (Solo Superadmin)
+
+  # Public Routes
+  root "pages#mvp_home"
+  get "viaggiatori" => "pages#viaggiatori", as: :viaggiatori
+  get "esperienze" => "public_events#index", as: :esperienze
+  get "esperienze/:id" => "public_events#show", as: :esperienza
+
+  # Dashboard utente loggato
+  get "dashboard" => "home#dashboard", as: :dashboard
+  patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
+
+  # Area Admin / Superadmin
   namespace :admin do
     get "dashboard" => "home#dashboard", as: :dashboard
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
     resources :risorse, controller: "/resources", only: [:index, :show]
   end
 
-  # Area Demo (Superadmin + Accesso Demo)
+  # Area Demo / Prototipi
   namespace :demo do
     get "mari" => "pages#mari"
     get "viaggiatori" => "pages#viaggiatori"
     get "carta_nautica" => "pages#carta_nautica"
-  end
 
-  # Public Routes
-  root "pages#mvp_home"
-  get "mvp_home" => "pages#mvp_home", as: :mvp_home
-  
-  get "dashboard" => "home#dashboard", as: :dashboard
-  patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
-  
-  get "esperienze" => "public_events#index", as: :esperienze
-  get "esperienze/:id" => "public_events#show", as: :esperienza
-  
-  get "progetti" => "home#progetti"
-  get "lavoro" => "home#lavoro"
-  get "salute" => "home#salute"
-  get "mondi" => "pages#mari", as: :mondi
-  get "viaggiatori" => "pages#viaggiatori", as: :viaggiatori
-  
-  get "pagine/:slug" => "view_pages#show", as: :view_page
+    get "mvp_home" => "pages#mvp_home"
+    get "mondi" => "pages#mari"
+    get "progetti" => "home#progetti"
+    get "lavoro" => "home#lavoro"
+    get "salute" => "home#salute"
+    get "pagine/:slug" => "view_pages#show", as: :view_page
+  end
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

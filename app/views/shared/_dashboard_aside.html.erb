@@ -25,7 +25,7 @@
       <% item_classes = [base_classes, (active ? active_classes : (superadmin ? open_classes : locked_classes))].join(" ") %>
 
       <% if superadmin %>
-        <%= link_to item[:path], class: item_classes do %>
+        <%= verified_link_to item[:path], class: item_classes do %>
           <strong class="block text-sm font-extrabold"><%= item[:title] %></strong>
           <span class="mt-1 block text-sm <%= active ? 'text-slate-200' : 'text-slate-500' %>"><%= item[:subtitle] %></span>
         <% end %>

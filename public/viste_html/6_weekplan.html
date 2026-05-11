@@ -15,10 +15,10 @@
       position: relative;
     }
     
-    /* Utility per posizionamento (riga 1 = 08:00) */
     .start-08 { grid-row-start: 1; }
     .start-09 { grid-row-start: 2; }
     .start-10 { grid-row-start: 3; }
+    .start-11 { grid-row-start: 4; }
     .start-15 { grid-row-start: 8; }
     .start-17 { grid-row-start: 10; }
     
@@ -39,14 +39,13 @@
     <div class="flex flex-wrap items-center gap-3 text-[8px] font-bold">
       <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span> RAILS 4B</div>
       <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400"></span> POSTURACORRETTA</div>
-      <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> EVENTI GDC</div>
+      <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> EVENTI GDC / TAI CHI</div>
       <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-400"></span> PITTURA</div>
       <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-400"></span> FISARMONICA</div>
     </div>
   </header>
 
   <div class="flex-1 flex gap-2 overflow-hidden">
-    <!-- Orari -->
     <div class="w-10 flex flex-col pt-10 text-[8px] font-bold text-slate-300 text-right pr-2">
       <div class="flex-1">08:00</div><div class="flex-1">09:00</div><div class="flex-1">10:00</div><div class="flex-1">11:00</div>
       <div class="flex-1">12:00</div><div class="flex-1">13:00</div><div class="flex-1">14:00</div><div class="flex-1">15:00</div>
@@ -54,7 +53,6 @@
       <div class="flex-1">20:00</div><div class="flex-1">21:00</div>
     </div>
 
-    <!-- Griglia -->
     <div class="flex-1 grid grid-cols-7 gap-2 h-full">
       
       <!-- LUNEDÌ -->
@@ -72,15 +70,12 @@
       <div class="flex flex-col h-full">
         <div class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Mar</div>
         <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
-          <div class="start-08 span-3 bg-emerald-100 border border-emerald-300 rounded-lg p-2 shadow-sm">
-            <div class="text-[8px] font-black text-emerald-900 leading-tight">EVENTI GDC</div>
-            <div class="text-[7px] font-bold text-emerald-600">08:30-11:30</div>
-          </div>
           <div class="start-15 span-1 bg-rose-100 border border-rose-300 rounded-lg p-2 shadow-sm">
             <div class="text-[8px] font-black text-rose-900 leading-tight">FISARMONICA</div>
           </div>
           <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
             <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
+            <div class="text-[7px] font-bold text-blue-600">Viadana / Calvisano</div>
             <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
           </div>
         </div>
@@ -95,7 +90,8 @@
           </div>
           <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
             <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
-            <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
+            <div class="text-[7px] font-bold text-blue-600">Viadana / Calvisano</div>
+            <div class="text-[7px] font-bold text-blue-600">17:00-21:00 · con conferma</div>
           </div>
         </div>
       </div>
@@ -104,15 +100,23 @@
       <div class="flex flex-col h-full">
         <div class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Gio</div>
         <div class="flex-1 time-grid rounded-xl bg-slate-50/50 border border-slate-100 p-1">
-          <div class="start-08 span-3 bg-emerald-100 border border-emerald-300 rounded-lg p-2 shadow-sm">
-            <div class="text-[8px] font-black text-emerald-900 leading-tight">EVENTI GDC</div>
-            <div class="text-[7px] font-bold text-emerald-600">08:30-11:30</div>
+          <div class="start-09 span-2 bg-emerald-100 border border-emerald-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-emerald-900 leading-tight">TAI CHI</div>
+            <div class="text-[7px] font-bold text-emerald-600">09:00-10:30</div>
           </div>
+
+          <div class="start-11 span-1 bg-rose-100 border border-rose-300 rounded-lg p-2 shadow-sm">
+            <div class="text-[8px] font-black text-rose-900 leading-tight">LEZIONE FISARMONICA</div>
+            <div class="text-[7px] font-bold text-rose-600">11:00-12:00</div>
+          </div>
+
           <div class="start-15 span-1 bg-rose-100 border border-rose-300 rounded-lg p-2 shadow-sm">
             <div class="text-[8px] font-black text-rose-900 leading-tight">FISARMONICA</div>
           </div>
+
           <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
             <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
+            <div class="text-[7px] font-bold text-blue-600">Viadana / Calvisano</div>
             <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
           </div>
         </div>
@@ -131,6 +135,7 @@
           </div>
           <div class="start-17 span-4 bg-blue-100 border border-blue-300 rounded-lg p-2 shadow-sm">
             <div class="text-[8px] font-black text-blue-900 leading-tight">POSTURACORRETTA</div>
+            <div class="text-[7px] font-bold text-blue-600">Viadana / Calvisano</div>
             <div class="text-[7px] font-bold text-blue-600">17:00-21:00</div>
           </div>
         </div>

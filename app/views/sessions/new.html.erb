@@ -24,13 +24,13 @@
       </div>
 
       <div class="mt-4 text-sm text-gray-500 sm:mt-0">
-        <%= link_to "Password dimenticata?", new_password_path, class: "text-gray-700 underline hover:no-underline" %>
+        <%= verified_link_to "Password dimenticata?", new_password_path, class: "text-gray-700 underline hover:no-underline" %>
       </div>
     </div>
   <% end %>
 
   <div class="mt-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-slate-700">
     Non hai ancora un account?
-    <%= link_to "Registrati", new_user_path, class: "font-semibold text-blue-700 hover:text-blue-600" %>
+    <%= verified_link_to "Registrati", new_user_path, class: "font-semibold text-blue-700 hover:text-blue-600" %>
   </div>
 </div>

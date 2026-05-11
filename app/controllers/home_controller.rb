@@ -26,5 +26,14 @@ class HomeController < ApplicationController
 
   def salute
   end
+  def dashboard_role
+    role = params[:active_role].to_s
+
+    if Current.user.can_activate_role?(role)
+      Current.user.update!(active_role: role)
+    else
+      redirect_to dashboard_path, alert: "Ruolo non autorizzato"
+    end
+  end
 
 end
