@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  allow_unauthenticated_access
+  allow_unauthenticated_access only: [:index, :progetti, :lavoro, :salute]
   before_action :require_authentication, only: [:dashboard, :dashboard_role]
 
   def index
@@ -9,13 +9,15 @@ class HomeController < ApplicationController
     redirect_to dashboard_home_path
   end
 
-
   def dashboard_role
-    if superadmin? && params[:role].presence_in(available_dashboard_roles.map(&:first))
-      session[:dashboard_role] = params[:role]
+    role = params[:role].to_s
+    
+    if superadmin? || Current.user.can_activate_role?(role)
+      Current.user.update!(active_role: role)
+      redirect_to dashboard_home_path, notice: "Ruolo aggiornato a #{role.titleize}"
+    else
+      redirect_to dashboard_home_path, alert: "Non hai i permessi per attivare questo ruolo"
     end
-
-    redirect_to dashboard_home_path
   end
 
   def progetti
@@ -26,14 +28,4 @@ class HomeController < ApplicationController
 
   def salute
   end
-  def dashboard_role
-    role = params[:active_role].to_s
-
-    if Current.user.can_activate_role?(role)
-      Current.user.update!(active_role: role)
-    else
-      redirect_to dashboard_path, alert: "Ruolo non autorizzato"
-    end
-  end
-
 end

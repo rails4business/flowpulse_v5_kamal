@@ -15,32 +15,33 @@ class ApplicationController < ActionController::Base
     [ "demo", "Demo" ]
   ].freeze
 
-  helper_method :superadmin?, :available_dashboard_roles, :active_dashboard_role, :active_dashboard_role_label, :dashboard_home_path
+  helper_method :superadmin?, :active_dashboard_role, :active_dashboard_role_label, :dashboard_home_path, :ruolo_label
 
   private
-    def superadmin?
-      Current.user&.superadmin?
+    def ruolo_label(role_key)
+      { "traveler" => "Viaggiatore", "demo" => "Demo", "superadmin" => "Superadmin" }[role_key.to_s] || role_key.to_s.titleize
     end
-
-    def available_dashboard_roles
-      DASHBOARD_ROLES
+    def superadmin?
+      Current.user&.superadmin == true || Current.user&.active_role == "superadmin"
     end
 
     def active_dashboard_role
-      return "viaggiatori" unless authenticated?
-      return "viaggiatori" unless superadmin?
-
-      session[:dashboard_role].presence_in(DASHBOARD_ROLES.map(&:first)) || "superadmin"
+      Current.user&.active_role || "traveler"
     end
 
     def active_dashboard_role_label
-      available_dashboard_roles.to_h.fetch(active_dashboard_role, "Viaggiatori")
+      labels = { "traveler" => "Viaggiatore", "demo" => "Demo", "superadmin" => "Superadmin" }
+      labels[active_dashboard_role.to_s] || active_dashboard_role.to_s.titleize
     end
 
     def dashboard_home_path
-      return viaggiatori_path unless authenticated?
-      return viaggiatori_path unless superadmin?
-
-      active_dashboard_role == "superadmin" ? admin_dashboard_path : viaggiatori_path
+      return root_path unless authenticated?
+      
+      case active_dashboard_role.to_s
+      when "superadmin", "admin"
+        admin_dashboard_path
+      else
+        viaggiatori_path
+      end
     end
 end

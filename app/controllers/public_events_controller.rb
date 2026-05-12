@@ -3,9 +3,10 @@ class PublicEventsController < ApplicationController
 
   TABS = {
     "eventi" => { label: "Eventi", internal: false },
+    "percorsi" => { label: "Percorsi", internal: false },
+    "contenuti" => { label: "Contenuti", internal: false },
     "servizi" => { label: "Servizi", internal: false },
-    "corsi" => { label: "Corsi", internal: false },
-    "percorsi" => { label: "Percorsi", internal: false }
+    "corsi" => { label: "Corsi", internal: false }
   }.freeze
 
   def index
@@ -34,6 +35,8 @@ class PublicEventsController < ApplicationController
     case tab
     when "percorsi"
       mock_public_percorsi
+    when "contenuti"
+      mock_public_contents
     when "servizi"
       mock_public_services
     when "corsi"
@@ -315,6 +318,47 @@ class PublicEventsController < ApplicationController
         ],
         participants: "20 iscritti",
         duration: "8 settimane"
+      }
+    ]
+  end
+
+  def mock_public_contents
+    [
+      {
+        id: 601,
+        category: "content",
+        kind: "video",
+        title: "Respirazione Diaframmatica: La Base",
+        description: "In questo video scopriamo come attivare correttamente il diaframma per una postura perfetta.",
+        duration: "12:45",
+        brand: "PosturaCorretta",
+        sub_brand: "Video Tutorial",
+        thumbnail: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=400",
+        category_tags: [{ icon: "📽️", label: "Video", color: "blue" }]
+      },
+      {
+        id: 602,
+        category: "content",
+        kind: "pdf",
+        title: "Guida alla Mobilità Articolare",
+        description: "Un manuale completo in PDF con 10 esercizi da fare ogni mattina appena svegli.",
+        pages: "14 pagine",
+        brand: "PosturaCorretta",
+        sub_brand: "E-book",
+        thumbnail: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400",
+        category_tags: [{ icon: "📄", label: "PDF", color: "emerald" }]
+      },
+      {
+        id: 603,
+        category: "content",
+        kind: "audio",
+        title: "Meditazione Guidata: Rilascio Tensioni",
+        description: "Un audio di 15 minuti per scaricare le tensioni accumulate durante la giornata lavorativa.",
+        duration: "15:20",
+        brand: "Sapienza Visione",
+        sub_brand: "Podcast",
+        thumbnail: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=400",
+        category_tags: [{ icon: "🎧", label: "Audio", color: "purple" }]
       }
     ]
   end

@@ -1,0 +1,53 @@
+<% content_for :title, "Salute" %>
+
+<section class="dashboard-shell dashboard-shell--health dashboard-shell--with-aside">
+  <%= render "shared/dashboard_aside", current_section: :salute %>
+
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <p>Salute</p>
+      <h1>Percorsi e corsi</h1>
+      <span>Una dashboard per scegliere tra journey progressivi e contenuti formativi piu strutturati.</span>
+    </header>
+
+    <section class="dashboard-grid">
+      <a href="/viste_html/journey.html" class="dashboard-card" target="_blank" rel="noreferrer">
+        <span>01</span>
+        <h2>Percorsi</h2>
+        <p>Journey principali, stazioni di ingresso e lettura progressiva dei percorsi salute.</p>
+      </a>
+
+      <%= verified_link_to view_page_path("corsi-salute"), class: "dashboard-card" do %>
+        <span>02</span>
+        <h2>Corsi</h2>
+        <p>Moduli, lezioni, esercizi e contenuti ordinati per tema.</p>
+      <% end %>
+    </section>
+
+    <section class="dashboard-tabs-panel">
+      <header class="dashboard-tabs-panel__header">
+        <h2>Journey</h2>
+        <p>Per ora le varianti restano visibili come famiglia unica: la base, la lettura admin e le versioni ancora da rivedere.</p>
+      </header>
+
+      <nav class="dashboard-tabs" aria-label="Varianti journey">
+        <a href="/viste_html/journey.html" class="dashboard-tab is-active" target="_blank" rel="noreferrer">
+          <strong>Journey</strong>
+          <span>Base multi-percorso</span>
+        </a>
+        <a href="/viste_html/journey_admin.html" class="dashboard-tab" target="_blank" rel="noreferrer">
+          <strong>Journey Admin</strong>
+          <span>Vista SaaS operativa</span>
+        </a>
+        <a href="/viste_html/journey_admin_mermaid.html" class="dashboard-tab" target="_blank" rel="noreferrer">
+          <strong>Journey Admin Mermaid</strong>
+          <span>Workflow con diagrammi</span>
+        </a>
+        <a href="/viste_html/journey_utente_da_rivedere.html" class="dashboard-tab" target="_blank" rel="noreferrer">
+          <strong>Journey Utente</strong>
+          <span>Versione da rivedere</span>
+        </a>
+      </nav>
+    </section>
+  </main>
+</section>

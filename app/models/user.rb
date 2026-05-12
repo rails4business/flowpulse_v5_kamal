@@ -16,8 +16,32 @@ class User < ApplicationRecord
     admin: 5,
     superadmin: 6
   }
- 
-  def can_activate_role?(role)
-    available_active_roles.include?(role.to_s)
+
+  def can_activate_role?(role_name)
+    ruoli_attivabili.include?(role_name.to_s)
+  end
+
+  def ruoli_attivabili
+    # Controllo super-robusto per superadmin
+    is_sa = (self[:superadmin] == true || self[:superadmin] == 1 || superadmin == true)
+    is_demo = (self[:demo_access] == true || self[:demo_access] == 1 || demo_access == true)
+
+    attivabili = ["traveler"]
+    attivabili << "demo" if is_demo
+    attivabili << "superadmin" if is_sa
+    attivabili.uniq
+  end
+
+  # Helper rapidi per i permessi di base
+  def is_superadmin?
+    superadmin?
+  end
+
+  def has_demo_access?
+    superadmin? || demo_access?
+  end
+
+  def can_switch_roles?
+    superadmin? || ruoli_attivabili.size > 1
   end
 end

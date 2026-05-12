@@ -2,8 +2,8 @@
 <% items = [
   { key: :dashboard, title: "Dashboard Superadmin", subtitle: "Panoramica interna", path: admin_dashboard_path },
 { key: :resources, title: "Risorse", subtitle: "Eventi, transazioni, contatti", path: admin_risorse_index_path },
-  { key: :lavoro, title: "Lavoro", subtitle: "Creator, ruoli, attitudini, servizi", path: lavoro_path },
-  { key: :salute, title: "Salute", subtitle: "Percorsi e corsi", path: salute_path },
+  { key: :lavoro, title: "Lavoro", subtitle: "Creator, ruoli, attitudini, servizi", path: demo_lavoro_path },
+  { key: :salute, title: "Salute", subtitle: "Percorsi e corsi", path: demo_salute_path },
   { key: :pages, title: "Elenco pagine", subtitle: "Prototipi e viste collegate", path: admin_elenco_pagine_path },
   { key: :weekplan, title: "Weekplan", subtitle: "Planner settimanale HTML", path: "/viste_html/6_weekplan.html" }
 ] %>
@@ -44,11 +44,14 @@
     <% end %>
   </nav>
 
-  <% if superadmin %>
+  <% if Current.user.can_switch_roles? %>
     <div class="mt-4 border-t border-slate-100 pt-4">
       <strong class="block text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500">Simula dashboard</strong>
-      <%= form_with url: dashboard_role_path, method: :patch, class: "mt-3" do %>
-        <%= select_tag :role, options_for_select(available_dashboard_roles.map { |value, label| [label, value] }, active_dashboard_role), class: "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900", onchange: "this.form.requestSubmit()" %>
+      <%= form_with url: dashboard_role_path, method: :patch, class: "mt-3", data: { turbo: false } do %>
+        <%= select_tag :role, 
+          options_for_select(Current.user.ruoli_attivabili.map { |r| [ruolo_label(r), r] }, Current.user.active_role), 
+          class: "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900", 
+          onchange: "this.form.submit()" %>
       <% end %>
     </div>
   <% end %>

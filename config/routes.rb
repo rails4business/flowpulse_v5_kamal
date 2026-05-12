@@ -5,12 +5,12 @@ Rails.application.routes.draw do
 
   # Public Routes
   root "pages#mvp_home"
-  get "viaggiatori" => "pages#viaggiatori", as: :viaggiatori
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
 
   # Dashboard utente loggato
   get "dashboard" => "home#dashboard", as: :dashboard
+  get "dashboard/viaggiatore" => "pages#viaggiatori", as: :viaggiatori
   patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
 
   # Area Admin / Superadmin
