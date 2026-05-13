@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   root "pages#mvp_home"
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
+  get "markpostura" => "pages#markpostura", as: :markpostura
 
   # Dashboard utente loggato
   get "dashboard" => "home#dashboard", as: :dashboard

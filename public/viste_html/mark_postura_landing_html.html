@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mark Postura — Salute, esperienze e progetti</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-white">
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+      <a href="#top" class="text-sm font-black uppercase tracking-[0.24em] text-sky-300">Mark Postura</a>
+      <nav class="hidden items-center gap-6 text-sm font-semibold text-slate-300 md:flex">
+        <a href="#chi-sono" class="hover:text-white">Chi sono</a>
+        <a href="#servizi" class="hover:text-white">Servizi</a>
+        <a href="#eventi" class="hover:text-white">Eventi</a>
+        <a href="#libro" class="hover:text-white">Libro</a>
+        <a href="/markpostura" class="hover:text-white">La mia storia</a>
+        <a href="../viste_html/6_weekplan.html" class="hover:text-white">Weekplan</a>
+        <a href="#postura-fisiologia" class="hover:text-white">Postura e Fisiologia</a>
+        <a href="#prenota"
+          class="rounded-full bg-sky-400 px-4 py-2 font-bold text-slate-950 hover:bg-sky-300">Prenota</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="relative overflow-hidden">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.25),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(34,197,94,0.18),transparent_35%)]">
+      </div>
+      <div class="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 md:grid-cols-[1.1fr_0.9fr] md:py-28">
+        <div>
+          <p class="mb-5 text-sm font-black uppercase tracking-[0.25em] text-sky-300">Postura · Salute · Esperienze ·
+            Progetti</p>
+          <h1 class="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight md:text-7xl">
+            Riaccordarsi con il corpo, il ritmo e la realtà che vuoi costruire.
+          </h1>
+          <p class="mt-8 max-w-2xl text-xl leading-8 text-slate-300">
+            Creo percorsi, consulenze ed esperienze per aiutarti a leggere il corpo, costruire salute, organizzare
+            progetti e trasformare intuizioni in azioni concrete.
+          </p>
+          <div class="mt-10 flex flex-wrap gap-4">
+            <a href="#servizi"
+              class="rounded-full bg-white px-6 py-3 font-black text-slate-950 hover:bg-slate-200">Scopri i servizi</a>
+            <a href="#eventi"
+              class="rounded-full border border-white/20 px-6 py-3 font-black text-white hover:bg-white/10">Eventi
+              PosturaCorretta</a>
+          </div>
+        </div>
+
+        <aside class="rounded-[2rem] border border-white/10 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
+          <p class="text-sm font-black uppercase tracking-[0.22em] text-emerald-300">Mappa di lavoro</p>
+          <div class="mt-6 grid gap-4">
+            <div class="rounded-3xl bg-sky-400/15 p-5">
+              <h3 class="font-black text-sky-200">PosturaCorretta</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-300">Salute, postura, fisiologia, dolore, prevenzione e
+                routine corporee.</p>
+            </div>
+            <div class="rounded-3xl bg-emerald-400/15 p-5">
+              <h3 class="font-black text-emerald-200">Il Giardino del Corpo</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-300">Esperienze per l’evoluzione armonica dell’essere umano.
+              </p>
+            </div>
+            <div class="rounded-3xl bg-amber-400/15 p-5">
+              <h3 class="font-black text-amber-200">Flowpulse / Rails4Business</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-300">Strumenti digitali per organizzare percorsi, eventi,
+                contenuti e progetti.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- CHI SONO -->
+    <section id="chi-sono" class="border-t border-white/10 bg-slate-900 px-5 py-20">
+      <div class="mx-auto max-w-5xl">
+        <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-300">Chi sono</p>
+        <h2 class="mt-4 text-4xl font-black tracking-tight md:text-5xl">Una mappa tra corpo, salute e progettazione.
+        </h2>
+        <p class="mt-8 text-xl leading-9 text-slate-300">
+          Sono un professionista della salute e un imprenditore tra postura, benessere e informatica. Il mio lavoro
+          parte dal corpo, ma non si ferma al corpo: uso postura, fisiologia, esperienze, eventi e strumenti digitali
+          per aiutare le persone a costruire percorsi più chiari, concreti e sostenibili.
+        </p>
+        <p class="mt-6 text-xl leading-9 text-slate-300">
+          Il corpo non è solo qualcosa da correggere: è una mappa da leggere, ascoltare e riaccordare.
+        </p>
+      </div>
+    </section>
+
+    <!-- SERVIZI -->
+    <section id="servizi" class="px-5 py-20">
+      <div class="mx-auto max-w-7xl">
+        <div class="max-w-4xl">
+          <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-300">Mappa dei servizi</p>
+          <h2 class="mt-4 text-4xl font-black tracking-tight md:text-5xl">Flowpulse come contenitore generale.</h2>
+          <p class="mt-6 text-lg leading-8 text-slate-300">
+            Flowpulse è la piattaforma generale che collega percorsi, eventi, esperienze, strumenti, contenuti e
+            progetti.
+            Al suo interno convivono due grandi aree principali:
+          </p>
+        </div>
+
+        <div class="mt-14 grid gap-8 lg:grid-cols-2">
+          <!-- POSTURACORRETTA -->
+          <section class="rounded-[2rem] border border-sky-300/20 bg-sky-400/10 p-8">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-black uppercase tracking-[0.2em] text-sky-300">Area salute</p>
+                <h3 class="mt-2 text-3xl font-black text-white">PosturaCorretta</h3>
+              </div>
+              <div
+                class="rounded-full bg-sky-300/20 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-sky-100">
+                Blu · Rosso · Verde
+              </div>
+            </div>
+
+            <p class="mt-6 text-lg leading-8 text-slate-300">
+              Una mappa per orientarsi tra dolore, salute, prevenzione, fisiologia e benessere integrato.
+            </p>
+
+            <div class="mt-8 grid gap-5">
+              <article class="rounded-3xl border border-red-300/20 bg-red-400/10 p-6">
+                <h4 class="text-xl font-black text-red-200">Stop al Dolore</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Diagnosi funzionale, cause della patologia, sistemi che
+                  non funzionano più e gestione della fase acuta.</p>
+              </article>
+
+              <article class="rounded-3xl border border-red-300/20 bg-red-400/10 p-6">
+                <h4 class="text-xl font-black text-red-200">Percorso terapeutico</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Percorso per affrontare la patologia con
+                  professionisti, valutazioni, esercizi, trattamenti e routine.</p>
+              </article>
+
+              <article class="rounded-3xl border border-sky-300/20 bg-sky-400/10 p-6">
+                <h4 class="text-xl font-black text-sky-200">Stato di salute</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Mappa degli ambiti della salute e orientamento tra
+                  cura, prevenzione, benessere, performance e professionisti.</p>
+              </article>
+
+              <article class="rounded-3xl border border-emerald-300/20 bg-emerald-400/10 p-6">
+                <h4 class="text-xl font-black text-emerald-200">Benessere Integrato</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Costruisci il tuo percorso della salute e le tue
+                  routine lavorando sulle aree fondamentali della vita quotidiana.</p>
+              </article>
+
+              <article class="rounded-3xl border border-sky-300/20 bg-sky-400/10 p-6">
+                <h4 class="text-xl font-black text-sky-200">Postura e Fisiologia</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Percorso educativo a moduli per conoscere e riattivare
+                  i sistemi fisiologici grazie alle metodiche posturali.</p>
+              </article>
+            </div>
+          </section>
+
+          <!-- GIARDINO DEL CORPO -->
+          <section class="rounded-[2rem] border border-emerald-300/20 bg-emerald-400/10 p-8">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-black uppercase tracking-[0.2em] text-emerald-300">Area esperienziale</p>
+                <h3 class="mt-2 text-3xl font-black text-white">Il Giardino del Corpo</h3>
+              </div>
+              <div
+                class="rounded-full bg-emerald-300/20 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-emerald-100">
+                Evoluzione armonica
+              </div>
+            </div>
+
+            <p class="mt-6 text-lg leading-8 text-slate-300">
+              Esperienze, attività e strumenti per armonizzare corpo, emozioni, relazioni, creatività, ritmo e
+              progettazione personale.
+            </p>
+
+            <div class="mt-8 grid gap-5">
+              <article class="rounded-3xl border border-violet-300/20 bg-violet-400/10 p-6">
+                <h4 class="text-xl font-black text-violet-200">Inside Adventure</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Architetto: crea la tua realtà. Una mappa personale per
+                  orientare esperienze, intuizioni, parole e direzione.</p>
+              </article>
+
+              <article class="rounded-3xl border border-violet-300/20 bg-violet-400/10 p-6">
+                <h4 class="text-xl font-black text-violet-200">Sapienza e intuito</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Uno spazio per unire osservazione, comprensione,
+                  esperienza e intuizione.</p>
+              </article>
+
+              <article class="rounded-3xl border border-amber-300/20 bg-amber-400/10 p-6">
+                <h4 class="text-xl font-black text-amber-200">Genera Impresa</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Pensare idee, progetti e possibilità concrete per
+                  trasformare passioni e competenze in iniziative.</p>
+              </article>
+
+              <article class="rounded-3xl border border-amber-300/20 bg-amber-400/10 p-6">
+                <h4 class="text-xl font-black text-amber-200">Rails4Business</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Programmare e organizzare attività con AI, Ruby on
+                  Rails e strumenti digitali.</p>
+              </article>
+
+              <article class="rounded-3xl border border-emerald-300/20 bg-emerald-400/10 p-6">
+                <h4 class="text-xl font-black text-emerald-200">Canta che ti passa</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">La musica e il gioco come strumenti per ritrovare
+                  armonia, leggerezza e connessione.</p>
+              </article>
+
+              <article class="rounded-3xl border border-emerald-300/20 bg-emerald-400/10 p-6">
+                <h4 class="text-xl font-black text-emerald-200">Arti, linguaggio e comunicazione</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Attività per imparare a esprimere esperienze, emozioni,
+                  idee e bellezza.</p>
+              </article>
+
+              <article class="rounded-3xl border border-amber-300/20 bg-amber-400/10 p-6">
+                <h4 class="text-xl font-black text-amber-200">Calendario stagionale</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Organizzare attività e routine seguendo il ritmo del
+                  giorno, della stagione e del luogo.</p>
+              </article>
+
+              <article class="rounded-3xl border border-amber-300/20 bg-amber-400/10 p-6">
+                <h4 class="text-xl font-black text-amber-200">1impegno</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Eventi e risorse: uno strumento per collegare attività,
+                  persone, tempi e organizzazione.</p>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <div class="mt-10 rounded-[2rem] border border-white/10 bg-white/5 p-8">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-black uppercase tracking-[0.22em] text-amber-300">Contenitore generale</p>
+              <h3 class="mt-2 text-3xl font-black">Flowpulse</h3>
+            </div>
+            <div class="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-bold text-slate-300">
+              Formazione · Salute · Business
+            </div>
+          </div>
+
+          <p class="mt-6 max-w-5xl text-lg leading-8 text-slate-300">
+            Flowpulse è la piattaforma che collega PosturaCorretta, Il Giardino del Corpo, eventi, percorsi, contenuti,
+            strumenti digitali e progetti. È il sistema generale che permette di organizzare esperienze, risorse, ruoli,
+            attività e accademie.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTI -->
+    <section id="eventi" class="border-y border-white/10 bg-slate-900 px-5 py-20">
+      <div class="mx-auto max-w-7xl">
+        <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <p class="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Eventi PosturaCorretta</p>
+            <h2 class="mt-4 text-4xl font-black tracking-tight md:text-5xl">Esperienze di connessione.</h2>
+            <p class="mt-6 text-lg leading-8 text-slate-300">
+              Eventi per riaccordarsi con il ritmo del giorno, della stagione, del luogo in cui siamo e delle persone
+              che ci stanno intorno.
+            </p>
+          </div>
+          <div class="grid gap-4">
+            <div class="rounded-3xl bg-white/10 p-5">
+              <h3 class="font-black text-white">1. Movimento e allenamento</h3>
+              <p class="mt-2 text-sm text-slate-300">Camminata, mobilità, attivazione, respirazione e movimento
+                naturale.</p>
+            </div>
+            <div class="rounded-3xl bg-white/10 p-5">
+              <h3 class="font-black text-white">2. Recupero e autotrattamento</h3>
+              <p class="mt-2 text-sm text-slate-300">Una scheda semplice di Igiene Posturale: rilascio, automassaggio,
+                mobilità dolce.</p>
+            </div>
+            <div class="rounded-3xl bg-white/10 p-5">
+              <h3 class="font-black text-white">3. Meditazione e ascolto</h3>
+              <p class="mt-2 text-sm text-slate-300">Un momento per osservare corpo, respiro, sensazioni e stato
+                interno.</p>
+            </div>
+            <div class="rounded-3xl bg-white/10 p-5">
+              <h3 class="font-black text-white">4. Cibo e nutrimento</h3>
+              <p class="mt-2 text-sm text-slate-300">Tisana, merenda, pranzo leggero, cibo locale o condivisione
+                conviviale.</p>
+            </div>
+            <div class="rounded-3xl bg-white/10 p-5">
+              <h3 class="font-black text-white">5. Attività armonica facoltativa</h3>
+              <p class="mt-2 text-sm text-slate-300">Musica, canto, arte, orto, natura, teatro, gioco o laboratorio
+                creativo.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-14">
+          <h3 class="text-2xl font-black">Primi format evento</h3>
+          <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <article class="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <h4 class="font-black text-emerald-200">PosturaCorretta in cammino</h4>
+              <p class="mt-3 text-sm text-slate-300">Camminata, esercizi, autotrattamento e tisana finale.</p>
+            </article>
+            <article class="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <h4 class="font-black text-emerald-200">Igiene Posturale all’aperto</h4>
+              <p class="mt-3 text-sm text-slate-300">Lezione pratica semplice, veloce e adatta a tutti.</p>
+            </article>
+            <article class="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <h4 class="font-black text-emerald-200">Corpo, respiro e ascolto</h4>
+              <p class="mt-3 text-sm text-slate-300">Movimento dolce, respirazione e meditazione guidata.</p>
+            </article>
+            <article class="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <h4 class="font-black text-emerald-200">Canta che ti passa</h4>
+              <p class="mt-3 text-sm text-slate-300">Musica, voce e gioco per ritrovare armonia.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIBRO -->
+    <section id="libro" class="border-y border-white/10 bg-slate-900 px-5 py-20">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.24em] text-amber-300">Il libro</p>
+          <h2 class="mt-4 text-4xl font-black tracking-tight md:text-5xl">Il corpo, un mondo da scoprire</h2>
+        </div>
+        <div>
+          <p class="text-xl leading-9 text-slate-300">
+            Il libro è la mappa narrativa che unisce PosturaCorretta, Il Giardino del Corpo, Inside Adventure e
+            Flowpulse.
+          </p>
+          <p class="mt-6 text-lg leading-8 text-slate-300">
+            Racconta il passaggio dalla postura come correzione alla postura come modo per conoscere il corpo,
+            organizzare la salute, vivere esperienze e costruire una realtà più armonica.
+          </p>
+          <div class="mt-8 rounded-3xl border border-amber-300/20 bg-amber-400/10 p-6">
+            <h3 class="font-black text-amber-200">Funzione del libro</h3>
+            <p class="mt-3 text-sm leading-6 text-slate-300">È il filo rosso del progetto: introduce la visione, spiega
+              la mappa e accompagna il lettore dalla salute personale agli eventi, dai percorsi educativi alla
+              costruzione del proprio mondo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- POSTURA E FISIOLOGIA -->
+    <section id="postura-fisiologia" class="px-5 py-20">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_0.9fr]">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-300">Percorso educativo</p>
+          <h2 class="mt-4 text-4xl font-black tracking-tight md:text-5xl">Accademia Postura e Fisiologia</h2>
+          <p class="mt-6 text-lg leading-8 text-slate-300">
+            Un percorso educativo a step per conoscere i sistemi del corpo e riattivarli attraverso i principi delle
+            metodiche posturali.
+          </p>
+          <p class="mt-6 text-lg leading-8 text-slate-300">
+            Non è una semplice ginnastica: è una mappa pratica per comprendere articolazioni, movimento, sistema
+            nervoso, respirazione, percezione, comportamento corporeo, ritmo biologico e coscienza corporea.
+          </p>
+
+          <div class="mt-10 grid gap-5">
+            <article class="rounded-3xl border border-sky-300/20 bg-sky-400/10 p-6">
+              <div class="flex items-center gap-3">
+                <span
+                  class="rounded-full bg-sky-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-sky-100">Step
+                  01</span>
+                <h3 class="text-2xl font-black text-sky-100">Igiene Posturale</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-slate-300">
+                Lavoro base su mobilità articolare, rilascio delle tensioni, 3 vie di discesa e riattivazione dei
+                recettori corporei.
+              </p>
+            </article>
+
+            <article class="rounded-3xl border border-sky-300/20 bg-sky-400/10 p-6">
+              <div class="flex items-center gap-3">
+                <span
+                  class="rounded-full bg-sky-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-sky-100">Step
+                  02</span>
+                <h3 class="text-2xl font-black text-sky-100">Principi di fisioterapia</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-slate-300">
+                La fisioterapia e le metodiche posturali non lavorano solo sul sistema muscolo scheletrico. Esistono
+                altri sistemi che dobbiamo conoscere, ascoltare e aiutare.
+              </p>
+            </article>
+
+            <article class="rounded-3xl border border-violet-300/20 bg-violet-400/10 p-6">
+              <div class="flex items-center gap-3">
+                <span
+                  class="rounded-full bg-violet-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-violet-100">Step
+                  03</span>
+                <h3 class="text-2xl font-black text-violet-100">Introduzione alla Biomeccanica Comportamentale</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-slate-300">
+                La forma delle ossa rivela i nostri modi di essere e di agire. Scopri come le 5 catene muscolari sono
+                legate ai 5 movimenti primari.
+              </p>
+            </article>
+
+            <article class="rounded-3xl border border-emerald-300/20 bg-emerald-400/10 p-6">
+              <div class="flex items-center gap-3">
+                <span
+                  class="rounded-full bg-emerald-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-emerald-100">Step
+                  04</span>
+                <h3 class="text-2xl font-black text-emerald-100">Principi di osteopatia</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-slate-300">
+                L’osteopatia ci mostra altri sistemi che possono influenzare la nostra salute. Impara a percepirli,
+                ascoltarli e liberarli.
+              </p>
+            </article>
+
+            <article class="rounded-3xl border border-amber-300/20 bg-amber-400/10 p-6">
+              <div class="flex items-center gap-3">
+                <span
+                  class="rounded-full bg-amber-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-100">Step
+                  05</span>
+                <h3 class="text-2xl font-black text-amber-100">Kinesiologia applicata</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-slate-300">
+                Una sequenza introduttiva ispirata ai principi della kinesiologia applicata per comprendere risposta,
+                compenso e relazione tra sistemi corporei.
+              </p>
+            </article>
+
+            <article class="rounded-3xl border border-rose-300/20 bg-rose-400/10 p-6">
+              <div class="flex items-center gap-3">
+                <span
+                  class="rounded-full bg-rose-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-rose-100">Step
+                  06</span>
+                <h3 class="text-2xl font-black text-rose-100">Bioritmi circadiani e Corpo e Coscienza</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-slate-300">
+                Introduzione a Corpo e Coscienza di Georges Courchinoux. Vivere la coscienza corporea e imparare a
+                osservare il corpo come un territorio da esplorare.
+              </p>
+              <p class="mt-4 text-sm leading-7 text-slate-400">
+                Georges, come una guida di montagna, ci accompagna sui sentieri del corpo ed è stato in grado di far
+                comunicare tra loro oriente e occidente.
+              </p>
+            </article>
+
+            <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+              <div class="flex items-center gap-3">
+                <span
+                  class="rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-white">Step
+                  07</span>
+                <h3 class="text-2xl font-black text-white">Altre metodiche posturali</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-slate-300">
+                Esplorazione e integrazione di altre metodiche, approcci corporei e strumenti educativi per continuare
+                il percorso.
+              </p>
+            </article>
+          </div>
+
+          <div class="mt-12 rounded-[2rem] border border-white/10 bg-white/5 p-8">
+            <h3 class="text-3xl font-black text-white">Percorsi e ruoli</h3>
+
+            <div class="mt-8 grid gap-5 md:grid-cols-3">
+              <div class="rounded-3xl bg-slate-950/40 p-5">
+                <h4 class="text-xl font-black text-sky-100">In autonomia</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Segui il percorso attraverso schede, video, esercizi e
+                  pratiche personali.</p>
+              </div>
+
+              <div class="rounded-3xl bg-slate-950/40 p-5">
+                <h4 class="text-xl font-black text-emerald-100">In gruppo</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Lezioni e pratiche condivise con altre persone guidate
+                  da un insegnante.</p>
+              </div>
+
+              <div class="rounded-3xl bg-slate-950/40 p-5">
+                <h4 class="text-xl font-black text-amber-100">Individuale</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Percorso personalizzato con professionista o insegnante
+                  dedicato.</p>
+              </div>
+            </div>
+
+            <div class="mt-10 grid gap-5 lg:grid-cols-3">
+              <article class="rounded-3xl border border-sky-300/20 bg-sky-400/10 p-6">
+                <h4 class="text-xl font-black text-sky-100">Blu — Educatore</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Diventa insegnante dell’Accademia Postura e Fisiologia
+                  e accompagna le persone nella conoscenza del corpo e dei sistemi fisiologici.</p>
+              </article>
+
+              <article class="rounded-3xl border border-emerald-300/20 bg-emerald-400/10 p-6">
+                <h4 class="text-xl font-black text-emerald-100">Verde — Professionista del benessere</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Integra pratiche di benessere, movimento, recupero e
+                  stile di vita nei percorsi della salute.</p>
+              </article>
+
+              <article class="rounded-3xl border border-red-300/20 bg-red-400/10 p-6">
+                <h4 class="text-xl font-black text-red-100">Rosso — Professionista sanitario</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-300">Lavora nella fase terapeutica e patologica integrando
+                  valutazione, trattamento e recupero.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-[2rem] border border-sky-300/20 bg-sky-400/10 p-6">
+          <h3 class="text-2xl font-black text-sky-100">Modalità</h3>
+          <div class="mt-6 grid gap-4">
+            <div class="rounded-2xl bg-slate-950/50 p-5">
+              <h4 class="font-black">In autonomia</h4>
+              <p class="mt-2 text-sm text-slate-300">Materiali, schede e indicazioni per iniziare da solo.</p>
+            </div>
+            <div class="rounded-2xl bg-slate-950/50 p-5">
+              <h4 class="font-black">In gruppo</h4>
+              <p class="mt-2 text-sm text-slate-300">Lezioni guidate con altre persone.</p>
+            </div>
+            <div class="rounded-2xl bg-slate-950/50 p-5">
+              <h4 class="font-black">Individuale</h4>
+              <p class="mt-2 text-sm text-slate-300">Percorso adattato alle tue esigenze con un professionista.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRENOTA -->
+    <section id="prenota" class="bg-white px-5 py-20 text-slate-950">
+      <div class="mx-auto max-w-4xl text-center">
+        <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-600">Prenota / contatti</p>
+        <h2 class="mt-4 text-4xl font-black tracking-tight md:text-5xl">Da dove vuoi iniziare?</h2>
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+          Puoi partire da una consulenza, da un evento, da Postura e Fisiologia o da una mappa più ampia del tuo
+          progetto personale/professionale.
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-4">
+          <a href="mailto:markpostura@gmail.com"
+            class="rounded-full bg-slate-950 px-7 py-4 font-black text-white hover:bg-slate-800">Scrivimi</a>
+          <a href="#servizi"
+            class="rounded-full border border-slate-300 px-7 py-4 font-black text-slate-950 hover:bg-slate-100">Rivedi i
+            servizi</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 bg-slate-950 px-5 py-10">
+    <div
+      class="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+      <p>© Mark Postura — PosturaCorretta, Flowpulse, Il Giardino del Corpo</p>
+      <p>Riaccordarsi con corpo, ritmo, luogo e relazioni.</p>
+    </div>
+  </footer>
+</body>
+
+</html>
