@@ -3,10 +3,10 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
     static targets = [
-        "categoryDropdown", "brandDropdown",
-        "categoryList", "brandList",
-        "currentCategory", "currentBrand",
-        "categoryArrow", "brandArrow"
+        "categoryDropdown", "brandDropdown", "proDropdown",
+        "categoryList", "brandList", "proList",
+        "currentCategory", "currentBrand", "currentPro",
+        "categoryArrow", "brandArrow", "proArrow"
     ]
 
     connect() {
@@ -31,10 +31,9 @@ export default class extends Controller {
         const wasHidden = dropdown.classList.contains('hidden')
 
         this.closeAll()
-        dropdown.classList.toggle('hidden')
 
-        // Ruota la freccia solo se ora è aperto
-        if (!wasHidden) {
+        if (wasHidden) {
+            dropdown.classList.remove('hidden')
             arrow.classList.add('rotate-180')
         }
     }
@@ -58,6 +57,8 @@ export default class extends Controller {
             this.currentCategoryTarget.textContent = value
         } else if (type === 'brand' && this.hasCurrentBrandTarget) {
             this.currentBrandTarget.textContent = value
+        } else if (type === 'pro' && this.hasCurrentProTarget) {
+            this.currentProTarget.textContent = value
         }
 
         this.closeAll()
@@ -69,6 +70,7 @@ export default class extends Controller {
     reset() {
         if (this.hasCurrentCategoryTarget) this.currentCategoryTarget.textContent = 'Tutte'
         if (this.hasCurrentBrandTarget) this.currentBrandTarget.textContent = 'Tutti'
+        if (this.hasCurrentProTarget) this.currentProTarget.textContent = 'Tutti'
 
         // Se hai ancora la funzione globale showSubTab, puoi chiamarla qui:
         // if (typeof showSubTab === 'function') showSubTab('all')
@@ -77,7 +79,9 @@ export default class extends Controller {
     closeAll() {
         if (this.hasCategoryDropdownTarget) this.categoryDropdownTarget.classList.add('hidden')
         if (this.hasBrandDropdownTarget) this.brandDropdownTarget.classList.add('hidden')
+        if (this.hasProDropdownTarget) this.proDropdownTarget.classList.add('hidden')
         if (this.hasCategoryArrowTarget) this.categoryArrowTarget.classList.remove('rotate-180')
         if (this.hasBrandArrowTarget) this.brandArrowTarget.classList.remove('rotate-180')
+        if (this.hasProArrowTarget) this.proArrowTarget.classList.remove('rotate-180')
     }
 }
