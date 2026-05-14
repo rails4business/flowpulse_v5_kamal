@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Builder — Mark Postura</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    textarea, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  </style>
+</head>
+
+<body class="bg-white text-slate-900">
+
+ 
+
+  <!-- EVENT BUILDER -->
+  <section id="event-builder" class="bg-slate-50 px-5 py-20">
+    <div class="mx-auto max-w-5xl">
+
+      <div class="mb-10 max-w-4xl">
+        <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-700">Event Builder</p>
+        <h2 class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+          Crea un evento a step.
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-slate-600">
+          Compila un form alla volta. Gli slot vengono aggiunti dinamicamente allo stepper:
+          Info → Responsabile → Slot 1 → Slot 2 → Riepilogo JSON.
+        </p>
+      </div>
+
+      <!-- STEPPER DINAMICO -->
+      <div class="mb-8 rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+        <div id="stepper-buttons" class="grid gap-3 md:grid-cols-4"></div>
+      </div>
+
+      <form id="event-form" class="grid gap-8">
+
+        <!-- STEP INFO -->
+        <section id="panel-info" class="step-panel rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="border-b border-slate-200 pb-5">
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Step 1</p>
+            <h3 class="mt-1 text-2xl font-black text-slate-950">Nome evento e informazioni</h3>
+          </div>
+
+          <div class="mt-6 grid gap-5 md:grid-cols-2">
+            <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+              Nome evento
+              <input name="event_name" type="text" placeholder="Es. PosturaCorretta in cammino" class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Data evento
+              <input name="event_date" type="date" class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Luogo
+              <input name="event_location" type="text" placeholder="Es. Brescia, parco, sala, agriturismo..." class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+              Descrizione evento
+              <textarea name="event_description" rows="4" placeholder="Descrivi il senso dell’evento, a chi è rivolto e cosa si farà..." class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"></textarea>
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Link pagina evento
+              <input name="event_url" type="url" placeholder="https://..." class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Stato
+              <select name="event_status" class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100">
+                <option value="draft">Bozza</option>
+                <option value="planned">In programma</option>
+                <option value="published">Pubblicato</option>
+                <option value="completed">Concluso</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <!-- STEP RESPONSABILE -->
+        <section id="panel-manager" class="step-panel hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="border-b border-slate-200 pb-5">
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Step 2</p>
+            <h3 class="mt-1 text-2xl font-black text-slate-950">Responsabile generale</h3>
+          </div>
+
+          <div class="mt-6 grid gap-5 md:grid-cols-2">
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Nome responsabile
+              <input name="manager_name" type="text" placeholder="Es. Mark Postura" class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Ruolo
+              <input name="manager_role" type="text" placeholder="Es. organizzatore, guida, tutor..." class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Email / contatto
+              <input name="manager_contact" type="text" placeholder="email, telefono o profilo" class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-slate-700">
+              Link profilo
+              <input name="manager_profile_url" type="url" placeholder="https://..." class="form-field rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+            </label>
+          </div>
+        </section>
+
+        <!-- QUI VENGONO INSERITI I PANEL SLOT -->
+        <div id="slot-panels" class="grid gap-8"></div>
+
+        <!-- STEP RIEPILOGO -->
+        <section id="panel-summary" class="step-panel hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Ultimo step</p>
+              <h3 class="mt-1 text-2xl font-black text-slate-950">Riepilogo JSON</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-500">
+                Quando l’evento è completo, copia il JSON generato.
+              </p>
+            </div>
+
+            <button id="copy-json-btn" type="button" class="rounded-full bg-sky-600 px-5 py-3 text-sm font-black text-white hover:bg-sky-700">
+              Copia JSON
+            </button>
+          </div>
+
+          <textarea id="json-output" rows="24" readonly class="mt-6 w-full rounded-3xl border border-slate-200 bg-slate-950 p-5 text-xs leading-6 text-slate-100 outline-none"></textarea>
+        </section>
+
+        <!-- NAV -->
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <button id="prev-step" type="button" class="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-black text-slate-700 hover:bg-slate-100">
+            Indietro
+          </button>
+
+          <div class="flex flex-wrap gap-3">
+            <button id="add-slot-btn" type="button" class="rounded-full border border-emerald-200 bg-emerald-50 px-6 py-3 text-sm font-black text-emerald-700 hover:bg-emerald-100">
+              + Aggiungi slot
+            </button>
+
+            <button id="save-draft" type="button" class="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-black text-slate-700 hover:bg-slate-100">
+              Salva bozza
+            </button>
+
+            <button id="next-step" type="button" class="rounded-full bg-emerald-700 px-6 py-3 text-sm font-black text-white hover:bg-emerald-800">
+              Avanti
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </section>
+
+  <!-- SLOT TEMPLATE -->
+  <template id="slot-template">
+    <section class="slot-panel step-panel hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="slot-kicker text-xs font-black uppercase tracking-[0.2em] text-slate-400">Slot</p>
+          <h3 class="slot-heading mt-1 text-2xl font-black text-slate-950">Slot programma</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-500">
+            Ogni slot è una fase dell’evento e contiene già risorse, schede e link operativi.
+          </p>
+        </div>
+
+        <button type="button" class="remove-slot rounded-full border border-red-200 bg-red-50 px-4 py-2 text-xs font-black text-red-700 hover:bg-red-100">
+          Rimuovi slot
+        </button>
+      </div>
+
+      <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <label class="grid gap-2 text-sm font-bold text-slate-700">
+          Data
+          <input type="date" data-slot-field="date" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700">
+          Ora inizio
+          <input type="time" data-slot-field="start_time" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700">
+          Ora fine
+          <input type="time" data-slot-field="end_time" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700">
+          Area / Attività
+          <select data-slot-field="area" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100">
+            <option value="movimento_allenamento">Movimento e allenamento</option>
+            <option value="recupero_autotrattamento">Recupero e autotrattamento</option>
+            <option value="meditazione_ascolto">Meditazione e ascolto</option>
+            <option value="cibo_nutrimento">Cibo e nutrimento</option>
+            <option value="fisiologia_piante_cicli">Fisiologia, piante e cicli naturali</option>
+            <option value="attivita_armonica">Attività armonica facoltativa</option>
+            <option value="custom">Nome attività libera</option>
+          </select>
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Titolo slot
+          <input type="text" data-slot-field="title" placeholder="Es. Ginnastica dolce" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Persona responsabile / guida
+          <input type="text" data-slot-field="leader" placeholder="Es. Mark Postura" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Metodica utilizzata
+          <input type="text" data-slot-field="method" placeholder="Es. Igiene Posturale, Corpo e Coscienza, Metodo GDS..." class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Nome attività libera
+          <input type="text" data-slot-field="custom_activity" placeholder="Da usare se scegli Nome attività libera" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Link scheda seguita
+          <input type="url" data-slot-field="sheet_url" placeholder="https://..." class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Link descrizione esperienza
+          <input type="url" data-slot-field="experience_url" placeholder="https://..." class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Link materiali / risorse
+          <input type="url" data-slot-field="resource_url" placeholder="PDF, video, audio, pagina, materiali..." class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2">
+          Card ID / Scheda ID
+          <input type="text" data-slot-field="card_id" placeholder="Es. card_igiene_posturale_01" class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" />
+        </label>
+
+        <label class="grid gap-2 text-sm font-bold text-slate-700 md:col-span-2 lg:col-span-4">
+          Note slot
+          <textarea data-slot-field="notes" rows="3" placeholder="Materiali, indicazioni, varianti, cose da preparare..." class="slot-field rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"></textarea>
+        </label>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    const form = document.getElementById("event-form");
+    const stepperButtons = document.getElementById("stepper-buttons");
+    const panelInfo = document.getElementById("panel-info");
+    const panelManager = document.getElementById("panel-manager");
+    const panelSummary = document.getElementById("panel-summary");
+    const slotPanels = document.getElementById("slot-panels");
+    const prevStepBtn = document.getElementById("prev-step");
+    const nextStepBtn = document.getElementById("next-step");
+    const addSlotBtn = document.getElementById("add-slot-btn");
+    const saveDraftBtn = document.getElementById("save-draft");
+    const slotTemplate = document.getElementById("slot-template");
+    const jsonOutput = document.getElementById("json-output");
+    const copyJsonBtn = document.getElementById("copy-json-btn");
+
+    let currentStep = 0;
+    let slotCount = 0;
+    const slots = [];
+
+    function getSteps() {
+      return [
+        { id: "info", label: "Info evento", panel: panelInfo },
+        { id: "manager", label: "Responsabile", panel: panelManager },
+        ...slots.map((slot, index) => ({ id: slot.id, label: `Slot ${index + 1}`, panel: slot.panel })),
+        { id: "summary", label: "Riepilogo", panel: panelSummary }
+      ];
+    }
+
+    function renderStepper() {
+      const steps = getSteps();
+      stepperButtons.innerHTML = "";
+
+      steps.forEach((step, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = index === currentStep
+          ? "rounded-2xl bg-slate-950 px-4 py-4 text-left text-white transition"
+          : "rounded-2xl bg-slate-50 px-4 py-4 text-left text-slate-500 transition hover:bg-slate-100 hover:text-slate-950";
+
+        button.innerHTML = `
+          <span class="block text-xs font-black uppercase tracking-[0.18em]">Step ${index + 1}</span>
+          <span class="mt-1 block font-black">${step.label}</span>
+        `;
+
+        button.addEventListener("click", () => setStep(index));
+        stepperButtons.appendChild(button);
+      });
+    }
+
+    function setStep(step) {
+      const steps = getSteps();
+      currentStep = Math.max(0, Math.min(step, steps.length - 1));
+
+      steps.forEach((stepItem, index) => {
+        stepItem.panel.classList.toggle("hidden", index !== currentStep);
+      });
+
+      renderStepper();
+      updateJson();
+
+      prevStepBtn.classList.toggle("opacity-40", currentStep === 0);
+      prevStepBtn.classList.toggle("cursor-not-allowed", currentStep === 0);
+      nextStepBtn.textContent = currentStep === steps.length - 1 ? "Completato" : "Avanti";
+    }
+
+    function renumberSlots() {
+      slots.forEach((slot, index) => {
+        slot.panel.querySelector(".slot-kicker").textContent = `Step ${index + 3}`;
+        slot.panel.querySelector(".slot-heading").textContent = `Slot programma ${index + 1}`;
+      });
+    }
+
+    function addSlot(goToSlot = true) {
+      slotCount += 1;
+
+      const fragment = slotTemplate.content.cloneNode(true);
+      const panel = fragment.querySelector(".slot-panel");
+      const removeBtn = fragment.querySelector(".remove-slot");
+      const slot = { id: `slot_${slotCount}`, panel };
+
+      panel.dataset.slotId = slot.id;
+
+      removeBtn.addEventListener("click", () => {
+        const slotIndex = slots.findIndex(item => item.id === slot.id);
+        panel.remove();
+        if (slotIndex >= 0) slots.splice(slotIndex, 1);
+        renumberSlots();
+
+        const maxIndex = getSteps().length - 1;
+        if (currentStep > maxIndex) currentStep = maxIndex;
+        setStep(Math.min(currentStep, maxIndex));
+      });
+
+      fragment.querySelectorAll(".slot-field").forEach(field => {
+        field.addEventListener("input", updateJson);
+        field.addEventListener("change", updateJson);
+      });
+
+      slots.push(slot);
+      slotPanels.appendChild(fragment);
+      renumberSlots();
+
+      if (goToSlot) {
+        setStep(1 + slots.length);
+      } else {
+        setStep(currentStep);
+      }
+    }
+
+    function getFieldValue(name) {
+      const field = form.querySelector(`[name="${name}"]`);
+      return field ? field.value.trim() : "";
+    }
+
+    function cleanObject(object) {
+      return Object.fromEntries(
+        Object.entries(object).filter(([_, value]) => {
+          if (Array.isArray(value)) return value.length > 0;
+          if (value && typeof value === "object") return Object.keys(value).length > 0;
+          return value !== "" && value !== null && value !== undefined;
+        })
+      );
+    }
+
+    function collectSlots() {
+      return slots.map((slot, index) => {
+        const data = { id: slot.id, position: index + 1 };
+
+        slot.panel.querySelectorAll(".slot-field").forEach(field => {
+          const key = field.dataset.slotField;
+          const value = field.value.trim();
+          if (value) data[key] = value;
+        });
+
+        return cleanObject(data);
+      });
+    }
+
+    function buildEventJson() {
+      return cleanObject({
+        event: cleanObject({
+          name: getFieldValue("event_name"),
+          date: getFieldValue("event_date"),
+          location: getFieldValue("event_location"),
+          description: getFieldValue("event_description"),
+          url: getFieldValue("event_url"),
+          status: getFieldValue("event_status") || "draft"
+        }),
+        manager: cleanObject({
+          name: getFieldValue("manager_name"),
+          role: getFieldValue("manager_role"),
+          contact: getFieldValue("manager_contact"),
+          profile_url: getFieldValue("manager_profile_url")
+        }),
+        program: {
+          slots: collectSlots()
+        }
+      });
+    }
+
+    function updateJson() {
+      jsonOutput.value = JSON.stringify(buildEventJson(), null, 2);
+    }
+
+    prevStepBtn.addEventListener("click", () => {
+      if (currentStep > 0) setStep(currentStep - 1);
+    });
+
+    nextStepBtn.addEventListener("click", () => {
+      const steps = getSteps();
+      if (currentStep < steps.length - 1) setStep(currentStep + 1);
+    });
+
+    addSlotBtn.addEventListener("click", () => addSlot(true));
+
+    form.querySelectorAll(".form-field").forEach(field => {
+      field.addEventListener("input", updateJson);
+      field.addEventListener("change", updateJson);
+    });
+
+    saveDraftBtn.addEventListener("click", () => {
+      localStorage.setItem("event_builder_draft", JSON.stringify(buildEventJson()));
+      saveDraftBtn.textContent = "Bozza salvata";
+      setTimeout(() => saveDraftBtn.textContent = "Salva bozza", 1200);
+    });
+
+    copyJsonBtn.addEventListener("click", async () => {
+      updateJson();
+      try {
+        await navigator.clipboard.writeText(jsonOutput.value);
+        copyJsonBtn.textContent = "Copiato!";
+        setTimeout(() => copyJsonBtn.textContent = "Copia JSON", 1200);
+      } catch (error) {
+        jsonOutput.select();
+        document.execCommand("copy");
+        copyJsonBtn.textContent = "Copiato!";
+        setTimeout(() => copyJsonBtn.textContent = "Copia JSON", 1200);
+      }
+    });
+
+    addSlot(false);
+    setStep(0);
+  </script>
+
+</body>
+
+</html>

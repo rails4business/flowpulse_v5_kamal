@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YAML → JSON Tree Builder — Mark Postura</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    textarea, code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-white text-slate-900">
+
+  <main class="px-5 py-12">
+    <section class="mx-auto max-w-7xl">
+
+      <div class="mb-8 max-w-4xl">
+        <p class="text-xs font-black uppercase tracking-[0.24em] text-sky-700">YAML → JSON Tree Builder</p>
+        <h1 class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+          Scrivi l’albero in YAML, copia il JSON
+        </h1>
+        <p class="mt-5 text-base leading-7 text-slate-500">
+          Il YAML è più leggibile per costruire percorsi annidati. Quando hai finito, converti e incolla il JSON nello stepper.
+        </p>
+      </div>
+
+      <!-- ISTRUZIONI -->
+      <section class="mb-8 rounded-[2rem] border border-slate-200 bg-slate-50 p-6">
+        <h2 class="text-xl font-black text-slate-950">Struttura consigliata</h2>
+
+        <div class="mt-4 grid gap-4 text-sm leading-6 text-slate-600 md:grid-cols-3">
+          <div class="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+            <p class="font-black text-slate-950">Nodo normale</p>
+            <p class="mt-2">Usa <code>id</code>, <code>title</code>, <code>description</code>, <code>question</code>, <code>color</code> e <code>children</code>.</p>
+          </div>
+
+          <div class="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+            <p class="font-black text-slate-950">Nodo finale</p>
+            <p class="mt-2">Quando non ha <code>children</code>, può avere <code>service_id</code>, <code>href</code> e <code>cta_label</code>.</p>
+          </div>
+
+          <div class="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+            <p class="font-black text-slate-950">Icone e colori</p>
+            <p class="mt-2">Puoi usare <code>icon_url</code> e colori Tailwind: sky, red, emerald, amber, violet, blue, orange...</p>
+          </div>
+        </div>
+
+        <details class="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
+          <summary class="cursor-pointer text-sm font-black uppercase tracking-[0.18em] text-slate-500">Campi disponibili</summary>
+          <div class="mt-4 grid gap-2 text-sm text-slate-600 md:grid-cols-2">
+            <p><code>id</code> — slug tecnico, es. <code>salute</code></p>
+            <p><code>title</code> — titolo visibile</p>
+            <p><code>description</code> — testo breve</p>
+            <p><code>question</code> — domanda dello step attivo</p>
+            <p><code>color</code> — colore UI</p>
+            <p><code>icon_url</code> — URL icona/logo quadrato</p>
+            <p><code>type</code> — service, course, experience, event...</p>
+            <p><code>brand</code> — PosturaCorretta, Flowpulse...</p>
+            <p><code>service_id</code> — ID finale del servizio</p>
+            <p><code>href</code> — link finale</p>
+            <p><code>cta_label</code> — testo del bottone</p>
+            <p><code>children</code> — figli del nodo</p>
+          </div>
+        </details>
+      </section>
+
+      <div class="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+
+        <!-- YAML EDITOR -->
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Input</p>
+              <h2 class="mt-1 text-2xl font-black text-slate-950">YAML</h2>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button id="load-example-btn" class="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-100">
+                Esempio
+              </button>
+              <button id="add-service-btn" class="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-700 hover:bg-emerald-100">
+                + Servizio finale
+              </button>
+              <button id="convert-btn" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-black text-white hover:bg-slate-800">
+                Converti
+              </button>
+            </div>
+          </div>
+
+          <textarea id="yaml-input" rows="30" class="mt-6 w-full rounded-3xl border border-slate-200 bg-slate-950 p-5 text-sm leading-6 text-slate-100 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100" spellcheck="false"></textarea>
+
+          <div id="error-box" class="mt-4 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold leading-6 text-red-700"></div>
+        </section>
+
+        <!-- OUTPUT -->
+        <aside class="grid gap-6">
+
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Anteprima</p>
+                <h2 class="mt-1 text-2xl font-black text-slate-950">Albero</h2>
+              </div>
+              <p id="node-count" class="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-500">0 nodi</p>
+            </div>
+
+            <div id="tree-preview" class="mt-5 max-h-[360px] overflow-auto rounded-3xl bg-slate-50 p-4 text-sm"></div>
+          </section>
+
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Output</p>
+                <h2 class="mt-1 text-2xl font-black text-slate-950">JSON pronto</h2>
+              </div>
+              <button id="copy-json-btn" class="rounded-full bg-sky-600 px-4 py-2 text-sm font-black text-white hover:bg-sky-700">
+                Copia JSON
+              </button>
+            </div>
+
+            <textarea id="json-output" rows="20" readonly class="mt-5 w-full rounded-3xl border border-slate-200 bg-slate-950 p-5 text-xs leading-6 text-slate-100 outline-none"></textarea>
+          </section>
+
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const exampleYaml = `id: root
+title: Di cosa hai bisogno?
+description: Scegli un’area e segui le domande. Alla fine troverai il percorso o servizio più adatto.
+question: Di cosa hai bisogno?
+color: slate
+children:
+  - id: salute
+    title: Salute
+    color: sky
+    icon_url: ""
+    description: Dolore, prevenzione, fisiologia e benessere integrato.
+    question: Che bisogno hai sulla salute?
+    children:
+      - id: dolore
+        title: Ho dolore o un problema
+        color: red
+        icon_url: ""
+        description: Vuoi capire il problema o gestire la fase acuta.
+        question: Da dove vuoi partire?
+        children:
+          - id: stop_al_dolore
+            title: Stop al Dolore
+            color: red
+            icon_url: ""
+            type: service
+            brand: PosturaCorretta
+            service_id: stop_al_dolore
+            description: Percorso per leggere il dolore e capire quale direzione prendere.
+            href: "#servizi"
+            cta_label: Scopri Stop al Dolore
+          - id: percorso_terapeutico
+            title: Percorso terapeutico
+            color: red
+            icon_url: ""
+            type: service
+            brand: PosturaCorretta
+            service_id: percorso_terapeutico
+            description: Percorso con professionisti, valutazioni, trattamenti, esercizi e routine.
+            href: "../viste_html/6_weekplan.html"
+            cta_label: Prenota una valutazione
+      - id: prevenzione
+        title: Voglio stare meglio e prevenire
+        color: emerald
+        icon_url: ""
+        description: Vuoi costruire routine e linee guida per la salute quotidiana.
+        question: Che tipo di percorso senti più vicino?
+        children:
+          - id: benessere_integrato
+            title: Benessere Integrato
+            color: emerald
+            icon_url: ""
+            type: service
+            brand: PosturaCorretta
+            service_id: benessere_integrato
+            description: Costruisci il tuo percorso della salute lavorando sulle aree fondamentali della vita quotidiana.
+            href: "#servizi"
+            cta_label: Scopri Benessere Integrato
+          - id: postura_fisiologia
+            title: Postura e Fisiologia
+            color: sky
+            icon_url: ""
+            type: course
+            brand: Accademia PosturaCorretta
+            service_id: postura_fisiologia
+            description: Percorso educativo per conoscere e riattivare i sistemi fisiologici.
+            href: "#accademia-postura-fisiologia"
+            cta_label: Entra nell'Accademia
+  - id: lavoro
+    title: Lavoro
+    color: amber
+    icon_url: ""
+    description: Progetti, organizzazione, impresa e strumenti digitali.
+    question: Cosa vuoi costruire nel lavoro?
+    children:
+      - id: progetto
+        title: Voglio creare un progetto
+        color: amber
+        icon_url: ""
+        description: Vuoi trasformare idee, competenze o passioni in qualcosa di concreto.
+        question: Ti serve più visione o più strumento?
+        children:
+          - id: genera_impresa
+            title: Genera Impresa
+            color: amber
+            icon_url: ""
+            type: experience
+            brand: Il Giardino del Corpo
+            service_id: genera_impresa
+            description: Pensare idee, progetti e possibilità concrete.
+            href: "#eventi"
+            cta_label: Inizia a progettare
+  - id: stile_vita
+    title: Stile di vita e apprendimento
+    color: red
+    icon_url: ""
+    description: Esperienze, abitudini, creatività, corpo e ambiente.
+    question: Che esperienza vuoi coltivare?
+    children: []
+`;
+
+    const serviceSnippet = `
+          - id: nuovo_servizio
+            title: Nuovo servizio
+            color: sky
+            icon_url: ""
+            type: service
+            brand: PosturaCorretta
+            service_id: nuovo_servizio
+            description: Descrizione del servizio finale.
+            href: "#prenota"
+            cta_label: Inizia ora
+`;
+
+    const allowedKeys = [
+      "id", "title", "color", "description", "question", "type", "brand", "icon_url", "service_id", "href", "cta_label", "children"
+    ];
+
+    const colorDot = {
+      slate: "bg-slate-400",
+      sky: "bg-sky-400",
+      blue: "bg-blue-400",
+      cyan: "bg-cyan-400",
+      teal: "bg-teal-400",
+      emerald: "bg-emerald-400",
+      green: "bg-green-400",
+      lime: "bg-lime-400",
+      amber: "bg-amber-400",
+      yellow: "bg-yellow-400",
+      orange: "bg-orange-400",
+      red: "bg-red-400",
+      rose: "bg-rose-400",
+      pink: "bg-pink-400",
+      fuchsia: "bg-fuchsia-400",
+      purple: "bg-purple-400",
+      violet: "bg-violet-400",
+      indigo: "bg-indigo-400",
+      stone: "bg-stone-400",
+      zinc: "bg-zinc-400"
+    };
+
+    const els = {
+      yaml: document.getElementById("yaml-input"),
+      output: document.getElementById("json-output"),
+      preview: document.getElementById("tree-preview"),
+      error: document.getElementById("error-box"),
+      count: document.getElementById("node-count"),
+      loadExample: document.getElementById("load-example-btn"),
+      addService: document.getElementById("add-service-btn"),
+      convert: document.getElementById("convert-btn"),
+      copy: document.getElementById("copy-json-btn")
+    };
+
+    function cleanNode(node) {
+      if (!node || typeof node !== "object") return node;
+
+      const cleaned = {};
+
+      allowedKeys.forEach(key => {
+        if (node[key] === undefined || node[key] === null) return;
+        if (typeof node[key] === "string" && node[key].trim() === "") return;
+
+        if (key === "children") {
+          if (Array.isArray(node.children) && node.children.length) {
+            cleaned.children = node.children.map(cleanNode);
+          }
+        } else {
+          cleaned[key] = node[key];
+        }
+      });
+
+      return cleaned;
+    }
+
+    function countNodes(node) {
+      if (!node || typeof node !== "object") return 0;
+      return 1 + (node.children || []).reduce((sum, child) => sum + countNodes(child), 0);
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderTree(node, depth = 0) {
+      if (!node || typeof node !== "object") return "";
+
+      const color = colorDot[node.color] || colorDot.slate;
+      const children = node.children || [];
+      const isFinal = children.length === 0;
+
+      return `
+        <div class="mb-2" style="margin-left:${depth * 16}px">
+          <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <div class="flex items-start gap-3">
+              <span class="mt-1 h-3 w-3 shrink-0 rounded-full ${color}"></span>
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <p class="font-black text-slate-900">${escapeHtml(node.title || node.id)}</p>
+                  ${isFinal ? `<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700">finale</span>` : ""}
+                  ${node.type ? `<span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">${escapeHtml(node.type)}</span>` : ""}
+                </div>
+                ${node.description ? `<p class="mt-1 text-xs leading-5 text-slate-500">${escapeHtml(node.description)}</p>` : ""}
+                ${node.service_id ? `<p class="mt-1 text-xs text-slate-400">service_id: <code>${escapeHtml(node.service_id)}</code></p>` : ""}
+              </div>
+            </div>
+          </div>
+          ${children.map(child => renderTree(child, depth + 1)).join("")}
+        </div>
+      `;
+    }
+
+    function convertYaml() {
+      try {
+        const parsed = jsyaml.load(els.yaml.value);
+        const cleaned = cleanNode(parsed);
+
+        els.output.value = JSON.stringify(cleaned, null, 2);
+        els.preview.innerHTML = renderTree(cleaned);
+        els.count.textContent = `${countNodes(cleaned)} nodi`;
+        els.error.classList.add("hidden");
+        els.error.textContent = "";
+      } catch (error) {
+        els.error.classList.remove("hidden");
+        els.error.textContent = error.message;
+      }
+    }
+
+    function insertAtCursor(textarea, text) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const before = textarea.value.substring(0, start);
+      const after = textarea.value.substring(end);
+      textarea.value = before + text + after;
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    }
+
+    els.loadExample.addEventListener("click", () => {
+      els.yaml.value = exampleYaml;
+      convertYaml();
+    });
+
+    els.addService.addEventListener("click", () => {
+      insertAtCursor(els.yaml, serviceSnippet);
+      convertYaml();
+    });
+
+    els.convert.addEventListener("click", convertYaml);
+    els.yaml.addEventListener("input", convertYaml);
+
+    els.copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(els.output.value);
+        els.copy.textContent = "Copiato!";
+        setTimeout(() => els.copy.textContent = "Copia JSON", 1200);
+      } catch (error) {
+        els.output.select();
+        document.execCommand("copy");
+        els.copy.textContent = "Copiato!";
+        setTimeout(() => els.copy.textContent = "Copia JSON", 1200);
+      }
+    });
+
+    els.yaml.value = exampleYaml;
+    convertYaml();
+  </script>
+
+</body>
+
+</html>

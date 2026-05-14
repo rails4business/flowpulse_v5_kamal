@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stepper semplice — Mark Postura</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  </style>
+</head>
+
+<body class="bg-white text-slate-900">
+
+  <section id="percorso-guidato" class="border-b border-slate-200 bg-white px-5 py-20">
+    <div class="mx-auto max-w-4xl">
+
+      <div class="text-center">
+        <p class="text-xs font-black uppercase tracking-[0.24em] text-sky-700">
+          Percorso guidato
+        </p>
+
+        <h2 id="current-title" class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+          Di cosa hai bisogno?
+        </h2>
+
+        <p id="current-description" class="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-500">
+          Scegli un’area e segui le domande. Alla fine troverai il percorso o servizio più adatto.
+        </p>
+      </div>
+
+      <!-- Barra stile Google -->
+      <div class="mx-auto mt-10 max-w-2xl">
+        <div class="flex items-center gap-3 rounded-full border border-slate-300 bg-white px-5 py-3 shadow-sm focus-within:border-sky-400 focus-within:ring-4 focus-within:ring-sky-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+          </svg>
+
+          <input id="search-input" type="text" placeholder="Cerca: dolore, lavoro, abitudini..." class="w-full border-none bg-transparent text-base text-slate-800 outline-none placeholder:text-slate-400" />
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav class="mx-auto mt-6 max-w-2xl overflow-x-auto" aria-label="Breadcrumb">
+        <ol id="breadcrumb" class="flex min-h-8 items-center justify-center gap-2 whitespace-nowrap text-sm text-slate-400"></ol>
+      </nav>
+
+      <!-- Opzioni -->
+      <div id="options" class="mx-auto mt-8 grid max-w-2xl gap-3"></div>
+
+      <!-- Risultato finale -->
+      <div id="result" class="mx-auto mt-8 hidden max-w-2xl"></div>
+
+      <!-- Params preview -->
+      <div class="mt-8 text-center">
+        <p id="params-preview" class="inline-flex rounded-full bg-slate-100 px-4 py-2 text-xs font-bold text-slate-500">
+          nessun params
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    const tree = {
+      id: "root",
+      title: "Di cosa hai bisogno?",
+      description: "Scegli un’area e segui le domande. Alla fine troverai il percorso o servizio più adatto.",
+      question: "Di cosa hai bisogno?",
+      color: "slate",
+      children: [
+        {
+          id: "salute",
+          title: "Salute",
+          color: "sky",
+          icon_url: "",
+          description: "Dolore, prevenzione, fisiologia e benessere integrato.",
+          question: "Che bisogno hai sulla salute?",
+          children: [
+            {
+              id: "dolore",
+              title: "Ho dolore o un problema",
+              color: "red",
+              icon_url: "",
+              description: "Vuoi capire il problema o gestire la fase acuta.",
+              question: "Da dove vuoi partire?",
+              children: [
+                {
+                  id: "stop_al_dolore",
+                  title: "Stop al Dolore",
+                  color: "red",
+                  icon_url: "",
+                  type: "service",
+                  brand: "PosturaCorretta",
+                  service_id: "stop_al_dolore",
+                  description: "Percorso per leggere il dolore e capire quale direzione prendere.",
+                  href: "#servizi",
+                  cta_label: "Scopri Stop al Dolore"
+                },
+                {
+                  id: "percorso_terapeutico",
+                  title: "Percorso terapeutico",
+                  color: "red",
+                  icon_url: "",
+                  type: "service",
+                  brand: "PosturaCorretta",
+                  service_id: "percorso_terapeutico",
+                  description: "Percorso con professionisti, valutazioni, trattamenti, esercizi e routine.",
+                  href: "../viste_html/6_weekplan.html",
+                  cta_label: "Prenota una valutazione"
+                }
+              ]
+            },
+            {
+              id: "prevenzione",
+              title: "Voglio stare meglio e prevenire",
+              color: "emerald",
+              icon_url: "",
+              description: "Vuoi costruire routine e linee guida per la salute quotidiana.",
+              question: "Che tipo di percorso senti più vicino?",
+              children: [
+                {
+                  id: "benessere_integrato",
+                  title: "Benessere Integrato",
+                  color: "emerald",
+                  icon_url: "",
+                  type: "service",
+                  brand: "PosturaCorretta",
+                  service_id: "benessere_integrato",
+                  description: "Costruisci il tuo percorso della salute lavorando sulle aree fondamentali della vita quotidiana.",
+                  href: "#servizi",
+                  cta_label: "Scopri Benessere Integrato"
+                },
+                {
+                  id: "postura_fisiologia",
+                  title: "Postura e Fisiologia",
+                  color: "sky",
+                  icon_url: "",
+                  type: "course",
+                  brand: "Accademia PosturaCorretta",
+                  service_id: "postura_fisiologia",
+                  description: "Percorso educativo per conoscere e riattivare i sistemi fisiologici.",
+                  href: "#accademia-postura-fisiologia",
+                  cta_label: "Entra nell'Accademia"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: "lavoro",
+          title: "Lavoro",
+          color: "amber",
+          icon_url: "",
+          description: "Progetti, organizzazione, impresa e strumenti digitali.",
+          question: "Cosa vuoi costruire nel lavoro?",
+          children: [
+            {
+              id: "progetto",
+              title: "Voglio creare un progetto",
+              color: "amber",
+              icon_url: "",
+              description: "Vuoi trasformare idee, competenze o passioni in qualcosa di concreto.",
+              question: "Ti serve più visione o più strumento?",
+              children: [
+                {
+                  id: "genera_impresa",
+                  title: "Genera Impresa",
+                  color: "amber",
+                  icon_url: "",
+                  type: "experience",
+                  brand: "Il Giardino del Corpo",
+                  service_id: "genera_impresa",
+                  description: "Pensare idee, progetti e possibilità concrete.",
+                  href: "#eventi",
+                  cta_label: "Inizia a progettare"
+                },
+                {
+                  id: "rails4business",
+                  title: "Rails4Business",
+                  color: "amber",
+                  icon_url: "",
+                  type: "service",
+                  brand: "Flowpulse",
+                  service_id: "rails4business",
+                  description: "Programmare e organizzare attività con AI, Ruby on Rails e strumenti digitali.",
+                  href: "#flowpulse",
+                  cta_label: "Scopri Rails4Business"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: "stile_vita",
+          title: "Stile di vita e apprendimento",
+          color: "red",
+          icon_url: "",
+          description: "Esperienze, abitudini, creatività, corpo e ambiente.",
+          question: "Che esperienza vuoi coltivare?",
+          children: [
+            {
+              id: "esperienze_armoniche",
+              title: "Voglio vivere esperienze più armoniche",
+              color: "red",
+              icon_url: "",
+              description: "Vuoi ricordare risorse e capacità rimaste in secondo piano.",
+              question: "Da quale porta vuoi entrare?",
+              children: [
+                {
+                  id: "inside_adventure",
+                  title: "Inside Adventure",
+                  color: "violet",
+                  icon_url: "",
+                  type: "experience",
+                  brand: "Il Giardino del Corpo",
+                  service_id: "inside_adventure",
+                  description: "Un viaggio per comprendere processi cognitivi, mentali ed emotivi.",
+                  href: "#eventi",
+                  cta_label: "Esplora Inside Adventure"
+                },
+                {
+                  id: "canta_che_ti_passa",
+                  title: "Canta che ti passa",
+                  color: "emerald",
+                  icon_url: "",
+                  type: "experience",
+                  brand: "Il Giardino del Corpo",
+                  service_id: "canta_che_ti_passa",
+                  description: "Musica e gioco come strumenti per ritrovare armonia e leggerezza.",
+                  href: "#eventi",
+                  cta_label: "Partecipa a un evento"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    const colorClasses = {
+      slate: {
+        card: "border-slate-200 bg-white hover:border-slate-400 hover:bg-slate-50",
+        soft: "bg-slate-50 border-slate-200",
+        title: "text-slate-950",
+        text: "text-slate-600",
+        badge: "bg-slate-100 text-slate-700",
+        icon: "bg-slate-100 text-slate-600 border-slate-200",
+        button: "bg-slate-950 text-white hover:bg-slate-800"
+      },
+      sky: {
+        card: "border-sky-200 bg-sky-50 hover:border-sky-400 hover:bg-sky-100",
+        soft: "bg-sky-50 border-sky-200",
+        title: "text-sky-900",
+        text: "text-sky-700",
+        badge: "bg-sky-100 text-sky-800",
+        icon: "bg-sky-100 text-sky-700 border-sky-200",
+        button: "bg-sky-700 text-white hover:bg-sky-800"
+      },
+      blue: {
+        card: "border-blue-200 bg-blue-50 hover:border-blue-400 hover:bg-blue-100",
+        soft: "bg-blue-50 border-blue-200",
+        title: "text-blue-900",
+        text: "text-blue-700",
+        badge: "bg-blue-100 text-blue-800",
+        icon: "bg-blue-100 text-blue-700 border-blue-200",
+        button: "bg-blue-700 text-white hover:bg-blue-800"
+      },
+      cyan: {
+        card: "border-cyan-200 bg-cyan-50 hover:border-cyan-400 hover:bg-cyan-100",
+        soft: "bg-cyan-50 border-cyan-200",
+        title: "text-cyan-900",
+        text: "text-cyan-700",
+        badge: "bg-cyan-100 text-cyan-800",
+        icon: "bg-cyan-100 text-cyan-700 border-cyan-200",
+        button: "bg-cyan-700 text-white hover:bg-cyan-800"
+      },
+      teal: {
+        card: "border-teal-200 bg-teal-50 hover:border-teal-400 hover:bg-teal-100",
+        soft: "bg-teal-50 border-teal-200",
+        title: "text-teal-900",
+        text: "text-teal-700",
+        badge: "bg-teal-100 text-teal-800",
+        icon: "bg-teal-100 text-teal-700 border-teal-200",
+        button: "bg-teal-700 text-white hover:bg-teal-800"
+      },
+      emerald: {
+        card: "border-emerald-200 bg-emerald-50 hover:border-emerald-400 hover:bg-emerald-100",
+        soft: "bg-emerald-50 border-emerald-200",
+        title: "text-emerald-900",
+        text: "text-emerald-700",
+        badge: "bg-emerald-100 text-emerald-800",
+        icon: "bg-emerald-100 text-emerald-700 border-emerald-200",
+        button: "bg-emerald-700 text-white hover:bg-emerald-800"
+      },
+      green: {
+        card: "border-green-200 bg-green-50 hover:border-green-400 hover:bg-green-100",
+        soft: "bg-green-50 border-green-200",
+        title: "text-green-900",
+        text: "text-green-700",
+        badge: "bg-green-100 text-green-800",
+        icon: "bg-green-100 text-green-700 border-green-200",
+        button: "bg-green-700 text-white hover:bg-green-800"
+      },
+      lime: {
+        card: "border-lime-200 bg-lime-50 hover:border-lime-400 hover:bg-lime-100",
+        soft: "bg-lime-50 border-lime-200",
+        title: "text-lime-900",
+        text: "text-lime-700",
+        badge: "bg-lime-100 text-lime-800",
+        icon: "bg-lime-100 text-lime-700 border-lime-200",
+        button: "bg-lime-700 text-white hover:bg-lime-800"
+      },
+      amber: {
+        card: "border-amber-200 bg-amber-50 hover:border-amber-400 hover:bg-amber-100",
+        soft: "bg-amber-50 border-amber-200",
+        title: "text-amber-900",
+        text: "text-amber-700",
+        badge: "bg-amber-100 text-amber-800",
+        icon: "bg-amber-100 text-amber-700 border-amber-200",
+        button: "bg-amber-700 text-white hover:bg-amber-800"
+      },
+      yellow: {
+        card: "border-yellow-200 bg-yellow-50 hover:border-yellow-400 hover:bg-yellow-100",
+        soft: "bg-yellow-50 border-yellow-200",
+        title: "text-yellow-900",
+        text: "text-yellow-700",
+        badge: "bg-yellow-100 text-yellow-800",
+        icon: "bg-yellow-100 text-yellow-700 border-yellow-200",
+        button: "bg-yellow-600 text-white hover:bg-yellow-700"
+      },
+      orange: {
+        card: "border-orange-200 bg-orange-50 hover:border-orange-400 hover:bg-orange-100",
+        soft: "bg-orange-50 border-orange-200",
+        title: "text-orange-900",
+        text: "text-orange-700",
+        badge: "bg-orange-100 text-orange-800",
+        icon: "bg-orange-100 text-orange-700 border-orange-200",
+        button: "bg-orange-700 text-white hover:bg-orange-800"
+      },
+      red: {
+        card: "border-red-200 bg-red-50 hover:border-red-400 hover:bg-red-100",
+        soft: "bg-red-50 border-red-200",
+        title: "text-red-900",
+        text: "text-red-700",
+        badge: "bg-red-100 text-red-800",
+        icon: "bg-red-100 text-red-700 border-red-200",
+        button: "bg-red-700 text-white hover:bg-red-800"
+      },
+      rose: {
+        card: "border-rose-200 bg-rose-50 hover:border-rose-400 hover:bg-rose-100",
+        soft: "bg-rose-50 border-rose-200",
+        title: "text-rose-900",
+        text: "text-rose-700",
+        badge: "bg-rose-100 text-rose-800",
+        icon: "bg-rose-100 text-rose-700 border-rose-200",
+        button: "bg-rose-700 text-white hover:bg-rose-800"
+      },
+      pink: {
+        card: "border-pink-200 bg-pink-50 hover:border-pink-400 hover:bg-pink-100",
+        soft: "bg-pink-50 border-pink-200",
+        title: "text-pink-900",
+        text: "text-pink-700",
+        badge: "bg-pink-100 text-pink-800",
+        icon: "bg-pink-100 text-pink-700 border-pink-200",
+        button: "bg-pink-700 text-white hover:bg-pink-800"
+      },
+      fuchsia: {
+        card: "border-fuchsia-200 bg-fuchsia-50 hover:border-fuchsia-400 hover:bg-fuchsia-100",
+        soft: "bg-fuchsia-50 border-fuchsia-200",
+        title: "text-fuchsia-900",
+        text: "text-fuchsia-700",
+        badge: "bg-fuchsia-100 text-fuchsia-800",
+        icon: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200",
+        button: "bg-fuchsia-700 text-white hover:bg-fuchsia-800"
+      },
+      purple: {
+        card: "border-purple-200 bg-purple-50 hover:border-purple-400 hover:bg-purple-100",
+        soft: "bg-purple-50 border-purple-200",
+        title: "text-purple-900",
+        text: "text-purple-700",
+        badge: "bg-purple-100 text-purple-800",
+        icon: "bg-purple-100 text-purple-700 border-purple-200",
+        button: "bg-purple-700 text-white hover:bg-purple-800"
+      },
+      violet: {
+        card: "border-violet-200 bg-violet-50 hover:border-violet-400 hover:bg-violet-100",
+        soft: "bg-violet-50 border-violet-200",
+        title: "text-violet-900",
+        text: "text-violet-700",
+        badge: "bg-violet-100 text-violet-800",
+        icon: "bg-violet-100 text-violet-700 border-violet-200",
+        button: "bg-violet-700 text-white hover:bg-violet-800"
+      },
+      indigo: {
+        card: "border-indigo-200 bg-indigo-50 hover:border-indigo-400 hover:bg-indigo-100",
+        soft: "bg-indigo-50 border-indigo-200",
+        title: "text-indigo-900",
+        text: "text-indigo-700",
+        badge: "bg-indigo-100 text-indigo-800",
+        icon: "bg-indigo-100 text-indigo-700 border-indigo-200",
+        button: "bg-indigo-700 text-white hover:bg-indigo-800"
+      },
+      stone: {
+        card: "border-stone-200 bg-stone-50 hover:border-stone-400 hover:bg-stone-100",
+        soft: "bg-stone-50 border-stone-200",
+        title: "text-stone-900",
+        text: "text-stone-700",
+        badge: "bg-stone-100 text-stone-800",
+        icon: "bg-stone-100 text-stone-700 border-stone-200",
+        button: "bg-stone-800 text-white hover:bg-stone-900"
+      },
+      zinc: {
+        card: "border-zinc-200 bg-zinc-50 hover:border-zinc-400 hover:bg-zinc-100",
+        soft: "bg-zinc-50 border-zinc-200",
+        title: "text-zinc-900",
+        text: "text-zinc-700",
+        badge: "bg-zinc-100 text-zinc-800",
+        icon: "bg-zinc-100 text-zinc-700 border-zinc-200",
+        button: "bg-zinc-800 text-white hover:bg-zinc-900"
+      }
+    };
+
+    let selectedPath = [];
+
+    const els = {
+      title: document.getElementById("current-title"),
+      description: document.getElementById("current-description"),
+      breadcrumb: document.getElementById("breadcrumb"),
+      options: document.getElementById("options"),
+      result: document.getElementById("result"),
+      params: document.getElementById("params-preview"),
+      search: document.getElementById("search-input")
+    };
+
+    function getColor(node) {
+      return colorClasses[node?.color] || colorClasses.slate;
+    }
+
+    function getInitials(text) {
+      return String(text || "?")
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(word => word[0])
+        .join("")
+        .toUpperCase();
+    }
+
+    function renderIcon(node, size = "h-11 w-11") {
+      const color = getColor(node);
+
+      if (node.icon_url) {
+        return `
+          <div class="${size} shrink-0 overflow-hidden rounded-2xl border bg-white shadow-sm ${color.icon}">
+            <img src="${node.icon_url}" alt="${node.title || "Icona"}" class="h-full w-full object-cover" />
+          </div>
+        `;
+      }
+
+      return `
+        <div class="${size} flex shrink-0 items-center justify-center rounded-2xl border text-xs font-black shadow-sm ${color.icon}">
+          ${getInitials(node.title)}
+        </div>
+      `;
+    }
+
+    function findChildById(node, id) {
+      return (node.children || []).find(child => child.id === id);
+    }
+
+    function getNodeFromPath(path) {
+      let node = tree;
+      const nodes = [tree];
+
+      for (const id of path) {
+        const next = findChildById(node, id);
+        if (!next) break;
+        node = next;
+        nodes.push(node);
+      }
+
+      return { node, nodes };
+    }
+
+    function readPathFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const path = params.get("path");
+      return path ? path.split(".").filter(Boolean) : [];
+    }
+
+    function writePathToUrl(path) {
+      const url = new URL(window.location.href);
+      if (path.length) url.searchParams.set("path", path.join("."));
+      else url.searchParams.delete("path");
+      window.history.pushState({}, "", url);
+    }
+
+    function render() {
+      const { node, nodes } = getNodeFromPath(selectedPath);
+      const children = node.children || [];
+      const isFinal = children.length === 0;
+
+      els.title.textContent = node.question || node.title;
+      els.description.textContent = node.description || "";
+      els.params.textContent = selectedPath.length ? `?path=${selectedPath.join(".")}` : "nessun params";
+      els.search.value = "";
+
+      renderBreadcrumb(nodes);
+      els.options.innerHTML = "";
+      els.result.innerHTML = "";
+      els.result.classList.add("hidden");
+
+      if (isFinal) renderFinalNode(node);
+      else renderOptions(children);
+    }
+
+    function renderBreadcrumb(nodes) {
+      els.breadcrumb.innerHTML = "";
+
+      nodes.forEach((node, index) => {
+        const li = document.createElement("li");
+        li.className = "flex items-center gap-2";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = index === 0 ? "Inizio" : node.title;
+        button.className = index === nodes.length - 1
+          ? "font-bold text-slate-950"
+          : "hover:text-slate-950";
+
+        button.addEventListener("click", () => {
+          selectedPath = selectedPath.slice(0, Math.max(0, index));
+          writePathToUrl(selectedPath);
+          render();
+        });
+
+        li.appendChild(button);
+
+        if (index < nodes.length - 1) {
+          const sep = document.createElement("span");
+          sep.textContent = "/";
+          sep.className = "text-slate-300";
+          li.appendChild(sep);
+        }
+
+        els.breadcrumb.appendChild(li);
+      });
+    }
+
+    function renderOptions(children) {
+      children.forEach(child => {
+        const color = getColor(child);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.search = `${child.title} ${child.description || ""} ${child.brand || ""} ${child.type || ""}`.toLowerCase();
+        button.className = `option-card rounded-3xl border px-5 py-4 text-left shadow-sm transition hover:shadow-md ${color.card}`;
+
+        button.innerHTML = `
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex min-w-0 items-center gap-4">
+              ${renderIcon(child)}
+              <div class="min-w-0">
+                <div class="mb-2 flex flex-wrap items-center gap-2">
+                                   ${child.type ? `<span class="rounded-full bg-white/70 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">${child.type}</span>` : ""}
+                </div>
+                <h3 class="text-base font-black ${color.title}">${child.title}</h3>
+                <p class="mt-1 text-sm leading-6 text-slate-600">${child.description || ""}</p>
+              </div>
+            </div>
+            <span class="shrink-0 text-xl text-slate-400">→</span>
+          </div>
+        `;
+
+        button.addEventListener("click", () => {
+          selectedPath.push(child.id);
+          writePathToUrl(selectedPath);
+          render();
+        });
+
+        els.options.appendChild(button);
+      });
+    }
+
+    function renderFinalNode(node) {
+      const color = getColor(node);
+      els.result.classList.remove("hidden");
+
+      els.result.innerHTML = `
+        <div class="rounded-3xl border p-6 text-center shadow-sm ${color.soft}">
+          <div class="mx-auto flex justify-center">
+            ${renderIcon(node, "h-16 w-16")}
+          </div>
+
+          <p class="mt-5 text-xs font-black uppercase tracking-[0.2em] ${color.text}">Risultato</p>
+          <h3 class="mt-3 text-3xl font-black ${color.title}">${node.title}</h3>
+          <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-slate-600">${node.description || ""}</p>
+
+          <div class="mx-auto mt-5 grid max-w-xl gap-2 rounded-3xl bg-white/75 p-4 text-sm text-slate-600">
+            ${node.brand ? `<div><span class="font-bold">Brand:</span> ${node.brand}</div>` : ""}
+            ${node.type ? `<div><span class="font-bold">Tipo:</span> ${node.type}</div>` : ""}
+            <div>
+              <span class="font-bold">Service ID:</span>
+              <code class="rounded bg-slate-100 px-2 py-1">${node.service_id || node.id}</code>
+            </div>
+            <div>
+              <span class="font-bold">Params:</span>
+              <code class="rounded bg-slate-100 px-2 py-1">path=${selectedPath.join(".")}</code>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <a href="${node.href || "#"}" class="rounded-full px-6 py-3 text-sm font-black ${color.button}">
+              ${node.cta_label || "Inizia ora"}
+            </a>
+            <button type="button" id="back-one" class="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-black text-slate-700 hover:bg-slate-100">
+              Indietro
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("back-one").addEventListener("click", () => {
+        selectedPath.pop();
+        writePathToUrl(selectedPath);
+        render();
+      });
+    }
+
+    els.search.addEventListener("input", () => {
+      const query = els.search.value.trim().toLowerCase();
+      document.querySelectorAll(".option-card").forEach(card => {
+        card.classList.toggle("hidden", query && !card.dataset.search.includes(query));
+      });
+    });
+
+    window.addEventListener("popstate", () => {
+      selectedPath = readPathFromUrl();
+      render();
+    });
+
+    selectedPath = readPathFromUrl();
+    render();
+  </script>
+
+</body>
+
+</html>
