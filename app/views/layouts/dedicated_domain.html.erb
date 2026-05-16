@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= content_for(:title) || Current.dedicated_domain&.hostname || "Flowpulse" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "tailwind", "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-white text-slate-950">
+    <% if flowpulse_domain? %>
+       <header id="site-header" class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+      <nav class="mx-auto flex w-full max-w-7xl items-center justify-between gap-5 px-4 py-3 sm:px-6 lg:px-8" aria-label="Navigazione principale">
+        <%= verified_link_to "Flowpulse", root_path, class: "text-xl font-extrabold tracking-tight text-slate-950" %>
+
+        <div class="hidden items-center gap-1 md:flex">
+          <%= verified_link_to "Esperienze", esperienze_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <%= verified_link_to "Progetti", demo_progetti_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <%= verified_link_to "Percorsi", demo_mondi_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <% if authenticated? %>
+            <details class="relative">
+              <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-slate-200 bg-white py-1.5 pl-2 pr-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
+                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                  <%= (Current.user.profile&.display_name || Current.user.email_address).first.upcase %>
+                </span>
+                <span class="hidden sm:inline"><%= Current.user.profile&.display_name.presence || "Profilo" %></span>
+              </summary>
+              <div class="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                <div class="px-3 py-2">
+                  <p class="text-sm font-semibold text-slate-950"><%= Current.user.profile&.display_name.presence || "Profilo" %></p>
+                  <p class="truncate text-xs text-slate-500"><%= Current.user.email_address %></p>
+                </div>
+                <div class="my-1 border-t border-slate-100"></div>
+                <% if Current.user.can_switch_roles? %>
+                  <div class="px-3 py-2">
+                    <p class="text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500">Ruolo attivo</p>
+                    <%= form_with url: dashboard_role_path, method: :patch, class: "mt-3", data: { turbo: false } do %>
+                      <%= select_tag :role, 
+                        options_for_select(Current.user.ruoli_attivabili.map { |r| [ruolo_label(r), r] }, Current.user.active_role), 
+                        class: "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900", 
+                        onchange: "this.form.submit()" %>
+                    <% end %>
+                  </div>
+                  <div class="my-1 border-t border-slate-100"></div>
+                <% end %>
+                <%= verified_link_to "Dashboard", dashboard_home_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+                <%= verified_link_to "Profilo", "#", class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+                <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
+              </div>
+            </details>
+          <% else %>
+            <%= verified_link_to "Accedi", new_session_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" %>
+            <%= verified_link_to "Registrati", new_user_path, class: "rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <% if notice = flash[:notice] %>
+      <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"><%= notice %></p>
+      </div>
+    <% end %>
+
+    <% if alert = flash[:alert] %>
+      <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"><%= alert %></p>
+      </div>
+    <% end %>
+
+    <main class="<%= ((controller_name == "home" && action_name == "index") || (controller_name == "pages" && %w[mvp_home mari viaggiatori].include?(action_name))) ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8" %>">
+      <%= yield %>
+    </main>
+    <% else%>
+    <%= yield %>
+    <% end %>
+  </body>
+</html>

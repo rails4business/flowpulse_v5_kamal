@@ -44,4 +44,8 @@ class ApplicationController < ActionController::Base
         viaggiatori_path
       end
     end
+
+    def dedicated_domain_host
+      ENV.fetch("DEDICATED_DOMAIN_HOST_OVERRIDE", request.host).to_s.downcase.strip
+    end
 end

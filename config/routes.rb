@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
 
   # Public Routes
-  root "pages#mvp_home"
+  root "dedicated_domains#show"
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
   get "markpostura" => "pages#markpostura", as: :markpostura

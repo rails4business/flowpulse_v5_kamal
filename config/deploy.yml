@@ -14,7 +14,16 @@ registry:
 
 proxy:
   ssl: true
-  host: flowpulse.net
+  hosts:
+    - flowpulse.net
+    - www.flowpulse.net
+    - posturacorretta.org
+    - www.posturacorretta.org
+    - markpostura.it
+    - www.markpostura.it
+    - markpostura.com
+    - www.markpostura.com
+    
   healthcheck:
     path: /up
     interval: 3
@@ -32,6 +41,7 @@ env:
     DB_PORT: 5432
     DB_NAME: flowpulse_v_5_production
     DB_USERNAME: flowpulse
+    APP_HOSTS: "flowpulse.net,www.flowpulse.net,posturacorretta.org,www.posturacorretta.org,markpostura.it,www.markpostura.it,markpostura.com,www.markpostura.com"
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tree Brain — Flowpulse Map</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #020617;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .glass {
+      background: rgba(15, 23, 42, 0.68);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    .chip {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(15, 23, 42, 0.62);
+    }
+  </style>
+</head>
+<body class="text-white">
+  <canvas id="treeBrain" aria-label="Mappa neurale dell'albero Flowpulse"></canvas>
+
+  <!-- TOP BAR -->
+  <header class="pointer-events-none fixed inset-x-0 top-0 z-20 p-4 md:p-6">
+    <div class="glass pointer-events-auto mx-auto flex max-w-7xl items-center justify-between rounded-3xl px-5 py-4">
+      <div>
+        <p class="text-[11px] font-black uppercase tracking-[0.28em] text-cyan-300">Flowpulse · Tree Brain</p>
+        <h1 class="mt-1 text-xl font-black tracking-tight md:text-2xl">Mappa viva delle connessioni</h1>
+      </div>
+      <div class="hidden items-center gap-2 md:flex">
+        <button id="resetBtn" class="rounded-2xl bg-white px-4 py-2 text-sm font-extrabold text-slate-950 transition hover:bg-cyan-100">Centra</button>
+        <button id="toggleMotionBtn" class="rounded-2xl chip px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10">Pausa</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LEFT LEGEND -->
+  <aside class="pointer-events-none fixed bottom-4 left-4 z-20 w-[calc(100vw-2rem)] md:bottom-6 md:left-6 md:w-80">
+    <div class="glass pointer-events-auto rounded-3xl p-5">
+      <p class="text-xs font-black uppercase tracking-[0.24em] text-slate-400">Legenda</p>
+      <div class="mt-4 grid grid-cols-2 gap-2 text-sm md:grid-cols-1">
+        <div class="flex items-center gap-3"><span class="h-3 w-3 rounded-full bg-cyan-300"></span> Mondo / Mare</div>
+        <div class="flex items-center gap-3"><span class="h-3 w-3 rounded-full bg-emerald-300"></span> Isola / Area</div>
+        <div class="flex items-center gap-3"><span class="h-3 w-3 rounded-full bg-amber-300"></span> Linea metro</div>
+        <div class="flex items-center gap-3"><span class="h-3 w-3 rounded-full bg-fuchsia-300"></span> Stazione</div>
+        <div class="flex items-center gap-3"><span class="h-3 w-3 rounded-full bg-rose-300"></span> Experience</div>
+      </div>
+      <p class="mt-4 text-xs leading-5 text-slate-400">Trascina per muovere la mappa. Usa la rotella per zoomare. Clicca su un nodo per aprire il dettaglio.</p>
+    </div>
+  </aside>
+
+  <!-- DETAIL PANEL -->
+  <section id="detailPanel" class="pointer-events-none fixed right-4 top-28 z-20 hidden w-[calc(100vw-2rem)] md:right-6 md:top-28 md:w-96">
+    <div class="glass pointer-events-auto rounded-3xl p-6">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p id="detailType" class="text-xs font-black uppercase tracking-[0.24em] text-cyan-300">Nodo</p>
+          <h2 id="detailTitle" class="mt-2 text-2xl font-black tracking-tight">Titolo</h2>
+        </div>
+        <button id="closePanelBtn" class="rounded-full bg-white/10 px-3 py-1 text-sm font-black text-slate-300 hover:bg-white/20">×</button>
+      </div>
+      <p id="detailDescription" class="mt-4 text-sm leading-6 text-slate-300"></p>
+      <div class="mt-5 flex flex-wrap gap-2" id="detailTags"></div>
+      <button class="mt-6 w-full rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-slate-950 hover:bg-cyan-200">Apri percorso</button>
+    </div>
+  </section>
+
+  <script>
+    const canvas = document.getElementById("treeBrain");
+    const ctx = canvas.getContext("2d");
+
+    const colors = {
+      world: "#67e8f9",
+      sea: "#38bdf8",
+      chart: "#22c55e",
+      island: "#86efac",
+      part: "#facc15",
+      line: "#fbbf24",
+      station: "#e879f9",
+      experience: "#fb7185"
+    };
+
+    const nodes = [
+      { id: "world", label: "Mondo", type: "world", size: 18, x: 0, y: 0, description: "Il contenitore massimo: la mappa generale dei progetti, delle esperienze e dei percorsi." },
+      { id: "north", label: "Mare del Nord", type: "sea", size: 13, description: "Area alta: visione, formazione, concetti e mappe generali." },
+      { id: "center", label: "Mare del Centro", type: "sea", size: 13, description: "Area centrale: salute, lavoro, stile di vita e percorsi principali." },
+      { id: "south", label: "Mare del Sud", type: "sea", size: 13, description: "Area profonda: territorio, eventi, comunità e corpo vissuto." },
+
+      { id: "chart-health", label: "Carta Nautica Salute", type: "chart", size: 12, description: "Carta nautica dedicata ai percorsi di salute e postura." },
+      { id: "chart-work", label: "Carta Nautica Lavoro", type: "chart", size: 12, description: "Carta nautica dedicata a lavoro, progetti, business e organizzazione." },
+
+      { id: "island-postura", label: "Isola PosturaCorretta", type: "island", size: 16, description: "Isola principale per il metodo, i percorsi e le experiences di PosturaCorretta." },
+      { id: "island-flow", label: "Isola Flowpulse", type: "island", size: 16, description: "Isola per costruire sistemi, accademie, journey, card ed eventi." },
+
+      { id: "part-red", label: "Stop al Dolore", type: "part", size: 12, description: "Area rossa: dolore, problema, orientamento e professionisti." },
+      { id: "part-blue", label: "Postura e Fisiologia", type: "part", size: 12, description: "Area blu: educazione del corpo, sistemi fisiologici e igiene posturale." },
+      { id: "part-green", label: "Benessere Integrato", type: "part", size: 12, description: "Area verde: prevenzione, stile di vita, performance e integrazione." },
+
+      { id: "metro-base", label: "Mappa Metro Base", type: "line", size: 11, description: "Linea principale del percorso base: valutazione, pratica, diario, follow-up." },
+      { id: "station-eval", label: "Valutazione", type: "station", size: 10, description: "Prima stazione: capire dove sei e quale percorso è più adatto." },
+      { id: "station-diary", label: "Diario", type: "station", size: 10, description: "Stazione per registrare eventi, dolore, pratica, stati e progressi." },
+      { id: "station-practice", label: "Pratica", type: "station", size: 10, description: "Stazione operativa: schede, esercizi, routine e attività." },
+
+      { id: "exp-walk", label: "Camminata", type: "experience", size: 9, description: "Experience concreta: camminata, osservazione, respiro e movimento." },
+      { id: "exp-lesson", label: "Lezione 1", type: "experience", size: 9, description: "Prima lezione o scheda del percorso di Igiene Posturale." },
+      { id: "exp-event", label: "Evento", type: "experience", size: 9, description: "Evento collegato al percorso: territorio, gruppo, pratica e condivisione." }
+    ];
+
+    const links = [
+      ["world", "north"], ["world", "center"], ["world", "south"],
+      ["center", "chart-health"], ["center", "chart-work"],
+      ["chart-health", "island-postura"], ["chart-work", "island-flow"],
+      ["island-postura", "part-red"], ["island-postura", "part-blue"], ["island-postura", "part-green"],
+      ["part-blue", "metro-base"],
+      ["metro-base", "station-eval"], ["metro-base", "station-diary"], ["metro-base", "station-practice"],
+      ["station-practice", "exp-walk"], ["station-practice", "exp-lesson"], ["station-diary", "exp-event"],
+      ["part-red", "station-eval"], ["part-green", "exp-walk"], ["island-flow", "metro-base"]
+    ].map(([source, target]) => ({ source, target }));
+
+    const nodeById = Object.fromEntries(nodes.map(node => [node.id, node]));
+
+    let width = 0;
+    let height = 0;
+    let scale = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let dragging = false;
+    let dragNode = null;
+    let lastMouse = { x: 0, y: 0 };
+    let motion = true;
+    let hoveredNode = null;
+    let selectedNode = null;
+
+    function resize() {
+      const ratio = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      if (!offsetX && !offsetY) resetView();
+    }
+
+    function resetView() {
+      offsetX = width / 2;
+      offsetY = height / 2;
+      scale = Math.min(width, height) / 780;
+
+      nodes.forEach((node, index) => {
+        if (node.id === "world") {
+          node.x = 0;
+          node.y = 0;
+        } else {
+          const angle = (index / nodes.length) * Math.PI * 2;
+          const radius = 120 + (index % 5) * 48;
+          node.x = Math.cos(angle) * radius;
+          node.y = Math.sin(angle) * radius;
+        }
+        node.vx = 0;
+        node.vy = 0;
+      });
+    }
+
+    function screenToWorld(x, y) {
+      return {
+        x: (x - offsetX) / scale,
+        y: (y - offsetY) / scale
+      };
+    }
+
+    function worldToScreen(x, y) {
+      return {
+        x: x * scale + offsetX,
+        y: y * scale + offsetY
+      };
+    }
+
+    function applyForces() {
+      if (!motion) return;
+
+      // repulsione tra nodi
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i];
+          const b = nodes[j];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const distSq = dx * dx + dy * dy + 0.01;
+          const dist = Math.sqrt(distSq);
+          const force = 900 / distSq;
+          const fx = (dx / dist) * force;
+          const fy = (dy / dist) * force;
+          a.vx -= fx;
+          a.vy -= fy;
+          b.vx += fx;
+          b.vy += fy;
+        }
+      }
+
+      // attrazione dei collegamenti
+      links.forEach(link => {
+        const a = nodeById[link.source];
+        const b = nodeById[link.target];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const desired = 105;
+        const force = (dist - desired) * 0.012;
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        a.vx += fx;
+        a.vy += fy;
+        b.vx -= fx;
+        b.vy -= fy;
+      });
+
+      // gravità leggera verso il centro
+      nodes.forEach(node => {
+        node.vx += -node.x * 0.0007;
+        node.vy += -node.y * 0.0007;
+        node.vx *= 0.88;
+        node.vy *= 0.88;
+        if (node !== dragNode) {
+          node.x += node.vx;
+          node.y += node.vy;
+        }
+      });
+    }
+
+    function drawBackground() {
+      const gradient = ctx.createRadialGradient(width / 2, height / 2, 80, width / 2, height / 2, Math.max(width, height));
+      gradient.addColorStop(0, "#0f172a");
+      gradient.addColorStop(0.48, "#020617");
+      gradient.addColorStop(1, "#000000");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.save();
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = "#94a3b8";
+      for (let i = 0; i < 130; i++) {
+        const x = (i * 97) % width;
+        const y = (i * 193) % height;
+        const r = ((i * 13) % 3) + 0.4;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawLinks() {
+      links.forEach(link => {
+        const a = nodeById[link.source];
+        const b = nodeById[link.target];
+        const pa = worldToScreen(a.x, a.y);
+        const pb = worldToScreen(b.x, b.y);
+        const active = hoveredNode && (hoveredNode === a || hoveredNode === b);
+
+        ctx.save();
+        ctx.strokeStyle = active ? "rgba(103,232,249,0.82)" : "rgba(148,163,184,0.22)";
+        ctx.lineWidth = active ? 2.2 : 1.15;
+        ctx.beginPath();
+        ctx.moveTo(pa.x, pa.y);
+        const mx = (pa.x + pb.x) / 2;
+        const my = (pa.y + pb.y) / 2;
+        const bend = 18 * scale;
+        ctx.quadraticCurveTo(mx + bend, my - bend, pb.x, pb.y);
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    function drawNode(node) {
+      const p = worldToScreen(node.x, node.y);
+      const color = colors[node.type] || "#ffffff";
+      const radius = node.size * scale;
+      const active = node === hoveredNode || node === selectedNode;
+
+      ctx.save();
+      ctx.shadowColor = color;
+      ctx.shadowBlur = active ? 34 : 18;
+      ctx.fillStyle = color;
+      ctx.globalAlpha = active ? 1 : 0.88;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = active ? 0.18 : 0.08;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius * 3.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.globalAlpha = 1;
+      ctx.font = `${active ? 13 : 11}px Inter, system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = active ? "#ffffff" : "rgba(226,232,240,0.78)";
+      ctx.fillText(node.label, p.x, p.y + radius + 9);
+      ctx.restore();
+    }
+
+    function draw() {
+      applyForces();
+      drawBackground();
+      drawLinks();
+      nodes.forEach(drawNode);
+      requestAnimationFrame(draw);
+    }
+
+    function findNodeAt(clientX, clientY) {
+      const pos = screenToWorld(clientX, clientY);
+      return nodes.find(node => {
+        const dx = node.x - pos.x;
+        const dy = node.y - pos.y;
+        const r = node.size + 10 / scale;
+        return dx * dx + dy * dy < r * r;
+      });
+    }
+
+    function openDetail(node) {
+      selectedNode = node;
+      const panel = document.getElementById("detailPanel");
+      document.getElementById("detailType").textContent = node.type.replace("_", " ");
+      document.getElementById("detailTitle").textContent = node.label;
+      document.getElementById("detailDescription").textContent = node.description || "Nodo della mappa.";
+
+      const tags = document.getElementById("detailTags");
+      tags.innerHTML = "";
+      [node.type, "card", "tree-brain"].forEach(tag => {
+        const el = document.createElement("span");
+        el.className = "rounded-full chip px-3 py-1 text-xs font-bold text-slate-300";
+        el.textContent = tag;
+        tags.appendChild(el);
+      });
+
+      panel.classList.remove("hidden");
+    }
+
+    canvas.addEventListener("mousedown", event => {
+      dragging = true;
+      lastMouse = { x: event.clientX, y: event.clientY };
+      dragNode = findNodeAt(event.clientX, event.clientY);
+    });
+
+    window.addEventListener("mousemove", event => {
+      hoveredNode = findNodeAt(event.clientX, event.clientY);
+      canvas.style.cursor = hoveredNode ? "pointer" : dragging ? "grabbing" : "grab";
+
+      if (!dragging) return;
+
+      const dx = event.clientX - lastMouse.x;
+      const dy = event.clientY - lastMouse.y;
+      lastMouse = { x: event.clientX, y: event.clientY };
+
+      if (dragNode) {
+        dragNode.x += dx / scale;
+        dragNode.y += dy / scale;
+        dragNode.vx = 0;
+        dragNode.vy = 0;
+      } else {
+        offsetX += dx;
+        offsetY += dy;
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      dragging = false;
+      dragNode = null;
+    });
+
+    canvas.addEventListener("click", event => {
+      const node = findNodeAt(event.clientX, event.clientY);
+      if (node) openDetail(node);
+    });
+
+    canvas.addEventListener("wheel", event => {
+      event.preventDefault();
+      const mouse = { x: event.clientX, y: event.clientY };
+      const before = screenToWorld(mouse.x, mouse.y);
+      const delta = event.deltaY > 0 ? 0.92 : 1.08;
+      scale = Math.max(0.28, Math.min(2.6, scale * delta));
+      const after = screenToWorld(mouse.x, mouse.y);
+      offsetX += (after.x - before.x) * scale;
+      offsetY += (after.y - before.y) * scale;
+    }, { passive: false });
+
+    document.getElementById("resetBtn").addEventListener("click", resetView);
+
+    document.getElementById("toggleMotionBtn").addEventListener("click", event => {
+      motion = !motion;
+      event.currentTarget.textContent = motion ? "Pausa" : "Play";
+    });
+
+    document.getElementById("closePanelBtn").addEventListener("click", () => {
+      document.getElementById("detailPanel").classList.add("hidden");
+      selectedNode = null;
+    });
+
+    window.addEventListener("resize", resize);
+    resize();
+    draw();
+  </script>
+</body>
+</html>

@@ -12,4 +12,4 @@ Questa guida passo passo spiega come deployare una app Rails su un server Hetzne
 6. [Deploy dell’app](06-deploy.md)
 7. [Controllo post-deploy](07-controllo-post-deploy.md)
 8. [Aggiornamenti futuri](08-aggiornamenti.md)
-9. [Consigli extra](09-consigli.md)
+9. [Console production con Kamal](09-console-production.md)
