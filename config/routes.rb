@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
   get "markpostura" => "pages#markpostura", as: :markpostura
+  get "markposturastory" => "pages#markposturastory", as: :markposturastory
 
   # Dashboard utente loggato
   get "dashboard" => "home#dashboard", as: :dashboard

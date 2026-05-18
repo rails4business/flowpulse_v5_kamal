@@ -29,8 +29,19 @@
         <% @domains.each do |domain| %>
           <tr>
             <td class="px-4 py-3 text-slate-500">#<%= domain.id %></td>
-            <td class="px-4 py-3 font-semibold text-slate-950"><%= domain.hostname %></td>
-            <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.presence || domain.action %></td>
+            <td class="px-4 py-3 font-semibold text-slate-950">
+ <% if domain.target_controller.present? && domain.target_action.present? %>
+    <%= link_to domain.hostname,
+                url_for(
+                  controller: "/#{domain.target_controller}",
+                  action: domain.target_action,
+                  only_path: true
+                ) %>
+  <% else %>
+    <%= domain.hostname %>
+  <% end %>
+</td>
+            <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.presence || domain.target_action %></td>
             <td class="px-4 py-3 text-slate-600"><%= domain.locale %></td>
             <td class="px-4 py-3 text-slate-600"><%= domain.active? ? "Attivo" : "Disattivo" %></td>
             <td class="px-4 py-3 text-right">

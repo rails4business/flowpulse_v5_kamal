@@ -1,0 +1,365 @@
+<% content_for :title, "Markpostura" %>
+<% gallery_images = (1..12).map { |index| asset_path("progetto_flowpulse/#{index}.png") } %>
+
+<style>
+  .markpostura-gallery-page {
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 30%),
+      #06070a;
+  }
+
+  .markpostura-gallery-shell {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .markpostura-gallery-exit {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 999;
+    pointer-events: auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border-radius: 999px;
+    padding: 10px 14px;
+
+    color: white;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1;
+    text-decoration: none;
+
+    background: rgba(15, 23, 42, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .markpostura-gallery-exit:hover {
+    background: rgba(15, 23, 42, 0.95);
+  }
+
+  .markpostura-gallery-stage {
+    position: relative;
+    z-index: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .markpostura-gallery-image {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 110px);
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .markpostura-gallery-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 30;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 54px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 23, 42, 0.68);
+    backdrop-filter: blur(12px);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+
+  .markpostura-gallery-nav:hover {
+    background: rgba(15, 23, 42, 0.88);
+  }
+
+  .markpostura-gallery-nav.prev {
+    left: 20px;
+  }
+
+  .markpostura-gallery-nav.next {
+    right: 20px;
+  }
+
+  .markpostura-gallery-dots {
+    position: relative;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-bottom: 6px;
+  }
+
+  .markpostura-gallery-controls {
+    display: none;
+  }
+
+  .markpostura-gallery-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: rgba(148, 163, 184, 0.85);
+    cursor: pointer;
+    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  }
+
+  .markpostura-gallery-dot.is-active {
+    background: white;
+    border-color: white;
+    transform: scale(1.28);
+  }
+
+  @media (max-width: 700px) {
+    .markpostura-gallery-shell {
+      padding: 4px;
+      gap: 6px;
+      grid-template-rows: auto auto 1fr;
+    }
+
+    .markpostura-gallery-exit {
+      top: 8px;
+      left: 8px;
+      padding: 9px 11px;
+      font-size: 12px;
+    }
+
+    .markpostura-gallery-exit span:last-child {
+      display: none;
+    }
+
+    .markpostura-gallery-stage {
+      border-radius: 18px;
+      order: 3;
+      align-items: flex-start;
+    }
+
+    .markpostura-gallery-image {
+      height: calc(100vh - 92px);
+      object-position: top center;
+    }
+
+    .markpostura-gallery-controls {
+      position: relative;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      order: 1;
+      padding-top: 4px;
+    }
+
+    .markpostura-gallery-stage .markpostura-gallery-nav {
+      display: none;
+    }
+
+    .markpostura-gallery-nav {
+      position: static;
+      transform: none;
+      width: 48px;
+      height: 48px;
+      background: rgba(15, 23, 42, 0.92);
+    }
+
+    .markpostura-gallery-dots {
+      order: 2;
+      gap: 8px;
+      padding: 2px 0 4px;
+    }
+
+    .markpostura-gallery-dot {
+      width: 10px;
+      height: 10px;
+      background: rgba(148, 163, 184, 0.95);
+      border-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .markpostura-gallery-dot.is-active {
+      background: white;
+      border-color: white;
+    }
+  }
+</style>
+
+<section
+  class="markpostura-gallery-page"
+  data-gallery-images="<%= gallery_images.to_json %>">
+
+  
+  <div class="markpostura-gallery-shell">
+    <%= link_to root_path, class: "markpostura-gallery-exit" do %>
+    <span class="material-symbols-outlined">arrow_back</span>
+    <span>Esci</span>
+  <% end %>
+    <div class="markpostura-gallery-stage">
+    
+      <button type="button" class="markpostura-gallery-nav prev" data-gallery-previous aria-label="Immagine precedente">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+
+      <img class="markpostura-gallery-image" data-gallery-image alt="Markpostura gallery">
+
+      <button type="button" class="markpostura-gallery-nav next" data-gallery-next aria-label="Immagine successiva">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+
+    <div class="markpostura-gallery-dots">
+      <% gallery_images.each_with_index do |_image, index| %>
+        <button
+          type="button"
+          class="markpostura-gallery-dot <%= "is-active" if index.zero? %>"
+          data-gallery-dot
+          data-index="<%= index %>"
+          aria-label="Vai all'immagine <%= index + 1 %>"></button>
+      <% end %>
+    </div>
+
+    <div class="markpostura-gallery-controls">
+      <button type="button" class="markpostura-gallery-nav prev" data-gallery-previous aria-label="Immagine precedente">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+
+      <button type="button" class="markpostura-gallery-nav next" data-gallery-next aria-label="Immagine successiva">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  (() => {
+    const bootGallery = () => {
+      const root = document.querySelector("[data-gallery-images]")
+      if (!root) return
+
+      const images = JSON.parse(root.dataset.galleryImages || "[]")
+      const image = root.querySelector("[data-gallery-image]")
+      const previousButtons = Array.from(root.querySelectorAll("[data-gallery-previous]"))
+      const nextButtons = Array.from(root.querySelectorAll("[data-gallery-next]"))
+      const dots = Array.from(root.querySelectorAll("[data-gallery-dot]"))
+      if (!image || images.length === 0) return
+
+      let index = 0
+      const preloaded = new Set()
+
+      const preloadAt = (targetIndex) => {
+        const normalizedIndex = (targetIndex + images.length) % images.length
+        const src = images[normalizedIndex]
+        if (!src || preloaded.has(src)) return
+
+        const preloadImage = new Image()
+        preloadImage.src = src
+        preloaded.add(src)
+      }
+
+      const render = () => {
+        image.src = images[index]
+        dots.forEach((dot, dotIndex) => {
+          dot.classList.toggle("is-active", dotIndex === index)
+        })
+
+        preloadAt(index + 1)
+        preloadAt(index - 1)
+      }
+
+      previousButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          index = (index - 1 + images.length) % images.length
+          render()
+        })
+      })
+
+      nextButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          index = (index + 1) % images.length
+          render()
+        })
+      })
+
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          index = Number(dot.dataset.index || 0)
+          render()
+        })
+      })
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") {
+          index = (index - 1 + images.length) % images.length
+          render()
+        }
+        if (event.key === "ArrowRight") {
+          index = (index + 1) % images.length
+          render()
+        }
+      })
+
+      const stage = root.querySelector(".markpostura-gallery-stage")
+      if (stage) {
+        let touchStartX = 0
+        let touchEndX = 0
+
+        stage.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX
+        }, {passive: true})
+
+        stage.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX
+          const swipeThreshold = 50
+          if (touchEndX < touchStartX - swipeThreshold) {
+            index = (index + 1) % images.length
+            render()
+          } else if (touchEndX > touchStartX + swipeThreshold) {
+            index = (index - 1 + images.length) % images.length
+            render()
+          }
+        }, {passive: true})
+
+        stage.addEventListener('click', (e) => {
+          if (e.target.closest('.markpostura-gallery-nav')) return
+
+          const rect = stage.getBoundingClientRect()
+          const clickX = e.clientX - rect.left
+          
+          if (clickX < rect.width / 2) {
+            index = (index - 1 + images.length) % images.length
+            render()
+          } else {
+            index = (index + 1) % images.length
+            render()
+          }
+        })
+      }
+
+      render()
+    }
+
+    document.addEventListener("turbo:load", bootGallery, { once: true })
+    document.addEventListener("DOMContentLoaded", bootGallery, { once: true })
+  })()
+</script>
