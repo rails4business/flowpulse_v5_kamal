@@ -1,0 +1,10 @@
+<% content_for :title, "Modifica #{@domain.hostname}" %>
+
+<%= render "shell" do %>
+  <header>
+    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Dominio #<%= @domain.id %></p>
+    <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950">Modifica dominio</h1>
+  </header>
+
+  <%= render "form", domain: @domain %>
+<% end %>

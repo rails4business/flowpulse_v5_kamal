@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_11_173748) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_18_150644) do
+  create_table "domains", force: :cascade do |t|
+    t.string "action", default: "mvp_home", null: false
+    t.boolean "active", default: true, null: false
+    t.string "canonical_host"
+    t.datetime "created_at", null: false
+    t.string "hostname", null: false
+    t.string "locale", default: "it", null: false
+    t.boolean "primary", default: false, null: false
+    t.json "settings"
+    t.string "target_action"
+    t.string "target_controller"
+    t.datetime "updated_at", null: false
+    t.index ["hostname"], name: "index_domains_on_hostname", unique: true
+  end
+
   create_table "profiles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "display_name"

@@ -1,4 +1,4 @@
 class Current < ActiveSupport::CurrentAttributes
-  attribute :session, :dedicated_domain
+  attribute :session, :domain
   delegate :user, to: :session, allow_nil: true
 end

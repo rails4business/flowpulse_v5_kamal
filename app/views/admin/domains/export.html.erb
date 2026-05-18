@@ -1,0 +1,34 @@
+<% content_for :title, "Import/export domini" %>
+
+<%= render "shell" do %>
+  <header>
+    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Admin</p>
+    <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950">Import/export domini</h1>
+  </header>
+
+  <section class="rounded-xl border border-slate-200 bg-white p-6">
+    <h2 class="text-xl font-extrabold text-slate-950">Export</h2>
+    <p class="mt-2 text-sm text-slate-600">Scarica il file YAML generato dai domini presenti nel database.</p>
+
+    <div class="mt-5">
+      <%= verified_link_to "Scarica flowpulse_domains.yml", export_admin_domains_path(format: :yml), class: "inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500" %>
+    </div>
+  </section>
+
+  <section class="rounded-xl border border-slate-200 bg-white p-6">
+    <h2 class="text-xl font-extrabold text-slate-950">Import</h2>
+    <p class="mt-2 text-sm text-slate-600">Carica un file YAML con lo stesso formato di <code>config/dedicated_domains.yml</code> per aggiornare il database.</p>
+
+    <%= form_with url: import_admin_domains_path, method: :post, multipart: true, class: "mt-5 space-y-4" do |form| %>
+      <div>
+        <%= form.label :domains_file, "File YAML", class: "text-sm font-bold text-slate-700" %>
+        <%= form.file_field :domains_file, accept: ".yml,.yaml,text/yaml,application/x-yaml", class: "mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <%= form.submit "Importa file YAML", class: "rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500" %>
+        <%= verified_link_to "Torna ai domini", admin_domains_path, class: "rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
+      </div>
+    <% end %>
+  </section>
+<% end %>

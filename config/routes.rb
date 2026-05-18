@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
 
   # Public Routes
-  root "dedicated_domains#show"
+  root "domains#show"
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
   get "markpostura" => "pages#markpostura", as: :markpostura
@@ -18,6 +18,12 @@ Rails.application.routes.draw do
   namespace :admin do
     get "dashboard" => "home#dashboard", as: :dashboard
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
+    resources :domains do
+      collection do
+        get :export
+        post :import
+      end
+    end
     resources :risorse, controller: "/resources", only: [:index, :show]
   end
 

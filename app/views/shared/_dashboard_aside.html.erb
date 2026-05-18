@@ -1,7 +1,8 @@
 <% superadmin = Current.user&.superadmin? %>
 <% items = [
   { key: :dashboard, title: "Dashboard Superadmin", subtitle: "Panoramica interna", path: admin_dashboard_path },
-{ key: :resources, title: "Risorse", subtitle: "Eventi, transazioni, contatti", path: admin_risorse_index_path },
+  { key: :domains, title: "Domini", subtitle: "Gestione domini e routing", path: admin_domains_path },
+  { key: :resources, title: "Risorse", subtitle: "Eventi, transazioni, contatti", path: admin_risorse_index_path },
   { key: :lavoro, title: "Lavoro", subtitle: "Creator, ruoli, attitudini, servizi", path: demo_lavoro_path },
   { key: :salute, title: "Salute", subtitle: "Percorsi e corsi", path: demo_salute_path },
   { key: :pages, title: "Elenco pagine", subtitle: "Prototipi e viste collegate", path: admin_elenco_pagine_path },

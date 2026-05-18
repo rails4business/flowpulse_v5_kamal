@@ -6,6 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Flowpulse V 5">
     <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -24,22 +26,8 @@
   </head>
 
   <body class="min-h-screen bg-white text-slate-950">
-    <%= render "shared/flowpulse/nav" %>
+  <%= render "shared/flowpulse/nav" %>
 
-    <% if notice = flash[:notice] %>
-      <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"><%= notice %></p>
-      </div>
-    <% end %>
-
-    <% if alert = flash[:alert] %>
-      <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"><%= alert %></p>
-      </div>
-    <% end %>
-
-    <main class="<%= ((controller_name == "home" && action_name == "index") || (controller_name == "pages" && %w[mvp_home mari viaggiatori].include?(action_name))) ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8" %>">
-      <%= yield %>
-    </main>
+  <%= yield %>
   </body>
 </html>

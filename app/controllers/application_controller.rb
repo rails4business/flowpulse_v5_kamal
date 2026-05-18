@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
     [ "demo", "Demo" ]
   ].freeze
 
-  helper_method :superadmin?, :active_dashboard_role, :active_dashboard_role_label, :dashboard_home_path, :ruolo_label
+  helper_method :superadmin?, :active_dashboard_role, :active_dashboard_role_label, :dashboard_home_path, :ruolo_label, :dedicated_domain_host
 
   private
     def ruolo_label(role_key)

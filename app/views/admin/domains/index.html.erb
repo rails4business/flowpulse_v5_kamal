@@ -1,0 +1,44 @@
+<% content_for :title, "Domini" %>
+
+<%= render "shell" do %>
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Admin</p>
+      <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950">Domini</h1>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <%= verified_link_to "Import/export YAML", export_admin_domains_path, class: "inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
+      <%= verified_link_to "Nuovo dominio", new_admin_domain_path, class: "inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500" %>
+    </div>
+  </header>
+
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+        <tr>
+          <th class="px-4 py-3 w-16">ID</th>
+          <th class="px-4 py-3">Host</th>
+          <th class="px-4 py-3">Action</th>
+          <th class="px-4 py-3">Locale</th>
+          <th class="px-4 py-3">Stato</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @domains.each do |domain| %>
+          <tr>
+            <td class="px-4 py-3 text-slate-500">#<%= domain.id %></td>
+            <td class="px-4 py-3 font-semibold text-slate-950"><%= domain.hostname %></td>
+            <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.presence || domain.action %></td>
+            <td class="px-4 py-3 text-slate-600"><%= domain.locale %></td>
+            <td class="px-4 py-3 text-slate-600"><%= domain.active? ? "Attivo" : "Disattivo" %></td>
+            <td class="px-4 py-3 text-right">
+              <%= verified_link_to "Apri", admin_domain_path(domain), class: "font-bold text-blue-600 hover:text-blue-500" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
