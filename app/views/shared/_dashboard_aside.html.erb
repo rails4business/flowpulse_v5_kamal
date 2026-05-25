@@ -20,7 +20,7 @@
     <% items.each do |item| %>
       <% active = current_section == item[:key] %>
       <% base_classes = "block rounded-xl border px-4 py-3 transition" %>
-      <% active_classes = "border-slate-900 bg-slate-900 text-white" %>
+      <% active_classes = "border-slate-900 bg-slate-100 text-slate-950" %>
       <% open_classes = "border-slate-200 bg-slate-50 text-slate-900 hover:border-slate-300 hover:bg-slate-100" %>
       <% locked_classes = "border-slate-200 bg-slate-50 text-slate-400" %>
       <% item_classes = [base_classes, (active ? active_classes : (superadmin ? open_classes : locked_classes))].join(" ") %>
@@ -28,12 +28,12 @@
       <% if superadmin %>
         <%= verified_link_to item[:path], class: item_classes do %>
           <strong class="block text-sm font-extrabold"><%= item[:title] %></strong>
-          <span class="mt-1 block text-sm <%= active ? 'text-slate-200' : 'text-slate-500' %>"><%= item[:subtitle] %></span>
+          <span class="mt-1 block text-sm <%= active ? 'text-slate-600' : 'text-slate-500' %>"><%= item[:subtitle] %></span>
         <% end %>
       <% elsif active %>
         <div class="<%= item_classes %>">
           <strong class="block text-sm font-extrabold"><%= item[:title] %></strong>
-          <span class="mt-1 block text-sm text-slate-200"><%= item[:subtitle] %></span>
+          <span class="mt-1 block text-sm text-slate-600"><%= item[:subtitle] %></span>
         </div>
       <% else %>
         <div class="<%= item_classes %>">

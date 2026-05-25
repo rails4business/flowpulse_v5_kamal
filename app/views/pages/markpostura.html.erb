@@ -47,39 +47,47 @@
       <div class="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-sky-100/80 to-transparent"></div>
       <div class="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-emerald-100/50 blur-3xl"></div>
 
-      <div class="relative mx-auto max-w-5xl text-center">
+      <div class="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
 
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-          Fisioterapia · postura · natura · software
-        </p>
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
+            Fisioterapia · postura · natura · software
+          </p>
 
-        <h1 class="mx-auto mt-5 max-w-4xl text-5xl font-semibold leading-[1] tracking-[-0.04em] text-slate-950 md:text-7xl">
-          Il corpo,
-          <span class="text-sky-700">un mondo da scoprire.</span>
-        </h1>
+          <h1 class="mt-5 max-w-4xl text-5xl font-semibold leading-[1] tracking-[-0.04em] text-slate-950 md:text-7xl">
+            Il corpo,
+            <span class="text-sky-700">un mondo da scoprire.</span>
+          </h1>
 
-        <p class="mx-auto mt-8 max-w-3xl text-xl leading-9 text-slate-600">
-          Aiuto persone e professionisti a costruire salute,
-          esperienze e strumenti per vivere e lavorare in modo più umano.
-        </p>
+          <p class="mt-8 max-w-3xl text-xl leading-9 text-slate-600">
+            Aiuto persone e professionisti a costruire salute,
+            esperienze e strumenti per vivere e lavorare in modo più umano.
+          </p>
 
-        <div class="mt-10 flex flex-wrap justify-center gap-4">
+          <div class="mt-10 flex flex-wrap gap-4">
 
-          <a href="#come-posso-aiutarti"
-            class="rounded-full bg-slate-950 px-7 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
-            Come posso aiutarti?
-          </a>
+            <a href="#come-posso-aiutarti"
+              class="rounded-full bg-slate-950 px-7 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
+              Come posso aiutarti?
+            </a>
 
-          <a href="#libro"
-            class="rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
-            Il libro
-          </a>
+            <a href="#libro"
+              class="rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
+              Il libro
+            </a>
 
-          <a href="/markposturastory"
-            class="rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
-            La mia storia
-          </a>
+            <a href="/markposturastory"
+              class="rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
+              La mia storia
+            </a>
 
+          </div>
+        </div>
+
+        <div class="mx-auto w-full max-w-md overflow-hidden rounded-[2.5rem] border border-white/80 bg-white p-3 shadow-xl lg:mr-0">
+          <img src="<%= asset_path('markpostura/hero_mark_psotura.webp') %>"
+            class="aspect-[4/5] h-full w-full rounded-[2rem] object-cover"
+            alt="Mark Postura">
         </div>
       </div>
     </section>
@@ -89,9 +97,9 @@
     <section id="come-posso-aiutarti" class="px-5 pb-24">
       <div class="mx-auto max-w-7xl">
 
-        <div class="mx-auto max-w-3xl text-center">
+        <div class="mx-auto max-w-3xl text-center mt-14">
           <p class="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
-            La mappa operativa
+            Da dove vuoi iniziare?
           </p>
 
           <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
@@ -106,7 +114,7 @@
             class="group overflow-hidden rounded-[2rem] border border-sky-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
 
             <div class="aspect-[16/9] overflow-hidden bg-sky-100">
-              <img src="../images/portfolio/percorso-salute.jpg"
+              <img src="<%= asset_path('markpostura/percorso_salute.webp') %>"
                 class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 alt="Percorso Salute">
             </div>
@@ -131,7 +139,7 @@
             class="group overflow-hidden rounded-[2rem] border border-emerald-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
 
             <div class="aspect-[16/9] overflow-hidden bg-emerald-100">
-              <img src="../images/portfolio/eventi-esperienze.jpg"
+              <img src="<%= asset_path('markpostura/eventi_esperienze.webp') %>"
                 class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 alt="Eventi ed esperienze">
             </div>
@@ -156,7 +164,7 @@
             class="group overflow-hidden rounded-[2rem] border border-amber-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
 
             <div class="aspect-[16/9] overflow-hidden bg-amber-100">
-              <img src="../images/portfolio/progetti-software.jpg"
+              <img src="<%= asset_path('markpostura/progetti_e_software.webp') %>"
                 class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 alt="Progetti e software">
             </div>
@@ -206,7 +214,11 @@
         </div>
 
         <div class="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-slate-100 shadow-sm">
-          <div class="aspect-[16/9]"></div>
+          <iframe
+            src="/viste_html/6_weekplan.html"
+            title="Anteprima interattiva Weekplan"
+            class="h-[520px] w-full bg-white md:h-[620px]">
+          </iframe>
         </div>
 
       </div>
@@ -236,7 +248,11 @@
         <div class="mt-12 grid gap-6 md:grid-cols-3">
 
           <article class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-            <div class="aspect-[16/9] bg-emerald-100"></div>
+            <div class="aspect-[16/9] overflow-hidden bg-emerald-100">
+              <img src="<%= asset_path('markpostura/posturacorretta_in_vetta.wepb.png') %>"
+                class="h-full w-full object-cover"
+                alt="Camminata PosturaCorretta">
+            </div>
             <div class="p-6">
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Natura</p>
               <h3 class="mt-2 text-2xl font-semibold text-slate-950">Camminata PosturaCorretta</h3>
@@ -244,7 +260,11 @@
           </article>
 
           <article class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-            <div class="aspect-[16/9] bg-amber-100"></div>
+            <div class="aspect-[16/9] overflow-hidden bg-amber-100">
+              <img src="<%= asset_path('markpostura/posturacorretta_forchetta.webp') %>"
+                class="h-full w-full object-cover"
+                alt="PosturaCorretta e forchetta">
+            </div>
             <div class="p-6">
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Corpo & Cibo</p>
               <h3 class="mt-2 text-2xl font-semibold text-slate-950">PosturaCorretta e forchetta</h3>
@@ -252,7 +272,11 @@
           </article>
 
           <article class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-            <div class="aspect-[16/9] bg-sky-100"></div>
+            <div class="aspect-[16/9] overflow-hidden bg-sky-100">
+              <img src="<%= asset_path('markpostura/posturacorretta_spiaggetta.webp') %>"
+                class="h-full w-full object-cover"
+                alt="Mobilità e postura">
+            </div>
             <div class="p-6">
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Movimento</p>
               <h3 class="mt-2 text-2xl font-semibold text-slate-950">Mobilità e postura</h3>
@@ -266,26 +290,33 @@
 
     <!-- LIBRO -->
     <section id="libro" class="border-y border-slate-200 bg-white px-5 py-24">
-      <div class="mx-auto max-w-5xl text-center">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
 
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">
-          Libro guida
-        </p>
+        <div class="mx-auto w-full max-w-sm overflow-hidden rounded-[2rem] border border-amber-100 bg-amber-50 p-3 shadow-sm lg:mx-0">
+          <img src="<%= asset_path('markpostura/il corpo un mondo da scoprire.webp') %>"
+            class="aspect-[4/5] h-full w-full rounded-[1.5rem] object-cover"
+            alt="Il corpo, un mondo da scoprire">
+        </div>
 
-        <h2 class="mx-auto mt-5 max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 md:text-6xl">
-          Il corpo, un mondo da scoprire.
-        </h2>
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">
+            Libro guida
+          </p>
 
-        <p class="mx-auto mt-8 max-w-3xl text-xl leading-9 text-slate-600">
-          Il filo narrativo che unisce postura, salute, esperienze,
-          natura, tecnologia e modi più umani di vivere.
-        </p>
+          <h2 class="mt-5 max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 md:text-6xl">
+            Il corpo, un mondo da scoprire.
+          </h2>
 
-        <a href="#portfolio"
-          class="mt-10 inline-flex rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
-          Esplora i progetti
-        </a>
+          <p class="mt-8 max-w-3xl text-xl leading-9 text-slate-600">
+            Il filo narrativo che unisce postura, salute, esperienze,
+            natura, tecnologia e modi più umani di vivere.
+          </p>
 
+          <a href="#portfolio"
+            class="mt-10 inline-flex rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
+            Esplora i progetti
+          </a>
+        </div>
       </div>
     </section>
 
@@ -310,41 +341,60 @@
 
         <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
 
-          <a href="#" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Accademia</p>
+          <a href="https://flowpulse.net" target="_blank" rel="noopener noreferrer" class="group rounded-[2rem] border border-amber-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Software</p>
+              <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Attivo</span>
+            </div>
+            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Flowpulse</h3>
+            <p class="mt-3 leading-7 text-slate-600">Organizzazione di eventi, percorsi e progetti.</p>
+          </a>
+          <a href="https://posturacorretta.org" target="_blank" rel="noopener noreferrer" class="group rounded-[2rem] border border-sky-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Accademia</p>
+              <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Attivo</span>
+            </div>
             <h3 class="mt-3 text-2xl font-semibold text-slate-950">Accademia PosturaCorretta</h3>
             <p class="mt-3 leading-7 text-slate-600">Percorsi educativi tra postura e fisiologia.</p>
           </a>
 
-          <a href="#" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Eventi</p>
+          <div class="rounded-[2rem] border border-slate-200 bg-white/70 p-6 shadow-sm opacity-75" aria-disabled="true">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Eventi</p>
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">Coming soon</span>
+            </div>
             <h3 class="mt-3 text-2xl font-semibold text-slate-950">Spontaneamente</h3>
             <p class="mt-3 leading-7 text-slate-600">Eventi, relazioni reali, natura e comunità.</p>
-          </a>
+          </div>
 
-          <a href="#" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Software</p>
-            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Flowpulse</h3>
-            <p class="mt-3 leading-7 text-slate-600">Organizzazione di eventi, percorsi e progetti.</p>
-          </a>
+          
 
-          <a href="#" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Rails</p>
+          <a href="https://rails4b.com/" target="_blank" rel="noopener noreferrer" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Rails</p>
+              <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Da aggiornare</span>
+            </div>
             <h3 class="mt-3 text-2xl font-semibold text-slate-950">Rails4Business</h3>
             <p class="mt-3 leading-7 text-slate-600">Ruby on Rails e strumenti digitali.</p>
           </a>
 
-          <a href="#" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Visione</p>
+          <a href="https://ilgiardinodelcorpo.it/" target="_blank" rel="noopener noreferrer" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Visione</p>
+              <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Da aggiornare</span>
+            </div>
             <h3 class="mt-3 text-2xl font-semibold text-slate-950">Il Giardino del Corpo</h3>
             <p class="mt-3 leading-7 text-slate-600">Il progetto dell’agriturismo rigenerativo.</p>
           </a>
 
-          <a href="#libro" class="group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Libro</p>
+          <div class="rounded-[2rem] border border-slate-200 bg-white/70 p-6 shadow-sm opacity-75" aria-disabled="true">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Libro</p>
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">Coming soon</span>
+            </div>
             <h3 class="mt-3 text-2xl font-semibold text-slate-950">Il corpo, un mondo da scoprire</h3>
             <p class="mt-3 leading-7 text-slate-600">Il libro che unisce tutto il progetto.</p>
-          </a>
+          </div>
 
         </div>
       </div>
