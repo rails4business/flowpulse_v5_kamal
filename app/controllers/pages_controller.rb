@@ -14,7 +14,7 @@ class PagesController < ApplicationController
   def posturacorretta
   end 
 
-  def mvp_home
+  def flowpulse
   end
 
   def mari

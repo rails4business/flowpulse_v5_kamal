@@ -13,7 +13,7 @@ class Domain < ApplicationRecord
   end
 
   def self.import_from_config!(environment = Rails.env)
-    import_from_hash!(Rails.application.config_for(:dedicated_domains, env: environment))
+    import_from_hash!(Rails.application.config_for(:domains, env: environment))
   end
 
   def self.import_from_hash!(domains_config)

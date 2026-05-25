@@ -1,5 +1,5 @@
 namespace :domains do
-  desc "Import domains from config/dedicated_domains.yml into the database"
+  desc "Import domains from config/domains.yml into the database"
   task import: :environment do
     Domain.import_from_config!
     puts "Imported #{Domain.count} domains."
