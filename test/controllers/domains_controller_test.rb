@@ -9,30 +9,30 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "renders configured domain action" do
-    Domain.create!(hostname: "posturacorretta.org", action: "markpostura", locale: "it")
+    Domain.create!(hostname: "posturacorretta.org", action: "posturacorretta", locale: "it")
     host! "posturacorretta.org"
 
     get root_url
 
     assert_response :success
-    assert_includes response.body, "markpostura-gallery-page"
+    assert_includes response.body, "PosturaCorretta"
   end
 
-  test "renders html home when present" do
-    Domain.create!(hostname: "custom.org", action: "mvp_home", locale: "it", html_home: "<section>Custom home</section>")
+  test "renders configured controller target" do
+    Domain.create!(hostname: "custom.org", action: "flowpulse", target_controller: "pages", target_action: "flowpulse", locale: "it")
     host! "custom.org"
 
     get root_url
 
     assert_response :success
-    assert_includes response.body, "Custom home"
+    assert_includes response.body, "Flowpulse"
   end
 
   test "redirects canonical domain aliases" do
     Domain.create!(
       hostname: "www.posturacorretta.org",
       canonical_host: "posturacorretta.org",
-      action: "mvp_home",
+      action: "posturacorretta",
       locale: "it"
     )
     host! "www.posturacorretta.org"

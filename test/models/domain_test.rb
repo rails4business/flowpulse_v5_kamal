@@ -4,7 +4,7 @@ class DomainTest < ActiveSupport::TestCase
   test "normalizes hostnames" do
     domain = Domain.create!(
       hostname: " POSTURACORRETTA.ORG ",
-      action: "markpostura",
+      action: "posturacorretta",
       locale: "it"
     )
 
@@ -12,16 +12,16 @@ class DomainTest < ActiveSupport::TestCase
   end
 
   test "finds active domain by host" do
-    Domain.create!(hostname: "posturacorretta.org", action: "markpostura", locale: "it")
+    Domain.create!(hostname: "posturacorretta.org", action: "posturacorretta", locale: "it")
 
-    assert_equal "markpostura", Domain.find_for_host("POSTURACORRETTA.ORG").action
+    assert_equal "posturacorretta", Domain.find_for_host("POSTURACORRETTA.ORG").action
   end
 
   test "exports config hash" do
     Domain.create!(
       hostname: "www.posturacorretta.org",
       canonical_host: "posturacorretta.org",
-      action: "mvp_home",
+      action: "posturacorretta",
       locale: "it"
     )
 
