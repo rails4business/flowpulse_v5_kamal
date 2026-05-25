@@ -5,7 +5,13 @@ class PagesController < ApplicationController
   def markpostura
   end 
 
+  def markpostura_old
+  end 
+
   def markposturastory
+  end 
+
+  def posturacorretta
   end 
 
   def mvp_home

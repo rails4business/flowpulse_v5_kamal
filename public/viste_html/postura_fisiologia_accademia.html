@@ -44,105 +44,172 @@
 
   <div class="relative mx-auto max-w-7xl">
 
-    <!-- HERO -->
-    <div class="mx-auto max-w-5xl text-center">
-      <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-700">
-        Percorso educativo
+   <!-- HERO -->
+<section class="bg-slate-50 px-5 py-20">
+  <div class="mx-auto max-w-5xl text-center">
+    <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-700">
+      Percorso educativo
+    </p>
+
+    <h1 class="mt-5 text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
+      Accademia Postura e Fisiologia
+    </h1>
+
+    <p class="mx-auto mt-6 max-w-4xl text-lg leading-8 text-slate-600">
+      Un percorso educativo per conoscere il corpo, ascoltare i suoi sistemi
+      e riattivarli attraverso i principi delle metodiche posturali.
+    </p>
+
+    <p class="mx-auto mt-4 max-w-4xl text-lg leading-8 text-slate-600">
+      Non è una semplice ginnastica: è una mappa pratica per comprendere
+      articolazioni, movimento, sistema nervoso, respirazione, percezione,
+      comportamento corporeo, ritmo biologico e coscienza corporea.
+    </p>
+
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="#percorso"
+        class="rounded-full bg-sky-700 px-6 py-3 text-sm font-black text-white shadow-sm hover:bg-sky-800">
+        Esplora il percorso
+      </a>
+
+      <a href="#inizia"
+        class="rounded-full bg-white px-6 py-3 text-sm font-black text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
+        Inizia il percorso
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TABS PERCORSO -->
+<section id="percorso" class="bg-white px-5 py-16">
+  <div class="mx-auto max-w-6xl rounded-[2.5rem] border border-slate-200 bg-white p-6 shadow-sm md:p-10">
+
+    <div class="text-center">
+      <p class="text-sm font-black uppercase tracking-[0.2em] text-sky-700">
+        Accademia
       </p>
 
-      <h1 class="mt-5 text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
-        Accademia Postura e Fisiologia
-      </h1>
+      <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">
+        Il percorso dell’Accademia
+      </h2>
 
-      <p class="mx-auto mt-6 max-w-4xl text-lg leading-8 text-slate-600">
-        Un percorso educativo per conoscere il corpo, ascoltare i suoi sistemi
-        e riattivarli attraverso i principi delle metodiche posturali.
+      <p class="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600">
+        Un percorso progressivo: prima comprendi, poi pratichi, infine puoi
+        approfondire per trasmettere l’esperienza ad altre persone.
       </p>
-
-      <p class="mx-auto mt-4 max-w-4xl text-lg leading-8 text-slate-600">
-        Non è una semplice ginnastica: è una mappa pratica per comprendere
-        articolazioni, movimento, sistema nervoso, respirazione, percezione,
-        comportamento corporeo, ritmo biologico e coscienza corporea.
-      </p>
-
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a href="#aree"
-          class="rounded-full bg-sky-700 px-6 py-3 text-sm font-black text-white shadow-sm hover:bg-sky-800">
-          Esplora le aree
-        </a>
-
-        <a href="#inizia"
-          class="rounded-full bg-white px-6 py-3 text-sm font-black text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
-          Inizia il percorso
-        </a>
-      </div>
     </div>
 
-    <!-- PERCORSO SOTTO HERO -->
-    <section class="mt-16 rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm md:p-10">
-      <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+    <!-- TAB BUTTONS -->
+    <div class="mt-10 grid gap-3 md:grid-cols-3">
+      <button onclick="showTab('informati')"
+        class="tab-btn rounded-3xl border border-sky-200 bg-sky-50 p-5 text-left hover:bg-sky-100"
+        data-tab="informati">
+        <span class="text-xs font-black uppercase tracking-[0.18em] text-sky-800">
+          Step 01
+        </span>
+        <h3 class="mt-3 text-2xl font-black text-sky-950">Informati</h3>
+      </button>
 
-        <div>
-          <p class="text-sm font-black uppercase tracking-[0.2em] text-sky-700">
-            Accademia
-          </p>
+      <button onclick="showTab('pratica')"
+        class="tab-btn rounded-3xl border border-emerald-200 bg-emerald-50 p-5 text-left hover:bg-emerald-100"
+        data-tab="pratica">
+        <span class="text-xs font-black uppercase tracking-[0.18em] text-emerald-800">
+          Step 02
+        </span>
+        <h3 class="mt-3 text-2xl font-black text-emerald-950">Pratica</h3>
+      </button>
 
-          <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">
-            Il percorso dell’Accademia
-          </h2>
+      <button onclick="showTab('trasmetti')"
+        class="tab-btn rounded-3xl border border-violet-200 bg-violet-50 p-5 text-left hover:bg-violet-100"
+        data-tab="trasmetti">
+        <span class="text-xs font-black uppercase tracking-[0.18em] text-violet-800">
+          Step 03
+        </span>
+        <h3 class="mt-3 text-2xl font-black text-violet-950">Trasmetti</h3>
+      </button>
+    </div>
 
-          <p class="mt-5 text-base leading-7 text-slate-600">
-            Un percorso progressivo: prima comprendi, poi pratichi, infine puoi
-            approfondire per trasmettere l’esperienza ad altre persone.
-          </p>
+    <!-- TAB CONTENT -->
+    <div class="mt-8 rounded-[2rem] bg-slate-50 p-6 md:p-8">
 
-          <div class="mt-6 rounded-3xl bg-sky-900 p-6 text-white">
-            <p class="text-sm font-bold uppercase tracking-[0.18em] text-sky-200">
-              Obiettivo
-            </p>
-
-            <p class="mt-3 text-xl font-black leading-8">
-              Conoscere il corpo per costruire salute, presenza e consapevolezza.
-            </p>
-          </div>
-        </div>
-
-        <div class="grid gap-4 md:grid-cols-3">
-          <article class="rounded-3xl border border-sky-100 bg-sky-50 p-6">
-            <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-sky-800">
-              Step 01
-            </span>
-            <h3 class="mt-5 text-2xl font-black text-sky-950">Informati</h3>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              Scopri i principi della postura e dei sistemi fisiologici.
-            </p>
-          </article>
-
-          <article class="rounded-3xl border border-emerald-100 bg-emerald-50 p-6">
-            <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-emerald-800">
-              Step 02
-            </span>
-            <h3 class="mt-5 text-2xl font-black text-emerald-950">Pratica</h3>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              Attraversa esercizi, esperienze e pratiche corporee.
-            </p>
-          </article>
-
-          <article class="rounded-3xl border border-violet-100 bg-violet-50 p-6">
-            <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-violet-800">
-              Step 03
-            </span>
-            <h3 class="mt-5 text-2xl font-black text-violet-950">Trasmetti</h3>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              Approfondisci per accompagnare gruppi e creare esperienze.
-            </p>
-          </article>
-        </div>
-
+      <div class="tab-panel" id="informati">
+        <p class="text-sm font-black uppercase tracking-[0.18em] text-sky-700">
+          Step 01 — Informati
+        </p>
+        <h3 class="mt-3 text-3xl font-black text-slate-950">
+          Conosci il corpo prima di correggerlo.
+        </h3>
+        <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+          Scopri i principi della postura, delle articolazioni, del respiro,
+          del sistema nervoso e dei sistemi fisiologici. Prima di fare esercizi,
+          impari a orientarti.
+        </p>
       </div>
-    </section>
 
-    <!-- AREE -->
+      <div class="tab-panel hidden" id="pratica">
+        <p class="text-sm font-black uppercase tracking-[0.18em] text-emerald-700">
+          Step 02 — Pratica
+        </p>
+        <h3 class="mt-3 text-3xl font-black text-slate-950">
+          Trasforma la conoscenza in esperienza.
+        </h3>
+        <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+          Attraversa esercizi, automassaggi, respirazione, percezione,
+          movimento e pratiche corporee per sentire concretamente il corpo.
+        </p>
+      </div>
+
+      <div class="tab-panel hidden" id="trasmetti">
+        <p class="text-sm font-black uppercase tracking-[0.18em] text-violet-700">
+          Step 03 — Trasmetti
+        </p>
+        <h3 class="mt-3 text-3xl font-black text-slate-950">
+          Approfondisci per accompagnare altre persone.
+        </h3>
+        <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+          Se vuoi proseguire, puoi approfondire il metodo per creare gruppi,
+          esperienze, percorsi educativi e strumenti da trasmettere.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- OBIETTIVO -->
+    <div class="mt-8 rounded-3xl bg-sky-900 p-6 text-white">
+      <p class="text-sm font-bold uppercase tracking-[0.18em] text-sky-200">
+        Obiettivo
+      </p>
+
+      <p class="mt-3 text-xl font-black leading-8">
+        Conoscere il corpo per costruire salute, presenza e consapevolezza.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.add('hidden');
+    });
+
+    document.getElementById(tabId).classList.remove('hidden');
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('ring-4', 'ring-sky-200', 'scale-[1.02]');
+    });
+
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add(
+      'ring-4',
+      'ring-sky-200',
+      'scale-[1.02]'
+    );
+  }
+
+  showTab('informati');
+</script>
+    <!-- Informati -->
     <section id="aree" class="mt-16">
       <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
@@ -150,7 +217,7 @@
             Mappa del percorso
           </p>
           <h2 class="mt-3 text-3xl font-black text-slate-950 md:text-4xl">
-            Le aree dell’Accademia
+            Le aree della salute e le metodiche posturali.
           </h2>
         </div>
 
@@ -162,24 +229,24 @@
       <!-- TAB BUTTONS -->
       <div class="rounded-[2rem] border border-slate-200 bg-white p-3 shadow-sm">
         <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-          <button data-tab="recupero" class="tab-btn rounded-2xl bg-sky-900 px-4 py-4 text-left text-sm font-black text-white">
-            01<br><span class="text-base">Recupero</span>
+          <button data-tab="recupero" class="tab-btn rounded-2xl bg-blue-600 px-4 py-4 text-left text-sm font-black text-white">
+            01<br><span class="text-base">Recupero Autotrattamenti</span>
           </button>
 
-          <button data-tab="movimento" class="tab-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200">
-            02<br><span class="text-base">Movimento</span>
+          <button data-tab="movimento" class="tab-btn rounded-2xl bg-violet-900 px-4 py-4 text-left text-sm font-black text-white hover:bg-violet-400">
+            02<br><span class="text-base">Movimento Allenamento</span>
           </button>
 
-          <button data-tab="ascolto" class="tab-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200">
-            03<br><span class="text-base">Ascolto</span>
+          <button data-tab="ascolto" class="tab-btn rounded-2xl bg-green-600 px-4 py-4 text-left text-sm font-black text-white hover:bg-green-400">
+            03<br><span class="text-base">Aprirsi all'ascolto</span>
           </button>
 
-          <button data-tab="piante" class="tab-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200">
+          <button data-tab="piante" class="tab-btn rounded-2xl bg-red-700 px-4 py-4 text-left text-sm font-black text-white hover:bg-red-400">
             04<br><span class="text-base">Piante</span>
           </button>
 
-          <button data-tab="nutrizione" class="tab-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200">
-            05<br><span class="text-base">Nutrizione</span>
+          <button data-tab="nutrizione" class="tab-btn rounded-2xl bg-orange-500 px-4 py-4 text-left text-sm font-black text-white hover:bg-orange-300">
+            05<br><span class="text-base">Nutrirsi</span>
           </button>
         </div>
       </div>
@@ -323,6 +390,7 @@
               </div>
             </details>
 
+            
             <details class="group rounded-3xl border border-amber-100 bg-amber-50 p-6">
               <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
                 <div>
@@ -342,6 +410,28 @@
                   <li>• Risposta e adattamento</li>
                   <li>• Relazione tra sistemi corporei</li>
                   <li>• Compenso e riequilibrio</li>
+                </ul>
+              </div>
+            </details>
+            <details class="group rounded-3xl border border-orange-100 bg-orange-50 p-6">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                <div>
+                  <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-800">
+                    Modulo 07
+                  </span>
+                  <h3 class="mt-4 text-2xl font-black text-orange-900">
+                    Altre metodiche posturali
+                  </h3>
+                </div>
+                <span class="text-2xl font-black text-orange-700 transition group-open:rotate-45">+</span>
+              </summary>
+
+              <div class="mt-6 border-t border-orange-100 pt-5">
+                <ul class="grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
+                  <li>• Terapie Manuali</li>
+                  <li>• Metodiche di guarigione</li>
+                  <li>• Metodiche corporee</li>
+                  
                 </ul>
               </div>
             </details>
@@ -373,7 +463,7 @@
         <!-- ASCOLTO -->
         <section data-panel="ascolto" class="tab-panel hidden rounded-[2rem] border border-emerald-100 bg-emerald-50 p-8">
           <p class="text-sm font-black uppercase tracking-[0.2em] text-emerald-700">Area 03</p>
-          <h2 class="mt-3 text-3xl font-black text-emerald-950">Ascolto emotivo e mentale</h2>
+          <h2 class="mt-3 text-3xl font-black text-emerald-950">Aprirsi all'Ascolto emotivo e mentale</h2>
 
           <p class="mt-4 max-w-4xl text-base leading-7 text-slate-700">
             Area dedicata a percezione, coscienza corporea, parole, storie, voce,
@@ -436,7 +526,7 @@
       </div>
     </section>
 
-    <!-- INIZIA -->
+    <!-- PRatica  -->
     <section id="inizia" class="mt-16 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
       <p class="text-sm font-black uppercase tracking-[0.2em] text-sky-700">
         Percorsi
@@ -483,7 +573,7 @@
       </div>
     </section>
 
-    <!-- FORMAZIONE -->
+    <!-- trasmetti -->
     <section id="formazione" class="mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
       <p class="text-sm font-black uppercase tracking-[0.2em] text-violet-700">
         Formazione

@@ -1,0 +1,579 @@
+
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mark Postura — Corpo, salute, eventi e progetti</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-stone-50 text-slate-900">
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+      <a href="#top" class="text-sm font-black uppercase tracking-[0.24em] text-sky-700">
+        Mark Postura
+      </a>
+
+      <nav class="hidden items-center gap-6 text-sm font-semibold text-slate-600 md:flex">
+        <a href="#chi-sono" class="hover:text-slate-950">Chi sono</a>
+        <a href="#eventi" class="hover:text-slate-950">Eventi</a>
+        <a href="#accademia" class="hover:text-slate-950">Accademia</a>
+        <a href="#giardino" class="hover:text-slate-950">Giardino del Corpo</a>
+        <a href="#libro" class="hover:text-slate-950">Libro</a>
+        <a href="../viste_html/6_weekplan.html"
+          class="rounded-full bg-sky-600 px-5 py-2.5 font-bold text-white hover:bg-sky-700">
+          Weekplan
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section
+  class="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-sky-50 via-stone-50 to-emerald-50">
+
+  <div
+    class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.20),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(34,197,94,0.16),transparent_35%)]">
+  </div>
+
+  <div class="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:py-28">
+
+    <div>
+      <p class="text-sm font-black uppercase tracking-[0.25em] text-sky-700">
+        Fisioterapia · postura · natura · software
+      </p>
+
+      <h1 class="mt-5 max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-slate-950 md:text-7xl">
+        Il corpo è un mondo da scoprire.
+      </h1>
+
+      <p class="mt-8 max-w-2xl text-xl leading-9 text-slate-600">
+        Aiuto persone e professionisti a costruire salute, esperienze e strumenti
+        per vivere e lavorare in modo più umano.
+      </p>
+
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a href="#percorso-salute"
+          class="rounded-full bg-slate-950 px-7 py-4 font-black text-white shadow-sm hover:bg-slate-800">
+          Inizia dal percorso salute
+        </a>
+
+        <a href="#libro"
+          class="rounded-full border border-slate-300 bg-white px-7 py-4 font-black text-slate-900 shadow-sm hover:bg-slate-100">
+          Il libro
+        </a>
+      </div>
+    </div>
+
+    <aside class="rounded-[2rem] border border-slate-200 bg-white/85 p-6 shadow-xl backdrop-blur-xl">
+      <p class="text-sm font-black uppercase tracking-[0.22em] text-emerald-700">
+        La mappa operativa
+      </p>
+
+      <div class="mt-6 grid gap-4">
+
+        <a href="#percorso-salute"
+          class="group rounded-3xl border border-blue-100 bg-blue-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-blue-700">01</p>
+          <h3 class="mt-2 text-xl font-black text-slate-950">Percorso Salute</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">
+            Postura, fisioterapia, igiene posturale, valutazioni e percorsi per pazienti.
+          </p>
+        </a>
+
+        <a href="#eventi"
+          class="group rounded-3xl border border-emerald-100 bg-emerald-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">02</p>
+          <h3 class="mt-2 text-xl font-black text-slate-950">Eventi & Esperienze</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">
+            Camminate, pratica, incontri, natura, relazioni reali e attività di gruppo.
+          </p>
+        </a>
+
+        <a href="#progetti-software"
+          class="group rounded-3xl border border-amber-100 bg-amber-50 p-5 transition hover:-translate-y-1 hover:shadow-md">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-amber-700">03</p>
+          <h3 class="mt-2 text-xl font-black text-slate-950">Progetti & Software</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">
+            Flowpulse, Rails4Business, contenuti, organizzazione, automazioni e sviluppo del business.
+          </p>
+        </a>
+
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+   
+
+<!-- CHI SONO -->
+<section id="chi-sono" class="border-b border-slate-200 bg-stone-50 px-5 py-20">
+  <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+    <div>
+      <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-700">Chi sono</p>
+      <h2 class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+        Sono Mark Postura.
+      </h2>
+    </div>
+
+    <div>
+      <p class="text-xl leading-9 text-slate-700">
+        Mi sono formato come fisioterapista e negli anni ho ampliato la mia ricerca
+        attraverso le metodiche posturali, il movimento, la fisiologia e lo studio
+        dell’essere umano.
+      </p>
+
+      <p class="mt-6 text-lg leading-8 text-slate-600">
+        Oggi aiuto persone, professionisti e piccoli gruppi a costruire percorsi
+        per la salute, esperienze dal vivo e progetti che uniscono corpo,
+        educazione, natura e tecnologia.
+      </p>
+
+      <div class="mt-8 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 class="font-black text-slate-950">
+          Come puoi entrare nel progetto
+        </h3>
+
+        <div class="mt-4 grid gap-3 text-sm leading-6 text-slate-600">
+          <p>
+            <strong class="text-slate-950">Percorso Salute:</strong>
+            puoi iniziare un percorso personale per conoscere meglio il corpo,
+            migliorare la postura e costruire salute.
+          </p>
+
+          <p>
+            <strong class="text-slate-950">Accademia PosturaCorretta:</strong>
+            se sei un professionista della salute o del benessere, oppure vuoi
+            portare PosturaCorretta alle persone, puoi partecipare alla crescita
+            dell’Accademia e valutare il percorso per diventare insegnante.
+          </p>
+
+          <p>
+            <strong class="text-slate-950">Contenuti ed eventi:</strong>
+            puoi collaborare alla realizzazione di video, proporre attività in linea
+            con i principi di PosturaCorretta o organizzare eventi per far conoscere
+            il tuo lavoro.
+          </p>
+
+          <p>
+            <strong class="text-slate-950">Progetti & Software:</strong>
+            puoi seguire o sviluppare progetti con Rails4Business, Flowpulse e gli
+            strumenti digitali che sto costruendo.
+          </p>
+
+          <p>
+            <strong class="text-slate-950">Il Giardino del Corpo:</strong>
+            puoi partecipare alla visione dell’agriturismo rigenerativo e delle
+            attività per l’evoluzione armonica dell’essere umano.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-8 rounded-[2rem] border border-sky-100 bg-sky-50 p-6">
+        <h3 class="font-black text-slate-950">La mia frase guida</h3>
+        <p class="mt-3 text-lg leading-8 text-slate-600">
+          Il corpo non è solo qualcosa da correggere: è una mappa da leggere,
+          ascoltare e abitare meglio.
+        </p>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/markposturastory"
+          class="rounded-full bg-emerald-700 px-6 py-3 text-sm font-black text-white hover:bg-emerald-800">
+          Scopri la mia storia
+        </a>
+
+        <a href="#libro"
+          class="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-black text-slate-800 hover:bg-slate-100">
+          Leggi il progetto del libro
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTI / SPONTANEA-MENTE -->
+<section id="eventi" class="border-b border-slate-200 bg-stone-50 px-5 py-20">
+  <div class="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[420px_1fr]">
+
+    <!-- LEFT -->
+    <div class="lg:sticky lg:top-24 lg:self-start">
+
+      <p class="text-sm font-black uppercase tracking-[0.24em] text-emerald-700">
+        Spontanea-mente
+      </p>
+
+     <h2 class="mt-4 text-5xl font-black leading-[0.95] tracking-tight text-slate-950">
+    Eventi
+</h2>
+
+      <p class="mt-6 text-lg leading-8 text-slate-600">
+        Camminate, postura, erbe spontanee,
+        cibo semplice e momenti reali da vivere insieme.
+      </p>
+
+      <p class="mt-5 text-lg leading-8 text-slate-600">
+        Qui il corpo esce dalla teoria e torna nella vita quotidiana.
+      </p>
+
+      <!-- ACTIONS -->
+      <div class="mt-10 space-y-3">
+
+        <a href="../esperienze"
+          class="flex items-center justify-between rounded-[1.6rem] bg-emerald-700 px-6 py-5 text-white transition hover:bg-emerald-800">
+
+          <div>
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-200">
+              Eventi
+            </p>
+
+            <p class="mt-1 text-xl font-black">
+              Partecipa
+            </p>
+          </div>
+
+          <span class="text-2xl">→</span>
+        </a>
+
+        <a href="../viste_html/mark_eventi_section_e_crea_evento.html"
+          class="flex items-center justify-between rounded-[1.6rem] border border-slate-200 bg-white px-6 py-5 transition hover:bg-slate-100">
+
+          <div>
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+              Community
+            </p>
+
+            <p class="mt-1 text-xl font-black text-slate-950">
+              Organizza
+            </p>
+          </div>
+
+          <span class="text-2xl text-slate-400">+</span>
+        </a>
+
+        <a href="mailto:markpostura@gmail.com"
+          class="flex items-center justify-between rounded-[1.6rem] border border-amber-200 bg-amber-50 px-6 py-5 transition hover:bg-amber-100">
+
+          <div>
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-amber-700">
+              Idee
+            </p>
+
+            <p class="mt-1 text-xl font-black text-amber-950">
+              Proponi un’esperienza
+            </p>
+          </div>
+
+          <span class="text-2xl text-amber-700">✦</span>
+        </a>
+
+        <a href="../viste_html/spontaneamente.html"
+          class="flex items-center justify-between rounded-[1.6rem] border border-slate-200 bg-white px-6 py-5 transition hover:bg-slate-100">
+
+          <div>
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+              Filosofia
+            </p>
+
+            <p class="mt-1 text-xl font-black text-slate-950">
+              Scopri di più
+            </p>
+          </div>
+
+          <span class="text-2xl text-slate-400">↗</span>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <!-- RIGHT -->
+<div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+
+    <!-- CARD -->
+    <a href="https://instagram.com"
+      target="_blank"
+      class="group relative overflow-hidden rounded-[2rem] bg-slate-200 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+
+      <div class="aspect-[4/5] overflow-hidden">
+        <img
+          src="../images/eventi/posturacorretta-capretta.jpg"
+          class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+      </div>
+
+      <div class="absolute inset-x-0 bottom-0 p-4">
+        <div class="rounded-[1.4rem] bg-black/45 p-4 backdrop-blur-md">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-200">
+            Corpo · natura
+          </p>
+
+          <h4 class="mt-1 text-xl font-black text-white">
+            PosturaCorretta con la capretta
+          </h4>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD -->
+    <a href="https://instagram.com"
+      target="_blank"
+      class="group relative overflow-hidden rounded-[2rem] bg-slate-200 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+
+      <div class="aspect-[4/5] overflow-hidden">
+        <img
+          src="../images/eventi/posturacorretta-forchetta.jpg"
+          class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+      </div>
+
+      <div class="absolute inset-x-0 bottom-0 p-4">
+        <div class="rounded-[1.4rem] bg-black/45 p-4 backdrop-blur-md">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-amber-200">
+            Corpo · cibo
+          </p>
+
+          <h4 class="mt-1 text-xl font-black text-white">
+            PosturaCorretta e forchetta
+          </h4>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD -->
+    <a href="https://instagram.com"
+      target="_blank"
+      class="group relative overflow-hidden rounded-[2rem] bg-slate-200 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+
+      <div class="aspect-[4/5] overflow-hidden">
+        <img
+          src="../images/eventi/camminata-posturacorretta.jpg"
+          class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+      </div>
+
+      <div class="absolute inset-x-0 bottom-0 p-4">
+        <div class="rounded-[1.4rem] bg-black/45 p-4 backdrop-blur-md">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-sky-200">
+            Movimento · ascolto
+          </p>
+
+          <h4 class="mt-1 text-xl font-black text-white">
+            Camminata PosturaCorretta
+          </h4>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD -->
+    <a href="https://instagram.com"
+      target="_blank"
+      class="group relative overflow-hidden rounded-[2rem] bg-slate-200 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+
+      <div class="aspect-[4/5] overflow-hidden">
+        <img
+          src="../images/eventi/erbe-spontanee.jpg"
+          class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+      </div>
+
+      <div class="absolute inset-x-0 bottom-0 p-4">
+        <div class="rounded-[1.4rem] bg-black/45 p-4 backdrop-blur-md">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-lime-200">
+            Erbe · fisiologia
+          </p>
+
+          <h4 class="mt-1 text-xl font-black text-white">
+            Erbe spontanee e corpo
+          </h4>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+  </div>
+</section>
+
+    <!-- ACCADEMIA -->
+    <section id="accademia" class="border-b border-slate-200 bg-sky-50 px-5 py-20">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-700">Accademia PosturaCorretta</p>
+          <h2 class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+            Da quale posizione stai osservando il mondo?
+          </h2>
+        </div>
+
+        <div>
+          <p class="text-xl leading-9 text-slate-700">
+            Trova la tua giusta poszione da cui osservare la salute. L’Accademia PosturaCorretta ti offre servizi per creare il tuo percorso della salute iniziando dalle metodiche posturali.
+          </p>
+          <div class="mt-8 grid gap-4 md:grid-cols-3">
+            <div class="rounded-3xl border border-red-100 bg-white p-5">
+              <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Rosso</p>
+              <h3 class="mt-2 font-black text-slate-950">Stop al Dolore</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Quando c’è dolore, patologia o bisogno di orientamento
+                professionale.</p>
+            </div>
+           
+            <div class="rounded-3xl border border-emerald-100 bg-white p-5">
+              <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Verde</p>
+              <h3 class="mt-2 font-black text-slate-950">Benessere Integrato</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Per costruire il tuo percorso della salute in autonomia o con professionisti della salute e del benessere.</p>
+            </div>
+             <div class="rounded-3xl border border-sky-100 bg-white p-5">
+              <p class="text-xs font-black uppercase tracking-[0.18em] text-sky-700">Blu</p>
+              <h3 class="mt-2 font-black text-slate-950">Postura e Fisiologia</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Per imparare come funziona il corpo e riattivarlo con
+                metodo.</p>
+            </div>
+          </div>
+
+          <a href="../viste_html/mark_accademia_postura_e_fisiologia.html"
+            class="mt-8 inline-flex rounded-full bg-sky-700 px-6 py-3 text-sm font-black text-white hover:bg-sky-800">
+            Inizia il percorso
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- GIARDINO DEL CORPO -->
+    <section id="giardino" class="border-b border-slate-200 bg-emerald-50 px-5 py-20">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.24em] text-emerald-700">Il Giardino del Corpo</p>
+          <h2 class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+            Il sogno dell’agriturismo rigenerativo.
+          </h2>
+        </div>
+
+        <div>
+          <p class="text-xl leading-9 text-slate-700">
+            Il Giardino del Corpo è il progetto più ampio: immaginam un posto dove persone, si prendono cura del proprio corpo dell'ambiente in cui vivono, un luogo dove puoi vivere in armonia con i ritmi del giorno e della stagione, dove oltre al lavoro hai tempo per attività che facilitano l'evoluzione armonica dell'essere umano.
+
+          </p>
+          <p class="mt-6 text-lg leading-8 text-slate-600">
+            Prima di essere una struttura fisica è un progetto che racconta un nuovo modo di vivere la salute, il lavoro e lo stile di vita. Un modo per riportare il corpo dentro una vita più
+            semplice.
+          </p>
+
+          <div class="mt-8 grid gap-4 md:grid-cols-2">
+            <article class="rounded-3xl border border-emerald-100 bg-white p-6">
+              <h3 class="font-black text-emerald-950">Rigenerazione</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Recupero, riposo, natura, alimentazione semplice e ritmo
+                stagionale.</p>
+            </article>
+            <article class="rounded-3xl border border-amber-100 bg-white p-6">
+              <h3 class="font-black text-amber-950">Formazione</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Laboratori, percorsi, accademie, mestieri, arti e
+                apprendimento esperienziale.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIBRO -->
+    <section id="libro" class="border-b border-slate-200 bg-amber-50 px-5 py-20">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.24em] text-amber-700">Il libro</p>
+          <h2 class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+            Il corpo, un mondo da scoprire.
+          </h2>
+        </div>
+
+        <div>
+          <p class="text-xl leading-9 text-slate-700">
+            Il libro è il filo rosso che tiene insieme tutto: la mia storia, PosturaCorretta, gli eventi, il Giardino
+            del Corpo e la ricerca di un modo più umano di vivere.
+          </p>
+          <p class="mt-6 text-lg leading-8 text-slate-600">
+            Racconta il passaggio dalla postura come correzione alla postura come esplorazione: conoscere il corpo,
+            ascoltare i segnali, cambiare abitudini, creare esperienze e costruire salute nella vita reale.
+          </p>
+
+          <div class="mt-8 rounded-[2rem] border border-amber-200 bg-white p-6 shadow-sm">
+            <h3 class="font-black text-amber-800">Funzione del libro</h3>
+            <p class="mt-3 text-sm leading-6 text-slate-600">
+              È la mappa narrativa del progetto. La landing presenta le porte d’ingresso; il libro racconta il viaggio
+              completo.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLOWPULSE / WEEKPLAN -->
+    <section id="weekplan" class="border-b border-slate-200 bg-white px-5 py-20">
+      <div class="mx-auto max-w-5xl text-center">
+        <p class="text-sm font-black uppercase tracking-[0.24em] text-slate-500">Strumenti pratici</p>
+        <h2 class="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+          Dal progetto alla settimana.
+        </h2>
+        <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+          Tutta questa visione deve diventare pratica: appuntamenti, eventi, lezioni, camminate, tempo per il corpo,
+          tempo per il lavoro e tempo per costruire.
+        </p>
+
+        <div class="mt-10 flex flex-wrap justify-center gap-4">
+          <a href="../viste_html/6_weekplan.html"
+            class="rounded-full bg-slate-950 px-7 py-4 font-black text-white hover:bg-slate-800">
+            Apri il weekplan
+          </a>
+          <a href="mailto:markpostura@gmail.com"
+            class="rounded-full border border-slate-300 bg-white px-7 py-4 font-black text-slate-900 hover:bg-slate-100">
+            Contattami
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINALE -->
+    <section id="contatti" class="bg-slate-950 px-5 py-20 text-white">
+      <div class="mx-auto max-w-4xl text-center">
+        <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-300">Contatti</p>
+        <h2 class="mt-4 text-4xl font-black tracking-tight md:text-5xl">
+          Da dove vuoi iniziare?
+        </h2>
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+          Puoi partire da un evento, da una consulenza, dall’Accademia PosturaCorretta o semplicemente da una
+          conversazione.
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-4">
+          <a href="mailto:markpostura@gmail.com"
+            class="rounded-full bg-white px-7 py-4 font-black text-slate-950 hover:bg-slate-100">
+            Scrivimi
+          </a>
+          <a href="#top" class="rounded-full border border-white/20 px-7 py-4 font-black text-white hover:bg-white/10">
+            Torna su
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-950 px-5 py-10 text-white">
+    <div
+      class="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+      <p>© Mark Postura — PosturaCorretta, Il Giardino del Corpo, Flowpulse</p>
+      <p>Corpo · natura · salute · eventi · progetti</p>
+    </div>
+  </footer>
+</body>
+
+</html>

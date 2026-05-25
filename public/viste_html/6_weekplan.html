@@ -7,7 +7,7 @@
   <title>Weekly Plan</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 
   <style>
     html,
@@ -64,6 +64,7 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
       text-align: center;
+      color: #475569;
     }
 
     .time-grid {
@@ -71,7 +72,6 @@
       grid-template-rows: repeat(26, minmax(0, 1fr));
       height: 100%;
       min-height: 0;
-      position: relative;
       border-radius: 12px;
       background: #f8fafc;
       border: 1px solid #f1f5f9;
@@ -79,11 +79,11 @@
       box-sizing: border-box;
     }
 
-    .event {
+    .event-date {
       min-height: 0;
       overflow: hidden;
       border-radius: 8px;
-      padding: 3px 4px;
+      padding: 4px;
       box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
       line-height: 1.05;
     }
@@ -92,6 +92,7 @@
       font-size: 7px;
       line-height: 1.05;
       font-weight: 900;
+      text-transform: uppercase;
     }
 
     .event-text {
@@ -100,237 +101,377 @@
       font-weight: 800;
     }
 
-    .tiny {
-      font-size: 5.5px;
-      line-height: 1;
+    .activity {
+      margin-top: 3px;
+      padding-top: 3px;
+      border-top: 1px solid rgba(15, 23, 42, 0.12);
+    }
+
+    .activity-title {
+      font-size: 6px;
+      line-height: 1.05;
       font-weight: 900;
-      white-space: nowrap;
+      text-transform: uppercase;
     }
 
-    /* Griglia 08:00 - 21:00, righe da 30 minuti */
-    .start-09-00 {
-      grid-row-start: 3;
-    }
-
-    .start-10-00 {
-      grid-row-start: 5;
-    }
-
-    .start-11-00 {
-      grid-row-start: 7;
-    }
-
-    .start-15-00 {
-      grid-row-start: 15;
-    }
-
-    .start-16-30 {
-      grid-row-start: 18;
-    }
-
-    .start-17-00 {
-      grid-row-start: 19;
-    }
-
-    .start-20-00 {
-      grid-row-start: 25;
-    }
-
-    .span-30m {
-      grid-row-end: span 1;
-    }
-
-    .span-1h {
-      grid-row-end: span 2;
-    }
-
-    .span-1h30 {
-      grid-row-end: span 3;
-    }
-
-    .span-2h {
-      grid-row-end: span 4;
-    }
-
-    .span-3h {
-      grid-row-end: span 6;
-    }
-
-    .span-11h {
-      grid-row-end: span 22;
+    .appointment {
+      font-size: 5.5px;
+      line-height: 1.05;
+      font-weight: 800;
+      opacity: 0.85;
     }
   </style>
 </head>
 
 <body>
+  <script id="weekplan-data" type="application/json">
+  {
+    "time_range": {
+      "start": "08:00",
+      "end": "21:00",
+      "step_minutes": 30
+    },
+    "days": ["lun", "mar", "mer", "gio", "ven", "sab", "dom"],
+    "event_dates": [
+      {
+        "day": "lun",
+        "type": "rails4business",
+        "title": "RAILS 4B",
+        "start": "09:00",
+        "end": "20:00",
+        "location": "Studio / Online",
+        "activities": [
+          {
+            "title": "Sviluppo FlowPulse",
+            "service": "coding",
+            "appointments": [
+              {
+                "contact": "Mark",
+                "role": "developer",
+                "status": "planned"
+              }
+            ]
+          },
+          {
+            "title": "Refactoring WeekPlan",
+            "service": "rails4business",
+            "appointments": [
+              {
+                "contact": "Mark",
+                "role": "creator",
+                "status": "planned"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "mar",
+        "type": "posturacorretta",
+        "title": "PosturaCorretta",
+        "start": "17:00",
+        "end": "20:00",
+        "location": "Viadana / Calvisano",
+        "activities": [
+          {
+            "title": "Lezioni individuali",
+            "service": "igiene_posturale_individuale",
+            "appointments": [
+              {
+                "contact": "Cliente 1",
+                "role": "cliente",
+                "status": "confirmed"
+              },
+              {
+                "contact": "Mark",
+                "role": "insegnante",
+                "status": "confirmed"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "mer",
+        "type": "posturacorretta",
+        "title": "PosturaCorretta",
+        "start": "17:00",
+        "end": "20:00",
+        "location": "Viadana / Calvisano",
+        "status": "da_confermare",
+        "activities": [
+          {
+            "title": "Lezioni / valutazioni",
+            "service": "posturacorretta",
+            "appointments": [
+              {
+                "contact": "Da confermare",
+                "role": "cliente",
+                "status": "pending"
+              },
+              {
+                "contact": "Mark",
+                "role": "professionista",
+                "status": "available"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "gio",
+        "type": "appointments",
+        "title": "Lezione",
+        "start": "11:00",
+        "end": "12:00",
+        "location": "Musica",
+        "activities": [
+          {
+            "title": "Fisarmonica",
+            "service": "musica",
+            "appointments": [
+              {
+                "contact": "Mark",
+                "role": "studente",
+                "status": "confirmed"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "gio",
+        "type": "posturacorretta",
+        "title": "PosturaCorretta",
+        "start": "17:00",
+        "end": "20:00",
+        "location": "Viadana / Calvisano",
+        "activities": [
+          {
+            "title": "Lezioni individuali",
+            "service": "igiene_posturale_individuale",
+            "appointments": [
+              {
+                "contact": "Cliente 1",
+                "role": "cliente",
+                "status": "confirmed"
+              },
+              {
+                "contact": "Mark",
+                "role": "insegnante",
+                "status": "confirmed"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "ven",
+        "type": "appointments",
+        "title": "Pittura",
+        "start": "10:00",
+        "end": "12:00",
+        "activities": [
+          {
+            "title": "Lezione pittura",
+            "service": "arte",
+            "appointments": [
+              {
+                "contact": "Mark",
+                "role": "partecipante",
+                "status": "confirmed"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "ven",
+        "type": "posturacorretta",
+        "title": "PosturaCorretta",
+        "start": "17:00",
+        "end": "20:00",
+        "location": "Viadana / Calvisano",
+        "activities": [
+          {
+            "title": "Lezioni / gruppo",
+            "service": "posturacorretta",
+            "appointments": [
+              {
+                "contact": "Clienti",
+                "role": "cliente",
+                "status": "planned"
+              },
+              {
+                "contact": "Mark",
+                "role": "insegnante",
+                "status": "planned"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "sab",
+        "type": "events",
+        "title": "Eventi",
+        "start": "09:00",
+        "end": "12:00",
+        "location": "Outdoor / GDC",
+        "activities": [
+          {
+            "title": "PosturaCorretta in evento",
+            "service": "evento_posturacorretta",
+            "appointments": [
+              {
+                "contact": "Partecipanti",
+                "role": "gruppo",
+                "status": "open"
+              },
+              {
+                "contact": "Mark",
+                "role": "organizzatore",
+                "status": "planned"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "day": "dom",
+        "type": "events",
+        "title": "Eventi",
+        "start": "09:00",
+        "end": "12:00",
+        "location": "Outdoor / GDC",
+        "activities": [
+          {
+            "title": "Evento / camminata / pratica",
+            "service": "evento_gdc",
+            "appointments": [
+              {
+                "contact": "Partecipanti",
+                "role": "gruppo",
+                "status": "open"
+              },
+              {
+                "contact": "Mark",
+                "role": "organizzatore",
+                "status": "planned"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <div class="planner">
-
-    <!-- ORARI -->
-    <div class="hours">
-      <div></div>
-      <div>08:00</div>
-      <div></div>
-      <div>09:00</div>
-      <div></div>
-      <div>10:00</div>
-      <div></div>
-      <div>11:00</div>
-      <div></div>
-      <div>12:00</div>
-      <div></div>
-      <div>13:00</div>
-      <div></div>
-      <div>14:00</div>
-      <div></div>
-      <div>15:00</div>
-      <div></div>
-      <div>16:00</div>
-      <div></div>
-      <div>17:00</div>
-      <div></div>
-      <div>18:00</div>
-      <div></div>
-      <div>19:00</div>
-      <div></div>
-      <div>20:00</div>
-      <div>20:30</div>
-    </div>
-
-    <!-- GIORNI -->
-    <div class="days-grid">
-
-      <!-- LUN -->
-      <div class="day">
-        <div class="day-title text-slate-900">Lun</div>
-        <div class="time-grid">
-          <div class="event start-09-00 span-11h bg-amber-100 border border-amber-300">
-            <div class="event-title text-amber-900">RAILS 4B</div>
-            <div class="event-text text-amber-700">09:00 - 20:00</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- MAR -->
-      <div class="day">
-        <div class="day-title text-slate-500">Mar</div>
-        <div class="time-grid">
-          <div class="event start-15-00 span-30m bg-rose-100 border border-rose-300">
-            <div class="event-title text-rose-900 uppercase">Musica nel pomeriggio</div>
-            <div class="event-text text-rose-700">15:00 - 15:30</div>
-          </div>
-
-          <div class="event start-16-30 span-30m bg-sky-100 border border-sky-300">
-            <div class="tiny text-sky-900">GRUPPO 16:30-17:00</div>
-          </div>
-
-          <div class="event start-17-00 span-3h bg-blue-100 border border-blue-300">
-            <div class="event-title text-blue-900">POSTURACORRETTA</div>
-            <div class="event-text text-blue-700">Individuali</div>
-            <div class="event-text text-blue-700">Viadana / Calvisano</div>
-            <div class="event-text text-blue-700">17:00 - 20:00</div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- MER -->
-      <div class="day">
-        <div class="day-title text-slate-500">Mer</div>
-        <div class="time-grid">
-          <div class="event start-15-00 span-30m bg-rose-100 border border-rose-300">
-            <div class="event-title text-rose-900 uppercase">Musica nel pomeriggio</div>
-            <div class="event-text text-rose-700">15:00 - 15:30</div>
-          </div>
-
-          <div class="event start-17-00 span-3h bg-blue-100 border border-blue-300">
-            <div class="event-title text-blue-900">POSTURACORRETTA</div>
-            <div class="event-text text-blue-700">Viadana / Calvisano</div>
-            <div class="event-text text-blue-700">17:00 - 20:00</div>
-            <div class="event-text text-blue-700">Con conferma</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- GIO -->
-      <div class="day">
-        <div class="day-title text-slate-500">Gio</div>
-        <div class="time-grid">
-          <div class="event start-09-00 span-1h30 bg-emerald-100 border border-emerald-300">
-            <div class="event-title text-emerald-900">TAI CHI</div>
-            <div class="event-text text-emerald-700">09:00 - 10:30</div>
-          </div>
-
-          <div class="event start-11-00 span-1h bg-rose-100 border border-rose-300">
-            <div class="event-title text-rose-900">LEZIONE</div>
-            <div class="event-text text-rose-700">Fisarmonica</div>
-            <div class="event-text text-rose-700">11:00 - 12:00</div>
-          </div>
-
-          <div class="event start-15-00 span-30m bg-rose-100 border border-rose-300">
-            <div class="event-title text-rose-900 uppercase">Musica nel pomeriggio</div>
-            <div class="event-text text-rose-700">15:00 - 15:30</div>
-          </div>
-
-          <div class="event start-16-30 span-30m bg-sky-100 border border-sky-300">
-            <div class="tiny text-sky-900">GRUPPO 16:30-17:00</div>
-          </div>
-
-          <div class="event start-17-00 span-3h bg-blue-100 border border-blue-300">
-            <div class="event-title text-blue-900">POSTURACORRETTA</div>
-            <div class="event-text text-blue-700">Individuali</div>
-            <div class="event-text text-blue-700">Viadana / Calvisano</div>
-            <div class="event-text text-blue-700">17:00 - 20:00</div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- VEN -->
-      <div class="day">
-        <div class="day-title text-slate-500">Ven</div>
-        <div class="time-grid">
-          <div class="event start-10-00 span-2h bg-violet-100 border border-violet-300">
-            <div class="event-title text-violet-900">PITTURA</div>
-            <div class="event-text text-violet-700">10:00 - 12:00</div>
-          </div>
-
-          <div class="event start-15-00 span-30m bg-rose-100 border border-rose-300">
-            <div class="event-title text-rose-900 uppercase">Musica nel pomeriggio</div>
-            <div class="event-text text-rose-700">15:00 - 15:30</div>
-          </div>
-
-          <div class="event start-17-00 span-3h bg-blue-100 border border-blue-300">
-            <div class="event-title text-blue-900">POSTURACORRETTA</div>
-            <div class="event-text text-blue-700">Viadana / Calvisano</div>
-            <div class="event-text text-blue-700">17:00 - 20:00</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SAB -->
-      <div class="day">
-        <div class="day-title text-sky-600">Sab</div>
-        <div class="time-grid">
-          <div class="event start-09-00 span-3h bg-emerald-100 border border-emerald-300">
-            <div class="event-title text-emerald-900">EVENTI GDC</div>
-            <div class="event-text text-emerald-700">09:00 - 12:00</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DOM -->
-      <div class="day">
-        <div class="day-title text-sky-600">Dom</div>
-        <div class="time-grid">
-          <div class="event start-09-00 span-3h bg-emerald-100 border border-emerald-300">
-            <div class="event-title text-emerald-900">EVENTI GDC</div>
-            <div class="event-text text-emerald-700">09:00 - 12:00</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="hours" id="hours"></div>
+    <div class="days-grid" id="days-grid"></div>
   </div>
+
+  <script>
+    const data = JSON.parse(document.getElementById("weekplan-data").textContent)
+
+    const colors = {
+      appointments: "bg-rose-100 border-rose-300 text-rose-900",
+      posturacorretta: "bg-blue-100 border-blue-300 text-blue-900",
+      rails4business: "bg-amber-100 border-amber-300 text-amber-900",
+      events: "bg-violet-100 border-violet-300 text-violet-900"
+    }
+
+    function minutesFromTime(time) {
+      const [h, m] = time.split(":").map(Number)
+      return h * 60 + m
+    }
+
+    function timeToRow(time) {
+      const startMinutes = minutesFromTime(data.time_range.start)
+      const currentMinutes = minutesFromTime(time)
+      return Math.floor((currentMinutes - startMinutes) / data.time_range.step_minutes) + 1
+    }
+
+    function spanRows(start, end) {
+      const diff = minutesFromTime(end) - minutesFromTime(start)
+      return Math.max(1, diff / data.time_range.step_minutes)
+    }
+
+    function renderHours() {
+      const hours = document.getElementById("hours")
+      const start = minutesFromTime(data.time_range.start)
+      const end = minutesFromTime(data.time_range.end)
+      const step = data.time_range.step_minutes
+
+      hours.innerHTML = "<div></div>"
+
+      for (let min = start; min < end; min += step) {
+        const h = String(Math.floor(min / 60)).padStart(2, "0")
+        const m = String(min % 60).padStart(2, "0")
+        hours.innerHTML += m === "00" ? `<div>${h}:${m}</div>` : "<div></div>"
+      }
+    }
+
+    function renderWeekPlan() {
+      const grid = document.getElementById("days-grid")
+      grid.innerHTML = ""
+
+      data.days.forEach(day => {
+        const eventDates = data.event_dates.filter(eventDate => eventDate.day === day)
+
+        const dayEl = document.createElement("div")
+        dayEl.className = "day"
+
+        dayEl.innerHTML = `
+          <div class="day-title">${day}</div>
+          <div class="time-grid"></div>
+        `
+
+        const timeGrid = dayEl.querySelector(".time-grid")
+
+        eventDates.forEach(eventDate => {
+          const eventEl = document.createElement("div")
+          eventEl.className = `event-date border ${colors[eventDate.type] || colors.appointments}`
+
+          eventEl.style.gridRowStart = timeToRow(eventDate.start)
+          eventEl.style.gridRowEnd = `span ${spanRows(eventDate.start, eventDate.end)}`
+
+          const activitiesHtml = (eventDate.activities || []).map(activity => {
+            const appointmentsHtml = (activity.appointments || []).map(appointment => {
+              return `
+                <div class="appointment">
+                  ${appointment.contact} · ${appointment.role}
+                </div>
+              `
+            }).join("")
+
+            return `
+              <div class="activity">
+                <div class="activity-title">${activity.title}</div>
+                ${appointmentsHtml}
+              </div>
+            `
+          }).join("")
+
+          eventEl.innerHTML = `
+            <div class="event-title">${eventDate.title}</div>
+            <div class="event-text">${eventDate.start} - ${eventDate.end}</div>
+            ${eventDate.location ? `<div class="event-text">${eventDate.location}</div>` : ""}
+            ${eventDate.status ? `<div class="event-text">${eventDate.status}</div>` : ""}
+            ${activitiesHtml}
+          `
+
+          timeGrid.appendChild(eventEl)
+        })
+
+        grid.appendChild(dayEl)
+      })
+    }
+
+    renderHours()
+    renderWeekPlan()
+  </script>
 </body>
 
 </html>
