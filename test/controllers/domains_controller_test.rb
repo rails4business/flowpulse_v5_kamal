@@ -8,8 +8,8 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Flowpulse"
   end
 
-  test "renders configured domain action" do
-    Domain.create!(hostname: "posturacorretta.org", action: "posturacorretta", locale: "it")
+  test "renders configured domain target" do
+    Domain.create!(hostname: "posturacorretta.org", target_controller: "pages", target_action: "posturacorretta", locale: "it")
     host! "posturacorretta.org"
 
     get root_url
@@ -19,7 +19,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "renders configured controller target" do
-    Domain.create!(hostname: "custom.org", action: "flowpulse", target_controller: "pages", target_action: "flowpulse", locale: "it")
+    Domain.create!(hostname: "custom.org", target_controller: "pages", target_action: "flowpulse", locale: "it")
     host! "custom.org"
 
     get root_url
@@ -32,7 +32,6 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     Domain.create!(
       hostname: "www.posturacorretta.org",
       canonical_host: "posturacorretta.org",
-      action: "posturacorretta",
       locale: "it"
     )
     host! "www.posturacorretta.org"

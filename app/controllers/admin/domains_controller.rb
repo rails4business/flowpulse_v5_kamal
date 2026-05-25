@@ -10,7 +10,7 @@ module Admin
     end
 
     def new
-      @domain = Domain.new(locale: "it", action: "mvp_home", active: true)
+      @domain = Domain.new(locale: "it", target_controller: "pages", active: true)
     end
 
     def edit
@@ -71,7 +71,7 @@ module Admin
       end
 
       def domain_params
-        params.require(:domain).permit(:hostname, :canonical_host, :locale, :action, :target_controller, :target_action, :primary, :active)
+        params.require(:domain).permit(:hostname, :canonical_host, :locale, :target_controller, :target_action, :primary, :active)
       end
 
       def yaml_export_request?

@@ -32,8 +32,6 @@ class DomainsController < ApplicationController
     def dispatch_domain_action
       if Current.domain&.target_controller.present?
         render "#{Current.domain.target_controller}/#{Current.domain.target_action}"
-      elsif Current.domain&.action.present?
-        render "pages/#{Current.domain.action}"
       else
         render "pages/flowpulse"
       end

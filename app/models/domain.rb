@@ -3,7 +3,6 @@ class Domain < ApplicationRecord
 
   validates :hostname, presence: true, uniqueness: true
   validates :locale, presence: true
-  validates :action, presence: true
   validate :target_controller_and_action_presence
 
   scope :active, -> { where(active: true) }
@@ -23,12 +22,11 @@ class Domain < ApplicationRecord
       find_or_initialize_by(hostname: hostname).tap do |domain|
         domain.canonical_host = attrs[:canonical_host]
         domain.locale = attrs[:locale].presence || "it"
-        domain.action = attrs[:action].presence || "mvp_home"
         domain.target_controller = attrs[:target_controller]
         domain.target_action = attrs[:target_action]
         domain.primary = ActiveModel::Type::Boolean.new.cast(attrs.fetch(:primary, false))
         domain.active = ActiveModel::Type::Boolean.new.cast(attrs.fetch(:active, true))
-        domain.settings = attrs.except(:canonical_host, :locale, :action, :target_controller, :target_action, :primary, :active).presence
+        domain.settings = attrs.except(:canonical_host, :locale, :target_controller, :target_action, :primary, :active).presence
         domain.save!
       end
     end
@@ -41,12 +39,11 @@ class Domain < ApplicationRecord
   end
 
   def self.export_to_hash
-    order(:hostname).pluck(:hostname, :canonical_host, :locale, :action, :primary, :active, :target_controller, :target_action, :settings).each_with_object({}) do |row, hash|
-      hostname, canonical_host, locale, action, primary, active, target_controller, target_action, settings = row
+    order(:hostname).pluck(:hostname, :canonical_host, :locale, :primary, :active, :target_controller, :target_action, :settings).each_with_object({}) do |row, hash|
+      hostname, canonical_host, locale, primary, active, target_controller, target_action, settings = row
 
       config = {}
       config["canonical_host"] = canonical_host if canonical_host.present?
-      config["action"] = action if canonical_host.blank?
       config["locale"] = locale if canonical_host.blank?
       config["target_controller"] = target_controller if target_controller.present?
       config["target_action"] = target_action if target_action.present?
@@ -69,7 +66,6 @@ class Domain < ApplicationRecord
   def to_config
     {}.tap do |hash|
       hash["canonical_host"] = canonical_host if canonical_host.present?
-      hash["action"] = action if canonical_host.blank?
       hash["locale"] = locale if canonical_host.blank?
       hash["target_controller"] = target_controller if target_controller.present?
       hash["target_action"] = target_action if target_action.present?

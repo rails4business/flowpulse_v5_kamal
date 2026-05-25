@@ -36,7 +36,6 @@ Rails.application.routes.draw do
     get "viaggiatori" => "pages#viaggiatori"
     get "carta_nautica" => "pages#carta_nautica"
 
-    get "mvp_home" => "pages#mvp_home"
     get "mondi" => "pages#mari"
     get "progetti" => "home#progetti"
     get "lavoro" => "home#lavoro"
