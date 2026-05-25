@@ -18,13 +18,10 @@ default: &default
     canonical_host: markpostura.it
 
   markpostura.com:
-    locale: it
-    target_controller: pages
-    target_action: markpostura
-    primary: true
+    canonical_host: markpostura.it
 
   www.markpostura.com:
-    canonical_host: markpostura.com
+    canonical_host: markpostura.it
 
   posturacorretta.org:
     locale: it
