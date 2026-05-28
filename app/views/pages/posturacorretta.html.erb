@@ -148,6 +148,9 @@
         </div>
       </div>
     </section>
+
+  
+
 <!-- PERCORSI + TAB + ADERISCI AL PROGETTO -->
 <section id="inizia" class="border-y border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
   <div class="mx-auto max-w-7xl">
@@ -176,8 +179,8 @@
         <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-red-600 ring-4 ring-red-100"></span>
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-red-700">Rosso</span>
-          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Ho dolore o una diagnosi</span>
-          <span class="mt-2 block text-sm leading-6 text-slate-600">Fase acuta, recupero e cura guidata.</span>
+          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Ho dolore o una patologia?</span>
+          <span class="mt-2 block text-sm leading-6 text-slate-600">Affrontare la fase acuta, cura patologie e dolori, e non solo i sintomi.</span>
           <span class="mt-4 block text-sm font-semibold text-red-700">Scegli questo</span>
         </span>
       </button>
@@ -187,8 +190,8 @@
         <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-emerald-600 ring-4 ring-emerald-100"></span>
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Verde</span>
-          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Prevenire e stare meglio</span>
-          <span class="mt-2 block text-sm leading-6 text-slate-600">Abitudini, equilibrio e salute quotidiana.</span>
+          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Percorso salute</span>
+          <span class="mt-2 block text-sm leading-6 text-slate-600">Crea il tuo percorso integrato per migliorare la tua salute e il tuo benessere.</span>
           <span class="mt-4 block text-sm font-semibold text-emerald-700">Scegli questo</span>
         </span>
       </button>
@@ -199,7 +202,7 @@
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Blu</span>
           <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Capire meglio il corpo</span>
-          <span class="mt-2 block text-sm leading-6 text-slate-600">Postura, fisiologia e consapevolezza.</span>
+          <span class="mt-2 block text-sm leading-6 text-slate-600">Impara a conoscere a leggere i segnali e riattivare i tuoi sistemi fisiologici.</span>
           <span class="mt-4 block text-sm font-semibold text-blue-700">Scegli questo</span>
         </span>
       </button>
@@ -209,8 +212,8 @@
         <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-violet-700 ring-4 ring-violet-100"></span>
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Viola</span>
-          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Cambiare stile di vita</span>
-          <span class="mt-2 block text-sm leading-6 text-slate-600">Natura, eventi, comunità e ritmo.</span>
+          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Evoluzione armonica</span>
+          <span class="mt-2 block text-sm leading-6 text-slate-600">Scopri le sfere che influenzano la tua vita, e coltivale con eventi e pratiche di benessere.</span>
           <span class="mt-4 block text-sm font-semibold text-violet-700">Scegli questo</span>
         </span>
       </button>
@@ -260,7 +263,31 @@
 
       <!-- LISTA PERCORSO -->
       <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft md:p-10">
+        <div class="mb-10 flex flex-col gap-5 border-b border-slate-100 pb-8 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Tappe consigliate</p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Segui il percorso con calma.</h3>
+          </div>
+
+          <button id="path-start-link" type="button" disabled aria-disabled="true"
+            class="inline-flex items-center justify-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white opacity-90">
+            Inizia il percorso →
+          </button>
+        </div>
+
         <div id="path-steps" class="space-y-10"></div>
+
+        <div class="mt-10 flex flex-col gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Pronto a partire?</p>
+            <p id="path-bottom-text" class="mt-2 text-lg font-semibold text-slate-950">Inizia dal percorso rosso.</p>
+          </div>
+
+          <button id="path-bottom-start-link" type="button" disabled aria-disabled="true"
+            class="inline-flex items-center justify-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white opacity-90">
+            Inizia il percorso →
+          </button>
+        </div>
       </div>
 
     </div>
@@ -282,7 +309,7 @@
         ["Diario della salute", "Stai già facendo qualcosa per la tua salute?", "Registra i tuoi eventi le tue attività, le tue scoperte e i tuoi progetti.", ["Contenuti", "Corso", "Professionisti"]],
         ["Stop al dolore", "Hai già una diagnosi o un piano per uscire dalla fase acuta?", "Ti aiutiamo a orientarti tra professionisti ed esercizi utili per calmare il dolore.", ["Contenuti", "Percorso", "Professionisti"]],
         ["Valutazione PosturaCorretta", "Quali sistemi bloccati hanno favorito i tuoi sintomi?", "Una valutazione per capire quali sistemi sono compromessi e come lavorare in profondità.", ["Valutazione", "Schede", "Professionisti"]],
-        ["Percorso terapeutico", "Dopo la fase acuta serve recuperare funzione.", "Costruisci un piano terapeutico con trattamenti, riabilitazione e recupero guidato.", ["Recupero", "Trattamenti", "Professionisti"]]
+        ["Percorso terapeutico", "Per andare oltre la fase acuta.", "Costruisci un piano terapeutico con trattamenti, che vanno a curare le cause e non solo i sintomi, recupera la tua funzionalità con la riabilitazione e il recupero guidato.", ["Recupero", "Trattamenti", "Professionisti"]]
       ]
     },
 
@@ -297,7 +324,7 @@
       steps: [
         ["Diario della salute", "Stai già facendo qualcosa per la tua salute?", "Metti ordine tra i tuoi trattamenti e le tue attività.", ["Contenuti", "Corso", "Professionisti"]],
         ["Stato di salute", "Sai davvero qual è il tuo stato di salute?", "Valuta abitudini, rischi, risorse e ambiti della salute da migliorare.", ["Questionari", "Abitudini", "Diario"]],
-        ["Benessere integrato", "Sei pronto a costruire il tuo percorso per la salute?", "Scopri quale area della salute è prioritaria e costruisci il tuo percorso integrato.", ["Linee guida", "Professionisti", "Percorsi"]]
+        ["Benessere integrato", "Sei pronto a costruire un percorso integrato?", "Scopri quale area della salute è prioritaria e costruisci il tuo percorso integrato.", ["Linee guida", "Professionisti", "Percorsi"]]
       ]
     },
 
@@ -372,15 +399,6 @@
 
   const allowedTabs = ["rosso", "verde", "blu", "viola"];
 
-  function slugify(text) {
-    return text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  }
-
   function renderPath(key) {
     const path = paths[key];
     const c = colorClasses[path.color];
@@ -404,6 +422,13 @@
     document.getElementById("join-link").className =
       `mt-6 inline-flex rounded-full border ${c.border} px-5 py-3 text-sm font-semibold ${c.text} ${c.hover}`;
 
+    document.getElementById("path-start-link").className =
+      `inline-flex items-center justify-center rounded-full ${c.bg} px-6 py-3 text-sm font-semibold text-white opacity-90`;
+    document.getElementById("path-bottom-start-link").className =
+      `inline-flex items-center justify-center rounded-full ${c.bg} px-6 py-3 text-sm font-semibold text-white opacity-90`;
+    document.getElementById("path-bottom-text").textContent =
+      `Inizia dal ${path.kicker.toLowerCase()}.`;
+
     const joinTags = document.getElementById("join-tags");
     joinTags.innerHTML = path.joinTags.map(tag => `
       <span class="rounded-full ${c.soft} px-3 py-1 text-xs font-medium ${c.text}">
@@ -418,7 +443,7 @@
       const [label, title, description, tags] = step;
 
       container.innerHTML += `
-        <article class="${index < path.steps.length - 1 ? "step-line" : ""} relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+        <article class="${index < path.steps.length - 1 ? "step-line" : ""} relative pl-14">
           <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full ${c.bg} text-sm font-semibold text-white">
             ${index + 1}
           </div>
@@ -432,9 +457,11 @@
               ${title}
             </h3>
 
-            <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-              ${description}
-            </p>
+            ${description ? `
+              <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+                ${description}
+              </p>
+            ` : ""}
 
             <div class="mt-4 flex flex-wrap gap-2">
               ${tags.map(tag => `
@@ -444,11 +471,6 @@
               `).join("")}
             </div>
           </div>
-
-          <a href="#${slugify(label)}"
-            class="self-start rounded-full border ${c.border} px-4 py-2 text-sm font-semibold ${c.text} ${c.hover}">
-            Approfondisci →
-          </a>
         </article>
       `;
     });
@@ -513,6 +535,29 @@
 
   renderPath(getInitialTab());
 </script>
+
+  <!-- PERCORSO -->
+    <section id="percorso" class="border-y border-slate-100 bg-white px-5 py-16 md:py-24">
+      <div class="mx-auto max-w-7xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+          Il punto non è sostituire la medicina
+        </p>
+
+        <h2 class="mt-4 max-w-5xl text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.05]">
+          La diagnosi ti dice cosa hai.
+          <br>
+          Il percorso ti aiuta a capire
+          cosa sta succedendo al tuo corpo.
+        </h2>
+
+        <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-600">
+          Una patologia può avere un nome preciso.
+          Ma spesso dietro ci sono sistemi che non lavorano più bene:
+          movimento, respirazione, recupero, stress,
+          sonno, alimentazione, abitudini e rapporto con il corpo.
+        </p>
+      </div>
+    </section>
 
     <!-- RISORSE -->
     <section class="border-t border-slate-200 bg-white px-5 py-24" id="risorse">
@@ -598,6 +643,8 @@
         </div>
       </div>
     </section>
+
+    
 
     <!-- COMMUNITY -->
 <section id="community" class="border-t border-slate-200 bg-slate-50 px-5 py-20">
