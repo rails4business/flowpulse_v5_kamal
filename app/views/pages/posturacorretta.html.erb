@@ -179,7 +179,7 @@
         <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-red-600 ring-4 ring-red-100"></span>
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-red-700">Rosso</span>
-          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Ho dolore o una patologia?</span>
+          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Dolori e patologie</span>
           <span class="mt-2 block text-sm leading-6 text-slate-600">Affrontare la fase acuta, cura patologie e dolori, e non solo i sintomi.</span>
           <span class="mt-4 block text-sm font-semibold text-red-700">Scegli questo</span>
         </span>
@@ -190,7 +190,7 @@
         <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-emerald-600 ring-4 ring-emerald-100"></span>
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Verde</span>
-          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Percorso salute</span>
+          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Benessere e Prevenzione</span>
           <span class="mt-2 block text-sm leading-6 text-slate-600">Crea il tuo percorso integrato per migliorare la tua salute e il tuo benessere.</span>
           <span class="mt-4 block text-sm font-semibold text-emerald-700">Scegli questo</span>
         </span>
@@ -237,28 +237,6 @@
           Per chi parte da dolore, diagnosi, patologia o fase acuta.
         </p>
 
-        <!-- ADERISCI -->
-        <div id="join-box" class="mt-7 rounded-[2rem] border border-red-200 bg-white p-7 shadow-sm">
-          <p id="join-kicker" class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">
-            Aderisci al progetto
-          </p>
-
-          <h3 id="join-title" class="mt-3 text-2xl font-semibold text-slate-950">
-            Sei un professionista sanitario?
-          </h3>
-
-          <p id="join-description" class="mt-4 text-base leading-7 text-slate-600">
-            Se sei fisioterapista, osteopata, medico o professionista sanitario,
-            puoi integrare il percorso PosturaCorretta nei tuoi trattamenti.
-          </p>
-
-          <div id="join-tags" class="mt-5 flex flex-wrap gap-2"></div>
-
-          <a id="join-link" href="#professionisti"
-            class="mt-6 inline-flex rounded-full border border-red-200 px-5 py-3 text-sm font-semibold text-red-700 hover:bg-red-50">
-            Scopri come aderire →
-          </a>
-        </div>
       </aside>
 
       <!-- LISTA PERCORSO -->
@@ -287,6 +265,29 @@
             class="inline-flex items-center justify-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white opacity-90">
             Inizia il percorso →
           </button>
+        </div>
+
+        <!-- ADERISCI -->
+        <div id="join-box" class="mt-10 rounded-[2rem] border border-red-200 bg-white p-7 shadow-sm">
+          <p id="join-kicker" class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">
+            Aderisci al progetto
+          </p>
+
+          <h3 id="join-title" class="mt-3 text-2xl font-semibold text-slate-950">
+            Sei un professionista sanitario?
+          </h3>
+
+          <p id="join-description" class="mt-4 text-base leading-7 text-slate-600">
+            Se sei fisioterapista, osteopata, medico o professionista sanitario,
+            puoi integrare il percorso PosturaCorretta nei tuoi trattamenti.
+          </p>
+
+          <div id="join-tags" class="mt-5 flex flex-wrap gap-2"></div>
+
+          <a id="join-link" href="#professionisti"
+            class="mt-6 inline-flex rounded-full border border-red-200 px-5 py-3 text-sm font-semibold text-red-700 hover:bg-red-50">
+            Scopri come aderire →
+          </a>
         </div>
       </div>
 
@@ -411,7 +412,7 @@
     document.getElementById("path-description").textContent = path.description;
 
     document.getElementById("join-box").className =
-      `mt-7 rounded-[2rem] border ${c.border} bg-white p-7 shadow-sm`;
+      `mt-10 rounded-[2rem] border ${c.border} bg-white p-7 shadow-sm`;
 
     document.getElementById("join-kicker").className =
       `text-xs font-semibold uppercase tracking-[0.18em] ${c.text}`;
@@ -556,6 +557,10 @@
           movimento, respirazione, recupero, stress,
           sonno, alimentazione, abitudini e rapporto con il corpo.
         </p>
+
+        <a href="#inizia" class="mt-9 inline-flex rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+          Inizia il percorso →
+        </a>
       </div>
     </section>
 
