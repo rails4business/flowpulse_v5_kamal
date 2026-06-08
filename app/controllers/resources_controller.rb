@@ -1,5 +1,7 @@
 class ResourcesController < ApplicationController
-  allow_unauthenticated_access
+  dashboard_section :resources
+
+  before_action :require_admin_user!
 
   TABS = [
     { key: "eventi", label: "Eventi" },
@@ -30,6 +32,12 @@ class ResourcesController < ApplicationController
   end
 
   private
+
+    def require_admin_user!
+      unless admin_user? && (superadmin_user? || !demo_mode?)
+        redirect_to root_path, alert: "Accesso riservato agli admin."
+      end
+    end
 
     def normalized_tab(tab)
       TABS.find { |item| item[:key] == tab }&.fetch(:key) || "eventi"

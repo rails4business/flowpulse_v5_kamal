@@ -1,0 +1,19 @@
+<div class="flex h-16 flex-none items-center justify-between border-b border-slate-200 px-5">
+  <%= verified_link_to dashboard_home_path, class: "flex items-center gap-3" do %>
+    <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white">FP</span>
+    <span>
+      <strong class="block font-bold leading-none text-slate-950">FlowPulse</strong>
+      <span class="mt-1 block text-xs text-slate-500">Dashboard</span>
+    </span>
+  <% end %>
+
+  <button
+    id="closeSidebarButton"
+    data-dashboard-mobile-toggle
+    type="button"
+    class="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
+    aria-label="Chiudi menu"
+  >
+    <span aria-hidden="true">×</span>
+  </button>
+</div>

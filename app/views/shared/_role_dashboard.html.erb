@@ -1,0 +1,16 @@
+<% content_for :title, dashboard.fetch(:title) %>
+
+<header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600"><%= dashboard.fetch(:title) %></p>
+      <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl"><%= dashboard.fetch(:heading) %></h1>
+      <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600"><%= dashboard.fetch(:intro) %></span>
+    </header>
+
+    <section class="mt-6 grid gap-4 md:grid-cols-3">
+      <% dashboard.fetch(:cards).each do |title, body| %>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-extrabold text-slate-950"><%= title %></h2>
+          <p class="mt-2 text-sm leading-6 text-slate-600"><%= body %></p>
+        </article>
+      <% end %>
+    </section>

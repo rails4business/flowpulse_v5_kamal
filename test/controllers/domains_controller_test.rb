@@ -9,7 +9,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "renders configured domain target" do
-    Domain.create!(hostname: "posturacorretta.org", target_controller: "pages", target_action: "posturacorretta", locale: "it")
+    Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
     host! "posturacorretta.org"
 
     get root_url
@@ -18,8 +18,28 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "PosturaCorretta"
   end
 
+  test "resolves current domain from forwarded host" do
+    Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+    host! "internal.example"
+
+    get root_url, headers: { "X-Forwarded-Host" => "posturacorretta.org" }
+
+    assert_response :success
+    assert_includes response.body, "PosturaCorretta"
+  end
+
+  test "resolves current domain when forwarded host includes port" do
+    Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+    host! "internal.example"
+
+    get root_url, headers: { "X-Forwarded-Host" => "posturacorretta.org:443" }
+
+    assert_response :success
+    assert_includes response.body, "PosturaCorretta"
+  end
+
   test "renders configured controller target" do
-    Domain.create!(hostname: "custom.org", target_controller: "pages", target_action: "flowpulse", locale: "it")
+    Domain.create!(hostname: "custom.org", target_controller: "landing", target_action: "flowpulse", locale: "it")
     host! "custom.org"
 
     get root_url
@@ -39,5 +59,15 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_redirected_to "http://posturacorretta.org/"
+  end
+
+  test "renders igiene posturale domain as posturacorretta landing" do
+    Domain.create!(hostname: "igieneposturale.it", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+    host! "igieneposturale.it"
+
+    get root_url
+
+    assert_response :success
+    assert_includes response.body, "PosturaCorretta"
   end
 end

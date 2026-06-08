@@ -1,7 +1,8 @@
 class PagesController < ApplicationController
-  allow_unauthenticated_access
+  allow_unauthenticated_access except: :viaggiatori
 
-  layout "domains"
+  layout :pages_layout
+  dashboard_section :traveler, only: :viaggiatori
   def markpostura
   end 
 
@@ -22,4 +23,10 @@ class PagesController < ApplicationController
 
   def viaggiatori
   end
+
+  private
+
+    def pages_layout
+      action_name == "viaggiatori" ? "application" : "landing"
+    end
 end

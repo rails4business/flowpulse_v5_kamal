@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="it">
+<% content_for :title, "PosturaCorretta — Percorso della Salute" %>
+<% active_landing_tab = params[:tab].presence_in(%w[salute collabora eventi about]) || "salute" %>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PosturaCorretta — Percorso della Salute</title>
-
+<% content_for :head do %>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,40 +68,50 @@
     }
 
     .step-line:last-child::before { display: none; }
+
+    .landing-tab-button[aria-selected="true"] { color: #fff; }
   </style>
-</head>
+<% end %>
 
-<body class="text-slate-900 antialiased">
-
-  <!-- HEADER -->
-  <header class="sticky top-0 z-50 border-b border-slate-200/70 glass">
-    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
-      <a href="#top" class="flex items-center gap-3">
+<% content_for :landing_nav do %>
+  <header class="sticky top-0 z-50 border-b border-slate-200/80 glass">
+    <div class="mx-auto flex min-h-16 max-w-5xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6">
+      <a href="#top" class="flex items-center gap-3" aria-label="PosturaCorretta home">
         <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-7 w-auto">
       </a>
 
-      <nav class="hidden h-full items-center gap-6 md:flex">
-        <a href="#percorso" class="text-sm font-medium text-slate-600 hover:text-blue-700">Percorso</a>
-        <a href="#risorse" class="text-sm font-medium text-slate-600 hover:text-blue-700">Risorse</a>
-        <a href="#community" class="text-sm font-medium text-slate-600 hover:text-blue-700">Community</a>
-        <a href="#professionisti" class="text-sm font-medium text-slate-600 hover:text-blue-700">Per i professionisti</a>
-        <a href="#inizia" class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">Inizia</a>
+      <nav class="grid grid-cols-4  rounded-full bg-slate-100 p-1.5 text-center text-xs font-extrabold uppercase tracking-wide text-blue-600 sm:text-sm md:w-auto md:min-w-[700px]" role="tablist" aria-label="Navigazione principale PosturaCorretta">
+        <button type="button" class="landing-tab-button rounded-full px-2 py-2 transition md:px-5 <%= active_landing_tab == "salute" ? "bg-blue-600 text-white shadow-sm" : "text-blue-700" %>" data-landing-tab="salute" aria-selected="<%= active_landing_tab == "salute" %>">
+          Percorso<br class="sm:hidden"> Salute
+        </button>
+        <button type="button" class="landing-tab-button rounded-full px-2 py-2 transition md:px-5 <%= active_landing_tab == "collabora" ? "bg-orange-500 text-white shadow-sm" : "text-orange-600" %>" data-landing-tab="collabora" aria-selected="<%= active_landing_tab == "collabora" %>">
+          Collabora
+        </button>
+        <button type="button" class="landing-tab-button rounded-full px-2 py-2 transition md:px-5 <%= active_landing_tab == "eventi" ? "bg-violet-700 text-white shadow-sm" : "text-violet-700" %>" data-landing-tab="eventi" aria-selected="<%= active_landing_tab == "eventi" %>">
+          Eventi
+        </button>
+        <button type="button" class="landing-tab-button rounded-full px-2 py-2 transition md:px-5 <%= active_landing_tab == "about" ? "bg-slate-950 text-white shadow-sm" : "text-slate-700" %>" data-landing-tab="about" aria-selected="<%= active_landing_tab == "about" %>">
+          About
+        </button>
       </nav>
     </div>
   </header>
+<% end %>
 
-  <main id="top">
+<div id="top" class="text-slate-900 antialiased">
+  <div data-tab-panel="salute" class="<%= "hidden" unless active_landing_tab == "salute" %>">
+       
 
     <!-- HERO -->
     <section class="px-5 py-16 md:py-24">
-      <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[.95fr_1.05fr]">
+      <div class="mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-[.95fr_1.05fr]">
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-            La salute inizia dalle metodiche posturali
+            Accademia PosturaCorretta
           </p>
 
 
-          <h1 class="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+          <h1 class="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1]">
             Non è solo un dolore
             <br>
             <span class="text-blue-700">è il corpo che parla</span>
@@ -113,22 +119,16 @@
           </h1>
 
           <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-600">
-            Di solito si parte da un problema:
-            una visita, una diagnosi, uno specialista,
-            un farmaco o un intervento.
+           Di solito si parte da un problema: una visita, una diagnosi, uno specialista, un farmaco o un intervento.
           </p>
 
           <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-            Ma uscire dalla fase acuta è solo il primo passo.
-            Dopo serve capire quali sistemi del corpo sono in difficoltà,
-            quali abitudini ti stanno influenzando
-            e quale percorso può aiutarti a ricostruire salute,
-            benessere e consapevolezza.
+          Ma uscire dalla fase acuta è solo il primo passo. Dopo serve capire quali sistemi del corpo sono in difficoltà, quali abitudini ti stanno influenzando e quale percorso può aiutarti a ricostruire salute, benessere e consapevolezza.
           </p>
 
           <div class="mt-9 flex flex-wrap gap-3">
-            <a href="#percorso" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
-             Inizia il percorso
+            <a href="#inizia" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+             Scegli il percorso
             </a>
             <!--a href="/diario-della-salute" class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
               Inizia dal diario
@@ -148,28 +148,31 @@
         </div>
       </div>
     </section>
+    
 
   
 
 <!-- PERCORSI + TAB + ADERISCI AL PROGETTO -->
 <section id="inizia" class="border-y border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
-  <div class="mx-auto max-w-7xl">
+  <div class="mx-auto max-w-5xl">
 
     <!-- HERO COMPATTA -->
     <div class="max-w-4xl">
       <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-        Scelta guidata
+        Percorsi per le persone
       </p>
 
       <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
-        Scegli da dove partire.
+     Da dove vuoi iniziare?
       </h2>
 
       <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-        Seleziona la situazione più vicina a te: il percorso sotto si aggiorna
-        con tappe, risorse e professionisti più adatti.
+        Quale percorso è  più vicino alla tua situazione: dolore, benessere,
+        conoscenza del corpo o espressione del tuo potenziale.
       </p>
     </div>
+
+    
 
     <!-- TABS / CARD -->
     <div class="mt-12 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -201,7 +204,7 @@
         <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-blue-600 ring-4 ring-blue-100"></span>
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Blu</span>
-          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Capire meglio il corpo</span>
+          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Riattiva i sistemi del corpo</span>
           <span class="mt-2 block text-sm leading-6 text-slate-600">Impara a conoscere a leggere i segnali e riattivare i tuoi sistemi fisiologici.</span>
           <span class="mt-4 block text-sm font-semibold text-blue-700">Scegli questo</span>
         </span>
@@ -212,7 +215,7 @@
         <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-violet-700 ring-4 ring-violet-100"></span>
         <span>
           <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Viola</span>
-          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Evoluzione armonica</span>
+          <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Espressione armonica</span>
           <span class="mt-2 block text-sm leading-6 text-slate-600">Scopri le sfere che influenzano la tua vita, e coltivale con eventi e pratiche di benessere.</span>
           <span class="mt-4 block text-sm font-semibold text-violet-700">Scegli questo</span>
         </span>
@@ -263,7 +266,7 @@
 
           <button id="path-bottom-start-link" type="button" disabled aria-disabled="true"
             class="inline-flex items-center justify-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white opacity-90">
-            Inizia il percorso →
+            Inizia da qui →
           </button>
         </div>
 
@@ -284,15 +287,59 @@
 
           <div id="join-tags" class="mt-5 flex flex-wrap gap-2"></div>
 
-          <a id="join-link" href="#professionisti"
+          <button id="join-link" type="button" data-jump-tab="collabora"
             class="mt-6 inline-flex rounded-full border border-red-200 px-5 py-3 text-sm font-semibold text-red-700 hover:bg-red-50">
             Scopri come aderire →
-          </a>
+          </button>
         </div>
       </div>
 
     </div>
 
+  </div>
+</section>
+
+
+  </div>
+
+<!-- COLLABORA -->
+<section id="collabora" data-tab-panel="collabora" class="<%= "hidden " unless active_landing_tab == "collabora" %>border-b border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
+  <div class="mx-auto max-w-5xl">
+    <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-orange-700">Collaborazioni e Progetti</p>
+        <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+          Aiutaci a costruire PosturaCorretta.
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-slate-600">
+          PosturaCorretta non è solo un percorso per utenti e pazienti. È anche un progetto aperto
+          a chi vuole portare competenze, attività, contenuti, software, spazi o visione imprenditoriale.
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl border border-red-200 bg-white p-6">
+          <p class="text-sm font-semibold text-red-700">Professionisti sanitari</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Fisioterapisti, medici, osteopati e figure sanitarie per Stop al Dolore e percorsi complessi.</p>
+        </div>
+        <div class="rounded-2xl border border-emerald-200 bg-white p-6">
+          <p class="text-sm font-semibold text-emerald-700">Benessere e prevenzione</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Professionisti del movimento, trainer, operatori e facilitatori dello stile di vita.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-200 bg-white p-6">
+          <p class="text-sm font-semibold text-blue-700">Insegnanti ed educatori</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Persone che vogliono insegnare postura, fisiologia, igiene posturale e consapevolezza corporea.</p>
+        </div>
+        <div class="rounded-2xl border border-violet-200 bg-white p-6">
+          <p class="text-sm font-semibold text-violet-700">Eventi e territorio</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Chi vuole proporre attività, camminate, musica, natura, laboratori e momenti di comunità.</p>
+        </div>
+        <div class="rounded-2xl border border-orange-200 bg-white p-6 sm:col-span-2">
+          <p class="text-sm font-semibold text-orange-700">Software, contenuti e business</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Sviluppatori, copywriter, videomaker, designer, imprenditori e investitori per FlowPulse, piattaforma, comunicazione e rete.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -537,9 +584,93 @@
   renderPath(getInitialTab());
 </script>
 
+
+  <div data-tab-panel="about" class="<%= "hidden" unless active_landing_tab == "about" %>">
   <!-- PERCORSO -->
+     <section class="overflow-hidden px-5 py-6 md:py-12">
+    
+      <div class="mx-auto max-w-5xl grid  items-center gap-12 pt-12 lg:grid-cols-[1fr_.95fr]">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.24em] text-blue-700">
+           Trova il tuo punto di vista da cui osservare
+          </p>
+
+          <h1 class="mt-5 max-w-5xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-6xl md:leading-[1.03]">
+             Il mondo della
+            <span class="text-blue-700">Salute</span>,
+            del <span class="text-orange-500">Lavoro</span>
+            e dell’<span class="text-violet-700">Istruzione</span>.
+          </h1>
+
+          <!--p class="mt-7 max-w-3xl text-lg leading-8 text-slate-600">
+            Per noi istruzione non significa solo studiare: significa imparare dalla natura,
+            dall’esperienza, dal corpo e dalle relazioni, per trasformare la formazione
+            in espressione dell’essere umano.
+          </p-->
+
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+                Mentre il mondo esterno corre viene invaso da nuove tecnologie: 
+                <br>- l'intelligenza artificiale, 
+                <br>- la robotica,
+                <br>- la genetica 
+                <br>- le  nanotecnologie,
+                <br>Cresce anche il bisogno di comprendere meglio
+                ciò che siamo e il nostro rapporto con l'ambiente in cui viviamo.
+
+              </p>
+
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a href="#partecipa" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700">
+              Inizia il percorso →
+            </a>
+            <a href="#manifesto" class="rounded-full bg-white px-6 py-3 text-sm font-bold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
+             Per saperne di più
+            </a>
+          </div>
+        </div>
+       
+
+        <div class="relative mx-auto w-full max-w-[520px]">
+          <div class="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-blue-50 via-orange-50 to-violet-50 blur-2xl"></div>
+          <div class="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-3 shadow-soft">
+            <img src="https://ik.imagekit.io/posturacorretta/posturacorretta_home_3.png" class="w-full rounded-[1.5rem]" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="manifesto" class="bg-slate-950 px-5 py-24 text-white">
+      <div class="mx-auto max-w-5xl">
+        <p class="text-xs font-bold uppercase tracking-[0.24em] text-blue-300">La postura non è qualcosa da correggere, ma da comprendere</p>
+        <h2 class="mt-6 text-4xl font-extrabold tracking-tight md:text-6xl md:leading-[1.05]">Il corpo non è una macchina da riparare. È un mondo da scoprire.</h2>
+        <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-300">Se non impareremo la lezione il nostro corpo si farà sentire sempre più con nuovi dolori nuove patologie che non andranno solo sul corpo fisico, patologie degenerative, patologie metaboliche, e problemi che investiranno il campo delle relazioni e della mente.
+            <br>
+             <br>
+            Nelle metodiche posturali si nasconde la chiave per leggere l'essere umano sotto nuovi punti di vista, Proprio come una legenda ti aiuta ad interpretare e decifrare una mappa, ogni persona è unica con il suo punto di vista.
+
+            <br>
+            Trovare la 
+      
+ 
+            <br>
+            Lentamente.
+            <br>
+            Un passo alla volta.
+            <br>
+            Vuoi fare parte del cambiamento?
+            <br>
+            <br>
+          Il percorso parte dal dolore, attraversa la salute, passa dalla conoscenza del corpo e arriva all'espressione del potenziale umano. Una mappa, una rete e una comunità.
+       </p>
+        <div class="mt-10 flex flex-wrap gap-4">
+          <a href="#partecipa" class="rounded-full bg-white px-7 py-3 text-sm font-bold text-slate-950 hover:bg-slate-100">Da dove vuoi partire?</a>
+          <a href="#collabora" class="rounded-full border border-slate-700 px-7 py-3 text-sm font-bold text-white hover:bg-slate-900">Voglio collaborare</a>
+        </div>
+      </div>
+    </section>
+
     <section id="percorso" class="border-y border-slate-100 bg-white px-5 py-16 md:py-24">
-      <div class="mx-auto max-w-7xl">
+      <div class="mx-auto max-w-5xl">
         <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
           Il punto non è sostituire la medicina
         </p>
@@ -566,7 +697,7 @@
 
     <!-- RISORSE -->
     <section class="border-t border-slate-200 bg-white px-5 py-24" id="risorse">
-      <div class="mx-auto max-w-7xl">
+      <div class="mx-auto max-w-5xl">
 
         <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
@@ -576,9 +707,9 @@
   </p>
 
   <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.02]">
-    Accademia per la 
+    Accademia PosturaCorretta
 
-    Postura, fisiologia e salute integrata.
+    Percorsi, risorse e strumenti per costruire salute.
   </h2>
 
 </div>
@@ -586,16 +717,14 @@
 <div>
 
   <p class="text-lg leading-8 text-slate-600">
-    PosturaCorretta nasce dall’incontro tra
-    metodiche posturali, esperienza pratica,
-    ricerca sul corpo e stile di vita.
+    PosturaCorretta nasce dall’incontro tra metodiche posturali,
+    educazione alla fisiologia, diario della salute, professionisti
+    e percorsi pratici.
   </p>
 
   <p class="mt-6 text-lg leading-8 text-slate-600">
-    Contenuti, corsi, eventi e professionisti
-    vengono sviluppati progressivamente
-    attraverso la pratica quotidiana,
-    il confronto e l’esperienza sul campo.
+    L’obiettivo è aiutare le persone a orientarsi: prima nel dolore,
+    poi nella prevenzione, nella conoscenza del corpo e nella vita quotidiana.
   </p>
 
 </div>
@@ -617,12 +746,12 @@
             <p class="mt-6 text-sm font-semibold text-blue-700">Inizia →</p>
           </a>
 
-          <a href="#eventi" class="group border-b border-slate-200 p-8 transition hover:bg-slate-50">
+          <button type="button" data-jump-tab="eventi" class="group border-b border-slate-200 p-8 text-left transition hover:bg-slate-50">
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Esperienze</p>
             <h3 class="mt-3 text-2xl font-semibold text-slate-950">Eventi</h3>
             <p class="mt-4 text-base leading-7 text-slate-600">Camminate, incontri e pratica sul territorio.</p>
             <p class="mt-6 text-sm font-semibold text-blue-700">Partecipa →</p>
-          </a>
+          </button>
 
           <a href="#rete-professionale" class="group border-b border-slate-200 p-8 transition hover:bg-slate-50 lg:border-r lg:border-b-0">
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Rete</p>
@@ -648,20 +777,22 @@
         </div>
       </div>
     </section>
+  </div>
 
     
 
+  <div data-tab-panel="eventi" class="<%= "hidden" unless active_landing_tab == "eventi" %>">
     <!-- COMMUNITY -->
 <section id="community" class="border-t border-slate-200 bg-slate-50 px-5 py-20">
 
-  <div class="mx-auto max-w-7xl">
+  <div class="mx-auto max-w-5xl">
 
     <div class="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
 
       <div>
 
-        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-          Community
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
+          Eventi e Community
         </p>
 
         <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
@@ -741,22 +872,19 @@
     </p>
 
     <h2 class="mt-6 text-4xl font-semibold tracking-tight md:text-6xl md:leading-[1.05]">
-      Il corpo è un ecosistema da ascoltare con tante sfere da scoprire
-        e coltivare.
+      Un percorso. Una comunità. Tante guide.
     </h2>
 
     <p class="mt-10 max-w-3xl text-lg leading-8 text-slate-300">
-      La salute non dipende solo da ciò che sai.
-      Dipende da ciò che vivi ogni giorno:
-      movimento, respirazione, recupero,
-      ambiente, relazioni, alimentazione e stile di vita.
+      Dal dolore alla salute. Dalla salute alla conoscenza del corpo.
+      Dalla conoscenza del corpo all’espressione del proprio potenziale umano.
     </p>
     <div class="mt-12 flex flex-wrap gap-4">
 
-  <a href="#percorso"
+  <button type="button" data-jump-tab="about"
     class="inline-flex rounded-full bg-white px-8 py-4 text-sm font-semibold text-slate-950 hover:bg-slate-100">
     Torna al percorso
-  </a>
+  </button>
 
   <a href="/libro"
     class="inline-flex rounded-full border border-slate-700 px-8 py-4 text-sm font-semibold text-white hover:bg-slate-900">
@@ -769,14 +897,15 @@
   </div>
   
 </section>
+  </div>
 
 
 
-  </main>
+  </div>
 
   <!-- FOOTER -->
   <footer class="border-t border-slate-200 bg-white py-16">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 md:grid-cols-4">
+    <div class="mx-auto grid max-w-5xl grid-cols-1 gap-12 px-5 md:grid-cols-4">
 
       <div class="space-y-4">
         <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-7 w-auto">
@@ -792,7 +921,7 @@
       <div>
         <h5 class="mb-4 font-semibold text-slate-950">Percorso</h5>
         <ul class="space-y-2 text-sm text-slate-500">
-          <li><a class="hover:text-blue-700" href="#percorso">Percorso della salute</a></li>
+          <li><a class="hover:text-blue-700" href="?tab=salute">Percorso della salute</a></li>
           <li><a class="hover:text-blue-700" href="/diario-della-salute">Diario della salute</a></li>
           <li><a class="hover:text-blue-700" href="/postura-e-fisiologia">Postura e fisiologia</a></li>
         </ul>
@@ -820,5 +949,55 @@
     </div>
   </footer>
 
-</body>
-</html>
+<script>
+  (() => {
+    const allowedTabs = ["salute", "collabora", "eventi", "about"];
+    const buttons = document.querySelectorAll("[data-landing-tab]");
+    const panels = document.querySelectorAll("[data-tab-panel]");
+    const activeClasses = {
+      salute: ["bg-blue-600", "text-white", "shadow-sm"],
+      collabora: ["bg-orange-500", "text-white", "shadow-sm"],
+      eventi: ["bg-violet-700", "text-white", "shadow-sm"],
+      about: ["bg-slate-950", "text-white", "shadow-sm"]
+    };
+
+    function activateLandingTab(tabKey, updateUrl = true) {
+      const nextTab = allowedTabs.includes(tabKey) ? tabKey : "salute";
+
+      buttons.forEach((button) => {
+        const active = button.dataset.landingTab === nextTab;
+        button.setAttribute("aria-selected", active ? "true" : "false");
+        button.classList.remove("bg-blue-600", "bg-orange-500", "bg-violet-700", "bg-slate-950", "text-white", "shadow-sm");
+
+        if (active) {
+          button.classList.add(...activeClasses[nextTab]);
+        }
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle("hidden", panel.dataset.tabPanel !== nextTab);
+      });
+
+      if (updateUrl) {
+        const url = new URL(window.location);
+        url.searchParams.set("tab", nextTab);
+        window.history.replaceState({}, "", url);
+
+        document.getElementById("top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => activateLandingTab(button.dataset.landingTab));
+    });
+
+    document.querySelectorAll("[data-jump-tab]").forEach((button) => {
+      button.addEventListener("click", () => activateLandingTab(button.dataset.jumpTab));
+    });
+
+    window.addEventListener("popstate", () => {
+      const tab = new URLSearchParams(window.location.search).get("tab");
+      activateLandingTab(tab, false);
+    });
+  })();
+</script>

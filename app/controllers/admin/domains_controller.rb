@@ -1,5 +1,8 @@
 module Admin
   class DomainsController < BaseController
+    dashboard_section :domains
+
+    before_action :require_superadmin!
     before_action :set_domain, only: %i[show edit update destroy]
 
     def index
@@ -10,7 +13,7 @@ module Admin
     end
 
     def new
-      @domain = Domain.new(locale: "it", target_controller: "pages", active: true)
+      @domain = Domain.new(locale: "it", target_controller: "landing", active: true)
     end
 
     def edit

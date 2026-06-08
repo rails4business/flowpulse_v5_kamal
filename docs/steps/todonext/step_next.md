@@ -148,7 +148,7 @@ Per Rails, non creare un controller diverso per ogni dominio.
 La decisione aggiornata e nello step 0002:
 
 ```text
-dominio -> DedicatedDomainsController -> DedicatedDomain/Domain -> target pubblico + locale
+dominio -> DomainsController -> Domain -> target pubblico + locale
 ```
 
 Quindi qui resta solo il cuore dell'albero navigabile:
@@ -199,7 +199,7 @@ Secondo me per partire:
 2. Seed YAML per creare l’albero
 3. Card model unico
 4. Experience model collegato alle Card
-5. DedicatedDomainsController per gli ingressi pubblici, come definito nello step 0002
+5. DomainsController per gli ingressi pubblici, come definito nello step 0002
 6. TreepagesController per navigare tutto l’albero
 
 Quindi sì:
@@ -209,13 +209,13 @@ ma cuore unico ad albero.
 Esempio futuro:
 
 ```ruby
-root "dedicated_domains#show"
+root "domains#show"
 get "/map/:slug", to: "treepages#show", as: :treepage
 ```
 
 In pratica:
 
-DedicatedDomainsController = porta d’ingresso
+DomainsController = porta d’ingresso
 TreepagesController = navigazione interna
 Card = albero
 Experience = cosa puoi vivere/fare

@@ -1,13 +1,9 @@
-<% content_for :title, "Dashboard Superadmin" %>
-<% superadmin = Current.user&.superadmin? %>
+<% content_for :title, "Dashboard Admin" %>
+<% superadmin = superadmin_user? %>
 
-<section class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-  <%= render "shared/dashboard_aside", current_section: :dashboard %>
-
-  <main class="min-w-0">
-    <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+<header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div>
-        <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Dashboard Superadmin</p>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Dashboard Admin</p>
         <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">Strumenti interni</h1>
         <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Area interna per raccogliere viste, risorse e pagine di lavoro mentre l'app prende forma. Il selettore ruolo serve a simulare gli assetti futuri senza aprire tutto a tutti.</span>
       </div>
@@ -43,5 +39,3 @@
         <% end %>
       <% end %>
     </section>
-  </main>
-</section>

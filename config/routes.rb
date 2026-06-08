@@ -7,20 +7,38 @@ Rails.application.routes.draw do
   root "domains#show"
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
-  get "markpostura" => "pages#markpostura", as: :markpostura
-  get "markposturaold" => "pages#markpostura_old", as: :markposturaold
-  get "markposturastory" => "pages#markposturastory", as: :markposturastory
-    get "posturacorretta" => "pages#posturacorretta", as: :posturacorretta
+  get "flowpulse" => "landing#flowpulse", as: :flowpulse
+  get "markpostura" => "landing#markpostura", as: :markpostura
+  get "markposturaold" => "landing#markpostura_old", as: :markposturaold
+  get "markposturastory" => "landing#markposturastory", as: :markposturastory
+  get "posturacorretta" => "landing#posturacorretta", as: :posturacorretta
 
   # Dashboard utente loggato
   get "dashboard" => "home#dashboard", as: :dashboard
   get "dashboard/viaggiatore" => "pages#viaggiatori", as: :viaggiatori
   patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
 
+  namespace :creator_world do
+    root "dashboard#show"
+  end
+
+  namespace :teacher do
+    root "dashboard#show"
+  end
+
+  namespace :tutor do
+    root "dashboard#show"
+  end
+
+  namespace :professional do
+    root "dashboard#show"
+  end
+
   # Area Admin / Superadmin
   namespace :admin do
     get "dashboard" => "home#dashboard", as: :dashboard
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
+    get "role_map" => "role_maps#show", as: :role_map
     resources :domains do
       collection do
         get :export

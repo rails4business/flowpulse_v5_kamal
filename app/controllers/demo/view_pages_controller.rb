@@ -1,6 +1,6 @@
 module Demo
-  class ViewPagesController < ApplicationController
-    allow_unauthenticated_access
+  class ViewPagesController < BaseController
+    layout "landing"
 
     PAGES = {
       "eventi-attivita-routine" => {

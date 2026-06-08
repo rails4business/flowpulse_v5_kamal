@@ -1,0 +1,13 @@
+<% aside_context = dashboard_aside_context(local_assigns[:current_section]) %>
+
+<div class="flex-none border-t border-slate-100 p-4">
+    <% if Current.user&.can_switch_roles? %>
+      <%= form_with url: dashboard_role_path, method: :patch, class: "mt-3", data: { turbo: false } do %>
+        <%= select_tag :role,
+          options_for_select(Current.user.ruoli_attivabili.map { |role| [ruolo_label(role), role] }, Current.user.active_role),
+          class: "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900",
+          onchange: "this.form.submit()" %>
+      <% end %>
+    <% end %>
+
+</div>

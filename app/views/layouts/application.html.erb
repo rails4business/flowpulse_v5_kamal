@@ -21,25 +21,99 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag "normalize", "tailwind", "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#2563eb',
+              dark: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
   </head>
 
-  <body class="min-h-screen bg-white text-slate-950">
-    <%= render "shared/flowpulse/nav" %>
+  <body data-layout="dashboard" class="bg-slate-50 text-slate-900">
+    <% dashboard_context = dashboard_aside_context(dashboard_current_section) %>
 
-    <% if notice = flash[:notice] %>
-      <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"><%= notice %></p>
+    <div class="min-h-screen">
+      <div
+        id="sidebarOverlay"
+        data-dashboard-overlay
+        class="fixed inset-0 z-30 hidden bg-slate-900/50 lg:hidden"
+        aria-hidden="true"
+      ></div>
+
+      <aside
+        id="sidebar"
+        data-dashboard-sidebar
+        class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0"
+        aria-label="Sidebar"
+      >
+        <%= render "shared/dashboard/sidebar", current_section: dashboard_current_section %>
+      </aside>
+      
+
+      <div data-dashboard-frame class="min-w-0 lg:pl-72">
+        <header data-dashboard-topbar class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:px-6 lg:px-8">
+          <%= render "shared/dashboard/topbar", dashboard_context: dashboard_context %>
+        </header>
+
+        <% if notice = flash[:notice] %>
+          <div class="px-4 pt-4 lg:px-8">
+            <p class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"><%= notice %></p>
+          </div>
+        <% end %>
+
+        <% if alert = flash[:alert] %>
+          <div class="px-4 pt-4 lg:px-8">
+            <p class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"><%= alert %></p>
+          </div>
+        <% end %>
+
+        <main data-dashboard-main class="min-h-[calc(100vh-4rem)] min-w-0 p-4 md:p-6 lg:p-8">
+          <%= yield %>
+        </main>
       </div>
-    <% end %>
+    </div>
 
-    <% if alert = flash[:alert] %>
-      <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"><%= alert %></p>
-      </div>
-    <% end %>
+    <script>
+      (() => {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        const openButton = document.getElementById("openSidebarButton");
+        const closeButton = document.getElementById("closeSidebarButton");
 
-    <main class="<%= ((controller_name == "home" && action_name == "index") || (controller_name == "pages" && %w[flowpulse mari viaggiatori].include?(action_name))) ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8" %>">
-      <%= yield %>
-    </main>
+        const open = () => {
+          sidebar?.classList.remove("-translate-x-full");
+          sidebar?.classList.add("translate-x-0");
+          overlay?.classList.remove("hidden");
+          document.body.classList.add("overflow-hidden");
+          overlay?.setAttribute("aria-hidden", "false");
+        };
+
+        const close = () => {
+          sidebar?.classList.remove("translate-x-0");
+          sidebar?.classList.add("-translate-x-full");
+          overlay?.classList.add("hidden");
+          document.body.classList.remove("overflow-hidden");
+          overlay?.setAttribute("aria-hidden", "true");
+        };
+
+        openButton?.addEventListener("click", open);
+        closeButton?.addEventListener("click", close);
+        overlay?.addEventListener("click", close);
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") close();
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_103000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_03_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_103000) do
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
   end
 
+  create_table "role_assignments", force: :cascade do |t|
+    t.bigint "context_id"
+    t.string "context_type"
+    t.datetime "created_at", null: false
+    t.integer "role", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["context_type", "context_id"], name: "index_role_assignments_on_context_type_and_context_id"
+    t.index ["role"], name: "index_role_assignments_on_role"
+    t.index ["user_id", "role", "context_type", "context_id"], name: "index_role_assignments_on_context_role", unique: true, where: "((context_type IS NOT NULL) AND (context_id IS NOT NULL))"
+    t.index ["user_id", "role"], name: "index_role_assignments_on_global_role", unique: true, where: "((context_type IS NULL) AND (context_id IS NULL))"
+    t.index ["user_id"], name: "index_role_assignments_on_user_id"
+    t.check_constraint "context_type IS NULL AND context_id IS NULL OR context_type IS NOT NULL AND context_id IS NOT NULL", name: "role_assignments_context_presence"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -61,5 +76,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_103000) do
   end
 
   add_foreign_key "profiles", "users"
+  add_foreign_key "role_assignments", "users"
   add_foreign_key "sessions", "users"
 end

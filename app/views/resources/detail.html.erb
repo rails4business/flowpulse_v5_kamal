@@ -1,10 +1,6 @@
 <% content_for :title, @resource.fetch(:title) %>
 
-<section class="dashboard-shell dashboard-shell--resources dashboard-shell--with-aside">
-  <%= render "shared/dashboard_aside", current_section: :resources %>
-
-  <main class="dashboard-main">
-    <header class="dashboard-header">
+<header class="dashboard-header">
       <p><%= @resource.fetch(:type) %></p>
       <h1><%= @resource.fetch(:title) %></h1>
       <span><%= @resource.fetch(:description) %></span>
@@ -25,5 +21,3 @@
         <p>Questa risorsa e pronta per essere collegata a brand, membership, ruoli, transazioni e accessi. Per ora la pagina controller serve a dare una rotta vera e un punto di aggancio per i permessi.</p>
       </div>
     </section>
-  </main>
-</section>

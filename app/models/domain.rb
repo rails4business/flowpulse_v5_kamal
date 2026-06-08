@@ -60,7 +60,7 @@ class Domain < ApplicationRecord
   end
 
   def self.normalize_host(host)
-    host.to_s.downcase.strip
+    host.to_s.downcase.strip.split(":").first
   end
 
   def to_config

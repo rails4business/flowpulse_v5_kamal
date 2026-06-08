@@ -1,4 +1,6 @@
 class PublicEventsController < ApplicationController
+  layout "landing"
+
   skip_before_action :require_authentication, only: [:index, :show]
 
   TABS = {

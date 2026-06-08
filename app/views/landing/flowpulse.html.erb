@@ -1,0 +1,658 @@
+<% content_for :title, "Flowpulse" %>
+
+<main class="max-w-5xl mx-auto px-4 py-6">
+      <!-- LANDING -->
+      <section id="landing-tab" class="tab-content space-y-6">
+        <!-- HERO PREMIUM HEADER -->
+        <section class="relative overflow-hidden rounded-[2.5rem] bg-slate-950 text-white shadow-2xl">
+          <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/10 via-transparent to-emerald-500/10 pointer-events-none"></div>
+          
+          <div class="relative p-8 md:p-16 lg:p-20 flex flex-col items-center text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8">
+              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Flowpulse Engine</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight max-w-4xl mb-8">
+              Flowpulse
+            </h1>
+
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-100 max-w-3xl leading-snug mb-6">
+              Trasforma percorsi, interessi, competenze e passioni in un viaggio.
+            </h2>
+
+            <p class="text-lg md:text-xl text-slate-400 max-w-3xl leading-relaxed mb-12">
+              Una piattaforma per organizzare eventi, percorsi e collaborazioni tra professionisti della salute e del benessere, creator, centri, spazi e community locali.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4">
+              <%= verified_link_to "Trova eventi", esperienze_path, class: "px-8 py-4 rounded-2xl bg-white text-slate-950 font-black text-sm uppercase tracking-widest hover:bg-slate-100 transition-all shadow-xl shadow-white/5" %>
+              <%= verified_link_to "Organizza un’esperienza", "#", class: "px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all" %>
+              <%= verified_link_to "Crea il tuo brand", "#", class: "px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-blue-500/20" %>
+            </div>
+          </div>
+        </section>
+
+        <!-- SEZIONE MANIFESTO -->
+        <section class="py-12 md:py-20">
+          <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-black leading-tight mb-8 text-slate-950">
+              Hai una competenza, una passione o un interesse?
+            </h2>
+
+            <p class="text-xl md:text-2xl text-slate-600 mb-6 font-bold">
+              Crea il tuo mondo e organizza viaggi per farlo conoscere.
+            </p>
+
+            <p class="text-lg md:text-xl text-slate-500 mb-12 leading-relaxed">
+              Con Flowpulse puoi trasformare percorsi, competenze, passioni e collaborazioni tra salute, lavoro, stile di vita e territorio in un viaggio da esplorare, vivere e condividere.
+            </p>
+            
+            <div class="grid gap-10">
+>
+              <div class="flex gap-6">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl shadow-sm">🎨</div>
+                <div>
+                  <h3 class="text-xl font-black text-slate-900 mb-2">Sei un creator?</h3>
+                  <p class="text-slate-600 text-lg leading-relaxed">
+                    Disegna le mappe del tuo mondo e costruisci percorsi, eventi, format e community.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-6">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-emerald-50 flex items-center justify-center text-2xl shadow-sm">🩺</div>
+                <div>
+                  <h3 class="text-xl font-black text-slate-900 mb-2">Sei un professionista o un centro?</h3>
+                  <p class="text-slate-600 text-lg leading-relaxed">
+                    Trasforma servizi ed esperienze in viaggi guidati. Organizza eventi, crea collaborazioni e diventa un punto di riferimento per il viaggio delle persone.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-6">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-amber-50 flex items-center justify-center text-2xl shadow-sm">🚶‍♂️</div>
+                <div>
+                  <h3 class="text-xl font-black text-slate-900 mb-2">Sei un viaggiatore?</h3>
+                  <p class="text-slate-600 text-lg leading-relaxed">
+                    Esplora eventi, percorsi e community in base ai tuoi interessi e costruisci il tuo viaggio.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROBLEMA -->
+        <section class="py-12 md:py-20">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-500 mb-4">Il problema</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-6">
+            Oggi tutto è frammentato.
+          </h2>
+
+          <div class="grid md:grid-cols-2 gap-5 text-slate-700 leading-relaxed">
+            <div class="rounded-3xl bg-slate-50 p-5 border border-slate-200">
+              <h3 class="font-black text-lg mb-3">Per chi organizza</h3>
+              <ul class="space-y-2 text-sm">
+                <li>• Eventi sparsi tra WhatsApp, Instagram, fogli e calendari.</li>
+                <li>• Professionisti che lavorano separati.</li>
+                <li>• Centri con spazi disponibili, ma senza format chiari.</li>
+                <li>• Creator con idee e contenuti, ma senza esperienze reali.</li>
+              </ul>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5 border border-slate-200">
+              <h3 class="font-black text-lg mb-3">Per chi partecipa</h3>
+              <ul class="space-y-2 text-sm">
+                <li>• Un evento finisce e non lascia continuità.</li>
+                <li>• I servizi sono scollegati tra loro.</li>
+                <li>• Le persone cercano un percorso, ma trovano solo singole proposte.</li>
+                <li>• Manca una mappa semplice per orientarsi.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SOLUZIONE -->
+        <section class="bg-slate-900 text-white rounded-3xl p-6 md:p-10">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-4">La soluzione</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-6">
+            Un’esperienza vista come un viaggio crea connessione.
+          </h2>
+
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-slate-300 leading-relaxed">
+              <p>
+                Una camminata non è solo una camminata.
+                Una lezione non è solo una lezione.
+                Un workshop non è solo un workshop.
+              </p>
+
+              <p>
+                Se viene inserita in una mappa, ogni esperienza può diventare una tappa: un punto di ingresso verso un percorso più ampio, una relazione, una community o una collaborazione.
+              </p>
+
+              <p class="font-semibold text-white">
+                Flowpulse serve a passare dalla frammentazione alla connessione.
+              </p>
+            </div>
+
+            <div class="bg-white/10 rounded-3xl p-5 border border-white/10">
+              <div class="grid grid-cols-[1fr_auto_1fr] gap-3 items-center text-center">
+                <div class="rounded-2xl bg-white/10 p-4">
+                  <p class="text-3xl mb-2">🧩</p>
+                  <p class="font-bold">Frammentazione</p>
+                  <p class="text-xs text-slate-400 mt-2">eventi isolati, servizi scollegati, comunicazione dispersa</p>
+                </div>
+                <div class="text-3xl">→</div>
+                <div class="rounded-2xl bg-white text-slate-950 p-4">
+                  <p class="text-3xl mb-2">🗺️</p>
+                  <p class="font-bold">Viaggio</p>
+                  <p class="text-xs text-slate-600 mt-2">eventi collegati, percorsi, community, continuità</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CORE MANIFESTO -->
+        <section class="py-12 md:py-20">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-500 mb-4">Il core</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-6">
+            Flowpulse nasce per trasformare la frammentazione in connessione.
+          </h2>
+
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="rounded-3xl bg-slate-50 border border-slate-200 p-5">
+              <h3 class="font-black text-xl mb-4">Oggi spesso sono separati</h3>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <li>• Eventi</li>
+                <li>• Professionisti</li>
+                <li>• Centri e spazi</li>
+                <li>• Community</li>
+                <li>• Contenuti</li>
+                <li>• Servizi</li>
+                <li>• Esperienze</li>
+              </ul>
+            </div>
+
+            <div class="rounded-3xl bg-slate-900 text-white p-5">
+              <h3 class="font-black text-xl mb-4">Flowpulse prova a collegarli con</h3>
+              <ul class="space-y-2 text-sm text-slate-300">
+                <li>• Brand</li>
+                <li>• Categorie</li>
+                <li>• Eventi</li>
+                <li>• Percorsi</li>
+                <li>• Collaborazioni</li>
+                <li>• Community locali</li>
+                <li>• Mappe di esperienze</li>
+              </ul>
+            </div>
+          </div>
+
+          <blockquote class="mt-8 text-2xl md:text-3xl font-black leading-tight text-slate-900 border-l-4 border-slate-900 pl-5">
+            Non stiamo cercando di creare l’ennesima piattaforma eventi.
+            Stiamo cercando di costruire mappe per esperienze umane.
+          </blockquote>
+        </section>
+
+        <!-- EVENTO COME PERCORSO -->
+        <section class="bg-slate-900 text-white rounded-3xl p-6 md:p-10">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-4">Da evento a ecosistema</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-8">
+            Un evento isolato finisce.
+            Un evento collegato apre un viaggio.
+          </h2>
+
+          <div class="grid md:grid-cols-5 gap-3 text-center">
+            <div class="rounded-3xl bg-white/10 border border-white/10 p-5">
+              <div class="text-3xl mb-3">📍</div>
+              <h3 class="font-black">Evento</h3>
+              <p class="text-xs text-slate-400 mt-2">il primo punto di contatto</p>
+            </div>
+            <div class="hidden md:flex items-center justify-center text-2xl">→</div>
+            <div class="rounded-3xl bg-white/10 border border-white/10 p-5">
+              <div class="text-3xl mb-3">🛤️</div>
+              <h3 class="font-black">Percorso</h3>
+              <p class="text-xs text-slate-400 mt-2">una rotta da seguire</p>
+            </div>
+            <div class="hidden md:flex items-center justify-center text-2xl">→</div>
+            <div class="rounded-3xl bg-white text-slate-950 p-5">
+              <div class="text-3xl mb-3">🌱</div>
+              <h3 class="font-black">Ecosistema</h3>
+              <p class="text-xs text-slate-600 mt-2">community, servizi e collaborazioni</p>
+            </div>
+          </div>
+
+          <div class="mt-8 rounded-3xl bg-white/10 border border-white/10 p-5">
+            <p class="text-slate-300 leading-relaxed">
+              Esempio: una camminata può diventare un gruppo, il gruppo può diventare un percorso salute, il percorso può collegare più professionisti, e la rete può diventare una community territoriale.
+            </p>
+          </div>
+        </section>
+
+        <!-- TERRITORIO -->
+        <section class="py-12 md:py-20">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-500 mb-4">Dal digitale al territorio</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-6">
+            Le esperienze devono tornare nel mondo reale.
+          </h2>
+
+          <div class="grid md:grid-cols-2 gap-6 text-slate-700 leading-relaxed">
+            <div class="space-y-4">
+              <p>
+                Flowpulse non nasce solo per pubblicare contenuti online.
+                Nasce per aiutare persone, professionisti e community a incontrarsi nel territorio.
+              </p>
+              <p>
+                Camminate, workshop, lezioni, incontri, serate, giornate benessere, eventi nei centri, esperienze in natura e percorsi locali possono diventare parti di una stessa mappa.
+              </p>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 border border-slate-200 p-5">
+              <h3 class="font-black text-xl mb-4">Territorio significa</h3>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <li>• Professionisti locali</li>
+                <li>• Centri e sale disponibili</li>
+                <li>• Produttori e realtà del territorio</li>
+                <li>• Community reali</li>
+                <li>• Eventi ricorrenti</li>
+                <li>• Relazioni che continuano dopo l’evento</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ORIGINE -->
+        <section class="py-12 md:py-20">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-500 mb-4">Da dove nasce</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-8">
+            Flowpulse nasce dall’incontro tra salute, natura, tecnologia e formazione.
+          </h2>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-3xl bg-blue-50 border border-blue-100 p-5">
+              <h3 class="text-xl font-black mb-2">Accademia PosturaCorretta</h3>
+              <p class="text-slate-700 text-sm leading-relaxed">
+                Nasce dalla ricerca sulla postura, sulla fisiologia e sull’educazione alla salute. Integra tre percorsi: Stop al Dolore, Benessere Integrato, Postura e Fisiologia.
+              </p>
+            </div>
+
+            <div class="rounded-3xl bg-green-50 border border-green-100 p-5">
+              <h3 class="text-xl font-black mb-2">Il Giardino del Corpo</h3>
+              <p class="text-slate-700 text-sm leading-relaxed">
+                Nasce dal desiderio di creare esperienze tra natura, musica, cibo, movimento, comunità, territorio e rigenerazione.
+              </p>
+            </div>
+
+            <div class="rounded-3xl bg-yellow-50 border border-yellow-100 p-5">
+              <h3 class="text-xl font-black mb-2">Rails4Business</h3>
+              <p class="text-slate-700 text-sm leading-relaxed">
+                Nasce dagli anni passati a studiare programmazione, Rails, organizzazione, AI e sistemi digitali per costruire strumenti concreti.
+              </p>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 border border-slate-200 p-5">
+              <h3 class="text-xl font-black mb-2">Il corpo, un mondo da scoprire</h3>
+              <p class="text-slate-700 text-sm leading-relaxed">
+                È il tentativo di mettere insieme questi mondi in una visione più ampia: il corpo, il lavoro, la natura e la vita quotidiana come parti di un unico percorso.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- BRAND -->
+        <section class="py-12 md:py-20">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-500 mb-4">Non solo eventi</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-6">
+            Costruisci il tuo mondo.
+          </h2>
+
+          <p class="text-lg text-slate-600 max-w-3xl leading-relaxed mb-8">
+            In Flowpulse un brand non è solo un logo.
+            È un ecosistema fatto di categorie, eventi, servizi, percorsi, collaborazioni e community.
+          </p>
+
+          <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <div class="rounded-3xl bg-blue-50 border border-blue-100 p-5">
+              <div class="text-4xl mb-4">💙</div>
+              <h3 class="text-2xl font-black mb-2">PosturaCorretta</h3>
+              <p class="text-sm text-slate-700 leading-relaxed">
+                Salute, postura, fisiologia, prevenzione, movimento e benessere integrato.
+              </p>
+            </div>
+
+            <div class="rounded-3xl bg-green-50 border border-green-100 p-5">
+              <div class="text-4xl mb-4">🌿</div>
+              <h3 class="text-2xl font-black mb-2">Giardino del Corpo</h3>
+              <p class="text-sm text-slate-700 leading-relaxed">
+                Natura, musica, cibo, territorio, arte, eventi e rigenerazione.
+              </p>
+            </div>
+
+            <div class="rounded-3xl bg-yellow-50 border border-yellow-100 p-5">
+              <div class="text-4xl mb-4">🗺️</div>
+              <h3 class="text-2xl font-black mb-2">Flowpulse</h3>
+              <p class="text-sm text-slate-700 leading-relaxed">
+                Mappe, creator, organizzazione eventi, AI, percorsi e sistemi.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-5 items-start">
+            <div class="rounded-3xl bg-slate-50 border border-slate-200 p-5">
+              <h3 class="font-black text-xl mb-4">Ogni brand può creare</h3>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <li>• Eventi gratuiti o a pagamento</li>
+                <li>• Percorsi e format replicabili</li>
+                <li>• Categorie personalizzate</li>
+                <li>• Collaborazioni tra professionisti</li>
+                <li>• Community locali</li>
+                <li>• Esperienze online e offline</li>
+              </ul>
+            </div>
+
+            <div class="rounded-3xl bg-slate-900 text-white p-6">
+              <h3 class="text-2xl font-black leading-tight mb-4">
+                Hai una visione,
+                un progetto,
+                una community
+                o un metodo?
+              </h3>
+
+              <p class="text-slate-300 leading-relaxed mb-6">
+                Flowpulse nasce anche per aiutare professionisti, creator e centri a trasformare competenze e passioni in ecosistemi organizzati.
+              </p>
+
+              <button class="w-full px-5 py-4 rounded-2xl bg-white text-slate-950 font-black text-lg">
+                Crea il tuo brand
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- AREE -->
+        <section class="grid md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-3xl border border-blue-100 p-6">
+            <div class="text-4xl mb-4">💙</div>
+            <h3 class="text-2xl font-black mb-3">Salute</h3>
+            <p class="text-slate-600 leading-relaxed">
+              Postura, fisiologia, movimento, prevenzione, recupero, respiro, camminate e percorsi integrati tra professionisti.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl border border-yellow-100 p-6">
+            <div class="text-4xl mb-4">💻</div>
+            <h3 class="text-2xl font-black mb-3">Lavoro</h3>
+            <p class="text-slate-600 leading-relaxed">
+              Creator, AI, organizzazione, mappe, business, formazione, contenuti, servizi e costruzione di sistemi.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl border border-green-100 p-6">
+            <div class="text-4xl mb-4">🌿</div>
+            <h3 class="text-2xl font-black mb-3">Stile di vita</h3>
+            <p class="text-slate-600 leading-relaxed">
+              Natura, musica, cibo, comunità, arte, agricoltura, feste, territorio e momenti di rigenerazione.
+            </p>
+          </div>
+        </section>
+
+        <!-- TARGET -->
+        <section class="bg-slate-900 text-white rounded-3xl p-6 md:p-10">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-4">Per chi è</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-8">
+            Viaggiatori, creator, professionisti e centri dentro lo stesso ecosistema.
+          </h2>
+
+          <div class="grid md:grid-cols-3 gap-5">
+            <div class="bg-white/10 rounded-3xl p-6 border border-white/10">
+              <div class="text-4xl mb-4">🚶‍♂️</div>
+              <h3 class="text-2xl font-black mb-3">Viaggiatori</h3>
+              <p class="text-slate-300 leading-relaxed">
+                Persone che cercano eventi, gruppi, professionisti e percorsi per orientarsi tra salute, lavoro e stile di vita.
+              </p>
+            </div>
+
+            <div class="bg-white/10 rounded-3xl p-6 border border-white/10">
+              <div class="text-4xl mb-4">🗺️</div>
+              <h3 class="text-2xl font-black mb-3">Creator</h3>
+              <p class="text-slate-300 leading-relaxed">
+                Persone che vogliono trasformare idee, contenuti e passioni in brand, format, eventi, servizi e community.
+              </p>
+            </div>
+
+            <div class="bg-white/10 rounded-3xl p-6 border border-white/10">
+              <div class="text-4xl mb-4">🩺</div>
+              <h3 class="text-2xl font-black mb-3">Professionisti e centri</h3>
+              <p class="text-slate-300 leading-relaxed">
+                Professionisti della salute, del benessere e della formazione, studi, centri, spazi e associazioni che vogliono costruire percorsi integrati, collaborazioni ed eventi ricorrenti.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROFESSIONISTI -->
+        <section class="py-12 md:py-20 border-t border-slate-200">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-500 mb-4">Per professionisti e centri</p>
+          <h2 class="text-3xl md:text-5xl font-black leading-tight mb-6">
+            Non solo clienti.
+            Percorsi, rete, territorio e continuità.
+          </h2>
+
+          <div class="grid md:grid-cols-2 gap-6 text-slate-700 leading-relaxed">
+            <div class="space-y-4">
+              <p>
+                Molti professionisti hanno competenze preziose, ma faticano a trasformarle in esperienze accessibili, continuative e organizzate.
+              </p>
+              <p>
+                Molti centri hanno spazi, relazioni e possibilità, ma non sempre hanno format pronti, calendari chiari o una rete di collaboratori.
+              </p>
+              <p class="font-semibold text-slate-900">
+                Flowpulse vuole aiutare professionisti e centri a trasformare servizi isolati in percorsi integrati: eventi, gruppi, follow-up, collaborazioni e community locali.
+              </p>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 border border-slate-200 p-5">
+              <h3 class="font-black text-lg mb-4">Cosa puoi fare</h3>
+              <ul class="space-y-2 text-sm">
+                <li>• Organizzare eventi gratuiti o a pagamento.</li>
+                <li>• Collegare un evento a un percorso più ampio.</li>
+                <li>• Collaborare con altri professionisti.</li>
+                <li>• Proporre servizi dentro categorie riconoscibili.</li>
+                <li>• Creare format replicabili nel tempo.</li>
+                <li>• Dare continuità alle persone dopo il primo incontro.</li>
+                <li>• Costruire reti locali tra centri, professionisti e community.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- COME FUNZIONA -->
+        <section class="py-12 md:py-20 border-t border-slate-200">
+          <p class="text-sm uppercase tracking-[0.2em] text-slate-500 mb-4">Come funziona</p>
+
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="rounded-3xl bg-slate-50 p-5 border border-slate-200">
+              <div class="text-3xl mb-4">1️⃣</div>
+              <h3 class="font-black text-lg mb-2">Scegli una categoria</h3>
+              <p class="text-sm text-slate-600">Movimento, postura, musica, natura, lavoro, meditazione, cibo…</p>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5 border border-slate-200">
+              <div class="text-3xl mb-4">2️⃣</div>
+              <h3 class="font-black text-lg mb-2">Trova un evento</h3>
+              <p class="text-sm text-slate-600">Ogni esperienza ha luogo, data, brand, categorie e responsabile.</p>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5 border border-slate-200">
+              <div class="text-3xl mb-4">3️⃣</div>
+              <h3 class="font-black text-lg mb-2">Partecipa o organizza</h3>
+              <p class="text-sm text-slate-600">Puoi partecipare oppure proporti per creare un nuovo evento.</p>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5 border border-slate-200">
+              <div class="text-3xl mb-4">4️⃣</div>
+              <h3 class="font-black text-lg mb-2">Costruisci percorsi</h3>
+              <p class="text-sm text-slate-600">Gli eventi diventano rotte, community, collaborazioni e continuità.</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3 mt-10">
+            <button onclick="showTab('eventi-tab')" class="px-6 py-3 rounded-xl bg-slate-900 text-white font-bold">
+              Esplora gli eventi
+            </button>
+
+            <button onclick="showTab('brand-tab')" class="px-6 py-3 rounded-xl bg-slate-200 text-slate-900 font-bold">
+              Scopri i brand
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <!-- TAB EVENTI -->
+      <section id="eventi-tab" class="tab-content hidden space-y-5">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-2xl font-bold">Eventi</h2>
+            <p class="text-sm text-slate-500">Scegli una categoria, trova un evento, partecipa o organizzalo.</p>
+          </div>
+          <button class="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold">Proponi</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-3 bg-white rounded-2xl border border-slate-200 p-3">
+          <select class="rounded-xl border border-slate-300 px-3 py-2 bg-white text-sm">
+            <option>Tutte le categorie</option>
+            <option>Movimento</option>
+            <option>Cibo</option>
+            <option>Musica</option>
+            <option>Meditazione</option>
+            <option>Natura</option>
+            <option>Postura</option>
+          </select>
+          <select class="rounded-xl border border-slate-300 px-3 py-2 bg-white text-sm">
+            <option>Tutti i brand</option>
+            <option>PosturaCorretta</option>
+            <option>Stop al Dolore</option>
+            <option>Benessere Integrato</option>
+            <option>Giardino del Corpo</option>
+            <option>Flowpulse</option>
+          </select>
+        </div>
+
+        <div class="space-y-3">
+          <article class="bg-white rounded-2xl border border-slate-200 p-4 flex gap-4">
+            <div class="w-20 shrink-0 rounded-2xl bg-blue-50 border border-blue-100 text-center overflow-hidden">
+              <div class="bg-blue-600 text-white text-xs font-bold py-1">MAG</div>
+              <div class="py-2"><div class="text-3xl font-black leading-none">16</div><div class="text-xs font-semibold text-slate-500 mt-1">SAB</div></div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="inline-flex px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-bold">PosturaCorretta</span>
+                <span class="inline-flex px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold">Stop al Dolore</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="px-2.5 py-1 rounded-full bg-white border border-red-300 text-red-700 text-xs font-bold">🚶 Movimento</span>
+                <span class="px-2.5 py-1 rounded-full bg-white border border-green-300 text-green-700 text-xs font-bold">🌲 Natura</span>
+                <span class="px-2.5 py-1 rounded-full bg-white border border-blue-300 text-blue-700 text-xs font-bold">💙 Postura</span>
+              </div>
+              <h3 class="text-lg font-bold leading-tight">PosturaCorretta in Vetta</h3>
+              <p class="text-sm text-slate-600 mt-1">Camminata in montagna con esercizi semplici di postura e recupero.</p>
+              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-sm text-slate-700">
+                <span>Sab 16 Mag · 09:30</span><span>📍 Monte Maddalena</span><span>👤 Marco</span>
+              </div>
+              <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+                <span class="text-sm font-semibold text-slate-500">€15 · 8 posti disponibili</span>
+                <button class="px-3 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold">Partecipa</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="bg-white rounded-2xl border border-slate-200 p-4 flex gap-4">
+            <div class="w-20 shrink-0 rounded-2xl bg-orange-50 border border-orange-100 text-center overflow-hidden">
+              <div class="bg-orange-500 text-white text-xs font-bold py-1">MAG</div>
+              <div class="py-2"><div class="text-3xl font-black leading-none">23</div><div class="text-xs font-semibold text-slate-500 mt-1">SAB</div></div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="inline-flex px-2.5 py-1 rounded-md bg-emerald-700 text-white text-xs font-bold">Giardino del Corpo</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="px-2.5 py-1 rounded-full bg-white border border-orange-300 text-orange-700 text-xs font-bold">🍴 Cibo</span>
+                <span class="px-2.5 py-1 rounded-full bg-white border border-green-300 text-green-700 text-xs font-bold">🌲 Natura</span>
+                <span class="px-2.5 py-1 rounded-full bg-white border border-purple-300 text-purple-700 text-xs font-bold">🤝 Comunità</span>
+              </div>
+              <h3 class="text-lg font-bold leading-tight">PosturaCorretta con la Forchetta</h3>
+              <p class="text-sm text-slate-600 mt-1">Prodotti locali, movimento leggero e condivisione.</p>
+              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-sm text-slate-700">
+                <span>Sab 23 Mag · 18:30</span><span>📍 Azienda agricola partner</span><span>👤 Da trovare</span>
+              </div>
+              <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+                <span class="text-sm font-semibold text-slate-500">Da definire · evento da organizzare</span>
+                <button class="px-3 py-2 rounded-xl bg-slate-200 text-slate-900 text-sm font-semibold">Organizza</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="bg-white rounded-2xl border border-slate-200 p-4 flex gap-4">
+            <div class="w-20 shrink-0 rounded-2xl bg-pink-50 border border-pink-100 text-center overflow-hidden">
+              <div class="bg-pink-500 text-white text-xs font-bold py-1">GIU</div>
+              <div class="py-2"><div class="text-3xl font-black leading-none">06</div><div class="text-xs font-semibold text-slate-500 mt-1">SAB</div></div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="inline-flex px-2.5 py-1 rounded-md bg-emerald-700 text-white text-xs font-bold">Giardino del Corpo</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="px-2.5 py-1 rounded-full bg-white border border-pink-300 text-pink-700 text-xs font-bold">🪗 Musica</span>
+                <span class="px-2.5 py-1 rounded-full bg-white border border-green-300 text-green-700 text-xs font-bold">🌲 Natura</span>
+                <span class="px-2.5 py-1 rounded-full bg-white border border-purple-300 text-purple-700 text-xs font-bold">🤝 Comunità</span>
+              </div>
+              <h3 class="text-lg font-bold leading-tight">Fisarmonica e fuoco</h3>
+              <p class="text-sm text-slate-600 mt-1">Serata semplice con musica, racconti e comunità.</p>
+              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-sm text-slate-700">
+                <span>Sab 06 Giu · 20:00</span><span>📍 Location da confermare</span><span>👤 Anna</span>
+              </div>
+              <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+                <span class="text-sm font-semibold text-slate-500">Gratis · 20 posti</span>
+                <button class="px-3 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold">Partecipa</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- TAB CATEGORIE -->
+      <section id="categorie-tab" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class="text-2xl font-bold">Categorie</h2>
+          <p class="text-sm text-slate-500">Scegli il tipo di esperienza che vuoi vivere o organizzare.</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-red-200 p-5 text-left hover:border-red-400"><div class="text-3xl mb-3">🚶‍♂️</div><h3 class="font-bold">Movimento</h3><p class="text-sm text-slate-500">4 eventi</p></button>
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-orange-200 p-5 text-left hover:border-orange-400"><div class="text-3xl mb-3">🍴</div><h3 class="font-bold">Cibo</h3><p class="text-sm text-slate-500">2 eventi</p></button>
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-pink-200 p-5 text-left hover:border-pink-400"><div class="text-3xl mb-3">🪗</div><h3 class="font-bold">Musica</h3><p class="text-sm text-slate-500">3 eventi</p></button>
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-purple-200 p-5 text-left hover:border-purple-400"><div class="text-3xl mb-3">🧘</div><h3 class="font-bold">Meditazione</h3><p class="text-sm text-slate-500">1 evento</p></button>
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-green-200 p-5 text-left hover:border-green-400"><div class="text-3xl mb-3">🌲</div><h3 class="font-bold">Natura</h3><p class="text-sm text-slate-500">5 eventi</p></button>
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-blue-200 p-5 text-left hover:border-blue-400"><div class="text-3xl mb-3">💙</div><h3 class="font-bold">Postura</h3><p class="text-sm text-slate-500">4 eventi</p></button>
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-yellow-200 p-5 text-left hover:border-yellow-400"><div class="text-3xl mb-3">💻</div><h3 class="font-bold">Lavoro</h3><p class="text-sm text-slate-500">2 eventi</p></button>
+          <button onclick="showTab('eventi-tab')" class="bg-white rounded-2xl border border-slate-300 p-5 text-left hover:border-slate-500"><div class="text-3xl mb-3">🗺️</div><h3 class="font-bold">Mappe</h3><p class="text-sm text-slate-500">2 eventi</p></button>
+        </div>
+      </section>
+
+      <!-- TAB BRAND -->
+      <section id="brand-tab" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class="text-2xl font-bold">Brand</h2>
+          <p class="text-sm text-slate-500">I brand sono mondi di esperienze. Ogni brand può avere percorsi o sotto-brand.</p>
+        </div>
+        <div class="space-y-3">
+          <button onclick="showTab('eventi-tab')" class="w-full bg-white rounded-2xl border border-slate-200 p-5 text-left hover:border-slate-400">
+            <div class="flex items-start justify-between gap-4"><div><span class="inline-flex px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-bold mb-3">Brand</span><h3 class="text-lg font-bold">PosturaCorretta</h3><p class="text-sm text-slate-500">Postura, movimento, salute e fisiologia.</p></div><span class="text-2xl">💙</span></div>
+            <div class="flex flex-wrap gap-2 mt-4"><span class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold">Stop al Dolore</span><span class="px-2.5 py-1 rounded-md bg-green-50 text-green-800 border border-green-200 text-xs font-semibold">Benessere Integrato</span><span class="px-2.5 py-1 rounded-md bg-sky-50 text-sky-800 border border-sky-200 text-xs font-semibold">Postura e Fisiologia</span></div>
+          </button>
+          <button onclick="showTab('eventi-tab')" class="w-full bg-white rounded-2xl border border-slate-200 p-5 text-left hover:border-slate-400"><div class="flex items-start justify-between gap-4"><div><span class="inline-flex px-2.5 py-1 rounded-md bg-emerald-700 text-white text-xs font-bold mb-3">Brand</span><h3 class="text-lg font-bold">Giardino del Corpo</h3><p class="text-sm text-slate-500">Natura, musica, cibo, comunità e rigenerazione.</p></div><span class="text-2xl">🌿</span></div></button>
+          <button onclick="showTab('eventi-tab')" class="w-full bg-white rounded-2xl border border-slate-200 p-5 text-left hover:border-slate-400"><div class="flex items-start justify-between gap-4"><div><span class="inline-flex px-2.5 py-1 rounded-md bg-amber-500 text-white text-xs font-bold mb-3">Brand</span><h3 class="text-lg font-bold">Flowpulse</h3><p class="text-sm text-slate-500">Mappe, creator, lavoro e organizzazione eventi.</p></div><span class="text-2xl">🗺️</span></div></button>
+        </div>
+      </section>
+    </main>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Template Dashboard</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#2563eb',
+              dark: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+  <div class="min-h-screen">
+
+    <!-- Mobile overlay -->
+    <div
+      id="sidebarOverlay"
+      class="fixed inset-0 z-30 hidden bg-slate-900/50 lg:hidden"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Sidebar -->
+    <aside
+      id="sidebar"
+      class="fixed inset-y-0 left-0 z-40 w-72 -translate-x-full border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0"
+      aria-label="Sidebar"
+    >
+      <div class="flex h-16 items-center justify-between border-b border-slate-200 px-5">
+        <a href="#" class="flex items-center gap-3">
+          <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold">
+            FP
+          </div>
+          <div>
+            <p class="font-bold leading-none">FlowPulse</p>
+            <p class="text-xs text-slate-500">Dashboard</p>
+          </div>
+        </a>
+
+        <button
+          id="closeSidebarButton"
+          type="button"
+          class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
+          aria-label="Chiudi menu"
+        >
+          ✕
+        </button>
+      </div>
+
+      <nav class="h-[calc(100vh-4rem)] overflow-y-auto p-4">
+        <div class="mb-6">
+          <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Generale
+          </p>
+
+          <a href="#" class="flex items-center gap-3 rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-semibold text-blue-700">
+            <span>🏠</span>
+            Dashboard
+          </a>
+
+          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>🌳</span>
+            Alberi / Cards
+          </a>
+
+          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>🧭</span>
+            Journeys
+          </a>
+
+          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>📅</span>
+            Eventi
+          </a>
+        </div>
+
+        <div class="mb-6">
+          <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Accademia
+          </p>
+
+          <a href="#" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>🎓</span>
+            Corsi
+          </a>
+
+          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>📘</span>
+            Lezioni
+          </a>
+
+          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>✅</span>
+            Progressi
+          </a>
+        </div>
+
+        <div class="mb-6">
+          <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Salute
+          </p>
+
+          <a href="#" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>💙</span>
+            Postura e Fisiologia
+          </a>
+
+          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>❤️</span>
+            Stop al Dolore
+          </a>
+
+          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <span>💚</span>
+            Benessere Integrato
+          </a>
+        </div>
+
+        <div class="rounded-2xl bg-slate-50 p-4">
+          <p class="text-sm font-semibold">Hai un nuovo progetto?</p>
+          <p class="mt-1 text-xs text-slate-500">
+            Crea una nuova card, un journey o un evento operativo.
+          </p>
+          <button class="mt-3 w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+            + Nuovo
+          </button>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main wrapper -->
+    <div class="lg:pl-72">
+
+      <!-- Navbar -->
+      <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur lg:px-8">
+        <div class="flex items-center gap-3">
+          <button
+            id="openSidebarButton"
+            type="button"
+            class="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
+            aria-label="Apri menu"
+          >
+            ☰
+          </button>
+
+          <div>
+            <p class="text-sm text-slate-500">Template</p>
+            <h1 class="text-lg font-bold leading-tight">Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button class="hidden rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 sm:block">
+            Cerca
+          </button>
+
+          <button class="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100" aria-label="Notifiche">
+            🔔
+          </button>
+
+          <button class="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100" aria-label="Impostazioni">
+            ⚙️
+          </button>
+
+          <div class="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">
+            M
+          </div>
+        </div>
+      </header>
+
+      <!-- Main content -->
+      <main class="p-4 lg:p-8">
+
+        <!-- Breadcrumb -->
+        <div class="mb-6 text-sm text-slate-500">
+          Home / Dashboard
+        </div>
+
+        <!-- Page heading -->
+        <section class="mb-8 flex flex-col justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-center">
+          <div>
+            <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Pannello operativo
+            </p>
+            <h2 class="text-2xl font-bold tracking-tight lg:text-3xl">
+              Gestisci percorsi, card, eventi e utenti
+            </h2>
+            <p class="mt-2 max-w-2xl text-slate-500">
+              Una base pulita per costruire dashboard Rails, Hotwire, FlowPulse o PosturaCorretta.
+            </p>
+          </div>
+
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <button class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+              Esporta
+            </button>
+            <button class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+              + Crea nuovo
+            </button>
+          </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium text-slate-500">Utenti</p>
+              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">+12%</span>
+            </div>
+            <p class="mt-3 text-3xl font-bold">124</p>
+            <p class="mt-1 text-sm text-slate-500">Totali registrati</p>
+          </article>
+
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium text-slate-500">Card</p>
+              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">+34</span>
+            </div>
+            <p class="mt-3 text-3xl font-bold">432</p>
+            <p class="mt-1 text-sm text-slate-500">Contenuti e step</p>
+          </article>
+
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium text-slate-500">Eventi</p>
+              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">oggi</span>
+            </div>
+            <p class="mt-3 text-3xl font-bold">26</p>
+            <p class="mt-1 text-sm text-slate-500">In calendario</p>
+          </article>
+
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium text-slate-500">Percorsi</p>
+              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">attivi</span>
+            </div>
+            <p class="mt-3 text-3xl font-bold">18</p>
+            <p class="mt-1 text-sm text-slate-500">Journey aperti</p>
+          </article>
+        </section>
+
+        <!-- Content grid -->
+        <section class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+
+          <!-- Main panel -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2">
+            <div class="mb-5 flex items-center justify-between gap-4">
+              <div>
+                <h3 class="text-lg font-bold">Attività recenti</h3>
+                <p class="text-sm text-slate-500">Ultimi movimenti del sistema</p>
+              </div>
+              <button class="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium hover:bg-slate-100">
+                Vedi tutto
+              </button>
+            </div>
+
+            <div class="overflow-hidden rounded-2xl border border-slate-200">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                  <tr>
+                    <th class="px-4 py-3">Nome</th>
+                    <th class="px-4 py-3">Tipo</th>
+                    <th class="px-4 py-3">Stato</th>
+                    <th class="px-4 py-3 text-right">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                  <tr>
+                    <td class="px-4 py-4 font-medium">Igiene Posturale</td>
+                    <td class="px-4 py-4 text-slate-500">Programma</td>
+                    <td class="px-4 py-4"><span class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">Attivo</span></td>
+                    <td class="px-4 py-4 text-right"><a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Apri</a></td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-4 font-medium">Stop al Dolore</td>
+                    <td class="px-4 py-4 text-slate-500">Percorso</td>
+                    <td class="px-4 py-4"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">Bozza</span></td>
+                    <td class="px-4 py-4 text-right"><a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Apri</a></td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-4 font-medium">Diario della Salute</td>
+                    <td class="px-4 py-4 text-slate-500">Modulo</td>
+                    <td class="px-4 py-4"><span class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">Test</span></td>
+                    <td class="px-4 py-4 text-right"><a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Apri</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Side panel -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-bold">Prossimi step</h3>
+            <p class="mt-1 text-sm text-slate-500">Mini roadmap operativa</p>
+
+            <div class="mt-6 space-y-4">
+              <div class="flex gap-3">
+                <div class="mt-1 h-3 w-3 rounded-full bg-blue-600"></div>
+                <div>
+                  <p class="font-semibold">Creare le prime card</p>
+                  <p class="text-sm text-slate-500">Struttura contenuti e sezioni.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="mt-1 h-3 w-3 rounded-full bg-slate-300"></div>
+                <div>
+                  <p class="font-semibold">Collegare eventi</p>
+                  <p class="text-sm text-slate-500">Ogni evento nasce da una card.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="mt-1 h-3 w-3 rounded-full bg-slate-300"></div>
+                <div>
+                  <p class="font-semibold">Aggiungere Hotwire</p>
+                  <p class="text-sm text-slate-500">Turbo Frame e Stimulus controller.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const openButton = document.getElementById('openSidebarButton');
+    const closeButton = document.getElementById('closeSidebarButton');
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    openButton.addEventListener('click', openSidebar);
+    closeButton.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeSidebar();
+      }
+    });
+  </script>
+</body>
+</html>

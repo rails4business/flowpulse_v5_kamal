@@ -4,7 +4,18 @@ class DomainTest < ActiveSupport::TestCase
   test "normalizes hostnames" do
     domain = Domain.create!(
       hostname: " POSTURACORRETTA.ORG ",
-      target_controller: "pages",
+      target_controller: "landing",
+      target_action: "posturacorretta",
+      locale: "it"
+    )
+
+    assert_equal "posturacorretta.org", domain.hostname
+  end
+
+  test "normalizes hostnames with ports" do
+    domain = Domain.create!(
+      hostname: " POSTURACORRETTA.ORG:443 ",
+      target_controller: "landing",
       target_action: "posturacorretta",
       locale: "it"
     )
@@ -13,7 +24,7 @@ class DomainTest < ActiveSupport::TestCase
   end
 
   test "finds active domain by host" do
-    Domain.create!(hostname: "posturacorretta.org", target_controller: "pages", target_action: "posturacorretta", locale: "it")
+    Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
 
     assert_equal "posturacorretta", Domain.find_for_host("POSTURACORRETTA.ORG").target_action
   end

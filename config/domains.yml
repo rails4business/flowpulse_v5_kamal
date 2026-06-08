@@ -1,7 +1,7 @@
 default: &default
   flowpulse.net:
     locale: it
-    target_controller: pages
+    target_controller: landing
     target_action: flowpulse
     primary: true
 
@@ -10,7 +10,7 @@ default: &default
 
   markpostura.it:
     locale: it
-    target_controller: pages
+    target_controller: landing
     target_action: markpostura
     primary: true
 
@@ -25,12 +25,21 @@ default: &default
 
   posturacorretta.org:
     locale: it
-    target_controller: pages
+    target_controller: landing
     target_action: posturacorretta
     primary: true
 
   www.posturacorretta.org:
     canonical_host: posturacorretta.org
+
+  igieneposturale.it:
+    locale: it
+    target_controller: landing
+    target_action: igieneposturale
+    primary: true
+
+  www.igieneposturale.it:
+    canonical_host: igieneposturale.it
 
 development:
   <<: *default

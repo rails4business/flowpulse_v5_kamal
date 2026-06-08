@@ -1,5 +1,8 @@
 class ApplicationController < ActionController::Base
   include Authentication
+  include CurrentDomain
+  include FlowRoles::ControllerHelpers
+  helper_method :dashboard_current_section
   before_action :resume_session
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
@@ -7,45 +10,17 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  DASHBOARD_ROLES = [
-    [ "viaggiatori", "Viaggiatori" ],
-    [ "professionisti", "Professionisti" ],
-    [ "creator", "Creator" ],
-    [ "superadmin", "Superadmin" ],
-    [ "demo", "Demo" ]
-  ].freeze
+  DASHBOARD_ROLES = User::SWITCHABLE_ROLES.map { |role| [ role, User::ROLE_LABELS.fetch(role, role.titleize) ] }.freeze
 
-  helper_method :superadmin?, :active_dashboard_role, :active_dashboard_role_label, :dashboard_home_path, :ruolo_label, :dedicated_domain_host
+  def self.dashboard_section(section, **options)
+    before_action(**options) do
+      @dashboard_current_section = section.to_sym
+    end
+  end
 
   private
-    def ruolo_label(role_key)
-      { "traveler" => "Viaggiatore", "demo" => "Demo", "superadmin" => "Superadmin" }[role_key.to_s] || role_key.to_s.titleize
-    end
-    def superadmin?
-      Current.user&.superadmin == true || Current.user&.active_role == "superadmin"
-    end
 
-    def active_dashboard_role
-      Current.user&.active_role || "traveler"
-    end
-
-    def active_dashboard_role_label
-      labels = { "traveler" => "Viaggiatore", "demo" => "Demo", "superadmin" => "Superadmin" }
-      labels[active_dashboard_role.to_s] || active_dashboard_role.to_s.titleize
-    end
-
-    def dashboard_home_path
-      return root_path unless authenticated?
-      
-      case active_dashboard_role.to_s
-      when "superadmin", "admin"
-        admin_dashboard_path
-      else
-        viaggiatori_path
-      end
-    end
-
-    def dedicated_domain_host
-      ENV.fetch("DEDICATED_DOMAIN_HOST_OVERRIDE", request.host).to_s.downcase.strip
+    def dashboard_current_section
+      @dashboard_current_section || :dashboard
     end
 end
