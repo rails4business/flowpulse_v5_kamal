@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "FlowTree Dashboard" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="FlowTree Dashboard">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <%= stylesheet_link_tag "tailwind", "application", "data-turbo-track": "reload" %>
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js" defer></script>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="flowtree-dashboard-body">
+    <div class="flowtree-dashboard-shell">
+      <input type="checkbox" id="flowtree-sidebar-toggle" class="flowtree-sidebar-checkbox">
+      <label for="flowtree-sidebar-toggle" class="flowtree-sidebar-overlay" aria-hidden="true"></label>
+
+      <aside class="flowtree-dashboard-sidebar" aria-label="FlowTree navigation">
+        <%= render "shared/dashboard/sidebar", current_section: flowtree_dashboard_active_role %>
+      </aside>
+
+      <div class="flowtree-dashboard-frame">
+        <header class="flowtree-dashboard-topbar">
+          <%= render "shared/flowtree_dashboard/topbar" %>
+        </header>
+
+        <% if notice = flash[:notice] %>
+          <div class="flowtree-dashboard-flash">
+            <p class="flowtree-flash flowtree-flash-notice"><%= notice %></p>
+          </div>
+        <% end %>
+
+        <% if alert = flash[:alert] %>
+          <div class="flowtree-dashboard-flash">
+            <p class="flowtree-flash flowtree-flash-alert"><%= alert %></p>
+          </div>
+        <% end %>
+
+        <main class="flowtree-dashboard-main">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

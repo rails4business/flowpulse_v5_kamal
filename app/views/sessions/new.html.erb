@@ -10,6 +10,13 @@
   <h1 class="font-bold text-4xl">Accedi</h1>
 
   <%= form_with url: session_url, class: "contents" do |form| %>
+    <% if @subscription_domain.present? %>
+      <%= hidden_field_tag :subscription_domain_id, @subscription_domain.id %>
+      <div class="my-5 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-800">
+        Accedendo ti iscrivi gratuitamente a <%= @subscription_domain.display_hostname %>.
+      </div>
+    <% end %>
+
     <div class="my-5">
       <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address], class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
     </div>
@@ -31,6 +38,6 @@
 
   <div class="mt-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-slate-700">
     Non hai ancora un account?
-    <%= verified_link_to "Registrati", new_user_path, class: "font-semibold text-blue-700 hover:text-blue-600" %>
+    <%= verified_link_to "Registrati", new_user_path(subscription_domain_id: @subscription_domain&.id), class: "font-semibold text-blue-700 hover:text-blue-600" %>
   </div>
 </div>

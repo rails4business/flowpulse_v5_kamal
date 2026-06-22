@@ -1,0 +1,12 @@
+<div id="flowtree_flash_container">
+  <% if notice = flash[:notice] || flash.now[:notice] %>
+    <div class="flowtree-editor-flash">
+      <p class="flowtree-flash flowtree-flash-notice"><%= notice %></p>
+    </div>
+  <% end %>
+  <% if alert = flash[:alert] || flash.now[:alert] %>
+    <div class="flowtree-editor-flash">
+      <p class="flowtree-flash flowtree-flash-alert"><%= alert %></p>
+    </div>
+  <% end %>
+</div>

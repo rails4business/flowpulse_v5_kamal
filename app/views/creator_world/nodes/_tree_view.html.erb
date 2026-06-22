@@ -1,0 +1,91 @@
+<div
+  class="tree-folder <%= "tree-folder-empty" if tree.empty? %> text-sm text-slate-800"
+  data-parent-id="<%= parent_id %>"
+>
+  <% tree.each do |node, children| %>
+    <% selected = node == current_node %>
+    <% has_children = children.any? %>
+
+    <div
+      class="tree-item"
+      data-node-id="<%= node.id %>"
+      id="tree_node_<%= node.id %>"
+    >
+      <details
+        class="group"
+        data-node-id="<%= node.id %>"
+        data-action="toggle->tree#toggle"
+        open
+      >
+        <summary
+          class="flex h-8 w-full cursor-pointer list-none items-center gap-2 rounded-md px-2 <%= selected ? "bg-blue-50 text-blue-700" : "hover:bg-slate-100" %>"
+          data-node-id="<%= node.id %>"
+          data-tree-folder-drop-id="<%= node.id %>"
+          data-tree-target="folderDrop"
+          data-action="mouseenter->tree#previewMoveFolder mouseleave->tree#clearMovePreview click->tree#chooseMoveFolder"
+        >
+          <span
+            class="inline-flex h-4 w-4 items-center justify-center text-slate-300"
+          >
+            ·
+          </span>
+
+          <span class="inline-flex h-4 w-4 items-center justify-center text-xs text-slate-400 transition-transform group-open:rotate-90 <%= "invisible" unless has_children %>">
+            ▶
+          </span>
+
+          <span class="inline-flex h-4 w-4 items-center justify-center <%= node.bridge_node? ? 'text-blue-500 font-bold' : 'text-amber-500' %>">
+            <%= node.bridge_node? ? '↗' : '◆' %>
+          </span>
+
+          <span class="inline-flex h-5 min-w-5 items-center justify-center rounded bg-slate-100 px-1 text-[10px] font-bold text-slate-500">
+            <%= node.position || 0 %>
+          </span>
+
+          <%= link_to tree_creator_world_role_assignment_node_path(@role_assignment, node),
+            class: "truncate font-medium flex items-center gap-1.5",
+            data: { turbo_frame: "node_workspace" },
+            onclick: "event.stopPropagation()" do %>
+            <span><%= node.title %></span>
+            <% if node.bridge_node? %>
+              <span class="text-[10px] font-normal text-slate-500 bg-slate-100 border border-slate-200 rounded px-1">
+                ponte a: <%= node.link_node&.title || "n/d" %>
+              </span>
+            <% end %>
+          <% end %>
+
+          <%= link_to "✎", edit_creator_world_role_assignment_node_path(@role_assignment, node),
+            class: "tree-action-button ml-auto hidden h-6 w-6 items-center justify-center rounded-md text-sm font-bold text-slate-400 hover:bg-blue-50 hover:text-blue-600",
+            data: { tree_target: "treeAction", turbo_frame: "node_workspace" },
+            onclick: "event.stopPropagation()" %>
+
+          <%= button_to "×", creator_world_role_assignment_node_path(@role_assignment, node),
+            method: :delete,
+            form: {
+              class: "tree-action-button hidden",
+              onclick: "event.stopPropagation()",
+              data: {
+                tree_target: "treeAction",
+                turbo_confirm: "Eliminare questo nodo e tutti i suoi figli?"
+              }
+            },
+            class: "h-6 w-6 items-center justify-center rounded-md text-sm font-bold text-red-400 hover:bg-red-50 hover:text-red-600" %>
+
+          <% unless node.bridge_node? %>
+            <%= link_to "+", new_creator_world_role_assignment_node_path(@role_assignment, parent_id: node.id),
+              class: "tree-action-button hidden h-6 w-6 items-center justify-center rounded-md text-sm font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700",
+              data: { tree_target: "treeAction", turbo_frame: "node_workspace" },
+              onclick: "event.stopPropagation()" %>
+          <% end %>
+        </summary>
+
+        <div class="ml-4 border-l border-slate-200 pl-3">
+          <%= render "creator_world/nodes/tree_view",
+            tree: children,
+            parent_id: node.id,
+            current_node: current_node %>
+        </div>
+      </details>
+    </div>
+  <% end %>
+</div>

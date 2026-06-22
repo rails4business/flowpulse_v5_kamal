@@ -34,8 +34,31 @@ class DomainsController < ApplicationController
     def dispatch_domain_action
       if Current.domain&.target_controller.present?
         render_domain_target
+      elsif Current.domain&.node.present? && render_public_node(Current.domain.node)
+        # successfully rendered assigned node
+      elsif Current.domain&.role_assignment.present? && (creator_node = Current.domain.role_assignment.nodes.roots.published_free.order(:position, :title).find { |node| public_node_visible?(node) }) && render_public_node(creator_node)
+        # successfully rendered creator's home/first root node
       else
         render "landing/flowpulse"
+      end
+    end
+
+    def render_public_node(node)
+      if public_node_visible?(node)
+        @node = node
+        @children = public_node_accessible_children(@node)
+        @breadcrumbs = [@node]
+        @siblings = [@node]
+        @parent_node = nil
+        @previous_sibling = nil
+        @next_sibling = nil
+        @traveler_subscription_domain = Current.domain if Current.domain&.node_id == node.id
+        @traveler_subscription = Current.user&.profile&.traveler_subscriptions&.active&.find_by(domain: @traveler_subscription_domain) if @traveler_subscription_domain.present?
+        @node.build_content if @node.content.blank?
+        render "nodes/show", layout: "public_node"
+        true
+      else
+        false
       end
     end
 
@@ -49,6 +72,4 @@ class DomainsController < ApplicationController
         render "#{target_controller}/#{target_action}"
       end
     end
-
-    
 end

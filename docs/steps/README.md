@@ -10,6 +10,7 @@ Questi step descrivono lavoro gia implementato o decisioni operative gia recepit
 - `done/step_0004.md` - Semplificazione app, dashboard per ruolo, demo sandbox e mini API FlowRoles.
 - `done/step_0005.md` - UX aside e menu per ruolo.
 - `done/step_0006.md` - Dashboard app shell unica per UX, aside e main con scroll separati.
+- `done/step_0008_active_role_permissions.md` - Sidebar e accesso pagine guidati dall'active role.
 
 ## Todo
 

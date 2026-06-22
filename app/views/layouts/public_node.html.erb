@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || @node&.title || "Flowpulse" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <% favicon_url = @navigation_domain&.logo_square_url.presence %>
+    <% if favicon_url.present? %>
+      <link rel="icon" href="<%= favicon_url %>">
+      <link rel="apple-touch-icon" href="<%= favicon_url %>">
+    <% else %>
+      <link rel="icon" href="/icon.png" type="image/png">
+      <link rel="icon" href="/icon.svg" type="image/svg+xml">
+      <link rel="apple-touch-icon" href="/icon.png">
+    <% end %>
+
+    <%= stylesheet_link_tag "normalize", "tailwind", "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                blue: '#2563eb',
+                dark: '#0f172a'
+              }
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <% nav_brand = @navigation_domain&.display_hostname.presence || "Flowpulse" %>
+    <%
+      nav_siblings = Array(@siblings)
+      nav_has_real_siblings = nav_siblings.any? { |sibling| sibling != @node }
+      nav_has_left_sidebar = @parent_node.present? || nav_has_real_siblings || @children.present?
+    %>
+    
+    <div id="siblingSidebarOverlay" class="fixed inset-0 z-30 hidden bg-slate-950/40 backdrop-blur-sm lg:hidden" aria-hidden="true"></div>
+
+    <!-- Top navbar -->
+    <header class="sticky top-0 z-30 w-full border-b border-slate-200 bg-white/95 backdrop-blur px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3 min-w-0 flex-1 mr-4">
+        <% if nav_has_left_sidebar %>
+          <button id="siblingSidebarToggle" type="button" class="lg:hidden p-2 -ml-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0" aria-label="Apri menu laterale">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5.5 w-5.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+        <% end %>
+
+        <% if @traveler_subscription_domain.present? %>
+          <% if Current.user.blank? %>
+            <%= link_to "Iscriviti gratis", new_user_path(subscription_domain_id: @traveler_subscription_domain.id, return_to: request.fullpath),
+              title: "Registrati per iscriverti gratuitamente a #{@traveler_subscription_domain.display_hostname}.",
+              class: "rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-bold text-white hover:bg-slate-800" %>
+          <% elsif FlowRoles.active_role_for(Current.user) == "traveler" && @traveler_subscription.present? %>
+            <%= link_to "Iscritto", viaggiatori_path,
+              title: "Sei iscritto gratuitamente a #{@traveler_subscription_domain.display_hostname}. Puoi rimuovere l'iscrizione dalla dashboard.",
+              class: "rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-bold text-green-700 hover:bg-green-100" %>
+          <% elsif FlowRoles.active_role_for(Current.user) == "traveler" %>
+            <%= button_to "Iscriviti gratis", traveler_subscriptions_path,
+              params: { domain_id: @traveler_subscription_domain.id },
+              title: "Iscrizione gratuita a #{@traveler_subscription_domain.display_hostname}. Salviamo questo dominio nel tuo profilo per mostrartelo nella dashboard. Puoi rimuoverla quando vuoi.",
+              class: "rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-bold text-white hover:bg-slate-800" %>
+          <% end %>
+        <% end %>
+
+        <% if content_for?(:navbar_breadcrumbs) %>
+          <div class="min-w-0 flex-1 overflow-x-auto overflow-y-hidden">
+            <%= yield :navbar_breadcrumbs %>
+          </div>
+        <% else %>
+          <%= link_to root_path, class: "flex items-center gap-2 flex-shrink-0" do %>
+            <span class="flex min-h-9 items-center">
+              <% if @navigation_domain&.logo_square_url.present? %>
+                <%= image_tag @navigation_domain.logo_square_url, alt: nav_brand, class: "h-9 w-9 object-contain sm:hidden" %>
+              <% else %>
+                <span class="text-lg font-black tracking-wider text-slate-900 sm:hidden"><%= nav_brand %></span>
+              <% end %>
+
+              <% if @navigation_domain&.logo_full_url.present? %>
+                <%= image_tag @navigation_domain.logo_full_url, alt: nav_brand, class: "hidden h-9 max-w-[220px] object-contain sm:block" %>
+              <% else %>
+                <span class="hidden text-lg font-black tracking-wider text-slate-900 sm:inline"><%= nav_brand %></span>
+              <% end %>
+            </span>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <button id="tocSidebarToggle" type="button" class="xl:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0 hidden" aria-label="Apri indice">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5.5 w-5.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+          </svg>
+        </button>
+
+        <details class="relative">
+          <summary class="flex cursor-pointer list-none items-center justify-center rounded-full border border-slate-200 bg-white p-0 text-slate-600 hover:bg-slate-100" aria-label="<%= Current.user.present? ? 'Apri menu profilo' : 'Apri menu accesso' %>">
+            <% if Current.user.present? %>
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">
+                <%= (Current.user.profile&.display_name || Current.user.email_address).first.upcase %>
+              </span>
+            <% else %>
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-700">
+                ?
+              </span>
+            <% end %>
+          </summary>
+          <div class="absolute right-0 z-50 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+            <% if Current.user.present? %>
+              <div class="px-3 py-2">
+                <p class="text-sm font-semibold text-slate-950"><%= Current.user.profile&.display_name.presence || "Profilo" %></p>
+                <p class="truncate text-xs text-slate-500"><%= Current.user.email_address %></p>
+              </div>
+              <div class="my-1 border-t border-slate-100"></div>
+              <%= link_to "Dashboard", dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+              <%= link_to "Profilo", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+              <%= button_to "Esci", session_path,
+                method: :delete,
+                class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
+            <% else %>
+              <% auth_context = @traveler_subscription_domain.present? ? { subscription_domain_id: @traveler_subscription_domain.id, return_to: request.fullpath } : {} %>
+              <%= link_to "Accedi", new_session_path(auth_context), class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+              <%= link_to "Registrati", new_user_path(auth_context), class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+            <% end %>
+          </div>
+        </details>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex flex-col w-full max-w-8xl mx-auto relative">
+      <main class="flex-1 min-w-0 bg-white px-4 py-8 pb-28 sm:px-6 lg:px-12 xl:px-16">
+        <% if notice = flash[:notice] %>
+          <p class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"><%= notice %></p>
+        <% end %>
+        <% if alert = flash[:alert] %>
+          <p class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"><%= alert %></p>
+        <% end %>
+
+        <%= yield %>
+      </main>
+
+      <%= render "nodes/reading_nav",
+        previous_sibling: @previous_sibling,
+        parent_node: @parent_node,
+        first_child: @children&.first,
+        next_sibling: @next_sibling %>
+    </div>
+
+
+    <script>
+      (() => {
+        const siblingToggleBtn = document.getElementById("siblingSidebarToggle");
+        const tocToggleBtn = document.getElementById("tocSidebarToggle");
+        const siblingSidebar = document.querySelector(".node-public-sidebar");
+        const tocSidebar = document.querySelector(".node-public-toc-sidebar");
+        const overlay = document.getElementById("siblingSidebarOverlay");
+        const closeSiblingBtn = document.getElementById("closeSiblingSidebarButton");
+        const closeTocBtn = document.getElementById("closeTocSidebarButton");
+
+        const openSibling = () => {
+          siblingSidebar?.classList.add("open");
+          overlay?.classList.remove("hidden");
+          document.body.classList.add("overflow-hidden");
+        };
+
+        const openToc = () => {
+          tocSidebar?.classList.add("open");
+          overlay?.classList.remove("hidden");
+          document.body.classList.add("overflow-hidden");
+        };
+
+        const closeAll = () => {
+          siblingSidebar?.classList.remove("open");
+          tocSidebar?.classList.remove("open");
+          overlay?.classList.add("hidden");
+          document.body.classList.remove("overflow-hidden");
+        };
+
+        siblingToggleBtn?.addEventListener("click", openSibling);
+        tocToggleBtn?.addEventListener("click", openToc);
+        closeSiblingBtn?.addEventListener("click", closeAll);
+        closeTocBtn?.addEventListener("click", closeAll);
+        overlay?.addEventListener("click", closeAll);
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") closeAll();
+        });
+      })();
+    </script>
+  </body>
+</html>

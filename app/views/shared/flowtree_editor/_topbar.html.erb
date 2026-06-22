@@ -1,0 +1,98 @@
+<% tree_query = params.slice(:editing).permit(:editing).to_h.symbolize_keys %>
+<% compact_breadcrumbs = @breadcrumbs.to_a %>
+<% visible_breadcrumbs = compact_breadcrumbs.last(2) %>
+<% hidden_breadcrumbs_count = compact_breadcrumbs.size - visible_breadcrumbs.size %>
+
+<div class="tree-toolbar flex flex-wrap items-center gap-2" aria-label="Node explorer">
+  <button
+    type="button"
+    data-tree-target="sidebarToggle"
+    data-action="tree#toggleSidebar"
+    class="tree-sidebar-toggle h-9 w-9 items-center justify-center rounded-md border border-slate-300 bg-white text-lg font-bold text-slate-700 hover:bg-slate-100"
+    aria-label="Apri menu"
+    aria-expanded="false"
+  >
+    ☰
+  </button>
+
+  <%= link_to "← Torna alla dashboard", creator_world_root_path,
+    class: "tree-roots-link rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100" %>
+
+  <div class="tree-toolbar-breadcrumb flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden whitespace-nowrap text-sm">
+    <%= link_to @role_assignment.display_name, creator_world_role_assignment_nodes_path(@role_assignment),
+      class: "tree-breadcrumb-link tree-breadcrumb-world shrink-0 rounded-md px-2 py-1 font-semibold text-blue-700 hover:bg-blue-50" %>
+
+    <span class="shrink-0 text-slate-300">/</span>
+
+    <% if hidden_breadcrumbs_count.positive? %>
+      <span
+        class="tree-breadcrumb-ellipsis shrink-0 rounded-md bg-slate-100 px-2 py-1 font-semibold text-slate-500"
+        title="<%= compact_breadcrumbs.first(hidden_breadcrumbs_count).map(&:title).join(' / ') %>"
+      >
+        ...
+      </span>
+      <span class="shrink-0 text-slate-300">/</span>
+    <% end %>
+
+    <% visible_breadcrumbs.each do |node| %>
+      <%= link_to node.title, tree_creator_world_role_assignment_node_path(@role_assignment, node, tree_query.merge(tab: @active_tab.presence || "node")),
+        class: [
+          "tree-breadcrumb-link min-w-0 rounded-md px-2 py-1 font-medium hover:bg-slate-100 hover:text-blue-600",
+          (node == visible_breadcrumbs.last && !@node.new_record? && action_name != "edit" && action_name != "update") ? "tree-breadcrumb-current text-slate-900" : "tree-breadcrumb-parent shrink-0 text-slate-600"
+        ].join(" ") %>
+      <% if node != visible_breadcrumbs.last || @node.new_record? || action_name == "edit" || action_name == "update" %>
+        <span class="shrink-0 text-slate-300">/</span>
+      <% end %>
+    <% end %>
+
+    <% if @node.new_record? %>
+      <span class="tree-breadcrumb-current text-slate-900 font-semibold px-2 py-1">Nuovo nodo</span>
+    <% elsif action_name == "edit" || action_name == "update" %>
+      <span class="tree-breadcrumb-current text-slate-900 font-semibold px-2 py-1">Modifica</span>
+    <% end %>
+  </div>
+
+  <% if @node&.persisted? && action_name == "tree" %>
+    <div class="tree-toolbar-tabs flex shrink-0 rounded-lg border border-slate-200 bg-white p-1 text-xs font-semibold">
+      <% [["Node", "node"], ["Content", "content"]].each do |label, tab| %>
+        <%= link_to label,
+          tree_creator_world_role_assignment_node_path(@role_assignment, @node, tree_query.merge(tab: tab)),
+          class: [
+            "rounded-md px-3 py-1.5",
+            @active_tab == tab ? "bg-blue-50 text-blue-700" : "text-slate-500 hover:text-slate-900"
+          ].join(" ") %>
+      <% end %>
+    </div>
+
+    <%= link_to "Pubblica", flowtree_public_node_path(@node),
+      class: "tree-public-link rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800" %>
+
+    <button
+      type="button"
+      data-tree-target="editButton"
+      data-action="tree#toggleEditing"
+      class="tree-edit-button ml-auto rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+      aria-pressed="false"
+    >
+      Modifica
+    </button>
+  <% else %>
+    <div class="ml-auto text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 border border-slate-200 rounded-md px-3 py-1.5 select-none">
+      <%= (action_name == "edit" || action_name == "update") ? "Modalità Modifica" : "Nuovo Nodo" %>
+    </div>
+  <% end %>
+
+  <span
+    data-tree-target="moveMessage"
+    class="tree-move-message hidden rounded-md bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700"
+  ></span>
+
+  <button
+    type="button"
+    data-tree-target="cancelMoveButton"
+    data-action="tree#cancelFolderMove"
+    class="hidden rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+  >
+    Annulla
+  </button>
+</div>

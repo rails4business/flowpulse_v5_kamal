@@ -36,6 +36,187 @@
       <%= form.label :locale, "Locale", class: "text-sm font-bold text-slate-700" %>
       <%= form.text_field :locale, class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
     </div>
+
+    <div class="md:col-span-2 grid gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4 md:grid-cols-2">
+      <div>
+        <%= form.label :logo_full_url, "Logo lungo URL", class: "text-sm font-bold text-slate-700" %>
+        <%= form.url_field :logo_full_url, placeholder: "https://...", class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+
+      <div>
+        <%= form.label :logo_square_url, "Logo quadrato URL", class: "text-sm font-bold text-slate-700" %>
+        <%= form.url_field :logo_square_url, placeholder: "https://...", class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+    </div>
+
+    <div class="md:col-span-2">
+      <label for="domain_role_assignment_id_input" class="text-sm font-bold text-slate-700">Creator world</label>
+      
+      <div data-controller="autocomplete" style="position: relative; width: 100%;">
+        <%= form.hidden_field :role_assignment_id, data: { autocomplete_target: "hidden" } %>
+        
+        <div style="position: relative; display: flex; align-items: center; width: 100%;">
+          <% 
+            creator_initial_value = if domain.role_assignment.present?
+              domain.role_assignment.display_name
+            else
+              ""
+            end
+          %>
+          <input 
+            type="text" 
+            id="domain_role_assignment_id_input"
+            class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 bg-white text-sm" 
+            placeholder="Nessun creator, oppure cerca per nome..." 
+            data-autocomplete-target="input" 
+            data-action="input->autocomplete#onInput focus->autocomplete#showResults blur->autocomplete#onBlur"
+            value="<%= creator_initial_value %>"
+            autocomplete="off"
+            style="padding-right: 2rem;"
+          >
+          
+          <button 
+            type="button" 
+            data-autocomplete-target="clearBtn"
+            data-action="click->autocomplete#clear" 
+            class="hidden"
+            style="position: absolute; right: 0.5rem; bottom: 0.5rem; border: none; background: transparent; cursor: pointer; color: #94a3b8; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; height: 1.5rem; width: 1.5rem; outline: none;"
+            aria-label="Cancella selezione"
+          >
+            ×
+          </button>
+        </div>
+
+        <div 
+          data-autocomplete-target="results" 
+          class="hidden"
+          style="position: absolute; z-index: 50; left: 0; right: 0; margin-top: 0.25rem; max-height: 15rem; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 0.375rem; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); padding: 0.25rem 0;"
+        >
+          <!-- System fallback / no creator option -->
+          <div 
+            data-action="mousedown->autocomplete#select" 
+            data-id="" 
+            data-title="Nessun creator (Dominio di Sistema / Fallback)"
+            data-value=""
+            style="cursor: pointer; padding: 0.5rem 1rem; color: #64748b; font-style: italic; border-b: 1px solid #f1f5f9; font-size: 0.875rem;"
+            onmouseover="this.style.backgroundColor='#f1f5f9';"
+            onmouseout="this.style.backgroundColor='transparent';"
+          >
+            Nessun creator (Dominio di Sistema)
+          </div>
+
+          <% RoleAssignment.creator_of_worlds.includes(:profile).order(:id).each do |creator| %>
+            <% 
+              display_text = creator.display_name
+              search_text = "#{creator.display_name} #{creator.user&.email_address}"
+            %>
+            <div 
+              data-action="mousedown->autocomplete#select" 
+              data-id="<%= creator.id %>" 
+              data-title="<%= search_text %>"
+              data-value="<%= display_text %>"
+              style="cursor: pointer; padding: 0.5rem 1rem; color: #334155; font-size: 0.875rem;"
+              onmouseover="this.style.backgroundColor='#f1f5f9'; this.style.color='#1e293b';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#334155';"
+            >
+              <span style="font-weight: 600; color: #0f172a;"><%= display_text %></span>
+              <% if creator.user&.email_address.present? %>
+                <span style="display: block; font-size: 0.75rem; color: #64748b; margin-top: 0.125rem;">
+                  Email: <%= creator.user.email_address %>
+                </span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="md:col-span-2">
+      <label for="domain_node_id_input" class="text-sm font-bold text-slate-700">Nodo iniziale</label>
+      
+      <div data-controller="autocomplete" style="position: relative; width: 100%;">
+        <%= form.hidden_field :node_id, data: { autocomplete_target: "hidden" } %>
+        
+        <div style="position: relative; display: flex; align-items: center; width: 100%;">
+          <% 
+            initial_value = if domain.node.present?
+              creator = domain.node.role_assignment
+              "[#{domain.node.parent_id.nil? ? 'ROOT' : 'NODO'}] ##{domain.node.id} - #{domain.node.title} (#{creator&.display_name})"
+            else
+              ""
+            end
+          %>
+          <input 
+            type="text" 
+            id="domain_node_id_input"
+            class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 bg-white text-sm" 
+            placeholder="Nessun nodo, oppure cerca per titolo, ID o creator..." 
+            data-autocomplete-target="input" 
+            data-action="input->autocomplete#onInput focus->autocomplete#showResults blur->autocomplete#onBlur"
+            value="<%= initial_value %>"
+            autocomplete="off"
+            style="padding-right: 2rem;"
+          >
+          
+          <button 
+            type="button" 
+            data-autocomplete-target="clearBtn"
+            data-action="click->autocomplete#clear" 
+            class="hidden"
+            style="position: absolute; right: 0.5rem; bottom: 0.5rem; border: none; background: transparent; cursor: pointer; color: #94a3b8; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; height: 1.5rem; width: 1.5rem; outline: none;"
+            aria-label="Cancella selezione"
+          >
+            ×
+          </button>
+        </div>
+
+        <div 
+          data-autocomplete-target="results" 
+          class="hidden"
+          style="position: absolute; z-index: 50; left: 0; right: 0; margin-top: 0.25rem; max-height: 15rem; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 0.375rem; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); padding: 0.25rem 0;"
+        >
+          <!-- Optional system fallback option -->
+          <div 
+            data-action="mousedown->autocomplete#select" 
+            data-id="" 
+            data-title="Nessun nodo (Dominio di Sistema / Fallback)"
+            data-value=""
+            style="cursor: pointer; padding: 0.5rem 1rem; color: #64748b; font-style: italic; border-b: 1px solid #f1f5f9; font-size: 0.875rem;"
+            onmouseover="this.style.backgroundColor='#f1f5f9';"
+            onmouseout="this.style.backgroundColor='transparent';"
+          >
+            Nessun nodo iniziale
+          </div>
+
+          <% RoleAssignment.creator_of_worlds.includes(:profile, :nodes).order(:id).each do |creator| %>
+            <% creator.nodes.order(:id).each do |node| %>
+              <% 
+                type_label = node.parent_id.nil? ? 'ROOT' : 'NODO'
+                title_text = "##{node.id} - #{node.title} [#{type_label}] (#{creator.display_name})"
+                search_text = "#{node.title} #{node.id} #{creator.display_name} #{creator.user&.email_address}"
+              %>
+              <div 
+                data-action="mousedown->autocomplete#select" 
+                data-id="<%= node.id %>" 
+                data-title="<%= search_text %>"
+                data-value="<%= title_text %>"
+                style="cursor: pointer; padding: 0.5rem 1rem; color: #334155; font-size: 0.875rem;"
+                onmouseover="this.style.backgroundColor='#f1f5f9'; this.style.color='#1e293b';"
+                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#334155';"
+              >
+                <span style="font-weight: 600; color: #0f172a;">#<%= node.id %> - <%= node.title %></span>
+                <span class="badge <%= node.parent_id.nil? ? 'primary' : 'secondary' %>" style="font-size: 0.65rem; padding: 0.1rem 0.35rem; margin-left: 0.25rem;">
+                  <%= type_label %>
+                </span>
+                <span style="display: block; font-size: 0.75rem; color: #64748b; margin-top: 0.125rem;">
+                  Creator: <%= creator.display_name %> (<%= creator.user&.email_address %>)
+                </span>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 
 

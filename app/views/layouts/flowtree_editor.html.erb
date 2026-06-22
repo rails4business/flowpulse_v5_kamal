@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "FlowTree Editor" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="FlowTree Editor">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <%= stylesheet_link_tag "tailwind", "application", "data-turbo-track": "reload" %>
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js" defer></script>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="flowtree-editor-body">
+    <div
+      data-controller="tree"
+      data-tree-storage-key="flow-tree-<%= @root&.id || @node&.id %>"
+      data-tree-role-assignment-id="<%= @role_assignment&.id %>"
+      data-tree-editing="false"
+      data-tree-sidebar-open="false"
+      class="flowtree-editor-shell"
+    >
+      <svg
+        data-tree-target="moveLineSvg"
+        class="tree-move-line-svg pointer-events-none absolute inset-0 hidden h-full w-full"
+        aria-hidden="true"
+      >
+        <line
+          data-tree-target="moveLine"
+          class="tree-move-line"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="0"
+        />
+      </svg>
+
+      <header class="flowtree-editor-topbar">
+        <%= render "shared/flowtree_editor/topbar" %>
+      </header>
+
+      <%= render "shared/flowtree_editor/flash" %>
+
+      <div class="flowtree-editor-frame">
+        <%= render "shared/flowtree_editor/sidebar" %>
+
+        <main class="tree-main flowtree-editor-main">
+          <%= turbo_frame_tag "node_workspace", data: { turbo_action: "advance" } do %>
+            <%= yield %>
+          <% end %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

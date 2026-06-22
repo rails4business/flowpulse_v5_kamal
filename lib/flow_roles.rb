@@ -24,7 +24,7 @@ module FlowRoles
   end
 
   def assignable_roles
-    RoleAssignment.roles.keys
+    RoleAssignment::ROOT_ROLES
   end
 
   def label(role)
@@ -97,21 +97,21 @@ module FlowRoles
     action = action.to_sym
     resource = resource.to_sym
 
-    return true if user&.superadmin_user?
+    return READ_ACTIONS.include?(action) if resource == :public
     return false unless user
-    return false if MUTATING_ACTIONS.include?(action) && active_role_for(user) == "demo"
+
+    active_role = active_role_for(user)
+    return false if MUTATING_ACTIONS.include?(action) && active_role == "demo"
 
     case resource
-    when :public
-      READ_ACTIONS.include?(action)
     when :demo
-      user.has_demo_access? && READ_ACTIONS.include?(action)
+      (active_role == "demo" || user.superadmin_user?) && user.has_demo_access? && READ_ACTIONS.include?(action)
     when :admin
-      user.admin_user? && active_role_for(user) != "demo"
-    when :domains, :role_map
-      false
+      %w[admin superadmin].include?(active_role) && (user.admin_user? || user.superadmin_user?)
+    when :domains, :role_map, :assigned_role_map, :superadmin
+      active_role == "superadmin" && user.superadmin_user?
     else
-      can_access_role?(user, resource, context)
+      active_role == resource.to_s && can_access_role?(user, resource, context)
     end
   end
 end

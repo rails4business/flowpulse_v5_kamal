@@ -60,9 +60,15 @@ module FlowRoles
       end
 
       def require_role!(role, context = nil)
-        return if Current.user&.has_assigned_role?(role, context)
+        return if FlowRoles.can?(Current.user, :read, role, context: context)
 
         redirect_to dashboard_home_path, alert: "Accesso riservato al ruolo #{ruolo_label(role)}."
+      end
+
+      def require_permission!(resource, action = :read)
+        return if FlowRoles.can?(Current.user, action, resource)
+
+        redirect_to dashboard_home_path, alert: "Accesso non disponibile per il ruolo attivo."
       end
 
       def require_not_demo_mode!

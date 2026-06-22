@@ -23,4 +23,47 @@
       </div>
     </section>
   <% end %>
+
+  <% traveler_subscriptions = traveler_dashboard_aside_subscriptions %>
+  <% if traveler_subscriptions.any? %>
+    <section class="mb-6 border-t border-slate-100 pt-4">
+      <h3 class="px-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">Domini iscritti</h3>
+      <div class="mt-2 grid gap-1">
+        <% traveler_subscriptions.each do |subscription| %>
+          <%= link_to node_path(subscription.node), class: "group rounded-xl px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950" do %>
+            <strong class="block truncate text-sm font-bold text-slate-800 group-hover:text-slate-950"><%= subscription.domain.display_hostname %></strong>
+            <span class="mt-0.5 block truncate text-[11px] font-medium text-slate-400"><%= subscription.node.title %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <% if active_dashboard_role != "creator" && Current.user && Current.user.current_role_assignment.present? %>
+    <% ra = Current.user.current_role_assignment %>
+    <section class="mt-4 mb-6 border-t border-slate-150 pt-4">
+      <h3 class="px-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">Canale Attivo</h3>
+      <div class="mt-2 grid gap-1">
+        <% if ra.creator_of_worlds? %>
+          <%= link_to creator_world_role_assignment_nodes_path(ra), class: "group flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-150 transition" do %>
+            <span>⚙️ Dashboard Canale</span>
+          <% end %>
+
+          <% roots = ra.nodes.roots.order(:position, :title) %>
+          <% if roots.any? %>
+            <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-2">Alberi Nodi</div>
+            <% roots.each do |node| %>
+              <%= link_to tree_creator_world_role_assignment_node_path(ra, node), class: "group flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-150 hover:text-slate-900 transition", data: { turbo: false } do %>
+                <span>◆ <%= node.title %></span>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%= link_to new_creator_world_role_assignment_node_path(ra), class: "group flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50 transition" do %>
+            <span>+ Nuovo root node</span>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
 </nav>

@@ -1,1 +1,61 @@
-<%= render "shared/role_dashboard", dashboard: @role_dashboard %>
+<% content_for :title, "Dashboard Creator" %>
+
+<header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+  <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Creator</p>
+  <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">Root node e domini</h1>
+  <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Canali creator assegnati dal superadmin, con i root node e i domini collegati.</span>
+</header>
+
+<section class="mt-6 grid gap-4">
+  <% if @creator_assignments.any? %>
+    <% @creator_assignments.each do |assignment| %>
+      <% root_nodes = assignment.nodes.roots.includes(:domains).order(:position, :title) %>
+
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">Canale</p>
+            <h2 class="mt-1 text-xl font-extrabold text-slate-950"><%= assignment.display_name %></h2>
+          </div>
+
+          <%= link_to "New root node", new_creator_world_role_assignment_node_path(assignment), class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-extrabold text-white shadow-sm transition hover:bg-blue-700" %>
+        </div>
+
+        <% if root_nodes.any? %>
+          <div class="mt-5 grid gap-3">
+            <% root_nodes.each do |node| %>
+              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <h3 class="text-base font-extrabold text-slate-950"><%= node.title %></h3>
+                    <p class="mt-1 text-xs font-semibold text-slate-500"><%= node.status.humanize %> · <%= Node.visibility_label(node.visibility) %></p>
+                  </div>
+
+                  <%= link_to "Open", tree_creator_world_role_assignment_node_path(assignment, node), class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-extrabold text-slate-700 transition hover:bg-slate-100", data: { turbo: false } %>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <% if node.domains.any? %>
+                    <% node.domains.order(:hostname).each do |domain| %>
+                      <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 ring-1 ring-slate-200"><%= domain.hostname %></span>
+                    <% end %>
+                  <% else %>
+                    <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 ring-1 ring-amber-100">Nessun dominio collegato</span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5">
+            <p class="text-sm font-semibold text-slate-600">Nessun root node creato per questo canale.</p>
+          </div>
+        <% end %>
+      </article>
+    <% end %>
+  <% else %>
+    <article class="rounded-2xl border border-slate-200 bg-white p-6 text-sm font-semibold text-slate-600 shadow-sm">
+      Nessun canale creator assegnato.
+    </article>
+  <% end %>
+</section>

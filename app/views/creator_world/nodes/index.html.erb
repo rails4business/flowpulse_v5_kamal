@@ -1,0 +1,163 @@
+<div class="space-y-6">
+  <!-- Breadcrumbs & Header -->
+  <header class="flex flex-col justify-between gap-4 md:flex-row md:items-center bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+          Canale Creator
+        </span>
+      </div>
+      <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900"><%= @role_assignment.display_name %></h1>
+      <p class="mt-1 text-sm text-slate-500">Gestisci i domini, l'albero dei nodi e i relativi contenuti di questo canale.</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <%= link_to "+ Nuovo root node", new_creator_world_role_assignment_node_path(@role_assignment), class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 shadow-sm transition" %>
+    </div>
+  </header>
+
+  <!-- 2-Column Grid Layout -->
+  <div class="grid gap-6 lg:grid-cols-3">
+    
+    <!-- Sidebar (Left Column) -->
+    <div class="space-y-6 lg:col-span-1">
+      
+      <!-- Dettagli Card -->
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Dettagli Canale</h2>
+        
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-slate-500 font-medium">Ruolo</span>
+          <span class="font-semibold text-slate-800">creator_of_worlds</span>
+        </div>
+
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-slate-500 font-medium">ID Canale</span>
+          <span class="font-mono text-xs text-slate-600">#<%= @role_assignment.id %></span>
+        </div>
+
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-slate-500 font-medium">Utente</span>
+          <span class="font-semibold text-slate-800"><%= @role_assignment.user.email_address %></span>
+        </div>
+      </article>
+
+      <!-- Progetti / Domini Card -->
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <h2 class="text-lg font-bold text-slate-900">I Progetti (Domini)</h2>
+        </div>
+
+        <div class="space-y-3">
+          <% if @domains.any? %>
+            <% @domains.each do |domain| %>
+              <div class="rounded-xl border border-slate-150 bg-slate-50 p-4 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-900 break-all text-sm" title="<%= domain.hostname %>">
+                    <%= domain.hostname %>
+                  </span>
+                  <span class="inline-flex items-center rounded bg-slate-200/60 px-1.5 py-0.5 text-xs font-semibold text-slate-600">
+                    <%= domain.locale %>
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <% if domain.primary? %>
+                    <span class="inline-flex items-center rounded bg-blue-100 px-1.5 py-0.5 font-semibold text-blue-700">Primary</span>
+                  <% end %>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="h-2 w-2 rounded-full <%= domain.active? ? 'bg-green-500' : 'bg-slate-400' %>"></span>
+                    <span class="text-slate-500"><%= domain.active? ? "attivo" : "disattivo" %></span>
+                  </span>
+                </div>
+                
+                <% if domain.node.present? %>
+                  <div class="text-xs text-slate-600 bg-white border border-slate-200 rounded px-2 py-1.5 mt-1">
+                    <span class="font-semibold text-slate-700">Root Node:</span>
+                    <%= link_to domain.node.title, tree_creator_world_role_assignment_node_path(@role_assignment, domain.node), class: "font-semibold text-blue-600 hover:text-blue-800 hover:underline", data: { turbo: false } %>
+                  </div>
+                <% else %>
+                  <div class="text-xs text-slate-400 italic mt-1">
+                    Nessun homepage impostata
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-sm text-slate-500 italic text-center py-4">Nessun dominio associato a questo canale.</p>
+          <% end %>
+        </div>
+      </article>
+    </div>
+
+    <!-- Main Content (Right Columns) -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Stats summary row -->
+      <section class="grid gap-4 grid-cols-2 md:grid-cols-4">
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Nodi Radice</span>
+          <div class="mt-2 text-3xl font-extrabold text-slate-900"><%= @root_nodes_count %></div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Nodi Totali</span>
+          <div class="mt-2 text-3xl font-extrabold text-slate-900"><%= @role_assignment.nodes.count %></div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Nodi Pubblici</span>
+          <div class="mt-2 text-3xl font-extrabold text-slate-900"><%= @public_nodes_count %></div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Domini</span>
+          <div class="mt-2 text-3xl font-extrabold text-slate-900"><%= @domains.count %></div>
+        </div>
+      </section>
+
+      <!-- Root Nodes Grid Section -->
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-slate-900">Alberi dei Nodi Radice</h2>
+        
+        <div class="grid gap-4 sm:grid-cols-2">
+          <% @roots.each do |node| %>
+            <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+              <div>
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600 uppercase mb-2">
+                  Root Node
+                </span>
+                <h3 class="text-lg font-bold text-slate-900 truncate" title="<%= node.title %>">
+                  <%= node.title %>
+                </h3>
+                
+                <% if node.description.present? %>
+                  <p class="mt-2 text-sm text-slate-500 line-clamp-3 leading-relaxed min-h-[4.2rem]">
+                    <%= node.description %>
+                  </p>
+                <% else %>
+                  <div class="min-h-[4.2rem]"></div>
+                <% end %>
+              </div>
+
+              <div class="mt-4 pt-4 border-t border-slate-100">
+                <div class="flex gap-2 text-xs text-slate-500 mb-3">
+                  <span class="bg-slate-100 px-2 py-1 rounded">Figli: <%= node.children.count %></span>
+                  <span class="bg-slate-100 px-2 py-1 rounded">Posizione: <%= node.position || 0 %></span>
+                </div>
+
+                <div class="flex gap-2">
+                  <%= link_to "Gestisci Albero", tree_creator_world_role_assignment_node_path(@role_assignment, node), class: "flex-1 inline-flex items-center justify-center rounded-xl bg-blue-600 py-2 text-xs font-semibold text-white hover:bg-blue-500 transition shadow-sm", data: { turbo: false } %>
+                  <%= link_to "Visualizza", flowtree_public_node_path(node), class: "flex-1 inline-flex items-center justify-center rounded-xl border border-slate-300 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition" %>
+                </div>
+              </div>
+            </article>
+          <% end %>
+
+          <% if @roots.empty? %>
+            <div class="col-span-2 text-center py-12 px-4 border border-dashed border-slate-300 rounded-2xl bg-slate-50 text-slate-500">
+              Nessun nodo radice configurato per questo Canale. Clicca su "+ Nuovo root node" per iniziarne uno.
+            </div>
+          <% end %>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</div>

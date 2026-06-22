@@ -1,0 +1,28 @@
+<button
+  type="button"
+  data-tree-target="sidebarBackdrop"
+  data-action="tree#closeSidebar"
+  class="tree-sidebar-backdrop"
+  aria-label="Chiudi menu"
+></button>
+
+<aside
+  data-tree-target="sidebar"
+  class="tree-sidebar overflow-auto bg-slate-50 p-4"
+  aria-label="Albero nodi"
+>
+  <div id="tree_sidebar_content">
+    <%= render "creator_world/nodes/tree_view",
+      tree: @tree,
+      parent_id: @root&.parent_id,
+      current_node: @node %>
+  </div>
+</aside>
+
+<div
+  class="tree-resizer bg-slate-200 hover:bg-blue-500"
+  data-action="pointerdown->tree#startResizeSidebar"
+  role="separator"
+  aria-orientation="vertical"
+  style="width: 6px; cursor: col-resize; flex: 0 0 6px;"
+></div>

@@ -1,0 +1,9 @@
+<% content_for :full_screen, true %>
+
+<%= turbo_frame_tag "node_workspace" do %>
+  <div class="node-editor-page">
+    <div class="node-editor-shell">
+      <%= render "form", node: @node %>
+    </div>
+  </div>
+<% end %>

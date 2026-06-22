@@ -1,0 +1,37 @@
+<label for="flowtree-sidebar-toggle" class="flowtree-sidebar-open" aria-label="Apri menu">Menu</label>
+
+<% if content_for?(:topbar_heading) %>
+  <div class="flowtree-topbar-heading">
+    <%= yield :topbar_heading %>
+  </div>
+<% else %>
+  <div class="flowtree-topbar-heading">
+    <div class="flowtree-topbar-title"><%= flowtree_dashboard_title %></div>
+    <div class="flowtree-topbar-subtitle"><%= flowtree_dashboard_subtitle %></div>
+  </div>
+<% end %>
+
+<% if content_for?(:topbar_actions) %>
+  <div class="flowtree-topbar-actions">
+    <%= yield :topbar_actions %>
+  </div>
+<% end %>
+
+<%= form_with url: flowtree_dashboard_domain_path, method: :post, local: true, class: "flowtree-domain-switcher" do |form| %>
+  <%= hidden_field_tag :return_to, request.fullpath %>
+  <%= form.label :domain_id, "Dominio", class: "flowtree-domain-label" %>
+  <%= form.select :domain_id,
+    flowtree_dashboard_domain_options,
+    { include_blank: "Standalone", selected: flowtree_dashboard_active_domain_id },
+    { class: "flowtree-domain-select", onchange: "this.form.requestSubmit()" } %>
+<% end %>
+
+<div class="flowtree-topbar-role">
+  <% if flow_tree_superadmin? %>
+    Superadmin
+  <% elsif defined?(@creator_world) && @creator_world.present? && can_access_creator_world_management?(@creator_world) %>
+    CreatorWorld
+  <% else %>
+    Workspace
+  <% end %>
+</div>

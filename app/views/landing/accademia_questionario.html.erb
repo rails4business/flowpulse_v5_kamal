@@ -1,0 +1,911 @@
+<% content_for :title, "Accademia PosturaCorretta — Percorsi della Salute" %>
+<% active_landing_tab = params[:tab].presence_in(%w[accademia eventi collabora]) || "accademia" %>
+
+<% content_for :head do %>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pcblue: '#2563eb',
+            pcink: '#0f172a'
+          },
+          boxShadow: {
+            soft: '0 24px 70px rgba(15, 23, 42, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    section[id],
+    main[id] {
+      scroll-margin-top: 5rem;
+    }
+
+    #percorso-dettaglio,
+    #path-final-cta {
+      scroll-margin-top: 8rem;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, .88);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-image {
+      background-image:
+        linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(15, 23, 42, .10)),
+        url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .step-line::before {
+      content: "";
+      position: absolute;
+      left: 1.12rem;
+      top: 2.8rem;
+      bottom: -2.6rem;
+      width: 1px;
+      background: #dbeafe;
+    }
+
+    .step-line:last-child::before { display: none; }
+
+    .landing-tab-button[aria-selected="true"] { color: #fff; }
+  </style>
+<% end %>
+
+<% content_for :landing_nav do %>
+  <header class="sticky top-0 z-50 border-b border-slate-200/80 glass">
+    <div class="mx-auto flex min-h-16 max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6">
+      <a href="#top" class="flex items-center gap-3" aria-label="PosturaCorretta home">
+        <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-7 w-auto">
+      </a>
+
+      <nav class="grid grid-cols-3 rounded-full bg-slate-100 p-1.5 text-center text-xs font-extrabold uppercase tracking-wide sm:text-sm md:w-auto md:min-w-[620px]" role="tablist" aria-label="Navigazione principale PosturaCorretta">
+        <button type="button" class="landing-tab-button rounded-full px-2 py-2 transition md:px-5 <%= active_landing_tab == "accademia" ? "bg-blue-600 text-white shadow-sm" : "text-blue-700" %>" data-landing-tab="accademia" aria-selected="<%= active_landing_tab == "accademia" %>">
+          Accademia
+        </button>
+        <button type="button" class="landing-tab-button rounded-full px-2 py-2 transition md:px-5 <%= active_landing_tab == "eventi" ? "bg-violet-700 text-white shadow-sm" : "text-violet-700" %>" data-landing-tab="eventi" aria-selected="<%= active_landing_tab == "eventi" %>">
+          Eventi
+        </button>
+        <button type="button" class="landing-tab-button rounded-full px-2 py-2 transition md:px-5 <%= active_landing_tab == "collabora" ? "bg-orange-500 text-white shadow-sm" : "text-orange-600" %>" data-landing-tab="collabora" aria-selected="<%= active_landing_tab == "collabora" %>">
+          Progetti<br class="sm:hidden"> / Collabora
+        </button>
+      </nav>
+    </div>
+  </header>
+<% end %>
+
+<div id="top" class="text-slate-900 antialiased">
+
+  <!-- ACCADEMIA -->
+  <div data-tab-panel="accademia" class="<%= "hidden" unless active_landing_tab == "accademia" %>">
+
+    <!-- HERO -->
+    <section class="px-5 py-16 md:py-24">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[.95fr_1.05fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+            Accademia PosturaCorretta
+          </p>
+
+          <h1 class="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.03]">
+            Una mappa per costruire
+            <span class="text-blue-700">il tuo percorso della salute.</span>
+          </h1>
+
+          <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-600">
+            PosturaCorretta ti aiuta a orientarti tra dolore, prevenzione, benessere, conoscenza del corpo,
+            rapporto corpo-ambiente e sviluppo del potenziale umano.
+          </p>
+
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+            Non devi capire tutto subito. Parti dalla domanda più semplice: in cosa vuoi essere aiutato adesso?
+          </p>
+
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a href="#inizia" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+              Scegli il tuo percorso
+            </a>
+            <button type="button" data-jump-tab="eventi" class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
+              Guarda gli eventi
+            </button>
+          </div>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white p-3 shadow-soft">
+          <div class="hero-image aspect-[16/10] rounded-[1.55rem]"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERCORSI -->
+    <section id="inizia" class="border-y border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
+      <div class="mx-auto max-w-6xl">
+
+        <div class="max-w-4xl">
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+            Percorsi dell'Accademia
+          </p>
+
+          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+            In cosa vuoi essere aiutato?
+          </h2>
+
+          <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+            Scegli l'area più vicina alla tua situazione. Ogni scelta apre una traccia: contenuti, strumenti,
+            tappe, professionisti o attività da completare.
+          </p>
+        </div>
+
+        <!-- DOMANDA A RISPOSTA MULTIPLA -->
+        <div class="mt-12 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft md:p-8">
+          <div class="flex flex-col gap-4 border-b border-slate-100 pb-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Puoi scegliere anche più risposte
+              </p>
+              <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">
+                Che cosa senti più vicino alla tua situazione?
+              </h3>
+            </div>
+
+            <button id="show-recommendation" type="button"
+              class="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-6 py-4 text-sm font-semibold text-white transition hover:bg-blue-700">
+              Mostra il percorso consigliato →
+            </button>
+          </div>
+
+          <div class="mt-7 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+
+            <label data-question-option="cura" class="pc-question-option group flex cursor-pointer items-start gap-4 rounded-2xl border border-red-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-red-300 hover:shadow-md">
+              <input type="checkbox" value="cura" class="pc-question-checkbox mt-1 h-5 w-5 rounded border-red-300 text-red-600 focus:ring-red-500">
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-red-700">Cura e Riabilitazione</span>
+                <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Ho dolore, sintomi o una patologia</span>
+                <span class="mt-2 block text-sm leading-6 text-slate-600">Voglio capire da dove partire e quale percorso può aiutarmi.</span>
+              </span>
+            </label>
+
+            <label data-question-option="prevenzione" class="pc-question-option group flex cursor-pointer items-start gap-4 rounded-2xl border border-orange-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-orange-300 hover:shadow-md">
+              <input type="checkbox" value="prevenzione" class="pc-question-checkbox mt-1 h-5 w-5 rounded border-orange-300 text-orange-500 focus:ring-orange-500">
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">Prevenzione</span>
+                <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Voglio prevenire problemi futuri</span>
+                <span class="mt-2 block text-sm leading-6 text-slate-600">Lavoro, sport, età, scrivania, crescita, carichi e abitudini.</span>
+              </span>
+            </label>
+
+            <label data-question-option="performance" class="pc-question-option group flex cursor-pointer items-start gap-4 rounded-2xl border border-yellow-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-yellow-300 hover:shadow-md">
+              <input type="checkbox" value="performance" class="pc-question-checkbox mt-1 h-5 w-5 rounded border-yellow-300 text-yellow-500 focus:ring-yellow-500">
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-yellow-700">Performance</span>
+                <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Voglio migliorare le mie prestazioni</span>
+                <span class="mt-2 block text-sm leading-6 text-slate-600">Lavoro, formazione, capacità cognitive, energia e organizzazione.</span>
+              </span>
+            </label>
+
+            <label data-question-option="benessere" class="pc-question-option group flex cursor-pointer items-start gap-4 rounded-2xl border border-emerald-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md">
+              <input type="checkbox" value="benessere" class="pc-question-checkbox mt-1 h-5 w-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Benessere Integrato</span>
+                <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Voglio migliorare salute e benessere</span>
+                <span class="mt-2 block text-sm leading-6 text-slate-600">Salute, energia, fitness, estetica, servizi alla persona e stile di vita.</span>
+              </span>
+            </label>
+
+            <label data-question-option="fisiologia" class="pc-question-option group flex cursor-pointer items-start gap-4 rounded-2xl border border-blue-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md">
+              <input type="checkbox" value="fisiologia" class="pc-question-checkbox mt-1 h-5 w-5 rounded border-blue-300 text-blue-600 focus:ring-blue-500">
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Postura e Fisiologia</span>
+                <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Voglio capire come funziona il corpo</span>
+                <span class="mt-2 block text-sm leading-6 text-slate-600">Postura, movimento, respiro, recupero e sistemi fisiologici.</span>
+              </span>
+            </label>
+
+            <label data-question-option="ambiente" class="pc-question-option group flex cursor-pointer items-start gap-4 rounded-2xl border border-indigo-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md">
+              <input type="checkbox" value="ambiente" class="pc-question-checkbox mt-1 h-5 w-5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500">
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-indigo-700">Corpo e Ambiente</span>
+                <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Voglio capire il rapporto corpo-ambiente</span>
+                <span class="mt-2 block text-sm leading-6 text-slate-600">Natura, territorio, tradizioni, stagioni e abitudini.</span>
+              </span>
+            </label>
+
+            <label data-question-option="potenziale" class="pc-question-option group flex cursor-pointer items-start gap-4 rounded-2xl border border-violet-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md md:col-span-2 xl:col-span-3">
+              <input type="checkbox" value="potenziale" class="pc-question-checkbox mt-1 h-5 w-5 rounded border-violet-300 text-violet-700 focus:ring-violet-500">
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Potenziale Umano</span>
+                <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Voglio scoprire il mio potenziale</span>
+                <span class="mt-2 block text-sm leading-6 text-slate-600">Sfere dell'essere umano, creatività, relazioni, espressione e crescita armonica.</span>
+              </span>
+            </label>
+          </div>
+
+          <div id="question-result" class="mt-7 hidden rounded-2xl border border-blue-100 bg-blue-50 p-5">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Risultato orientativo</p>
+            <p id="question-result-title" class="mt-2 text-lg font-semibold text-slate-950"></p>
+            <div id="question-result-tags" class="mt-4 flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <!-- CONTENUTO DINAMICO -->
+        <div id="percorso-dettaglio" class="mt-14 grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
+
+          <aside class="lg:sticky lg:top-28 lg:h-fit">
+            <p id="path-kicker" class="text-xs font-semibold uppercase tracking-[0.22em] text-red-700">
+              Cura e Riabilitazione
+            </p>
+
+            <h2 id="path-title" class="mt-4 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+              Dal dolore alla cura guidata.
+            </h2>
+
+            <p id="path-description" class="mt-5 text-lg leading-8 text-slate-600">
+              Per chi parte da dolore, diagnosi, patologia o fase acuta.
+            </p>
+          </aside>
+
+          <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft md:p-10">
+            <div class="mb-10 border-b border-slate-100 pb-8">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Tappe consigliate</p>
+              <h3 id="path-steps-title" class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Segui il percorso con calma.</h3>
+            </div>
+
+            <div id="path-steps" class="space-y-10"></div>
+
+            <div id="path-final-cta" class="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Vuoi completare qualcosa?</p>
+              <p id="path-bottom-text" class="mt-2 text-lg font-semibold text-slate-950">Inizia dal percorso più vicino alla tua situazione.</p>
+
+              <a id="path-bottom-start-link" href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20iniziare%20un%20percorso%20con%20PosturaCorretta."
+                target="_blank" rel="noopener noreferrer"
+                class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-red-600 px-8 py-5 text-base font-semibold text-white opacity-90 md:text-lg">
+                Scrivi su WhatsApp →
+              </a>
+            </div>
+
+            <div id="join-box" class="mt-10 rounded-[2rem] border border-red-200 bg-white p-7 shadow-sm">
+              <p id="join-kicker" class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">
+                Aderisci al progetto
+              </p>
+
+              <h3 id="join-title" class="mt-3 text-2xl font-semibold text-slate-950">
+                Sei un professionista sanitario?
+              </h3>
+
+              <p id="join-description" class="mt-4 text-base leading-7 text-slate-600">
+                Puoi integrare il percorso PosturaCorretta nei tuoi trattamenti e accompagnare le persone oltre la sola gestione del dolore.
+              </p>
+
+              <div id="join-tags" class="mt-5 flex flex-wrap gap-2"></div>
+
+              <button id="join-link" type="button" data-jump-tab="collabora"
+                class="mt-6 inline-flex rounded-full border border-red-200 px-5 py-3 text-sm font-semibold text-red-700 hover:bg-red-50">
+                Scopri come aderire →
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- MANIFESTO BREVE -->
+    <section class="bg-white px-5 py-20 md:py-24">
+      <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+            La postura non è qualcosa da correggere, ma da comprendere
+          </p>
+          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.05]">
+            Il corpo è un mondo da scoprire.
+          </h2>
+        </div>
+
+        <div class="text-lg leading-8 text-slate-600">
+          <p>
+            Il percorso parte spesso dal dolore, ma non si ferma lì. Attraversa cura, prevenzione,
+            performance, benessere, fisiologia, ambiente e potenziale umano.
+          </p>
+          <p class="mt-6">
+            L'obiettivo è aiutare le persone a trovare il proprio punto di vista da cui osservare la salute,
+            scegliere strumenti pratici e costruire un percorso sostenibile.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- EVENTI -->
+  <div data-tab-panel="eventi" class="<%= "hidden" unless active_landing_tab == "eventi" %>">
+    <section id="eventi" class="border-t border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
+            Eventi e Community
+          </p>
+          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+            Eventi per vivere il percorso, non solo studiarlo.
+          </h2>
+          <p class="mt-6 text-lg leading-8 text-slate-600">
+            Camminate, incontri, attività sul territorio, movimento, natura, musica, buon cibo,
+            scambio trattamenti e momenti di comunità.
+          </p>
+          <div class="mt-8">
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20informazioni%20sui%20prossimi%20eventi%20PosturaCorretta."
+               target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center justify-center rounded-2xl bg-violet-700 px-6 py-4 text-base font-semibold text-white transition hover:bg-violet-800 shadow-sm">
+              Chiedi informazioni sugli eventi →
+            </a>
+          </div>
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-2">
+          <a href="https://www.youtube.com/posturacorretta" target="_blank" rel="noopener noreferrer" class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">Video & Ricerca</p>
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">YouTube</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Approfondimenti, esercizi, eventi e costruzione pubblica del progetto.</p>
+            <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-red-600">Vai al canale <span class="transition group-hover:translate-x-1">→</span></div>
+          </a>
+
+          <a href="https://www.instagram.com/posturacorretta" target="_blank" rel="noopener noreferrer" class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-pink-200 hover:shadow-xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-pink-600">Community & Eventi</p>
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Instagram</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Dietro le quinte, caroselli, eventi e aggiornamenti quotidiani.</p>
+            <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-pink-600">Segui la pagina <span class="transition group-hover:translate-x-1">→</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- COLLABORA -->
+  <section id="collabora" data-tab-panel="collabora" class="<%= "hidden " unless active_landing_tab == "collabora" %>border-b border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
+    <div class="mx-auto max-w-6xl">
+      <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-orange-700">Progetti e Collaborazioni</p>
+          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+            Aiutaci a costruire PosturaCorretta.
+          </h2>
+          <p class="mt-6 text-lg leading-8 text-slate-600">
+            PosturaCorretta è anche un progetto aperto a professionisti, insegnanti, operatori,
+            sviluppatori, creator, centri, spazi, eventi e persone che vogliono contribuire.
+          </p>
+          <div class="mt-8">
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20proporre%20una%20collaborazione%20per%20il%20progetto%20PosturaCorretta."
+               target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center justify-center gap-2 rounded-2xl bg-orange-500 px-6 py-4 text-base font-semibold text-white transition hover:bg-orange-600 shadow-sm">
+              Proponi una collaborazione su WhatsApp →
+            </a>
+          </div>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="flex flex-col justify-between rounded-2xl border border-red-200 bg-white p-6">
+            <div>
+              <p class="text-sm font-semibold text-red-700">Professionisti sanitari</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Fisioterapisti, medici, osteopati e figure sanitarie per cura, riabilitazione e percorsi complessi.</p>
+            </div>
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20sono%20un%20professionista%20sanitario%20e%20vorrei%20collaborare%20con%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center rounded-xl bg-red-50 px-4 py-2.5 text-xs font-semibold text-red-700 transition hover:bg-red-100">Contatta →</a>
+          </div>
+
+          <div class="flex flex-col justify-between rounded-2xl border border-emerald-200 bg-white p-6">
+            <div>
+              <p class="text-sm font-semibold text-emerald-700">Benessere e prevenzione</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Professionisti del movimento, trainer, operatori e facilitatori dello stile di vita.</p>
+            </div>
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20mi%20occupo%20di%20benessere%20o%20prevenzione%20e%20vorrei%20collaborare%20con%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center rounded-xl bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100">Contatta →</a>
+          </div>
+
+          <div class="flex flex-col justify-between rounded-2xl border border-blue-200 bg-white p-6">
+            <div>
+              <p class="text-sm font-semibold text-blue-700">Insegnanti ed educatori</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Persone che vogliono insegnare postura, fisiologia e igiene posturale in modo pratico.</p>
+            </div>
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20sono%20un%20insegnante%20o%20educatore%20e%20vorrei%20collaborare%20con%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center rounded-xl bg-blue-50 px-4 py-2.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">Contatta →</a>
+          </div>
+
+          <div class="flex flex-col justify-between rounded-2xl border border-violet-200 bg-white p-6">
+            <div>
+              <p class="text-sm font-semibold text-violet-700">Eventi e territorio</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Chi vuole proporre attività, camminate, musica, natura, laboratori e momenti di comunità.</p>
+            </div>
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20proporre%20un%20evento%20o%20un%27attivit%C3%A0%20sul%20territorio%20per%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center rounded-xl bg-violet-50 px-4 py-2.5 text-xs font-semibold text-violet-700 transition hover:bg-violet-100">Contatta →</a>
+          </div>
+
+          <div class="flex flex-col justify-between rounded-2xl border border-orange-200 bg-white p-6 sm:col-span-2">
+            <div>
+              <p class="text-sm font-semibold text-orange-700">Progetti: Software, contenuti e business</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Sviluppatori, copywriter, videomaker, designer, imprenditori e investitori per piattaforma, comunicazione e rete.</p>
+            </div>
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20collaborare%20all%27area%20software%2C%20contenuti%20o%20business%20di%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center rounded-xl bg-orange-50 px-4 py-2.5 text-xs font-semibold text-orange-700 transition hover:bg-orange-100">Contatta →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 bg-white py-16">
+    <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-5 md:grid-cols-4">
+      <div class="space-y-4">
+        <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-7 w-auto">
+        <p class="text-sm leading-6 text-slate-500">
+          Educazione posturale, salute del corpo e percorsi di consapevolezza.
+        </p>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Accademia</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><a class="hover:text-blue-700" href="?tab=accademia&path=cura">Cura e Riabilitazione</a></li>
+          <li><a class="hover:text-blue-700" href="?tab=accademia&path=benessere">Benessere Integrato</a></li>
+          <li><a class="hover:text-blue-700" href="?tab=accademia&path=fisiologia">Postura e Fisiologia</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Progetto</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><button type="button" data-jump-tab="eventi" class="hover:text-violet-700">Eventi</button></li>
+          <li><button type="button" data-jump-tab="collabora" class="hover:text-orange-700">Collabora</button></li>
+          <li><a class="hover:text-blue-700" href="/libro">Libro</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Community</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><a class="hover:text-blue-700" href="https://youtube.com/@posturacorretta" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+          <li><a class="hover:text-blue-700" href="https://instagram.com/posturacorretta" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a class="hover:text-blue-700" href="/contatti">Contatti</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const academyPaths = {
+    cura: {
+      color: "red",
+      kicker: "Cura e Riabilitazione",
+      title: "Dal dolore alla cura guidata.",
+      description: "Per chi parte da dolore, sintomi, diagnosi, patologia o fase acuta. Il primo obiettivo è mettere ordine e capire quale aiuto serve davvero.",
+      joinTitle: "Sei un professionista sanitario?",
+      joinDescription: "Fisioterapisti, osteopati, medici e professionisti sanitari possono collaborare nei percorsi di cura, riabilitazione e valutazione.",
+      joinTags: ["Fisioterapia", "Osteopatia", "Medicina", "Riabilitazione"],
+      stepsTitle: "Parti da ciò che senti adesso.",
+      steps: [
+        ["Diario della salute", "Cosa sta succedendo?", "Registra dolore, eventi, trattamenti, diagnosi, attività e segnali del corpo.", ["Diario", "Sintomi", "Eventi"]],
+        ["Stop al Dolore", "Hai già una diagnosi o un piano?", "Ti aiutiamo a orientarti tra fase acuta, professionisti, autotrattamenti e tappe di recupero.", ["Dolore", "Professionisti", "Linee guida"]],
+        ["Valutazione PosturaCorretta", "Quali sistemi sono in difficoltà?", "Una valutazione per osservare articolazioni, compensi, respirazione, recupero e abitudini.", ["Valutazione", "Schede", "Percorso"]],
+        ["Percorso terapeutico", "Come recuperi continuità?", "Trattamenti, esercizi, riabilitazione e follow-up per andare oltre la sola gestione del sintomo.", ["Recupero", "Trattamenti", "Follow-up"]]
+      ]
+    },
+
+    prevenzione: {
+      color: "orange",
+      kicker: "Prevenzione",
+      title: "Prima che il corpo si faccia sentire.",
+      description: "Per chi vuole prevenire problemi legati a lavoro, sport, età, postura quotidiana o fasi specifiche della vita.",
+      joinTitle: "Hai un'attività legata alla prevenzione?",
+      joinDescription: "Puoi proporre contenuti, valutazioni, eventi o servizi per aiutare le persone a prevenire problemi futuri.",
+      joinTags: ["Lavoro", "Sport", "Età evolutiva", "Abitudini"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Vuoi completare qualcosa in quest'area?", "Stiamo preparando strumenti per prevenzione al lavoro, sport, scrivania, età dello sviluppo e fasi specifiche della vita.", ["Prevenzione", "Checklist", "Routine"]]
+      ]
+    },
+
+    performance: {
+      color: "yellow",
+      kicker: "Performance",
+      title: "Migliora il modo in cui lavori, studi e usi il corpo.",
+      description: "Per chi vuole migliorare prestazioni, energia, capacità cognitive, lavoro, formazione e rapporto con strumenti come l'intelligenza artificiale.",
+      joinTitle: "Ti occupi di performance, formazione o lavoro?",
+      joinDescription: "Puoi contribuire con strumenti, metodi, contenuti o percorsi per migliorare prestazioni e organizzazione.",
+      joinTags: ["Lavoro", "Formazione", "Cognizione", "IA"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Vuoi completare qualcosa in quest'area?", "Stiamo preparando contenuti su performance, lavoro, formazione, capacità cognitive, strumenti digitali e IA.", ["Performance", "Lavoro", "Studio"]]
+      ]
+    },
+
+    benessere: {
+      color: "emerald",
+      kicker: "Benessere Integrato",
+      title: "Costruisci un programma per stare meglio.",
+      description: "Per chi vuole migliorare salute, energia, fitness, estetica, abitudini e qualità della vita con un percorso integrato.",
+      joinTitle: "Sei un professionista del benessere?",
+      joinDescription: "Operatori, trainer, professionisti del movimento e facilitatori possono proporre attività, programmi e servizi collegati al benessere.",
+      joinTags: ["Benessere", "Fitness", "Estetica", "Stile di vita"],
+      stepsTitle: "Metti ordine nella tua salute.",
+      steps: [
+        ["Diario della salute", "Stai già facendo qualcosa per la tua salute?", "Registra attività, trattamenti, abitudini, alimentazione, sonno, movimento e progressi.", ["Diario", "Abitudini", "Progressi"]],
+        ["Stato di salute", "Quali ambiti stai trascurando?", "Valuta rischi, risorse e aree della salute da migliorare.", ["Questionari", "Prevenzione", "Stile di vita"]],
+        ["Programma integrato", "Da dove vuoi partire?", "Costruisci un programma sostenibile con pratiche, professionisti e obiettivi progressivi.", ["Programma", "Professionisti", "Routine"]]
+      ]
+    },
+
+    fisiologia: {
+      color: "blue",
+      kicker: "Postura e Fisiologia",
+      title: "Capire il corpo per prendersene cura.",
+      description: "Per chi vuole conoscere e riattivare i sistemi del corpo: articolazioni, muscoli, respiro, recupero, sistema nervoso, bioritmi e postura.",
+      joinTitle: "Vuoi diventare insegnante o tutor?",
+      joinDescription: "Per chi vuole insegnare postura, fisiologia e igiene posturale attraverso contenuti, lezioni, corsi ed esperienze pratiche.",
+      joinTags: ["Accademia", "Igiene Posturale", "Fisiologia", "Didattica"],
+      stepsTitle: "Impara una cosa alla volta.",
+      steps: [
+        ["Postura e Fisiologia", "Vuoi capire come funziona il corpo?", "Colleghiamo postura, movimento, respiro, recupero e segnali quotidiani.", ["Fisiologia", "Sistemi", "Pratica"]],
+        ["Igiene Posturale", "Vuoi iniziare con una pratica semplice?", "Mobilità articolare, punti di tensione, vie di discesa, recettori e routine quotidiana.", ["Mobilità", "Autotrattamento", "Routine"], [
+          ["Modulo 01", "Igiene Posturale", ["Mobilità articolare", "Punti di tensione", "Vie di discesa", "Recettori sensoriali"]],
+          ["Modulo 02", "Principi di fisioterapia", []],
+          ["Modulo 03", "Biomeccanica comportamentale", ["Introduzione al Metodo GDS"]],
+          ["Modulo 04", "Principi di osteopatia", []],
+          ["Modulo 05", "Bioritmi circadiani", ["Introduzione al metodo Corpo e Coscienza"]]
+        ]]
+      ]
+    },
+
+    ambiente: {
+      color: "indigo",
+      kicker: "Corpo e Ambiente",
+      title: "Il corpo vive dentro un ambiente.",
+      description: "Per chi vuole comprendere il rapporto tra corpo e ambiente: natura, territorio, stagioni, tradizioni, cultura, abitudini e stile di vita.",
+      joinTitle: "Vuoi proporre attività sul territorio?",
+      joinDescription: "Puoi contribuire con camminate, laboratori, tradizioni locali, calendario contadino, attività in natura ed esperienze culturali.",
+      joinTags: ["Natura", "Territorio", "Tradizioni", "Stile di vita"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Vuoi completare qualcosa in quest'area?", "Stiamo preparando contenuti sul rapporto corpo-ambiente, microcosmo-macrocosmo, natura, territorio e tradizioni.", ["Ambiente", "Tradizioni", "Stagioni"]]
+      ]
+    },
+
+    potenziale: {
+      color: "violet",
+      kicker: "Potenziale Umano",
+      title: "Scopri e coltiva le tue potenzialità.",
+      description: "Per chi vuole esplorare le sfere dell'essere umano: corpo, emozioni, relazioni, creatività, espressione, modelli e crescita armonica.",
+      joinTitle: "Vuoi proporre un'esperienza o un modello?",
+      joinDescription: "Puoi contribuire con pratiche, eventi, modelli educativi, laboratori, musica, arte, movimento e percorsi di crescita.",
+      joinTags: ["Creatività", "Relazioni", "Espressione", "Crescita"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Vuoi completare qualcosa in quest'area?", "Stiamo preparando contenuti ed esperienze per esplorare le sfere dell'essere umano e il potenziale personale.", ["Potenziale", "Espressione", "Armonia"]]
+      ]
+    }
+  };
+
+  const colorClasses = {
+    red: {
+      text: "text-red-700", bg: "bg-red-600", soft: "bg-red-50", border: "border-red-200", activeBorder: "border-red-400", hover: "hover:bg-red-50", ring: "ring-red-500"
+    },
+    orange: {
+      text: "text-orange-700", bg: "bg-orange-500", soft: "bg-orange-50", border: "border-orange-200", activeBorder: "border-orange-400", hover: "hover:bg-orange-50", ring: "ring-orange-500"
+    },
+    yellow: {
+      text: "text-yellow-700", bg: "bg-yellow-400", soft: "bg-yellow-50", border: "border-yellow-200", activeBorder: "border-yellow-400", hover: "hover:bg-yellow-50", ring: "ring-yellow-500"
+    },
+    emerald: {
+      text: "text-emerald-700", bg: "bg-emerald-600", soft: "bg-emerald-50", border: "border-emerald-200", activeBorder: "border-emerald-400", hover: "hover:bg-emerald-50", ring: "ring-emerald-500"
+    },
+    blue: {
+      text: "text-blue-700", bg: "bg-blue-600", soft: "bg-blue-50", border: "border-blue-200", activeBorder: "border-blue-400", hover: "hover:bg-blue-50", ring: "ring-blue-500"
+    },
+    indigo: {
+      text: "text-indigo-700", bg: "bg-indigo-600", soft: "bg-indigo-50", border: "border-indigo-200", activeBorder: "border-indigo-400", hover: "hover:bg-indigo-50", ring: "ring-indigo-500"
+    },
+    violet: {
+      text: "text-violet-700", bg: "bg-violet-700", soft: "bg-violet-50", border: "border-violet-200", activeBorder: "border-violet-400", hover: "hover:bg-violet-50", ring: "ring-violet-500"
+    }
+  };
+
+  const allowedPathTabs = ["cura", "prevenzione", "performance", "benessere", "fisiologia", "ambiente", "potenziale"];
+  const selectedPathsStorageKey = "posturacorretta_selected_academy_paths";
+
+  function renderPath(key) {
+    const path = academyPaths[key] || academyPaths.cura;
+    const c = colorClasses[path.color];
+
+    document.getElementById("path-kicker").textContent = path.kicker;
+    document.getElementById("path-kicker").className = `text-xs font-semibold uppercase tracking-[0.22em] ${c.text}`;
+    document.getElementById("path-title").textContent = path.title;
+    document.getElementById("path-description").textContent = path.description;
+    document.getElementById("path-steps-title").textContent = path.stepsTitle;
+
+    document.getElementById("join-box").className = `mt-10 rounded-[2rem] border ${c.border} bg-white p-7 shadow-sm`;
+    document.getElementById("join-kicker").className = `text-xs font-semibold uppercase tracking-[0.18em] ${c.text}`;
+    document.getElementById("join-title").textContent = path.joinTitle;
+    document.getElementById("join-description").textContent = path.joinDescription;
+    document.getElementById("join-link").className = `mt-6 inline-flex rounded-full border ${c.border} px-5 py-3 text-sm font-semibold ${c.text} ${c.hover}`;
+
+    document.getElementById("path-bottom-start-link").className = `mt-6 inline-flex w-full items-center justify-center rounded-2xl ${c.bg} px-8 py-5 text-base font-semibold text-white opacity-90 md:text-lg`;
+    document.getElementById("path-bottom-text").textContent = `Inizia da ${path.kicker}.`;
+    document.getElementById("path-bottom-start-link").href = `https://wa.me/393792891488?text=${encodeURIComponent(`Ciao, vorrei iniziare da ${path.kicker} con PosturaCorretta.`)}`;
+
+    const joinTags = document.getElementById("join-tags");
+    joinTags.innerHTML = path.joinTags.map(tag => `
+      <span class="rounded-full ${c.soft} px-3 py-1 text-xs font-medium ${c.text}">${tag}</span>
+    `).join("");
+
+    const container = document.getElementById("path-steps");
+    container.innerHTML = "";
+
+    path.steps.forEach((step, index) => {
+      const [label, title, description, tags, modules = []] = step;
+
+      container.innerHTML += `
+        <article class="${index < path.steps.length - 1 ? "step-line" : ""} relative cursor-pointer rounded-2xl pl-14 pr-3 py-2 transition hover:bg-slate-50" data-scroll-to-cta="true">
+          <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full ${c.bg} text-sm font-semibold text-white">
+            ${index + 1}
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] ${c.text}">${label}</p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">${title}</h3>
+
+            ${description ? `<p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">${description}</p>` : ""}
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              ${tags.map(tag => `<span class="rounded-full ${c.soft} px-3 py-1 text-xs font-medium ${c.text}">${tag}</span>`).join("")}
+            </div>
+
+            ${modules.length ? `
+              <div class="mt-6 grid gap-3">
+                ${modules.map(([moduleNumber, moduleTitle, moduleItems]) => `
+                  <div class="rounded-2xl border ${c.border} bg-white p-4">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] ${c.text}">${moduleNumber}</p>
+                    <h4 class="mt-1 text-base font-semibold text-slate-950">${moduleTitle}</h4>
+                    ${moduleItems.length ? `
+                      <ul class="mt-3 grid gap-1 text-sm leading-6 text-slate-600 sm:grid-cols-2">
+                        ${moduleItems.map(item => `<li>• ${item}</li>`).join("")}
+                      </ul>
+                    ` : ""}
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+          </div>
+        </article>
+      `;
+    });
+
+    document.querySelectorAll("[data-scroll-to-cta]").forEach(step => {
+      step.addEventListener("click", () => {
+        document.getElementById("path-final-cta")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+  }
+
+  function getSelectedPaths() {
+    return Array.from(document.querySelectorAll(".pc-question-checkbox:checked"))
+      .map(input => input.value)
+      .filter(value => allowedPathTabs.includes(value));
+  }
+
+  function setSelectedPaths(keys) {
+    const uniqueKeys = [...new Set(keys.filter(key => allowedPathTabs.includes(key)))];
+
+    document.querySelectorAll(".pc-question-checkbox").forEach(input => {
+      input.checked = uniqueKeys.includes(input.value);
+    });
+
+    updateQuestionCards(uniqueKeys);
+    localStorage.setItem(selectedPathsStorageKey, JSON.stringify(uniqueKeys));
+    return uniqueKeys;
+  }
+
+  function updateQuestionCards(selectedKeys = getSelectedPaths()) {
+    document.querySelectorAll(".pc-question-option").forEach(card => {
+      const key = card.dataset.questionOption;
+      const selected = selectedKeys.includes(key);
+      const path = academyPaths[key];
+      const c = colorClasses[path.color];
+
+      card.classList.remove(
+        "ring-2",
+        "ring-red-500", "ring-orange-500", "ring-yellow-500", "ring-emerald-500", "ring-blue-500", "ring-indigo-500", "ring-violet-500",
+        "bg-red-50", "bg-orange-50", "bg-yellow-50", "bg-emerald-50", "bg-blue-50", "bg-indigo-50", "bg-violet-50",
+        "border-red-400", "border-orange-400", "border-yellow-400", "border-emerald-400", "border-blue-400", "border-indigo-400", "border-violet-400",
+        "shadow-md"
+      );
+
+      if (selected) {
+        card.classList.add("ring-2", c.ring, c.soft, c.activeBorder, "shadow-md");
+      }
+    });
+  }
+
+  function choosePrimaryPath(selectedKeys) {
+    if (!selectedKeys.length) return "cura";
+
+    // Priorità pratica: se c'è dolore/patologia, si parte da cura; altrimenti dal primo bisogno scelto.
+    const priority = ["cura", "benessere", "prevenzione", "fisiologia", "performance", "ambiente", "potenziale"];
+    return priority.find(key => selectedKeys.includes(key)) || selectedKeys[0];
+  }
+
+  function renderQuestionResult(selectedKeys) {
+    const resultBox = document.getElementById("question-result");
+    const resultTitle = document.getElementById("question-result-title");
+    const resultTags = document.getElementById("question-result-tags");
+
+    if (!selectedKeys.length) {
+      resultBox.classList.add("hidden");
+      return;
+    }
+
+    const primaryKey = choosePrimaryPath(selectedKeys);
+    const primaryPath = academyPaths[primaryKey];
+    const primaryColor = colorClasses[primaryPath.color];
+
+    resultBox.classList.remove("hidden");
+    resultBox.className = `mt-7 rounded-2xl border ${primaryColor.border} ${primaryColor.soft} p-5`;
+    resultTitle.textContent = `Ti consigliamo di iniziare da: ${primaryPath.kicker}.`;
+
+    resultTags.innerHTML = selectedKeys.map(key => {
+      const path = academyPaths[key];
+      const c = colorClasses[path.color];
+      return `<button type="button" data-result-path="${key}" class="rounded-full bg-white px-3 py-1 text-xs font-semibold ${c.text} ring-1 ${c.border}">${path.kicker}</button>`;
+    }).join("");
+
+    document.querySelectorAll("[data-result-path]").forEach(button => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.resultPath;
+        renderPath(key);
+        updatePathState(key, selectedKeys);
+        scrollToPathDetail();
+      });
+    });
+
+    renderPath(primaryKey);
+    updatePathState(primaryKey, selectedKeys);
+  }
+
+  function getInitialPathAndAnswers() {
+    const params = new URLSearchParams(window.location.search);
+    const urlPath = params.get("path");
+
+    const urlAnswers = (params.get("answers") || "").split(",").filter(key => allowedPathTabs.includes(key));
+
+    if (allowedPathTabs.includes(urlPath)) {
+      return { primary: urlPath, selected: urlAnswers.length ? urlAnswers : [urlPath] };
+    }
+
+    if (urlAnswers.length) {
+      return { primary: choosePrimaryPath(urlAnswers), selected: urlAnswers };
+    }
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(selectedPathsStorageKey) || "[]");
+      const selected = saved.filter(key => allowedPathTabs.includes(key));
+      if (selected.length) {
+        return { primary: choosePrimaryPath(selected), selected };
+      }
+    } catch (_error) {}
+
+    return { primary: "cura", selected: [] };
+  }
+
+  function updatePathState(primaryKey, selectedKeys = getSelectedPaths()) {
+    const url = new URL(window.location);
+    url.searchParams.set("tab", "accademia");
+    url.searchParams.set("path", primaryKey);
+    if (selectedKeys.length) {
+      url.searchParams.set("answers", selectedKeys.join(","));
+    } else {
+      url.searchParams.delete("answers");
+    }
+    window.history.replaceState({}, "", url);
+    localStorage.setItem("posturacorretta_active_academy_path", primaryKey);
+    localStorage.setItem(selectedPathsStorageKey, JSON.stringify(selectedKeys));
+  }
+
+  function scrollToPathDetail() {
+    document.getElementById("percorso-dettaglio")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.querySelectorAll(".pc-question-checkbox").forEach(input => {
+    input.addEventListener("change", () => {
+      const selectedKeys = getSelectedPaths();
+      updateQuestionCards(selectedKeys);
+      renderQuestionResult(selectedKeys);
+    });
+  });
+
+  document.getElementById("show-recommendation")?.addEventListener("click", () => {
+    const selectedKeys = getSelectedPaths();
+
+    if (!selectedKeys.length) {
+      const fallback = setSelectedPaths(["cura"]);
+      renderQuestionResult(fallback);
+    } else {
+      renderQuestionResult(selectedKeys);
+    }
+
+    scrollToPathDetail();
+  });
+
+  const initial = getInitialPathAndAnswers();
+  setSelectedPaths(initial.selected);
+  if (initial.selected.length) {
+    renderQuestionResult(initial.selected);
+  } else {
+    renderPath(initial.primary);
+  }
+
+  if (new URLSearchParams(window.location.search).has("path")) {
+    window.setTimeout(scrollToPathDetail, 120);
+  }
+</script>
+
+<script>
+  (() => {
+    const allowedTabs = ["accademia", "eventi", "collabora"];
+    const buttons = document.querySelectorAll("[data-landing-tab]");
+    const panels = document.querySelectorAll("[data-tab-panel]");
+    const activeClasses = {
+      accademia: ["bg-blue-600", "text-white", "shadow-sm"],
+      eventi: ["bg-violet-700", "text-white", "shadow-sm"],
+      collabora: ["bg-orange-500", "text-white", "shadow-sm"]
+    };
+
+    function activateLandingTab(tabKey, updateUrl = true) {
+      const nextTab = allowedTabs.includes(tabKey) ? tabKey : "accademia";
+
+      buttons.forEach((button) => {
+        const active = button.dataset.landingTab === nextTab;
+        button.setAttribute("aria-selected", active ? "true" : "false");
+        button.classList.remove("bg-blue-600", "bg-violet-700", "bg-orange-500", "text-white", "shadow-sm");
+
+        if (active) {
+          button.classList.add(...activeClasses[nextTab]);
+        }
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle("hidden", panel.dataset.tabPanel !== nextTab);
+      });
+
+      if (updateUrl) {
+        const url = new URL(window.location);
+        url.searchParams.set("tab", nextTab);
+        if (nextTab !== "accademia") url.searchParams.delete("path");
+        window.history.replaceState({}, "", url);
+        document.getElementById("top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => activateLandingTab(button.dataset.landingTab));
+    });
+
+    document.querySelectorAll("[data-jump-tab]").forEach((button) => {
+      button.addEventListener("click", () => activateLandingTab(button.dataset.jumpTab));
+    });
+
+    window.addEventListener("popstate", () => {
+      const tab = new URLSearchParams(window.location.search).get("tab");
+      activateLandingTab(tab, false);
+    });
+  })();
+</script>

@@ -4,13 +4,15 @@ class FlowRolesTest < ActiveSupport::TestCase
   test "exposes roles labels and assignable roles" do
     assert_includes FlowRoles.roles, "teacher"
     assert_equal "Teacher", FlowRoles.label(:teacher)
-    assert_includes FlowRoles.assignable_roles, "tutor"
+    assert_includes FlowRoles.assignable_roles, "demo"
+    assert_includes FlowRoles.assignable_roles, "creator_of_worlds"
+    assert_not_includes FlowRoles.assignable_roles, "tutor"
     assert_not_includes FlowRoles.assignable_roles, "superadmin"
   end
 
   test "checks role access from assignments and superadmin bypass" do
     teacher = create_user("flow-roles-teacher@example.com")
-    teacher.role_assignments.create!(role: :teacher)
+    RoleAssignment.create!(profile: teacher.profile, role: :teacher, parent: create_creator_assignment)
 
     superadmin = create_user("flow-roles-superadmin@example.com", superadmin: true)
 
@@ -21,7 +23,7 @@ class FlowRolesTest < ActiveSupport::TestCase
 
   test "denies admin access when active role is demo" do
     user = create_user("flow-roles-demo-admin@example.com", demo_access: true, active_role: :demo)
-    user.role_assignments.create!(role: :admin)
+    RoleAssignment.create!(profile: user.profile, role: :admin, parent: create_creator_assignment)
 
     assert_not FlowRoles.can?(user, :show, :admin)
     assert_not FlowRoles.can?(user, :update, :admin)
@@ -31,7 +33,7 @@ class FlowRolesTest < ActiveSupport::TestCase
   test "groups menu items for superadmin" do
     user = create_user("flow-roles-menu-superadmin@example.com", superadmin: true)
 
-    groups = FlowRoles.grouped_menu_for(user, active_role: "traveler")
+    groups = FlowRoles.grouped_menu_for(user, active_role: "superadmin")
 
     assert_includes groups.keys, :workspace
     assert_includes groups.keys, :demo
@@ -48,12 +50,21 @@ class FlowRolesTest < ActiveSupport::TestCase
   private
 
     def create_user(email, **attributes)
-      User.create!(
+      demo_val = attributes.delete(:demo_access)
+      user = User.create!(
         {
           email_address: email,
           password: "password123",
           password_confirmation: "password123"
         }.merge(attributes)
       )
+      user.create_profile!(display_name: email.split("@").first.capitalize)
+      RoleAssignment.create!(profile: user.profile, role: :demo) if demo_val
+      user
+    end
+
+    def create_creator_assignment
+      creator = create_user("creator-#{SecureRandom.hex(4)}@example.com")
+      RoleAssignment.create!(profile: creator.profile, role: :creator_of_worlds)
     end
 end

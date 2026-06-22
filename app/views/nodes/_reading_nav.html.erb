@@ -1,0 +1,78 @@
+<% if previous_sibling.present? || parent_node.present? || first_child.present? || next_sibling.present? %>
+  <nav class="node-public-reading-nav-static border-t border-slate-200 bg-white py-8 mt-auto" aria-label="Navigazione di lettura">
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
+      <div class="node-public-book-nav-grid">
+        
+        <!-- Column 1: Previous Sibling (Left) -->
+        <div class="node-public-book-col node-public-book-col-left">
+          <% if previous_sibling.present? %>
+            <a href="<%= flowtree_public_node_path(previous_sibling) %>" class="node-public-book-link node-public-book-prev group" aria-label="Precedente: <%= previous_sibling.title %>">
+              <div class="node-public-book-icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </div>
+              <div class="node-public-book-text">
+                <span class="node-public-book-label">Precedente</span>
+                <span class="node-public-book-title"><%= previous_sibling.title %></span>
+              </div>
+            </a>
+          <% elsif parent_node.present? %>
+            <a href="<%= flowtree_public_node_path(parent_node) %>" class="node-public-book-link node-public-book-prev group" aria-label="Torna a: <%= parent_node.title %>">
+              <div class="node-public-book-icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </div>
+              <div class="node-public-book-text">
+                <span class="node-public-book-label">Torna a</span>
+                <span class="node-public-book-title"><%= parent_node.title %></span>
+              </div>
+            </a>
+          <% else %>
+            <div class="node-public-book-spacer"></div>
+          <% end %>
+        </div>
+
+        <!-- Column 2: First Child (Center) -->
+        <div class="node-public-book-col node-public-book-col-center">
+          <% if first_child.present? %>
+            <a href="<%= flowtree_public_node_path(first_child) %>" class="node-public-book-link-center node-public-book-down group" aria-label="Giù: <%= first_child.title %>">
+              <div class="node-public-book-icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+              <div class="node-public-book-text-center">
+                <span class="node-public-book-label">Vai sotto</span>
+                <span class="node-public-book-title-center"><%= first_child.title %></span>
+              </div>
+            </a>
+          <% else %>
+            <div class="node-public-book-spacer"></div>
+          <% end %>
+        </div>
+
+        <!-- Column 3: Next Sibling (Right) -->
+        <div class="node-public-book-col node-public-book-col-right">
+          <% if next_sibling.present? %>
+            <a href="<%= flowtree_public_node_path(next_sibling) %>" class="node-public-book-link node-public-book-next group" aria-label="Successivo: <%= next_sibling.title %>">
+              <div class="node-public-book-text text-right">
+                <span class="node-public-book-label">Successivo</span>
+                <span class="node-public-book-title"><%= next_sibling.title %></span>
+              </div>
+              <div class="node-public-book-icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </div>
+            </a>
+          <% else %>
+            <div class="node-public-book-spacer"></div>
+          <% end %>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+<% end %>

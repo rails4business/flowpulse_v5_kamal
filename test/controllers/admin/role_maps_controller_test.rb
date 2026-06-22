@@ -7,7 +7,8 @@ module Admin
         email_address: "role-map-superadmin@example.com",
         password: "password123",
         password_confirmation: "password123",
-        superadmin: true
+        superadmin: true,
+        active_role: :superadmin
       )
 
       post session_url, params: { email_address: user.email_address, password: "password123" }
@@ -26,12 +27,25 @@ module Admin
         password: "password123",
         password_confirmation: "password123"
       )
-      user.role_assignments.create!(role: :admin)
+      user.create_profile!(display_name: "Admin User")
+      RoleAssignment.create!(profile: user.profile, role: :admin, parent: create_creator_assignment)
 
       post session_url, params: { email_address: user.email_address, password: "password123" }
       get admin_role_map_url
 
-      assert_redirected_to root_url
+      assert_redirected_to viaggiatori_url
     end
+
+    private
+
+      def create_creator_assignment
+        creator = User.create!(
+          email_address: "role-map-creator-#{SecureRandom.hex(4)}@example.com",
+          password: "password123",
+          password_confirmation: "password123"
+        )
+        creator.create_profile!(display_name: "Creator User")
+        RoleAssignment.create!(profile: creator.profile, role: :creator_of_worlds)
+      end
   end
 end

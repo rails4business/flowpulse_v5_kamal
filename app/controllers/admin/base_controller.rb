@@ -5,15 +5,11 @@ module Admin
     private
 
     def require_admin!
-      unless admin_user? && (superadmin_user? || !demo_mode?)
-        redirect_to root_path, alert: "Accesso riservato agli admin."
-      end
+      require_permission!(:admin)
     end
 
     def require_superadmin!
-      unless superadmin_user?
-        redirect_to root_path, alert: "Accesso riservato ai superadmin."
-      end
+      require_permission!(:superadmin)
     end
   end
 end

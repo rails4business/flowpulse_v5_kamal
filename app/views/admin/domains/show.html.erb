@@ -32,6 +32,28 @@
       <dd class="mt-1 text-slate-950"><%= @domain.locale %></dd>
     </div>
     <div>
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Logo lungo URL</dt>
+      <dd class="mt-1 break-all text-slate-950"><%= @domain.logo_full_url.presence || "-" %></dd>
+    </div>
+    <div>
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Logo quadrato URL</dt>
+      <dd class="mt-1 break-all text-slate-950"><%= @domain.logo_square_url.presence || "-" %></dd>
+    </div>
+    <div>
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Creator world</dt>
+      <dd class="mt-1 text-slate-950"><%= @domain.role_assignment&.display_name || "-" %></dd>
+    </div>
+    <div>
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Nodo iniziale</dt>
+      <dd class="mt-1 text-slate-950">
+        <% if @domain.node.present? %>
+          #<%= @domain.node.id %> - <%= @domain.node.title %>
+        <% else %>
+          -
+        <% end %>
+      </dd>
+    </div>
+    <div>
       <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Stato</dt>
       <dd class="mt-1 text-slate-950"><%= @domain.active? ? "Attivo" : "Disattivo" %></dd>
     </div>

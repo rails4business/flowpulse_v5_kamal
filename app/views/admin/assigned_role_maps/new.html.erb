@@ -1,0 +1,88 @@
+<% content_for :title, "New assigned role" %>
+
+<header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+  <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Nuova assegnazione</p>
+  <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">New assigned role</h1>
+  <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Il superadmin assegna solo ruoli root. I ruoli children vengono creati dal relativo creator of worlds.</span>
+</header>
+
+<section class="mt-6 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+  <% if @role_assignment.errors.any? %>
+    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+      <%= @role_assignment.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <!-- Warning for Creator of Worlds profile constraint -->
+  <div id="profile-warning" class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-700 animate-pulse">
+    ⚠️ Attenzione: l'utente selezionato non possiede un profilo configurato. Non è possibile assegnargli il ruolo di <strong>Creator of Worlds</strong>.
+  </div>
+
+  <%= form_with model: @role_assignment, url: admin_assigned_role_map_path, method: :post, class: "grid gap-5" do |form| %>
+    <div>
+      <%= form.label :user_email, "Utente (Cerca per Email)", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+      
+      <%= form.text_field :user_email,
+        list: "users-datalist",
+        id: "role_assignment_user_email",
+        class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500",
+        placeholder: "Cerca utente per email...",
+        autocomplete: "off",
+        value: @role_assignment.user&.email_address || params.dig(:role_assignment, :user_email) %>
+
+      <datalist id="users-datalist">
+        <% @users.each do |user| %>
+          <% profile_info = user.profile.present? ? "Profilo: #{user.profile.display_name}" : "Nessun Profilo" %>
+          <option value="<%= user.email_address %>"><%= profile_info %></option>
+        <% end %>
+      </datalist>
+    </div>
+
+    <div>
+      <%= form.label :role, "Ruolo", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+      <%= form.select :role,
+        options_for_select(@assignable_roles.map { |role| [role.humanize, role] }, @role_assignment.role),
+        { prompt: "Seleziona ruolo" },
+        id: "role_assignment_role",
+        class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 pt-2">
+      <%= form.submit "Create", class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-extrabold text-white shadow-sm transition hover:bg-blue-700" %>
+      <%= link_to "Cancel", admin_assigned_role_map_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50" %>
+    </div>
+  <% end %>
+</section>
+
+<script>
+  (() => {
+    const setupWarning = () => {
+      const userInput = document.getElementById("role_assignment_user_email");
+      const roleSelect = document.getElementById("role_assignment_role");
+      const warning = document.getElementById("profile-warning");
+      const noProfileEmails = <%= @users.select { |u| u.profile.blank? }.map(&:email_address).to_json.html_safe %>;
+
+      const checkConstraint = () => {
+        if (!userInput || !roleSelect || !warning) return;
+        const email = userInput.value.trim();
+        const isCreator = roleSelect.value === "creator_of_worlds";
+        const hasNoProfile = noProfileEmails.includes(email);
+
+        if (isCreator && hasNoProfile) {
+          warning.classList.remove("hidden");
+        } else {
+          warning.classList.add("hidden");
+        }
+      };
+
+      userInput?.addEventListener("input", checkConstraint);
+      userInput?.addEventListener("change", checkConstraint);
+      roleSelect?.addEventListener("change", checkConstraint);
+
+      checkConstraint();
+    };
+
+    document.addEventListener("turbo:load", setupWarning);
+    setupWarning();
+  })();
+</script>

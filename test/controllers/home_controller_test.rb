@@ -93,8 +93,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
       email_address: "superadmin@example.com",
       password: "password123",
       password_confirmation: "password123",
-      superadmin: true
+      superadmin: true,
+      active_role: :superadmin
     )
+    user.create_profile!(display_name: "Superadmin")
 
     post session_url, params: { email_address: user.email_address, password: "password123" }
     get demo_lavoro_url
@@ -114,7 +116,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get elenco pagine" do
-    sign_in(create_user("elenco-pagine-superadmin@example.com", superadmin: true))
+    sign_in(create_user("elenco-pagine-superadmin@example.com", superadmin: true, active_role: :superadmin))
 
     get admin_elenco_pagine_url
 
@@ -131,13 +133,17 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   private
 
     def create_user(email, **attributes)
-      User.create!(
+      demo_val = attributes.delete(:demo_access)
+      user = User.create!(
         {
           email_address: email,
           password: "password123",
           password_confirmation: "password123"
         }.merge(attributes)
       )
+      user.create_profile!(display_name: email.split("@").first.capitalize)
+      RoleAssignment.create!(profile: user.profile, role: :demo) if demo_val
+      user
     end
 
     def sign_in(user)

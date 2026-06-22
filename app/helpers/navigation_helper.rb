@@ -55,26 +55,33 @@ module NavigationHelper
     FlowRoles.group_label(group)
   end
 
-  def can_access_menu_item?(item)
-    return true if superadmin_user?
+  def traveler_dashboard_aside_subscriptions
+    return [] unless active_dashboard_role == "traveler"
+    return [] unless Current.user&.profile
 
+    TravelerSubscription.ordered_for(profile: Current.user.profile, domain: current_domain)
+  end
+
+  def can_access_menu_item?(item)
     item.fetch(:roles).include?(active_dashboard_role)
   end
 
   def can_access_path?(path)
     path = path.to_s
 
-    return true if superadmin_user?
+    return true if FlowRoles.can?(Current.user, :read, :public) && public_path?(path)
+    return FlowRoles.can?(Current.user, :read, :demo) if demo_path?(path)
 
-    if demo_mode?
-      return true if public_path?(path)
-      return true if demo_path?(path)
-      return false
+    if admin_path?(path)
+      return FlowRoles.can?(Current.user, :read, :domains) if path.start_with?("/admin/domains")
+      return FlowRoles.can?(Current.user, :read, :role_map) if path.start_with?("/admin/role_map")
+      return FlowRoles.can?(Current.user, :read, :assigned_role_map) if path.start_with?("/admin/assigned_role_map")
+      return FlowRoles.can?(Current.user, :read, :superadmin) if path.start_with?("/admin/elenco_pagine")
+
+      return FlowRoles.can?(Current.user, :read, :admin)
     end
 
-    return true if admin_user? && admin_path?(path)
-
-    public_path?(path)
+    false
   end
 
   def public_path?(path)
@@ -90,7 +97,7 @@ module NavigationHelper
   end
 
   def admin_dashboard_section?(current_section)
-    current_section.to_sym.in?(%i[dashboard domains resources pages role_map weekplan])
+    current_section.to_sym.in?(%i[dashboard domains resources pages role_map assigned_role_map weekplan])
   end
 
   def resolve_dashboard_menu_path(path)

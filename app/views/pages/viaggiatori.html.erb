@@ -6,6 +6,49 @@
       <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">Esperienze</h1>
     </header>
 
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Iscrizioni</p>
+          <h2 class="mt-1 text-2xl font-extrabold tracking-tight text-slate-950">I tuoi domini</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">
+            <% if @traveler_subscription_scope_domain.present? %>
+              Vista filtrata da <strong><%= @traveler_subscription_scope_domain.display_hostname %></strong> e dai domini sotto il suo nodo.
+            <% else %>
+              Tutte le iscrizioni gratuite collegate ai domini che segui.
+            <% end %>
+          </p>
+        </div>
+        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+          <%= @traveler_subscriptions.size %> attive
+        </span>
+      </div>
+
+      <% if @traveler_subscriptions.any? %>
+        <div class="mt-5 divide-y divide-slate-100">
+          <% @traveler_subscriptions.each do |subscription| %>
+            <article class="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div class="min-w-0">
+                <h3 class="truncate text-base font-extrabold text-slate-900"><%= subscription.domain.display_hostname %></h3>
+                <p class="mt-1 truncate text-sm text-slate-500"><%= subscription.node.title %></p>
+              </div>
+              <div class="flex items-center gap-2">
+                <%= link_to "Apri", node_path(subscription.node), class: "rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50" %>
+                <%= button_to "Rimuovi", traveler_subscription_path(subscription),
+                  method: :delete,
+                  class: "rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50",
+                  form: { data: { turbo_confirm: "Rimuovere questa iscrizione?" } } %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-5 text-sm font-semibold text-slate-500">
+          Nessuna iscrizione attiva in questo ramo.
+        </div>
+      <% end %>
+    </section>
+
     <nav class="mt-4 flex flex-wrap gap-2" aria-label="Sezioni esperienze">
       <% [
         ["eventi", "Eventi"],
@@ -16,7 +59,7 @@
         <%= verified_link_to title, viaggiatori_path(section: key), class: "rounded-xl border px-4 py-2 text-sm font-extrabold transition #{active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}" %>
       <% end %>
     </nav>
-
+<% if  0 == 1 %>
     <% if active_section == "eventi" %>
       <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="mvp-travel-section__intro">
@@ -164,3 +207,4 @@
         </div>
       </section>
     <% end %>
+<% end %>

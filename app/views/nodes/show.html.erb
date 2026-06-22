@@ -1,0 +1,221 @@
+<% content = @node.content %>
+<% content_for :full_screen, true %>
+<%
+  sidebar_siblings = Array(@siblings)
+  sidebar_children = Array(@children)
+  has_real_siblings = sidebar_siblings.any? { |sibling| sibling != @node }
+  sidebar_items = if has_real_siblings || @parent_node.present?
+    sidebar_siblings
+  else
+    sidebar_children
+  end
+  has_sidebar = @parent_node.present? || has_real_siblings || sidebar_children.any?
+%>
+
+<% content_for :navbar_breadcrumbs do %>
+  <nav class="node-public-breadcrumb" aria-label="Percorso">
+    <% @breadcrumbs.each_with_index do |node, index| %>
+      <% breadcrumb_label = (@navigation_domain.present? && node == @navigation_root_node) ? @navigation_domain.display_hostname : node.title %>
+      <% if index.positive? %>
+        <span class="node-public-breadcrumb-separator">/</span>
+      <% end %>
+      <% if node == @node %>
+        <span aria-current="page" class="node-public-breadcrumb-current"><%= breadcrumb_label %></span>
+      <% else %>
+        <%= link_to breadcrumb_label, flowtree_public_node_path(node), class: "node-public-breadcrumb-link" %>
+      <% end %>
+    <% end %>
+  </nav>
+<% end %>
+
+<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %>">
+
+  <% if @can_manage_public_node %>
+    <div class="node-public-status node-public-creator-bar">
+      <div class="node-public-creator-status">
+        <span class="node-public-creator-badge">
+          Stato: <strong><%= @node.status %></strong>
+        </span>
+        <span class="node-public-creator-badge">
+          Visibilita: <strong><%= Node.visibility_label(@node.visibility) %></strong>
+        </span>
+      </div>
+      <div class="node-public-creator-actions">
+        <%= link_to tree_creator_world_role_assignment_node_path(@node.role_assignment, @node), class: "node-public-creator-btn" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+          </svg>
+          <span>Albero</span>
+        <% end %>
+        <%= link_to edit_creator_world_role_assignment_node_path(@node.role_assignment, @node), class: "node-public-creator-btn" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+          </svg>
+          <span>Modifica</span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="node-public-layout">
+    <% if has_sidebar %>
+      <aside class="node-public-sidebar">
+        <div class="node-public-sidebar-mobile-header lg:hidden flex justify-between items-center px-4 py-3 border-b border-slate-100 mb-4 bg-slate-50 rounded-t-xl">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Navigazione</span>
+          <button id="closeSiblingSidebarButton" type="button" class="p-2 -mr-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0" aria-label="Chiudi menu laterale">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="node-public-sidebar-parent-section border-b border-slate-100 pb-3 mb-3">
+          <% if @parent_node.present? %>
+            <%= link_to flowtree_public_node_path(@parent_node), class: "node-public-sidebar-parent-link flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-wider" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-3.5 w-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              <span><%= @parent_node.title %></span>
+            <% end %>
+          <% else %>
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <%= @navigation_domain&.display_hostname.presence || "Navigazione" %>
+            </div>
+          <% end %>
+        </div>
+        <% if sidebar_items.any? %>
+          <ul class="node-public-sidebar-list">
+            <% sidebar_items.each do |sidebar_node| %>
+              <% sidebar_target = sidebar_node.bridge_node? ? sidebar_node.resolve_target : sidebar_node %>
+              <% first_child = sidebar_node.bridge_node? ? nil : public_node_accessible_children(sidebar_node).first %>
+              <li class="node-public-sidebar-item <%= sidebar_node == @node ? 'active' : '' %>">
+                <div class="node-public-sidebar-item-row flex items-center justify-between group">
+                  <%= link_to sidebar_node.title, flowtree_public_node_path(sidebar_target), class: "node-public-sidebar-link flex-1" %>
+                  <% if first_child.present? %>
+                    <%= link_to flowtree_public_node_path(first_child), class: "node-public-sidebar-enter-btn p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-50 transition-all", title: "Vai al primo sotto-argomento" do %>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-3.5 w-3.5 transform group-hover:translate-x-0.5 transition-transform">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5-7.5" />
+                      </svg>
+                    <% end %>
+                  <% end %>
+                </div>
+              
+                <% if sidebar_node == @node && @children.any? %>
+                  <ul class="node-public-sidebar-sublist pl-3 border-l-2 border-blue-500/20 mt-1 mb-2 ml-4 flex flex-col gap-1 list-none">
+                    <% @children.each do |child| %>
+                      <% child_target = child.bridge_node? ? child.resolve_target : child %>
+                      <li class="node-public-sidebar-subitem">
+                        <%= link_to child.title, flowtree_public_node_path(child_target), class: "node-public-sidebar-sublink block text-[13px] text-slate-500 hover:text-slate-900 py-1 px-2 rounded-md transition-colors" %>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </aside>
+    <% end %>
+
+    <main class="node-public-article">
+      <p class="node-public-kicker">
+        <%= @node.node_type.presence || @node.content_type.presence || "Articolo" %>
+      </p>
+
+      <h1 class="node-public-title"><%= @node.title %></h1>
+
+      <div class="node-public-meta flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500 mt-4 pb-6 border-b border-slate-100">
+        <div class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 capitalize">
+          <%= @node.node_type.presence || "Contenuto" %>
+        </div>
+        
+        <% if @node.role_assignment.present? %>
+          <div class="flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5 text-blue-600">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+            <span><%= @node.role_assignment.display_name %></span>
+          </div>
+        <% end %>
+
+        <div class="flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5 text-blue-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+          </svg>
+          <span><%= @node.updated_at.strftime("%e %B %Y") %></span>
+        </div>
+
+        <%
+          word_count = (content&.body_md.presence || "").split.size
+          reading_time = (word_count / 200.0).ceil
+          reading_time = 1 if reading_time.zero?
+        %>
+        <div class="flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5 text-blue-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span><%= reading_time %> min lettura</span>
+        </div>
+      </div>
+
+      <%
+        cover_image_url = content&.data&.dig("cover_image_url").presence
+      %>
+      <% if cover_image_url.present? %>
+        <div class="node-public-cover mt-6 aspect-[16/9] overflow-hidden rounded-[2rem] border border-slate-200 shadow-md">
+          <img src="<%= cover_image_url %>" alt="<%= @node.title %>" class="h-full w-full object-cover">
+        </div>
+      <% end %>
+ 
+      <% if @node.description.present? %>
+        <p class="node-public-description">
+          <%= @node.description %>
+        </p>
+      <% end %>
+
+      <article class="node-public-content">
+        <% if content&.body_md.present? %>
+          <%= render_node_markdown(content.body_md) %>
+        <% elsif content&.body_html.present? %>
+          <%= sanitize content.body_html %>
+        <% else %>
+          <p class="node-public-empty">
+            Questo nodo non ha ancora contenuto.
+          </p>
+        <% end %>
+      </article>
+
+    
+
+     
+
+      <!-- Explore tags section card -->
+      <%
+        brand_city = @navigation_domain&.display_hostname&.split(".")&.first&.titleize || "Cesena"
+      %>
+     
+    </main>
+
+    <!-- Right Sidebar Table of Contents (TOC) -->
+    <aside data-controller="toc" class="node-public-toc-sidebar">
+      <div class="node-public-sidebar-mobile-header xl:hidden flex justify-between items-center px-4 py-3 border-b border-slate-100 mb-4 bg-slate-50 rounded-t-xl">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Indice</span>
+        <button id="closeTocSidebarButton" type="button" class="p-2 -mr-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0" aria-label="Chiudi indice">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <nav aria-label="Indice articolo" class="node-public-toc-nav">
+        <div class="node-public-toc-header">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4 text-blue-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
+          <span class="node-public-toc-title">In questo articolo</span>
+        </div>
+        <ul data-toc-target="list" class="node-public-toc-list">
+          <!-- Populated dynamically by toc_controller.js -->
+        </ul>
+      </nav>
+    </aside>
+  </div>
+</div>

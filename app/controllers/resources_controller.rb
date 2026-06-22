@@ -34,9 +34,7 @@ class ResourcesController < ApplicationController
   private
 
     def require_admin_user!
-      unless admin_user? && (superadmin_user? || !demo_mode?)
-        redirect_to root_path, alert: "Accesso riservato agli admin."
-      end
+      require_permission!(:admin)
     end
 
     def normalized_tab(tab)

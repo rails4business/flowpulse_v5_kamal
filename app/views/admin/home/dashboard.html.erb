@@ -1,41 +1,586 @@
-<% content_for :title, "Dashboard Admin" %>
+<% content_for :title, "Dashboard Admin - Flowpulse" %>
 <% superadmin = superadmin_user? %>
 
-<header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+<div class="admin-page">
+  <div class="admin-container">
+    
+    <!-- Header -->
+    <header class="admin-header">
       <div>
-        <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Dashboard Admin</p>
-        <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">Strumenti interni</h1>
-        <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Area interna per raccogliere viste, risorse e pagine di lavoro mentre l'app prende forma. Il selettore ruolo serve a simulare gli assetti futuri senza aprire tutto a tutti.</span>
+        <h1>Superadmin Dashboard</h1>
+        <p style="color: #64748b; margin: 0.25rem 0 0 0;">Gestione e diagnostica del sistema multi-tenancy FlowTree</p>
+      </div>
+      <div class="badge primary">
+        🛠️ Master Control
       </div>
     </header>
 
-    <section class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <% cards = [
-        { number: "01", title: "Risorse", body: "Tab: Eventi, Transazioni, Contatti, Attenzione, Luoghi, Abilita, Energia.", path: admin_risorse_index_path },
-        { number: "02", title: "Domini", body: "Host pubblici, redirect canonici e target controller/pagina.", path: admin_domains_path },
-        { number: "03", title: "Lavoro", body: "Creator, professionisti, attitudini, ruoli e servizi collegati ai progetti.", path: demo_lavoro_path },
-        { number: "04", title: "Salute", body: "Percorsi e corsi, con accesso rapido alla vista salute che stiamo costruendo.", path: demo_salute_path },
-        { number: "05", title: "Elenco pagine", body: "Inventario dei prototipi HTML e delle pagine controller gia agganciate.", path: admin_elenco_pagine_path }
-      ] %>
+    <!-- Superadmin Tabs -->
+    <% active_tab = params[:tab].presence_in(%w[dashboard worlds domains guide]) || "dashboard" %>
+    <nav class="superadmin-tabs" aria-label="Sezioni amministratore">
+      <%= link_to admin_dashboard_path(tab: "dashboard"), class: "tab-btn #{active_tab == 'dashboard' ? 'active' : ''}" do %>
+        <span>📊 Panoramica &amp; Diagnostica</span>
+      <% end %>
+      <%= link_to admin_dashboard_path(tab: "worlds"), class: "tab-btn #{active_tab == 'worlds' ? 'active' : ''}" do %>
+        <span>🌍 Creator</span>
+      <% end %>
+      <%= link_to admin_dashboard_path(tab: "domains"), class: "tab-btn #{active_tab == 'domains' ? 'active' : ''}" do %>
+        <span>🔌 Domini</span>
+      <% end %>
+      <%= link_to admin_dashboard_path(tab: "guide"), class: "tab-btn #{active_tab == 'guide' ? 'active' : ''}" do %>
+        <span>📖 Mappa Ruoli</span>
+      <% end %>
+    </nav>
 
-      <% cards.each do |card| %>
-        <% if superadmin %>
-          <%= verified_link_to card[:path], class: "flex min-h-[230px] flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" do %>
-            <span class="text-sm font-extrabold tracking-[0.12em] text-blue-600"><%= card[:number] %></span>
-            <div class="mt-6">
-              <h2 class="text-2xl font-extrabold tracking-tight text-slate-950"><%= card[:title] %></h2>
-              <p class="mt-3 text-sm leading-6 text-slate-600"><%= card[:body] %></p>
+    <% if active_tab == "dashboard" %>
+      <!-- QUICK STATS -->
+      <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="dashboard-card" style="margin-bottom: 0;">
+          <h3 class="card-title">🌍 Creator</h3>
+          <p class="card-value"><%= @creator_worlds.count %></p>
+        </div>
+        <div class="dashboard-card" style="margin-bottom: 0;">
+          <h3 class="card-title">🔌 Domini Attivi</h3>
+          <p class="card-value"><%= @total_domains %></p>
+        </div>
+        <div class="dashboard-card" style="margin-bottom: 0;">
+          <h3 class="card-title">🌿 Nodi Totali</h3>
+          <p class="card-value"><%= @total_nodes %></p>
+        </div>
+        <div class="dashboard-card" style="margin-bottom: 0;">
+          <h3 class="card-title">📄 Contenuti</h3>
+          <p class="card-value"><%= @total_contents %></p>
+        </div>
+      </div>
+
+      <!-- DIAGNOSTICS & SIMULATOR -->
+      <div class="info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="dashboard-card" style="margin-bottom: 0;">
+          <h3 class="card-title">🔌 Stato Multi-Tenancy</h3>
+          
+          <div class="context-item">
+            <div class="context-label">Dominio Attivo (Current.domain)</div>
+            <div class="context-value">
+              <% if current_domain.present? %>
+                <span class="status-dot active"></span><%= current_domain.hostname %>
+                <% if current_domain.hostname == "flowpulse.net" %>
+                  <strong style="color: #4f46e5; font-size: 0.8125rem; margin-left: 0.5rem;">[MASTER DOMAIN]</strong>
+                <% end %>
+              <% else %>
+                <span class="status-dot inactive"></span>Nessuno (Standalone Fallback)
+              <% end %>
+            </div>
+          </div>
+
+          <div class="context-item">
+            <div class="context-label">Nodo Radice Attivo (Current.node)</div>
+            <div class="context-value">
+              <% if current_node.present? %>
+                <span class="highlight">#<%= current_node.id %> - <%= current_node.title %></span>
+                <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
+                  Slug: /<%= current_node.slug %>
+                </div>
+              <% else %>
+                <em>Tutto visibile (flowpulse.net o standalone)</em>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Simulation Override Widget (Localhost only) -->
+          <% if local_request? %>
+            <div class="context-item" style="border: 1px dashed rgba(99, 102, 241, 0.3); background: rgba(99, 102, 241, 0.02); margin-top: 1rem; padding: 1rem; border-radius: 0.75rem;">
+              <div class="context-label" style="color: #4f46e5; font-weight: 700; display: flex; align-items: center; gap: 0.25rem;">
+                🎭 Simulatore Dominio (Localhost)
+              </div>
+              <div style="margin-top: 0.5rem;">
+                <% if session[:override_domain_id].present? %>
+                  <div style="font-size: 0.875rem; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 0.75rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                    <span>Simulazione attiva: <strong><%= current_domain&.hostname %></strong></span>
+                    <%= button_to "Resetta", admin_set_override_path(domain_id: nil), method: :post, class: "btn-secondary", style: "padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 0.25rem; cursor: pointer;" %>
+                  </div>
+                <% else %>
+                  <%= form_with(url: admin_set_override_path, method: :post, local: true, style: "display: flex; gap: 0.5rem; align-items: center;") do |f| %>
+                    <%= f.select :domain_id, Domain.order(:hostname).map { |d| [d.hostname, d.id] }, { include_blank: "Seleziona dominio..." }, { class: "form-input", style: "padding: 0.5rem; font-size: 0.8125rem; flex: 1; min-height: 38px; background: white;" } %>
+                    <%= f.submit "Simula", class: "btn-primary", style: "padding: 0.5rem 1rem; font-size: 0.8125rem; border-radius: 0.5rem; box-shadow: none; cursor: pointer; min-height: 38px;" %>
+                  <% end %>
+                <% end %>
+              </div>
             </div>
           <% end %>
-        <% else %>
-          <div class="flex min-h-[230px] flex-col justify-between rounded-2xl border border-slate-200 bg-slate-100 p-6 text-slate-400">
-            <span class="text-sm font-extrabold tracking-[0.12em]"><%= card[:number] %></span>
-            <div class="mt-6">
-              <h2 class="text-2xl font-extrabold tracking-tight"><%= card[:title] %></h2>
-              <p class="mt-3 text-sm leading-6"><%= card[:body] %></p>
+        </div>
+
+        <div class="dashboard-card" style="margin-bottom: 0;">
+          <h3 class="card-title">🔍 Info Host Applicazione</h3>
+          <div class="context-item">
+            <div class="context-label">Filtro Superadmin</div>
+            <div class="context-value">
+              <% if superadmin %>
+                <span style="color: #16a34a; font-weight: 600;">Superadmin Attivo</span>
+              <% else %>
+                <span style="color: #ea580c; font-weight: 600;">Admin Attivo</span>
+              <% end %>
             </div>
-            <strong class="mt-4 text-xs font-extrabold uppercase tracking-[0.14em] text-slate-500">Disponibile quando sbloccato dal superadmin</strong>
           </div>
-        <% end %>
-      <% end %>
-    </section>
+          <div class="context-item">
+            <div class="context-label">Ambiente Rails</div>
+            <div class="context-value highlight">
+              <%= Rails.env %>
+            </div>
+          </div>
+          <div class="context-item">
+            <div class="context-label">Host Rilevato</div>
+            <div class="context-value font-mono text-xs text-slate-600">
+              <%= request.host %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMINISTRATIVE QUICK LINKS -->
+      <div class="table-card">
+        <h2 style="font-size: 1.125rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">🔗 Collegamenti Rapidi Amministrazione</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+          
+          <%= link_to admin_risorse_index_path, class: "flex flex-col border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition hover:border-slate-300" do %>
+            <div class="flex items-center justify-between">
+              <strong style="color: #0f172a; font-size: 0.95rem;">📦 Risorse Interne</strong>
+              <span class="text-xs text-slate-400">01</span>
+            </div>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0.5rem 0 0 0; line-height: 1.4;">
+              Tabella di consultazione risorse: Eventi, Transazioni, Contatti, Luoghi, Attitudini, etc.
+            </p>
+          <% end %>
+
+          <%= link_to admin_domains_path, class: "flex flex-col border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition hover:border-slate-300" do %>
+            <div class="flex items-center justify-between">
+              <strong style="color: #0f172a; font-size: 0.95rem;">🔌 Gestione Domini</strong>
+              <span class="text-xs text-slate-400">02</span>
+            </div>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0.5rem 0 0 0; line-height: 1.4;">
+              Gestione hosts pubblici, redirect canonici, locale di partenza, e target controller.
+            </p>
+          <% end %>
+
+          <%= link_to demo_lavoro_path, class: "flex flex-col border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition hover:border-slate-300" do %>
+            <div class="flex items-center justify-between">
+              <strong style="color: #0f172a; font-size: 0.95rem;">💼 Lavoro & Progetti</strong>
+              <span class="text-xs text-slate-400">03</span>
+            </div>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0.5rem 0 0 0; line-height: 1.4;">
+              Anteprime e prototipi su sezioni Creator, professionisti, attitudini e ruoli.
+            </p>
+          <% end %>
+
+          <%= link_to demo_salute_path, class: "flex flex-col border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition hover:border-slate-300" do %>
+            <div class="flex items-center justify-between">
+              <strong style="color: #0f172a; font-size: 0.95rem;">🩺 Salute & Corsi</strong>
+              <span class="text-xs text-slate-400">04</span>
+            </div>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0.5rem 0 0 0; line-height: 1.4;">
+              Accesso rapido alle viste della sezione salute, percorsi benessere e corsi.
+            </p>
+          <% end %>
+
+          <%= link_to admin_elenco_pagine_path, class: "flex flex-col border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition hover:border-slate-300" do %>
+            <div class="flex items-center justify-between">
+              <strong style="color: #0f172a; font-size: 0.95rem;">📄 Inventario Pagine HTML</strong>
+              <span class="text-xs text-slate-400">05</span>
+            </div>
+            <p style="font-size: 0.8125rem; color: #64748b; margin: 0.5rem 0 0 0; line-height: 1.4;">
+              Elenco prototipi statici HTML inseriti in public/viste_html e collegati all'engine.
+            </p>
+          <% end %>
+
+        </div>
+      </div>
+
+    <% elsif active_tab == "worlds" %>
+      <!-- CREATOR WORLDS TABLE -->
+      <div class="table-card">
+        <div class="table-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.125rem; font-weight: 700; color: #0f172a; margin: 0;">Elenco Creator</h2>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator (Canale)</th>
+                <th>Profilo Owner</th>
+                <th>Email Utente</th>
+                <th>Nodi Collegati</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @creator_worlds.any? %>
+                <% @creator_worlds.each do |world| %>
+                  <tr>
+                    <td><strong>#<%= world.id %></strong></td>
+                    <td style="color: #0f172a; font-weight: 500;">
+                      <%= world.display_name %>
+                    </td>
+                    <td>
+                      <span style="font-size: 0.8125rem; background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem; border: 1px solid rgba(0,0,0,0.03); color: #475569;">
+                        <%= world.profile&.display_name.presence || "—" %>
+                      </span>
+                    </td>
+                    <td>
+                      <%= world.user&.email_address.presence || "—" %>
+                    </td>
+                    <td>
+                      <span class="badge primary"><%= world.nodes.count %> nodi</span>
+                    </td>
+                    <td class="action-cell">
+                      <%= link_to "Gestisci Nodi", creator_world_role_assignment_nodes_path(world), class: "btn-secondary", style: "padding: 0.35rem 0.75rem;" %>
+                      <% if world.nodes.roots.any? %>
+                        <%= link_to "Albero", tree_creator_world_role_assignment_node_path(world, world.nodes.roots.first), class: "btn-primary", style: "padding: 0.35rem 0.75rem; box-shadow: none;" %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan="6" style="text-align: center; padding: 2rem; color: #64748b;">
+                    Nessun Creator trovato nel database.
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    <% elsif active_tab == "domains" %>
+      <!-- DOMAINS TABLE GROUPED BY CREATOR -->
+      <div class="table-card">
+        <div class="table-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.125rem; font-weight: 700; color: #0f172a; margin: 0;">Domini Associati ai Creator</h2>
+          <% if superadmin %>
+            <div class="action-cell">
+              <%= link_to "Aggiungi Dominio", new_admin_domain_path, class: "btn-primary", style: "box-shadow: none;" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th style="width: 200px;">Creator</th>
+                <th style="width: 220px;">Nodo Root del Creator</th>
+                <th>Host Dominio</th>
+                <th>Canonical Host</th>
+                <th>Stato</th>
+                <th>Primary</th>
+                <th>Nodo Collegato</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @creator_worlds.any? %>
+                <% @creator_worlds.each do |creator| %>
+                  <% domains = creator.domains.order(:hostname) %>
+                  <% if domains.any? %>
+                    <% domains.each_with_index do |domain, idx| %>
+                      <tr>
+                        <% if idx.zero? %>
+                          <td rowspan="<%= domains.size %>" style="vertical-align: top; font-weight: 700; background: #f8fafc; border-right: 1px solid rgba(0,0,0,0.03);">
+                            <%= creator.display_name %>
+                            <span style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 400; margin-top: 0.25rem;"><%= creator.user&.email_address %></span>
+                          </td>
+                          <td rowspan="<%= domains.size %>" style="vertical-align: top; background: #f8fafc; border-right: 1px solid rgba(0,0,0,0.03);">
+                            <% roots = creator.nodes.roots %>
+                            <% if roots.any? %>
+                              <% roots.each do |root| %>
+                                <div style="margin-bottom: 0.25rem;">
+                                  <span class="badge primary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">#<%= root.id %> - <%= root.title %></span>
+                                </div>
+                              <% end %>
+                            <% else %>
+                              <span style="color: #94a3b8;">Nessun nodo root</span>
+                            <% end %>
+                          </td>
+                        <% end %>
+                        <td style="font-weight: 600; color: #0f172a;"><%= domain.hostname %></td>
+                        <td><%= domain.canonical_host.presence || "-" %></td>
+                        <td>
+                          <span class="badge <%= domain.active? ? 'published' : 'archived' %>">
+                            <%= domain.active? ? "attivo" : "disattivo" %>
+                          </span>
+                        </td>
+                        <td>
+                          <% if domain.primary? %>
+                            <span style="color: #4f46e5; font-weight: 600;">Sì</span>
+                          <% else %>
+                            <span style="color: #94a3b8;">-</span>
+                          <% end %>
+                        </td>
+                        <td>
+                          <% if domain.node.present? %>
+                            #<%= domain.node.id %> - <%= domain.node.title %>
+                          <% else %>
+                            <span style="color: #94a3b8;">Fallback Radice</span>
+                          <% end %>
+                        </td>
+                        <td class="action-cell">
+                          <% if superadmin %>
+                            <%= link_to "Visualizza", admin_domain_path(domain), class: "btn-secondary", style: "padding: 0.35rem 0.75rem;" %>
+                            <%= link_to "Modifica", edit_admin_domain_path(domain), class: "btn-secondary", style: "padding: 0.35rem 0.75rem;" %>
+                          <% else %>
+                            <span style="color: #94a3b8; font-size: 0.8125rem;">—</span>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  <% else %>
+                    <tr>
+                      <td style="vertical-align: top; font-weight: 700; background: #f8fafc; border-right: 1px solid rgba(0,0,0,0.03);">
+                        <%= creator.display_name %>
+                        <span style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 400; margin-top: 0.25rem;"><%= creator.user&.email_address %></span>
+                      </td>
+                      <td style="vertical-align: top; background: #f8fafc; border-right: 1px solid rgba(0,0,0,0.03);">
+                        <% roots = creator.nodes.roots %>
+                        <% if roots.any? %>
+                          <% roots.each do |root| %>
+                            <div style="margin-bottom: 0.25rem;">
+                              <span class="badge primary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">#<%= root.id %> - <%= root.title %></span>
+                            </div>
+                          <% end %>
+                        <% else %>
+                          <span style="color: #94a3b8;">Nessun nodo root</span>
+                        <% end %>
+                      </td>
+                      <td colspan="6" style="text-align: center; color: #94a3b8; font-style: italic; padding: 1.5rem; background: #fafafa;">
+                        Nessun dominio configurato per questo Creator.
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 2rem; color: #64748b;">
+                    Nessun Creator configurato.
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SYSTEM & FALLBACK DOMAINS -->
+      <div class="table-card" style="margin-top: 2rem;">
+        <div class="table-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.125rem; font-weight: 700; color: #0f172a; margin: 0;">Domini di Sistema e Fallback Standalone</h2>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Host Principale</th>
+                <th>Canonical Host</th>
+                <th>Stato</th>
+                <th>Primary</th>
+                <th>Controller / Action Target</th>
+                <th>Nodo Collegato</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% system_domains = @domains.reject { |d| d.role_assignment&.creator_of_worlds? } %>
+              <% if system_domains.any? %>
+                <% system_domains.each do |domain| %>
+                  <tr>
+                    <td style="font-weight: 600; color: #0f172a;"><%= domain.hostname %></td>
+                    <td><%= domain.canonical_host.presence || "-" %></td>
+                    <td>
+                      <span class="badge <%= domain.active? ? 'published' : 'archived' %>">
+                        <%= domain.active? ? "attivo" : "disattivo" %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if domain.primary? %>
+                        <span style="color: #4f46e5; font-weight: 600;">Sì</span>
+                      <% else %>
+                        <span style="color: #94a3b8;">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if domain.target_controller.present? %>
+                        <span class="font-mono text-xs"><%= domain.target_controller %>#<%= domain.target_action %></span>
+                      <% else %>
+                        <span style="color: #94a3b8;">Fallback standard</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if domain.node.present? %>
+                        #<%= domain.node.id %> - <%= domain.node.title %>
+                      <% else %>
+                        <span style="color: #94a3b8;">Nessuno</span>
+                      <% end %>
+                    </td>
+                    <td class="action-cell">
+                      <% if superadmin %>
+                        <%= link_to "Visualizza", admin_domain_path(domain), class: "btn-secondary", style: "padding: 0.35rem 0.75rem;" %>
+                        <%= link_to "Modifica", edit_admin_domain_path(domain), class: "btn-secondary", style: "padding: 0.35rem 0.75rem;" %>
+                      <% else %>
+                        <span style="color: #94a3b8; font-size: 0.8125rem;">—</span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">
+                    Nessun dominio di sistema o fallback configurato.
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    <% elsif active_tab == "guide" %>
+      <!-- ROLE GUIDE & PAGE MAP -->
+      <div class="table-card">
+        <div class="table-header" style="border-bottom: 1px solid rgba(0,0,0,0.06); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.125rem; font-weight: 700; color: #0f172a; margin: 0;">Pagine per Ruolo</h2>
+        </div>
+
+        <%
+          role_pages = [
+            {
+              role: "Superadmin",
+              pages: [
+                {
+                  group: "Dashboard Amministratore",
+                  label: "Superadmin Dashboard",
+                  path: admin_dashboard_path,
+                  note: "Area principale di controllo statistico e multi-tenancy."
+                },
+                {
+                  group: "Mappa dei Ruoli",
+                  label: "Visualizza Mappa Ruoli",
+                  path: admin_role_map_path,
+                  note: "Configurazione e gerarchia delle mappature ruoli registrate."
+                },
+                {
+                  group: "Assegnazioni Ruoli",
+                  label: "Visualizza Assegnazioni",
+                  path: admin_assigned_role_map_path,
+                  note: "Mappa delle assegnazioni ruoli agli utenti."
+                },
+                {
+                  group: "Assegnazioni Ruoli",
+                  label: "Nuova Assegnazione",
+                  path: admin_new_assigned_role_map_path,
+                  note: "Form per assegnare un nuovo ruolo a un utente."
+                },
+                {
+                  group: "Gestione Domini",
+                  label: "Elenco Domini",
+                  path: admin_domains_path,
+                  note: "Configurazione e manutenzione dei domini d'ingresso."
+                }
+              ]
+            },
+            {
+              role: "World Creator",
+              pages: [
+                {
+                  group: "Canali & Nodi",
+                  label: (@sample_creator_world.present? ? "Gestione Nodi Canale" : "Gestione Canale (Non disp.)"),
+                  path: (@sample_creator_world.present? ? creator_world_role_assignment_nodes_path(@sample_creator_world) : nil),
+                  note: "Sezione per creare e gestire l'albero dei nodi e contenuti del canale."
+                },
+                {
+                  group: "Workspace Albero",
+                  label: (@sample_creator_world.present? && @sample_creator_world.nodes.roots.any? ? "Obsidian Editor" : "Obsidian Editor (Non disp.)"),
+                  path: (@sample_creator_world.present? && @sample_creator_world.nodes.roots.any? ? tree_creator_world_role_assignment_node_path(@sample_creator_world, @sample_creator_world.nodes.roots.first) : nil),
+                  note: "Visualizzatore grafico e editor markdown per i contenuti del canale."
+                }
+              ]
+            },
+            {
+              role: "Viaggiatore / Pubblico",
+              pages: [
+                {
+                  group: "Dashboard Viaggiatore",
+                  label: "Area Viaggiatori",
+                  path: viaggiatori_path,
+                  note: "Home interna per utenti loggati con ruolo Viaggiatore."
+                },
+                {
+                  group: "Landing Page",
+                  label: "Home / Ingresso",
+                  path: root_path,
+                  note: "Home page pubblica risolta dinamicamente in base al dominio d'ingresso."
+                },
+                {
+                  group: "Esperienze",
+                  label: "Eventi & Esperienze",
+                  path: esperienze_path,
+                  note: "Pagina pubblica con directory e schede eventi del sistema."
+                },
+                {
+                  group: "Postura Corretta",
+                  label: "Pagina Postura Corretta",
+                  path: posturacorretta_path,
+                  note: "Landing page pubblica per percorsi e progetti postura."
+                }
+              ]
+            }
+          ]
+        %>
+
+        <div style="overflow-x: auto;">
+          <table class="dashboard-table role-pages-table">
+            <thead>
+              <tr>
+                <th>Ruolo</th>
+                <th>Area</th>
+                <th>Pagina</th>
+                <th>Path</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% role_pages.each do |section| %>
+                <% section[:pages].each_with_index do |page, index| %>
+                  <tr>
+                    <% if index.zero? %>
+                      <td rowspan="<%= section[:pages].size %>" class="role-pages-role" style="vertical-align: top;">
+                        <span class="badge primary"><%= section[:role] %></span>
+                      </td>
+                    <% end %>
+                    <td><strong><%= page[:group] %></strong></td>
+                    <td>
+                      <% if page[:path].present? %>
+                        <%= link_to page[:label], page[:path], style: "font-weight: 700; color: #0f172a;" %>
+                      <% else %>
+                        <span style="font-weight: 700; color: #94a3b8;"><%= page[:label] %></span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if page[:path].present? %>
+                        <%= link_to page[:path], page[:path], style: "color: #0284c7; overflow-wrap: anywhere; font-family: monospace; font-size: 0.8125rem;" %>
+                      <% else %>
+                        <span style="color: #94a3b8;">Non disponibile</span>
+                      <% end %>
+                    </td>
+                    <td style="color: #64748b; font-size: 0.8125rem;"><%= page[:note] %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>

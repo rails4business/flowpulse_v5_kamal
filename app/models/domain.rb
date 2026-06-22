@@ -1,9 +1,20 @@
 class Domain < ApplicationRecord
+  store_accessor :settings, :logo_full_url, :logo_square_url
+
+  belongs_to :role_assignment, optional: true
+  belongs_to :node, optional: true
+  has_many :traveler_subscriptions, dependent: :destroy
+
   before_validation :normalize_hosts
+  before_validation :normalize_brand_settings
+  before_validation :sync_role_assignment_from_node
+
 
   validates :hostname, presence: true, uniqueness: true
   validates :locale, presence: true
   validate :target_controller_and_action_presence
+  validate :role_assignment_is_creator_world
+  validate :node_belongs_to_role_assignment
 
   scope :active, -> { where(active: true) }
 
@@ -63,6 +74,10 @@ class Domain < ApplicationRecord
     host.to_s.downcase.strip.split(":").first
   end
 
+  def display_hostname
+    hostname.to_s.sub(/\Awww\./, "")
+  end
+
   def to_config
     {}.tap do |hash|
       hash["canonical_host"] = canonical_host if canonical_host.present?
@@ -81,11 +96,40 @@ class Domain < ApplicationRecord
       self.canonical_host = self.class.normalize_host(canonical_host) if canonical_host.present?
     end
 
+    def normalize_brand_settings
+      self.settings = settings.to_h
+      self.logo_full_url = logo_full_url.to_s.strip.presence
+      self.logo_square_url = logo_square_url.to_s.strip.presence
+      self.settings = settings.to_h.compact.presence
+    end
+
     def target_controller_and_action_presence
       if target_controller.present? && target_action.blank?
         errors.add(:target_action, "deve essere presente se target_controller è presente")
       elsif target_action.present? && target_controller.blank?
         errors.add(:target_controller, "deve essere presente se target_action è presente")
       end
+    end
+
+    def sync_role_assignment_from_node
+      if persisted? && role_assignment_id_changed? && role_assignment_id.blank?
+        self.node = nil
+      elsif node.present? && role_assignment.nil?
+        self.role_assignment = node.role_assignment
+      end
+    end
+
+    def role_assignment_is_creator_world
+      return if role_assignment.blank?
+      return if role_assignment.creator_of_worlds?
+
+      errors.add(:role_assignment_id, "deve fare riferimento a un ruolo creator_of_worlds")
+    end
+
+    def node_belongs_to_role_assignment
+      return if node.blank? || role_assignment.blank?
+      return if node.role_assignment_id == role_assignment_id
+
+      errors.add(:node_id, "deve appartenere allo stesso Creator del dominio")
     end
 end

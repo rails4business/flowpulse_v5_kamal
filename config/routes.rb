@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   # Public Routes
   root "domains#show"
+  resources :nodes, only: [:show]
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
@@ -17,9 +18,20 @@ Rails.application.routes.draw do
   get "dashboard" => "home#dashboard", as: :dashboard
   get "dashboard/viaggiatore" => "pages#viaggiatori", as: :viaggiatori
   patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
+  patch "dashboard_channel" => "home#dashboard_channel", as: :dashboard_channel
+  resources :traveler_subscriptions, only: [:create, :destroy]
+  resource :profile, only: [:show]
 
   namespace :creator_world do
     root "dashboard#show"
+    resources :role_assignments, only: [] do
+      resources :nodes, except: [:show] do
+        member do
+          patch :move
+          get :tree
+        end
+      end
+    end
   end
 
   namespace :teacher do
@@ -37,8 +49,12 @@ Rails.application.routes.draw do
   # Area Admin / Superadmin
   namespace :admin do
     get "dashboard" => "home#dashboard", as: :dashboard
+    post "set_override" => "home#set_override", as: :set_override
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
     get "role_map" => "role_maps#show", as: :role_map
+    get "assigned_role_map" => "assigned_role_maps#show", as: :assigned_role_map
+    get "assigned_role_map/new" => "assigned_role_maps#new", as: :new_assigned_role_map
+    post "assigned_role_map" => "assigned_role_maps#create"
     resources :domains do
       collection do
         get :export

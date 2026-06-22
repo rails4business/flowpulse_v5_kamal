@@ -72,3 +72,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "closure_tree", "~> 9.7"
+gem "acts_as_list", "~> 1.2"
+

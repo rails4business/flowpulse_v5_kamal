@@ -9,7 +9,7 @@ module FlowRoles
           title: "Viaggiatore",
           subtitle: "Esperienze, categorie e brand",
           path: :viaggiatori_path,
-          roles: %w[traveler demo creator teacher tutor professional admin superadmin],
+          roles: %w[traveler demo admin superadmin],
           group: :workspace,
           badge: "EXP",
           demo_visible: true
@@ -129,6 +129,15 @@ module FlowRoles
           badge: "SYS"
         ),
         MenuItem.build(
+          key: :assigned_role_map,
+          title: "Assigned roles",
+          subtitle: "Utenti e ruoli assegnati",
+          path: :admin_assigned_role_map_path,
+          roles: %w[superadmin],
+          group: :admin,
+          badge: "SYS"
+        ),
+        MenuItem.build(
           key: :weekplan,
           title: "Weekplan",
           subtitle: "Planner settimanale HTML",
@@ -150,13 +159,11 @@ module FlowRoles
     end
 
     def admin_items
-      admin_keys = %i[dashboard domains resources pages role_map weekplan]
+      admin_keys = %i[dashboard domains resources pages role_map assigned_role_map weekplan]
       items.select { |item| admin_keys.include?(item.key) }
     end
 
     def visible_for(active_role:, superadmin: false)
-      return items if superadmin
-
       items_for_role(active_role)
     end
   end

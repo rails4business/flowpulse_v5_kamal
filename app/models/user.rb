@@ -1,9 +1,10 @@
 class User < ApplicationRecord
+  has_one :profile, dependent: :destroy
   include FlowRoles::UserRoles
 
   has_secure_password
-  has_one :profile, dependent: :destroy
   has_many :sessions, dependent: :destroy
+  belongs_to :current_role_assignment, class_name: "RoleAssignment", optional: true
   accepts_nested_attributes_for :profile
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
