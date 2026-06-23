@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = [ "list" ]
 
   connect() {
+    this.article = document.querySelector(".node-public-article")
     this.headings = Array.from(document.querySelectorAll(".node-public-content h1, .node-public-content h2, .node-public-content h3"))
     if (this.headings.length === 0) {
       this.element.style.display = "none"
@@ -12,6 +13,7 @@ export default class extends Controller {
 
     this.buildToc()
     this.setupObserver()
+    this.scrollToInitialHash()
 
     const tocToggle = document.getElementById("tocSidebarToggle")
     if (tocToggle) {
@@ -54,7 +56,7 @@ export default class extends Controller {
       link.addEventListener("click", (e) => {
         e.preventDefault()
         this.activateLink(heading.id)
-        heading.scrollIntoView({ behavior: "smooth" })
+        this.scrollArticleToHeading(heading)
         history.pushState(null, null, `#${heading.id}`)
       })
 
@@ -73,7 +75,8 @@ export default class extends Controller {
         this.activateLink(id)
       }
     }, {
-      rootMargin: "-100px 0px -75% 0px"
+      root: this.article,
+      rootMargin: "-24px 0px -75% 0px"
     })
 
     this.headings.forEach(heading => this.observer.observe(heading))
@@ -116,6 +119,33 @@ export default class extends Controller {
     scrollContainer.scrollTo({
       top: targetTop,
       behavior: "smooth"
+    })
+  }
+
+  scrollArticleToHeading(heading, behavior = "smooth") {
+    if (!this.article || !heading) return
+
+    const articleRect = this.article.getBoundingClientRect()
+    const headingRect = heading.getBoundingClientRect()
+    const topPadding = 20
+    const targetTop = this.article.scrollTop + headingRect.top - articleRect.top - topPadding
+
+    this.article.scrollTo({
+      top: Math.max(targetTop, 0),
+      behavior
+    })
+  }
+
+  scrollToInitialHash() {
+    if (!window.location.hash) return
+
+    const hash = decodeURIComponent(window.location.hash.slice(1))
+    const heading = this.headings.find((item) => item.id === hash)
+    if (!heading) return
+
+    requestAnimationFrame(() => {
+      this.activateLink(heading.id)
+      this.scrollArticleToHeading(heading, "auto")
     })
   }
 

@@ -15,51 +15,52 @@
 <% content_for :navbar_breadcrumbs do %>
   <nav class="node-public-breadcrumb" aria-label="Percorso">
     <% @breadcrumbs.each_with_index do |node, index| %>
-      <% breadcrumb_label = (@navigation_domain.present? && node == @navigation_root_node) ? @navigation_domain.display_hostname : node.title %>
+      <% domain_breadcrumb = @navigation_domain.present? && node == @navigation_root_node %>
+      <% breadcrumb_label = domain_breadcrumb ? @navigation_domain.display_hostname : node.title %>
       <% if index.positive? %>
         <span class="node-public-breadcrumb-separator">/</span>
       <% end %>
       <% if node == @node %>
-        <span aria-current="page" class="node-public-breadcrumb-current"><%= breadcrumb_label %></span>
+        <span aria-current="page" class="node-public-breadcrumb-current">
+          <% if domain_breadcrumb && (@navigation_domain.logo_full_url.present? || @navigation_domain.logo_square_url.present?) %>
+            <span class="node-public-breadcrumb-brand">
+              <% if @navigation_domain.logo_square_url.present? %>
+                <%= image_tag @navigation_domain.logo_square_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-square #{'sm:hidden' if @navigation_domain.logo_full_url.present?}" %>
+              <% end %>
+              <% if @navigation_domain.logo_full_url.present? %>
+                <%= image_tag @navigation_domain.logo_full_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-full #{'hidden sm:block' if @navigation_domain.logo_square_url.present?}" %>
+              <% end %>
+              <span class="sr-only"><%= breadcrumb_label %></span>
+            </span>
+          <% else %>
+            <%= breadcrumb_label %>
+          <% end %>
+        </span>
       <% else %>
-        <%= link_to breadcrumb_label, flowtree_public_node_path(node), class: "node-public-breadcrumb-link" %>
+        <%= link_to flowtree_public_node_path(node), class: "node-public-breadcrumb-link" do %>
+          <% if domain_breadcrumb && (@navigation_domain.logo_full_url.present? || @navigation_domain.logo_square_url.present?) %>
+            <span class="node-public-breadcrumb-brand">
+              <% if @navigation_domain.logo_square_url.present? %>
+                <%= image_tag @navigation_domain.logo_square_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-square #{'sm:hidden' if @navigation_domain.logo_full_url.present?}" %>
+              <% end %>
+              <% if @navigation_domain.logo_full_url.present? %>
+                <%= image_tag @navigation_domain.logo_full_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-full #{'hidden sm:block' if @navigation_domain.logo_square_url.present?}" %>
+              <% end %>
+              <span class="sr-only"><%= breadcrumb_label %></span>
+            </span>
+          <% else %>
+            <%= breadcrumb_label %>
+          <% end %>
+        <% end %>
       <% end %>
     <% end %>
   </nav>
 <% end %>
 
-<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %>">
-
-  <% if @can_manage_public_node %>
-    <div class="node-public-status node-public-creator-bar">
-      <div class="node-public-creator-status">
-        <span class="node-public-creator-badge">
-          Stato: <strong><%= @node.status %></strong>
-        </span>
-        <span class="node-public-creator-badge">
-          Visibilita: <strong><%= Node.visibility_label(@node.visibility) %></strong>
-        </span>
-      </div>
-      <div class="node-public-creator-actions">
-        <%= link_to tree_creator_world_role_assignment_node_path(@node.role_assignment, @node), class: "node-public-creator-btn" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-          </svg>
-          <span>Albero</span>
-        <% end %>
-        <%= link_to edit_creator_world_role_assignment_node_path(@node.role_assignment, @node), class: "node-public-creator-btn" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-          </svg>
-          <span>Modifica</span>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="node-public-layout">
+<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> lg:min-h-0">
+  <div class="node-public-layout lg:min-h-0">
     <% if has_sidebar %>
-      <aside class="node-public-sidebar">
+      <aside class="node-public-sidebar lg:min-h-0">
         <div class="node-public-sidebar-mobile-header lg:hidden flex justify-between items-center px-4 py-3 border-b border-slate-100 mb-4 bg-slate-50 rounded-t-xl">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Navigazione</span>
           <button id="closeSiblingSidebarButton" type="button" class="p-2 -mr-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0" aria-label="Chiudi menu laterale">
@@ -116,7 +117,7 @@
       </aside>
     <% end %>
 
-    <main class="node-public-article">
+    <main class="node-public-article lg:min-h-0">
       <p class="node-public-kicker">
         <%= @node.node_type.presence || @node.content_type.presence || "Articolo" %>
       </p>
@@ -196,7 +197,7 @@
     </main>
 
     <!-- Right Sidebar Table of Contents (TOC) -->
-    <aside data-controller="toc" class="node-public-toc-sidebar">
+    <aside data-controller="toc" class="node-public-toc-sidebar xl:min-h-0">
       <div class="node-public-sidebar-mobile-header xl:hidden flex justify-between items-center px-4 py-3 border-b border-slate-100 mb-4 bg-slate-50 rounded-t-xl">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Indice</span>
         <button id="closeTocSidebarButton" type="button" class="p-2 -mr-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0" aria-label="Chiudi indice">

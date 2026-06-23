@@ -107,6 +107,46 @@
           </svg>
         </button>
 
+        <% if @can_manage_public_node %>
+          <details class="relative">
+            <summary class="node-public-creator-menu-toggle flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100" aria-label="Apri strumenti creator">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4.5 w-4.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.66.84.083.037.165.076.246.117.334.169.73.16 1.045-.043l1.08-.696a1.125 1.125 0 011.45.12l1.833 1.833c.389.389.44.997.12 1.45l-.696 1.08c-.203.315-.212.711-.043 1.045.041.081.08.163.117.246.154.347.466.597.84.66l1.281.213c.542.09.94.56.94 1.11v2.593c0 .55-.398 1.02-.94 1.11l-1.281.213c-.374.063-.686.313-.84.66a6.963 6.963 0 01-.117.246c-.169.334-.16.73.043 1.045l.696 1.08c.32.453.269 1.061-.12 1.45l-1.833 1.833a1.125 1.125 0 01-1.45.12l-1.08-.696c-.315-.203-.711-.212-1.045-.043a6.963 6.963 0 01-.246.117c-.347.154-.597.466-.66.84l-.213 1.281c-.09.542-.56.94-1.11.94h-2.593c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.66-.84a6.963 6.963 0 01-.246-.117c-.334-.169-.73-.16-1.045.043l-1.08.696a1.125 1.125 0 01-1.45-.12l-1.833-1.833a1.125 1.125 0 01-.12-1.45l.696-1.08c.203-.315.212-.711.043-1.045a6.963 6.963 0 01-.117-.246c-.154-.347-.466-.597-.84-.66l-1.281-.213a1.125 1.125 0 01-.94-1.11v-2.593c0-.55.398-1.02.94-1.11l1.281-.213c.374-.063.686-.313.84-.66.037-.083.076-.165.117-.246.169-.334.16-.73-.043-1.045l-.696-1.08a1.125 1.125 0 01.12-1.45l1.833-1.833a1.125 1.125 0 011.45-.12l1.08.696c.315.203.711.212 1.045.043.081-.041.163-.08.246-.117.347-.154.597-.466.66-.84l.213-1.281z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </summary>
+            <div class="absolute right-0 z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+              <div class="px-3 py-2">
+                <p class="text-sm font-bold text-slate-950">Creator</p>
+                <p class="truncate text-xs text-slate-500"><%= @node.title %></p>
+              </div>
+              <div class="grid grid-cols-2 gap-2 px-3 py-2 text-xs">
+                <div class="rounded-lg bg-slate-50 px-2.5 py-2">
+                  <span class="block font-bold text-slate-400">Stato</span>
+                  <strong class="mt-1 block text-slate-900"><%= @node.status %></strong>
+                </div>
+                <div class="rounded-lg bg-slate-50 px-2.5 py-2">
+                  <span class="block font-bold text-slate-400">Visibilita</span>
+                  <strong class="mt-1 block text-slate-900"><%= Node.visibility_label(@node.visibility) %></strong>
+                </div>
+              </div>
+              <div class="my-1 border-t border-slate-100"></div>
+              <%= link_to tree_creator_world_role_assignment_node_path(@node.role_assignment, @node), class: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4 text-blue-600">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25A2.25 2.25 0 0113.5 8.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                </svg>
+                <span>Albero</span>
+              <% end %>
+              <%= link_to edit_creator_world_role_assignment_node_path(@node.role_assignment, @node), class: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4 text-blue-600">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                </svg>
+                <span>Modifica</span>
+              <% end %>
+            </div>
+          </details>
+        <% end %>
+
         <details class="relative">
           <summary class="flex cursor-pointer list-none items-center justify-center rounded-full border border-slate-200 bg-white p-0 text-slate-600 hover:bg-slate-100" aria-label="<%= Current.user.present? ? 'Apri menu profilo' : 'Apri menu accesso' %>">
             <% if Current.user.present? %>
@@ -143,7 +183,7 @@
 
     <!-- Main Container -->
     <div class="flex-1 flex flex-col w-full max-w-8xl mx-auto relative">
-      <main class="flex-1 min-w-0 bg-white px-4 py-8 pb-28 sm:px-6 lg:px-12 xl:px-16">
+      <main class="flex-1 min-w-0 bg-white px-4 py-8 pb-20 sm:px-6 lg:px-12 xl:px-16">
         <% if notice = flash[:notice] %>
           <p class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"><%= notice %></p>
         <% end %>
