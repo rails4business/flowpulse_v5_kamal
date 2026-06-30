@@ -64,6 +64,48 @@ module Admin
       assert_response :success
     end
 
+    test "domains list groups canonical aliases under canonical host" do
+      Domain.create!(
+        hostname: "www.example-existing.com",
+        canonical_host: "example-existing.com",
+        locale: "it",
+        active: true
+      )
+
+      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
+      get admin_domains_url
+
+      assert_response :success
+      assert_select "tbody tr", 1
+      assert_select "td", text: /example-existing\.com/
+      assert_select "td", text: /www\.example-existing\.com/
+      assert_select "td", text: /Alias:/
+    end
+
+    test "domains list pins flowpulse base domain first" do
+      Domain.create!(
+        hostname: "flowpulse.net",
+        locale: "it",
+        target_controller: "landing",
+        target_action: "flowpulse",
+        active: true
+      )
+      Domain.create!(
+        hostname: "www.flowpulse.net",
+        canonical_host: "flowpulse.net",
+        locale: "it",
+        active: true
+      )
+
+      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
+      get admin_domains_url
+
+      assert_response :success
+      assert_select "tbody tr:first-child td", text: /flowpulse\.net/
+      assert_select "tbody tr:first-child td", text: /Applicazione base/
+      assert_select "tbody tr:first-child td", text: /www\.flowpulse\.net/
+    end
+
     test "superadmin can view new domain form" do
       post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
       get new_admin_domain_url

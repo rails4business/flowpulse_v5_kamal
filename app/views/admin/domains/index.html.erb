@@ -13,6 +13,12 @@
     </div>
   </header>
 
+  <% aliases_by_canonical = @domains.select { |domain| domain.canonical_host.present? }.group_by(&:canonical_host) %>
+  <% canonical_hosts = @domains.map(&:hostname) %>
+  <% base_domain_hosts = %w[flowpulse.net] %>
+  <% visible_domains = @domains.reject { |domain| domain.canonical_host.present? && canonical_hosts.include?(domain.canonical_host) } %>
+  <% visible_domains = visible_domains.sort_by { |domain| [base_domain_hosts.include?(domain.hostname) ? 0 : 1, domain.hostname] } %>
+
   <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
     <table class="w-full text-left text-sm">
       <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
@@ -27,14 +33,51 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
-        <% @domains.each do |domain| %>
+        <% visible_domains.each do |domain| %>
+          <% canonical_aliases = aliases_by_canonical[domain.hostname].to_a %>
           <tr>
             <td class="px-4 py-3 text-slate-500">#<%= domain.id %></td>
             <td class="px-4 py-3 font-semibold text-slate-950">
-              <%= link_to domain.hostname, "https://#{domain.hostname}", target: "_blank", rel: "noopener", class: "text-blue-700 hover:text-blue-500" %>
+              <div class="space-y-2">
+                <div class="flex flex-wrap items-center gap-2">
+                  <%= link_to domain.hostname, "https://#{domain.hostname}", target: "_blank", rel: "noopener", class: "text-blue-700 hover:text-blue-500" %>
+                  <% if base_domain_hosts.include?(domain.hostname) %>
+                    <span class="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-blue-700">
+                      Applicazione base
+                    </span>
+                  <% end %>
+                  <% if canonical_aliases.any? %>
+                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      <%= pluralize(canonical_aliases.size, "alias") %>
+                    </span>
+                  <% elsif domain.canonical_host.present? %>
+                    <span class="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-700">
+                      canonical non trovato
+                    </span>
+                  <% end %>
+                </div>
+
+                <% if canonical_aliases.any? %>
+                  <div class="space-y-1 border-l border-slate-200 pl-3 text-xs font-medium text-slate-500">
+                    <% canonical_aliases.each do |domain_alias| %>
+                      <div class="flex flex-wrap items-center gap-2">
+                        <span>Alias:</span>
+                        <%= link_to domain_alias.hostname, "https://#{domain_alias.hostname}", target: "_blank", rel: "noopener", class: "text-slate-700 hover:text-blue-600" %>
+                        <span class="text-slate-400">→</span>
+                        <span><%= domain.hostname %></span>
+                        <%= verified_link_to "Apri", admin_domain_path(domain_alias), class: "font-bold text-blue-600 hover:text-blue-500" %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% elsif domain.canonical_host.present? %>
+                  <div class="text-xs font-medium text-slate-500">
+                    Redirect canonical verso <span class="text-slate-700"><%= domain.canonical_host %></span>
+                  </div>
+                <% end %>
+              </div>
             </td>
             <td class="px-4 py-3 text-slate-600"><%= domain.role_assignment&.display_name || "-" %></td>
-            <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.presence || [domain.target_controller, domain.target_action].compact.join("#").presence || "-" %></td>
+            <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.present? ? "canonical → #{domain.canonical_host}" : [domain.target_controller, domain.target_action].compact.join("#").presence || "-" %></td>
             <td class="px-4 py-3 text-slate-600"><%= domain.locale %></td>
             <td class="px-4 py-3 text-slate-600"><%= domain.active? ? "Attivo" : "Disattivo" %></td>
             <td class="px-4 py-3 text-right">

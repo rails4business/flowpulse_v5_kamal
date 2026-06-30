@@ -1,0 +1,256 @@
+<% content_for :title, "PosturaCorretta" %>
+
+<% content_for :head do %>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pcblue: '#2563eb',
+            pcink: '#0f172a'
+          },
+          boxShadow: {
+            soft: '0 24px 70px rgba(15, 23, 42, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+    }
+
+    section[id] {
+      scroll-margin-top: 6rem;
+    }
+
+    .hero-bg {
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, .12), transparent 32rem),
+        radial-gradient(circle at top right, rgba(249, 115, 22, .10), transparent 30rem),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+  </style>
+<% end %>
+
+<div id="top" class="min-h-screen bg-white text-slate-950 antialiased">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+
+      <a href="#top" class="flex items-center gap-3" aria-label="PosturaCorretta home">
+        <img
+          src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
+          alt="PosturaCorretta"
+          class="h-8 w-auto"
+        >
+      </a>
+
+      <nav class="hidden items-center gap-5 text-sm font-semibold text-slate-600 md:flex">
+        <a href="#accademia" class="hover:text-blue-700">Accademia</a>
+        <a href="#eventi" class="hover:text-violet-700">Eventi</a>
+        <a href="#progetti" class="hover:text-orange-600">Progetti</a>
+        <a href="#salute" class="hover:text-emerald-700">Percorso Salute</a>
+        <a href="#libro" class="hover:text-slate-950">Libro</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <section class="hero-bg px-5 py-20 md:py-28">
+      <div class="mx-auto max-w-6xl text-center">
+
+        <p class="text-xs font-bold uppercase tracking-[0.24em] text-blue-700">
+          PosturaCorretta
+        </p>
+
+        <h1 class="mx-auto mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-6xl md:leading-[1.03]">
+          Una mappa per orientarti tra corpo, salute, formazione e progetti.
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+          Scegli da dove vuoi iniziare.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- 5 INGRESSI -->
+    <section class="px-5 py-16 md:py-24">
+      <div class="mx-auto max-w-6xl">
+
+        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+
+          <!-- 1 ACCADEMIA -->
+          <a
+            id="accademia"
+            href="#"
+            class="group flex min-h-72 flex-col justify-between rounded-[2rem] border border-blue-200 bg-blue-50 p-6 transition hover:-translate-y-1 hover:shadow-soft"
+          >
+            <div>
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-2xl text-white">
+                🎓
+              </div>
+
+              <p class="text-sm font-bold text-blue-700">01</p>
+
+              <h2 class="mt-3 text-2xl font-extrabold tracking-tight text-blue-800">
+                Inizia l’Accademia
+              </h2>
+            </div>
+
+            <p class="mt-8 text-sm font-bold text-blue-700">
+              Entra →
+            </p>
+          </a>
+
+          <!-- 2 EVENTI -->
+          <a
+            id="eventi"
+            href="#"
+            class="group flex min-h-72 flex-col justify-between rounded-[2rem] border border-violet-200 bg-violet-50 p-6 transition hover:-translate-y-1 hover:shadow-soft"
+          >
+            <div>
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-700 text-2xl text-white">
+                📅
+              </div>
+
+              <p class="text-sm font-bold text-violet-700">02</p>
+
+              <h2 class="mt-3 text-2xl font-extrabold tracking-tight text-violet-800">
+                Eventi
+              </h2>
+            </div>
+
+            <p class="mt-8 text-sm font-bold text-violet-700">
+              Partecipa →
+            </p>
+          </a>
+
+          <!-- 3 PROGETTI -->
+          <a
+            id="progetti"
+            href="#"
+            class="group flex min-h-72 flex-col justify-between rounded-[2rem] border border-orange-200 bg-orange-50 p-6 transition hover:-translate-y-1 hover:shadow-soft"
+          >
+            <div>
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-2xl text-white">
+                🚀
+              </div>
+
+              <p class="text-sm font-bold text-orange-600">03</p>
+
+              <h2 class="mt-3 text-2xl font-extrabold tracking-tight text-orange-700">
+                Progetti e Rails4Business
+              </h2>
+            </div>
+
+            <p class="mt-8 text-sm font-bold text-orange-600">
+              Costruisci →
+            </p>
+          </a>
+
+          <!-- 4 PERCORSO SALUTE -->
+          <a
+            id="salute"
+            href="#"
+            class="group flex min-h-72 flex-col justify-between rounded-[2rem] border border-emerald-200 bg-emerald-50 p-6 transition hover:-translate-y-1 hover:shadow-soft"
+          >
+            <div>
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-2xl text-white">
+                🌿
+              </div>
+
+              <p class="text-sm font-bold text-emerald-700">04</p>
+
+              <h2 class="mt-3 text-2xl font-extrabold tracking-tight text-emerald-800">
+                Inizia il Percorso della Salute
+              </h2>
+            </div>
+
+            <p class="mt-8 text-sm font-bold text-emerald-700">
+              Inizia →
+            </p>
+          </a>
+
+          <!-- 5 LIBRO -->
+          <a
+            id="libro"
+            href="#"
+            class="group flex min-h-72 flex-col justify-between rounded-[2rem] border border-slate-200 bg-slate-50 p-6 transition hover:-translate-y-1 hover:shadow-soft"
+          >
+            <div>
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-2xl text-white">
+                📘
+              </div>
+
+              <p class="text-sm font-bold text-slate-500">05</p>
+
+              <h2 class="mt-3 text-2xl font-extrabold tracking-tight text-slate-950">
+                Il libro Postura e Fisiologia
+              </h2>
+            </div>
+
+            <p class="mt-8 text-sm font-bold text-slate-700">
+              Leggi →
+            </p>
+          </a>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FRASE DI TRANSIZIONE -->
+    <section class="border-y border-slate-200 bg-slate-50 px-5 py-16">
+      <div class="mx-auto max-w-4xl text-center">
+        <p class="text-lg leading-8 text-slate-600">
+          PosturaCorretta è una mappa in costruzione: puoi iniziare dalle pagine scritte,
+          esplorare i contenuti pubblici e seguire l’evoluzione dei percorsi nel tempo.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 bg-white px-5 py-12">
+    <div class="mx-auto flex max-w-6xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
+
+      <div>
+        <img
+          src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
+          alt="PosturaCorretta"
+          class="h-7 w-auto"
+        >
+
+        <p class="mt-4 max-w-md text-sm leading-6 text-slate-500">
+          Educazione posturale, fisiologia, salute e progetti per comprendere meglio il corpo.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-4 text-sm font-semibold text-slate-500">
+        <a href="#accademia" class="hover:text-blue-700">Accademia</a>
+        <a href="#eventi" class="hover:text-violet-700">Eventi</a>
+        <a href="#progetti" class="hover:text-orange-600">Progetti</a>
+        <a href="#salute" class="hover:text-emerald-700">Salute</a>
+        <a href="#libro" class="hover:text-slate-950">Libro</a>
+      </div>
+
+    </div>
+  </footer>
+
+</div>
