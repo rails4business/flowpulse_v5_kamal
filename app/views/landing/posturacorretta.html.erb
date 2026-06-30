@@ -46,10 +46,18 @@
       backdrop-filter: blur(18px);
     }
 
-    .hero-image {
+    .hero-image-accademia {
       background-image:
         linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(15, 23, 42, .10)),
         url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-image-percorso {
+      background-image:
+        linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(15, 23, 42, .10)),
+        url('/images/percorso_hero.png');
       background-size: cover;
       background-position: center;
     }
@@ -159,7 +167,7 @@
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Percorso</p>
             <h2 class="mt-2 text-lg font-semibold text-slate-950">Personalizzato</h2>
             <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Scegli gli aspetti della salute su cui vuoi lavorare e costruisci il percorso più adatto a te.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Apri <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
+            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Inizia<span class="ml-1 transition group-hover:translate-x-1">→</span></span>
           </a>
 
           <a href="?tab=accademia#accademia" data-landing-tab="accademia" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4">
@@ -194,248 +202,211 @@
   </div>
 
   <!-- PERCORSO -->
-  <div id="percorso" data-tab-panel="percorso" class="<%= "hidden" unless active_landing_tab == "percorso" %>">
+  <!-- PERCORSO -->
+<div id="percorso" data-tab-panel="percorso" class="<%= "hidden" unless active_landing_tab == "percorso" %>">
 
-    <!-- HERO -->
-    <section class="px-5 py-16 md:py-24">
-      <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[.95fr_1.05fr]">
+  <section class="flex min-h-[calc(100vh-4rem)] items-center px-5 py-6 md:py-10">
+    <div class="mx-auto w-full max-w-6xl">
+      <div class="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-stretch xl:gap-12">
+
+        <!-- LEFT COLUMN: HERO TEXT + CHOICE CARDS -->
+        <div class="flex flex-col justify-between space-y-6">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+              Percorso personalizzato
+            </p>
+
+            <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+              Costruisci <span class="text-blue-700">il tuo percorso</span>
+            </h1>
+
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              Con le metodiche posturali abbiamo scelto di mettere al centro il corpo. Seleziona uno o più bisogni della tua situazione attuale per tracciare il tuo percorso di salute personalizzato.
+            </p>
+          </div>
+
+          <!-- CHOICE FORM -->
+          <div class="border-t border-slate-200 pt-6">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-950">
+              In cosa vuoi essere aiutato?
+            </h2>
+
+            <!-- 7 CHOICE CARDS -->
+            <div class="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+              <button type="button" data-choice="Cura e Riabilitazione" data-path-key="cura"
+                class="pc-choice rounded-2xl border border-red-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-red-700">Cura</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Cura e Riabilitazione</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Hai dolore, sintomi o una patologia?</p>
+              </button>
+
+              <button type="button" data-choice="Prevenzione" data-path-key="prevenzione"
+                class="pc-choice rounded-2xl border border-orange-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-orange-700">Prevenzione</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Prevenzione</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Lavoro, sport o età?</p>
+              </button>
+
+              <button type="button" data-choice="Performance" data-path-key="performance"
+                class="pc-choice rounded-2xl border border-yellow-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-yellow-700">Performance</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Performance</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Lavoro, studio o IA?</p>
+              </button>
+
+              <button type="button" data-choice="Benessere Integrato" data-path-key="benessere"
+                class="pc-choice rounded-2xl border border-emerald-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Benessere</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Benessere Integrato</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Salute, energia e qualità della vita?</p>
+              </button>
+
+              <button type="button" data-choice="Postura e Fisiologia" data-path-key="fisiologia"
+                class="pc-choice rounded-2xl border border-blue-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-700">Fisiologia</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Postura e Fisiologia</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Capire come funziona il corpo?</p>
+              </button>
+
+              <button type="button" data-choice="Corpo e Ambiente" data-path-key="ambiente"
+                class="pc-choice rounded-2xl border border-indigo-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-indigo-700">Ambiente</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Corpo e Ambiente</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Rapporto tra corpo e ambiente?</p>
+              </button>
+
+              <button type="button" data-choice="Potenziale Umano" data-path-key="potenziale"
+                class="pc-choice rounded-2xl border border-violet-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md sm:col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-violet-700">Potenziale</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Potenziale Umano</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Vuoi scoprire il tuo potenziale?</p>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: HERO IMAGE + SUMMARY BOX -->
+        <div class="flex flex-col justify-between space-y-6 lg:h-full">
+          <div class="flex-1 rounded-[2rem] border border-slate-200 bg-white p-3 shadow-soft min-h-[220px] lg:min-h-0">
+            <div class="hero-image-percorso h-full w-full rounded-[1.55rem]"></div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Hai selezionato
+              </p>
+
+              <p id="selected-paths-text" class="mt-2 min-h-12 text-sm font-semibold leading-6 text-slate-950">
+                Nessuna area selezionata.
+              </p>
+            </div>
+
+            <a id="start-whatsapp-link"
+               href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20iniziare%20un%20percorso%20con%20PosturaCorretta."
+               target="_blank"
+               rel="noopener noreferrer"
+               class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white hover:bg-blue-700 transition">
+              Inizia ora →
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MODALE DETTAGLI PERCORSO -->
+  <div id="path-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative w-full max-w-3xl rounded-[2rem] border border-slate-100 bg-white p-6 shadow-2xl md:p-10 flex flex-col max-h-[90vh]">
+      
+      <!-- Close button -->
+      <button id="close-modal-btn" type="button" class="absolute right-6 top-6 grid h-10 w-10 place-items-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition">
+        ✕
+      </button>
+
+      <!-- Modal Content (Scrollable) -->
+      <div class="overflow-y-auto flex-1 pr-2">
+        <p id="modal-path-kicker" class="text-xs font-semibold uppercase tracking-[0.22em] text-red-700">
+          Cura e Riabilitazione
+        </p>
+
+        <h2 id="modal-path-title" class="mt-4 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">
+          Dal dolore alla cura guidata.
+        </h2>
+
+        <p id="modal-path-description" class="mt-4 text-base leading-7 text-slate-600">
+          Per chi parte da dolore, sintomi, diagnosi, patologia o fase acuta.
+        </p>
+
+        <div class="mt-8 border-t border-slate-100 pt-6">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Tappe consigliate</p>
+          <h3 id="modal-path-steps-title" class="mt-1 text-lg font-semibold text-slate-950">Segui il percorso con calma.</h3>
+        </div>
+
+        <div id="modal-path-steps" class="mt-6 space-y-8"></div>
+
+        <!-- Join Box (for professionals) -->
+        <div id="modal-join-box" class="mt-8 rounded-2xl border border-slate-100 bg-slate-50 p-6">
+          <p id="modal-join-kicker" class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">
+            Aderisci al progetto
+          </p>
+          <h3 id="modal-join-title" class="mt-2 text-lg font-semibold text-slate-950">
+            Sei un professionista?
+          </h3>
+          <p id="modal-join-description" class="mt-3 text-sm leading-6 text-slate-600">
+            Puoi collaborare e integrare il percorso PosturaCorretta.
+          </p>
+          <div id="modal-join-tags" class="mt-4 flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="mt-6 border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
+        <button id="modal-select-btn" type="button" class="flex-1 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-blue-700 transition">
+          Seleziona questo percorso
+        </button>
+        <button id="modal-cancel-btn" type="button" class="rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+          Chiudi
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+  <!-- ACCADEMIA -->
+  <div id="accademia" data-tab-panel="accademia" class="<%= "hidden" unless active_landing_tab == "accademia" %>">
+    <section class="px-5 py-12 md:py-16">
+      <div class="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[.95fr_1.05fr]">
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
             Accademia PosturaCorretta
           </p>
 
           <h1 class="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.03]">
-            Una mappa per costruire
-            <span class="text-blue-700">il tuo percorso della salute.</span>
+            Lezioni, strumenti e mappe per
+            <span class="text-blue-700">imparare a leggere il corpo</span>
           </h1>
 
           <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-600">
-            PosturaCorretta ti aiuta a orientarti tra dolore, prevenzione, benessere, conoscenza del corpo,
-            rapporto corpo-ambiente e sviluppo del potenziale umano.
+            Questo spazio raccoglierà contenuti didattici, video-lezioni, schede pratiche e mappe anatomiche dell'Accademia PosturaCorretta.
           </p>
 
           <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-            Non devi capire tutto subito. Parti dalla domanda più semplice: in cosa vuoi essere aiutato adesso?
+            Con le metodiche posturali impariamo a leggere i segni del corpo e riattivare i suoi sistemi di autoguarigione e di relazione con l'ambiente.
           </p>
 
-          <div class="mt-9 flex flex-wrap gap-3">
-            <a href="#inizia" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
-              Scegli il tuo percorso
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="?tab=percorso#percorso" data-landing-tab="percorso" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+              Inizia il tuo percorso
             </a>
-            <button type="button" data-jump-tab="eventi" class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
-              Guarda gli eventi
-            </button>
           </div>
         </div>
 
         <div class="rounded-[2rem] border border-slate-200 bg-white p-3 shadow-soft">
-          <div class="hero-image aspect-[16/10] rounded-[1.55rem]"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PERCORSI -->
-    <section id="inizia" class="border-y border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
-      <div class="mx-auto max-w-6xl">
-
-        <div class="max-w-4xl">
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-            Percorsi dell'Accademia
-          </p>
-
-          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
-            In cosa vuoi essere aiutato?
-          </h2>
-
-          <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-            Scegli l'area più vicina alla tua situazione. Ogni scelta apre una traccia: contenuti, strumenti,
-            tappe, professionisti o attività da completare.
-          </p>
-        </div>
-
-        <!-- SCELTA PERCORSO -->
-        <div class="mt-12 grid gap-3 md:grid-cols-2 xl:grid-cols-7">
-
-          <button data-path-tab="cura" class="pc-path-tab flex min-h-40 items-start gap-4 rounded-2xl border border-red-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-red-300 hover:shadow-md xl:col-span-1">
-            <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-red-600 ring-4 ring-red-100"></span>
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-red-700">Cura</span>
-              <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Cura e Riabilitazione</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-600">Hai dolore, sintomi o una patologia?</span>
-              <span class="mt-4 block text-sm font-semibold text-red-700">Apri percorso</span>
-            </span>
-          </button>
-
-          <button data-path-tab="prevenzione" class="pc-path-tab flex min-h-40 items-start gap-4 rounded-2xl border border-orange-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-orange-300 hover:shadow-md xl:col-span-1">
-            <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-orange-500 ring-4 ring-orange-100"></span>
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">Prevenzione</span>
-              <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Prevenzione</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-600">Vuoi prevenire problemi legati a lavoro, sport o età?</span>
-              <span class="mt-4 block text-sm font-semibold text-orange-700">Apri percorso</span>
-            </span>
-          </button>
-
-          <button data-path-tab="performance" class="pc-path-tab flex min-h-40 items-start gap-4 rounded-2xl border border-yellow-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-yellow-300 hover:shadow-md xl:col-span-1">
-            <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-yellow-400 ring-4 ring-yellow-100"></span>
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-yellow-700">Performance</span>
-              <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Performance</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-600">Vuoi migliorare lavoro, studio o capacità cognitive?</span>
-              <span class="mt-4 block text-sm font-semibold text-yellow-700">Apri percorso</span>
-            </span>
-          </button>
-
-          <button data-path-tab="benessere" class="pc-path-tab flex min-h-40 items-start gap-4 rounded-2xl border border-emerald-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md xl:col-span-1">
-            <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-emerald-600 ring-4 ring-emerald-100"></span>
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Benessere</span>
-              <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Benessere Integrato</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-600">Vuoi migliorare salute, energia e qualità della vita?</span>
-              <span class="mt-4 block text-sm font-semibold text-emerald-700">Apri percorso</span>
-            </span>
-          </button>
-
-          <button data-path-tab="fisiologia" class="pc-path-tab flex min-h-40 items-start gap-4 rounded-2xl border border-blue-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md xl:col-span-1">
-            <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-blue-600 ring-4 ring-blue-100"></span>
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Fisiologia</span>
-              <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Postura e Fisiologia</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-600">Vuoi capire come funziona il corpo?</span>
-              <span class="mt-4 block text-sm font-semibold text-blue-700">Apri percorso</span>
-            </span>
-          </button>
-
-          <button data-path-tab="ambiente" class="pc-path-tab flex min-h-40 items-start gap-4 rounded-2xl border border-indigo-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md xl:col-span-1">
-            <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-indigo-600 ring-4 ring-indigo-100"></span>
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-indigo-700">Ambiente</span>
-              <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Corpo e Ambiente</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-600">Vuoi comprendere il rapporto tra corpo e ambiente?</span>
-              <span class="mt-4 block text-sm font-semibold text-indigo-700">Apri percorso</span>
-            </span>
-          </button>
-
-          <button data-path-tab="potenziale" class="pc-path-tab flex min-h-40 items-start gap-4 rounded-2xl border border-violet-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md xl:col-span-1">
-            <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-violet-700 ring-4 ring-violet-100"></span>
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Potenziale</span>
-              <span class="mt-2 block text-lg font-semibold leading-6 text-slate-950">Potenziale Umano</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-600">Vuoi scoprire il tuo potenziale?</span>
-              <span class="mt-4 block text-sm font-semibold text-violet-700">Apri percorso</span>
-            </span>
-          </button>
-
-        </div>
-
-        <!-- CONTENUTO DINAMICO -->
-        <div id="percorso-dettaglio" class="mt-14 grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
-
-          <aside class="lg:sticky lg:top-28 lg:h-fit">
-            <p id="path-kicker" class="text-xs font-semibold uppercase tracking-[0.22em] text-red-700">
-              Cura e Riabilitazione
-            </p>
-
-            <h2 id="path-title" class="mt-4 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
-              Dal dolore alla cura guidata.
-            </h2>
-
-            <p id="path-description" class="mt-5 text-lg leading-8 text-slate-600">
-              Per chi parte da dolore, diagnosi, patologia o fase acuta.
-            </p>
-          </aside>
-
-          <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft md:p-10">
-            <div class="mb-10 border-b border-slate-100 pb-8">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Tappe consigliate</p>
-              <h3 id="path-steps-title" class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Segui il percorso con calma.</h3>
-            </div>
-
-            <div id="path-steps" class="space-y-10"></div>
-
-            <div id="path-final-cta" class="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Vuoi completare qualcosa?</p>
-              <p id="path-bottom-text" class="mt-2 text-lg font-semibold text-slate-950">Inizia dal percorso più vicino alla tua situazione.</p>
-
-              <a id="path-bottom-start-link" href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20iniziare%20un%20percorso%20con%20PosturaCorretta."
-                target="_blank" rel="noopener noreferrer"
-                class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-red-600 px-8 py-5 text-base font-semibold text-white opacity-90 md:text-lg">
-                Scrivi su WhatsApp →
-              </a>
-            </div>
-
-            <div id="join-box" class="mt-10 rounded-[2rem] border border-red-200 bg-white p-7 shadow-sm">
-              <p id="join-kicker" class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">
-                Aderisci al progetto
-              </p>
-
-              <h3 id="join-title" class="mt-3 text-2xl font-semibold text-slate-950">
-                Sei un professionista sanitario?
-              </h3>
-
-              <p id="join-description" class="mt-4 text-base leading-7 text-slate-600">
-                Puoi integrare il percorso PosturaCorretta nei tuoi trattamenti e accompagnare le persone oltre la sola gestione del dolore.
-              </p>
-
-              <div id="join-tags" class="mt-5 flex flex-wrap gap-2"></div>
-
-              <button id="join-link" type="button" data-jump-tab="collabora"
-                class="mt-6 inline-flex rounded-full border border-red-200 px-5 py-3 text-sm font-semibold text-red-700 hover:bg-red-50">
-                Scopri come aderire →
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- MANIFESTO BREVE -->
-    <section class="bg-white px-5 py-20 md:py-24">
-      <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-            La postura non è qualcosa da correggere, ma da comprendere
-          </p>
-          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.05]">
-            Il corpo è un mondo da scoprire.
-          </h2>
-        </div>
-
-        <div class="text-lg leading-8 text-slate-600">
-          <p>
-            Il percorso parte spesso dal dolore, ma non si ferma lì. Attraversa cura, prevenzione,
-            performance, benessere, fisiologia, ambiente e potenziale umano.
-          </p>
-          <p class="mt-6">
-            L'obiettivo è aiutare le persone a trovare il proprio punto di vista da cui osservare la salute,
-            scegliere strumenti pratici e costruire un percorso sostenibile.
-          </p>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- ACCADEMIA -->
-  <div id="accademia" data-tab-panel="accademia" class="<%= "hidden" unless active_landing_tab == "accademia" %>">
-    <section class="bg-white px-5 py-20 md:py-24">
-      <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-            Accademia
-          </p>
-          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.05]">
-            Lezioni, strumenti e mappe per imparare a leggere il corpo.
-          </h2>
-        </div>
-
-        <div class="text-lg leading-8 text-slate-600">
-          <p>
-            Questo spazio raccoglierà contenuti didattici, percorsi guidati e materiali dell'Accademia PosturaCorretta.
-          </p>
-          <p class="mt-6">
-            Per ora puoi partire dai percorsi personalizzati e tornare qui quando aggiungeremo i moduli completi.
-          </p>
+          <div class="hero-image-accademia aspect-[16/10] rounded-[1.55rem]"></div>
         </div>
       </div>
     </section>
@@ -842,161 +813,155 @@
   };
 
   const colorClasses = {
-    red: {
-      text: "text-red-700", bg: "bg-red-600", soft: "bg-red-50", border: "border-red-200", activeBorder: "border-red-400", hover: "hover:bg-red-50", ring: "ring-red-500"
-    },
-    orange: {
-      text: "text-orange-700", bg: "bg-orange-500", soft: "bg-orange-50", border: "border-orange-200", activeBorder: "border-orange-400", hover: "hover:bg-orange-50", ring: "ring-orange-500"
-    },
-    yellow: {
-      text: "text-yellow-700", bg: "bg-yellow-400", soft: "bg-yellow-50", border: "border-yellow-200", activeBorder: "border-yellow-400", hover: "hover:bg-yellow-50", ring: "ring-yellow-500"
-    },
-    emerald: {
-      text: "text-emerald-700", bg: "bg-emerald-600", soft: "bg-emerald-50", border: "border-emerald-200", activeBorder: "border-emerald-400", hover: "hover:bg-emerald-50", ring: "ring-emerald-500"
-    },
-    blue: {
-      text: "text-blue-700", bg: "bg-blue-600", soft: "bg-blue-50", border: "border-blue-200", activeBorder: "border-blue-400", hover: "hover:bg-blue-50", ring: "ring-blue-500"
-    },
-    indigo: {
-      text: "text-indigo-700", bg: "bg-indigo-600", soft: "bg-indigo-50", border: "border-indigo-200", activeBorder: "border-indigo-400", hover: "hover:bg-indigo-50", ring: "ring-indigo-500"
-    },
-    violet: {
-      text: "text-violet-700", bg: "bg-violet-700", soft: "bg-violet-50", border: "border-violet-200", activeBorder: "border-violet-400", hover: "hover:bg-violet-50", ring: "ring-violet-500"
-    }
+    red: { text: "text-red-700", bg: "bg-red-600", bgHover: "hover:bg-red-700", soft: "bg-red-50", border: "border-red-200" },
+    orange: { text: "text-orange-700", bg: "bg-orange-500", bgHover: "hover:bg-orange-600", soft: "bg-orange-50", border: "border-orange-200" },
+    yellow: { text: "text-yellow-700", bg: "bg-yellow-400", bgHover: "hover:bg-yellow-500", soft: "bg-yellow-50", border: "border-yellow-200" },
+    emerald: { text: "text-emerald-700", bg: "bg-emerald-600", bgHover: "hover:bg-emerald-700", soft: "bg-emerald-50", border: "border-emerald-200" },
+    blue: { text: "text-blue-700", bg: "bg-blue-600", bgHover: "hover:bg-blue-700", soft: "bg-blue-50", border: "border-blue-200" },
+    indigo: { text: "text-indigo-700", bg: "bg-indigo-600", bgHover: "hover:bg-indigo-700", soft: "bg-indigo-50", border: "border-indigo-200" },
+    violet: { text: "text-violet-700", bg: "bg-violet-700", bgHover: "hover:bg-violet-800", soft: "bg-violet-50", border: "border-violet-200" }
   };
 
-  const allowedPathTabs = ["cura", "prevenzione", "performance", "benessere", "fisiologia", "ambiente", "potenziale"];
+  (() => {
+    const cards = document.querySelectorAll("#percorso .pc-choice");
+    const outputText = document.getElementById("selected-paths-text");
+    const waLink = document.getElementById("start-whatsapp-link");
+    const selectedChoices = new Set();
 
-  function renderPath(key) {
-    const path = academyPaths[key];
-    const c = colorClasses[path.color];
+    // Modal elements
+    const modal = document.getElementById("path-modal");
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    const cancelModalBtn = document.getElementById("modal-cancel-btn");
+    const selectModalBtn = document.getElementById("modal-select-btn");
 
-    document.getElementById("path-kicker").textContent = path.kicker;
-    document.getElementById("path-kicker").className = `text-xs font-semibold uppercase tracking-[0.22em] ${c.text}`;
-    document.getElementById("path-title").textContent = path.title;
-    document.getElementById("path-description").textContent = path.description;
-    document.getElementById("path-steps-title").textContent = path.stepsTitle;
+    let modalActiveKey = null;
+    let modalActiveChoice = null;
 
-    document.getElementById("join-box").className = `mt-10 rounded-[2rem] border ${c.border} bg-white p-7 shadow-sm`;
-    document.getElementById("join-kicker").className = `text-xs font-semibold uppercase tracking-[0.18em] ${c.text}`;
-    document.getElementById("join-title").textContent = path.joinTitle;
-    document.getElementById("join-description").textContent = path.joinDescription;
-    document.getElementById("join-link").className = `mt-6 inline-flex rounded-full border ${c.border} px-5 py-3 text-sm font-semibold ${c.text} ${c.hover}`;
+    function updateWhatsappText() {
+      const values = Array.from(selectedChoices);
+      outputText.textContent = values.length ? values.join(", ") : "Nessuna area selezionata.";
+      const msg = values.length
+        ? `Ciao, vorrei iniziare un percorso con PosturaCorretta. Le aree che mi interessano sono: ${values.join(", ")}.`
+        : "Ciao, vorrei iniziare un percorso con PosturaCorretta.";
+      waLink.href = `https://wa.me/393792891488?text=${encodeURIComponent(msg)}`;
+    }
 
-    document.getElementById("path-bottom-start-link").className = `mt-6 inline-flex w-full items-center justify-center rounded-2xl ${c.bg} px-8 py-5 text-base font-semibold text-white opacity-90 md:text-lg`;
-    document.getElementById("path-bottom-text").textContent = `Inizia da ${path.kicker}.`;
-    document.getElementById("path-bottom-start-link").href = `https://wa.me/393792891488?text=${encodeURIComponent(`Ciao, vorrei iniziare da ${path.kicker} con PosturaCorretta.`)}`;
+    function openModal(key, choice) {
+      modalActiveKey = key;
+      modalActiveChoice = choice;
+      const path = academyPaths[key];
+      const c = colorClasses[path.color];
 
-    const joinTags = document.getElementById("join-tags");
-    joinTags.innerHTML = path.joinTags.map(tag => `
-      <span class="rounded-full ${c.soft} px-3 py-1 text-xs font-medium ${c.text}">${tag}</span>
-    `).join("");
+      // Populate text details
+      document.getElementById("modal-path-kicker").textContent = path.kicker;
+      document.getElementById("modal-path-kicker").className = `text-xs font-semibold uppercase tracking-[0.22em] ${c.text}`;
+      document.getElementById("modal-path-title").textContent = path.title;
+      document.getElementById("modal-path-description").textContent = path.description;
+      document.getElementById("modal-path-steps-title").textContent = path.stepsTitle;
 
-    const container = document.getElementById("path-steps");
-    container.innerHTML = "";
-
-    path.steps.forEach((step, index) => {
-      const [label, title, description, tags, modules = []] = step;
-
-      container.innerHTML += `
-        <article class="${index < path.steps.length - 1 ? "step-line" : ""} relative cursor-pointer rounded-2xl pl-14 pr-3 py-2 transition hover:bg-slate-50" data-scroll-to-cta="true">
-          <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full ${c.bg} text-sm font-semibold text-white">
-            ${index + 1}
-          </div>
-
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] ${c.text}">${label}</p>
-            <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">${title}</h3>
-
-            ${description ? `<p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">${description}</p>` : ""}
-
-            <div class="mt-4 flex flex-wrap gap-2">
-              ${tags.map(tag => `<span class="rounded-full ${c.soft} px-3 py-1 text-xs font-medium ${c.text}">${tag}</span>`).join("")}
+      // Populate Steps
+      const stepsContainer = document.getElementById("modal-path-steps");
+      stepsContainer.innerHTML = "";
+      path.steps.forEach((step, index) => {
+        const [label, title, description, tags, modules = []] = step;
+        stepsContainer.innerHTML += `
+          <article class="relative pl-14 py-1">
+            <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full ${c.bg} text-sm font-semibold text-white">
+              ${index + 1}
             </div>
-
-            ${modules.length ? `
-              <div class="mt-6 grid gap-3">
-                ${modules.map(([moduleNumber, moduleTitle, moduleItems]) => `
-                  <div class="rounded-2xl border ${c.border} bg-white p-4">
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] ${c.text}">${moduleNumber}</p>
-                    <h4 class="mt-1 text-base font-semibold text-slate-950">${moduleTitle}</h4>
-                    ${moduleItems.length ? `
-                      <ul class="mt-3 grid gap-1 text-sm leading-6 text-slate-600 sm:grid-cols-2">
-                        ${moduleItems.map(item => `<li>• ${item}</li>`).join("")}
-                      </ul>
-                    ` : ""}
-                  </div>
-                `).join("")}
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] ${c.text}">${label}</p>
+              <h3 class="mt-1 text-lg font-semibold tracking-tight text-slate-950">${title}</h3>
+              ${description ? `<p class="mt-2 text-sm leading-6 text-slate-600">${description}</p>` : ""}
+              <div class="mt-3 flex flex-wrap gap-2">
+                ${tags.map(tag => `<span class="rounded-full ${c.soft} px-2.5 py-0.5 text-xs font-medium ${c.text}">${tag}</span>`).join("")}
               </div>
-            ` : ""}
-          </div>
-        </article>
-      `;
+              ${modules.length ? `
+                <div class="mt-4 grid gap-2.5">
+                  ${modules.map(([mNumber, mTitle, mItems]) => `
+                    <div class="rounded-xl border ${c.border} bg-white p-3.5">
+                      <p class="text-[10px] font-semibold uppercase tracking-[0.18em] ${c.text}">${mNumber}</p>
+                      <h4 class="mt-0.5 text-sm font-semibold text-slate-950">${mTitle}</h4>
+                      ${mItems.length ? `
+                        <ul class="mt-2 grid gap-0.5 text-xs leading-5 text-slate-600 sm:grid-cols-2">
+                          ${mItems.map(item => `<li>• ${item}</li>`).join("")}
+                        </ul>
+                      ` : ""}
+                    </div>
+                  `).join("")}
+                </div>
+              ` : ""}
+            </div>
+          </article>
+        `;
+      });
+
+      // Populate Join Box
+      document.getElementById("modal-join-box").className = `mt-8 rounded-2xl border ${c.border} bg-slate-50 p-6`;
+      document.getElementById("modal-join-kicker").className = `text-xs font-semibold uppercase tracking-[0.18em] ${c.text}`;
+      document.getElementById("modal-join-title").textContent = path.joinTitle;
+      document.getElementById("modal-join-description").textContent = path.joinDescription;
+      const joinTags = document.getElementById("modal-join-tags");
+      joinTags.innerHTML = path.joinTags.map(tag => `
+        <span class="rounded-full ${c.soft} px-2.5 py-0.5 text-xs font-medium ${c.text}">${tag}</span>
+      `).join("");
+
+      // Select button colors
+      selectModalBtn.className = `flex-1 rounded-xl px-6 py-3.5 text-sm font-semibold text-white transition ${c.bg} ${c.bgHover}`;
+      selectModalBtn.textContent = `Seleziona: ${path.kicker}`;
+
+      // Open modal
+      modal.classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+      modalActiveKey = null;
+      modalActiveChoice = null;
+    }
+
+    // Select button inside modal
+    selectModalBtn.addEventListener("click", () => {
+      if (modalActiveChoice) {
+        selectedChoices.add(modalActiveChoice);
+        const card = document.querySelector(`[data-choice="${modalActiveChoice}"]`);
+        if (card) {
+          card.classList.remove("bg-white");
+          card.classList.add("ring-2", "ring-blue-600", "bg-blue-50");
+        }
+        updateWhatsappText();
+      }
+      closeModal();
     });
 
-    document.querySelectorAll("[data-scroll-to-cta]").forEach(step => {
-      step.addEventListener("click", () => {
-        document.getElementById("path-final-cta")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    cards.forEach(card => {
+      card.addEventListener("click", () => {
+        const choice = card.dataset.choice;
+        const key = card.dataset.pathKey;
+
+        if (selectedChoices.has(choice)) {
+          // If already selected, click immediately deselects it without modal opening
+          selectedChoices.delete(choice);
+          card.classList.remove("ring-2", "ring-blue-600", "bg-blue-50");
+          card.classList.add("bg-white");
+          updateWhatsappText();
+        } else {
+          // Open details modal
+          openModal(key, choice);
+        }
       });
     });
 
-    document.querySelectorAll(".pc-path-tab").forEach(tab => {
-      tab.classList.remove(
-        "ring-2",
-        "ring-red-500", "ring-orange-500", "ring-yellow-500", "ring-emerald-500", "ring-blue-500", "ring-indigo-500", "ring-violet-500",
-        "bg-red-50", "bg-orange-50", "bg-yellow-50", "bg-emerald-50", "bg-blue-50", "bg-indigo-50", "bg-violet-50",
-        "border-red-400", "border-orange-400", "border-yellow-400", "border-emerald-400", "border-blue-400", "border-indigo-400", "border-violet-400",
-        "shadow-md"
-      );
-      tab.classList.add("bg-white");
+    closeModalBtn.addEventListener("click", closeModal);
+    cancelModalBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
     });
 
-    const activeTab = document.querySelector(`[data-path-tab="${key}"]`);
-    activeTab.classList.remove("bg-white");
-    activeTab.classList.add("ring-2", c.ring, c.soft, c.activeBorder, "shadow-md");
-  }
-
-  function getInitialPath() {
-    const params = new URLSearchParams(window.location.search);
-    const urlPath = params.get("path");
-    if (allowedPathTabs.includes(urlPath)) {
-      localStorage.setItem("posturacorretta_active_academy_path", urlPath);
-      return urlPath;
-    }
-
-    const savedPath = localStorage.getItem("posturacorretta_active_academy_path");
-    if (allowedPathTabs.includes(savedPath)) return savedPath;
-
-    return "cura";
-  }
-
-  function updatePathState(key) {
-    const url = new URL(window.location);
-    url.searchParams.set("tab", "percorso");
-    url.searchParams.set("path", key);
-    window.history.replaceState({}, "", url);
-    localStorage.setItem("posturacorretta_active_academy_path", key);
-  }
-
-  function scrollToPathDetail() {
-    document.getElementById("percorso-dettaglio")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  document.querySelectorAll(".pc-path-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      const key = tab.dataset.pathTab;
-      renderPath(key);
-      updatePathState(key);
-      scrollToPathDetail();
-    });
-  });
-
-  const initialPath = getInitialPath();
-  renderPath(initialPath);
-
-  if (new URLSearchParams(window.location.search).has("path")) {
-    window.setTimeout(scrollToPathDetail, 120);
-  }
+    updateWhatsappText();
+  })();
 </script>
 
 <script>

@@ -8,7 +8,7 @@ module FlowRoles
   }.freeze
   ASIDE_CONTEXTS = {
     "traveler" => { eyebrow: "Workspace", title: "Esperienze", subtitle: "Eventi, categorie e brand" },
-    "creator" => { eyebrow: "Workspace", title: "Creator World", subtitle: "Progetti, format e contenuti" },
+    "creator" => { eyebrow: "Workspace", title: "Nodi e domini", subtitle: "Gestione domini e root node" },
     "teacher" => { eyebrow: "Workspace", title: "Didattica", subtitle: "Percorsi, corsi e lezioni" },
     "tutor" => { eyebrow: "Workspace", title: "Accompagnamento", subtitle: "Persone, follow-up e progressi" },
     "professional" => { eyebrow: "Workspace", title: "Professionista", subtitle: "Servizi, abilita e disponibilita" },

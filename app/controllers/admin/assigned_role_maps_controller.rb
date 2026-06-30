@@ -17,16 +17,19 @@ module Admin
     end
 
     def create
-      email = params.dig(:role_assignment, :user_email)
-      user = User.find_by(email_address: email)
-      profile = user&.profile
+      identifier = params.dig(:role_assignment, :user_identifier)
+      
+      profile = if identifier.to_s.include?("@")
+                  user = User.find_by(email_address: identifier.to_s.strip.downcase)
+                  user&.profile
+                else
+                  Profile.find_by(username: identifier.to_s.strip.downcase)
+                end
 
       @role_assignment = RoleAssignment.new(role_assignment_params.merge(profile_id: profile&.id))
 
-      if user.nil? && email.present?
-        @role_assignment.errors.add(:profile_id, "non trovato con questa email")
-      elsif profile.nil? && user.present?
-        @role_assignment.errors.add(:profile_id, "deve avere un profilo configurato prima di poter essere assegnato")
+      if profile.nil? && identifier.present?
+        @role_assignment.errors.add(:profile_id, "non trovato con questa email o username")
       end
 
       if @role_assignment.errors.empty? && @role_assignment.save
@@ -43,7 +46,8 @@ module Admin
       end
 
       def prepare_form_options
-        @users = User.order(:email_address)
+        @profiles = Profile.includes(:user).order(:username)
+        @no_profile_emails = User.where.missing(:profile).pluck(:email_address)
         @assignable_roles = RoleAssignment::ROOT_ROLES
       end
   end

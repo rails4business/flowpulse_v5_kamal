@@ -46,12 +46,21 @@ module FlowRoles
         ),
         MenuItem.build(
           key: :creator,
-          title: "Creator",
-          subtitle: "Progetti, format e contenuti",
+          title: "Nodi e domini",
+          subtitle: "Gestione domini e root node",
           path: :creator_world_root_path,
           roles: %w[creator superadmin],
           group: :workspace,
           badge: "CR"
+        ),
+        MenuItem.build(
+          key: :creator_roles,
+          title: "Ruoli",
+          subtitle: "Gestione ruoli dipendenti",
+          path: :creator_world_role_assignments_path,
+          roles: %w[creator superadmin],
+          group: :workspace,
+          badge: "ROL"
         ),
         MenuItem.build(
           key: :teacher,

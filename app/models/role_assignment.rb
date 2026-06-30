@@ -32,8 +32,14 @@ class RoleAssignment < ApplicationRecord
   has_many :domains, dependent: :nullify
 
   def display_name
-    email_prefix = user&.email_address&.split('@')&.first
-    display = profile&.display_name.presence || email_prefix
+    display = if profile
+                parts = [profile.display_name]
+                parts << "@#{profile.username}" if profile.username.present?
+                parts.compact.join(" - ")
+              else
+                user&.email_address&.split('@')&.first
+              end
+
     if role == "creator_of_worlds"
       "Creator (#{display})"
     else

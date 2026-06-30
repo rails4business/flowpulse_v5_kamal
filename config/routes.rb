@@ -24,7 +24,7 @@ Rails.application.routes.draw do
 
   namespace :creator_world do
     root "dashboard#show"
-    resources :role_assignments, only: [] do
+    resources :role_assignments, only: [:index, :new, :create, :destroy] do
       resources :nodes, except: [:show] do
         member do
           patch :move

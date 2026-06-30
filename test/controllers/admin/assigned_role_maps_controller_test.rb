@@ -43,7 +43,27 @@ module Admin
       assert_difference -> { target.role_assignments.reload.count }, 1 do
         post admin_assigned_role_map_url, params: {
           role_assignment: {
-            user_email: target.email_address,
+            user_identifier: target.email_address,
+            role: "creator_of_worlds"
+          }
+        }
+      end
+
+      assert_redirected_to admin_assigned_role_map_url
+      assert target.role_assignments.exists?(role: "creator_of_worlds")
+    end
+
+    test "superadmin can create root role assignment using username" do
+      superadmin = create_user("assigned-role-map-create-un-superadmin@example.com", superadmin: true)
+      superadmin.update!(active_role: :superadmin)
+      target = create_user("assigned-role-map-create-un-target@example.com")
+
+      post session_url, params: { email_address: superadmin.email_address, password: "password123" }
+
+      assert_difference -> { target.role_assignments.reload.count }, 1 do
+        post admin_assigned_role_map_url, params: {
+          role_assignment: {
+            user_identifier: target.profile.username,
             role: "creator_of_worlds"
           }
         }
@@ -63,7 +83,7 @@ module Admin
       assert_no_difference -> { target.role_assignments.reload.count } do
         post admin_assigned_role_map_url, params: {
           role_assignment: {
-            user_email: target.email_address,
+            user_identifier: target.email_address,
             role: "teacher"
           }
         }
@@ -84,14 +104,14 @@ module Admin
       assert_no_difference -> { RoleAssignment.count } do
         post admin_assigned_role_map_url, params: {
           role_assignment: {
-            user_email: target.email_address,
+            user_identifier: target.email_address,
             role: "creator_of_worlds"
           }
         }
       end
 
       assert_response :unprocessable_entity
-      assert_includes response.body, "deve avere un profilo configurato prima di poter essere assegnato"
+      assert_includes response.body, "non trovato con questa email o username"
     end
 
     test "assigned admin cannot see assigned role map" do
@@ -114,7 +134,8 @@ module Admin
             password_confirmation: "password123"
           }.merge(attributes)
         )
-        user.create_profile!(display_name: email.split('@').first)
+        username = email.split('@').first.downcase.gsub(/[^a-z0-9_]/, '_')[0...30]
+        user.create_profile!(display_name: email.split('@').first, username: username)
         user
       end
 

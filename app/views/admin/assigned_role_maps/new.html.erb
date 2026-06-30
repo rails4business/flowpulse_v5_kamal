@@ -20,20 +20,21 @@
 
   <%= form_with model: @role_assignment, url: admin_assigned_role_map_path, method: :post, class: "grid gap-5" do |form| %>
     <div>
-      <%= form.label :user_email, "Utente (Cerca per Email)", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+      <%= form.label :user_identifier, "Utente (Cerca per Email o Username)", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
       
-      <%= form.text_field :user_email,
+      <%= form.text_field :user_identifier,
         list: "users-datalist",
-        id: "role_assignment_user_email",
+        id: "role_assignment_user_identifier",
         class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500",
-        placeholder: "Cerca utente per email...",
+        placeholder: "Cerca utente per email o username...",
         autocomplete: "off",
-        value: @role_assignment.user&.email_address || params.dig(:role_assignment, :user_email) %>
+        value: @role_assignment.user&.email_address || params.dig(:role_assignment, :user_identifier) %>
 
       <datalist id="users-datalist">
-        <% @users.each do |user| %>
-          <% profile_info = user.profile.present? ? "Profilo: #{user.profile.display_name}" : "Nessun Profilo" %>
-          <option value="<%= user.email_address %>"><%= profile_info %></option>
+        <% @profiles.each do |profile| %>
+          <% next if profile.user.nil? %>
+          <option value="<%= profile.username %>">Username: <%= profile.display_name %> (<%= profile.user.email_address %>)</option>
+          <option value="<%= profile.user.email_address %>">Email: <%= profile.display_name %> (@<%= profile.username %>)</option>
         <% end %>
       </datalist>
     </div>
@@ -57,16 +58,16 @@
 <script>
   (() => {
     const setupWarning = () => {
-      const userInput = document.getElementById("role_assignment_user_email");
+      const userInput = document.getElementById("role_assignment_user_identifier");
       const roleSelect = document.getElementById("role_assignment_role");
       const warning = document.getElementById("profile-warning");
-      const noProfileEmails = <%= @users.select { |u| u.profile.blank? }.map(&:email_address).to_json.html_safe %>;
+      const noProfileEmails = <%= @no_profile_emails.to_json.html_safe %>;
 
       const checkConstraint = () => {
         if (!userInput || !roleSelect || !warning) return;
-        const email = userInput.value.trim();
+        const val = userInput.value.trim();
         const isCreator = roleSelect.value === "creator_of_worlds";
-        const hasNoProfile = noProfileEmails.includes(email);
+        const hasNoProfile = noProfileEmails.includes(val);
 
         if (isCreator && hasNoProfile) {
           warning.classList.remove("hidden");
