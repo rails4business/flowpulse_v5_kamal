@@ -8,7 +8,7 @@ options.add_argument('--disable-gpu')
 driver = Selenium::WebDriver.for :chrome, options: options
 
 begin
-  driver.navigate.to 'http://localhost:3000/posturacorretta?tab=percorso'
+  driver.navigate.to 'http://localhost:3000/posturacorretta/percorso'
   puts "Page title: #{driver.title}"
   
   # Print any console logs on load

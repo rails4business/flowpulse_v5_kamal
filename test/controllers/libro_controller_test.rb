@@ -2,6 +2,7 @@ require "test_helper"
 
 class LibroControllerTest < ActionDispatch::IntegrationTest
   BOOK_SLUG = "il-corpo-un-mondo-da-scoprire"
+  HIDDEN_BOOK_SLUG = "test-hidden-book"
 
   setup do
     @superadmin = User.create!(
@@ -29,7 +30,7 @@ class LibroControllerTest < ActionDispatch::IntegrationTest
     get book_chapter_url(book_slug: BOOK_SLUG, id: "copertina")
     assert_response :success
     assert_includes response.body, "Il corpo, un mondo da scoprire"
-    assert_includes response.body, "Clicca sulla copertina per iniziare a leggere"
+    assert_includes response.body, "Inizia a leggere"
   end
 
   test "show should render draft chapter placeholder for guests" do
@@ -42,7 +43,7 @@ class LibroControllerTest < ActionDispatch::IntegrationTest
   test "show should support chapter pages if valid" do
     get book_chapter_url(book_slug: BOOK_SLUG, id: "il-tuo-corpo-ti-accompagna-ogni-giorno")
     assert_response :success
-    assert_includes response.body, "Il tuo corpo ti accompagna ogni giorno"
+    assert_includes response.body, "Mentre il corpo ti accompagna, tu ti perdi nello scrolling"
   end
 
   test "toc shows visual outline numbering without changing index data" do
@@ -50,7 +51,35 @@ class LibroControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "1. Parte I - Di cosa parleremo in questo libro"
-    assert_includes response.body, "1.1. Il tuo corpo ti accompagna ogni giorno"
+    assert_includes response.body, "1.1. Mentre il corpo ti accompagna, tu ti perdi nello scrolling"
+  end
+
+  test "hide access removes chapter from public toc and keeps numbering compact" do
+    get book_chapter_url(book_slug: HIDDEN_BOOK_SLUG, id: "visible-entry")
+
+    assert_response :success
+    assert_includes response.body, "Visible Entry"
+    assert_includes response.body, "Second Visible Entry"
+    assert_includes response.body, "1. Visible Entry"
+    assert_includes response.body, "2. Second Visible Entry"
+    assert_not_includes response.body, "Hidden Entry"
+  end
+
+  test "hide access returns not found for public direct access" do
+    get book_chapter_url(book_slug: HIDDEN_BOOK_SLUG, id: "hidden-entry")
+
+    assert_response :not_found
+    assert_includes response.body, "Contenuto non trovato"
+  end
+
+  test "hide access remains available to superadmin" do
+    post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
+
+    get book_chapter_url(book_slug: HIDDEN_BOOK_SLUG, id: "hidden-entry")
+
+    assert_response :success
+    assert_includes response.body, "Hidden Entry"
+    assert_includes response.body, "Nascosto"
   end
 
   test "show should return 404 for non-existent chapter" do

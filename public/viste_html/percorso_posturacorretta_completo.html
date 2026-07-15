@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I nostri Corsi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-100">
+   
+  
+ 
+<!-- posturacorretta penultima -->
+<section id="percorso" class=" bg-white pb-7  bg-blue-200" >
+  <div class="relative w-full px-5 py-10 mx-auto sm:py-12 md:py-16 md:px-10 max-w-7xl ">
+    <h1 class="mb-1 text-4xl font-extrabold leading-none text-gray-900 lg:text-center lg:text-5xl xl:text-6xl sm:mb-3"><a href="#guida">Percorso PosturaCorretta</a></h1>
+    <p class="text-lg font-medium text-gray-500 sm:text-2xl lg:text-center ">Dalla postura ad un benessere integrato.
+      <br>
+      Il percorso di educazione alla salute che inizia dalle migliori metodiche posturali.
+    </div>
+    <div class="w-full bg-blue-50">
+      <%= link_to root_path("guida_gratuita"), class:"flex " do %>
+        <div class=" box-border py-16 flex flex-col items-center content-center px-8 mx-auto mt-2 leading-6 text-black border-0 border-gray-300 border-solid md:mt-20 xl:mt-0 md:flex-row max-w-7xl lg:px-16">
+          <div class="box-border w-full text-black border-solid md:w-1/2 md:pl-6 xl:pl-32">
+            <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+              Guida Gratuita</h2>
+            <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-10 lg:text-lg">
+              <b>Tutto  quello che devi sapere</b> sulla postura, salute e benessere.</p>
+            <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+              <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+                <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Il percorso è adatto a te?</li>
+              <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+                <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Dalla postura verso un benessere integrato</li>
+              <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+                <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Perchè partire dalla postura?</li>
+            </ul>
+          </div>
+          <div class="box-border relative w-full max-w-md px-4 mt-10 mb-4 text-center bg-no-repeat bg-contain border-solid md:mt-0 md:max-w-none lg:mb-0 md:w-1/2">
+            <%= inline_svg_tag "svg/undraw_scientist_sva9.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <%= link_to root_path("inizia_da_qui"), class:"flex" do %>
+      <div class="py-16 box-border flex flex-col items-center content-center px-8 mx-auto leading-6 text-black border-0 border-gray-300 border-solid md:flex-row max-w-7xl lg:px-16">
+        <div class="box-border relative w-full max-w-md px-4 mt-5 mb-4 -ml-5 text-center bg-no-repeat bg-contain border-solid md:ml-0 md:mt-0 md:max-w-none lg:mb-0 md:w-1/2 xl:pl-10">
+          <%= inline_svg_tag "svg/undraw_doctors_p6aq.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+        </div>
+        <div class="box-border order-first w-full text-black border-solid md:w-1/2 md:pl-10 md:order-none">
+          <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+            Inizia da qui</h2>
+          <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+            Come funziona il percorso.</p>
+          <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Come si affronta il percorso?</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Stop al dolore</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Test Stato di salute</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Diario della salute</li>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+    <%= link_to root_path("igiene_posturale"), class:"flex bg-blue-50" do %>
+      <div class="box-border py-16 flex flex-col items-center content-center px-8 mx-auto mt-2 leading-6 text-black border-0 border-gray-300 border-solid md:mt-20 xl:mt-0 md:flex-row max-w-7xl lg:px-16">
+        <div class="box-border w-full text-black border-solid md:w-1/2 md:pl-6 xl:pl-32">
+          <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+            Quattro sett. con l'Igiene posturale</h2>
+          <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-10 lg:text-lg">
+            <b>Percorso Base.</b>  Mantieni in salute le tue articolazioni e la tua postura.</p>
+          <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Mobilità articolare</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Scarica i tuoi ammortizzatori</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Ridistribuire le tensioni</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Riattivare i tuoi recettori</li>
+          </ul>
+        </div>
+        <div class="box-border relative w-full max-w-md px-4 mt-10 mb-4 text-center bg-no-repeat bg-contain border-solid md:mt-0 md:max-w-none lg:mb-0 md:w-1/2">
+          <%= inline_svg_tag "svg/undraw_yoga_re_i5ld.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:200px;" %>
+        </div>
+      </div>
+    <% end%>
+    <%= link_to root_path("principi_fisioterapia"), class:"flex" do %>
+      <div class="py-16 box-border flex flex-col items-center content-center px-8 mx-auto leading-6 text-black border-0 border-gray-300 border-solid md:flex-row max-w-7xl lg:px-16">
+        <div class="box-border relative w-full max-w-md px-4 mt-5 mb-4 -ml-5 text-center bg-no-repeat bg-contain border-solid md:ml-0 md:mt-0 md:max-w-none lg:mb-0 md:w-1/2 xl:pl-10">
+          <%= inline_svg_tag "svg/undraw_injured_9757.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+        </div>
+        <div class="box-border order-first w-full text-black border-solid md:w-1/2 md:pl-10 md:order-none">
+          <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+            Cinque set. - Come cura la Fisioterapia </h2>
+          <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+            <b>Amplifica gli effetti di un percorso fisioterapico.</b>  Riattiva la fisiologia dei tuoi apparati con gli esercizi di riabilitazione</p>
+          <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Sistema Linfatico</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Sistema Respiratorio</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Sistema Nervoso</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Sistema Muscolo scheletrico e movimento</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Sistema Cardio Circolatorio</li>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+    <%= link_to root_path("principi_osteopatia"), class:"flex bg-blue-50" do %>
+      <div class="box-border py-16 flex flex-col items-center content-center px-8 mx-auto mt-2 leading-6 text-black border-0 border-gray-300 border-solid md:mt-20 xl:mt-0 md:flex-row max-w-7xl lg:px-16">
+        <div class="box-border w-full text-black border-solid md:w-1/2 md:pl-6 xl:pl-32">
+          <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+            Cinque set. - Potenzia il risultato dei tuoi trattamenti osteopatici</h2>
+          <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-10 lg:text-lg">
+            <b>Amplifica gli effetti di un percorso osteopatico.</b>   Scopri i sistemi e i principi dell'osteopatia</p>
+          <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Togliere i blocchi e ripristinare la funzione.</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Il sistema fasciale</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Tensioni del sistema Viscerale</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Riequilibrare il sistema neurovegetativo il nervo vago</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Il sistema craniosacrale</li>
+          </ul>
+        </div>
+        <div class="box-border relative w-full max-w-md px-4 mt-10 mb-4 text-center bg-no-repeat bg-contain border-solid md:mt-0 md:max-w-none lg:mb-0 md:w-1/2">
+          <%= inline_svg_tag "svg/undraw_medicine_b-1-ol.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+        </div>
+      </div>
+    <% end %>
+    <%= link_to root_path("principi_metodo_gds"), class:"flex" do %>
+      <div class="py-16 box-border flex flex-col items-center content-center px-8 mx-auto leading-6 text-black border-0 border-gray-300 border-solid md:flex-row max-w-7xl lg:px-16">
+        <div class="box-border relative w-full max-w-md px-4 mt-5 mb-4 -ml-5 text-center bg-no-repeat bg-contain border-solid md:ml-0 md:mt-0 md:max-w-none lg:mb-0 md:w-1/2 xl:pl-10">
+          <%= inline_svg_tag "svg/undraw_pilates_u199.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+        </div>
+        <div class="box-border order-first w-full text-black border-solid md:w-1/2 md:pl-10 md:order-none">
+          <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+            Sei set. -  Impara a usare la tua Biomeccanica</h2>
+          <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+            <b>Scopri cos'è il metodo GDS e come può aiutarti.</b>   Ecco come il metodo gds può aiutare a migliorare la tua salute e la tua postura:</p>
+          <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Le 5 direzioni di movimento</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Flessione e catena AM</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Rotazione interna e catena AL</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Estensione e catena PM</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Rotazione Esterna e catena PL</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Rigido e Lasso Catena PAAP</li>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+    <%= link_to root_path("principi_corpo_e_coscienza"), class:"flex bg-blue-50" do %>
+      <div class="box-border py-16 flex flex-col items-center content-center px-8 mx-auto mt-2 leading-6 text-black border-0 border-gray-300 border-solid md:mt-20 xl:mt-0 md:flex-row max-w-7xl lg:px-16">
+        <div class="box-border w-full text-black border-solid md:w-1/2 md:pl-6 xl:pl-32">
+          <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+            Otto set. - Ritmi circardiani e postura</h2>
+          <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-10 lg:text-lg">
+            <b>Scopri cos'è  il metodo corpo e coscienza.</b>   Il metodo grazie a una una lettura fisiologica a più livelli permette un approccio  interdisciplinare alla salute che inizia dalla presa di coscienza corporea, permette di creare un collegamento tra mondo della postura aspetti Fisioterapici, del Movimento, aspetti Medici (Biologici e Fisiologic) e aspetti psicologici.</p>
+          <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Tra biologia e aspetti percettivi sensoriali.</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Conoscere e attivare le 2 circolazioni</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Coscienza corporea i 3 centri di gravità</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> I 4 tipi di movimento</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>5 elementi e il ritmo stagionale</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>6 coppie di meridiani ritmi circardiani</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>i 7 centri neurolinfatici</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Fisiologia Fenomenologia e Aspetti Energetici</li>
+          </ul>
+        </div>
+        <div class="box-border relative w-full max-w-md px-4 mt-10 mb-4 text-center bg-no-repeat bg-contain border-solid md:mt-0 md:max-w-none lg:mb-0 md:w-1/2">
+          <%= inline_svg_tag "svg/undraw_meditation_re_gll0.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+        </div>
+      </div>
+    <% end %>
+    <br>
+    <br>
+    <%= link_to root_path("benessere_integrato"), class:"flex bg-green-100" do %>
+      <div class="py-16 box-border flex flex-col items-center content-center px-8 mx-auto leading-6 text-black border-0 border-gray-300 border-solid md:flex-row max-w-7xl lg:px-16">
+        <div class="box-border relative w-full max-w-md px-4 mt-5 mb-4 -ml-5 text-center bg-no-repeat bg-contain border-solid md:ml-0 md:mt-0 md:max-w-none lg:mb-0 md:w-1/2 xl:pl-10">
+          <%= inline_svg_tag "svg/undraw_coffee_time_hioi.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+        </div>
+        <div class="box-border order-first w-full text-black border-solid md:w-1/2 md:pl-10 md:order-none">
+          <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+            Otto set. - Benessere integrato, costruisci il tuo percorso
+          </h2>
+          <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+            <b>Come e perchè costruire un percorso integrato</b> Medicina, Fisioterapia, Movimento e aspetti Energetici</p>
+          <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Coscienza Corporea e Recupero</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>  Movimento e Allenamento</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Atteggiamento emotivo mentale</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Fitoterapia europea Farmaci e fisiologia   </li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Alimentazione e nutrire il corpo</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Una visione Bio Psico Sociale della salute</li>
+            <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+              <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Oltre la postura e il benessere</li>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+  </section>
+  <!--section class="w-full bg-white pt-7 pb-7 md:pt-20 md:pb-24" >
+  <div class="absolute w-full h-32 bg-gradient-to-b from-gray-100 to-white" id="guida"></div>
+  <div class="relative w-full px-5 py-10 mx-auto sm:py-12 md:py-16 md:px-10 max-w-7xl">
+    <h1 class="mb-1 text-4xl font-extrabold leading-none text-gray-900 lg:text-5xl xl:text-6xl sm:mb-3"><a href="#guida">Altri corsi PosturaCorretta</a></h1>
+    <p class="text-lg font-medium text-gray-500 sm:text-2xl">Corsi per approfondire il mondo della postura
+    </p>
+  </div>
+  <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+    <div class="grid gap-8 lg:grid-cols-3 sm:max-w-sm sm:mx-auto lg:max-w-full">
+      <div class="flex">
+        <div class="pt-1 mr-6 text-center">
+          <div class="px-2 pb-1 mb-1 border-b border-gray-400">
+            <p class="text-sm text-blue-gray-700">Jul</p>
+          </div>
+          <div class="px-2">
+            <p class="text-lg font-bold">18</p>
+          </div>
+        </div>
+        <div>
+          <div class="mb-2">
+            <a href="/" class="text-xs font-semibold tracking-wide uppercase transition-colors duration-200 text-deep-purple-accent-400 hover:text-deep-purple-800" aria-label="Category" title="Delevopment">Delevopment</a>
+          </div>
+          <div class="mb-2">
+            <a href="/" aria-label="Article" class="inline-block text-2xl font-bold leading-5 text-black transition-colors duration-200 hover:text-deep-purple-accent-400">Why I love Laravel</a>
+          </div>
+          <p class="mb-5 text-gray-700">
+            Sed ut perspiciatis unde omnis iste natus error sit sed quia consequuntur magni voluptatem doloremque.
+          </p>
+          <div class="flex items-center">
+            <a href="/" aria-label="Author" title="Author" class="mr-3">
+              <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=750&amp;w=1260" alt="avatar" class="object-cover w-10 h-10 rounded-full shadow-sm" />
+            </a>
+            <div>
+              <a href="/" aria-label="Author" title="Author" class="font-semibold text-gray-800 transition-colors duration-200 hover:text-deep-purple-accent-400">Petru Vîrtos</a>
+              <p class="text-sm font-medium leading-4 text-gray-600">Author</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex">
+        <div class="pt-1 mr-6 text-center">
+          <div class="px-2 pb-1 mb-1 border-b border-gray-400">
+            <p class="text-sm text-blue-gray-700">May</p>
+          </div>
+          <div class="px-2">
+            <p class="text-lg font-bold">6</p>
+          </div>
+        </div>
+        <div>
+          <div class="mb-2">
+            <a href="/" class="text-xs font-semibold tracking-wide uppercase transition-colors duration-200 text-deep-purple-accent-400 hover:text-deep-purple-800" aria-label="Category" title="Food &amp; Snacks">Food &amp; Snacks</a>
+          </div>
+          <div class="mb-2">
+            <a href="/" aria-label="Article" class="inline-block text-2xl font-bold leading-5 text-black transition-colors duration-200 hover:text-deep-purple-accent-400">Pizza, you should try it</a>
+          </div>
+          <p class="mb-5 text-gray-700">
+            Sed ut perspiciatis unde omnis iste natus error sit sed quia consequuntur magni voluptatem doloremque.
+          </p>
+          <div class="flex items-center">
+            <a href="/" aria-label="Author" title="Author" class="mr-3">
+              <img src="https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=750&amp;w=1260" alt="avatar" class="object-cover w-10 h-10 rounded-full shadow-sm" />
+            </a>
+            <div>
+              <a href="/" aria-label="Author" title="Author" class="font-semibold text-gray-800 transition-colors duration-200 hover:text-deep-purple-accent-400">Alex Stratulat</a>
+              <p class="text-sm font-medium leading-4 text-gray-600">Author</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex">
+        <div class="pt-1 mr-6 text-center">
+          <div class="px-2 pb-1 mb-1 border-b border-gray-400">
+            <p class="text-sm text-blue-gray-700">Feb</p>
+          </div>
+          <div class="px-2">
+            <p class="text-lg font-bold">27</p>
+          </div>
+        </div>
+        <div>
+          <div class="mb-2">
+            <a href="/" class="text-xs font-semibold tracking-wide uppercase transition-colors duration-200 text-deep-purple-accent-400 hover:text-deep-purple-800" aria-label="Category" title="Out of this world">Out of this world</a>
+          </div>
+          <div class="mb-2">
+            <a href="/" aria-label="Article" class="inline-block text-2xl font-bold leading-5 text-black transition-colors duration-200 hover:text-deep-purple-accent-400">Whatever, just feed me</a>
+          </div>
+          <p class="mb-5 text-gray-700">
+            Sed ut perspiciatis unde omnis iste natus error sit sed quia consequuntur magni voluptatem doloremque.
+          </p>
+          <div class="flex items-center">
+            <a href="/" aria-label="Author" title="Author" class="mr-3">
+              <img src="https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=3&amp;h=750&amp;w=1260" alt="avatar" class="object-cover w-10 h-10 rounded-full shadow-sm" />
+            </a>
+            <div>
+              <a href="/" aria-label="Author" title="Author" class="font-semibold text-gray-800 transition-colors duration-200 hover:text-deep-purple-accent-400">Susie the Cat</a>
+              <p class="text-sm font-medium leading-4 text-gray-600">Author</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-16 box-border flex flex-col items-center content-center px-8 mx-auto leading-6 text-black border-0 border-gray-300 border-solid md:flex-row max-w-7xl lg:px-16">
+    <div class="box-border relative w-full max-w-md px-4 mt-5 mb-4 -ml-5 text-center bg-no-repeat bg-contain border-solid md:ml-0 md:mt-0 md:max-w-none lg:mb-0 md:w-1/2 xl:pl-10">
+      <%= inline_svg_tag "svg/undraw_running_wild_h6ao.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+    </div>
+    <div class="box-border order-first w-full text-black border-solid md:w-1/2 md:pl-10 md:order-none">
+      <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+        Postura e Movimento
+      </h2>
+      <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+        Riattiviamo il nostro movimento</p>
+      <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> A scuola di movimento dai bambini </li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>La conquista della verticalità l'evoluzione della nostra specie</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Il cammino  </li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> La corsa   </li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Movimenti arcaici </li>
+      </ul>
+    </div>
+  </div>
+  <div class="box-border py-16 flex flex-col items-center content-center px-8 mx-auto mt-2 leading-6 text-black border-0 border-gray-300 border-solid md:mt-20 xl:mt-0 md:flex-row max-w-7xl lg:px-16">
+    <div class="box-border w-full text-black border-solid md:w-1/2 md:pl-6 xl:pl-32">
+      <h2 class="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
+        Tra Postura e Cultura  </h2>
+      <p class="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-10 lg:text-lg">
+        Postura e Movimento nella vita e nelle abitudini dell'uomo </p>
+      <ul class="p-0 m-0 leading-6 border-0 border-gray-300">
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Musica e Movimento</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Musica e danza</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Musica e lotta</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span> Musica e voce</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Altre Metodiche posturali</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Metodiche corporee</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Terapie Manuali</li>
+        <li class="box-border relative py-1 pl-0 text-left text-gray-500 border-solid">
+          <span class="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-blue-400 rounded-full" data-primary="yellow-400"><span class="text-sm font-bold">✓</span></span>Altre Metodiche di Guarigione</li>
+      </ul>
+    </div>
+    <div class="box-border relative w-full max-w-md px-4 mt-10 mb-4 text-center bg-no-repeat bg-contain border-solid md:mt-0 md:max-w-none lg:mb-0 md:w-1/2">
+      <%= inline_svg_tag "svg/undraw_workout_gcgu.svg", class:"h-auto p-2 pl-6 pr-5 xl:pl-16 pr-20", style:"width:400px;" %>
+    </div>
+  </div>
+</section-->
+  <!--section class="relative w-full bg-white">
+<div class="absolute w-full h-32 bg-gradient-to-b from-gray-100 to-white"></div>
+<div class="relative w-full px-5 py-10 mx-auto sm:py-12 md:py-16 md:px-10 max-w-7xl">
+  <h1 class="mb-1 text-4xl font-extrabold leading-none text-gray-900 lg:text-5xl xl:text-6xl sm:mb-3"><a href="#_">Corsi</a></h1>
+  <p class="text-lg font-medium text-gray-500 sm:text-2xl">Ecco i nostri corsi</p>
+  <div class="flex grid h-full grid-cols-12 gap-10 pb-10 mt-8 sm:mt-16">
+    <div class="grid grid-cols-12 col-span-12 gap-7">
+      <div class="flex flex-col items-start col-span-12 overflow-hidden shadow-sm rounded-xl md:col-span-6 lg:col-span-4">
+        <a href="#_" class="block transition duration-200 ease-out transform hover:scale-110">
+          <img class="object-cover w-full shadow-sm max-h-56" src="https://cdn.devdojo.com/images/may2021/workstation.jpg">
+        </a>
+        <div class="relative flex flex-col items-start px-6 bg-white border border-t-0 border-gray-200 py-7 rounded-b-2xl">
+          <div class="bg-indigo-400 absolute top-0 -mt-3 flex items-center px-3 py-1.5 leading-none w-auto inline-block rounded-full text-xs font-medium uppercase text-white inline-block">
+            <span>Inspiration</span></div>
+          <h2 class="text-base font-bold sm:text-lg md:text-xl"><a href="#_">Best Workstations of the Year</a></h2>
+          <p class="mt-2 text-sm text-gray-500">Check out these inspiring workstations to get ideas on how to level-up your workstation.</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-start col-span-12 overflow-hidden shadow-sm rounded-xl md:col-span-6 lg:col-span-4">
+        <a href="#_" class="block transition duration-200 ease-out transform hover:scale-110">
+          <img class="object-cover w-full shadow-sm max-h-56" src="https://cdn.devdojo.com/images/may2021/snacks.jpg">
+        </a>
+        <div class="relative flex flex-col items-start px-6 bg-white border border-t-0 border-gray-200 py-7 rounded-b-2xl">
+          <div class="bg-red-400 absolute top-0 -mt-3 flex items-center px-3 py-1.5 leading-none w-auto inline-block rounded-full text-xs font-medium uppercase text-white inline-block">
+            <span>Food</span></div>
+          <h2 class="text-base font-bold sm:text-lg md:text-xl"><a href="#_">Eating for Productivity</a></h2>
+          <p class="mt-2 text-sm text-gray-500">Learn how to be more disciplined in your diet and how you can eat to maximize productivity.</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-start col-span-12 overflow-hidden shadow-sm rounded-xl md:col-span-6 lg:col-span-4">
+        <a href="#_" class="block transition duration-200 ease-out transform hover:scale-110">
+          <img class="object-cover w-full shadow-sm max-h-56" src="https://cdn.devdojo.com/images/may2021/book-design.jpg">
+        </a>
+        <div class="relative flex flex-col items-start px-6 bg-white border border-t-0 border-gray-200 py-7 rounded-b-2xl">
+          <div class="bg-purple-500 absolute top-0 -mt-3 flex items-center px-3 py-1.5 leading-none w-auto inline-block rounded-full text-xs font-medium uppercase text-white inline-block">
+            <span>Resources</span></div>
+          <h2 class="text-base font-bold sm:text-lg md:text-xl"><a href="#_">A Design Mind-set</a></h2>
+          <p class="mt-2 text-sm text-gray-500">What does it mean to have a design mind-set? Learn how to improve your eye for design.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section-->
+  <section class="bg-white">
+    <div class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
+      <nav class="flex flex-wrap justify-center -mx-5 -my-2">
+        <div class="px-5 py-2">
+          <%= link_to 'Info', root_path, class:"text-base leading-6 text-gray-500 hover:text-gray-900" %>
+        </div>
+        <!--div class="px-5 py-2">
+        <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+          Blog
+        </a></div>
+      <div class="px-5 py-2">
+        <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+          Team
+        </a></div-->
+        <!--div class="px-5 py-2">
+        <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+          Pricing
+        </a></div>
+      <div class="px-5 py-2">
+        <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+          Contact
+        </a></div-->
+        <div class="px-5 py-2">
+          <%= link_to 'Termini', terms_path, class:"text-base leading-6 text-gray-500 hover:text-gray-900" %>
+        </div>
+        <div class="px-5 py-2">
+          <%= link_to 'Privacy', privacy_path, class:"text-base leading-6 text-gray-500 hover:text-gray-900" %>
+        </div>
+      </nav>
+      <div class="flex justify-center mt-8 space-x-6">
+        <a href="https://www.facebook.com/www.posturacorretta.org" class="text-gray-400 hover:text-gray-500">
+          <span class="sr-only">Facebook</span>
+          <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/posturacorretta" class="text-gray-400 hover:text-gray-500">
+          <span class="sr-only">Instagram</span>
+          <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"></path>
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/posturacorretta" class="text-gray-400 hover:text-gray-500">
+          <span class="sr-only">Youtube</span>
+          <img src="https://img.icons8.com/small/512/youtube--v1.png" class="w-6">
+        </a>
+      </div>
+      <p class="mt-8 text-base leading-6 text-center text-gray-400">
+        © <%= DateTime.now.strftime("%Y") %> PosturaCorretta, Inc. All rights reserved.</p>
+    </div>
+  </section>
+  <div class="grid lg:grid-cols-5 gap-4 m-4">
+    <div class="bg-blue-200 p-4">
+      Riposo e Tecniche di Recupero
+      <br>
+      <br>
+      <hr>
+      <br>
+      <b>Igiene articolare:</b>
+      <br>
+      - Mobilità articolare 
+      <br>
+      - Punti di tensione
+      <br>
+      - Vie di discesa 
+      <br>
+      - Recettori sensoriali
+      <br>
+      <b>Principi di fisioterapia</b>
+      <br>
+      - S. Respiratorio
+      <br>
+      - S. Nervoso e urogen.
+      <br>
+      - S. Muscolo scheletrico
+      <br>
+      - S. Cardio Circolatorio
+      <br>
+      - S. Linfatico e digerente
+      <br>
+      <b>Principi di osteopatia</b>
+      <br>
+      - Togliere le disfunzioni
+      <br>
+      - S. Fasciale
+      <br>
+      - S. Viscerale
+      <br>
+      - S. Cranio Sacrale
+      <br>
+      - S. Neurovegetativo
+      <br>
+      <b>  Biomeccanica Comportamentale Intro al Metodo GDS</b>
+      <br>
+      - 5 Direzioni di movimento
+      <br>
+      - Flessione e catena AM
+      <br>
+      -  Rotazione interna e catena AL
+      <br>
+      - Estensione e catena PM
+      <br>
+      - Rotazione Esterna e catena PL
+      <br>
+      - Rigido e Lasso Catena PAAP
+      <br>
+      <b> Bioritmi circardiani intro al metodo Corpo e Coscienza </b>
+      <br>
+      - Tra biologia e aspetti percettivi sensoriali.
+      <br>
+      - Conoscere e attivare le 2 circolazioni
+      <br>
+      -  Coscienza corporea i 3 centri di gravità
+      <br>
+      -   I 4 tipi di movimento
+      <br>
+      -   5 elementi e il ritmo stagionale
+      <br>
+      -  6 coppie di meridiani ritmi circardiani
+      <br>
+      -  i 7 centri neurolinfatici
+      <br>
+      -   Fisiologia Fenomenologia e Aspetti Energetici
+    </div>
+    <div class="bg-purple-200 p-4">Movimento Allenamento
+      <br>
+      <br>
+      <br>
+      <hr>
+      <br>
+      <b>Rinforzo muscolare</b>
+      <br>
+      - <br>
+      <b>I cinque tibetani</b>
+      <br>
+      - <br>
+      <b>Gli 8 pezzi di brocato</b>
+      <br>
+      - <br>
+      <b>Una sequenza dello yoga</b>
+      <br>
+      - <br>
+      <b>Lo sviluppo del movimento dei bambini DNS Dynamic Muscolar Neurosistem</b>
+      <br>
+      - <br>
+      <b>Animal Flow</b>
+      <br>
+      - <br>
+      <b>Movimenti arcaici</b>
+      <br>
+      - <br>
+      <b>La capoeira</b>
+      <br>
+      - <br>
+      <b>Il tai chi</b>
+    </div>
+    <div class="bg-green-200 p-4">Impara ad ascoltare e percepire gli aspetti  Emotivo e Mentale
+      <br>
+      <br>
+      <hr>
+      <b>La morfopsicologia </b>
+      <br>
+      <br>
+      <b>Human design</b>
+      - <br>
+      <b>Caisedo Sofrologia </b>
+      <br>
+      - <br>
+      <b>Corpo e coscienza</b>
+      <br>
+      - <br>
+      <b>Yoga nozioni avanzate</b>
+      <br>
+      - <br>
+      <b>Su wen medicina cinese fenomenologia</b>
+      <br>
+      <br>
+      <b>Siamo fatti di parole</b>
+      <br>
+      - <br>
+      <b>Il potere delle storie</b>
+      <br>
+      - <br>
+      <b>Efficacia personale</b>
+      <br>
+      - <br>
+      <b>Il viaggio dell'eroe</b>
+      <br>
+      - <br>
+      <b>La medicina del Suono</b>
+      <br>
+      - <br>
+      <b>Il teatro</b>
+      <br>
+      - <br>
+      - <br>
+      <b>Il giardino del corpo</b>
+      <br>
+      - <br>
+    </div>
+    <div class="bg-red-200 p-4">Fisiologia Piante Integratori Farmaci adatti a te
+      <hr>
+      <br>
+      <b>La medicina dei semplici Dr. Abbiati</b>
+      <br>
+      - <br>
+      <b>Medicina mediterranea</b>
+      <br>
+      - <br>
+      <b>Medicina cinese</b>
+      <br>
+      - <br>
+      <b>Ayurveda</b>
+    </div>
+    <div class="bg-orange-200 p-4">Nutrizione
+      <br>
+      <br>
+      <br>
+      <hr>
+      <br>
+      <b>Cosa stiamo mangiando?</b>
+      <br>
+      - <br>
+      <b>Cos'è il cibo?</b>
+      <br>
+      - <br>
+      <b>Il cibo viene dalla terra</b>
+      <br>
+      - <br>
+      <b>Cibo e industrializzazione</b>
+      <br>
+      - <br>
+      <b>Cibo un mezzo per trasmettere energia</b>
+      <br>
+      - <br>
+    </div>
+  </div>
+
+
+</body>
+</html>

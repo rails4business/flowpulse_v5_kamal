@@ -1,0 +1,99 @@
+<%
+  is_home = current_page?(posturacorretta_path) || current_page?("/posturacorretta")
+  is_percorso = current_page?(posturacorretta_percorso_path) rescue false
+  is_contenuti = current_page?(posturacorretta_contenuti_path) rescue false
+  is_filosofia = current_page?(posturacorretta_filosofia_path) rescue false
+  is_eventi = current_page?(posturacorretta_eventi_path) rescue false
+  is_collabora = current_page?(posturacorretta_collabora_path) rescue false
+  
+  is_risorse = is_percorso || is_contenuti || is_filosofia || is_eventi || is_collabora
+%>
+
+<header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex flex-col md:flex-row md:h-16 items-start md:items-center justify-between px-6 py-3 md:py-0 gap-3 md:gap-0">
+    <a href="<%= posturacorretta_path %>" class="flex items-center gap-3 shrink-0 animate-fade-in" aria-label="PosturaCorretta home">
+      <img
+        src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
+        alt="PosturaCorretta"
+        class="h-8 w-auto">
+    </a>
+
+    <nav class="flex items-center gap-5 md:gap-7 pb-1 md:pb-0" aria-label="Navigazione principale PosturaCorretta">
+      <a href="<%= posturacorretta_path %>"
+         aria-selected="<%= is_home %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_home ? "border-blue-600 text-blue-700" : "border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700" %>">
+        Accademia
+      </a>
+
+      <!-- RISORSE DROPDOWN -->
+      <div class="relative inline-block text-left" id="risorse-menu-container">
+        <button id="risorse-dropdown-btn" type="button" class="inline-flex items-center gap-1 border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_risorse ? "border-blue-600 text-blue-700" : "border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700" %>" aria-expanded="false" aria-haspopup="true">
+          <span>Risorse</span>
+          <svg class="h-4 w-4 text-slate-500 transition-transform duration-205" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" id="risorse-arrow">
+            <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        <!-- Dropdown menu -->
+        <div id="risorse-dropdown-menu" class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-slate-200 bg-white p-2 shadow-xl transition-all duration-200 opacity-0 scale-95 pointer-events-none" role="menu" aria-orientation="vertical" aria-labelledby="risorse-dropdown-btn" tabindex="-1">
+          <div class="py-1 space-y-1" role="none">
+            <a href="<%= posturacorretta_percorso_path %>" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition" role="menuitem" tabindex="-1">
+              Percorso personalizzato
+            </a>
+            <a href="<%= posturacorretta_contenuti_path %>" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition" role="menuitem" tabindex="-1">
+              Contenuti
+            </a>
+            <a href="<%= posturacorretta_filosofia_path %>" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition" role="menuitem" tabindex="-1">
+              Libro e Visione
+            </a>
+            <a href="<%= posturacorretta_eventi_path %>" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition" role="menuitem" tabindex="-1">
+              Eventi e Community
+            </a>
+            <a href="<%= posturacorretta_collabora_path %>" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition" role="menuitem" tabindex="-1">
+              Progetti in corso
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  (() => {
+    const container = document.getElementById("risorse-menu-container");
+    const btn = document.getElementById("risorse-dropdown-btn");
+    const menu = document.getElementById("risorse-dropdown-menu");
+    const arrow = document.getElementById("risorse-arrow");
+
+    if (container && btn && menu) {
+      function openDropdown() {
+        btn.setAttribute("aria-expanded", "true");
+        menu.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+        arrow.classList.add("rotate-180");
+      }
+
+      function closeDropdown() {
+        btn.setAttribute("aria-expanded", "false");
+        menu.classList.add("opacity-0", "scale-95", "pointer-events-none");
+        arrow.classList.remove("rotate-180");
+      }
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        if (expanded) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!container.contains(e.target)) {
+          closeDropdown();
+        }
+      });
+    }
+  })();
+</script>

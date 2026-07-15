@@ -94,7 +94,7 @@
 title: "Titolo del Capitolo"
 description: "Sottotitolo descrittivo"
 color: "rosso"  # Opzioni: rosso, verde, blu, arancione, viola, neutro
-access: "draft" # Opzioni: draft (in bozza/solo admin), free (pubblico a tutti)
+access: "draft" # Opzioni: draft (bozza), free (pubblico), hide (nascosto ai visitatori)
 ---
 
 # Titolo del Capitolo
@@ -114,6 +114,7 @@ Qui inizia il testo del capitolo scritto in standard Markdown...
             <strong>Come mettere a breve/pubblicare capitoli?</strong><br>
             Impostando <code>access: "draft"</code> il capitolo mostrerà il badge <strong>"A breve"</strong> nell'indice e presenterà una pagina segnaposto ai visitatori. I superadmin, purché loggati e in modalità attiva, potranno vederne l'intero testo per revisionarlo. 
             Impostando <code>access: "free"</code> il capitolo diventa visibile pubblicamente a tutti.
+            Impostando <code>access: "hide"</code> il capitolo viene tolto dall'indice e dall'aside per i visitatori, e l'URL diretto risponde come contenuto non trovato. I superadmin lo vedono con il badge <strong>"Nascosto"</strong>.
           </p>
         </div>
       </section>

@@ -5,21 +5,21 @@ color: "rosso"
 access: "draft"
 ---
 
+
+La perdita della salute è la prima cosa di cui ci occupiamo. I professioni sanitari sono i professionisti in prima linea entrano in azione quando la salute è in pericolo e quando arrivano  **dolori e patologie** 
+
+La sezione quando perdi la salute, ti sarà utilissima se sei una persona che sta affrontando un percorso di cura per una patologia o hai un problema o un dolore per cui non riesci a trovare soluzione. Questo capitolo mostra le dinamiche che molti pazienti affrontano, e che non gli permettono di guarire e una volta viste le dinamiche diventa più facile superarle. Parla dei problemi che spesso si incontrano durante il percorso terapeutico sia da parte di pazienti che da parte di professionisti e di come è possibile superarli.
+
+e infine racconto quello che io e molti altri professionisti spieghiano ogni volta ai loro pazienti prima di iniziare un percorso di cura di una patologia.
+
+
+
 “Quello che mi ha sorpreso di più negli uomini dell’Occidente è che perdono la salute per fare i soldi e poi perdono i soldi per recuperare la salute. Pensano tanto al futuro che dimenticano di vivere il presente in tale maniera che non riescono a vivere né il presente, né il futuro. Vivono come se non dovessero morire mai e muoiono come se non avessero mai vissuto.”
 
 Dalai Lama
 
 
-Ebbene si iniziamo dalla salute infatti senza quella si possono avere tempo e soldi ma... sarebbe quasi inutile, un vecchio detto dice: 
+Questa è una frase che ho sentito tante volte e ormai è diventata banale ma ogni volta che la riascolto resta pur sempre vera.
 
 
-Lo studio della fisioterapia è quello che mi ha formato: 
-- Per accompagnare e aiutare le persone 
-- con dolori e patologie 
-- nella prevenzione di rischi che nel lavoro e nelle attività. 
-- nella prevenzione in fasi della vita delicate come l'età dello sviluppo, o nella terza età. 
-- nel preparare molti atleti/e nel preparare le loro performance nel mondo sportivo.
 
-Di questo Parleremo nella sezione quando perdi la salute, e troverai le cose principali che vorrei raccontare ai pazienti che arrivano con un poblema da affrontare o un obiettivo da raggiungere.
-
-Ecco lo scrivo così non devo ripeterlo continuamente, e può essere d'aiuto anche a te.

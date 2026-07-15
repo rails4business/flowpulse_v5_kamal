@@ -1,0 +1,99 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<div id="top" class="text-slate-900 antialiased">
+
+  <!-- LIBRO E VISIONE -->
+  <section class="bg-white px-5 py-20 md:py-24 min-h-[calc(100vh-4rem)] flex items-start">
+    <div class="mx-auto w-full max-w-6xl">
+      <div class="grid gap-12 items-start lg:grid-cols-[0.8fr_1.2fr]">
+        
+        <!-- Left Side: Interactive 3D Book Cover -->
+        <div class="flex justify-center lg:justify-start py-6 lg:sticky lg:top-24">
+          <a href="/books/il-corpo-un-mondo-da-scoprire" class="group relative block w-72 max-w-full transition duration-300" style="perspective: 1200px;">
+            <div class="relative aspect-[3/4] w-full rounded-r-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] transition-all duration-500 ease-out transform group-hover:scale-[1.03] group-hover:shadow-[0_30px_70px_rgba(37,99,235,0.25)]" style="transform-style: preserve-3d; transform-origin: left center;">
+              <img src="https://ik.imagekit.io/posturacorretta/markpostura/home/il%20corpo%20un%20mondo%20da%20scoprire.webp?updatedAt=1783012351120" alt="PosturaCorretta: Il Libro" class="h-full w-full rounded-r-xl object-cover">
+              <!-- Spine shadow overlay -->
+              <div class="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-black/25 via-black/5 to-transparent rounded-r-sm"></div>
+              <!-- Page edges mockup border on right side -->
+              <div class="absolute inset-y-0.5 right-0 w-1 bg-slate-200/50 rounded-r-sm border-r border-slate-300/30"></div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Right Side: Content description -->
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-700">
+            Libro e Visione
+          </p>
+          <h1 class="mt-4 text-4xl font-semibold tracking-tight text-slate-955 md:text-5xl md:leading-[1.05]">
+            Il corpo, un mondo da scoprire.
+          </h1>
+          <p class="mt-6 text-lg leading-8 text-slate-655 font-semibold">
+            Dall'accademia PosturaCorretta all'agriturismo rigenerativo Il Giardino del Corpo.
+          </p>
+
+          <div class="mt-8 text-base leading-7 text-slate-600 space-y-4 text-justify">
+            <p> Il libro raccoglie la visione del progetto. Il punto di partenza sono le metodiche posturali, che ci permettono di comprendere la postura non come una forma da correggere, ma come un linguaggio attraverso cui il corpo comunica il proprio stato di equilibrio, adattamento e benessere. </p>
+            <p> Da questa prospettiva il percorso si amplia naturalmente, invitando a esplorare il legame tra corpo, salute, ambiente, abitudini e consapevolezza di sé. Comprendere il corpo significa anche comprendere il modo in cui percepiamo il mondo e il rapporto che costruiamo con esso.</p>
+            
+            <div id="book-extra-content" class="hidden space-y-4 opacity-0 transition-opacity duration-300">
+              <p> Lo sguardo, però, è rivolto anche al futuro. L'obiettivo è sperimentare un prototipo di <strong>agriturismo rigenerativo</strong>: un luogo in cui poter vivere per alcuni giorni seguendo ritmi più vicini alla natura, riscoprendo l'alternarsi del giorno e della notte, delle stagioni e dei tempi del corpo. Uno spazio in cui l'uso della tecnologia venga limitato a momenti ben definiti, per lasciare spazio all'ascolto di sé, al movimento, al contatto con la natura e alle relazioni autentiche. </p>
+              <p> L'intento non è quello di fuggire dal mondo moderno, ma di ritrovare un equilibrio che spesso la frenesia quotidiana ci fa dimenticare. Solo rallentando possiamo tornare ad ascoltare quelle parti di noi che chiedono attenzione, coltivarle e riscoprire un modo più armonico di vivere la salute e l'esistenza. </p>
+            </div>
+
+            <button type="button" id="toggle-book-text-btn" class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-blue-600 hover:text-blue-700 transition bg-blue-50/50 hover:bg-blue-50 rounded-lg px-3 py-2 focus:outline-none mt-2">
+              <span>Leggi di più</span>
+              <span id="toggle-book-text-arrow" class="transition-transform duration-200 inline-block">↓</span>
+            </button>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href="/books/il-corpo-un-mondo-da-scoprire" class="inline-flex rounded-xl bg-blue-600 hover:bg-blue-700 px-8 py-3.5 text-sm font-bold text-white transition duration-200 shadow-sm shadow-blue-500/20 active:scale-[0.98]">
+              Leggi il libro online
+            </a>
+            <a href="<%= posturacorretta_collabora_path %>" class="inline-flex rounded-xl bg-white border border-slate-200 hover:bg-slate-50 px-8 py-3.5 text-sm font-bold text-slate-700 transition duration-200 shadow-3xs active:scale-[0.98]">
+              Esplora il progetto
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <%= render "posturacorretta/footer" %>
+</div>
+
+<script>
+  (() => {
+    const btn = document.getElementById("toggle-book-text-btn");
+    const extraContent = document.getElementById("book-extra-content");
+    const arrow = document.getElementById("toggle-book-text-arrow");
+
+    if (btn && extraContent && arrow) {
+      btn.addEventListener("click", () => {
+        const isHidden = extraContent.classList.contains("hidden");
+        if (isHidden) {
+          extraContent.classList.remove("hidden");
+          setTimeout(() => {
+            extraContent.classList.remove("opacity-0");
+            extraContent.classList.add("opacity-100");
+          }, 10);
+          btn.firstElementChild.textContent = "Leggi meno";
+          arrow.classList.add("rotate-180");
+        } else {
+          extraContent.classList.add("opacity-0");
+          extraContent.classList.remove("opacity-100");
+          setTimeout(() => {
+            extraContent.classList.add("hidden");
+          }, 300);
+          btn.firstElementChild.textContent = "Leggi di più";
+          arrow.classList.remove("rotate-180");
+        }
+      });
+    }
+  })();
+</script>
+

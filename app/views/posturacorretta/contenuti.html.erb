@@ -1,0 +1,283 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<%
+  blog_categories = {
+    "dolore" => {
+      label: "Stop al dolore",
+      eyebrow: "Parti dal sintomo",
+      icon: "🩹",
+      color: "rose",
+      description: "Articoli pratici per comprendere dolore, rigidità e tensioni e scegliere il primo passo più adatto.",
+      subcategories: ["Dolore e sintomi", "Autotrattamento", "Recupero"],
+      articles: [
+        { title: "Punti di tensione: come riconoscerli", excerpt: "Una mappa semplice per distinguere una zona dolente da una tensione che mantiene il problema.", slug: "igiene-posturale", subcategory: "Dolore e sintomi", time: "6 min" },
+        { title: "Massaggio, presenza e autotrattamento", excerpt: "Perché toccare una zona non significa soltanto trattarla, ma anche imparare ad ascoltarla.", slug: "metodiche-posturali-e-fisiologia", subcategory: "Autotrattamento", time: "8 min" },
+        { title: "Sistema muscolo-scheletrico e dolore", excerpt: "Muscoli, articolazioni e catene: cosa osservare quando il dolore continua a tornare.", slug: "insegnamenti-fisioterapia", subcategory: "Dolore e sintomi", time: "9 min" },
+        { title: "Eliminare le disfunzioni", excerpt: "I principi osteopatici per comprendere restrizioni di movimento e compensi.", slug: "osteopatia-ascolto-del-corpo", subcategory: "Recupero", time: "7 min" }
+      ]
+    },
+    "prevenzione" => {
+      label: "Prevenzione",
+      eyebrow: "Prenditi cura prima",
+      icon: "🛡️",
+      color: "emerald",
+      description: "Abitudini, segnali del corpo e pratiche quotidiane per conservare mobilità, energia e autonomia.",
+      subcategories: ["Abitudini", "Mobilità", "Respirazione", "Circolazione"],
+      articles: [
+        { title: "Mobilità articolare: da dove iniziare", excerpt: "Una pratica sostenibile vale più di una sequenza perfetta fatta una volta sola.", slug: "igiene-posturale", subcategory: "Mobilità", time: "5 min" },
+        { title: "La respirazione come strumento di prevenzione", excerpt: "Il respiro collega postura, sistema nervoso e capacità di recupero.", slug: "insegnamenti-fisioterapia", subcategory: "Respirazione", time: "8 min" },
+        { title: "Prendersi cura del sistema fasciale", excerpt: "Movimento, idratazione e varietà: ciò che aiuta i tessuti a restare adattabili.", slug: "osteopatia-ascolto-del-corpo", subcategory: "Abitudini", time: "7 min" },
+        { title: "Le due circolazioni", excerpt: "Un'introduzione al movimento dei liquidi e ai ritmi che sostengono il corpo.", slug: "corpo-e-coscienza", subcategory: "Circolazione", time: "6 min" }
+      ]
+    },
+    "performance" => {
+      label: "Performance",
+      eyebrow: "Muoviti meglio",
+      icon: "⚡",
+      color: "amber",
+      description: "Forza strutturale, coordinazione e mobilità per esprimere capacità senza perdere ascolto e qualità del gesto.",
+      subcategories: ["Forza", "Coordinazione", "Mobilità avanzata", "Pratiche"],
+      articles: [
+        { title: "Le cinque direzioni di movimento", excerpt: "Una bussola biomeccanica per leggere il gesto oltre la singola articolazione.", slug: "biomeccanica-comportamentale-gds", subcategory: "Coordinazione", time: "9 min" },
+        { title: "Rinforzo muscolare strutturale", excerpt: "Costruire forza senza separare stabilità, respiro e organizzazione globale.", slug: "valutare-lo-stato-di-salute", subcategory: "Forza", time: "7 min" },
+        { title: "DNS e stabilizzazione neuromuscolare", excerpt: "Cosa possiamo imparare dalle tappe dello sviluppo motorio.", slug: "cinque-aree-della-salute", subcategory: "Coordinazione", time: "8 min" },
+        { title: "Animal Flow e movimenti evolutivi", excerpt: "Esplorare agilità e controllo attraverso appoggi e transizioni a corpo libero.", slug: "cinque-aree-della-salute", subcategory: "Pratiche", time: "6 min" }
+      ]
+    },
+    "fisiologia" => {
+      label: "Postura e Fisiologia",
+      eyebrow: "Comprendi il corpo",
+      icon: "🌀",
+      color: "blue",
+      description: "Le mappe fondamentali dell'Accademia: fisioterapia, biomeccanica, osteopatia, bioritmi e coscienza corporea.",
+      subcategories: ["Igiene posturale", "Fisioterapia", "Biomeccanica GDS", "Osteopatia", "Corpo e coscienza"],
+      articles: [
+        { title: "Che cos'è davvero la postura?", excerpt: "Non una posizione immobile, ma il modo in cui il corpo si organizza e risponde all'ambiente.", slug: "metodiche-posturali-e-fisiologia", subcategory: "Igiene posturale", time: "7 min" },
+        { title: "I sistemi della fisiologia", excerpt: "Dal respiratorio al linfatico: perché leggere il corpo soltanto per apparati non basta.", slug: "insegnamenti-fisioterapia", subcategory: "Fisioterapia", time: "10 min" },
+        { title: "Biomeccanica comportamentale GDS", excerpt: "Le famiglie muscolari come espressione del movimento e dell'adattamento individuale.", slug: "biomeccanica-comportamentale-gds", subcategory: "Biomeccanica GDS", time: "11 min" },
+        { title: "Osteopatia e ascolto del corpo", excerpt: "Disfunzione, fascia, visceri e sistema neurovegetativo in una lettura integrata.", slug: "osteopatia-ascolto-del-corpo", subcategory: "Osteopatia", time: "9 min" },
+        { title: "Dai bioritmi alla coscienza corporea", excerpt: "Circolazioni, centri e movimenti per orientarsi tra le diverse mappe del corpo.", slug: "corpo-e-coscienza", subcategory: "Corpo e coscienza", time: "8 min" }
+      ]
+    },
+    "benessere" => {
+      label: "Benessere Integrato",
+      eyebrow: "Allarga lo sguardo",
+      icon: "🌿",
+      color: "green",
+      description: "Cinque aree che dialogano: recupero, movimento, mondo emotivo e mentale, piante e rimedi, nutrizione.",
+      subcategories: ["Recupero", "Movimento", "Emozioni e mente", "Piante e rimedi", "Nutrizione"],
+      articles: [
+        { title: "Riposo e tecniche di recupero", excerpt: "La mappa iniziale per collegare riposo, recupero, percezione corporea e cura quotidiana.", slug: "creare-un-percorso-integrato", subcategory: "Recupero", time: "Risorsa" },
+        { title: "Igiene articolare", excerpt: "Mobilita articolare, punti di tensione, vie di discesa e recettori sensoriali.", slug: "creare-un-percorso-integrato", subcategory: "Recupero", time: "4 lezioni" },
+        { title: "Principi di fisioterapia", excerpt: "Sistema respiratorio, nervoso, muscolo-scheletrico, cardiocircolatorio, linfatico e digerente.", slug: "creare-un-percorso-integrato", subcategory: "Recupero", time: "5 lezioni" },
+        { title: "Principi di osteopatia", excerpt: "Disfunzioni, sistema fasciale, viscerale, cranio-sacrale e neurovegetativo.", slug: "creare-un-percorso-integrato", subcategory: "Recupero", time: "5 lezioni" },
+        { title: "Biomeccanica comportamentale - intro al Metodo GDS", excerpt: "Cinque direzioni di movimento, catene AM, AL, PM, PL e PA/AP.", slug: "creare-un-percorso-integrato", subcategory: "Recupero", time: "6 lezioni" },
+        { title: "Bioritmi circadiani - intro al metodo Corpo e Coscienza", excerpt: "Due circolazioni, centri di gravita, elementi, meridiani e centri neurolinfatici.", slug: "creare-un-percorso-integrato", subcategory: "Recupero", time: "8 lezioni" },
+
+        { title: "Movimento e allenamento", excerpt: "Una panoramica per scegliere pratiche corporee, allenamento e movimento sostenibile.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Risorsa" },
+        { title: "Rinforzo muscolare", excerpt: "Costruire forza senza separarla da postura, respiro e qualita del gesto.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "I cinque tibetani", excerpt: "Una sequenza essenziale per ritmo, mobilita e continuita nella pratica.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "Gli 8 pezzi di brocato", excerpt: "Una pratica tradizionale per coordinare movimento, respiro e presenza.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "Una sequenza dello yoga", excerpt: "Come usare lo yoga come risorsa di movimento, non come ricetta uguale per tutti.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "Lo sviluppo del movimento dei bambini - DNS", excerpt: "Lo sviluppo motorio del bambino come riferimento per stabilita, coordinazione e appoggi.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "Animal Flow", excerpt: "Transizioni a corpo libero, appoggi e controllo dinamico del movimento.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "Movimenti arcaici", excerpt: "Schemi motori essenziali per riscoprire possibilita e adattamento del corpo.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "Capoeira", excerpt: "Ritmo, gioco, coordinazione e relazione come pratica corporea integrata.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+        { title: "Tai Chi", excerpt: "Movimento lento, equilibrio, continuita e ascolto del gesto.", slug: "creare-un-percorso-integrato", subcategory: "Movimento", time: "Lezione" },
+
+        { title: "Aspetti emotivi e mentali", excerpt: "Risorse per ascoltare percezione, linguaggio, storie personali e atteggiamento mentale.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Risorsa" },
+        { title: "Morfopsicologia", excerpt: "Una mappa da trattare con prudenza per osservare espressione, corpo e carattere.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Human Design", excerpt: "Un linguaggio simbolico da esplorare come spunto di consapevolezza personale.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Caycedo Sofrologia", excerpt: "Rilassamento, percezione corporea e presenza come strumenti di regolazione.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Corpo e coscienza", excerpt: "Collegare percezione, movimento, fisiologia e vissuto corporeo.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Yoga, nozioni avanzate", excerpt: "Oltre la forma: respiro, attenzione, energia e adattamento della pratica.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Su Wen, medicina cinese e fenomenologia", excerpt: "Un ponte culturale per leggere corpo, ritmo e ambiente senza semplificare troppo.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Siamo fatti di parole", excerpt: "Come linguaggio e narrazione influenzano il modo in cui percepiamo il corpo.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Il potere delle storie", excerpt: "Le storie come strumenti per orientare attenzione, identita e cambiamento.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Efficacia personale", excerpt: "Dare forma a obiettivi, continuita e responsabilita nel percorso di salute.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Il viaggio dell'eroe", excerpt: "Una struttura narrativa per comprendere passaggi, crisi e trasformazioni.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "La medicina del suono", excerpt: "Suono, ritmo e ascolto come esperienze corporee e relazionali.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Teatro", excerpt: "Corpo, voce, relazione e presenza come strumenti di espressione.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Lezione" },
+        { title: "Il Giardino del Corpo", excerpt: "Dalla salute individuale a un ambiente in cui coltivare ritmo, relazioni e pratica.", slug: "creare-un-percorso-integrato", subcategory: "Emozioni e mente", time: "Risorsa" },
+
+        { title: "Fisiologia, piante, integratori e farmaci adatti a te", excerpt: "Una cornice prudente per collegare rimedi, fisiologia e responsabilita professionale.", slug: "creare-un-percorso-integrato", subcategory: "Piante e rimedi", time: "Risorsa" },
+        { title: "La medicina dei semplici - Dr. Abbiati", excerpt: "La tradizione delle piante e dei rimedi territoriali come cultura da riscoprire con criterio.", slug: "creare-un-percorso-integrato", subcategory: "Piante e rimedi", time: "Lezione" },
+        { title: "Medicina mediterranea", excerpt: "Territorio, stagioni, abitudini e rimedi nel contesto mediterraneo.", slug: "creare-un-percorso-integrato", subcategory: "Piante e rimedi", time: "Lezione" },
+        { title: "Medicina cinese", excerpt: "Un sistema tradizionale per leggere relazioni tra organi, ritmi, energia e ambiente.", slug: "creare-un-percorso-integrato", subcategory: "Piante e rimedi", time: "Lezione" },
+        { title: "Ayurveda", excerpt: "Una tradizione per osservare costituzione, ritmo, alimentazione e stile di vita.", slug: "creare-un-percorso-integrato", subcategory: "Piante e rimedi", time: "Lezione" },
+
+        { title: "Nutrizione", excerpt: "Alimentazione e nutrimento come una delle cinque aree del percorso integrato.", slug: "creare-un-percorso-integrato", subcategory: "Nutrizione", time: "Risorsa" },
+        { title: "Cosa stiamo mangiando?", excerpt: "Qualita, origine e trasformazione del cibo nella vita quotidiana.", slug: "creare-un-percorso-integrato", subcategory: "Nutrizione", time: "Lezione" },
+        { title: "Cos'e il cibo?", excerpt: "Il cibo come materia, relazione, cultura e nutrimento del corpo.", slug: "creare-un-percorso-integrato", subcategory: "Nutrizione", time: "Lezione" },
+        { title: "Il cibo viene dalla terra", excerpt: "Stagionalita, territorio e filiera come parte della salute.", slug: "creare-un-percorso-integrato", subcategory: "Nutrizione", time: "Lezione" },
+        { title: "Cibo e industrializzazione", excerpt: "Capire come produzione, trasformazione e abitudini cambiano cio che mangiamo.", slug: "creare-un-percorso-integrato", subcategory: "Nutrizione", time: "Lezione" },
+        { title: "Cibo un mezzo per trasmettere energia", excerpt: "Una lettura simbolica e pratica del nutrimento, tra qualita e vitalita.", slug: "creare-un-percorso-integrato", subcategory: "Nutrizione", time: "Lezione" }
+      ]
+    },
+    "giardino" => {
+      label: "Il Giardino del Corpo",
+      eyebrow: "Coltiva il tuo mondo",
+      icon: "🌱",
+      color: "violet",
+      description: "Territorio, stagioni, esperienze e progetti: dal prendersi cura del corpo al prendersi cura del luogo in cui viviamo.",
+      subcategories: ["Visione", "Territorio", "Eventi ed esperienze", "Calendario contadino"],
+      articles: [
+        { title: "La formazione oltre la salute e il lavoro", excerpt: "Le sfere di Flowpulse e il passaggio verso il Giardino del Corpo.", slug: "antica-mappa-giardino-corpo", subcategory: "Visione", time: "7 min" },
+        { title: "Che cos'è il Giardino del Corpo", excerpt: "L'idea di un agriturismo rigenerativo e di una scuola per lo sviluppo armonico.", slug: "giardino-del-corpo", subcategory: "Visione", time: "8 min" },
+        { title: "L'importanza dei luoghi", excerpt: "Gli spazi cambiano il modo in cui apprendiamo, ci incontriamo e costruiamo comunità.", slug: "importanza-dei-luoghi", subcategory: "Territorio", time: "6 min" },
+        { title: "Eventi tra natura e territorio", excerpt: "Esperienze all'aperto per riaprire un rapporto concreto con il paesaggio.", slug: "eventi-tra-natura-e-territorio", subcategory: "Eventi ed esperienze", time: "5 min" },
+        { title: "Il calendario contadino e le stagioni", excerpt: "Ritrovare ritmo attraverso attività, raccolti e passaggi dell'anno.", slug: "il-calendario-contadino-e-le-stagioni", subcategory: "Calendario contadino", time: "7 min" }
+      ]
+    }
+  }
+
+  blog_color_classes = {
+    "rose" => { soft: "bg-rose-50", border: "border-rose-200", text: "text-rose-700", badge: "bg-rose-100 text-rose-800", hover: "group-hover:text-rose-700" },
+    "emerald" => { soft: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", badge: "bg-emerald-100 text-emerald-800", hover: "group-hover:text-emerald-700" },
+    "amber" => { soft: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", badge: "bg-amber-100 text-amber-800", hover: "group-hover:text-amber-700" },
+    "blue" => { soft: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", badge: "bg-blue-100 text-blue-800", hover: "group-hover:text-blue-700" },
+    "green" => { soft: "bg-green-50", border: "border-green-200", text: "text-green-700", badge: "bg-green-100 text-green-800", hover: "group-hover:text-green-700" },
+    "violet" => { soft: "bg-violet-50", border: "border-violet-200", text: "text-violet-700", badge: "bg-violet-100 text-violet-800", hover: "group-hover:text-violet-700" }
+  }
+%>
+
+<div id="top" class="bg-slate-50 text-slate-900 antialiased">
+  <section class="border-t border-slate-100 px-5 py-12 md:py-16 min-h-[calc(100vh-4rem)]">
+    <div class="mx-auto max-w-4xl">
+      <header class="max-w-2xl">
+        <p class="text-xs font-black uppercase tracking-[0.22em] text-blue-700">PosturaCorretta Blog</p>
+        <h1 class="mt-3 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">Articoli e approfondimenti</h1>
+        <p class="mt-4 text-base leading-relaxed text-slate-600">Cerca un argomento oppure esplora il blog per categoria.</p>
+
+        <label class="relative mt-6 block max-w-lg">
+          <span class="sr-only">Cerca nel blog</span>
+          <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">⌕</span>
+          <input id="blog-search" type="search" placeholder="Cerca un argomento…" class="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-11 pr-4 text-sm shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+        </label>
+      </header>
+
+      <nav class="mt-9 border-b border-slate-200" aria-label="Categorie del blog">
+        <div class="flex gap-2 overflow-x-auto pb-3 no-scrollbar">
+          <% blog_categories.each_with_index do |(key, category), index| %>
+            <button type="button" onclick="switchBlogCategory('<%= key %>')" id="blog-tab-<%= key %>" class="blog-tab shrink-0 rounded-full px-4 py-2.5 text-xs font-bold transition <%= index.zero? ? 'bg-slate-950 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:text-slate-950' %>">
+              <%= category[:label] %>
+            </button>
+          <% end %>
+        </div>
+      </nav>
+
+      <% blog_categories.each_with_index do |(key, category), category_index| %>
+        <% colors = blog_color_classes.fetch(category[:color]) %>
+        <section id="blog-section-<%= key %>" class="blog-section pt-8 <%= 'hidden' unless category_index.zero? %>" data-category="<%= key %>">
+          <div class="border-b border-slate-200 pb-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] <%= colors[:text] %>"><%= category[:eyebrow] %></p>
+            <div class="mt-1 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 class="text-2xl font-black text-slate-950"><%= category[:label] %></h2>
+                <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600"><%= category[:description] %></p>
+              </div>
+              <span class="visible-count text-xs font-semibold text-slate-400"><%= category[:articles].size %> articoli</span>
+            </div>
+          </div>
+
+          <div class="mt-5 flex gap-2 overflow-x-auto pb-2 no-scrollbar" aria-label="Sottocategorie">
+            <button type="button" onclick="filterBlogSubcategory('<%= key %>', 'all', this)" class="subcategory-button active-subcategory whitespace-nowrap rounded-full bg-slate-900 px-3.5 py-2 text-xs font-bold text-white">Tutti</button>
+            <% category[:subcategories].each do |subcategory| %>
+              <button type="button" onclick="filterBlogSubcategory('<%= key %>', '<%= subcategory %>', this)" class="subcategory-button whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-semibold text-slate-500 hover:bg-white hover:text-slate-950"><%= subcategory %></button>
+            <% end %>
+          </div>
+
+          <div class="mt-3 divide-y divide-slate-200" id="article-list-<%= key %>">
+            <% category[:articles].each do |article| %>
+              <a href="/books/il-corpo-un-mondo-da-scoprire/<%= article[:slug] %>" class="blog-article group grid gap-3 py-6 transition sm:grid-cols-[1fr_auto] sm:items-center" data-subcategory="<%= article[:subcategory] %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory]].join(' ').downcase %>">
+                <div>
+                  <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider <%= colors[:text] %>">
+                    <span><%= article[:subcategory] %></span>
+                    <span class="text-slate-300">·</span>
+                    <span class="font-semibold normal-case tracking-normal text-slate-400"><%= article[:time] %></span>
+                  </div>
+                  <h3 class="mt-1.5 text-lg font-black text-slate-900 transition <%= colors[:hover] %>"><%= article[:title] %></h3>
+                  <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-500"><%= article[:excerpt] %></p>
+                </div>
+                <span class="text-slate-300 transition group-hover:translate-x-1 group-hover:text-slate-700">→</span>
+              </a>
+            <% end %>
+          </div>
+
+          <div class="blog-empty hidden border-t border-slate-200 py-12 text-center">
+            <p class="font-black text-slate-900">Nessun articolo trovato</p>
+            <p class="mt-2 text-sm text-slate-500">Prova con un'altra parola o sottocategoria.</p>
+          </div>
+        </section>
+      <% end %>
+    </div>
+  </section>
+
+  <%= render "posturacorretta/footer" %>
+</div>
+
+<script>
+  let activeBlogCategory = "dolore";
+  const activeSubcategories = {};
+
+  window.switchBlogCategory = function(key) {
+    const selectedSection = document.getElementById(`blog-section-${key}`);
+    const selectedTab = document.getElementById(`blog-tab-${key}`);
+    if (!selectedSection || !selectedTab) return;
+
+    activeBlogCategory = key;
+    document.querySelectorAll(".blog-section").forEach(section => section.classList.add("hidden"));
+    document.querySelectorAll(".blog-tab").forEach(tab => {
+      tab.className = "blog-tab shrink-0 rounded-full px-4 py-2.5 text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:text-slate-950";
+    });
+
+    selectedSection.classList.remove("hidden");
+    selectedTab.className = "blog-tab shrink-0 rounded-full px-4 py-2.5 text-xs font-bold transition bg-slate-950 text-white shadow-sm";
+    applyBlogFilters();
+
+    const url = new URL(window.location);
+    url.searchParams.set("categoria", key);
+    history.replaceState({}, "", url);
+  };
+
+  window.filterBlogSubcategory = function(category, subcategory, button) {
+    activeSubcategories[category] = subcategory;
+    const section = document.getElementById(`blog-section-${category}`);
+    section.querySelectorAll(".subcategory-button").forEach(item => {
+      item.classList.remove("bg-slate-900", "text-white", "active-subcategory");
+      item.classList.add("text-slate-600");
+    });
+    button.classList.add("bg-slate-900", "text-white", "active-subcategory");
+    button.classList.remove("text-slate-600");
+    applyBlogFilters();
+  };
+
+  function applyBlogFilters() {
+    const section = document.getElementById(`blog-section-${activeBlogCategory}`);
+    if (!section) return;
+
+    const query = document.getElementById("blog-search").value.trim().toLowerCase();
+    const subcategory = activeSubcategories[activeBlogCategory] || "all";
+    let visible = 0;
+
+    section.querySelectorAll(".blog-article").forEach(article => {
+      const matchesSubcategory = subcategory === "all" || article.dataset.subcategory === subcategory;
+      const matchesSearch = !query || article.dataset.search.includes(query);
+      const shouldShow = matchesSubcategory && matchesSearch;
+      article.classList.toggle("hidden", !shouldShow);
+      if (shouldShow) visible += 1;
+    });
+
+    section.querySelector(".visible-count").textContent = `${visible} ${visible === 1 ? "articolo" : "articoli"}`;
+    section.querySelector(".blog-empty").classList.toggle("hidden", visible !== 0);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("blog-search").addEventListener("input", applyBlogFilters);
+    const params = new URLSearchParams(window.location.search);
+    const requestedCategory = params.get("categoria") || params.get("subtab") || "dolore";
+    window.switchBlogCategory(document.getElementById(`blog-tab-${requestedCategory}`) ? requestedCategory : "dolore");
+  });
+</script>

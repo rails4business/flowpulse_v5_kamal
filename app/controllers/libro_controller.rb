@@ -59,7 +59,10 @@ class LibroController < ApplicationController
         access = (frontmatter["access"] || "draft").to_s.strip.downcase
         is_superadmin = Current.user&.superadmin_user?
 
-        if access == "draft" && !is_superadmin
+        if hidden_access?(access) && !is_superadmin
+          render plain: "Contenuto non trovato per #{@chapter_slug}", status: :not_found
+          return
+        elsif access == "draft" && !is_superadmin
           @is_draft = true
           @chapter_markdown = "*Questo capitolo è attualmente in fase di scrittura/bozza e sarà disponibile a breve. Torna presto a trovarci per leggerne i contenuti!*"
         else
@@ -140,11 +143,17 @@ class LibroController < ApplicationController
     standalone_counter = 0
     access_map = build_access_map
 
-    @toc = yaml_data.map do |item|
+    @toc = yaml_data.each_with_object([]) do |item, entries|
       type = item["type"].presence || "chapter"
       is_header = item["header"] == true || type == "head"
+      slug = item["slug"]
+      access = access_map[slug].presence || item["access"].presence || "draft"
+
+      next if hidden_access?(access) && !Current.user&.superadmin_user?
+
       chapter_num = nil
       outline_number = nil
+
       unless is_header
         counter += 1
         chapter_num = counter
@@ -165,10 +174,7 @@ class LibroController < ApplicationController
         end
       end
 
-      slug = item["slug"]
-      access = access_map[slug] || "draft"
-
-      {
+      entries << {
         title: item["title"],
         slug: slug,
         type: type,
@@ -199,6 +205,10 @@ class LibroController < ApplicationController
       next
     end
     map
+  end
+
+  def hidden_access?(access)
+    access.to_s.strip.downcase.in?(%w[hide hidden])
   end
 
   def find_book_file(dir, safe_slug_base)
