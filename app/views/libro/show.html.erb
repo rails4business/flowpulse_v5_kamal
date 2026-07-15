@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= @chapter_title %> — PosturaCorretta</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #f1f5f9;
+      font-family: "Playfair Display", ui-serif, Georgia, serif;
+      overflow-x: hidden;
+    }
+    .book-shell {
+      perspective: 1600px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .book {
+      position: relative;
+      width: 100%;
+      max-width: 1400px;
+      height: auto;
+      transform-style: preserve-3d;
+      margin: 0 auto;
+    }
+    .page {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #fdfaf6;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+    }
+    
+    .page::before {
+      display: none;
+    }
+
+    .page-left {
+      background: #f4eee7;
+      border-bottom: 1px solid #e2d8cd;
+      padding-bottom: 2rem;
+    }
+    .page-right {
+      background: #fffaf5;
+    }
+    .paper-texture {
+      position: absolute;
+      inset: 0;
+      background: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+      opacity: 0.25;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .content {
+      position: relative;
+      z-index: 3;
+      padding: 1.5rem;
+    }
+    
+    /* DESKTOP STYLES (Book Spread) */
+    @media (min-width: 1024px) {
+      body {
+        overflow: hidden;
+      }
+      .book {
+        width: min(1400px, 96vw);
+        height: min(760px, 80vh);
+      }
+      .page {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: 0.95fr 1.05fr;
+        flex-direction: row;
+        box-shadow: 0 35px 80px rgba(15, 23, 42, 0.22);
+        overflow: hidden;
+      }
+      .page::before {
+        display: block;
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 47.5%;
+        width: 2px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.05), rgba(0,0,0,0.15));
+        transform: translateX(-1px);
+        z-index: 2;
+        pointer-events: none;
+      }
+      .page-left {
+        border-right: 1px solid #e2d8cd;
+        border-bottom: none;
+        padding-bottom: 0;
+        overflow: hidden;
+      }
+      .page-right {
+        height: 100%;
+        overflow: hidden;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .page-right-body {
+        overflow-y: auto;
+        flex: 1;
+        width: 100%;
+      }
+      .content {
+        padding: 3rem;
+      }
+      .page-left .content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .page-left::-webkit-scrollbar, 
+      .page-right-body::-webkit-scrollbar {
+        width: 6px;
+      }
+      .page-left::-webkit-scrollbar-thumb,
+      .page-right-body::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 3px;
+      }
+    }
+
+    .prose {
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+    .prose p {
+      margin-bottom: 1.25rem;
+      text-indent: 1rem;
+    }
+    .prose h1, .prose h2, .prose h3 {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      text-indent: 0;
+    }
+    .prose h1 { font-size: 1.5rem; }
+    .prose h2 { font-size: 1.25rem; }
+    .prose h3 { font-size: 1.1rem; }
+    .prose ul, .prose ol {
+      margin-bottom: 1.25rem;
+      padding-left: 1.5rem;
+      text-indent: 0;
+    }
+    .prose ul { list-style-type: disc; }
+    .prose ol { list-style-type: decimal; }
+    .prose li { margin-bottom: 0.5rem; }
+
+    .nav-link {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* Scrollbar minimal custom styling */
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 4px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,0.08);
+      border-radius: 2px;
+    }
+
+    /* Fullscreen Mode Overrides (Standard Native) */
+    :fullscreen .header-bar { display: none !important; }
+    :fullscreen main { padding: 0 !important; margin: 0 !important; }
+    :fullscreen .book-shell { padding: 0 !important; }
+    :fullscreen .book {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+    :fullscreen .page {
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      height: 100vh !important;
+    }
+    :fullscreen #fullscreen-exit-floating {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Fullscreen Mode Overrides (Webkit Safari/Chrome) */
+    :-webkit-full-screen .header-bar { display: none !important; }
+    :-webkit-full-screen main { padding: 0 !important; margin: 0 !important; }
+    :-webkit-full-screen .book-shell { padding: 0 !important; }
+    :-webkit-full-screen .book {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+    :-webkit-full-screen .page {
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      height: 100vh !important;
+    }
+    :-webkit-full-screen #fullscreen-exit-floating {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Fullscreen Mode Overrides (JS Class Fallback) */
+    .fullscreen-active .header-bar { display: none !important; }
+    .fullscreen-active main { padding: 0 !important; margin: 0 !important; }
+    .fullscreen-active .book-shell { padding: 0 !important; }
+    .fullscreen-active .book {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+    .fullscreen-active .page {
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      height: 100vh !important;
+    }
+    .fullscreen-active #fullscreen-exit-floating {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f1f5f9]">
+  
+  <!-- Floating exit button only shown in fullscreen -->
+  <button id="fullscreen-exit-floating" class="fixed top-4 right-4 z-50 p-3 bg-slate-900/60 hover:bg-slate-900/80 text-white rounded-full hidden font-sans text-sm font-bold" title="Esci da Schermo Intero">
+❌ 
+  </button>
+
+  <!-- Header Bar -->
+  <div class="header-bar relative w-full px-6 md:px-10 py-4 flex items-center justify-between border-b border-slate-200/50 bg-white/40 backdrop-blur z-20">
+    <div class="flex items-center gap-4 md:gap-6">
+      <a class="nav-link text-slate-600 hover:text-slate-900 transition font-semibold" href="/posturacorretta?tab=filosofia#filosofia">
+        ← Torna 
+      </a>
+      <!-- Indice toggle button visible only on mobile and when not on cover -->
+      <% unless @is_cover %>
+        <button id="mobile-toc-toggle" class="lg:hidden nav-link text-blue-600 hover:text-blue-800 transition font-bold flex items-center gap-1">
+          ☰ Indice
+        </button>
+      <% end %>
+    </div>
+
+    <!-- Fullscreen & Admin Controls (Centered) -->
+    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-4 md:gap-6 z-30">
+      <button id="fullscreen-toggle" class="nav-link text-slate-600 hover:text-slate-900 transition font-semibold flex items-center gap-1">
+        ⛶ Schermo Intero
+      </button>
+      <% if Current.user&.superadmin_user? %>
+        <a href="<%= book_reader_guida_path %>" class="nav-link text-red-600 hover:text-red-800 transition font-bold flex items-center gap-1" title="Guida di Gestione Libro">
+          ⚙️ Guida
+        </a>
+      <% end %>
+    </div>
+
+    <a class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-500 hover:text-slate-700" href="/posturacorretta">
+      <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta Logo" class="h-6 w-auto opacity-90">
+    </a>
+  </div>
+
+  <% if @is_cover %>
+    <!-- CLOSED BOOK COVER VIEW -->
+    <% first_chapter_slug = @next_chapter&.dig(:slug) || "copertina" %>
+    <main class="flex-1 flex flex-col items-center justify-center py-10 px-4 z-10">
+      <div class="max-w-md w-full flex flex-col items-center justify-center text-center">
+        <a href="<%= book_reader_chapter_path(first_chapter_slug) %>" class="group relative block w-72 max-w-full transition duration-300" style="perspective: 1600px;">
+          <div class="relative aspect-[3/4] w-full rounded-r-2xl shadow-[0_30px_70px_rgba(15,23,42,0.25)] transition-all duration-500 ease-out transform group-hover:scale-[1.03] group-hover:rotate-y-[-14deg] group-hover:shadow-[0_45px_90px_rgba(37,99,235,0.3)] bg-white" style="transform-style: preserve-3d; transform-origin: left center;">
+            <img src="<%= @book_metadata["cover_url"].presence || "/images/libro_cover.png" %>" alt="<%= @chapter_title %>" class="h-full w-full rounded-r-2xl object-cover">
+            <!-- Deep spine shadow for closed book -->
+            <div class="absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-black/35 via-black/10 to-transparent rounded-r-sm"></div>
+            <!-- Page edges thickness simulated inside the 3D projection -->
+            <div class="absolute inset-y-0.5 -right-3 w-3 bg-gradient-to-r from-slate-100 to-slate-200 rounded-r-sm shadow-inner border-y border-r border-slate-300/40 transform origin-left rotate-y-[90deg] hidden sm:block"></div>
+          </div>
+        </a>
+        <h1 class="mt-8 text-2xl font-semibold text-slate-800 italic font-serif"><%= @chapter_title %></h1>
+        <p class="mt-2 text-sm text-slate-500 font-sans max-w-xs leading-relaxed"><%= @chapter_description %></p>
+        <p class="mt-8 text-[11px] uppercase tracking-[0.25em] text-blue-600 font-sans font-bold animate-pulse">
+          Clicca sulla copertina per iniziare a leggere →
+        </p>
+      </div>
+    </main>
+  <% else %>
+    <!-- OPEN BOOK SPREAD VIEW -->
+    <main class="flex-1 flex items-center justify-center py-2 px-4 z-10">
+      <div class="book-shell">
+        <div class="book">
+          <div class="page">
+            
+            <!-- Left Page (Metadata & TOC) -->
+            <div class="page-left relative">
+              <div class="paper-texture"></div>
+              <div class="content flex flex-col h-full !pt-6 lg:!pt-8">
+               
+
+                <!-- Table of Contents directly on left page (hidden on mobile, flex on desktop) -->
+                <div class="  flex-1 flex-col min-h-0 overflow-hidden hidden lg:flex">
+                  <a href="<%= book_reader_chapter_path("copertina") %>" class="text-[14px] uppercase tracking-[0.1em] text-slate-400 hover:text-slate-600 transition font-sans font-bold mb-3 block">
+                    ← <%= @book_metadata["title"].presence || @book_slug.titleize %>
+                  </a>
+                  <nav class="flex-1 overflow-y-auto space-y-1.5 pr-2 scrollbar-thin font-sans">
+                    <% @toc.each do |item| %>
+                      <% if item[:header] %>
+                        <%
+                          head_border_color = case item[:color]
+                            when "rosso" then "border-l-[3px] border-red-500 pl-2 text-red-950 bg-red-50/20"
+                            when "verde" then "border-l-[3px] border-green-600 pl-2 text-green-950 bg-green-50/20"
+                            when "arancione" then "border-l-[3px] border-orange-500 pl-2 text-orange-950 bg-orange-50/20"
+                            when "viola" then "border-l-[3px] border-purple-600 pl-2 text-purple-950 bg-purple-50/20"
+                            when "blu" then "border-l-[3px] border-blue-600 pl-2 text-blue-950 bg-blue-50/20"
+                            else "border-l-[3px] border-slate-400 pl-2 text-slate-800"
+                          end
+                        %>
+                        <div class="text-[11px] font-black uppercase tracking-wider mt-5 mb-1.5 py-0.5 rounded-r <%= head_border_color %>">
+                          <%= item[:title] %>
+                        </div>
+                      <% elsif item[:type] == "section" %>
+                        <%
+                          is_active = item[:slug] == @chapter_slug
+                          section_class = is_active ? "bg-slate-100 text-slate-950 border-l-2 border-slate-500 pl-[10px]" : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+                        %>
+                        <a href="<%= book_reader_chapter_path(item[:slug]) %>"
+                           class="block text-[12px] font-bold mt-4 mb-1 pl-3 py-1 rounded transition <%= section_class %>">
+                          <%= item[:outline_number] ? "#{item[:outline_number]}. " : "" %><%= item[:title] %>
+                          <% if item[:access] == "draft" %>
+                            <span class="text-[9px] uppercase tracking-wider bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded ml-1.5 font-bold">A breve</span>
+                          <% end %>
+                        </a>
+                      <% else %>
+                        <%
+                          is_active = item[:slug] == @chapter_slug
+                          chapter_class = if is_active
+                            case item[:color]
+                              when "rosso" then "bg-red-50 text-red-900 border-l-2 border-red-600 pl-[22px]"
+                              when "verde" then "bg-green-50 text-green-900 border-l-2 border-green-600 pl-[22px]"
+                              when "arancione" then "bg-orange-50 text-orange-950 border-l-2 border-orange-600 pl-[22px]"
+                              when "viola" then "bg-purple-50 text-purple-950 border-l-2 border-purple-600 pl-[22px]"
+                              when "blu" then "bg-blue-50 text-blue-950 border-l-2 border-blue-600 pl-[22px]"
+                              else "bg-slate-100 text-slate-950 border-l-2 border-slate-500 pl-[22px]"
+                            end
+                          else
+                            "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                          end
+                        %>
+                        <a href="<%= book_reader_chapter_path(item[:slug]) %>"
+                           class="block text-[13px] pl-6 py-0.5 rounded transition <%= chapter_class %>">
+                          <%= item[:outline_number] ? "#{item[:outline_number]}. " : "" %><%= item[:title] %>
+                          <% if item[:access] == "draft" %>
+                            <span class="text-[9px] uppercase tracking-wider bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded ml-1.5 font-bold">A breve</span>
+                          <% end %>
+                        </a>
+                      <% end %>
+                    <% end %>
+                  </nav>
+                </div>
+
+              </div>
+            </div>
+            
+            <!-- Right Page (Markdown Content) -->
+            <div class="page-right relative flex flex-col items-center justify-start min-h-[350px] lg:min-h-0">
+              <div class="paper-texture"></div>
+              
+              <!-- Scrollable Body Container -->
+              <div class="page-right-body w-full overflow-y-auto flex-1 flex flex-col min-h-0">
+                <div class="content prose prose-slate max-w-none text-justify leading-relaxed font-serif text-slate-800 w-full flex-1 !pt-6 lg:!pt-8 pb-16">
+                  <!-- Title & Description at the top of content -->
+                  <div class="mb-8 not-prose text-left">
+                    <h1 class="text-3xl lg:text-4xl italic text-slate-800 leading-tight font-serif tracking-tight"><%= @chapter_title %></h1>
+                    <% if @chapter_description.present? %>
+                      <p class="mt-3 text-slate-500 font-sans text-sm leading-relaxed"><%= @chapter_description %></p>
+                    <% end %>
+                  </div>
+
+                  <!-- Markdown body text -->
+                  <%= markdown(@chapter_markdown) %>
+                </div>
+              </div>
+
+              <!-- Fixed Footer Container inside the section -->
+              <div class="page-right-footer w-full bg-[#fffaf5] border-t border-slate-200/60 z-10 py-4 px-6 md:px-12 flex justify-between items-center text-xs font-sans text-slate-500 font-semibold shadow-[0_-4px_12px_rgba(0,0,0,0.02)]">
+                <% if @prev_chapter %>
+                  <a class="hover:text-blue-600 transition flex items-center gap-1" href="<%= book_reader_chapter_path(@prev_chapter[:slug]) %>">
+                    ← Precedente
+                  </a>
+                <% else %>
+                  <span></span>
+                <% end %>
+                <% if @next_chapter %>
+                  <a class="hover:text-blue-600 transition flex items-center gap-1" href="<%= book_reader_chapter_path(@next_chapter[:slug]) %>">
+                    Successivo →
+                  </a>
+                <% else %>
+                  <span></span>
+                <% end %>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  <% end %>
+
+  <!-- Mobile TOC Drawer Overlay -->
+  <div id="mobile-toc-drawer" class="fixed inset-0 z-50 hidden transition-all duration-300">
+    <!-- Backdrop with fade-in effect -->
+    <div id="mobile-toc-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300"></div>
+    <!-- Drawer Panel with slide-in-out transition -->
+    <div class="absolute inset-y-0 left-0 w-80 max-w-[85vw] bg-[#f4eee7] shadow-2xl flex flex-col p-6 overflow-hidden transform transition-transform duration-300 -translate-x-full" id="mobile-toc-panel">
+      <div class="flex items-center justify-between border-b border-slate-300 pb-3 mb-4">
+        <a href="<%= book_reader_chapter_path("copertina") %>" class="text-[14px] uppercase tracking-[0.1em] text-slate-500 hover:text-slate-700 transition font-sans font-bold block">
+          ← <%= @book_metadata["title"].presence || @book_slug.titleize %>
+        </a>
+        <button id="mobile-toc-close" class="text-slate-400 hover:text-slate-600 text-2xl font-bold font-sans">&times;</button>
+      </div>
+      <nav class="flex-1 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin font-sans">
+        <% @toc.each do |item| %>
+          <% if item[:header] %>
+            <%
+              head_border_color = case item[:color]
+                when "rosso" then "border-l-[3px] border-red-500 pl-2 text-red-955 bg-red-50/20"
+                when "verde" then "border-l-[3px] border-green-600 pl-2 text-green-955 bg-green-50/20"
+                when "arancione" then "border-l-[3px] border-orange-500 pl-2 text-orange-955 bg-orange-50/20"
+                when "viola" then "border-l-[3px] border-purple-600 pl-2 text-purple-955 bg-purple-50/20"
+                when "blu" then "border-l-[3px] border-blue-600 pl-2 text-blue-955 bg-blue-50/20"
+                else "border-l-[3px] border-slate-400 pl-2 text-slate-800"
+              end
+            %>
+            <div class="text-[11px] font-black uppercase tracking-wider mt-5 mb-1.5 py-0.5 rounded-r <%= head_border_color %>">
+              <%= item[:title] %>
+            </div>
+          <% elsif item[:type] == "section" %>
+            <%
+              is_active = item[:slug] == @chapter_slug
+              section_class = is_active ? "bg-slate-100 text-slate-950 border-l-2 border-slate-500 pl-[10px]" : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+            %>
+            <a href="<%= book_reader_chapter_path(item[:slug]) %>"
+               class="block text-[12px] font-bold mt-4 mb-1 pl-3 py-1 rounded transition <%= section_class %>">
+              <%= item[:outline_number] ? "#{item[:outline_number]}. " : "" %><%= item[:title] %>
+              <% if item[:access] == "draft" %>
+                <span class="text-[9px] uppercase tracking-wider bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded ml-1.5 font-bold">A breve</span>
+              <% end %>
+            </a>
+          <% else %>
+            <%
+              is_active = item[:slug] == @chapter_slug
+              chapter_class = if is_active
+                case item[:color]
+                  when "rosso" then "bg-red-50 text-red-900 border-l-2 border-red-600 pl-[22px]"
+                  when "verde" then "bg-green-50 text-green-900 border-l-2 border-green-600 pl-[22px]"
+                  when "arancione" then "bg-orange-50 text-orange-950 border-l-2 border-orange-600 pl-[22px]"
+                  when "viola" then "bg-purple-50 text-purple-950 border-l-2 border-purple-600 pl-[22px]"
+                  when "blu" then "bg-blue-50 text-blue-950 border-l-2 border-blue-600 pl-[22px]"
+                  else "bg-slate-100 text-slate-950 border-l-2 border-slate-500 pl-[22px]"
+                end
+              else
+                "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              end
+            %>
+            <a href="<%= book_reader_chapter_path(item[:slug]) %>"
+               class="block text-[13px] pl-6 py-0.5 rounded transition <%= chapter_class %>">
+              <%= item[:outline_number] ? "#{item[:outline_number]}. " : "" %><%= item[:title] %>
+              <% if item[:access] == "draft" %>
+                <span class="text-[9px] uppercase tracking-wider bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded ml-1.5 font-bold">A breve</span>
+              <% end %>
+            </a>
+          <% end %>
+        <% end %>
+      </nav>
+    </div>
+  </div>
+
+  <!-- JavaScript SPA & Toggle Logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // SPA Navigation for preserving Fullscreen State
+      const bindReaderLinks = () => {
+        const links = document.querySelectorAll('a[href^="/books"], a[href^="/libro"]');
+        links.forEach(link => {
+          const href = link.getAttribute("href");
+          if (!isReaderChapterUrl(href)) return;
+
+          // Clone to prevent duplicate event listeners
+          const newLink = link.cloneNode(true);
+          link.parentNode.replaceChild(newLink, link);
+
+          newLink.addEventListener("click", (e) => {
+            const href = newLink.getAttribute("href");
+            if (!isReaderChapterUrl(href)) return;
+
+            e.preventDefault();
+            navigateToChapter(href);
+          });
+        });
+      };
+
+      const isReaderChapterUrl = (href) => {
+        if (!href) return false;
+
+        const url = new URL(href, window.location.origin);
+        return url.origin === window.location.origin &&
+          (url.pathname === "/libro" ||
+            /^\/libro\/(?!gestione\/)/.test(url.pathname) ||
+            /^\/books\/[^/]+$/.test(url.pathname) ||
+            /^\/books\/[^/]+\/(?!gestione\/).+/.test(url.pathname));
+      };
+
+      const navigateToChapter = (url) => {
+        fetch(url)
+          .then(res => res.text())
+          .then(htmlText => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, "text/html");
+            const newMain = doc.querySelector("main");
+            const currentMain = document.querySelector("main");
+            const newHeader = doc.querySelector(".header-bar");
+            const currentHeader = document.querySelector(".header-bar");
+
+            if (!newMain || !currentMain || !newHeader || !currentHeader) {
+              window.location.href = url;
+              return;
+            }
+
+            // Update document title and URL
+            document.title = doc.title;
+            history.pushState(null, "", url);
+
+            // Swap main container
+            currentMain.outerHTML = newMain.outerHTML;
+
+            // Swap header content
+            currentHeader.outerHTML = newHeader.outerHTML;
+
+            // Swap mobile drawer
+            const newDrawer = doc.querySelector("#mobile-toc-drawer");
+            const currentDrawer = document.getElementById("mobile-toc-drawer");
+            if (newDrawer && currentDrawer) {
+              currentDrawer.outerHTML = newDrawer.outerHTML;
+            }
+
+            // Re-bind listeners for the newly loaded elements
+            bindReaderLinks();
+            rebindToggles();
+          })
+          .catch(err => {
+            console.error("Errore durante la navigazione SPA:", err);
+            // Fallback
+            window.location.href = url;
+          });
+      };
+
+      const rebindToggles = () => {
+        // Re-bind mobile TOC drawer logic
+        const toggleBtn = document.getElementById("mobile-toc-toggle");
+        const closeBtn = document.getElementById("mobile-toc-close");
+        const backdrop = document.getElementById("mobile-toc-backdrop");
+        const drawer = document.getElementById("mobile-toc-drawer");
+        const panel = document.getElementById("mobile-toc-panel");
+
+        if (toggleBtn && drawer && panel) {
+          const showDrawer = () => {
+            drawer.classList.remove("hidden");
+            setTimeout(() => {
+              panel.classList.remove("-translate-x-full");
+            }, 20);
+          };
+
+          const hideDrawer = () => {
+            panel.classList.add("-translate-x-full");
+            setTimeout(() => {
+              drawer.classList.add("hidden");
+            }, 300);
+          };
+
+          toggleBtn.addEventListener("click", showDrawer);
+          if (closeBtn) closeBtn.addEventListener("click", hideDrawer);
+          if (backdrop) backdrop.addEventListener("click", hideDrawer);
+        }
+
+        // Re-bind fullscreen controls
+        const fsToggle = document.getElementById("fullscreen-toggle");
+        if (fsToggle) {
+          fsToggle.addEventListener("click", () => {
+            if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen().catch(err => {
+                console.error("Errore attivando lo schermo intero:", err.message);
+              });
+            } else {
+              document.exitFullscreen();
+            }
+          });
+          // Update button label
+          if (document.fullscreenElement) {
+            fsToggle.innerHTML = "⛶ Esci";
+          } else {
+            fsToggle.innerHTML = "⛶ Schermo Intero";
+          }
+        }
+
+        const fsExitFloating = document.getElementById("fullscreen-exit-floating");
+        if (fsExitFloating) {
+          fsExitFloating.addEventListener("click", () => {
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            }
+          });
+        }
+      };
+
+      // Initial binding
+      bindReaderLinks();
+      rebindToggles();
+
+      // Listen for browser back/forward buttons
+      window.addEventListener("popstate", () => {
+        if (isReaderChapterUrl(window.location.pathname)) {
+          navigateToChapter(window.location.pathname);
+        } else {
+          window.location.reload();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

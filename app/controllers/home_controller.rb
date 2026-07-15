@@ -1,10 +1,10 @@
 class HomeController < ApplicationController
   layout :home_layout
 
-  allow_unauthenticated_access only: [:index, :progetti, :lavoro, :salute]
+  allow_unauthenticated_access only: [:index, :progetti, :lavoro, :salute, :accademia]
   before_action :require_authentication, only: [:dashboard, :dashboard_role, :dashboard_channel]
   dashboard_section :lavoro, only: :lavoro
-  dashboard_section :salute, only: :salute
+  dashboard_section :salute, only: [:salute, :accademia]
 
   def index
   end
@@ -72,9 +72,12 @@ class HomeController < ApplicationController
   def salute
   end
 
+  def accademia
+  end
+
   private
 
     def home_layout
-      %w[lavoro salute].include?(action_name) ? "application" : "landing"
+      %w[lavoro salute accademia].include?(action_name) ? "application" : "landing"
     end
 end

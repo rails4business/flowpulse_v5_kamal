@@ -1,0 +1,2518 @@
+<!-- BEGIN app/views/layouts/landing.html.erb
+--><!DOCTYPE html>
+<html>
+  <head>
+    <title>Accademia PosturaCorretta — Percorsi della Salute</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Flowpulse V 5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="U3iGnjvuyl1RUmHEwUuS7pt33id-sHXNQ49PsjXVLJWXNarPBFoxQelndTu8dViSgVDTzUUd_PAvrGTfQYM6gg" />
+    
+
+      <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pcblue: '#2563eb',
+            pcink: '#0f172a'
+          },
+          boxShadow: {
+            soft: '0 24px 70px rgba(15, 23, 42, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none; /* Safari and Chrome */
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+    summary { list-style: none; }
+
+    section[id],
+    main[id] {
+      scroll-margin-top: 5rem;
+    }
+
+    #percorso-dettaglio,
+    #path-final-cta {
+      scroll-margin-top: 8rem;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, .88);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-image-accademia {
+      background-image:
+        linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(15, 23, 42, .10)),
+        url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-image-percorso {
+      background-image:
+        linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(15, 23, 42, .10)),
+        url('/images/percorso_hero.png');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .step-line::before {
+      content: "";
+      position: absolute;
+      left: 1.12rem;
+      top: 2.8rem;
+      bottom: -2.6rem;
+      width: 1px;
+      background: #dbeafe;
+    }
+
+    .step-line:last-child::before { display: none; }
+
+  </style>
+
+
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="stylesheet" href="/assets/normalize-551238af.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/tailwind-c8dbdaf9.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/application-cc1e1b28.css" data-turbo-track="reload" />
+    <script type="importmap" data-turbo-track="reload">{
+  "imports": {
+    "application": "/assets/application-bfcdf840.js",
+    "@hotwired/turbo-rails": "/assets/turbo.min-9fd88cd5.js",
+    "@hotwired/stimulus": "/assets/stimulus.min-4b1e420e.js",
+    "@hotwired/stimulus-loading": "/assets/stimulus-loading-1fc53fe7.js",
+    "sortablejs": "/assets/sortablejs-764cc38c.js",
+    "controllers/application": "/assets/controllers/application-3affb389.js",
+    "controllers/autocomplete_controller": "/assets/controllers/autocomplete_controller-142d7c05.js",
+    "controllers/filter_controller": "/assets/controllers/filter_controller-fe3413a4.js",
+    "controllers/hello_controller": "/assets/controllers/hello_controller-708796bd.js",
+    "controllers": "/assets/controllers/index-28809a0a.js",
+    "controllers/markdown_editor_controller": "/assets/controllers/markdown_editor_controller-3be1adba.js",
+    "controllers/sortable_controller": "/assets/controllers/sortable_controller-582dff8f.js",
+    "controllers/toc_controller": "/assets/controllers/toc_controller-977df594.js",
+    "controllers/tree_controller": "/assets/controllers/tree_controller-cf5f4457.js"
+  }
+}</script>
+<link rel="modulepreload" href="/assets/application-bfcdf840.js">
+<link rel="modulepreload" href="/assets/turbo.min-9fd88cd5.js">
+<link rel="modulepreload" href="/assets/stimulus.min-4b1e420e.js">
+<link rel="modulepreload" href="/assets/stimulus-loading-1fc53fe7.js">
+<link rel="modulepreload" href="/assets/sortablejs-764cc38c.js">
+<link rel="modulepreload" href="/assets/controllers/application-3affb389.js">
+<link rel="modulepreload" href="/assets/controllers/autocomplete_controller-142d7c05.js">
+<link rel="modulepreload" href="/assets/controllers/filter_controller-fe3413a4.js">
+<link rel="modulepreload" href="/assets/controllers/hello_controller-708796bd.js">
+<link rel="modulepreload" href="/assets/controllers/index-28809a0a.js">
+<link rel="modulepreload" href="/assets/controllers/markdown_editor_controller-3be1adba.js">
+<link rel="modulepreload" href="/assets/controllers/sortable_controller-582dff8f.js">
+<link rel="modulepreload" href="/assets/controllers/toc_controller-977df594.js">
+<link rel="modulepreload" href="/assets/controllers/tree_controller-cf5f4457.js">
+<script type="module">import "application"</script>
+  </head>
+
+  <body class="min-h-screen bg-white text-slate-950">
+      <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div class="mx-auto flex flex-col md:flex-row md:h-16 items-start md:items-center justify-between px-6 py-3 md:py-0 gap-3 md:gap-0">
+      <a href="?tab=home#home" data-landing-tab="home" class="flex items-center gap-3 shrink-0 animate-fade-in" aria-label="PosturaCorretta home">
+        <img
+          src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
+          alt="PosturaCorretta"
+          class="h-8 w-auto">
+      </a>
+
+      <nav class="flex items-center gap-5 md:gap-7 overflow-x-auto max-w-full whitespace-nowrap no-scrollbar pb-1 md:pb-0" aria-label="Navigazione principale PosturaCorretta">
+        <a href="?tab=home#home"
+           data-landing-tab="home"
+           aria-selected="true"
+           class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition border-blue-600 text-blue-700">
+          Accademia
+        </a>
+
+        <a href="?tab=percorso#percorso"
+           data-landing-tab="percorso"
+           aria-selected="false"
+           class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700">
+          Percorso personalizzato
+        </a>
+
+        <a href="?tab=eventi#eventi"
+           data-landing-tab="eventi"
+           aria-selected="false"
+           class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700">
+          Eventi e Community
+        </a>
+
+        <a href="?tab=filosofia#filosofia"
+           data-landing-tab="filosofia"
+           aria-selected="false"
+           class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700">
+          Libro e Visione
+        </a>
+
+        <a href="?tab=collabora#collabora"
+           data-landing-tab="collabora"
+           aria-selected="false"
+           class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700">
+          Progetti in corso
+        </a>
+      </nav>
+    </div>
+  </header>
+
+
+
+
+    <main class="">
+      <!-- BEGIN app/views/landing/posturacorretta.html.erb
+-->
+
+
+<div id="top" class="text-slate-900 antialiased">
+
+  <!-- HOME -->
+  <div id="home" data-tab-panel="home" class="">
+    <section class="flex items-center px-5 py-12 md:py-16 lg:py-20">
+      <div class="mx-auto w-full max-w-6xl">
+        <div class="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] xl:gap-10">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+              PosturaCorretta
+            </p>
+            <h1 class="mt-4 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl md:leading-[1.05] xl:text-5xl">
+              Trova la giusta posizione da cui osservare il mondo.
+              <span class="mt-2 block text-blue-700">Inizia dalla salute!</span>
+            </h1>
+            <p class="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg xl:mt-4">
+             Partiamo dalle metodiche posturali per imparare a leggere il corpo, come si relaziona con l’ambiente per migliorare la nostra salute e la nostra vita.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-4">
+              <a href="#acc-curriculum" class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition duration-200">
+                Scopri il Programma
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 animate-bounce">
+                  <path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v9.793l3.52-3.52a.75.75 0 1 1 1.06 1.06l-4.8 4.8a.75.75 0 0 1-1.06 0l-4.8-4.8a.75.75 0 1 1 1.06-1.06l3.52 3.52V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="rounded-[2rem] border border-blue-100 bg-white p-3 shadow-soft xl:p-4">
+            <img
+              src="https://ik.imagekit.io/posturacorretta/img_home_postura_corretta.png?tr=w-1100,q-85"
+              alt="PosturaCorretta: trova la giusta posizione da cui osservare il mondo"
+              class="mx-auto aspect-[16/10] w-full rounded-[1.5rem] object-contain xl:max-h-[300px]">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEGIN app/views/landing/_accademia_curriculum.html.erb
+--><style>
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+</style>
+
+
+<section id="acc-curriculum" class="border-t border-slate-100 bg-slate-50/60 py-16 px-5">
+  <div class="mx-auto max-w-4xl">
+    <div class="text-center mb-10">
+      <p class="text-sm font-black uppercase tracking-[0.2em] text-blue-700">
+        Programma di Studio
+      </p>
+      <h1 class="mt-3 text-4xl font-black tracking-tight text-slate-955 md:text-5xl">
+        Accademia
+      </h1>
+      <p class="mt-4 text-slate-600 max-w-2xl mx-auto">
+        Tutti i moduli formativi e le lezioni dell'Accademia. Clicca su una lezione per aprirla direttamente nel libro digitale.
+      </p>
+    </div>
+
+    <!-- TABS CONTROLLER (with overflow scroll on small screens) -->
+    <div class="flex justify-center mb-12">
+      <div class="inline-flex p-1 bg-slate-200/50 backdrop-blur-md rounded-2xl border border-slate-200/80 overflow-x-auto max-w-full whitespace-nowrap no-scrollbar gap-1 shadow-2xs">
+        <button onclick="switchCurriculumTab('dolore')" id="tab-btn-dolore" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Stop al dolore
+        </button>
+        <button onclick="switchCurriculumTab('prevenzione')" id="tab-btn-prevenzione" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Prevenzione
+        </button>
+        <button onclick="switchCurriculumTab('performance')" id="tab-btn-performance" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Performance
+        </button>
+        <button onclick="switchCurriculumTab('fisiologia')" id="tab-btn-fisiologia" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50">
+          Postura e Fisiologia
+        </button>
+        <button onclick="switchCurriculumTab('benessere')" id="tab-btn-benessere" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Benessere Integrato
+        </button>
+        <button onclick="switchCurriculumTab('giardino')" id="tab-btn-giardino" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-violet-750 flex items-center gap-1.5">
+          <span id="giardino-lock-icon">🔒</span>
+          <span>Il Giardino del Corpo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: Stop al Dolore (Hidden by default) -->
+    <div id="sec-dolore" class="space-y-8 hidden">
+      <div class="bg-blue-50/80 border border-blue-100/70 rounded-3xl p-8 text-center max-w-2xl mx-auto shadow-2xs">
+        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-700 text-xl font-bold mb-4">
+          🩹
+        </span>
+        <h3 class="text-xl font-bold text-slate-900">Stop al dolore</h3>
+        <p class="text-slate-655 mt-3 text-sm leading-relaxed max-w-lg mx-auto">
+          Un percorso mirato per chi soffre di tensioni muscolari, rigidità articolare o dolori cronici. Impara le metodiche posturali per decongestionare le zone di sofferenza del corpo, rilasciare le catene in tensione e ristabilire un allineamento fisiologico indolore.
+        </p>
+      </div>
+      <!-- Curated lessons for this path -->
+      <div class="max-w-2xl mx-auto mt-8">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 px-3 uppercase tracking-wider">Lezioni Chiave Suggerite:</h4>
+        <div class="flex flex-col gap-3 pl-4 border-l-2 border-blue-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/metodiche-posturali-e-fisiologia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 04</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Postura e Fisiologia: Massaggio, Presenza &amp; Autotrattamento</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Presa di coscienza corporea e autotrattamento.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/igiene-posturale">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 06</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Punti di tensione</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Identificare e rilasciare i punti critici di tensione del corpo.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/insegnamenti-fisioterapia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 11</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Sistema muscolo-scheletrico</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Studio fisioterapico delle catene muscolari e scheletriche.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/osteopatia-ascolto-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 20</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Eliminare le disfunzioni</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">I principi osteopatici per liberare le articolazioni bloccate.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Prevenzione (Hidden by default) -->
+    <div id="sec-prevenzione" class="space-y-8 hidden">
+      <div class="bg-emerald-50/80 border border-emerald-100/70 rounded-3xl p-8 text-center max-w-2xl mx-auto shadow-2xs">
+        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 text-xl font-bold mb-4">
+          🛡️
+        </span>
+        <h3 class="text-xl font-bold text-slate-900">Prevenzione</h3>
+        <p class="text-slate-655 mt-3 text-sm leading-relaxed max-w-lg mx-auto">
+          Prenditi cura della tua salute prima che insorgano problemi. Questo percorso ti insegna le corrette abitudini quotidiane, la mobilità articolare preventiva e l'ascolto fine dei segnali del corpo per mantenere vitalità e benessere nel lungo termine.
+        </p>
+      </div>
+      <!-- Curated lessons for this path -->
+      <div class="max-w-2xl mx-auto mt-8">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 px-3 uppercase tracking-wider">Lezioni Chiave Suggerite:</h4>
+        <div class="flex flex-col gap-3 pl-4 border-l-2 border-emerald-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/igiene-posturale">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 05</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Mobilità articolare</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Mantenere le articolazioni mobili ed elastiche nel tempo.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/insegnamenti-fisioterapia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 09</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Sistema respiratorio</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">La respirazione fisiologica come pilastro della prevenzione.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/osteopatia-ascolto-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 21</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Il sistema fasciale</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Nutrire e preservare la salute dei tessuti connettivi fasciali.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/corpo-e-coscienza">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 25</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Le 2 circolazioni</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Equilibrare i ritmi circolatori per ottimizzare il metabolismo organico.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Performance (Hidden by default) -->
+    <div id="sec-performance" class="space-y-8 hidden">
+      <div class="bg-amber-50/80 border border-amber-100/70 rounded-3xl p-8 text-center max-w-2xl mx-auto shadow-2xs">
+        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-700 text-xl font-bold mb-4">
+          ⚡
+        </span>
+        <h3 class="text-xl font-bold text-slate-900">Performance</h3>
+        <p class="text-slate-655 mt-3 text-sm leading-relaxed max-w-lg mx-auto">
+          Sblocca il massimo potenziale dal tuo corpo. Ottimizza la biomeccanica del movimento, incrementa la forza profonda e strutturale, e allena la coordinazione neuromuscolare avanzata per migliorare le prestazioni fisiche nello sport e nella vita di tutti i giorni.
+        </p>
+      </div>
+      <!-- Curated lessons for this path -->
+      <div class="max-w-2xl mx-auto mt-8">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 px-3 uppercase tracking-wider">Lezioni Chiave Suggerite:</h4>
+        <div class="flex flex-col gap-3 pl-4 border-l-2 border-amber-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-amber-50/50 rounded-xl transition duration-200" href="/libro/biomeccanica-comportamentale-gds">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 14</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-amber-600 transition">Le 5 direzioni di movimento</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Studio biomeccanico del gesto motorio integrato.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-amber-100/70 text-amber-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-amber-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 03</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-amber-600 transition">Rinforzo muscolare strutturale</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Costruire forza profonda partendo dal centro del corpo.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-amber-100/70 text-amber-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-amber-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 07</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-amber-600 transition">DNS (Stabilizzazione Neuromuscolare)</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Attivazione neuromotoria basata sullo sviluppo evolutivo.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-amber-100/70 text-amber-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-amber-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 08</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-amber-600 transition">Animal Flow</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Coordinazione, agilità ed energia a corpo libero.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-amber-100/70 text-amber-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Postura e Fisiologia (Active by default) -->
+    <div id="sec-fisiologia" class="space-y-12">
+      
+      <!-- Module 00: Intro -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-sky-100 text-sky-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 00</span>
+            <h3 class="text-xl font-bold text-slate-900">Intro: Basi & Fondamenti</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">4 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Il modulo introduttivo per comprendere la visione della postura e le basi fisiologiche.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-sky-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-sky-50/50 rounded-xl transition duration-200" href="/libro/perche-iniziare-da-posturacorretta">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 01</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-sky-600 transition">Perché La postura</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">I principi delle migliori metodiche posturali, per imparare a leggere il corpo.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-sky-100/70 text-sky-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-sky-50/50 rounded-xl transition duration-200" href="/libro/affiancare-il-percorso-educativo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 02</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-sky-600 transition">Rosso Verde Blu</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Come usare il percorso. Rispettando il ruolo dei professionisti della salute e del benessere.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-sky-100/70 text-sky-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-sky-50/50 rounded-xl transition duration-200" href="/libro/come-costruire-un-percorso">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 03</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-sky-600 transition">Informati, Pratica, Insegna</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Differenza tra insegnante e professionista formato nelle metodiche posturali.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-sky-100/70 text-sky-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-sky-50/50 rounded-xl transition duration-200" href="/libro/metodiche-posturali-e-fisiologia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 04</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-sky-600 transition">Postura e Fisiologia: Massaggio, Presenza &amp; Autotrattamento</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Presa di coscienza corporea e autotrattamento.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-sky-100/70 text-sky-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 01: Igiene Posturale -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-indigo-100 text-indigo-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 01</span>
+            <h3 class="text-xl font-bold text-slate-900">Igiene Posturale</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">4 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I concetti essenziali per eliminare le abitudini posturali scorrette.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-indigo-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-indigo-50/50 rounded-xl transition duration-200" href="/libro/igiene-posturale">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 05</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition">Mobilità articolare</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-indigo-100/70 text-indigo-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-indigo-50/50 rounded-xl transition duration-200" href="/libro/igiene-posturale">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 06</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition">Punti di tensione</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-indigo-100/70 text-indigo-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-indigo-50/50 rounded-xl transition duration-200" href="/libro/igiene-posturale">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 07</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition">Via di discesa</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-indigo-100/70 text-indigo-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-indigo-50/50 rounded-xl transition duration-200" href="/libro/igiene-posturale">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 08</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition">Recettori sensoriali</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-indigo-100/70 text-indigo-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 02: Fisioterapia -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-blue-100 text-blue-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 02</span>
+            <h3 class="text-xl font-bold text-slate-900">Principi di Fisioterapia</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">5 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Approccio biologico allo studio dei grandi sistemi vitali del corpo.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-blue-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/insegnamenti-fisioterapia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 09</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Sistema respiratorio</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/insegnamenti-fisioterapia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 10</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Sistema nervoso e urogenitale</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/insegnamenti-fisioterapia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 11</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Sistema muscolo-scheletrico</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/insegnamenti-fisioterapia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 12</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Sistema cardiocircolatorio</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-blue-50/50 rounded-xl transition duration-200" href="/libro/insegnamenti-fisioterapia">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 13</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition">Sistema linfatico e digerente</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-blue-100/70 text-blue-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 03: Biomeccanica (GDS) -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-violet-100 text-violet-850 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 03</span>
+            <h3 class="text-xl font-bold text-slate-900">Biomeccanica Comportamentale (GDS)</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">6 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Le 5 catene muscolari e il loro significato psicofisiologico.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-violet-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/biomeccanica-comportamentale-gds">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 14</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Le 5 direzioni di movimento</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/biomeccanica-comportamentale-gds">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 15</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Catena AM (Flessione)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/biomeccanica-comportamentale-gds">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 16</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Catena AL (Rotazione interna)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/biomeccanica-comportamentale-gds">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 17</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Catena PM (Estensione)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/biomeccanica-comportamentale-gds">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 18</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Catena PL (Rotazione esterna)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/biomeccanica-comportamentale-gds">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 19</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Catene PA/AP (Rigido e lasso)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 04: Osteopatia -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 04</span>
+            <h3 class="text-xl font-bold text-slate-900">Principi di Osteopatia</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">5 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I 5 sistemi osteopatici e la liberazione dalle disfunzioni articolari.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-emerald-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/osteopatia-ascolto-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 20</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Eliminare le disfunzioni</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/osteopatia-ascolto-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 21</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Il sistema fasciale</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/osteopatia-ascolto-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 22</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Il sistema viscerale</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/osteopatia-ascolto-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 23</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Il sistema cranio-sacrale</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-emerald-50/50 rounded-xl transition duration-200" href="/libro/osteopatia-ascolto-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 24</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-emerald-600 transition">Il sistema neurovegetativo</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-emerald-100/70 text-emerald-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 05: Bioritmi -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-rose-100 text-rose-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 05</span>
+            <h3 class="text-xl font-bold text-slate-900">Bioritmi Circadiani (Corpo & Coscienza)</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">6 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I sette parametri strutturali ed energetici della coscienza somatica.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-rose-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-rose-50/50 rounded-xl transition duration-200" href="/libro/corpo-e-coscienza">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 25</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-rose-600 transition">Le 2 circolazioni</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-rose-100/70 text-rose-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-rose-50/50 rounded-xl transition duration-200" href="/libro/corpo-e-coscienza">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 26</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-rose-600 transition">I 3 centri di gravità</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-rose-100/70 text-rose-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-rose-50/50 rounded-xl transition duration-200" href="/libro/corpo-e-coscienza">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 27</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-rose-600 transition">I 4 tipi di movimento</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-rose-100/70 text-rose-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-rose-50/50 rounded-xl transition duration-200" href="/libro/corpo-e-coscienza">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 28</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-rose-600 transition">I 5 elementi e il ritmo stagionale</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-rose-100/70 text-rose-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-rose-50/50 rounded-xl transition duration-200" href="/libro/corpo-e-coscienza">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 29</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-rose-600 transition">Le 6 coppie di meridiani</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-rose-100/70 text-rose-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-rose-50/50 rounded-xl transition duration-200" href="/libro/corpo-e-coscienza">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 30</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-rose-600 transition">I 7 centri neurolinfatici</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-rose-100/70 text-rose-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION 5: Benessere Integrato (Hidden by default) -->
+    <div id="sec-benessere" class="space-y-12 hidden">
+
+      <!-- Modulo Intro Benessere: Intro -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-sky-100 text-sky-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Intro</span>
+            <h3 class="text-xl font-bold text-slate-900">Introduzione al Benessere Integrato</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">2 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">La visione globale della salute e gli ambiti di applicazione del percorso.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-sky-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-sky-50/50 rounded-xl transition duration-200" href="/libro/quando-usare-questo-libro">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 01</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-sky-600 transition">Gli ambiti in cui la postura può aiutarti</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-sky-100/70 text-sky-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-sky-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 02</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-sky-600 transition">Le 5 aree del percorso della salute</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-sky-100/70 text-sky-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 07: Movimento -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-fuchsia-100 text-fuchsia-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 07</span>
+            <h3 class="text-xl font-bold text-slate-900">Movimento & Allenamento</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">9 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Mappe pratiche di movimento, forza strutturale e mobilità cosciente.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-fuchsia-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 03</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">Rinforzo muscolare strutturale</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 04</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">I Cinque Tibetani</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 05</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">Gli 8 Pezzi di Broccato</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 06</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">Dinamiche dello Yoga</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 07</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">DNS (Stabilizzazione Neuromuscolare)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 08</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">Animal Flow</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 09</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">Movimenti arcaici ed evolutivi</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 10</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">Capoeira</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-fuchsia-50/50 rounded-xl transition duration-200" href="/libro/cinque-aree-della-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 11</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-fuchsia-600 transition">Tai Chi ed energia interna</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-fuchsia-100/70 text-fuchsia-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 08: Emotivo -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-green-100 text-green-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 08</span>
+            <h3 class="text-xl font-bold text-slate-900">Aspetto Emotivo e Mentale</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">8 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Lo studio archetipico, morfologico e linguistico per l'evoluzione personale.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-green-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 12</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">Morfopsicologia</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 13</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">Human Design</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 14</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">Archetipi (I Ching &amp; Tarocchi)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 15</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">PNL &amp; Efficacia personale</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 16</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">Sofrologia Caycediana</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 17</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">Risveglio delle memorie corporee</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 18</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">Studio del Su Wen e fenomenologia</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-green-50/50 rounded-xl transition duration-200" href="/libro/valutare-lo-stato-di-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 19</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-green-600 transition">Teatro e Giardino del Corpo</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-green-100/70 text-green-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 09: Fitoterapia -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-red-100 text-red-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 09</span>
+            <h3 class="text-xl font-bold text-slate-900">Fisiologia, Fitoterapia & Rimedi</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">4 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I rimedi naturali, le erbe officinali e l'integrazione fitoterapica costituzionale.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-red-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-red-50/50 rounded-xl transition duration-200" href="/libro/guarire-dalla-patologia-e-ritornare-in-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 20</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-red-600 transition">La medicina dei semplici (Dr. Abbiati)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-red-100/70 text-red-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-red-50/50 rounded-xl transition duration-200" href="/libro/guarire-dalla-patologia-e-ritornare-in-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 21</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-red-600 transition">Erboristica e medicina mediterranea</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-red-100/70 text-red-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-red-50/50 rounded-xl transition duration-200" href="/libro/guarire-dalla-patologia-e-ritornare-in-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 22</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-red-600 transition">Fitoterapia e medicina cinese</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-red-100/70 text-red-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-red-50/50 rounded-xl transition duration-200" href="/libro/guarire-dalla-patologia-e-ritornare-in-salute">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 23</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-red-600 transition">Ayurveda e costituzione (Dosha)</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-red-100/70 text-red-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <!-- Module 10: Nutrizione -->
+      <div class="py-4 mb-8">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-orange-100 text-orange-850 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 10</span>
+            <h3 class="text-xl font-bold text-slate-900">Nutrizione Biologica ed Energetica</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">5 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-550 mb-6">La riscoperta della qualità del cibo e della vitalità energetica alimentare.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-orange-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-orange-50/50 rounded-xl transition duration-200" href="/libro/prendersi-cura-della-salute-e-del-benessere">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 24</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition">Cosa stiamo mangiando?</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-orange-100/70 text-orange-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-orange-50/50 rounded-xl transition duration-200" href="/libro/prendersi-cura-della-salute-e-del-benessere">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 25</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition">Definizione evolutiva di cibo</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-orange-100/70 text-orange-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-orange-50/50 rounded-xl transition duration-200" href="/libro/prendersi-cura-della-salute-e-del-benessere">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 26</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition">Agricoltura rigenerativa e stagionalità</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-orange-100/70 text-orange-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-orange-50/50 rounded-xl transition duration-200" href="/libro/prendersi-cura-della-salute-e-del-benessere">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 27</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition">Cibo industrializzato e ultra-processato</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-orange-100/70 text-orange-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-orange-50/50 rounded-xl transition duration-200" href="/libro/prendersi-cura-della-salute-e-del-benessere">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 28</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition">Alimentazione vibrazionale ed energetica</h5>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-orange-100/70 text-orange-850 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-slate-200/60 mt-8 text-center">
+        <p class="text-xs text-slate-400">Completa lo studio o sblocca la sezione finale per accedere al tab in alto.</p>
+      </div>
+
+    </div>
+
+    <!-- SECTION 6: Il Giardino del Corpo (Contains dynamic lock or lessons list) -->
+    <div id="sec-giardino" class="space-y-12 hidden">
+      <!-- Locked Screen Container -->
+      <div id="giardino-lock-screen" class="py-8">
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-3xl border border-slate-200 shadow-xl max-w-md mx-auto text-center">
+          <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-violet-100 text-violet-750 text-xl font-bold mb-4 animate-bounce">
+            🔒
+          </span>
+          <h4 class="text-lg font-bold text-slate-900">Sezione Bloccata: Il Giardino del Corpo</h4>
+          <p class="text-xs text-slate-555 mt-2 mb-6">Questa sezione finale sull'agriturismo rigenerativo e lo sviluppo armonico sul territorio si sblocca completando lo studio dei moduli del Benessere Integrato.</p>
+          <button onclick="unlockGiardino()" class="w-full inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-3 text-xs font-bold text-white hover:bg-violet-750 active:scale-95 shadow-md shadow-violet-500/20 transition duration-150">
+            Sblocca Sezione
+          </button>
+        </div>
+      </div>
+
+      <!-- Unlocked Lessons list -->
+      <div id="giardino-unlocked-content" class="hidden">
+        <!-- Module 11: Il Giardino del Corpo -->
+        <div class="py-4">
+          <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+              <span class="rounded-md bg-violet-100 text-violet-850 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 11</span>
+              <h3 class="text-xl font-bold text-slate-900">Il Giardino del Corpo (Eventi & Territorio)</h3>
+            </div>
+            <span class="text-xs font-semibold text-slate-400">8 Lezioni</span>
+          </div>
+          <div class="text-sm text-slate-500 mb-6">Agriturismo rigenerativo, eventi, esperienze sul territorio e il calendario contadino.</div>
+
+          <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-violet-300">
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/antica-mappa-giardino-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 01</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">La Formazione oltre la salute e il lavoro</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Le sfere di Flowpulse e il Giardino del Corpo.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/giardino-del-corpo">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 02</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Il Giardino del Corpo</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">L&#39;Agriturismo rigenerativo e la scuola per lo sviluppo armonico.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/eventi-ed-esperienze">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 03</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Eventi ed esperienze</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Il primo passo concreto verso l&#39;agriturismo rigenerativo.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/presentazione-del-libro-e-del-progetto">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 04</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Presentazione del libro e del progetto</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Organizzare presentazioni in librerie, teatri e spazi culturali.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/eventi-seminari-a-tema">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 05</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Eventi/seminari a tema</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Modelli tra fisiologia ed evoluzione armonica.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/importanza-dei-luoghi">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 06</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Importanza dei luoghi</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">I luoghi e i non luoghi nell&#39;apprendimento.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/eventi-tra-natura-e-territorio">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 07</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Eventi tra Natura e Territorio</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Esperienze all&#39;aperto per riscoprire il legame con la natura.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+  <a class="group text-black block py-2.5 px-3 hover:bg-violet-50/50 rounded-xl transition duration-200" href="/libro/il-calendario-contadino-e-le-stagioni">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ 08</span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 group-hover:text-violet-600 transition">Il calendario contadino e le stagioni</h5>
+            <p class="text-xs text-slate-500 mt-1 font-normal">Ritrovare equilibrio attraverso le attività stagionali.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal bg-violet-100/70 text-violet-855 uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  function switchCurriculumTab(tab) {
+    const doloreBtn = document.getElementById('tab-btn-dolore');
+    const prevenzioneBtn = document.getElementById('tab-btn-prevenzione');
+    const performanceBtn = document.getElementById('tab-btn-performance');
+    const fisiologiaBtn = document.getElementById('tab-btn-fisiologia');
+    const benessereBtn = document.getElementById('tab-btn-benessere');
+    const giardinoBtn = document.getElementById('tab-btn-giardino');
+    
+    const doloreSec = document.getElementById('sec-dolore');
+    const prevenzioneSec = document.getElementById('sec-prevenzione');
+    const performanceSec = document.getElementById('sec-performance');
+    const fisiologiaSec = document.getElementById('sec-fisiologia');
+    const benessereSec = document.getElementById('sec-benessere');
+    const giardinoSec = document.getElementById('sec-giardino');
+    
+    // Reset buttons to inactive style
+    resetTabBtnClass(doloreBtn);
+    resetTabBtnClass(prevenzioneBtn);
+    resetTabBtnClass(performanceBtn);
+    resetTabBtnClass(fisiologiaBtn);
+    resetTabBtnClass(benessereBtn);
+    resetTabBtnClass(giardinoBtn);
+    
+    // Hide all sections
+    doloreSec.classList.add('hidden');
+    prevenzioneSec.classList.add('hidden');
+    performanceSec.classList.add('hidden');
+    fisiologiaSec.classList.add('hidden');
+    benessereSec.classList.add('hidden');
+    giardinoSec.classList.add('hidden');
+    
+    // Activate clicked tab
+    if (tab === 'dolore') {
+      doloreBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      doloreSec.classList.remove('hidden');
+    } else if (tab === 'prevenzione') {
+      prevenzioneBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      prevenzioneSec.classList.remove('hidden');
+    } else if (tab === 'performance') {
+      performanceBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      performanceSec.classList.remove('hidden');
+    } else if (tab === 'fisiologia') {
+      fisiologiaBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      fisiologiaSec.classList.remove('hidden');
+    } else if (tab === 'benessere') {
+      benessereBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      benessereSec.classList.remove('hidden');
+    } else if (tab === 'giardino') {
+      const isLocked = document.getElementById('giardino-lock-icon') !== null;
+      if (isLocked) {
+        giardinoBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-slate-100 text-slate-500 shadow-xs border border-slate-200/50";
+      } else {
+        giardinoBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-violet-955 shadow-xs border border-violet-250/50";
+      }
+      giardinoSec.classList.remove('hidden');
+    }
+  }
+
+  function resetTabBtnClass(btn) {
+    const isLockedGiardino = btn.id === 'tab-btn-giardino' && document.getElementById('giardino-lock-icon') !== null;
+    if (isLockedGiardino) {
+      btn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-400 bg-slate-100/50 flex items-center gap-1.5";
+    } else if (btn.id === 'tab-btn-giardino') {
+      btn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-600 hover:text-slate-955";
+    } else {
+      btn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-600 hover:text-slate-955";
+    }
+  }
+
+  function unlockGiardino() {
+    const lockIcon = document.getElementById('giardino-lock-icon');
+    const lockScreen = document.getElementById('giardino-lock-screen');
+    const unlockedContent = document.getElementById('giardino-unlocked-content');
+    const giardinoBtn = document.getElementById('tab-btn-giardino');
+    
+    // 1. Remove the lock icon from tab switcher button
+    if (lockIcon) {
+      lockIcon.remove();
+    }
+    
+    // 2. Hide lock screen and reveal unlocked content
+    if (lockScreen && unlockedContent) {
+      lockScreen.classList.add('hidden');
+      unlockedContent.classList.remove('hidden');
+    }
+    
+    // 3. Update tab button appearance
+    giardinoBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-violet-955 shadow-xs border border-violet-250/50";
+    
+    // Switch to tab
+    switchCurriculumTab('giardino');
+  }
+</script>
+<!-- END app/views/landing/_accademia_curriculum.html.erb -->
+  </div>
+
+
+  <!-- PERCORSO -->
+  <!-- PERCORSO -->
+<div id="percorso" data-tab-panel="percorso" class="hidden">
+
+  <section class="flex min-h-[calc(100vh-4rem)] items-center px-5 py-6 md:py-10">
+    <div class="mx-auto w-full max-w-6xl">
+      <div class="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-stretch xl:gap-12">
+
+        <!-- LEFT COLUMN: HERO TEXT + CHOICE CARDS -->
+        <div class="flex flex-col justify-between space-y-6">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+              Percorso personalizzato
+            </p>
+
+            <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+              Costruisci <span class="text-blue-700">il tuo percorso</span>
+            </h1>
+
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              Con le metodiche posturali abbiamo scelto di mettere al centro il corpo. Seleziona uno o più bisogni della tua situazione attuale per tracciare il tuo percorso di salute personalizzato.
+            </p>
+          </div>
+
+          <!-- CHOICE FORM -->
+          <div class="border-t border-slate-200 pt-6">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-950">
+              In cosa vuoi essere aiutato?
+            </h2>
+
+            <!-- 7 CHOICE CARDS -->
+            <div class="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+              <button type="button" data-choice="Cura e Riabilitazione" data-path-key="cura"
+                class="pc-choice rounded-2xl border border-red-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-red-700">Cura</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Cura e Riabilitazione</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Hai dolore, sintomi o una patologia?</p>
+              </button>
+
+              <button type="button" data-choice="Prevenzione" data-path-key="prevenzione"
+                class="pc-choice rounded-2xl border border-orange-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-orange-700">Prevenzione</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Prevenzione</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Lavoro, sport o età?</p>
+              </button>
+
+              <button type="button" data-choice="Performance" data-path-key="performance"
+                class="pc-choice rounded-2xl border border-yellow-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-yellow-700">Performance</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Performance</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Lavoro, studio o IA?</p>
+              </button>
+
+              <button type="button" data-choice="Benessere Integrato" data-path-key="benessere"
+                class="pc-choice rounded-2xl border border-emerald-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Benessere</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Benessere Integrato</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Salute, energia e qualità della vita?</p>
+              </button>
+
+              <button type="button" data-choice="Postura e Fisiologia" data-path-key="fisiologia"
+                class="pc-choice rounded-2xl border border-blue-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-700">Fisiologia</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Postura e Fisiologia</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Capire come funziona il corpo?</p>
+              </button>
+
+              <button type="button" data-choice="Corpo e Ambiente" data-path-key="ambiente"
+                class="pc-choice rounded-2xl border border-indigo-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-indigo-700">Ambiente</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Corpo e Ambiente</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Rapporto tra corpo e ambiente?</p>
+              </button>
+
+              <button type="button" data-choice="Potenziale Umano" data-path-key="potenziale"
+                class="pc-choice rounded-2xl border border-violet-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md sm:col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-1">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-violet-700">Potenziale</p>
+                <h3 class="mt-1 text-base font-semibold text-slate-950 leading-5">Potenziale Umano</h3>
+                <p class="mt-1.5 text-xs text-slate-500">Vuoi scoprire il tuo potenziale?</p>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: HERO IMAGE + SUMMARY BOX -->
+        <div class="flex flex-col justify-between space-y-6 lg:h-full">
+          <div class="flex-1 rounded-[2rem] border border-slate-200 bg-white p-3 shadow-soft min-h-[220px] lg:min-h-0">
+            <div class="hero-image-percorso h-full w-full rounded-[1.55rem]"></div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Hai selezionato
+              </p>
+
+              <p id="selected-paths-text" class="mt-2 min-h-12 text-sm font-semibold leading-6 text-slate-950">
+                Nessuna area selezionata.
+              </p>
+            </div>
+
+            <a id="start-whatsapp-link"
+               href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20iniziare%20un%20percorso%20con%20PosturaCorretta."
+               target="_blank"
+               rel="noopener noreferrer"
+               class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white hover:bg-blue-700 transition">
+              Inizia ora →
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MODALE DETTAGLI PERCORSO -->
+  <div id="path-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative w-full max-w-3xl rounded-[2rem] border border-slate-100 bg-white p-6 shadow-2xl md:p-10 flex flex-col max-h-[90vh]">
+      
+      <!-- Close button -->
+      <button id="close-modal-btn" type="button" class="absolute right-6 top-6 grid h-10 w-10 place-items-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition">
+        ✕
+      </button>
+
+      <!-- Modal Content (Scrollable) -->
+      <div class="overflow-y-auto flex-1 pr-2">
+        <p id="modal-path-kicker" class="text-xs font-semibold uppercase tracking-[0.22em] text-red-700">
+          Cura e Riabilitazione
+        </p>
+
+        <h2 id="modal-path-title" class="mt-4 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">
+          Dal dolore alla cura guidata.
+        </h2>
+
+        <p id="modal-path-description" class="mt-4 text-base leading-7 text-slate-600">
+          Per chi parte da dolore, sintomi, diagnosi, patologia o fase acuta.
+        </p>
+
+        <div class="mt-8 border-t border-slate-100 pt-6">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Tappe consigliate</p>
+          <h3 id="modal-path-steps-title" class="mt-1 text-lg font-semibold text-slate-950">Segui il percorso con calma.</h3>
+        </div>
+
+        <div id="modal-path-steps" class="mt-6 space-y-8"></div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="mt-6 border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
+        <button id="modal-select-btn" type="button" class="flex-1 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-blue-700 transition">
+          Seleziona questo percorso
+        </button>
+        <button id="modal-cancel-btn" type="button" class="rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+          Chiudi
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- EVENTI -->
+  <div id="eventi" data-tab-panel="eventi" class="hidden">
+    <section class="border-t border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
+            Eventi e Community
+          </p>
+          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+            Eventi per vivere il percorso, non solo studiarlo.
+          </h2>
+          <p class="mt-6 text-lg leading-8 text-slate-600">
+            Camminate, incontri, attività sul territorio, movimento, natura, musica, buon cibo,
+            scambio trattamenti e momenti di comunità.
+          </p>
+          <div class="mt-8">
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20informazioni%20sui%20prossimi%20eventi%20PosturaCorretta."
+               target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center justify-center rounded-2xl bg-violet-700 px-6 py-4 text-base font-semibold text-white transition hover:bg-violet-800 shadow-sm">
+              Chiedi informazioni sugli eventi →
+            </a>
+          </div>
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-2">
+          <a href="https://www.youtube.com/posturacorretta" target="_blank" rel="noopener noreferrer" class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">Video & Ricerca</p>
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">YouTube</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Approfondimenti, esercizi, eventi e costruzione pubblica del progetto.</p>
+            <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-red-600">Vai al canale <span class="transition group-hover:translate-x-1">→</span></div>
+          </a>
+
+          <a href="https://www.instagram.com/posturacorretta" target="_blank" rel="noopener noreferrer" class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-pink-200 hover:shadow-xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-pink-600">Community & Eventi</p>
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Instagram</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Dietro le quinte, caroselli, eventi e aggiornamenti quotidiani.</p>
+            <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-pink-600">Segui la pagina <span class="transition group-hover:translate-x-1">→</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- LIBRO E VISIONE -->
+  <div id="filosofia" data-tab-panel="filosofia" class="hidden">
+    <section class="bg-white px-5 py-20 md:py-24">
+      <div class="mx-auto grid max-w-6xl gap-12 items-center lg:grid-cols-[0.8fr_1.2fr]">
+        
+        <!-- Left Side: Interactive 3D Book Cover -->
+        <div class="flex justify-center lg:justify-start py-6">
+          <a href="/libro" class="group relative block w-72 max-w-full transition duration-300" style="perspective: 1200px;">
+            <div class="relative aspect-square sm:aspect-[3/4] w-full rounded-r-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] transition-all duration-500 ease-out transform group-hover:scale-[1.03] group-hover:shadow-[0_30px_70px_rgba(37,99,235,0.25)]" style="transform-style: preserve-3d; transform-origin: left center;">
+              <img src="https://ik.imagekit.io/posturacorretta/markpostura/home/il%20corpo%20un%20mondo%20da%20scoprire.webp?updatedAt=1783012351120" alt="PosturaCorretta: Il Libro" class="h-full w-full rounded-r-xl object-cover">
+              <!-- Spine shadow overlay -->
+              <div class="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-black/25 via-black/5 to-transparent rounded-r-sm"></div>
+              <!-- Page edges mockup border on right side -->
+              <div class="absolute inset-y-0.5 right-0 w-1 bg-slate-200/50 rounded-r-sm border-r border-slate-300/30"></div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Right Side: Content description -->
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-700">
+            Libro e Visione
+          </p>
+          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+            Il corpo, un mondo da scoprire.
+          </h2>
+          <p class="mt-6 text-lg leading-8 text-slate-600">
+            Dall'accademia PosturaCorretta all'agriturismo rigenerativo Il Giardino del Corpo.
+          </p>
+
+          <div class="mt-8 text-lg leading-8 text-slate-600 space-y-4">
+           <p> Il libro raccoglie la visione del progetto. Il punto di partenza sono le metodiche posturali, che ci permettono di comprendere la postura non come una forma da correggere, ma come un linguaggio attraverso cui il corpo comunica il proprio stato di equilibrio, adattamento e benessere. </p>
+
+<p> Da questa prospettiva il percorso si amplia naturalmente, invitando a esplorare il legame tra corpo, salute, ambiente, abitudini e consapevolezza di sé. Comprendere il corpo significa anche comprendere il modo in cui percepiamo il mondo e il rapporto che costruiamo con esso.</p>
+<p> Lo sguardo, però, è rivolto anche al futuro. L'obiettivo è sperimentare un prototipo di <strong>agriturismo rigenerativo</strong>: un luogo in cui poter vivere per alcuni giorni seguendo ritmi più vicini alla natura, riscoprendo l'alternarsi del giorno e della notte, delle stagioni e dei tempi del corpo. Uno spazio in cui l'uso della tecnologia venga limitato a momenti ben definiti, per lasciare spazio all'ascolto di sé, al movimento, al contatto con la natura e alle relazioni autentiche. </p>
+
+<p> L'intento non è quello di fuggire dal mondo moderno, ma di ritrovare un equilibrio che spesso la frenesia quotidiana ci fa dimenticare. Solo rallentando possiamo tornare ad ascoltare quelle parti di noi che chiedono attenzione, coltivarle e riscoprire un modo più armonico di vivere la salute e l'esistenza. </p>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href="/libro" class="inline-flex rounded-full bg-slate-950 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 shadow-sm">
+              Leggi il libro online
+            </a>
+            <a href="#collabora" data-jump-tab="collabora" class="inline-flex rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
+              Esplora il progetto
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- PROGETTI IN CORSO -->
+  <section id="collabora" data-tab-panel="collabora" class="hidden border-b border-slate-200 bg-slate-50 px-5 py-20 md:py-24">
+    <div class="mx-auto max-w-6xl">
+      <div class="max-w-4xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-orange-700">Progetti in corso</p>
+        <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+          Il cantiere vivo di PosturaCorretta.
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-slate-600">
+          Qui raccogliamo aggiornamenti, idee operative e progetti aperti. Ogni scheda si apre
+          come un articolo: cosa stiamo costruendo, a che punto siamo e come partecipare.
+        </p>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-2 rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-200">
+        <button type="button" data-project-tab="in-corso" aria-selected="true" class="project-status-tab rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white transition">
+          In corso
+        </button>
+        <button type="button" data-project-tab="pianificazione" aria-selected="false" class="project-status-tab rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-orange-50 hover:text-orange-700">
+          In pianificazione
+        </button>
+        <button type="button" data-project-tab="idee" aria-selected="false" class="project-status-tab rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-orange-50 hover:text-orange-700">
+          Idee future
+        </button>
+        <button type="button" data-project-tab="realizzati" aria-selected="false" class="project-status-tab rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-orange-50 hover:text-orange-700">
+          Realizzati
+        </button>
+      </div>
+
+      <div class="mt-12 space-y-4">
+        <details data-project-status="in-corso" class="project-article group rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6">
+            <span>
+              <span class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">In sviluppo</span>
+              <span class="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">Accademia PosturaCorretta</span>
+              <span class="mt-3 block text-sm leading-6 text-slate-600">Percorsi, lezioni e strumenti per leggere il corpo attraverso le metodiche posturali.</span>
+            </span>
+            <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Apri</span>
+          </summary>
+          <article class="mt-6 border-t border-slate-100 pt-6 text-base leading-7 text-slate-600">
+            <p>
+              L'Accademia è il cuore didattico del progetto: un luogo dove trasformare esperienza,
+              ricerca e pratica in percorsi comprensibili. L'obiettivo è aiutare le persone a partire
+              dalla propria situazione concreta e costruire una strada progressiva.
+            </p>
+            <p class="mt-4">
+              Stiamo organizzando contenuti, esercizi, mappe e collegamenti con professionisti,
+              eventi e strumenti digitali. Chi vuole contribuire può farlo come insegnante, operatore,
+              autore o tester dei percorsi.
+            </p>
+          </article>
+        </details>
+
+        <details data-project-status="pianificazione" class="project-article group rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6">
+            <span>
+              <span class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Concept</span>
+              <span class="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">Il Giardino del Corpo</span>
+              <span class="mt-3 block text-sm leading-6 text-slate-600">Agriturismo rigenerativo, natura, corpo, salute e comunità.</span>
+            </span>
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Apri</span>
+          </summary>
+          <article class="mt-6 border-t border-slate-100 pt-6 text-base leading-7 text-slate-600">
+            <p>
+              Il Giardino del Corpo è l'estensione concreta della visione del libro: uno spazio
+              in cui la salute non viene solo spiegata, ma vissuta attraverso ambiente, movimento,
+              alimentazione, relazioni e pratiche rigenerative.
+            </p>
+            <p class="mt-4">
+              Il progetto è ancora in costruzione: stiamo raccogliendo idee, alleanze, competenze
+              e possibili luoghi. È pensato per ospitare eventi, ritiri, laboratori, percorsi e momenti
+              di comunità.
+            </p>
+          </article>
+        </details>
+
+        <details data-project-status="in-corso" class="project-article group rounded-2xl border border-violet-100 bg-white p-6 shadow-sm">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6">
+            <span>
+              <span class="text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Attivo</span>
+              <span class="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">Eventi e Community</span>
+              <span class="mt-3 block text-sm leading-6 text-slate-600">Camminate, incontri, laboratori e momenti condivisi sul territorio.</span>
+            </span>
+            <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">Apri</span>
+          </summary>
+          <article class="mt-6 border-t border-slate-100 pt-6 text-base leading-7 text-slate-600">
+            <p>
+              Gli eventi servono a portare il percorso fuori dallo schermo: camminare, incontrarsi,
+              sperimentare, ascoltare il corpo e costruire relazioni. La community nasce proprio da
+              questi momenti pratici.
+            </p>
+            <p class="mt-4">
+              Cerchiamo persone, spazi e collaboratori per proporre attività legate a movimento,
+              natura, musica, buon cibo, cultura e scambio di competenze.
+            </p>
+          </article>
+        </details>
+
+        <details data-project-status="pianificazione" class="project-article group rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6">
+            <span>
+              <span class="text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">Piattaforma</span>
+              <span class="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">FlowPulse e rete dei domini</span>
+              <span class="mt-3 block text-sm leading-6 text-slate-600">La struttura digitale per pubblicare percorsi, nodi, iscrizioni e comunità tematiche.</span>
+            </span>
+            <span class="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">Apri</span>
+          </summary>
+          <article class="mt-6 border-t border-slate-100 pt-6 text-base leading-7 text-slate-600">
+            <p>
+              FlowPulse è il motore digitale che permette di organizzare domini, nodi, contenuti,
+              ruoli, iscrizioni e percorsi. PosturaCorretta diventa così uno dei mondi pubblicati
+              dentro una rete più ampia.
+            </p>
+            <p class="mt-4">
+              Qui servono sviluppatori, creator, copywriter, designer, persone operative e partner
+              che vogliono contribuire alla parte software, editoriale e organizzativa.
+            </p>
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20collaborare%20a%20un%20progetto%20in%20corso%20di%20PosturaCorretta."
+               target="_blank" rel="noopener noreferrer"
+               class="mt-6 inline-flex rounded-full bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600">
+              Proponi una collaborazione
+            </a>
+          </article>
+        </details>
+
+        <details data-project-status="idee" class="project-article group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6">
+            <span>
+              <span class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">Idea futura</span>
+              <span class="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">Rete di luoghi rigenerativi</span>
+              <span class="mt-3 block text-sm leading-6 text-slate-600">Unire spazi, professionisti e comunità locali intorno a salute, natura e cultura del corpo.</span>
+            </span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">Apri</span>
+          </summary>
+          <article class="mt-6 border-t border-slate-100 pt-6 text-base leading-7 text-slate-600">
+            <p>
+              L'idea è creare una rete di luoghi che possano ospitare esperienze PosturaCorretta:
+              agriturismi, centri, studi, spazi nella natura e realtà educative.
+            </p>
+            <p class="mt-4">
+              Per ora resta una direzione aperta: serviranno criteri, format, alleanze territoriali
+              e una struttura leggera per collegare ogni luogo al proprio percorso.
+            </p>
+          </article>
+        </details>
+
+        <details data-project-status="realizzati" class="project-article group rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6">
+            <span>
+              <span class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Realizzato</span>
+              <span class="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">Home orientativa PosturaCorretta</span>
+              <span class="mt-3 block text-sm leading-6 text-slate-600">La prima schermata per scegliere tra percorso, accademia, eventi, libro e progetti.</span>
+            </span>
+            <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Apri</span>
+          </summary>
+          <article class="mt-6 border-t border-slate-100 pt-6 text-base leading-7 text-slate-600">
+            <p>
+              La home è stata riorganizzata come mappa iniziale: una frase guida, un'immagine centrale
+              e cinque card che portano alle aree principali del progetto.
+            </p>
+            <p class="mt-4">
+              È un primo passo per rendere PosturaCorretta più leggibile: meno pagina lunga, più
+              orientamento e accesso diretto ai contenuti.
+            </p>
+          </article>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 bg-white py-16">
+    <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-5 md:grid-cols-4">
+      <div class="space-y-4">
+        <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-7 w-auto">
+        <p class="text-sm leading-6 text-slate-500">
+          Educazione posturale, salute del corpo e percorsi di consapevolezza.
+        </p>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Accademia</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><a class="hover:text-blue-700" href="?tab=percorso&path=cura#percorso">Cura e Riabilitazione</a></li>
+          <li><a class="hover:text-blue-700" href="?tab=percorso&path=benessere#percorso">Benessere Integrato</a></li>
+          <li><a class="hover:text-blue-700" href="?tab=percorso&path=fisiologia#percorso">Postura e Fisiologia</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Progetto</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><button type="button" data-jump-tab="eventi" class="hover:text-violet-700">Eventi e Community</button></li>
+          <li><button type="button" data-jump-tab="collabora" class="hover:text-orange-700">Progetti in corso</button></li>
+          <li><button type="button" data-jump-tab="filosofia" class="hover:text-blue-700">Libro e Visione</button></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Community</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><a class="hover:text-blue-700" href="https://youtube.com/@posturacorretta" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+          <li><a class="hover:text-blue-700" href="https://instagram.com/posturacorretta" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a class="hover:text-blue-700" href="/contatti">Contatti</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const academyPaths = {
+    cura: {
+      color: "red",
+      kicker: "Cura e Riabilitazione",
+      title: "Dal dolore alla cura guidata.",
+      description: "Per chi parte da dolore, sintomi, diagnosi, patologia o fase acuta. Il primo obiettivo è mettere ordine e capire quale aiuto serve davvero.",
+      joinTitle: "Sei un professionista sanitario?",
+      joinDescription: "Fisioterapisti, osteopati, medici e professionisti sanitari possono collaborare nei percorsi di cura, riabilitazione e valutazione.",
+      joinTags: ["Fisioterapia", "Osteopatia", "Medicina", "Riabilitazione"],
+      stepsTitle: "Parti da ciò che senti adesso.",
+      steps: [
+        ["Diario della salute", "Cosa sta succedendo?", "Registra dolore, eventi, trattamenti, diagnosi, attività e segnali del corpo.", ["Diario", "Sintomi", "Eventi"]],
+        ["Stop al Dolore", "Hai già una diagnosi e un piano per uscire dalla fase acuta?", "Ti aiutiamo a orientarti a trovare il professionista che possa accompagnarti in questa fase delicata.", ["Dolore", "Professionisti", "Linee guida"]],
+        ["Valutazione PosturaCorretta", "Quali sistemi sono in difficoltà?", "Una valutazione per osservare articolazioni, compensi, respirazione, recupero e abitudini.", ["Valutazione", "Schede", "Percorso"]],
+        ["Percorso terapeutico", "Esercizi che ti possono aiutare in fase acuta", "Ti mostriamo in base alla patologia alcuni Esercizi che possono aiutarti mentre sei in fase acuta, nel frattempo è importante trovare al più presto un professionista della salute che possa seguirti. ", ["Fase acuta", "Stop al dolore"]]
+      ]
+    },
+
+    prevenzione: {
+      color: "orange",
+      kicker: "Prevenzione",
+      title: "Come puoi fare prevenzione sul lavoro o nella tua attività?",
+      description: "Per chi vuole prevenire problemi legati a lavoro, sport, età, postura quotidiana o fasi specifiche della vita.",
+      joinTitle: "Hai un'attività legata alla prevenzione?",
+      joinDescription: "Puoi proporre contenuti, valutazioni, eventi o servizi per aiutare le persone a prevenire problemi futuri.",
+      joinTags: ["Lavoro", "Sport", "Età evolutiva", "Abitudini"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Conosci quali sono i rischi della tua attività principale?", "Stiamo preparando strumenti per prevenzione al lavoro, sport, scrivania, età dello sviluppo e fasi specifiche della vita.", ["Prevenzione", "Checklist", "Routine"]]
+      ]
+    },
+
+    performance: {
+      color: "yellow",
+      kicker: "Performance",
+      title: "Migliora il modo in cui lavori, studi e usi il corpo.",
+      description: "Per chi vuole migliorare prestazioni, energia, capacità cognitive, lavoro, formazione e rapporto con strumenti come l'intelligenza artificiale.",
+      joinTitle: "Ti occupi di performance, formazione o lavoro?",
+      joinDescription: "Puoi contribuire con strumenti, metodi, contenuti o percorsi per migliorare prestazioni e organizzazione.",
+      joinTags: ["Lavoro", "Formazione", "Cognizione", "IA"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Vuoi completare qualcosa in quest'area?", "Stiamo preparando contenuti su performance, lavoro, formazione, capacità cognitive, strumenti digitali e IA.", ["Performance", "Lavoro", "Studio"]]
+      ]
+    },
+
+    benessere: {
+      color: "emerald",
+      kicker: "Benessere Integrato",
+      title: "Costruisci un programma per stare meglio.",
+      description: "Per chi vuole migliorare salute, energia, fitness, estetica, abitudini e qualità della vita con un percorso integrato.",
+      joinTitle: "Sei un professionista del benessere?",
+      joinDescription: "Operatori, trainer, professionisti del movimento e facilitatori possono proporre attività, programmi e servizi collegati al benessere.",
+      joinTags: ["Benessere", "Fitness", "Estetica", "Stile di vita"],
+      stepsTitle: "Metti ordine nella tua salute.",
+      steps: [
+        ["Diario della salute", "Stai già facendo qualcosa per la tua salute?", "Registra attività, trattamenti, abitudini, alimentazione, sonno, movimento e progressi.", ["Diario", "Abitudini", "Progressi"]],
+        ["Stato di salute", "Quali ambiti stai trascurando?", "Valuta rischi, risorse e aree della salute da migliorare.", ["Questionari", "Prevenzione", "Stile di vita"]],
+        ["Programma integrato", "Da dove vuoi partire?", "Costruisci un programma sostenibile con pratiche, professionisti e obiettivi progressivi.", ["Programma", "Professionisti", "Routine"]]
+      ]
+    },
+
+    fisiologia: {
+      color: "blue",
+      kicker: "Postura e Fisiologia",
+      title: "Capire il corpo per prendersene cura.",
+      description: "Per chi vuole conoscere e riattivare i sistemi del corpo: articolazioni, muscoli, respiro, recupero, sistema nervoso, bioritmi e postura.",
+      joinTitle: "Vuoi diventare insegnante o tutor?",
+      joinDescription: "Per chi vuole insegnare postura, fisiologia e igiene posturale attraverso contenuti, lezioni, corsi ed esperienze pratiche.",
+      joinTags: ["Accademia", "Igiene Posturale", "Fisiologia", "Didattica"],
+      stepsTitle: "Impara una cosa alla volta.",
+      steps: [
+        ["Postura e Fisiologia", "Vuoi capire come funziona il corpo?", "Colleghiamo postura, movimento, respiro, recupero e segnali quotidiani.", ["Fisiologia", "Sistemi", "Pratica"]],
+        ["Igiene Posturale", "Vuoi iniziare con una pratica semplice?", "Mobilità articolare, punti di tensione, vie di discesa, recettori e routine quotidiana.", ["Mobilità", "Autotrattamento", "Routine"], [
+          ["Modulo 01", "Igiene Posturale", ["Mobilità articolare", "Punti di tensione", "Vie di discesa", "Recettori sensoriali"]],
+          ["Modulo 02", "Principi di fisioterapia", []],
+          ["Modulo 03", "Biomeccanica comportamentale", ["Introduzione al Metodo GDS"]],
+          ["Modulo 04", "Principi di osteopatia", []],
+          ["Modulo 05", "Bioritmi circadiani", ["Introduzione al metodo Corpo e Coscienza"]]
+        ]]
+      ]
+    },
+
+    ambiente: {
+      color: "indigo",
+      kicker: "Corpo e Ambiente",
+      title: "Il corpo vive dentro un ambiente.",
+      description: "Per chi vuole comprendere il rapporto tra corpo e ambiente: natura, territorio, stagioni, tradizioni, cultura, abitudini e stile di vita.",
+      joinTitle: "Vuoi proporre attività sul territorio?",
+      joinDescription: "Puoi contribuire con camminate, laboratori, tradizioni locali, calendario contadino, attività in natura ed esperienze culturali.",
+      joinTags: ["Natura", "Territorio", "Tradizioni", "Stile di vita"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Vuoi completare qualcosa in quest'area?", "Stiamo preparando contenuti sul rapporto corpo-ambiente, microcosmo-macrocosmo, natura, territorio e tradizioni.", ["Ambiente", "Tradizioni", "Stagioni"]]
+      ]
+    },
+
+    potenziale: {
+      color: "violet",
+      kicker: "Potenziale Umano",
+      title: "Scopri e coltiva le tue potenzialità.",
+      description: "Per chi vuole esplorare le sfere dell'essere umano: corpo, emozioni, relazioni, creatività, espressione, modelli e crescita armonica.",
+      joinTitle: "Vuoi proporre un'esperienza o un modello?",
+      joinDescription: "Puoi contribuire con pratiche, eventi, modelli educativi, laboratori, musica, arte, movimento e percorsi di crescita.",
+      joinTags: ["Creatività", "Relazioni", "Espressione", "Crescita"],
+      stepsTitle: "Percorso in costruzione.",
+      steps: [
+        ["In costruzione", "Vuoi completare qualcosa in quest'area?", "Stiamo preparando contenuti ed esperienze per esplorare le sfere dell'essere umano e il potenziale personale.", ["Potenziale", "Espressione", "Armonia"]]
+      ]
+    }
+  };
+
+  const colorClasses = {
+    red: { text: "text-red-700", bg: "bg-red-600", bgHover: "hover:bg-red-700", soft: "bg-red-50", border: "border-red-200" },
+    orange: { text: "text-orange-700", bg: "bg-orange-500", bgHover: "hover:bg-orange-600", soft: "bg-orange-50", border: "border-orange-200" },
+    yellow: { text: "text-yellow-700", bg: "bg-yellow-400", bgHover: "hover:bg-yellow-500", soft: "bg-yellow-50", border: "border-yellow-200" },
+    emerald: { text: "text-emerald-700", bg: "bg-emerald-600", bgHover: "hover:bg-emerald-700", soft: "bg-emerald-50", border: "border-emerald-200" },
+    blue: { text: "text-blue-700", bg: "bg-blue-600", bgHover: "hover:bg-blue-700", soft: "bg-blue-50", border: "border-blue-200" },
+    indigo: { text: "text-indigo-700", bg: "bg-indigo-600", bgHover: "hover:bg-indigo-700", soft: "bg-indigo-50", border: "border-indigo-200" },
+    violet: { text: "text-violet-700", bg: "bg-violet-700", bgHover: "hover:bg-violet-800", soft: "bg-violet-50", border: "border-violet-200" }
+  };
+
+  (() => {
+    const cards = document.querySelectorAll("#percorso .pc-choice");
+    const outputText = document.getElementById("selected-paths-text");
+    const waLink = document.getElementById("start-whatsapp-link");
+    const selectedChoices = new Set();
+
+    // Modal elements
+    const modal = document.getElementById("path-modal");
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    const cancelModalBtn = document.getElementById("modal-cancel-btn");
+    const selectModalBtn = document.getElementById("modal-select-btn");
+
+    let modalActiveKey = null;
+    let modalActiveChoice = null;
+
+    function updateWhatsappText() {
+      const values = Array.from(selectedChoices);
+      outputText.textContent = values.length ? values.join(", ") : "Nessuna area selezionata.";
+      const msg = values.length
+        ? `Ciao, vorrei iniziare un percorso con PosturaCorretta. Le aree che mi interessano sono: ${values.join(", ")}.`
+        : "Ciao, vorrei iniziare un percorso con PosturaCorretta.";
+      waLink.href = `https://wa.me/393792891488?text=${encodeURIComponent(msg)}`;
+    }
+
+    function openModal(key, choice) {
+      modalActiveKey = key;
+      modalActiveChoice = choice;
+      const path = academyPaths[key];
+      const c = colorClasses[path.color];
+
+      // Populate text details
+      document.getElementById("modal-path-kicker").textContent = path.kicker;
+      document.getElementById("modal-path-kicker").className = `text-xs font-semibold uppercase tracking-[0.22em] ${c.text}`;
+      document.getElementById("modal-path-title").textContent = path.title;
+      document.getElementById("modal-path-description").textContent = path.description;
+      document.getElementById("modal-path-steps-title").textContent = path.stepsTitle;
+
+      // Populate Steps
+      const stepsContainer = document.getElementById("modal-path-steps");
+      stepsContainer.innerHTML = "";
+      path.steps.forEach((step, index) => {
+        const [label, title, description, tags, modules = []] = step;
+        stepsContainer.innerHTML += `
+          <article class="relative pl-14 py-1">
+            <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full ${c.bg} text-sm font-semibold text-white">
+              ${index + 1}
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] ${c.text}">${label}</p>
+              <h3 class="mt-1 text-lg font-semibold tracking-tight text-slate-950">${title}</h3>
+              ${description ? `<p class="mt-2 text-sm leading-6 text-slate-600">${description}</p>` : ""}
+              <div class="mt-3 flex flex-wrap gap-2">
+                ${tags.map(tag => `<span class="rounded-full ${c.soft} px-2.5 py-0.5 text-xs font-medium ${c.text}">${tag}</span>`).join("")}
+              </div>
+              ${modules.length ? `
+                <div class="mt-4 grid gap-2.5">
+                  ${modules.map(([mNumber, mTitle, mItems]) => `
+                    <div class="rounded-xl border ${c.border} bg-white p-3.5">
+                      <p class="text-[10px] font-semibold uppercase tracking-[0.18em] ${c.text}">${mNumber}</p>
+                      <h4 class="mt-0.5 text-sm font-semibold text-slate-950">${mTitle}</h4>
+                      ${mItems.length ? `
+                        <ul class="mt-2 grid gap-0.5 text-xs leading-5 text-slate-600 sm:grid-cols-2">
+                          ${mItems.map(item => `<li>• ${item}</li>`).join("")}
+                        </ul>
+                      ` : ""}
+                    </div>
+                  `).join("")}
+                </div>
+              ` : ""}
+            </div>
+          </article>
+        `;
+      });
+
+      // Select button colors
+      selectModalBtn.className = `flex-1 rounded-xl px-6 py-3.5 text-sm font-semibold text-white transition ${c.bg} ${c.bgHover}`;
+      selectModalBtn.textContent = `Seleziona: ${path.kicker}`;
+
+      // Open modal
+      modal.classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+      modalActiveKey = null;
+      modalActiveChoice = null;
+    }
+
+    // Select button inside modal
+    selectModalBtn.addEventListener("click", () => {
+      if (modalActiveChoice) {
+        selectedChoices.add(modalActiveChoice);
+        const card = document.querySelector(`[data-choice="${modalActiveChoice}"]`);
+        if (card) {
+          card.classList.remove("bg-white");
+          card.classList.add("ring-2", "ring-blue-600", "bg-blue-50");
+        }
+        updateWhatsappText();
+      }
+      closeModal();
+    });
+
+    cards.forEach(card => {
+      card.addEventListener("click", () => {
+        const choice = card.dataset.choice;
+        const key = card.dataset.pathKey;
+
+        if (selectedChoices.has(choice)) {
+          // If already selected, click immediately deselects it without modal opening
+          selectedChoices.delete(choice);
+          card.classList.remove("ring-2", "ring-blue-600", "bg-blue-50");
+          card.classList.add("bg-white");
+          updateWhatsappText();
+        } else {
+          // Open details modal
+          openModal(key, choice);
+        }
+      });
+    });
+
+    closeModalBtn.addEventListener("click", closeModal);
+    cancelModalBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    updateWhatsappText();
+  })();
+</script>
+
+<script>
+  (() => {
+    const allowedTabs = ["home", "percorso", "eventi", "filosofia", "collabora"];
+    const tabTriggers = document.querySelectorAll("[data-landing-tab]");
+    const navButtons = document.querySelectorAll(".landing-tab-button[data-landing-tab]");
+    const panels = document.querySelectorAll("[data-tab-panel]");
+    const navStateClasses = [
+      "border-blue-600", "border-transparent", "text-blue-700", "text-slate-700",
+      "hover:border-blue-200", "hover:text-blue-700"
+    ];
+
+    function activateLandingTab(tabKey, updateUrl = true) {
+      const nextTab = allowedTabs.includes(tabKey) ? tabKey : "home";
+
+      navButtons.forEach((button) => {
+        const active = button.dataset.landingTab === nextTab;
+        button.setAttribute("aria-selected", active ? "true" : "false");
+        button.classList.remove(...navStateClasses);
+
+        button.classList.add(active ? "border-blue-600" : "border-transparent", active ? "text-blue-700" : "text-slate-700");
+        if (!active) button.classList.add("hover:border-blue-200", "hover:text-blue-700");
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle("hidden", panel.dataset.tabPanel !== nextTab);
+      });
+
+      if (updateUrl) {
+        const url = new URL(window.location);
+        url.searchParams.set("tab", nextTab);
+        if (nextTab !== "percorso") url.searchParams.delete("path");
+        url.hash = nextTab;
+        window.history.replaceState({}, "", url);
+        document.getElementById("top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    tabTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", (event) => {
+        event.preventDefault();
+        activateLandingTab(trigger.dataset.landingTab);
+      });
+    });
+
+    document.querySelectorAll("[data-jump-tab]").forEach((button) => {
+      button.addEventListener("click", () => activateLandingTab(button.dataset.jumpTab));
+    });
+
+    window.addEventListener("popstate", () => {
+      const tab = new URLSearchParams(window.location.search).get("tab");
+      activateLandingTab(tab, false);
+    });
+  })();
+</script>
+
+<script>
+  (() => {
+    const statusTabs = document.querySelectorAll("[data-project-tab]");
+    const articles = document.querySelectorAll("[data-project-status]");
+    const activeClasses = ["bg-orange-500", "text-white"];
+    const inactiveClasses = ["text-slate-600", "hover:bg-orange-50", "hover:text-orange-700"];
+
+    function activateProjectStatus(status) {
+      statusTabs.forEach((tab) => {
+        const active = tab.dataset.projectTab === status;
+        tab.setAttribute("aria-selected", active ? "true" : "false");
+        tab.classList.remove(...activeClasses, ...inactiveClasses);
+        tab.classList.add(...(active ? activeClasses : inactiveClasses));
+      });
+
+      articles.forEach((article) => {
+        const visible = article.dataset.projectStatus === status;
+        article.classList.toggle("hidden", !visible);
+        if (!visible) article.open = false;
+      });
+    }
+
+    statusTabs.forEach((tab) => {
+      tab.addEventListener("click", () => activateProjectStatus(tab.dataset.projectTab));
+    });
+
+    activateProjectStatus("in-corso");
+  })();
+</script>
+
+
+<!-- END app/views/landing/posturacorretta.html.erb -->
+    </main>
+  </body>
+</html>
+<!-- END app/views/layouts/landing.html.erb -->

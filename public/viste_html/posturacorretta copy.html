@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PosturaCorretta — Percorso della Salute</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pcblue: '#2563eb',
+            pcink: '#0f172a'
+          },
+          boxShadow: {
+            soft: '0 24px 70px rgba(15, 23, 42, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, .88);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-image {
+      background-image:
+        linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(15, 23, 42, .10)),
+        url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .path-image {
+      background-image:
+        linear-gradient(135deg, rgba(37, 99, 235, .08), rgba(15, 23, 42, .06)),
+        url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .step-line::before {
+      content: "";
+      position: absolute;
+      left: 1.12rem;
+      top: 2.8rem;
+      bottom: -2.6rem;
+      width: 1px;
+      background: #dbeafe;
+    }
+
+    .step-line:last-child::before { display: none; }
+  </style>
+</head>
+
+<body class="text-slate-900 antialiased">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 glass">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+      <a href="#top" class="flex items-center gap-3">
+        <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-7 w-auto">
+      </a>
+
+      <nav class="hidden items-center gap-7 md:flex">
+        <a href="#percorso" class="text-sm font-medium text-slate-600 hover:text-blue-700">Percorso</a>
+        <a href="#risorse" class="text-sm font-medium text-slate-600 hover:text-blue-700">Risorse</a>
+        <a href="#community" class="text-sm font-medium text-slate-600 hover:text-blue-700">Community</a>
+        <a href="#inizia" class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">Inizia</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="px-5 py-16 md:py-24">
+      <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[.95fr_1.05fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+            La salute inizia dalle metodiche posturali
+          </p>
+
+
+          <h1 class="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+            Non è solo un dolore
+            <br>
+            <span class="text-blue-700">è il corpo che parla</span>
+            
+          </h1>
+
+          <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-600">
+            Di solito si parte da un problema:
+            una visita, una diagnosi, uno specialista,
+            un farmaco o un intervento.
+          </p>
+
+          <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+            Ma uscire dalla fase acuta è solo il primo passo.
+            Dopo serve capire quali sistemi del corpo sono in difficoltà,
+            quali abitudini ti stanno influenzando
+            e quale percorso può aiutarti a ricostruire salute,
+            benessere e consapevolezza.
+          </p>
+
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a href="#percorso" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+             Inizia il percorso
+            </a>
+            <!--a href="/diario-della-salute" class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
+              Inizia dal diario
+            </a-->
+          </div>
+
+          <!--div class="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-500">
+            <a href="/eventi" class="hover:text-blue-700">Eventi</a>
+            <a href="/manifesto" class="hover:text-blue-700">Manifesto</a>
+            <a href="/libro" class="hover:text-blue-700">Libro</a>
+            <a href="/rete-professionale" class="hover:text-blue-700">Rete professionale</a>
+          </div-->
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white p-3 shadow-soft">
+          <div class="hero-image aspect-[16/9] rounded-[1.55rem]"></div>
+        </div>
+      </div>
+    </section>
+    <!-- TRE PERCORSI -->
+<section class="border-t border-slate-200 bg-slate-100 px-5 py-24">
+
+  <div class="mx-auto max-w-7xl">
+
+    <!-- INTRO -->
+    <div class="max-w-4xl">
+
+      <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+        Tre punti di ingresso
+      </p>
+
+      <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.04]">
+        Tre colori,
+       <span class="text-blue-700">
+          4 punti da cui iniziare.</span>
+      </h2>
+
+      <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-600">
+        Non tutti partono dallo stesso punto.
+        C’è chi cerca sollievo dal dolore,
+        chi vuole migliorare il proprio stile di vita
+        e chi desidera capire meglio il corpo e la fisiologia.
+      </p>
+
+    </div>
+
+    <!-- GRID -->
+    <div class="mt-20 grid gap-6 lg:grid-cols-3">
+
+      <!-- ROSSO -->
+      <a href="/stop-al-dolore"
+        class="group rounded-[2rem] border border-red-200 bg-white p-8 transition hover:-translate-y-1 hover:border-red-300 hover:shadow-xl">
+
+        <div class="flex items-center gap-3">
+
+          <div class="h-4 w-4 rounded-full bg-red-500"></div>
+
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">
+            Rosso
+          </p>
+
+        </div>
+
+        <h3 class="mt-6 text-3xl font-semibold tracking-tight text-slate-950">
+          Patologie e dolori!
+        </h3>
+
+        <p class="mt-5 text-base leading-7 text-slate-600">
+          Per chi parte da dolore,
+          diagnosi, patologia
+          o fase acuta.
+        </p>
+
+        <div class="mt-8 flex items-center gap-2 text-sm font-semibold text-red-700">
+          Esplora il percorso
+          <span class="transition group-hover:translate-x-1">→</span>
+        </div>
+
+      </a>
+
+      <!-- VERDE -->
+      <a href="/benessere-integrato"
+        class="group rounded-[2rem] border border-emerald-200 bg-white p-8 transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl">
+
+        <div class="flex items-center gap-3">
+
+          <div class="h-4 w-4 rounded-full bg-emerald-500"></div>
+
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+            Verde
+          </p>
+
+        </div>
+
+        <h3 class="mt-6 text-3xl font-semibold tracking-tight text-slate-950">
+          Percorso salute
+        </h3>
+
+        <p class="mt-5 text-base leading-7 text-slate-600">
+          Per chi vuole costruire
+          prevenzione, equilibrio
+          e stile di vita.
+        </p>
+
+        <div class="mt-8 flex items-center gap-2 text-sm font-semibold text-emerald-700">
+          Esplora il percorso
+          <span class="transition group-hover:translate-x-1">→</span>
+        </div>
+
+      </a>
+
+      <!-- BLU -->
+      <a href="/postura-e-fisiologia"
+        class="group rounded-[2rem] border border-blue-200 bg-white p-8 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl">
+
+        <div class="flex items-center gap-3">
+
+          <div class="h-4 w-4 rounded-full bg-blue-500"></div>
+
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
+            Blu
+          </p>
+
+        </div>
+
+        <h3 class="mt-6 text-3xl font-semibold tracking-tight text-slate-950">
+          Postura e fisiologia
+        </h3>
+
+        <p class="mt-5 text-base leading-7 text-slate-600">
+          Per chi vuole conoscere il corpo
+          e riattivare i sistemi fisiologici.
+        </p>
+
+        <div class="mt-8 flex items-center gap-2 text-sm font-semibold text-blue-700">
+          Esplora il percorso
+          <span class="transition group-hover:translate-x-1">→</span>
+        </div>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+    <!-- PERCORSO -->
+    <section id="percorso" class="border-y border-slate-100 bg-slate-50/70 px-5 py-16 md:py-24">
+      <div class="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[.82fr_1.18fr]">
+
+        <aside class="lg:sticky lg:top-28 lg:h-fit">
+         <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-600">
+            Il punto non è sostituire la medicina
+          </p>
+
+          <h2 class="mt-4 max-w-5xl text-4xl font-semibold tracking-tight text-black md:text-6xl md:leading-[1.05]">
+         Da dolore e patologia 
+           <span class="text-blue-700">alla consapevolezza del corpo</span>
+          </h2>
+
+          <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-700">
+              Una patologia può avere un nome preciso. Ma spesso dietro ci sono sistemi che non lavorano più bene.
+          <br>
+           <br>
+            Movimento, respirazione, recupero, stress, sonno, alimentazione, abitudini e rapporto con il corpo.
+          <br>
+           <br>
+            La diagnosi ti dice cosa hai.
+           Il percorso ti aiuta a capire cosa sta succedendo al tuo corpo
+          </p>
+
+          <div class="mt-8 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white p-3 shadow-sm">
+            <div class="path-image aspect-[16/9] rounded-[1.15rem]"></div>
+          </div>
+        </aside>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft md:p-10">
+          <div class="space-y-11">
+
+            <article id="step-01" class="step-line relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-blue-600 text-sm font-semibold text-white">1</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Diario della salute</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Stai già facendo qualcosa per la tua salute?</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">In autonomia con un professionista? Metti ordine tra sintomi, visite, esami, abitudini e obiettivi.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">Contenuti</span>
+                  <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">Corso</span>
+                  <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">Professionisti</span>
+                </div>
+              </div>
+              <a href="/diario-della-salute" class="self-start rounded-full border border-blue-100 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50">Approfondisci →</a>
+            </article>
+
+            <article class="step-line relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-red-600 text-sm font-semibold text-white">2</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">Stop al dolore</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Hai già una diagnosi o un piano per uscire dalla fase acuta?</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">Ti possiamo consigliare professionisti, e alcuni esercizi che calmano il dolore per affrontare la fase acuta.
+Dopo puoi avere una valutazione dei sistemi compromessi che hanno favorito l'insorgere della patologia.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Contenuti</span>
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Percorso</span>
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Professionisti</span>
+                </div>
+              </div>
+              <a href="/stop-al-dolore" class="self-start rounded-full border border-red-100 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50">Approfondisci →</a>
+            </article>
+
+            <article class="step-line relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-red-600 text-sm font-semibold text-white">3</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">Valutazione PosturaCorretta</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Quali sistemi bloccati, hanno fatto si che si manifestassero i tuo dolori o i tuoi sintomi?</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">Le metodiche posturali che proponiamo ti forniscono una valutazione che permette di capire quali sistemi sono compromessi, e fanno da ponte tra la medicina occidentale e quella orientale.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Valutazione</span>
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Schede</span>
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Professionisti</span>
+                </div>
+              </div>
+              <a href="/valutazione-posturale" class="self-start rounded-full border border-red-100 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50">Approfondisci →</a>
+            </article>
+
+            <article class="step-line relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-red-600 text-sm font-semibold text-white">4</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-700">Percorso terapeutico</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Dopo aver spento la fase acuta è ora di curare a fondo la tua patologia e recuperare funzione, movimento o autonomia.</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600"> Vuoi creare un piano terapeutico per affrontare la tua patologia? Ti guideremo nella scelta di professionisti, delle terapie e dei trattamenti. Nel percorso ti aiutiamo a recuperare funzione, movimento o autonomia? Riabilitazione, trattamenti e recupero guidato da professionisti.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Recupero</span>
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Trattamenti</span>
+                  <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Professionisti</span>
+                </div>
+              </div>
+              <a href="/percorso-terapeutico" class="self-start rounded-full border border-red-100 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50">Approfondisci →</a>
+            </article>
+
+            <article class="step-line relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-emerald-600 text-sm font-semibold text-white">5</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Stato di salute</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Sai davvero qual è il tuo stato di salute?</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">Oltre alla cura della patologia puoi, valuta il tuo stato di salute. Scopri quali sono gli ambiti della salute e quali servizi e professionisti possono esserti utili. </p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Questionari</span>
+                  <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Abitudini</span>
+                  <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Diario</span>
+                </div>
+              </div>
+              <a href="/stato-di-salute" class="self-start rounded-full border border-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">Approfondisci →</a>
+            </article>
+
+            <article class="step-line relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-emerald-600 text-sm font-semibold text-white">6</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Benessere integrato</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Sei pronto a costruire il tuo percorso per la salute?</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">Scopri quale delle 5 area della salute è prioritaria per te, e in base alle tue risorse, costruisci il tuo percorso integrato.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Linee guida</span>
+                  <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Professionisti</span>
+                  <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Percorsi</span>
+                </div>
+              </div>
+              <a href="/benessere-integrato" class="self-start rounded-full border border-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">Approfondisci →</a>
+            </article>
+
+            <article class="step-line relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-blue-600 text-sm font-semibold text-white">7</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Postura e fisiologia</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Puoi fare di tutto per la tua salute ma se non capisci come funziona il tuo corpo, rischi di non essere efficace.</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">Qui trovi moduli che ti insegnano a capire quali sono e riattivare i tuoi sistemi fisiologici, grazie all'aiuto delle metodiche posturali.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">Accademia</span>
+                  <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">Corsi</span>
+                  <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">Pratica</span>
+                </div>
+              </div>
+              <a href="/postura-e-fisiologia" class="self-start rounded-full border border-blue-100 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50">Approfondisci →</a>
+            </article>
+
+            <article class="relative grid gap-5 pl-14 md:grid-cols-[1fr_auto] md:gap-10">
+              <div class="absolute left-0 top-0 grid h-9 w-9 place-items-center rounded-full bg-violet-700 text-sm font-semibold text-white">8</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">Il Giardino del Corpo</p>
+                <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Vuoi trasformare la salute in un modo di vivere?</h3>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">Ora è il moemnto di fare un passo in più se sei arrivato fin qui avrai capito che macrocosmo e microcosmo sono legati e che il corpo ha molte sfere e come un giardion puoi coltivare quelle che sono più importanti per te.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-medium text-violet-700">Eventi</span>
+                  <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-medium text-violet-700">Natura</span>
+                  <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-medium text-violet-700">Comunità</span>
+                </div>
+              </div>
+              <a href="/giardino-del-corpo" class="self-start rounded-full border border-violet-100 px-4 py-2 text-sm font-semibold text-violet-700 hover:bg-violet-50">Approfondisci →</a>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RISORSE -->
+    <section class="border-t border-slate-200 bg-white px-5 py-24" id="risorse">
+      <div class="mx-auto max-w-7xl">
+
+        <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+
+  <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+   Risorse
+  </p>
+
+  <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.02]">
+    Accademia per la 
+
+    Postura, fisiologia e salute integrata.
+  </h2>
+
+</div>
+
+<div>
+
+  <p class="text-lg leading-8 text-slate-600">
+    PosturaCorretta nasce dall’incontro tra
+    metodiche posturali, esperienza pratica,
+    ricerca sul corpo e stile di vita.
+  </p>
+
+  <p class="mt-6 text-lg leading-8 text-slate-600">
+    Contenuti, corsi, eventi e professionisti
+    vengono sviluppati progressivamente
+    attraverso la pratica quotidiana,
+    il confronto e l’esperienza sul campo.
+  </p>
+
+</div>
+        </div>
+
+        <div class="mt-20 grid border-t border-slate-200 md:grid-cols-2 lg:grid-cols-3">
+
+          <a href="/contenuti" class="group border-b border-slate-200 p-8 transition hover:bg-slate-50 lg:border-r">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Impara</p>
+            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Contenuti</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Video, articoli e linee guida per capire meglio il corpo.</p>
+            <p class="mt-6 text-sm font-semibold text-blue-700">Esplora →</p>
+          </a>
+
+          <a href="/corsi-online" class="group border-b border-slate-200 p-8 transition hover:bg-slate-50 lg:border-r">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Pratica</p>
+            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Corsi online</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Percorsi guidati da seguire in autonomia o con supporto.</p>
+            <p class="mt-6 text-sm font-semibold text-blue-700">Inizia →</p>
+          </a>
+
+          <a href="/eventi" class="group border-b border-slate-200 p-8 transition hover:bg-slate-50">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Esperienze</p>
+            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Eventi</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Camminate, incontri e pratica sul territorio.</p>
+            <p class="mt-6 text-sm font-semibold text-blue-700">Partecipa →</p>
+          </a>
+
+          <a href="/rete-professionale" class="group border-b border-slate-200 p-8 transition hover:bg-slate-50 lg:border-r lg:border-b-0">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Rete</p>
+            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Rete professionale</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Professionisti, insegnanti e collaboratori del progetto.</p>
+            <p class="mt-6 text-sm font-semibold text-blue-700">Scopri →</p>
+          </a>
+
+          <a href="/manifesto" class="group border-b border-slate-200 p-8 transition hover:bg-slate-50 md:border-b-0 lg:border-r">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Visione</p>
+            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Manifesto</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">I principi e la direzione culturale di PosturaCorretta.</p>
+            <p class="mt-6 text-sm font-semibold text-blue-700">Leggi →</p>
+          </a>
+
+          <a href="/libro" class="group p-8 transition hover:bg-slate-50">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Ricerca</p>
+            <h3 class="mt-3 text-2xl font-semibold text-slate-950">Libro</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">Il corpo, un mondo da scoprire.</p>
+            <p class="mt-6 text-sm font-semibold text-blue-700">Scopri →</p>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- COMMUNITY -->
+<section class="border-t border-slate-200 bg-slate-50 px-5 py-20" id="community">
+
+  <div class="mx-auto max-w-7xl">
+
+    <div class="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+
+      <div>
+
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+          Community
+        </p>
+
+        <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
+          Segui il progetto
+        </h2>
+
+        <p class="mt-5 max-w-xl text-lg leading-8 text-slate-600">
+          Video, eventi, riflessioni, ricerca e aggiornamenti
+          condivisi attraverso i canali PosturaCorretta.
+        </p>
+
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+
+        <!-- YOUTUBE -->
+        <a href="https://www.youtube.com/posturacorretta"
+          target="_blank"
+          class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">
+            Video & Ricerca
+          </p>
+
+          <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
+            YouTube
+          </h3>
+
+          <p class="mt-4 text-base leading-7 text-slate-600">
+            Approfondimenti, esercizi, eventi e costruzione pubblica del progetto.
+          </p>
+
+          <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-red-600">
+            Vai al canale
+            <span class="transition group-hover:translate-x-1">→</span>
+          </div>
+
+        </a>
+
+        <!-- INSTAGRAM -->
+        <a href="https://www.instagram.com/posturacorretta"
+          target="_blank"
+          class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-pink-200 hover:shadow-xl">
+
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-pink-600">
+            Community & Eventi
+          </p>
+
+          <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
+            Instagram
+          </h3>
+
+          <p class="mt-4 text-base leading-7 text-slate-600">
+            Dietro le quinte, caroselli, eventi e aggiornamenti quotidiani.
+          </p>
+
+          <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-pink-600">
+            Segui la pagina
+            <span class="transition group-hover:translate-x-1">→</span>
+          </div>
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 bg-white py-16">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 md:grid-cols-4">
+
+      <div class="space-y-4">
+        <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-7 w-auto">
+        <p class="text-sm leading-6 text-slate-500">
+          Educazione posturale, salute del corpo e percorsi di consapevolezza.
+        </p>
+        <a href="https://www.dash.org/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 transition hover:bg-slate-100">
+          <span class="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Accettiamo</span>
+          <span class="text-xs font-bold text-[#008de4]">Dash Digital Cash</span>
+        </a>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Percorso</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><a class="hover:text-blue-700" href="#percorso">Percorso della salute</a></li>
+          <li><a class="hover:text-blue-700" href="/diario-della-salute">Diario della salute</a></li>
+          <li><a class="hover:text-blue-700" href="/postura-e-fisiologia">Postura e fisiologia</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Risorse</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><a class="hover:text-blue-700" href="/contenuti">Contenuti</a></li>
+          <li><a class="hover:text-blue-700" href="/corsi-online">Corsi online</a></li>
+          <li><a class="hover:text-blue-700" href="/eventi">Eventi</a></li>
+          <li><a class="hover:text-blue-700" href="/libro">Libro</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5 class="mb-4 font-semibold text-slate-950">Community</h5>
+        <ul class="space-y-2 text-sm text-slate-500">
+          <li><a class="hover:text-blue-700" href="https://youtube.com/@posturacorretta" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+          <li><a class="hover:text-blue-700" href="https://instagram.com/posturacorretta" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a class="hover:text-blue-700" href="/manifesto">Manifesto</a></li>
+          <li><a class="hover:text-blue-700" href="/contatti">Contatti</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

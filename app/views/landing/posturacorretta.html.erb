@@ -1,5 +1,5 @@
 <% content_for :title, "Accademia PosturaCorretta — Percorsi della Salute" %>
-<% active_landing_tab = params[:tab].presence_in(%w[home percorso accademia eventi filosofia collabora]) || "home" %>
+<% active_landing_tab = params[:tab].presence_in(%w[home percorso eventi filosofia collabora]) || "home" %>
 
 <% content_for :head do %>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,6 +25,14 @@
 
   <style>
     html { scroll-behavior: smooth; }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none; /* Safari and Chrome */
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
@@ -90,20 +98,20 @@
 
 <% content_for :landing_nav do %>
   <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
-    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-      <a href="?tab=home#home" data-landing-tab="home" class="flex items-center gap-3" aria-label="PosturaCorretta home">
+    <div class="mx-auto flex flex-col md:flex-row md:h-16 items-start md:items-center justify-between px-6 py-3 md:py-0 gap-3 md:gap-0">
+      <a href="?tab=home#home" data-landing-tab="home" class="flex items-center gap-3 shrink-0 animate-fade-in" aria-label="PosturaCorretta home">
         <img
           src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
           alt="PosturaCorretta"
           class="h-8 w-auto">
       </a>
 
-      <nav class="hidden items-center gap-7 md:flex" aria-label="Navigazione principale PosturaCorretta">
+      <nav class="flex items-center gap-5 md:gap-7 overflow-x-auto max-w-full whitespace-nowrap no-scrollbar pb-1 md:pb-0" aria-label="Navigazione principale PosturaCorretta">
         <a href="?tab=home#home"
            data-landing-tab="home"
            aria-selected="<%= active_landing_tab == "home" %>"
            class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= active_landing_tab == "home" ? "border-blue-600 text-blue-700" : "border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700" %>">
-          Home
+          Accademia
         </a>
 
         <a href="?tab=percorso#percorso"
@@ -111,13 +119,6 @@
            aria-selected="<%= active_landing_tab == "percorso" %>"
            class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= active_landing_tab == "percorso" ? "border-blue-600 text-blue-700" : "border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700" %>">
           Percorso personalizzato
-        </a>
-
-        <a href="?tab=accademia#accademia"
-           data-landing-tab="accademia"
-           aria-selected="<%= active_landing_tab == "accademia" %>"
-           class="landing-tab-button border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= active_landing_tab == "accademia" ? "border-blue-600 text-blue-700" : "border-transparent text-slate-700 hover:border-blue-200 hover:text-blue-700" %>">
-          Accademia
         </a>
 
         <a href="?tab=eventi#eventi"
@@ -149,7 +150,7 @@
 
   <!-- HOME -->
   <div id="home" data-tab-panel="home" class="<%= "hidden" unless active_landing_tab == "home" %>">
-    <section class="flex min-h-[calc(100vh-4rem)] items-center px-5 py-10 md:py-12 xl:py-8">
+    <section class="flex items-center px-5 py-12 md:py-16 lg:py-20">
       <div class="mx-auto w-full max-w-6xl">
         <div class="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] xl:gap-10">
           <div>
@@ -163,6 +164,15 @@
             <p class="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg xl:mt-4">
              Partiamo dalle metodiche posturali per imparare a leggere il corpo, come si relaziona con l’ambiente per migliorare la nostra salute e la nostra vita.
             </p>
+
+            <div class="mt-8 flex flex-wrap gap-4">
+              <a href="#acc-curriculum" class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition duration-200">
+                Scopri il Programma
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 animate-bounce">
+                  <path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v9.793l3.52-3.52a.75.75 0 1 1 1.06 1.06l-4.8 4.8a.75.75 0 0 1-1.06 0l-4.8-4.8a.75.75 0 1 1 1.06-1.06l3.52 3.52V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" />
+                </svg>
+              </a>
+            </div>
           </div>
 
           <div class="rounded-[2rem] border border-blue-100 bg-white p-3 shadow-soft xl:p-4">
@@ -172,45 +182,12 @@
               class="mx-auto aspect-[16/10] w-full rounded-[1.5rem] object-contain xl:max-h-[300px]">
           </div>
         </div>
-
-        <div class="mt-8 grid gap-4 md:grid-cols-2 xl:mt-7 xl:grid-cols-5">
-          <a href="?tab=percorso#percorso" data-landing-tab="percorso" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Percorso</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Personalizzato</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Scegli gli aspetti della salute su cui vuoi lavorare e costruisci il percorso più adatto a te.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Inizia<span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-
-          <a href="?tab=accademia#accademia" data-landing-tab="accademia" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Accademia</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Impara</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5"> Con le metodiche posturali, comprendi e riattiva i sistemi del corpo.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Inizia l'accademia <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-
-          <a href="?tab=eventi#eventi" data-landing-tab="eventi" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Eventi e Community</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Vivi il percorso</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Incontri, camminate, attività e momenti di comunità sul territorio.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Guarda <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-          <a href="?tab=filosofia#filosofia" data-landing-tab="filosofia" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Il libro</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Il corpo, un mondo da scoprire</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Dalla PosturaCorretta all'agriturismo rigenerativo Il Giardino del Corpo.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Scopri il libro <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-
-          <a href="?tab=collabora#collabora" data-landing-tab="collabora" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Progetti</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">In corso</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Aggiornamenti, cantieri aperti e prossimi sviluppi del progetto.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Leggi gli aggiornamenti <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-        </div>
       </div>
     </section>
+
+    <%= render "landing/accademia_curriculum" %>
   </div>
+
 
   <!-- PERCORSO -->
   <!-- PERCORSO -->
@@ -326,6 +303,7 @@
       </div>
     </div>
   </section>
+</div>
 
   <!-- MODALE DETTAGLI PERCORSO -->
   <div id="path-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -367,600 +345,7 @@
           Chiudi
         </button>
       </div>
-
     </div>
-  </div>
-
-</div>
-
-  <!-- ACCADEMIA -->
-  <div id="accademia" data-tab-panel="accademia" class="<%= "hidden" unless active_landing_tab == "accademia" %>">
-    <section class="relative overflow-hidden bg-slate-50 px-5 py-12 md:py-16">
-      <div class="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-sky-100/70 to-transparent"></div>
-
-      <div class="relative mx-auto max-w-6xl">
-
-        <!-- HERO -->
-        <div class="grid items-center gap-10 py-10 lg:grid-cols-[.95fr_1.05fr] md:py-16">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-              Accademia PosturaCorretta
-            </p>
-
-            <h1 class="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.03]">
-              Lezioni, strumenti e mappe per
-              <span class="text-blue-700">imparare a leggere il corpo</span>
-            </h1>
-
-            <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-600">
-              Un percorso educativo per conoscere il corpo, ascoltare i suoi sistemi e riattivarli attraverso i principi delle metodiche posturali.
-            </p>
-
-            <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-              Non è una semplice ginnastica: è una mappa pratica per comprendere articolazioni, movimento, respirazione, percezione corporea e coscienza.
-            </p>
-
-            <div class="mt-8 flex flex-wrap gap-3">
-              <a href="#acc-percorso"
-                class="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
-                Esplora il percorso
-              </a>
-              <a href="#acc-inizia"
-                class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 transition">
-                Inizia ora
-              </a>
-            </div>
-          </div>
-
-          <div class="rounded-[2rem] border border-slate-200 bg-white p-3 shadow-soft">
-            <div class="hero-image-accademia aspect-[16/10] rounded-[1.55rem]"></div>
-          </div>
-        </div>
-
-        <!-- TABS PERCORSO -->
-        <section id="acc-percorso" class="bg-white rounded-[2.5rem] border border-slate-200 p-6 shadow-sm md:p-10 my-12">
-          <div class="text-center">
-            <p class="text-sm font-black uppercase tracking-[0.2em] text-sky-700">
-              Accademia
-            </p>
-
-            <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">
-              Il percorso dell’Accademia
-            </h2>
-
-            <p class="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600">
-              Un percorso progressivo: prima comprendi, poi pratichi, infine puoi approfondire per trasmettere l’esperienza ad altre persone.
-            </p>
-          </div>
-
-          <!-- STEP BUTTONS -->
-          <div class="mt-10 grid gap-3 md:grid-cols-3">
-            <button onclick="showAccStepTab('informati')"
-              class="acc-step-btn rounded-3xl border border-sky-200 bg-sky-50 p-5 text-left hover:bg-sky-100 transition ring-4 ring-sky-200 scale-[1.02]"
-              data-acc-step-btn="informati">
-              <span class="text-xs font-black uppercase tracking-[0.18em] text-sky-800">
-                Step 01
-              </span>
-              <h3 class="mt-3 text-2xl font-black text-sky-950">Informati</h3>
-            </button>
-
-            <button onclick="showAccStepTab('pratica')"
-              class="acc-step-btn rounded-3xl border border-emerald-200 bg-emerald-50 p-5 text-left hover:bg-emerald-100 transition"
-              data-acc-step-btn="pratica">
-              <span class="text-xs font-black uppercase tracking-[0.18em] text-emerald-800">
-                Step 02
-              </span>
-              <h3 class="mt-3 text-2xl font-black text-emerald-950">Pratica</h3>
-            </button>
-
-            <button onclick="showAccStepTab('trasmetti')"
-              class="acc-step-btn rounded-3xl border border-violet-200 bg-violet-50 p-5 text-left hover:bg-violet-100 transition"
-              data-acc-step-btn="trasmetti">
-              <span class="text-xs font-black uppercase tracking-[0.18em] text-violet-800">
-                Step 03
-              </span>
-              <h3 class="mt-3 text-2xl font-black text-violet-950">Trasmetti</h3>
-            </button>
-          </div>
-
-          <!-- STEP PANELS -->
-          <div class="mt-8 rounded-[2rem] bg-slate-50 p-6 md:p-8">
-            <div class="acc-step-panel animate-fade-in" id="informati">
-              <p class="text-sm font-black uppercase tracking-[0.18em] text-sky-700">
-                Step 01 — Informati
-              </p>
-              <h3 class="mt-3 text-3xl font-black text-slate-950">
-                Conosci il corpo prima di correggerlo.
-              </h3>
-              <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-                Scopri i principi della postura, delle articolazioni, del respiro, del sistema nervoso e dei sistemi fisiologici. Prima di fare esercizi, impari a orientarti.
-              </p>
-            </div>
-
-            <div class="acc-step-panel hidden animate-fade-in" id="pratica">
-              <p class="text-sm font-black uppercase tracking-[0.18em] text-emerald-700">
-                Step 02 — Pratica
-              </p>
-              <h3 class="mt-3 text-3xl font-black text-slate-950">
-                Trasforma la conoscenza in esperienza.
-              </h3>
-              <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-                Attraversa esercizi, automassaggi, respirazione, percezione, movimento e pratiche corporee per sentire concretamente il corpo.
-              </p>
-            </div>
-
-            <div class="acc-step-panel hidden animate-fade-in" id="trasmetti">
-              <p class="text-sm font-black uppercase tracking-[0.18em] text-violet-700">
-                Step 03 — Trasmetti
-              </p>
-              <h3 class="mt-3 text-3xl font-black text-slate-950">
-                Approfondisci per accompagnare altre persone.
-              </h3>
-              <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-                Se vuoi proseguire, puoi approfondire il metodo per creare gruppi, esperienze, percorsi educativi e strumenti da trasmettere.
-              </p>
-            </div>
-          </div>
-
-          <!-- OBIETTIVO -->
-          <div class="mt-8 rounded-3xl bg-sky-900 p-6 text-white shadow-md">
-            <p class="text-sm font-bold uppercase tracking-[0.18em] text-sky-200">
-              Obiettivo
-            </p>
-            <p class="mt-3 text-xl font-black leading-8">
-              Conoscere il corpo per costruire salute, presenza e consapevolezza.
-            </p>
-          </div>
-        </section>
-
-        <!-- MAPPA DEL PERCORSO / AREE -->
-        <section id="acc-aree" class="my-16">
-          <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p class="text-sm font-black uppercase tracking-[0.2em] text-sky-700">
-                Mappa del percorso
-              </p>
-              <h2 class="mt-3 text-3xl font-black text-slate-950 md:text-4xl">
-                Le aree della salute e le metodiche posturali.
-              </h2>
-            </div>
-            <p class="max-w-2xl text-sm leading-6 text-slate-500">
-              Seleziona un’area alla volta per esplorare moduli, pratiche e contenuti.
-            </p>
-          </div>
-
-          <!-- AREA BUTTONS -->
-          <div class="rounded-[2rem] border border-slate-200 bg-white p-3 shadow-sm">
-            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-              <button data-acc-area-btn="recupero" class="acc-area-btn rounded-2xl bg-blue-600 px-4 py-4 text-left text-sm font-black text-white hover:opacity-95 transition">
-                01<br><span class="text-base">Massaggio e terapie manuali</span>
-              </button>
-
-              <button data-acc-area-btn="movimento" class="acc-area-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200 transition">
-                02<br><span class="text-base">Movimento Allenamento</span>
-              </button>
-
-              <button data-acc-area-btn="ascolto" class="acc-area-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200 transition">
-                03<br><span class="text-base">Aspetti Emotivo e Mentale</span>
-              </button>
-
-              <button data-acc-area-btn="piante" class="acc-area-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200 transition">
-                04<br><span class="text-base">Fisiologia / Piante / Farmaci</span>
-              </button>
-
-              <button data-acc-area-btn="nutrizione" class="acc-area-btn rounded-2xl bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-700 hover:bg-slate-200 transition">
-                05<br><span class="text-base">Nutrizione</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- AREA PANELS -->
-          <div class="mt-8">
-
-            <!-- RECUPERO -->
-            <div data-acc-area-panel="recupero" class="acc-area-panel rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-              <p class="text-sm font-black uppercase tracking-[0.24em] text-sky-700">Area 01</p>
-              <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">
-                Massaggio e terapie manuali
-              </h2>
-
-              <p class="mt-4 max-w-4xl text-base leading-7 text-slate-600">
-                Terapie manuali, trattamenti per il recupero della mobilità e igiene posturale per allentare le tensioni corporee e ripristinare il corretto scorrimento dei tessuti.
-              </p>
-
-              <div class="mt-8 grid gap-4">
-                <details open class="group rounded-3xl border border-sky-100 bg-sky-50 p-6 transition">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                    <div>
-                      <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-sky-800">
-                        Modulo 01
-                      </span>
-                      <h3 class="mt-4 text-2xl font-black text-sky-900">Igiene Posturale</h3>
-                    </div>
-                    <span class="text-2xl font-black text-sky-700 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <div class="mt-6 border-t border-sky-100 pt-5">
-                    <ul class="grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
-                      <li>• Mobilità articolare</li>
-                      <li>• Punti di tensione</li>
-                      <li>• Via di discesa</li>
-                      <li>• Recettori sensoriali</li>
-                    </ul>
-                  </div>
-                </details>
-
-                <details class="group rounded-3xl border border-blue-100 bg-blue-50 p-6 transition">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                    <div>
-                      <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-blue-800">
-                        Modulo 02
-                      </span>
-                      <h3 class="mt-4 text-2xl font-black text-blue-900">Principi di fisioterapia</h3>
-                    </div>
-                    <span class="text-2xl font-black text-blue-700 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <div class="mt-6 border-t border-blue-100 pt-5">
-                    <ul class="grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
-                      <li>• Sistema respiratorio</li>
-                      <li>• Sistema nervoso e urogenitale</li>
-                      <li>• Sistema muscolo-scheletrico</li>
-                      <li>• Sistema cardiocircolatorio</li>
-                      <li>• Sistema linfatico e digerente</li>
-                    </ul>
-                  </div>
-                </details>
-
-                <details class="group rounded-3xl border border-violet-100 bg-violet-50 p-6 transition">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                    <div>
-                      <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-violet-800">
-                        Modulo 03
-                      </span>
-                      <h3 class="mt-4 text-2xl font-black text-violet-900">Biomeccanica Comportamentale</h3>
-                      <p class="mt-2 text-sm font-semibold text-violet-800">Introduzione al Metodo GDS</p>
-                    </div>
-                    <span class="text-2xl font-black text-violet-700 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <div class="mt-6 border-t border-violet-100 pt-5">
-                    <ul class="grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
-                      <li>• 5 direzioni di movimento</li>
-                      <li>• Flessione e catena AM</li>
-                      <li>• Rotazione interna e catena AL</li>
-                      <li>• Estensione e catena PM</li>
-                      <li>• Rotazione esterna e catena PL</li>
-                      <li>• Rigido e lasso: catena PA/AP</li>
-                    </ul>
-                  </div>
-                </details>
-
-                <details class="group rounded-3xl border border-emerald-100 bg-emerald-50 p-6 transition">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                    <div>
-                      <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-emerald-800">
-                        Modulo 04
-                      </span>
-                      <h3 class="mt-4 text-2xl font-black text-emerald-900">Principi di osteopatia</h3>
-                    </div>
-                    <span class="text-2xl font-black text-emerald-700 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <div class="mt-6 border-t border-emerald-100 pt-5">
-                    <ul class="grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
-                      <li>• Togliere le disfunzioni</li>
-                      <li>• Sistema fasciale</li>
-                      <li>• Sistema viscerale</li>
-                      <li>• Sistema cranio-sacrale</li>
-                      <li>• Sistema neurovegetativo</li>
-                    </ul>
-                  </div>
-                </details>
-
-                <details class="group rounded-3xl border border-rose-100 bg-rose-50 p-6 transition">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                    <div>
-                      <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-rose-800">
-                        Modulo 05
-                      </span>
-                      <h3 class="mt-4 text-2xl font-black text-rose-900">Bioritmi circadiani</h3>
-                      <p class="mt-2 text-sm font-semibold text-rose-800">Introduzione al metodo Corpo e Coscienza</p>
-                    </div>
-                    <span class="text-2xl font-black text-rose-700 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <div class="mt-6 border-t border-rose-100 pt-5">
-                    <ul class="grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
-                      <li>• Le 2 circolazioni</li>
-                      <li>• I 3 centri di gravità</li>
-                      <li>• I 4 tipi di movimento</li>
-                      <li>• 5 elementi e ritmo stagionale</li>
-                      <li>• 6 coppie di meridiani</li>
-                      <li>• 7 centri neurolinfatici</li>
-                    </ul>
-                  </div>
-                </details>
-
-                <details class="group rounded-3xl border border-amber-100 bg-amber-50 p-6 transition">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                    <div>
-                      <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-800">
-                        Modulo 06
-                      </span>
-                      <h3 class="mt-4 text-2xl font-black text-amber-900">Sequenza di Kinesiologia Applicata</h3>
-                    </div>
-                    <span class="text-2xl font-black text-amber-700 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <div class="mt-6 border-t border-amber-100 pt-5">
-                    <ul class="grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
-                      <li>• Sequenze corporee integrate</li>
-                      <li>• Risposta e adattamento</li>
-                      <li>• Relazione tra sistemi corporei</li>
-                      <li>• Compenso e riequilibrio</li>
-                    </ul>
-                  </div>
-                </details>
-
-                <details class="group rounded-3xl border border-orange-100 bg-orange-50 p-6 transition">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                    <div>
-                      <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-800">
-                        Modulo 07
-                      </span>
-                      <h3 class="mt-4 text-2xl font-black text-orange-900">Altre metodiche posturali</h3>
-                      <p class="mt-2 text-sm font-semibold text-orange-850">Massaggio, terapie manuali e discipline autonome</p>
-                    </div>
-                    <span class="text-2xl font-black text-orange-700 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <div class="mt-6 border-t border-orange-100 pt-5">
-                    <p class="text-sm text-orange-900/60 italic">In fase di definizione e raccolta contenuti.</p>
-                  </div>
-                </details>
-              </div>
-            </div>
-
-            <!-- MOVIMENTO -->
-            <div data-acc-area-panel="movimento" class="acc-area-panel hidden rounded-[2rem] border border-violet-100 bg-violet-50 p-8 shadow-sm">
-              <p class="text-sm font-black uppercase tracking-[0.2em] text-violet-700">Area 02</p>
-              <h2 class="mt-3 text-3xl font-black text-violet-950">Movimento e Allenamento</h2>
-              <p class="mt-4 max-w-4xl text-base leading-7 text-slate-700">
-                Dallo sviluppo neuromotorio del bambino e del movimento arcaico, alle pratiche di allenamento, flessibilità e coordinazione integrata.
-              </p>
-
-              <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Forza & Struttura</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">Rinforzo muscolare</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Attività mirata al supporto strutturale e alla stabilità del corpo.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Pratiche Energetiche</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">I cinque tibetani</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Riti di movimento e allungamento per riequilibrare i centri energetici.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Pratiche Orientali</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">Gli 8 pezzi di broccato</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Esercizi tradizionali cinesi per la salute e la longevità degli organi (Baduanjin).</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Sinergia & Presenza</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">Una sequenza dello yoga</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Integrazione di respiro, asana e consapevolezza del momento presente.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Sviluppo Neuromotorio</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">DNS (Sviluppo movimento bambini)</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Dynamic Neuromuscular Stabilization: ripristinare gli schemi motori fisiologici primari.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Movimento a Terra</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">Animal Flow</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Pratica fluida a corpo libero incentrata su posture ed andature animali quadrupediche.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Origini & Istinto</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">Movimenti arcaici</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Esplorazione degli schemi primitivi del movimento evolutivo dell'essere umano.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Ritmo & Arte Marziale</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">Capoeira</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Danza, acrobatica, musica e lotta in un gioco dinamico continuo.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-violet-100/50">
-                  <span class="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-800">Consapevolezza Interna</span>
-                  <h3 class="mt-4 text-xl font-bold text-violet-950">Tai chi</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Movimenti lenti e circolari per coltivare l'equilibrio e l'energia interna.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- ASCOLTO -->
-            <div data-acc-area-panel="ascolto" class="acc-area-panel hidden rounded-[2rem] border border-emerald-100 bg-emerald-50 p-8 shadow-sm">
-              <p class="text-sm font-black uppercase tracking-[0.2em] text-emerald-700">Area 03</p>
-              <h2 class="mt-3 text-3xl font-black text-emerald-950">Aspetti Emotivo e Mentale</h2>
-              <p class="mt-4 max-w-4xl text-base leading-7 text-slate-700">
-                La comprensione profonda degli aspetti emotivi, mentali ed energetici. Perché il corpo non è solo muscoli, ma vive di pensieri, emozioni, memorie e relazioni.
-              </p>
-
-              <div class="mt-8 grid gap-6 md:grid-cols-2">
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-emerald-100/50">
-                  <h3 class="text-lg font-bold text-emerald-800 border-b border-emerald-50 pb-2 mb-4">Consapevolezza & Lettura del Sé</h3>
-                  <ul class="space-y-3 text-sm text-slate-700">
-                    <li>• Morfopsicologia: Corrispondenza tra somatici del volto e psicologia.</li>
-                    <li>• Human design: Mappa della natura energetica basata su sintesi di saperi tradizionali.</li>
-                    <li>• Hi Ching / I Ching & Tarocchi: Archetipi e simbologia di indagine evolutiva.</li>
-                    <li>• PNL & Efficacia personale: Programmazione Neuro-Linguistica.</li>
-                  </ul>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-emerald-100/50">
-                  <h3 class="text-lg font-bold text-emerald-800 border-b border-emerald-50 pb-2 mb-4">Pratiche Corporee & di Coscienza</h3>
-                  <ul class="space-y-3 text-sm text-slate-700">
-                    <li>• Sofrologia (Caycedo): Armonizzazione di corpo e mente.</li>
-                    <li>• Corpo e coscienza: Percezione, rilassamento e risveglio delle memorie corporee.</li>
-                    <li>• Yoga (nozioni avanzate): Dimensione spirituale, energetica e meditativa.</li>
-                    <li>• Meditazione trascendentale profonda: Riduzione dello stress.</li>
-                  </ul>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-emerald-100/50">
-                  <h3 class="text-lg font-bold text-emerald-800 border-b border-emerald-50 pb-2 mb-4">Parole, Storie & Suono</h3>
-                  <ul class="space-y-3 text-sm text-slate-700">
-                    <li>• Siamo fatti di parole: Influenza del nostro vocabolario sulla biologia.</li>
-                    <li>• Il potere delle storie & Viaggio dell'eroe: Narrazione come superamento delle prove.</li>
-                    <li>• La medicina del suono: Riequilibrio energetico guidato dall'ascolto di frequenze.</li>
-                  </ul>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-emerald-100/50">
-                  <h3 class="text-lg font-bold text-emerald-800 border-b border-emerald-50 pb-2 mb-4">Studio e Creatività</h3>
-                  <ul class="space-y-3 text-sm text-slate-700">
-                    <li>• Su wen / Medicina cinese / Fenomenologia: Approccio classico alla fisiologia energetica.</li>
-                    <li>• Memo memoria metodo: Tecniche pratiche per l'apprendimento.</li>
-                    <li>• Pensare come leonardo: Principi per allenare l'intuizione.</li>
-                    <li>• Teatro & Il giardino del corpo: Espressione corporea e arte scenica.</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- PIANTE -->
-            <div data-acc-area-panel="piante" class="acc-area-panel hidden rounded-[2rem] border border-red-100 bg-red-50 p-8 shadow-sm">
-              <p class="text-sm font-black uppercase tracking-[0.2em] text-red-700">Area 04</p>
-              <h2 class="mt-3 text-3xl font-black text-red-950">Fisiologia / Piante / Integratori / Farmaci</h2>
-              <p class="mt-4 max-w-4xl text-base leading-7 text-slate-700">
-                L'approccio naturale per sostenere e riequilibrare i sistemi corporei attraverso la fitoterapia e le grandi tradizioni mediche.
-              </p>
-
-              <div class="mt-8 grid gap-4 md:grid-cols-2">
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-red-100/50">
-                  <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800">Fisiologia & Immunità</span>
-                  <h3 class="mt-4 text-xl font-bold text-red-950">La medicina dei semplici (Dr. Abbiati)</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">La croce dei 4 sistemi vitali, con al centro il ruolo di riequilibrio e protezione del sistema immunitario.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-red-100/50">
-                  <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800">Tradizione Locale</span>
-                  <h3 class="mt-4 text-xl font-bold text-red-950">Medicina mediterranea</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">I rimedi naturali tipici del nostro territorio e la tradizione erboristica locale.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-red-100/50">
-                  <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800">Fisiologia Energetica</span>
-                  <h3 class="mt-4 text-xl font-bold text-red-950">Medicina cinese</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">L'uso delle piante e delle ricette fitoterapiche secondo i flussi di energia e le stagioni.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-red-100/50">
-                  <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800">Scienza della Vita</span>
-                  <h3 class="mt-4 text-xl font-bold text-red-950">Ayurveda</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">I primi indiani di erboristeria e integrazione mirati al riequilibrio della propria costituzione (Dosha).</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- NUTRIZIONE -->
-            <div data-acc-area-panel="nutrizione" class="acc-area-panel hidden rounded-[2rem] border border-orange-100 bg-orange-50 p-8 shadow-sm">
-              <p class="text-sm font-black uppercase tracking-[0.2em] text-orange-700">Area 05</p>
-              <h2 class="mt-3 text-3xl font-black text-orange-950">Nutrizione</h2>
-              <p class="mt-4 max-w-4xl text-base leading-7 text-slate-700">
-                Un'indagine profonda sul cibo e sulla nutrizione biologica ed energetica, riscoprendo il rapporto originario tra l'uomo, la terra e la vitalità.
-              </p>
-
-              <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-orange-100/50 flex flex-col justify-between">
-                  <div>
-                    <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800">Consapevolezza</span>
-                    <h3 class="mt-4 text-lg font-bold text-orange-950">Cosa stiamo mangiando?</h3>
-                  </div>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Riflessioni e analisi sulle sostanze nutritive introdotte quotidianamente.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-orange-100/50 flex flex-col justify-between">
-                  <div>
-                    <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800">Definizione</span>
-                    <h3 class="mt-4 text-lg font-bold text-orange-950">Cos’è il cibo?</h3>
-                  </div>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Indagine oltre i macronutrienti: la biologia ed evoluzione del cibo.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-orange-100/50 flex flex-col justify-between">
-                  <div>
-                    <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800">Origini</span>
-                    <h3 class="mt-4 text-lg font-bold text-orange-950">Il cibo viene dalla terra</h3>
-                  </div>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Riconnettersi ai ritmi naturali della produzione agricola e della stagionalità.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-orange-100/50 flex flex-col justify-between">
-                  <div>
-                    <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800">Società</span>
-                    <h3 class="mt-4 text-lg font-bold text-orange-950">Cibo e industrializzazione</h3>
-                  </div>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">L'impatto dei prodotti ultra-processati sulla nostra biologia ed equilibrio.</p>
-                </div>
-                <div class="rounded-3xl bg-white p-6 shadow-sm border border-orange-100/50 flex flex-col justify-between lg:col-span-1">
-                  <div>
-                    <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800">Energia Sottile</span>
-                    <h3 class="mt-4 text-lg font-bold text-orange-950">Cibo per trasmettere energia</h3>
-                  </div>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">L'alimentazione vista come fonte biologica e vibrazionale di energia vitale.</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- INIZIA IL PERCORSO -->
-        <section id="acc-inizia" class="mt-16 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <p class="text-sm font-black uppercase tracking-[0.2em] text-sky-700">Percorsi</p>
-          <h2 class="mt-2 text-3xl font-black text-slate-950">Inizia il percorso</h2>
-          <p class="mt-4 max-w-3xl text-sm leading-6 text-slate-500">
-            Puoi iniziare in autonomia, con altre persone oppure con un professionista o insegnante.
-          </p>
-
-          <div class="mt-8 grid gap-5 md:grid-cols-3">
-            <article class="rounded-3xl border border-sky-100 bg-sky-50 p-6">
-              <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-sky-800">Modalità 01</span>
-              <h3 class="mt-4 text-2xl font-black text-sky-900">In autonomia</h3>
-              <p class="mt-4 text-sm leading-7 text-slate-600">Schede, video, esercizi e pratiche personali.</p>
-            </article>
-
-            <article class="rounded-3xl border border-emerald-100 bg-emerald-50 p-6">
-              <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-emerald-800">Modalità 02</span>
-              <h3 class="mt-4 text-2xl font-black text-emerald-900">In gruppo</h3>
-              <p class="mt-4 text-sm leading-7 text-slate-600">Lezioni ed esperienze condivise guidate da un insegnante.</p>
-            </article>
-
-            <article class="rounded-3xl border border-amber-100 bg-amber-50 p-6">
-              <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-800">Modalità 03</span>
-              <h3 class="mt-4 text-2xl font-black text-amber-900">Individuale</h3>
-              <p class="mt-4 text-sm leading-7 text-slate-600">Percorso personalizzato con insegnante o professionista.</p>
-            </article>
-          </div>
-        </section>
-
-        <!-- ACC-FORMAZIONE -->
-        <section id="acc-formazione" class="mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <p class="text-sm font-black uppercase tracking-[0.2em] text-violet-700">Formazione</p>
-          <h2 class="mt-2 text-3xl font-black text-slate-950">Diventa insegnante</h2>
-          <p class="mt-4 max-w-3xl text-sm leading-6 text-slate-500">
-            Il percorso può essere approfondito per accompagnerà altre persone nella conoscenza del corpo.
-          </p>
-
-          <div class="mt-8 grid gap-5 lg:grid-cols-3">
-            <article class="rounded-3xl border border-sky-100 bg-sky-50 p-6">
-              <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-sky-800">Blu</span>
-              <h3 class="mt-4 text-2xl font-black text-sky-900">Facilitatore del percorso</h3>
-              <p class="mt-4 text-sm leading-7 text-slate-600">Accompagna gruppi, organizza esperienze e diffonde i principi educativi.</p>
-            </article>
-
-            <article class="rounded-3xl border border-emerald-100 bg-emerald-50 p-6">
-              <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">Verde</span>
-              <h3 class="mt-4 text-2xl font-black text-emerald-900">Professionista del benessere</h3>
-              <p class="mt-4 text-sm leading-7 text-slate-600">Integra movimento, recupero, stile di vita e pratiche preventive.</p>
-            </article>
-
-            <article class="rounded-3xl border border-red-100 bg-red-50 p-6">
-              <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-red-800">Rosso</span>
-              <h3 class="mt-4 text-2xl font-black text-red-900">Professionista sanitario</h3>
-              <p class="mt-4 text-sm leading-7 text-slate-600">Integra il percorso nella parte terapeutica, valutativa o riabilitativa.</p>
-            </article>
-          </div>
-        </section>
-
-      </div>
-    </section>
   </div>
 
   <!-- EVENTI -->
@@ -1009,33 +394,52 @@
   <!-- LIBRO E VISIONE -->
   <div id="filosofia" data-tab-panel="filosofia" class="<%= "hidden" unless active_landing_tab == "filosofia" %>">
     <section class="bg-white px-5 py-20 md:py-24">
-      <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+      <div class="mx-auto grid max-w-6xl gap-12 items-center lg:grid-cols-[0.8fr_1.2fr]">
+        
+        <!-- Left Side: Interactive 3D Book Cover -->
+        <div class="flex justify-center lg:justify-start py-6">
+          <a href="/books/il-corpo-un-mondo-da-scoprire" class="group relative block w-72 max-w-full transition duration-300" style="perspective: 1200px;">
+            <div class="relative aspect-square sm:aspect-[3/4] w-full rounded-r-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] transition-all duration-500 ease-out transform group-hover:scale-[1.03] group-hover:shadow-[0_30px_70px_rgba(37,99,235,0.25)]" style="transform-style: preserve-3d; transform-origin: left center;">
+              <img src="https://ik.imagekit.io/posturacorretta/markpostura/home/il%20corpo%20un%20mondo%20da%20scoprire.webp?updatedAt=1783012351120" alt="PosturaCorretta: Il Libro" class="h-full w-full rounded-r-xl object-cover">
+              <!-- Spine shadow overlay -->
+              <div class="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-black/25 via-black/5 to-transparent rounded-r-sm"></div>
+              <!-- Page edges mockup border on right side -->
+              <div class="absolute inset-y-0.5 right-0 w-1 bg-slate-200/50 rounded-r-sm border-r border-slate-300/30"></div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Right Side: Content description -->
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-700">
             Libro e Visione
           </p>
-          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl md:leading-[1.05]">
+          <h2 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
             Il corpo, un mondo da scoprire.
           </h2>
           <p class="mt-6 text-lg leading-8 text-slate-600">
-            Dalla PosturaCorretta all'agriturismo rigenerativo Il Giardino del Corpo.
+            Dall'accademia PosturaCorretta all'agriturismo rigenerativo Il Giardino del Corpo.
           </p>
+
+          <div class="mt-8 text-lg leading-8 text-slate-600 space-y-4">
+           <p> Il libro raccoglie la visione del progetto. Il punto di partenza sono le metodiche posturali, che ci permettono di comprendere la postura non come una forma da correggere, ma come un linguaggio attraverso cui il corpo comunica il proprio stato di equilibrio, adattamento e benessere. </p>
+
+<p> Da questa prospettiva il percorso si amplia naturalmente, invitando a esplorare il legame tra corpo, salute, ambiente, abitudini e consapevolezza di sé. Comprendere il corpo significa anche comprendere il modo in cui percepiamo il mondo e il rapporto che costruiamo con esso.</p>
+<p> Lo sguardo, però, è rivolto anche al futuro. L'obiettivo è sperimentare un prototipo di <strong>agriturismo rigenerativo</strong>: un luogo in cui poter vivere per alcuni giorni seguendo ritmi più vicini alla natura, riscoprendo l'alternarsi del giorno e della notte, delle stagioni e dei tempi del corpo. Uno spazio in cui l'uso della tecnologia venga limitato a momenti ben definiti, per lasciare spazio all'ascolto di sé, al movimento, al contatto con la natura e alle relazioni autentiche. </p>
+
+<p> L'intento non è quello di fuggire dal mondo moderno, ma di ritrovare un equilibrio che spesso la frenesia quotidiana ci fa dimenticare. Solo rallentando possiamo tornare ad ascoltare quelle parti di noi che chiedono attenzione, coltivarle e riscoprire un modo più armonico di vivere la salute e l'esistenza. </p>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href="/books/il-corpo-un-mondo-da-scoprire" class="inline-flex rounded-full bg-slate-950 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 shadow-sm">
+              Leggi il libro online
+            </a>
+            <a href="#collabora" data-jump-tab="collabora" class="inline-flex rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
+              Esplora il progetto
+            </a>
+          </div>
         </div>
 
-        <div class="text-lg leading-8 text-slate-600">
-          <p>
-            Il libro raccoglie la visione del progetto: la postura non come forma da correggere,
-            ma come modo di leggere il rapporto tra corpo, ambiente, salute, abitudini e comunità.
-          </p>
-          <p class="mt-6">
-            Da qui nasce anche l'idea del Giardino del Corpo: uno spazio rigenerativo in cui
-            metodiche posturali, natura, movimento, alimentazione, relazioni e cultura diventano
-            esperienza concreta.
-          </p>
-          <a href="/libro" class="mt-8 inline-flex rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
-            Vai al libro
-          </a>
-        </div>
       </div>
     </section>
   </div>
@@ -1507,7 +911,7 @@
 
 <script>
   (() => {
-    const allowedTabs = ["home", "percorso", "accademia", "eventi", "filosofia", "collabora"];
+    const allowedTabs = ["home", "percorso", "eventi", "filosofia", "collabora"];
     const tabTriggers = document.querySelectorAll("[data-landing-tab]");
     const navButtons = document.querySelectorAll(".landing-tab-button[data-landing-tab]");
     const panels = document.querySelectorAll("[data-tab-panel]");
@@ -1590,65 +994,3 @@
   })();
 </script>
 
-<script>
-  // Accademia Step Tabs (Informati, Pratica, Trasmetti)
-  function showAccStepTab(tabId) {
-    document.querySelectorAll('.acc-step-panel').forEach(panel => {
-      panel.classList.add('hidden');
-    });
-
-    const targetPanel = document.getElementById(tabId);
-    if (targetPanel) {
-      targetPanel.classList.remove('hidden');
-    }
-
-    document.querySelectorAll('.acc-step-btn').forEach(btn => {
-      btn.classList.remove('ring-4', 'ring-sky-200', 'scale-[1.02]');
-    });
-
-    const targetBtn = document.querySelector(`[data-acc-step-btn="${tabId}"]`);
-    if (targetBtn) {
-      targetBtn.classList.add('ring-4', 'ring-sky-200', 'scale-[1.02]');
-    }
-  }
-
-  // Accademia Area Tabs (Massaggio, Movimento, Ascolto, Piante, Nutrizione)
-  (() => {
-    const activeColorClasses = {
-      recupero: "bg-blue-600",
-      movimento: "bg-violet-900",
-      ascolto: "bg-green-600",
-      piante: "bg-red-700",
-      nutrizione: "bg-orange-500"
-    };
-
-    function activateAccAreaTab(tabName) {
-      document.querySelectorAll(".acc-area-btn").forEach((button) => {
-        const isCurrent = button.dataset.accAreaBtn === tabName;
-        const themeColor = activeColorClasses[button.dataset.accAreaBtn];
-
-        if (isCurrent) {
-          button.classList.remove("bg-slate-100", "text-slate-700", "hover:bg-slate-200");
-          button.classList.add(themeColor, "text-white");
-        } else {
-          button.classList.remove(themeColor, "text-white");
-          button.classList.add("bg-slate-100", "text-slate-700", "hover:bg-slate-200");
-        }
-      });
-
-      document.querySelectorAll(".acc-area-panel").forEach((panel) => {
-        panel.classList.toggle("hidden", panel.dataset.accAreaPanel !== tabName);
-      });
-    }
-
-    document.querySelectorAll(".acc-area-btn").forEach((button) => {
-      button.addEventListener("click", () => {
-        activateAccAreaTab(button.dataset.accAreaBtn);
-      });
-    });
-
-    // Initialize first tabs
-    showAccStepTab('informati');
-    activateAccAreaTab('recupero');
-  })();
-</script>

@@ -1,0 +1,112 @@
+# bin/renumber_book_files
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Renumber markdown files like:
+#   001-title.md, 002-title.md ...
+# Works with patterns:
+#   001-foo.md
+#   001_foo.md
+#   001.foo.md
+#
+# Usage:
+#   ruby bin/renumber_book_files path/to/folder
+#   ruby bin/renumber_book_files path/to/folder --apply
+#
+# It will:
+# - detect numeric prefix
+# - sort by prefix then name
+# - rename to continuous sequence (001, 002, ...)
+# - do a two-phase rename via temporary names to avoid collisions
+# ruby bin/renumber_book_files config/data/book_official --apply
+require "fileutils"
+
+folder = ARGV.find { |a| !a.start_with?("--") } || "book"
+apply  = ARGV.include?("--apply")
+
+unless Dir.exist?(folder)
+  warn "Folder not found: #{folder}"
+  exit 1
+end
+
+# Match: 001-title.md, 1-title.md, 0001-title.md etc.
+# Capture groups:
+# 1) number
+# 2) separator (optional)
+# 3) rest of filename
+REGEX = /\A(\d+)([-_. ]?)(.+)\z/
+
+entries =
+  Dir.children(folder)
+     .select { |f| File.file?(File.join(folder, f)) }
+     .map do |f|
+        m = f.match(REGEX)
+        next unless m
+        num = m[1].to_i
+        sep = m[2]
+        rest = m[3]
+        { file: f, num: num, sep: sep, rest: rest }
+      end
+     .compact
+
+if entries.empty?
+  warn "No numbered files found in #{folder}"
+  exit 1
+end
+
+# Decide padding based on the largest current prefix length, minimum 3
+max_digits = [entries.map { |e| e[:file].match(REGEX)[1].length }.max, 3].max
+
+# Sort by numeric prefix, then rest to stabilize duplicates
+entries.sort_by! { |e| [e[:num], e[:rest].downcase, e[:file].downcase] }
+
+plan = []
+entries.each_with_index do |e, idx|
+  new_num = idx + 1
+  new_prefix = new_num.to_s.rjust(max_digits, "0")
+  # keep original separator if present, else default "-"
+  sep = e[:sep]
+  sep = "-" if sep.nil? || sep.empty?
+  new_name = "#{new_prefix}#{sep}#{e[:rest]}"
+  plan << [e[:file], new_name]
+end
+
+# Show plan
+puts "Folder: #{folder}"
+puts "Padding: #{max_digits} digits"
+puts "Mode: #{apply ? "APPLY (will rename)" : "DRY RUN (preview only)"}"
+puts
+plan.each do |old_name, new_name|
+  next if old_name == new_name
+  puts "#{old_name}  ->  #{new_name}"
+end
+
+if plan.all? { |old_name, new_name| old_name == new_name }
+  puts "\nNothing to do."
+  exit 0
+end
+
+exit 0 unless apply
+
+# Two-phase rename to avoid collisions:
+# 1) old -> .tmp__<old>
+# 2) tmp -> new
+tmp_map = []
+
+timestamp = Time.now.strftime("%Y%m%d%H%M%S")
+plan.each do |old_name, new_name|
+  next if old_name == new_name
+  old_path = File.join(folder, old_name)
+  tmp_name = ".tmp__#{timestamp}__#{old_name}"
+  tmp_path = File.join(folder, tmp_name)
+  FileUtils.mv(old_path, tmp_path)
+  tmp_map << [tmp_name, new_name]
+end
+
+tmp_map.each do |tmp_name, new_name|
+  tmp_path = File.join(folder, tmp_name)
+  new_path = File.join(folder, new_name)
+  FileUtils.mv(tmp_path, new_path)
+end
+
+puts "\nDone. Renamed #{tmp_map.size} files."

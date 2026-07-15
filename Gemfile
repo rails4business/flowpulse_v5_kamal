@@ -75,4 +75,6 @@ end
 
 gem "closure_tree", "~> 9.7"
 gem "acts_as_list", "~> 1.2"
+gem "redcarpet", "~> 3.6.0"
+
 

@@ -1,0 +1,531 @@
+<style>
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+</style>
+
+<%
+lesson_row = ->(number, title, slug, theme_color, description = nil) do
+  theme_classes = {
+    "sky" => { bg: "bg-sky-100/70", text: "text-sky-850", hover: "hover:bg-sky-50/50", hover_text: "group-hover:text-sky-600" },
+    "indigo" => { bg: "bg-indigo-100/70", text: "text-indigo-850", hover: "hover:bg-indigo-50/50", hover_text: "group-hover:text-indigo-600" },
+    "blue" => { bg: "bg-blue-100/70", text: "text-blue-850", hover: "hover:bg-blue-50/50", hover_text: "group-hover:text-blue-600" },
+    "violet" => { bg: "bg-violet-100/70", text: "text-violet-855", hover: "hover:bg-violet-50/50", hover_text: "group-hover:text-violet-600" },
+    "emerald" => { bg: "bg-emerald-100/70", text: "text-emerald-850", hover: "hover:bg-emerald-50/50", hover_text: "group-hover:text-emerald-600" },
+    "rose" => { bg: "bg-rose-100/70", text: "text-rose-850", hover: "hover:bg-rose-50/50", hover_text: "group-hover:text-rose-600" },
+    "amber" => { bg: "bg-amber-100/70", text: "text-amber-850", hover: "hover:bg-amber-50/50", hover_text: "group-hover:text-amber-600" },
+    "fuchsia" => { bg: "bg-fuchsia-100/70", text: "text-fuchsia-850", hover: "hover:bg-fuchsia-50/50", hover_text: "group-hover:text-fuchsia-600" },
+    "green" => { bg: "bg-green-100/70", text: "text-green-850", hover: "hover:bg-green-50/50", hover_text: "group-hover:text-green-600" },
+    "red" => { bg: "bg-red-100/70", text: "text-red-850", hover: "hover:bg-red-50/50", hover_text: "group-hover:text-red-600" },
+    "orange" => { bg: "bg-orange-100/70", text: "text-orange-850", hover: "hover:bg-orange-50/50", hover_text: "group-hover:text-orange-600" }
+  }[theme_color] || { bg: "bg-slate-100", text: "text-slate-855", hover: "hover:bg-slate-50/50", hover_text: "group-hover:text-slate-600" }
+%>
+  <a class="group text-black block py-2.5 px-3 <%= theme_classes[:hover] %> rounded-xl transition duration-200" href="/books/il-corpo-un-mondo-da-scoprire/<%= slug %>">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 min-w-[48px] self-start mt-0.5">LEZ <%= number %></span>
+        <div>
+          <h5 class="text-sm font-semibold text-slate-800 <%= theme_classes[:hover_text] %> transition"><%= title %></h5>
+          <% if description.present? %>
+            <p class="text-xs text-slate-500 mt-1 font-normal"><%= description %></p>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start mt-0.5">
+        <div class="rounded-sm py-0.5 px-2 text-[10px] inline-block font-semibold leading-normal <%= theme_classes[:bg] %> <%= theme_classes[:text] %> uppercase tracking-wider">Leggi Lezione →</div>
+      </div>
+    </div>
+  </a>
+<%
+end
+%>
+
+<section id="acc-curriculum" class="border-t border-slate-100 bg-slate-50/60 py-16 px-5">
+  <div class="mx-auto max-w-4xl">
+    <div class="text-center mb-10">
+      <p class="text-sm font-black uppercase tracking-[0.2em] text-blue-700">
+        Programma di Studio
+      </p>
+      <h1 class="mt-3 text-4xl font-black tracking-tight text-slate-955 md:text-5xl">
+        Accademia
+      </h1>
+      <p class="mt-4 text-slate-600 max-w-2xl mx-auto">
+        Tutti i moduli formativi e le lezioni dell'Accademia. Clicca su una lezione per aprirla direttamente nel libro digitale.
+      </p>
+    </div>
+
+    <!-- TABS CONTROLLER (with overflow scroll on small screens) -->
+    <div class="flex justify-center mb-12">
+      <div class="inline-flex p-1 bg-slate-200/50 backdrop-blur-md rounded-2xl border border-slate-200/80 overflow-x-auto max-w-full whitespace-nowrap no-scrollbar gap-1 shadow-2xs">
+        <button onclick="switchCurriculumTab('dolore')" id="tab-btn-dolore" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Stop al dolore
+        </button>
+        <button onclick="switchCurriculumTab('prevenzione')" id="tab-btn-prevenzione" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Prevenzione
+        </button>
+        <button onclick="switchCurriculumTab('performance')" id="tab-btn-performance" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Performance
+        </button>
+        <button onclick="switchCurriculumTab('fisiologia')" id="tab-btn-fisiologia" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50">
+          Postura e Fisiologia
+        </button>
+        <button onclick="switchCurriculumTab('benessere')" id="tab-btn-benessere" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-slate-955">
+          Benessere Integrato
+        </button>
+        <button onclick="switchCurriculumTab('giardino')" id="tab-btn-giardino" class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-650 hover:text-violet-750 flex items-center gap-1.5">
+          <span id="giardino-lock-icon">🔒</span>
+          <span>Il Giardino del Corpo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: Stop al Dolore (Hidden by default) -->
+    <div id="sec-dolore" class="space-y-8 hidden">
+      <div class="bg-blue-50/80 border border-blue-100/70 rounded-3xl p-8 text-center max-w-2xl mx-auto shadow-2xs">
+        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-700 text-xl font-bold mb-4">
+          🩹
+        </span>
+        <h3 class="text-xl font-bold text-slate-900">Stop al dolore</h3>
+        <p class="text-slate-655 mt-3 text-sm leading-relaxed max-w-lg mx-auto">
+          Un percorso mirato per chi soffre di tensioni muscolari, rigidità articolare o dolori cronici. Impara le metodiche posturali per decongestionare le zone di sofferenza del corpo, rilasciare le catene in tensione e ristabilire un allineamento fisiologico indolore.
+        </p>
+      </div>
+      <!-- Curated lessons for this path -->
+      <div class="max-w-2xl mx-auto mt-8">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 px-3 uppercase tracking-wider">Lezioni Chiave Suggerite:</h4>
+        <div class="flex flex-col gap-3 pl-4 border-l-2 border-blue-300">
+          <% lesson_row.call("04", "Postura e Fisiologia: Massaggio, Presenza & Autotrattamento", "metodiche-posturali-e-fisiologia", "blue", "Presa di coscienza corporea e autotrattamento.") %>
+          <% lesson_row.call("06", "Punti di tensione", "igiene-posturale", "blue", "Identificare e rilasciare i punti critici di tensione del corpo.") %>
+          <% lesson_row.call("11", "Sistema muscolo-scheletrico", "insegnamenti-fisioterapia", "blue", "Studio fisioterapico delle catene muscolari e scheletriche.") %>
+          <% lesson_row.call("20", "Eliminare le disfunzioni", "osteopatia-ascolto-del-corpo", "blue", "I principi osteopatici per liberare le articolazioni bloccate.") %>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Prevenzione (Hidden by default) -->
+    <div id="sec-prevenzione" class="space-y-8 hidden">
+      <div class="bg-emerald-50/80 border border-emerald-100/70 rounded-3xl p-8 text-center max-w-2xl mx-auto shadow-2xs">
+        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 text-xl font-bold mb-4">
+          🛡️
+        </span>
+        <h3 class="text-xl font-bold text-slate-900">Prevenzione</h3>
+        <p class="text-slate-655 mt-3 text-sm leading-relaxed max-w-lg mx-auto">
+          Prenditi cura della tua salute prima che insorgano problemi. Questo percorso ti insegna le corrette abitudini quotidiane, la mobilità articolare preventiva e l'ascolto fine dei segnali del corpo per mantenere vitalità e benessere nel lungo termine.
+        </p>
+      </div>
+      <!-- Curated lessons for this path -->
+      <div class="max-w-2xl mx-auto mt-8">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 px-3 uppercase tracking-wider">Lezioni Chiave Suggerite:</h4>
+        <div class="flex flex-col gap-3 pl-4 border-l-2 border-emerald-300">
+          <% lesson_row.call("05", "Mobilità articolare", "igiene-posturale", "emerald", "Mantenere le articolazioni mobili ed elastiche nel tempo.") %>
+          <% lesson_row.call("09", "Sistema respiratorio", "insegnamenti-fisioterapia", "emerald", "La respirazione fisiologica come pilastro della prevenzione.") %>
+          <% lesson_row.call("21", "Il sistema fasciale", "osteopatia-ascolto-del-corpo", "emerald", "Nutrire e preservare la salute dei tessuti connettivi fasciali.") %>
+          <% lesson_row.call("25", "Le 2 circolazioni", "corpo-e-coscienza", "emerald", "Equilibrare i ritmi circolatori per ottimizzare il metabolismo organico.") %>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Performance (Hidden by default) -->
+    <div id="sec-performance" class="space-y-8 hidden">
+      <div class="bg-amber-50/80 border border-amber-100/70 rounded-3xl p-8 text-center max-w-2xl mx-auto shadow-2xs">
+        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-700 text-xl font-bold mb-4">
+          ⚡
+        </span>
+        <h3 class="text-xl font-bold text-slate-900">Performance</h3>
+        <p class="text-slate-655 mt-3 text-sm leading-relaxed max-w-lg mx-auto">
+          Sblocca il massimo potenziale dal tuo corpo. Ottimizza la biomeccanica del movimento, incrementa la forza profonda e strutturale, e allena la coordinazione neuromuscolare avanzata per migliorare le prestazioni fisiche nello sport e nella vita di tutti i giorni.
+        </p>
+      </div>
+      <!-- Curated lessons for this path -->
+      <div class="max-w-2xl mx-auto mt-8">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 px-3 uppercase tracking-wider">Lezioni Chiave Suggerite:</h4>
+        <div class="flex flex-col gap-3 pl-4 border-l-2 border-amber-300">
+          <% lesson_row.call("14", "Le 5 direzioni di movimento", "biomeccanica-comportamentale-gds", "amber", "Studio biomeccanico del gesto motorio integrato.") %>
+          <% lesson_row.call("03", "Rinforzo muscolare strutturale", "valutare-lo-stato-di-salute", "amber", "Costruire forza profonda partendo dal centro del corpo.") %>
+          <% lesson_row.call("07", "DNS (Stabilizzazione Neuromuscolare)", "cinque-aree-della-salute", "amber", "Attivazione neuromotoria basata sullo sviluppo evolutivo.") %>
+          <% lesson_row.call("08", "Animal Flow", "cinque-aree-della-salute", "amber", "Coordinazione, agilità ed energia a corpo libero.") %>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Postura e Fisiologia (Active by default) -->
+    <div id="sec-fisiologia" class="space-y-12">
+      
+      <!-- Module 00: Intro -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-sky-100 text-sky-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 00</span>
+            <h3 class="text-xl font-bold text-slate-900">Intro: Basi & Fondamenti</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">4 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Il modulo introduttivo per comprendere la visione della postura e le basi fisiologiche.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-sky-300">
+          <% lesson_row.call("01", "Perché La postura", "perche-iniziare-da-posturacorretta", "sky", "I principi delle migliori metodiche posturali, per imparare a leggere il corpo.") %>
+          <% lesson_row.call("02", "Rosso Verde Blu", "affiancare-il-percorso-educativo", "sky", "Come usare il percorso. Rispettando il ruolo dei professionisti della salute e del benessere.") %>
+          <% lesson_row.call("03", "Informati, Pratica, Insegna", "come-costruire-un-percorso", "sky", "Differenza tra insegnante e professionista formato nelle metodiche posturali.") %>
+          <% lesson_row.call("04", "Postura e Fisiologia: Massaggio, Presenza & Autotrattamento", "metodiche-posturali-e-fisiologia", "sky", "Presa di coscienza corporea e autotrattamento.") %>
+        </div>
+      </div>
+
+      <!-- Module 01: Igiene Posturale -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-indigo-100 text-indigo-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 01</span>
+            <h3 class="text-xl font-bold text-slate-900">Igiene Posturale</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">4 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I concetti essenziali per eliminare le abitudini posturali scorrette.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-indigo-300">
+          <% lesson_row.call("05", "Mobilità articolare", "igiene-posturale", "indigo") %>
+          <% lesson_row.call("06", "Punti di tensione", "igiene-posturale", "indigo") %>
+          <% lesson_row.call("07", "Via di discesa", "igiene-posturale", "indigo") %>
+          <% lesson_row.call("08", "Recettori sensoriali", "igiene-posturale", "indigo") %>
+        </div>
+      </div>
+
+      <!-- Module 02: Fisioterapia -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-blue-100 text-blue-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 02</span>
+            <h3 class="text-xl font-bold text-slate-900">Principi di Fisioterapia</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">5 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Approccio biologico allo studio dei grandi sistemi vitali del corpo.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-blue-300">
+          <% lesson_row.call("09", "Sistema respiratorio", "insegnamenti-fisioterapia", "blue") %>
+          <% lesson_row.call("10", "Sistema nervoso e urogenitale", "insegnamenti-fisioterapia", "blue") %>
+          <% lesson_row.call("11", "Sistema muscolo-scheletrico", "insegnamenti-fisioterapia", "blue") %>
+          <% lesson_row.call("12", "Sistema cardiocircolatorio", "insegnamenti-fisioterapia", "blue") %>
+          <% lesson_row.call("13", "Sistema linfatico e digerente", "insegnamenti-fisioterapia", "blue") %>
+        </div>
+      </div>
+
+      <!-- Module 03: Biomeccanica (GDS) -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-violet-100 text-violet-850 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 03</span>
+            <h3 class="text-xl font-bold text-slate-900">Biomeccanica Comportamentale (GDS)</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">6 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Le 5 catene muscolari e il loro significato psicofisiologico.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-violet-300">
+          <% lesson_row.call("14", "Le 5 direzioni di movimento", "biomeccanica-comportamentale-gds", "violet") %>
+          <% lesson_row.call("15", "Catena AM (Flessione)", "biomeccanica-comportamentale-gds", "violet") %>
+          <% lesson_row.call("16", "Catena AL (Rotazione interna)", "biomeccanica-comportamentale-gds", "violet") %>
+          <% lesson_row.call("17", "Catena PM (Estensione)", "biomeccanica-comportamentale-gds", "violet") %>
+          <% lesson_row.call("18", "Catena PL (Rotazione esterna)", "biomeccanica-comportamentale-gds", "violet") %>
+          <% lesson_row.call("19", "Catene PA/AP (Rigido e lasso)", "biomeccanica-comportamentale-gds", "violet") %>
+        </div>
+      </div>
+
+      <!-- Module 04: Osteopatia -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 04</span>
+            <h3 class="text-xl font-bold text-slate-900">Principi di Osteopatia</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">5 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I 5 sistemi osteopatici e la liberazione dalle disfunzioni articolari.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-emerald-300">
+          <% lesson_row.call("20", "Eliminare le disfunzioni", "osteopatia-ascolto-del-corpo", "emerald") %>
+          <% lesson_row.call("21", "Il sistema fasciale", "osteopatia-ascolto-del-corpo", "emerald") %>
+          <% lesson_row.call("22", "Il sistema viscerale", "osteopatia-ascolto-del-corpo", "emerald") %>
+          <% lesson_row.call("23", "Il sistema cranio-sacrale", "osteopatia-ascolto-del-corpo", "emerald") %>
+          <% lesson_row.call("24", "Il sistema neurovegetativo", "osteopatia-ascolto-del-corpo", "emerald") %>
+        </div>
+      </div>
+
+      <!-- Module 05: Bioritmi -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-rose-100 text-rose-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 05</span>
+            <h3 class="text-xl font-bold text-slate-900">Bioritmi Circadiani (Corpo & Coscienza)</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">6 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I sette parametri strutturali ed energetici della coscienza somatica.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-rose-300">
+          <% lesson_row.call("25", "Le 2 circolazioni", "corpo-e-coscienza", "rose") %>
+          <% lesson_row.call("26", "I 3 centri di gravità", "corpo-e-coscienza", "rose") %>
+          <% lesson_row.call("27", "I 4 tipi di movimento", "corpo-e-coscienza", "rose") %>
+          <% lesson_row.call("28", "I 5 elementi e il ritmo stagionale", "corpo-e-coscienza", "rose") %>
+          <% lesson_row.call("29", "Le 6 coppie di meridiani", "corpo-e-coscienza", "rose") %>
+          <% lesson_row.call("30", "I 7 centri neurolinfatici", "corpo-e-coscienza", "rose") %>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION 5: Benessere Integrato (Hidden by default) -->
+    <div id="sec-benessere" class="space-y-12 hidden">
+
+      <!-- Modulo Intro Benessere: Intro -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-sky-100 text-sky-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Intro</span>
+            <h3 class="text-xl font-bold text-slate-900">Introduzione al Benessere Integrato</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">2 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">La visione globale della salute e gli ambiti di applicazione del percorso.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-sky-300">
+          <% lesson_row.call("01", "Gli ambiti in cui la postura può aiutarti", "quando-usare-questo-libro", "sky") %>
+          <% lesson_row.call("02", "Le 5 aree del percorso della salute", "cinque-aree-della-salute", "sky") %>
+        </div>
+      </div>
+
+      <!-- Module 07: Movimento -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-fuchsia-100 text-fuchsia-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 07</span>
+            <h3 class="text-xl font-bold text-slate-900">Movimento & Allenamento</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">9 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Mappe pratiche di movimento, forza strutturale e mobilità cosciente.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-fuchsia-300">
+          <% lesson_row.call("03", "Rinforzo muscolare strutturale", "valutare-lo-stato-di-salute", "fuchsia") %>
+          <% lesson_row.call("04", "I Cinque Tibetani", "cinque-aree-della-salute", "fuchsia") %>
+          <% lesson_row.call("05", "Gli 8 Pezzi di Broccato", "cinque-aree-della-salute", "fuchsia") %>
+          <% lesson_row.call("06", "Dinamiche dello Yoga", "cinque-aree-della-salute", "fuchsia") %>
+          <% lesson_row.call("07", "DNS (Stabilizzazione Neuromuscolare)", "cinque-aree-della-salute", "fuchsia") %>
+          <% lesson_row.call("08", "Animal Flow", "cinque-aree-della-salute", "fuchsia") %>
+          <% lesson_row.call("09", "Movimenti arcaici ed evolutivi", "cinque-aree-della-salute", "fuchsia") %>
+          <% lesson_row.call("10", "Capoeira", "cinque-aree-della-salute", "fuchsia") %>
+          <% lesson_row.call("11", "Tai Chi ed energia interna", "cinque-aree-della-salute", "fuchsia") %>
+        </div>
+      </div>
+
+      <!-- Module 08: Emotivo -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-green-100 text-green-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 08</span>
+            <h3 class="text-xl font-bold text-slate-900">Aspetto Emotivo e Mentale</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">8 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">Lo studio archetipico, morfologico e linguistico per l'evoluzione personale.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-green-300">
+          <% lesson_row.call("12", "Morfopsicologia", "valutare-lo-stato-di-salute", "green") %>
+          <% lesson_row.call("13", "Human Design", "valutare-lo-stato-di-salute", "green") %>
+          <% lesson_row.call("14", "Archetipi (I Ching & Tarocchi)", "valutare-lo-stato-di-salute", "green") %>
+          <% lesson_row.call("15", "PNL & Efficacia personale", "valutare-lo-stato-di-salute", "green") %>
+          <% lesson_row.call("16", "Sofrologia Caycediana", "valutare-lo-stato-di-salute", "green") %>
+          <% lesson_row.call("17", "Risveglio delle memorie corporee", "valutare-lo-stato-di-salute", "green") %>
+          <% lesson_row.call("18", "Studio del Su Wen e fenomenologia", "valutare-lo-stato-di-salute", "green") %>
+          <% lesson_row.call("19", "Teatro e Giardino del Corpo", "valutare-lo-stato-di-salute", "green") %>
+        </div>
+      </div>
+
+      <!-- Module 09: Fitoterapia -->
+      <div class="py-4">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-red-100 text-red-800 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 09</span>
+            <h3 class="text-xl font-bold text-slate-900">Fisiologia, Fitoterapia & Rimedi</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">4 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-500 mb-6">I rimedi naturali, le erbe officinali e l'integrazione fitoterapica costituzionale.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-red-300">
+          <% lesson_row.call("20", "La medicina dei semplici (Dr. Abbiati)", "guarire-dalla-patologia-e-ritornare-in-salute", "red") %>
+          <% lesson_row.call("21", "Erboristica e medicina mediterranea", "guarire-dalla-patologia-e-ritornare-in-salute", "red") %>
+          <% lesson_row.call("22", "Fitoterapia e medicina cinese", "guarire-dalla-patologia-e-ritornare-in-salute", "red") %>
+          <% lesson_row.call("23", "Ayurveda e costituzione (Dosha)", "guarire-dalla-patologia-e-ritornare-in-salute", "red") %>
+        </div>
+      </div>
+
+      <!-- Module 10: Nutrizione -->
+      <div class="py-4 mb-8">
+        <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="rounded-md bg-orange-100 text-orange-850 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 10</span>
+            <h3 class="text-xl font-bold text-slate-900">Nutrizione Biologica ed Energetica</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">5 Lezioni</span>
+        </div>
+        <div class="text-sm text-slate-550 mb-6">La riscoperta della qualità del cibo e della vitalità energetica alimentare.</div>
+
+        <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-orange-300">
+          <% lesson_row.call("24", "Cosa stiamo mangiando?", "prendersi-cura-della-salute-e-del-benessere", "orange") %>
+          <% lesson_row.call("25", "Definizione evolutiva di cibo", "prendersi-cura-della-salute-e-del-benessere", "orange") %>
+          <% lesson_row.call("26", "Agricoltura rigenerativa e stagionalità", "prendersi-cura-della-salute-e-del-benessere", "orange") %>
+          <% lesson_row.call("27", "Cibo industrializzato e ultra-processato", "prendersi-cura-della-salute-e-del-benessere", "orange") %>
+          <% lesson_row.call("28", "Alimentazione vibrazionale ed energetica", "prendersi-cura-della-salute-e-del-benessere", "orange") %>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-slate-200/60 mt-8 text-center">
+        <p class="text-xs text-slate-400">Completa lo studio o sblocca la sezione finale per accedere al tab in alto.</p>
+      </div>
+
+    </div>
+
+    <!-- SECTION 6: Il Giardino del Corpo (Contains dynamic lock or lessons list) -->
+    <div id="sec-giardino" class="space-y-12 hidden">
+      <!-- Locked Screen Container -->
+      <div id="giardino-lock-screen" class="py-8">
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-3xl border border-slate-200 shadow-xl max-w-md mx-auto text-center">
+          <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-violet-100 text-violet-750 text-xl font-bold mb-4 animate-bounce">
+            🔒
+          </span>
+          <h4 class="text-lg font-bold text-slate-900">Sezione Bloccata: Il Giardino del Corpo</h4>
+          <p class="text-xs text-slate-555 mt-2 mb-6">Questa sezione finale sull'agriturismo rigenerativo e lo sviluppo armonico sul territorio si sblocca completando lo studio dei moduli del Benessere Integrato.</p>
+          <button onclick="unlockGiardino()" class="w-full inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-3 text-xs font-bold text-white hover:bg-violet-750 active:scale-95 shadow-md shadow-violet-500/20 transition duration-150">
+            Sblocca Sezione
+          </button>
+        </div>
+      </div>
+
+      <!-- Unlocked Lessons list -->
+      <div id="giardino-unlocked-content" class="hidden">
+        <!-- Module 11: Il Giardino del Corpo -->
+        <div class="py-4">
+          <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+              <span class="rounded-md bg-violet-100 text-violet-850 text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">Modulo 11</span>
+              <h3 class="text-xl font-bold text-slate-900">Il Giardino del Corpo (Eventi & Territorio)</h3>
+            </div>
+            <span class="text-xs font-semibold text-slate-400">8 Lezioni</span>
+          </div>
+          <div class="text-sm text-slate-500 mb-6">Agriturismo rigenerativo, eventi, esperienze sul territorio e il calendario contadino.</div>
+
+          <div class="flex flex-col gap-3 pl-4 md:pl-6 border-l-2 border-violet-300">
+            <% lesson_row.call("01", "La Formazione oltre la salute e il lavoro", "antica-mappa-giardino-corpo", "violet", "Le sfere di Flowpulse e il Giardino del Corpo.") %>
+            <% lesson_row.call("02", "Il Giardino del Corpo", "giardino-del-corpo", "violet", "L'Agriturismo rigenerativo e la scuola per lo sviluppo armonico.") %>
+            <% lesson_row.call("03", "Eventi ed esperienze", "eventi-ed-esperienze", "violet", "Il primo passo concreto verso l'agriturismo rigenerativo.") %>
+            <% lesson_row.call("04", "Presentazione del libro e del progetto", "presentazione-del-libro-e-del-progetto", "violet", "Organizzare presentazioni in librerie, teatri e spazi culturali.") %>
+            <% lesson_row.call("05", "Eventi/seminari a tema", "eventi-seminari-a-tema", "violet", "Modelli tra fisiologia ed evoluzione armonica.") %>
+            <% lesson_row.call("06", "Importanza dei luoghi", "importanza-dei-luoghi", "violet", "I luoghi e i non luoghi nell'apprendimento.") %>
+            <% lesson_row.call("07", "Eventi tra Natura e Territorio", "eventi-tra-natura-e-territorio", "violet", "Esperienze all'aperto per riscoprire il legame con la natura.") %>
+            <% lesson_row.call("08", "Il calendario contadino e le stagioni", "il-calendario-contadino-e-le-stagioni", "violet", "Ritrovare equilibrio attraverso le attività stagionali.") %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  function switchCurriculumTab(tab) {
+    const doloreBtn = document.getElementById('tab-btn-dolore');
+    const prevenzioneBtn = document.getElementById('tab-btn-prevenzione');
+    const performanceBtn = document.getElementById('tab-btn-performance');
+    const fisiologiaBtn = document.getElementById('tab-btn-fisiologia');
+    const benessereBtn = document.getElementById('tab-btn-benessere');
+    const giardinoBtn = document.getElementById('tab-btn-giardino');
+    
+    const doloreSec = document.getElementById('sec-dolore');
+    const prevenzioneSec = document.getElementById('sec-prevenzione');
+    const performanceSec = document.getElementById('sec-performance');
+    const fisiologiaSec = document.getElementById('sec-fisiologia');
+    const benessereSec = document.getElementById('sec-benessere');
+    const giardinoSec = document.getElementById('sec-giardino');
+    
+    // Reset buttons to inactive style
+    resetTabBtnClass(doloreBtn);
+    resetTabBtnClass(prevenzioneBtn);
+    resetTabBtnClass(performanceBtn);
+    resetTabBtnClass(fisiologiaBtn);
+    resetTabBtnClass(benessereBtn);
+    resetTabBtnClass(giardinoBtn);
+    
+    // Hide all sections
+    doloreSec.classList.add('hidden');
+    prevenzioneSec.classList.add('hidden');
+    performanceSec.classList.add('hidden');
+    fisiologiaSec.classList.add('hidden');
+    benessereSec.classList.add('hidden');
+    giardinoSec.classList.add('hidden');
+    
+    // Activate clicked tab
+    if (tab === 'dolore') {
+      doloreBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      doloreSec.classList.remove('hidden');
+    } else if (tab === 'prevenzione') {
+      prevenzioneBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      prevenzioneSec.classList.remove('hidden');
+    } else if (tab === 'performance') {
+      performanceBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      performanceSec.classList.remove('hidden');
+    } else if (tab === 'fisiologia') {
+      fisiologiaBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      fisiologiaSec.classList.remove('hidden');
+    } else if (tab === 'benessere') {
+      benessereBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-slate-900 shadow-xs border border-slate-200/50";
+      benessereSec.classList.remove('hidden');
+    } else if (tab === 'giardino') {
+      const isLocked = document.getElementById('giardino-lock-icon') !== null;
+      if (isLocked) {
+        giardinoBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-slate-100 text-slate-500 shadow-xs border border-slate-200/50";
+      } else {
+        giardinoBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-violet-955 shadow-xs border border-violet-250/50";
+      }
+      giardinoSec.classList.remove('hidden');
+    }
+  }
+
+  function resetTabBtnClass(btn) {
+    const isLockedGiardino = btn.id === 'tab-btn-giardino' && document.getElementById('giardino-lock-icon') !== null;
+    if (isLockedGiardino) {
+      btn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-400 bg-slate-100/50 flex items-center gap-1.5";
+    } else if (btn.id === 'tab-btn-giardino') {
+      btn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-600 hover:text-slate-955";
+    } else {
+      btn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 text-slate-600 hover:text-slate-955";
+    }
+  }
+
+  function unlockGiardino() {
+    const lockIcon = document.getElementById('giardino-lock-icon');
+    const lockScreen = document.getElementById('giardino-lock-screen');
+    const unlockedContent = document.getElementById('giardino-unlocked-content');
+    const giardinoBtn = document.getElementById('tab-btn-giardino');
+    
+    // 1. Remove the lock icon from tab switcher button
+    if (lockIcon) {
+      lockIcon.remove();
+    }
+    
+    // 2. Hide lock screen and reveal unlocked content
+    if (lockScreen && unlockedContent) {
+      lockScreen.classList.add('hidden');
+      unlockedContent.classList.remove('hidden');
+    }
+    
+    // 3. Update tab button appearance
+    giardinoBtn.className = "shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition duration-200 bg-white text-violet-955 shadow-xs border border-violet-250/50";
+    
+    // Switch to tab
+    switchCurriculumTab('giardino');
+  }
+</script>

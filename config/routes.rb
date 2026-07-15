@@ -74,8 +74,18 @@ Rails.application.routes.draw do
     get "progetti" => "home#progetti"
     get "lavoro" => "home#lavoro"
     get "salute" => "home#salute"
+    get "accademia" => "home#accademia"
     get "pagine/:slug" => "view_pages#show", as: :view_page
   end
+
+  # Libro routes
+  get "books/:book_slug" => "libro#index", as: :book
+  get "books/:book_slug/gestione/guida" => "libro#guida", as: :book_guida
+  get "books/:book_slug/:id" => "libro#show", as: :book_chapter
+
+  get "libro" => "libro#legacy_index", as: :libro
+  get "libro/gestione/guida" => "libro#legacy_guida", as: :libro_guida
+  get "libro/:id" => "libro#legacy_show", as: :libro_chapter
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

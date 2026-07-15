@@ -1,0 +1,140 @@
+{
+  "project": "Accademia PosturaCorretta",
+  "objective": "Costruire prima gli strumenti, i contenuti e le basi operative necessarie, poi impostare l'Accademia online e sviluppare la rete.",
+  "principle": "Partire dal funzionamento ideale finale e procedere a ritroso fino allo stato attuale.",
+  "pre_academy_projects": [
+    {
+      "order": 1,
+      "name": "1Impegno",
+      "description": "Creare un'app che funzioni come log calendario.",
+      "functions": [
+        "Le date possono essere parte di eventi e servizi",
+        "Una persona può essere invitata",
+        "Si possono segnare soldi da pagare o da ricevere",
+        "Si possono segnare risorse, luoghi, professionisti, servizi ed eventi",
+        "Il sistema può avere una funzione di referral"
+      ]
+    },
+    {
+      "order": 2,
+      "name": "GeneraImpresa",
+      "description": "Creare l'elenco dei progetti divisi per impresa.",
+      "functions": [
+        "Ogni impresa ha un progetto"
+      ]
+    },
+    {
+      "order": 3,
+      "name": "Rails4Business",
+      "description": "Aggiornare le linee guida per chi vuole entrare come sviluppatore o collaboratore dei progetti.",
+      "functions": [
+        "Linee guida per sviluppatori",
+        "Linee guida per collaboratori",
+        "Parte grafica",
+        "Parte designer",
+        "Parte social"
+      ]
+    },
+    {
+      "order": 4,
+      "name": "Libro",
+      "description": "Creare il libro Il corpo, un mondo da scoprire.",
+      "functions": [
+        "Raccontare il percorso dall'Accademia PosturaCorretta al Giardino del Corpo",
+        "Presentare il Giardino del Corpo come agriturismo rigenerativo"
+      ]
+    },
+    {
+      "order": 5,
+      "name": "Eventi PosturaCorretta",
+      "description": "Creare eventi da pubblicare su PosturaCorretta.",
+      "functions": [
+        "Usare 1Impegno come base per le iscrizioni agli eventi"
+      ]
+    },
+    {
+      "order": 6,
+      "name": "Accademia online",
+      "description": "Impostare l'Accademia online.",
+      "functions": []
+    },
+    {
+      "order": 7,
+      "name": "Percorso personalizzato",
+      "description": "Creare la possibilità di costruire un percorso personalizzato con i professionisti affiliati.",
+      "functions": [
+        "Usare 1Impegno, indicato anche come Experiences, per tracciare il percorso"
+      ]
+    }
+  ],
+  "academy_and_network_phases": [
+    {
+      "order": 0,
+      "name": "Progettazione del sistema"
+    },
+    {
+      "order": 1,
+      "name": "Accademia online autonoma"
+    },
+    {
+      "order": 2,
+      "name": "Accademia online con professionista singolo"
+    },
+    {
+      "order": 3,
+      "name": "Primo centro con percorso individuale"
+    },
+    {
+      "order": 4,
+      "name": "Primo centro con gruppo"
+    },
+    {
+      "order": 5,
+      "name": "Centro modello con più gruppi"
+    },
+    {
+      "order": 6,
+      "name": "Tre centri pilota"
+    },
+    {
+      "order": 7,
+      "name": "Dieci centri"
+    },
+    {
+      "order": 8,
+      "name": "Trenta centri"
+    },
+    {
+      "order": 9,
+      "name": "Cento centri"
+    },
+    {
+      "order": 10,
+      "name": "Duecentocinquanta centri"
+    },
+    {
+      "order": 11,
+      "name": "Cinquecento centri"
+    }
+  ],
+  "economic_model": {
+    "group": {
+      "participants": 10,
+      "lessons": 4,
+      "price_per_person_eur": 120,
+      "gross_revenue_per_group_eur": 1200
+    },
+    "center": {
+      "groups_per_month": 6,
+      "gross_revenue_per_month_eur": 7200
+    },
+    "distribution_percent": {
+      "location_manager": 20,
+      "teacher": 20,
+      "team_manager_secretariat": 10,
+      "referrers": 5,
+      "posturacorretta": 10,
+      "unallocated": 35
+    }
+  }
+}

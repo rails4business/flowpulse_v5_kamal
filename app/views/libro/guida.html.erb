@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guida Gestione Libro — PosturaCorretta</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #f8fafc;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Top Header -->
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5 mb-8">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Pannello Superadmin</p>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Guida alla Gestione del Libro</h1>
+      </div>
+      <a href="<%= book_reader_chapter_path("copertina") %>" class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50 transition">
+        ← Torna al Lettore
+      </a>
+    </div>
+
+    <!-- Intro Card -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8 shadow-sm">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-blue-800 mb-2">⚙️ Informazioni di Sistema</h3>
+      <p class="text-sm text-blue-900/90 leading-relaxed mb-4">
+        Il lettore del libro "Il corpo, un mondo da scoprire" è interamente <strong>file-based</strong>. 
+        Tutti i capitoli, le gerarchie, lo stato delle bozze e i colori tematici sono salvati in file testuali all'interno del progetto, senza dipendere dal database.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono text-blue-950">
+        <div class="bg-white/70 border border-blue-200/50 rounded-lg p-3">
+          <span class="block font-bold text-[10px] uppercase text-blue-700 mb-1">File Indice Gerarchico (YAML)</span>
+          config/data/books/il-corpo-un-mondo-da-scoprire/index.yml
+        </div>
+        <div class="bg-white/70 border border-blue-200/50 rounded-lg p-3">
+          <span class="block font-bold text-[10px] uppercase text-blue-700 mb-1">Directory dei Capitoli (Markdown)</span>
+          config/data/books/il-corpo-un-mondo-da-scoprire/chapters/
+        </div>
+        <div class="bg-white/70 border border-blue-200/50 rounded-lg p-3 md:col-span-2">
+          <span class="block font-bold text-[10px] uppercase text-blue-700 mb-1">Scheda libro</span>
+          config/data/books/il-corpo-un-mondo-da-scoprire/book.yml
+        </div>
+      </div>
+    </div>
+
+    <!-- Guide Content -->
+    <div class="space-y-8">
+      
+      <!-- Section 1: Gerarchia Indice -->
+      <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">1. La Gerarchia dell'Indice (File YAML)</h2>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          L'indice del libro si configura aggiungendo elementi all'array YAML. Ogni elemento supporta tre differenti tipologie (chiave <code>type</code>):
+        </p>
+        <div class="space-y-4">
+          <div class="border-l-4 border-slate-400 pl-3">
+            <span class="inline-block px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-700 rounded mb-1">type: "head"</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>Capo-sezione (Macro-area)</strong>. Serve a raggruppare i capitoli (es. <em>"I – CORSI"</em>). Non ha un file .md collegato.
+              Il colore associato (<code>color</code>) definisce il bordo tematico nell'indice del lettore.
+            </p>
+          </div>
+          <div class="border-l-4 border-slate-400 pl-3">
+            <span class="inline-block px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-700 rounded mb-1">type: "section"</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>Sotto-sezione</strong>. Raggruppamento intermedio all'interno di una macro-area. Non ha un file .md collegato ed è preceduto da un punto elenco nell'indice.
+            </p>
+          </div>
+          <div class="border-l-4 border-blue-500 pl-3">
+            <span class="inline-block px-2 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 rounded mb-1">type: "chapter"</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>Capitolo reale</strong>. È l'elemento foglia. Cliccabile nel lettore. Carica il testo da un file <code>.md</code> che matcha lo <code>slug</code>. 
+              Si illumina del colore tematico impostato quando attivo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: File Markdown -->
+      <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">2. I File dei Capitoli (Markdown `.md`)</h2>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          I capitoli stanno in <code>chapters/</code>. Il nome del file contiene ordinamento, tipo e URL del capitolo: <code>001-chapter-introduzione-pc-gdc.md</code>.
+          Il YAML Frontmatter contiene solo i metadati editoriali:
+        </p>
+        <pre class="bg-slate-900 text-slate-100 rounded-lg p-4 font-mono text-xs overflow-x-auto leading-relaxed">
+---
+title: "Titolo del Capitolo"
+description: "Sottotitolo descrittivo"
+color: "rosso"  # Opzioni: rosso, verde, blu, arancione, viola, neutro
+access: "draft" # Opzioni: draft (in bozza/solo admin), free (pubblico a tutti)
+---
+
+# Titolo del Capitolo
+
+Qui inizia il testo del capitolo scritto in standard Markdown...
+        </pre>
+        <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-slate-600">
+          <strong class="text-slate-800">Regola pratica:</strong>
+          non inserire <code>number</code>, <code>type</code> o <code>slug</code> nel frontmatter.
+          Questi valori vengono ricavati dal nome file e poi copiati nello YAML quando lanci lo script di sincronizzazione.
+        </div>
+        
+        <!-- Amber draft notice -->
+        <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4 flex gap-3 text-amber-900">
+          <span class="text-lg">📢</span>
+          <p class="text-xs leading-relaxed">
+            <strong>Come mettere a breve/pubblicare capitoli?</strong><br>
+            Impostando <code>access: "draft"</code> il capitolo mostrerà il badge <strong>"A breve"</strong> nell'indice e presenterà una pagina segnaposto ai visitatori. I superadmin, purché loggati e in modalità attiva, potranno vederne l'intero testo per revisionarlo. 
+            Impostando <code>access: "free"</code> il capitolo diventa visibile pubblicamente a tutti.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 3: Script bin/ -->
+      <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">3. Script di Automazione e Utility (in `bin/`)</h2>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          Per semplificare le operazioni ripetitive, sono stati configurati dei comandi da eseguire nel terminale della cartella del progetto:
+        </p>
+        
+        <div class="space-y-6">
+          <!-- sync_book_index.rb -->
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="font-bold text-sm font-mono text-slate-800">bin/sync_book_index.rb</span>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Consigliato</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              Rigenera automaticamente il file YAML di indice leggendo i file <code>.md</code>:
+              <code>number</code>, <code>type</code> e <code>slug</code> dal nome file; <code>title</code>, <code>description</code>, <code>color</code> e <code>access</code> dal frontmatter.
+            </p>
+            <div class="bg-slate-900 text-slate-100 rounded-lg p-3 font-mono text-xs flex justify-between items-center">
+              <span class="overflow-x-auto whitespace-nowrap pr-4 select-all">ruby bin/sync_book_index.rb config/data/books/il-corpo-un-mondo-da-scoprire/index.yml config/data/books/il-corpo-un-mondo-da-scoprire/chapters --write</span>
+            </div>
+          </div>
+
+          <!-- renumber_book_files -->
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="font-bold text-sm font-mono text-slate-800">bin/renumber_book_files</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              Se aggiungi un capitolo in mezzo all'indice (es. <code>015-nuovo.md</code>), riordina ed aggiorna consecutivamente tutti i prefissi numerici dei restanti capitoli per non avere buchi nella numerazione.
+            </p>
+            <div class="bg-slate-900 text-slate-100 rounded-lg p-3 font-mono text-xs flex justify-between items-center">
+              <span class="overflow-x-auto whitespace-nowrap pr-4 select-all">ruby bin/renumber_book_files config/data/books/il-corpo-un-mondo-da-scoprire/chapters --apply</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Rake Tasks -->
+      <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">4. Rake Task di Rails</h2>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          Comandi Rails pre-configurati per la generazione e sincronizzazione con il database di Flowpulse:
+        </p>
+
+        <div class="space-y-4">
+          <div>
+            <span class="font-bold text-xs font-mono text-slate-800 block mb-1">bin/rails book:regenerate_from_yml</span>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              Mostra in anteprima la rigenerazione completa dei file <code>.md</code> partendo dallo YAML. Non modifica nulla finche non aggiungi <code>APPLY=1</code>.
+            </p>
+            <div class="bg-slate-900 text-slate-100 rounded-lg p-3 font-mono text-xs overflow-x-auto">
+              <span class="whitespace-nowrap select-all">BOOK=il-corpo-un-mondo-da-scoprire bin/rails book:regenerate_from_yml</span>
+            </div>
+          </div>
+          <div class="border-t border-slate-100 pt-3">
+            <span class="font-bold text-xs font-mono text-red-700 block mb-1">APPLY=1 bin/rails book:regenerate_from_yml</span>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              Rigenera davvero tutti i file markdown da zero. Prima crea un backup dei file esistenti in <code>tmp/book_backups/</code>, poi cancella i <code>.md</code> e li ricrea dallo YAML.
+            </p>
+            <div class="bg-slate-900 text-slate-100 rounded-lg p-3 font-mono text-xs overflow-x-auto">
+              <span class="whitespace-nowrap select-all">APPLY=1 BOOK=il-corpo-un-mondo-da-scoprire bin/rails book:regenerate_from_yml</span>
+            </div>
+          </div>
+          <div class="border-t border-slate-100 pt-3 rounded-lg bg-amber-50 border border-amber-200 p-4">
+            <p class="text-xs text-amber-900 leading-relaxed">
+              <strong>Attenzione:</strong> questo comando serve per ripartire da zero dalla scaletta YAML. Il contenuto scritto nei markdown esistenti viene sostituito dai template generati. Usa prima sempre il dry-run e controlla il backup.
+            </p>
+          </div>
+          <div class="border-t border-slate-100 pt-3">
+            <span class="font-bold text-xs font-mono text-slate-800 block mb-1">PARENT_SLUG=... bin/rails book:import_index</span>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              Importa o aggiorna l'intero indice gerarchico del libro nel database di Flowpulse all'interno dell'albero dei <code>Taxbranch</code> sotto il genitore specificato.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-12 text-xs text-slate-400">
+      PosturaCorretta Admin Desk — Flowpulse Integration
+    </div>
+
+  </div>
+</body>
+</html>
