@@ -1,0 +1,45 @@
+<%= render "posturacorretta/header" %>
+
+<main class="min-h-screen bg-slate-50">
+  <section class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-6 py-12">
+      <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700">Archivio metodiche</p>
+      <h1 class="mt-3 max-w-3xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">
+        Le mappe per orientarsi nel corpo.
+      </h1>
+      <p class="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+        Ogni metodica ha una storia, un linguaggio e un modo specifico di osservare postura, movimento e salute.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto grid max-w-7xl gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3">
+    <% @methodologies.each do |methodology| %>
+      <% professionals = methodology_professionals_for(@methodology_professionals, methodology.fetch("slug")) %>
+      <a href="<%= posturacorretta_metodica_path(methodology.fetch("slug")) %>" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg">
+        <div class="flex items-start justify-between gap-3">
+          <span class="flex items-center gap-3">
+            <% if methodology.fetch("logo_url").present? %>
+              <img src="<%= methodology.fetch("logo_url") %>" alt="<%= methodology.fetch("title") %>" class="h-10 w-10 rounded-xl border border-slate-200 object-contain p-1">
+            <% else %>
+              <span class="grid h-10 w-10 place-items-center rounded-xl border border-blue-100 bg-blue-50 text-sm font-extrabold text-blue-700"><%= methodology.fetch("title").first %></span>
+            <% end %>
+            <span class="rounded-full border px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide <%= methodology_badge_classes(methodology.fetch("badge")) %>">
+              <%= methodology_badge_label(methodology.fetch("badge")) %>
+            </span>
+          </span>
+          <span class="text-xs font-bold text-slate-400"><%= professionals.size %> professionisti</span>
+        </div>
+        <h2 class="mt-4 text-xl font-bold text-slate-950"><%= methodology.fetch("title") %></h2>
+        <p class="mt-1 text-sm font-semibold text-slate-500">Fondatore: <%= methodology.fetch("founder") %></p>
+        <p class="mt-3 text-sm leading-6 text-slate-600"><%= methodology.fetch("short_description") %></p>
+        <% if methodology.fetch("website_url").present? %>
+          <span class="mt-3 block text-xs font-bold text-slate-500">Sito: <%= methodology_website_host(methodology.fetch("website_url")) %></span>
+        <% end %>
+        <span class="mt-5 inline-flex text-sm font-bold text-blue-700">
+          Apri metodica <span class="ml-1 transition group-hover:translate-x-1">→</span>
+        </span>
+      </a>
+    <% end %>
+  </section>
+</main>

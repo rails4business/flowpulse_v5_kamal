@@ -1,0 +1,13 @@
+<%
+  module_teachers = local_assigns[:module_teachers] || []
+  module_titles = local_assigns[:module_titles] || {}
+%>
+
+<div class="tab-panel" data-panel="teachers">
+  <p class="panel-intro">Gli insegnanti abilitati al modulo. Il badge indica se il percorso è rivolto a professionisti sanitari, professionisti del benessere o aperto a tutti.</p>
+  <div class="teacher-grid">
+    <% module_teachers.each do |teacher| %>
+      <%= render "landing/academy/teacher_info", teacher: teacher, module_titles: module_titles %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+<%
+  module_index = academy_module_counter
+  module_id = "m#{module_index}"
+  teacher_slugs = academy_module.fetch("teachers")
+  location_slugs = academy_module.fetch("locations")
+  methodology_slugs = academy_module.fetch("methodologies", [])
+  module_teachers = teacher_slugs.map { |slug| academy_teacher(academy_teachers, slug) }
+  module_locations = location_slugs.map { |slug| academy_location(academy_locations, slug) }
+  methodology_path = methodology_slugs.one? ? posturacorretta_metodica_path(methodology_slugs.first) : posturacorretta_metodiche_path
+  search_text = [
+    academy_module.fetch("title"),
+    academy_module.fetch("description"),
+    academy_module.fetch("lessons").map { |lesson| [lesson.fetch("title"), lesson.fetch("description")] }
+  ].flatten.join(" ").downcase
+%>
+
+<article
+  class="module <%= "open" if module_index == 1 %>"
+  id="<%= module_id %>"
+  data-area="<%= academy_module.fetch("_area_slug", "recupero") %>"
+  data-modes="<%= academy_module.fetch("modes").join(" ") %>"
+  data-search="<%= search_text %>"
+>
+  <div class="module-top">
+    <span class="module-index"><%= academy_module.fetch("number") %></span>
+    <span class="module-title">
+      <h3><%= academy_module.fetch("title") %></h3>
+      <p><%= academy_module.fetch("description") %></p>
+    </span>
+    <span class="modes module-stats">
+      <% if methodology_slugs.any? %>
+        <a class="stat-pill methodology-count" href="<%= methodology_path %>">
+          <strong><%= methodology_slugs.size %></strong>
+          <span>Metodica</span>
+        </a>
+      <% end %>
+      <button class="stat-pill participants" type="button" data-modal-template="module-participants-<%= academy_module.fetch("slug") %>">
+        <strong><%= academy_module.fetch("participants") %></strong>
+        <span>Partecipanti</span>
+      </button>
+      <button class="stat-pill teachers-count" type="button" data-modal-template="module-roster-<%= academy_module.fetch("slug") %>">
+        <strong><%= module_teachers.size %></strong>
+        <span>Insegnanti</span>
+      </button>
+      <button class="stat-pill centers-count" type="button" data-modal-template="module-locations-<%= academy_module.fetch("slug") %>">
+        <strong><%= module_locations.size %></strong>
+        <span>Centri</span>
+      </button>
+    </span>
+    <button class="chevron" aria-label="Apri <%= academy_module.fetch("title") %>" aria-expanded="<%= module_index == 1 %>">⌄</button>
+  </div>
+
+  <div class="module-body">
+    <div class="module-tabs" role="tablist" aria-label="Sezioni di <%= academy_module.fetch("title") %>">
+      <% [["info", "Informati"], ["practice", "Pratica"], ["teach", "Insegna"]].each_with_index do |tab, index| %>
+        <button class="module-tab <%= "active" if index.zero? %>" type="button" role="tab" aria-selected="<%= index.zero? %>" data-module-tab="<%= tab.first %>"><%= tab.last %></button>
+      <% end %>
+    </div>
+
+    <div class="tab-panel active" data-panel="info">
+      <p class="panel-intro">Tutte le informazioni e i contenuti per conoscere il modulo, seguirne le lezioni e approfondire gli argomenti.</p>
+      <div class="lessons">
+        <div class="body-title"><span><%= academy_module.fetch("lessons").size %> lezioni</span><span>Contenuti del modulo</span></div>
+        <%= render partial: "landing/academy/lesson",
+                   collection: academy_module.fetch("lessons"),
+                   as: :lesson,
+                   locals: { academy_module: academy_module } %>
+      </div>
+    </div>
+
+    <%= render "landing/academy/tab_practice" %>
+    <%= render "landing/academy/tab_teach" %>
+  </div>
+</article>
+
+<template id="module-participants-<%= academy_module.fetch("slug") %>" data-modal-title="Partecipanti di <%= academy_module.fetch("title") %>">
+  <p class="panel-intro">Le persone che hanno iniziato, praticato o completato il modulo.</p>
+  <div class="participant-grid">
+    <div class="participant-stat"><strong><%= academy_module.fetch("participants") %></strong><span>Partecipanti complessivi</span><div class="participant-bar"><i style="width:100%"></i></div></div>
+    <div class="participant-stat"><strong><%= (academy_module.fetch("participants") * 0.72).round %></strong><span>Hanno completato Informati</span><div class="participant-bar"><i style="width:72%"></i></div></div>
+    <div class="participant-stat"><strong><%= (academy_module.fetch("participants") * 0.46).round %></strong><span>Hanno partecipato a Pratica</span><div class="participant-bar"><i style="width:46%"></i></div></div>
+    <div class="participant-stat"><strong><%= [3, (academy_module.fetch("participants") * 0.12).round].max %></strong><span>Nel percorso Insegna</span><div class="participant-bar"><i style="width:12%"></i></div></div>
+  </div>
+</template>
+
+<template id="module-roster-<%= academy_module.fetch("slug") %>" data-modal-title="Insegnanti di <%= academy_module.fetch("title") %>">
+  <div class="roster-list" style="display: grid; gap: 16px;">
+    <% module_teachers.each do |teacher| %>
+      <%= render "landing/academy/teacher_info", teacher: teacher, module_titles: (@academy_modules.each_with_object({}) { |mod, h| h[mod.fetch("slug")] = mod.fetch("title") }) %>
+    <% end %>
+  </div>
+</template>
+
+<template id="module-locations-<%= academy_module.fetch("slug") %>" data-modal-title="Centri e luoghi di <%= academy_module.fetch("title") %>">
+  <p class="panel-intro">Centri, studi e luoghi nei quali è possibile praticare o seguire il modulo.</p>
+  <div class="location-list">
+    <% module_locations.each do |location| %>
+      <button class="location-card" type="button" data-modal-template="location-<%= location.fetch("slug") %>">
+        <span class="location-pin">⌖</span>
+        <span><strong><%= location.fetch("name") %></strong><small><%= location.fetch("city") %> · <%= location.fetch("type") %></small></span>
+        <em>Dettagli</em>
+      </button>
+    <% end %>
+  </div>
+</template>

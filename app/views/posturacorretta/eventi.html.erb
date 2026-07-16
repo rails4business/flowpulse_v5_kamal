@@ -133,213 +133,9 @@
 
 <script>
 (() => {
-  // Event data with programs, locations, and teachers
-  const events = [
-    {
-      id: 1,
-      title: "Camminata ed Esercizi di Mobilità in Val Seriana",
-      date: "2026-07-28",
-      formattedDate: "28 Luglio 2026",
-      location: "Clusone (BG)",
-      locationKey: "clusone",
-      teachers: ["Marco", "Sara Moretti"],
-      description: "Una camminata guidata per esplorare il movimento, rilassare le catene posteriori ed imparare a camminare in salita con stabilità strutturale.",
-      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
-      type: "future",
-      waText: "Ciao, vorrei iscrivermi alla camminata in Val Seriana del 28 Luglio.",
-      program: [
-        "09:00 — Ritrovo dei partecipanti presso il parcheggio di Clusone",
-        "09:30 — Sessione iniziale: esercizi di mobilità articolare e respirazione cosciente",
-        "10:15 — Inizio camminata: focus sugli appoggi dei piedi e l'uso corretto del baricentro in salita",
-        "12:30 — Sosta pranzo al sacco e condivisione di gruppo",
-        "14:00 — Esercizi di allungamento catene posteriori e scarico finale",
-        "15:30 — Rientro previsto al punto di partenza"
-      ]
-    },
-    {
-      id: 2,
-      title: "Pratica di DNS ed Animal Flow all'aperto",
-      date: "2026-08-12",
-      formattedDate: "12 Agosto 2026",
-      location: "Parco dei Colli, Bergamo",
-      locationKey: "parco-colli",
-      teachers: ["Marco", "Giulia Conti"],
-      description: "Pratica collettiva di stabilizzazione neuromuscolare ed esplorazione dei movimenti arcaici ed evolutivi sul prato.",
-      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=800",
-      type: "future",
-      waText: "Ciao, vorrei maggiori informazioni sulla lezione di DNS e Animal Flow del 12 Agosto.",
-      program: [
-        "18:00 — Ritrovo sul prato principale del Parco dei Colli",
-        "18:15 — Teoria ed esercizi pratici di respirazione diaframmatica (DNS)",
-        "19:00 — Transizioni a terra ed elementi base del metodo Animal Flow",
-        "19:45 — Sequenza dinamica globale di integrazione posturale",
-        "20:00 — Rilassamento finale e saluti"
-      ]
-    },
-    {
-      id: 3,
-      title: "Ritiro Somatico e Contatto in Natura",
-      date: "2026-09-05",
-      formattedDate: "05 Settembre 2026",
-      location: "Il Giardino del Corpo, Toscana",
-      locationKey: "toscana",
-      teachers: ["Marco", "Andrea Rinaldi", "Laura Bianchi"],
-      description: "Due giorni dedicati all'ascolto di sé, respirazione cosciente, percorsi sensoriali ed alimentazione naturale in agriturismo rigenerativo.",
-      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=800",
-      type: "future",
-      waText: "Ciao, sono interessato al ritiro somatico in Toscana del 5 Settembre.",
-      program: [
-        "Venerdì 16:00 — Arrivo, accoglienza, tisana di benvenuto e sistemazione camere",
-        "Sabato 07:30 — Pratica corporea al risveglio e riscaldamento articolare",
-        "Sabato 10:00 — Camminata sensoriale a piedi scalzi nel bosco dell'agriturismo",
-        "Sabato 15:30 — Laboratorio di autotrattamento fasciale ed igiene posturale",
-        "Domenica 09:00 — Movimenti evolutivi, respirazione ed integrazione delle 5 aree della salute",
-        "Domenica 13:00 — Pranzo rigenerativo finale e cerchio di chiusura"
-      ]
-    },
-    {
-      id: 4,
-      title: "Seminario sulle Catene Muscolari GDS",
-      date: "2026-06-15",
-      formattedDate: "15 Giugno 2026",
-      location: "Studio PosturaCorretta, Bergamo",
-      locationKey: "studio-pc",
-      teachers: ["Marco", "Sara Moretti", "Matteo Romano"],
-      description: "Un pomeriggio teorico-pratico per comprendere le proprie tipologie psicocorporee e i relativi allungamenti e bilanciamenti somatici.",
-      image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800",
-      type: "past",
-      waText: "Ciao, vorrei sapere quando si terrà il prossimo seminario sulle Catene Muscolari GDS dopo quello di Giugno.",
-      program: [
-        "14:30 — Registrazione partecipanti ed introduzione alle 5 famiglie muscolari",
-        "15:00 — Test pratico di auto-valutazione posturale",
-        "16:00 — Esercizi specifici per le catene anteriori e posteriori",
-        "17:30 — Integrazione posturale nel gesto quotidiano",
-        "18:00 — Spazio domande e conclusione"
-      ]
-    },
-    {
-      id: 5,
-      title: "Camminata Consapevole Primaverile",
-      date: "2026-05-10",
-      formattedDate: "10 Maggio 2026",
-      location: "Parco del Serio, Seriate",
-      locationKey: "parco-serio",
-      teachers: ["Marco", "Paolo Ferri"],
-      description: "Ritrovare ritmo, allineamento e presenza mentale riscoprendo le sponde del fiume Serio a piedi scalzi e mobilità cosciente.",
-      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
-      type: "past",
-      waText: "Ciao, vorrei sapere quando replicate la camminata consapevole del Serio.",
-      program: [
-        "08:30 — Ritrovo e cerchio iniziale di presenza mentale",
-        "09:00 — Camminata silenciosa guidata: ascolto dei suoni e del proprio passo",
-        "10:15 — Sosta sul fiume: esperienza di grounding (piedi scalzi) e respirazione",
-        "11:30 — Cerchio di condivisione e riflessioni posturali",
-        "12:00 — Conclusione attività"
-      ]
-    },
-    {
-      id: 6,
-      title: "Introduzione al Corpo come Giardino",
-      date: "2026-04-18",
-      formattedDate: "18 Aprile 2026",
-      location: "Spazio Rigenera, Milano",
-      locationKey: "milano",
-      teachers: ["Marco"],
-      description: "Presentazione interattiva del libro ed introduzione alla visione futura dell'agriturismo rigenerativo.",
-      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800",
-      type: "past",
-      waText: "Ciao, vorrei informazioni sulle prossime presentazioni del libro in programma a Milano.",
-      program: [
-        "20:30 — Inizio presentazione del libro 'Il corpo, un mondo da scoprire' a cura di Marco",
-        "21:15 — Domande e risposte sul legame tra postura, natura ed abitudini",
-        "21:45 — Brindisi di saluto e firma delle copie cartacee"
-      ]
-    }
-  ];
-
-  const places = [
-    {
-      key: "clusone",
-      name: "Clusone (BG)",
-      description: "Camminate montane e mobilità nei boschi della Val Seriana.",
-      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      key: "parco-colli",
-      name: "Parco dei Colli, Bergamo",
-      description: "Pratiche all'aperto, stabilizzazione DNS ed Animal Flow a due passi dalla città.",
-      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      key: "toscana",
-      name: "Il Giardino del Corpo, Toscana",
-      description: "Ritiro somatico e percorsi di benessere integrato in agriturismo rigenerativo.",
-      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      key: "studio-pc",
-      name: "Studio PosturaCorretta, Bergamo",
-      description: "Seminari teorico-pratico di anatomia esperienziale e catene GDS.",
-      image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      key: "parco-serio",
-      name: "Parco del Serio, Seriate",
-      description: "Grounding e camminate a piedi scalzi lungo le sponde del fiume Serio.",
-      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      key: "milano",
-      name: "Spazio Rigenera, Milano",
-      description: "Presentazioni interattive del libro e conferenze sulla salute naturale.",
-      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800"
-    }
-  ];
-
-  const teachers = [
-    {
-      name: "Marco",
-      role: "Fisioterapista & Ideatore PC",
-      description: "Ideatore di PosturaCorretta, specializzato in DNS e terapie integrate del movimento.",
-      image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Sara Moretti",
-      role: "Chinesiologa",
-      description: "Esperta di ginnastica posturale, catene muscolari GDS e riequilibrio fasciale.",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Giulia Conti",
-      role: "Movement Coach",
-      description: "Insegnante certificata di Animal Flow e mobilità articolare a corpo libero.",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Andrea Rinaldi",
-      role: "Osteopata",
-      description: "Specializzato in rilascio somato-emozionale ed integrazione strutturale.",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Laura Bianchi",
-      role: "Fisioterapista",
-      description: "Esperta in riabilitazione neurofunzionale e percorsi di cura personalizzati.",
-      image: "https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Paolo Ferri",
-      role: "Fisioterapista Biomeccanico",
-      description: "Specialista nella rieducazione del cammino e riequilibrio degli appoggi plantari.",
-      image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Matteo Romano",
-      role: "Massoterapista",
-      description: "Specializzato in terapia miofasciale e decontratturante ad indirizzo sportivo.",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800"
-    }
-  ];
+  const events = <%= raw @events.to_json %>;
+  const places = <%= raw @places.to_json %>;
+  const teachers = <%= raw @teachers.to_json %>;
 
   let currentMacroTab = "events"; // 'events', 'places', 'teachers'
   let currentTemporalTab = "future"; // 'future', 'past'
@@ -503,8 +299,9 @@
           <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent"></div>
           
           <!-- Top date badge overlay -->
-          <div class="absolute left-4 top-4 z-10 rounded-xl bg-white/90 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-sm backdrop-blur-md">
-            ${e.formattedDate}
+          <div class="absolute left-4 top-4 z-10 rounded-xl bg-white/90 px-3.5 py-2 text-xs font-bold text-slate-800 shadow-sm backdrop-blur-md">
+            <span class="block">${e.formattedDate}</span>
+            <span class="mt-0.5 block text-[11px] font-semibold text-violet-700">Ore ${e.time}</span>
           </div>
 
           <!-- Top hover helper overlay -->
@@ -550,8 +347,8 @@
           </button>
           <h2 class="mt-2.5 text-2xl font-black leading-snug text-slate-950">${event.title}</h2>
           <div class="flex items-center gap-2 mt-3 text-xs text-slate-500 font-semibold">
-            <span>📅 Data dell'evento:</span>
-            <span class="text-slate-800 font-bold">${event.formattedDate}</span>
+            <span>📅 Data e ora:</span>
+            <span class="text-slate-800 font-bold">${event.formattedDate} · ore ${event.time}</span>
           </div>
         </div>
       </div>

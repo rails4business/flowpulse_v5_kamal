@@ -13,7 +13,10 @@ Rails.application.routes.draw do
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
   get "posturacorretta" => "landing#posturacorretta", as: :posturacorretta
+  get "posturacorretta/accademia" => "posturacorretta#accademia", as: :posturacorretta_accademia
   get "posturacorretta/percorso" => "posturacorretta#percorso", as: :posturacorretta_percorso
+  get "posturacorretta/metodiche" => "posturacorretta#metodiche", as: :posturacorretta_metodiche
+  get "posturacorretta/metodiche/:slug" => "posturacorretta#metodica", as: :posturacorretta_metodica
   get "posturacorretta/professionisti" => "posturacorretta#professionisti", as: :posturacorretta_professionisti
   get "posturacorretta/contenuti" => "posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/eventi" => "posturacorretta#eventi", as: :posturacorretta_eventi

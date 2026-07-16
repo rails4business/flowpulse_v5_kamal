@@ -1,5 +1,15 @@
 <%# app/views/landing/_accademia_curriculum.html.erb %>
 <%# Richiamo nel template: render "landing/accademia_curriculum" %>
+<%
+  academy_modules = @academy_modules || []
+  academy_path = @academy_path || {}
+  academy_areas = @academy_areas || []
+  academy_teachers = @academy_teachers || {}
+  academy_locations = @academy_locations || {}
+  academy_summary = (@academy_curriculum || {}).fetch("summary", {})
+  academy_lesson_count = academy_modules.sum { |academy_module| academy_module.fetch("lessons").size }
+  active_area_slug = academy_areas.first&.fetch("slug", nil)
+%>
 
 <style>
   @scope (#academy-curriculum) {
@@ -63,7 +73,7 @@
     .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
     .summary {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,.15);
@@ -78,8 +88,8 @@
     .workspace { max-width: 1280px; margin: -36px auto 0; padding: 0 24px 90px; position: relative; z-index: 3; }
     .toolbar {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
       align-items: center;
       padding: 18px;
       border: 1px solid var(--line);
@@ -99,9 +109,21 @@
     }
     .search input:focus { border-color: #8bb3f3; box-shadow: 0 0 0 4px #eaf2ff; }
     .search::before { content: "⌕"; position: absolute; left: 15px; top: 8px; z-index: 1; color: #718096; font-size: 23px; }
-    .filter-tabs { display: flex; gap: 7px; }
-    .filter-tab { border: 0; border-radius: 10px; padding: 10px 13px; background: transparent; color: var(--muted); font-weight: 750; cursor: pointer; }
-    .filter-tab.active { color: var(--blue); background: var(--sky); }
+    .area-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 9px 13px;
+      border: 1px solid #d7e3f3;
+      border-radius: 999px;
+      background: var(--sky);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .area-count { color: #64748b; font-size: 10px; }
 
     .content-grid { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 28px; margin-top: 30px; }
     .side { position: sticky; top: 98px; align-self: start; }
@@ -141,11 +163,32 @@
     }
     .module:hover { border-color: #c5d3e5; box-shadow: 0 10px 28px rgba(28,50,84,.07); }
     .module[hidden] { display: none; }
-    .module-top { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto auto 30px; gap: 18px; align-items: center; width: 100%; padding: 23px; border: 0; text-align: left; background: transparent; cursor: pointer; }
+    .module-top { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto 30px; gap: 18px; align-items: center; width: 100%; padding: 23px; border: 0; text-align: left; background: transparent; cursor: pointer; }
     .module-index { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; color: var(--blue); background: var(--sky); font-size: 12px; font-weight: 850; }
     .module-title h3 { margin: 0; font-size: 19px; letter-spacing: -.02em; }
     .module-title p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
-    .modes { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 240px; }
+    .modes { display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 6px; max-width: none; }
+    .module-stats { gap: 6px; }
+    .stat-pill {
+      display: grid;
+      min-width: 68px;
+      padding: 7px 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 11px;
+      background: #f8fafc;
+      color: #475569;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .stat-pill:hover { transform: translateY(-1px); border-color: #b8c7da; box-shadow: 0 7px 18px rgba(28,50,84,.08); }
+    .stat-pill:focus-visible { outline: 3px solid #bfdbfe; outline-offset: 2px; }
+    .stat-pill strong { display: block; color: var(--navy); font-size: 13px; line-height: 1; letter-spacing: -.02em; }
+    .stat-pill span { display: block; margin-top: 3px; font-size: 8px; font-weight: 850; letter-spacing: .04em; text-transform: uppercase; }
+    .stat-pill.participants { background: var(--sky); border-color: #d7e7ff; }
+    .stat-pill.teachers-count { background: var(--violet-wash); border-color: #e3d7f6; }
+    .stat-pill.centers-count { background: var(--green-wash); border-color: #ccece3; }
+    .stat-pill.methodology-count { background: var(--orange-wash); border-color: #fed7aa; }
     .mode { display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px; border-radius: 9px; background: #f3f6fa; color: #56657a; font-size: 10px; font-weight: 800; white-space: nowrap; }
     .mode::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #91a0b3; }
     .mode.info { color: var(--blue); background: var(--sky); }
@@ -190,7 +233,7 @@
     .tab-panel.active { display: block; }
     .lessons { padding: 0; }
     .body-title { display: flex; justify-content: space-between; margin-bottom: 10px; color: #8a95a5; font-size: 10px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
-    .lesson { display: grid; grid-template-columns: 39px minmax(0, 1fr) auto; gap: 13px; align-items: center; padding: 12px 9px; border-bottom: 1px solid #edf1f6; border-radius: 10px; }
+    .lesson { display: grid; grid-template-columns: 39px minmax(0, 1fr) auto; gap: 13px; align-items: center; width: 100%; padding: 12px 9px; border: 0; border-bottom: 1px solid #edf1f6; border-radius: 10px; text-align: left; background: transparent; cursor: pointer; }
     .lesson:last-child { border-bottom: 0; }
     .lesson:hover { background: white; }
     .lesson-num { color: #9aa5b4; font-size: 10px; font-weight: 800; }
@@ -247,6 +290,7 @@
       .side { display: none; }
       .module-top { grid-template-columns: 48px minmax(0, 1fr) auto 26px; }
       .modes { grid-column: 2 / -1; grid-row: 2; justify-content: flex-start; max-width: none; }
+      .module-stats { grid-column: 2 / -1; grid-row: 2; }
       .teachers { grid-column: 3; grid-row: 1; }
       .chevron { grid-column: 4; grid-row: 1; }
     }
@@ -255,12 +299,13 @@
       .button { padding: 8px 11px; font-size: 12px; }
       .hero { padding: 42px 20px 62px; }
       .hero-copy { font-size: 16px; }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .summary div { min-height: 78px; padding: 16px 12px; }
       .summary strong { font-size: 22px; }
       .summary span { font-size: 9px; }
       .workspace { margin-top: -26px; padding: 0 12px 60px; }
       .toolbar { grid-template-columns: 1fr; padding: 12px; }
-      .filter-tabs { overflow-x: auto; }
+      .area-badge { justify-content: center; width: 100%; }
       .section-head { align-items: start; }
       .legend { display: none; }
       .module-top { grid-template-columns: 43px minmax(0,1fr) 26px; gap: 12px; padding: 17px 14px; }
@@ -269,7 +314,7 @@
       .module-title p { display: none; }
       .teachers { grid-column: 2; grid-row: 2; justify-content: flex-start; }
       .chevron { grid-column: 3; }
-      .modes { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; }
+      .modes { grid-column: 1 / -1; grid-row: 3; flex-wrap: wrap; justify-content: flex-start; }
       .module-tabs { padding: 10px 14px 0; }
       .tab-panel { padding: 17px 14px; }
       .lesson { grid-template-columns: 32px 1fr; }
@@ -285,45 +330,72 @@
     <div class="hero-inner">
       <div>
         <p class="eyebrow">Postura e fisiologia</p>
-        <h1 id="academy-curriculum-title">Un percorso da vivere, una competenza da trasmettere.</h1>
-        <p class="hero-copy">Esplora moduli e lezioni, passa dall’informazione alla pratica e incontra gli insegnanti di ogni area.</p>
+    <h1 id="academy-curriculum-title">
+  Conosci il tuo corpo e <br> riattiva i tuoi sistemi fisiologici. 
+</h1>
+
+<p class="hero-copy">
+  Scopri le basi delle principali metodiche utilizzate in ambito terapeutico,
+  comprendine possibilità e limiti e scegli con maggiore consapevolezza il tuo
+  percorso di salute.
+</p>
         <div class="hero-actions">
-          <button class="button secondary" id="academyOpenAll" type="button">Apri tutti i moduli</button>
-          <button class="button primary" type="button" data-roster>Tutti gli insegnanti</button>
+          <button class="button primary" onclick="showAcademyMethod()" type="button">Come funziona l'accademia? 📖</button>
         </div>
       </div>
       <div class="summary" aria-label="Riepilogo del corso">
-        <div><strong>8</strong><span>Moduli</span></div>
-        <div><strong>38</strong><span>Lezioni</span></div>
-        <div><strong>24</strong><span>Insegnanti</span></div>
+        <div><strong><%= academy_summary.fetch("participants", academy_modules.sum { |academy_module| academy_module.fetch("participants").to_i }) %></strong><span>Partecipanti</span></div>
+        <div><strong><%= academy_summary.fetch("teachers", academy_teachers.size) %></strong><span>Insegnanti</span></div>
+        <div><strong><%= academy_summary.fetch("centers", academy_locations.size) %></strong><span>Centri</span></div>
       </div>
     </div>
   </section>
 
-  <main class="workspace">
+  <main class="workspace" data-initial-area="<%= active_area_slug %>">
     <div class="toolbar">
+      <% if academy_areas.first %>
+        <% active_area = academy_areas.first %>
+        <span class="area-badge">
+          <span><%= active_area.fetch("title") %></span>
+          <span class="area-count"><%= active_area.fetch("modules").size %> moduli</span>
+        </span>
+      <% end %>
       <label class="search"><span class="sr-only">Cerca modulo o lezione</span><input id="search" type="search" placeholder="Cerca un modulo o una lezione…"></label>
     </div>
 
     <div class="content-grid">
       <nav class="side" aria-label="Indice dei moduli">
         <p class="side-label">Indice del percorso</p>
-        <a class="active" href="#m0"><span class="side-num">00</span><span>Introduzione</span><span class="side-count">4</span></a>
-        <a href="#m1"><span class="side-num">01</span><span>Igiene posturale</span><span class="side-count">4</span></a>
-        <a href="#m2"><span class="side-num">02</span><span>Fisioterapia</span><span class="side-count">5</span></a>
-        <a href="#m3"><span class="side-num">03</span><span>Biomeccanica GDS</span><span class="side-count">6</span></a>
-        <a href="#m4"><span class="side-num">04</span><span>Osteopatia</span><span class="side-count">5</span></a>
-        <a href="#m5"><span class="side-num">05</span><span>Corpo e coscienza</span><span class="side-count">6</span></a>
-        <a href="#m6"><span class="side-num">06</span><span>Kinesiologia</span><span class="side-count">4</span></a>
-        <a href="#m7"><span class="side-num">07</span><span>Altre metodiche</span><span class="side-count">4</span></a>
+        <% academy_modules.each_with_index do |academy_module, index| %>
+          <a class="<%= "active" if index.zero? %>" href="#m<%= index %>" data-module-target="m<%= index %>">
+            <span class="side-num"><%= academy_module.fetch("number") %></span>
+            <span><%= academy_module.fetch("title") %></span>
+            <span class="side-count"><%= academy_module.fetch("lessons").size %></span>
+          </a>
+        <% end %>
       </nav>
 
       <section>
-        <div class="section-head">
-          <div><h2>Il programma</h2><p>Apri un modulo per vedere lezioni, partecipanti e insegnanti.</p></div>
-          <div class="legend"><span><i></i> Formazione completata</span><span>⌄ Apri modulo</span></div>
+        <div class="section-head" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <div>
+            <h2>Il programma</h2>
+            <p>Apri un modulo per vedere lezioni, partecipanti, insegnanti e centri.</p>
+          </div>
+          <div class="legend" style="display: flex; align-items: center; gap: 8px;">
+            <button class="button-utility" id="academyOpenAll" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='white';">
+              📂 <span>Apri tutti i moduli</span>
+            </button>
+            <button class="button-utility" type="button" data-modal-template="academy-roster" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='white';">
+              👥 <span>Tutti gli insegnanti</span>
+            </button>
+          </div>
         </div>
-        <div class="module-list" id="moduleList"></div>
+        <div class="module-list" id="moduleList">
+          <%= render partial: "landing/academy/module",
+                     collection: academy_modules,
+                     as: :academy_module,
+                     locals: { academy_teachers: academy_teachers, academy_locations: academy_locations } %>
+        </div>
         <div class="empty" id="empty">Nessun modulo corrisponde alla ricerca.</div>
       </section>
     </div>
@@ -335,120 +407,85 @@
       <div class="modal-content" id="modalContent"></div>
     </div>
   </div>
+  <template id="academy-roster" data-modal-title="Insegnanti dell'Accademia">
+    <div class="roster-list" style="display: grid; gap: 16px;">
+      <%
+        module_titles = academy_modules.each_with_object({}) { |mod, h| h[mod.fetch("slug")] = mod.fetch("title") }
+      %>
+      <% academy_teachers.each_value do |teacher| %>
+        <%= render "landing/academy/teacher_info", teacher: teacher, module_titles: module_titles %>
+      <% end %>
+    </div>
+  </template>
+
+  <% academy_teachers.each_value do |teacher| %>
+    <%
+      module_titles = academy_modules.each_with_object({}) { |mod, h| h[mod.fetch("slug")] = mod.fetch("title") }
+    %>
+    <template id="teacher-<%= teacher.fetch("slug") %>" data-modal-title="Insegnante">
+      <%= render "landing/academy/teacher_info", teacher: teacher, module_titles: module_titles %>
+      <div class="profile-meta" style="margin-top: 12px;">
+        <span class="mode teach">Insegnante</span>
+        <span class="mode">Dal <%= teacher.fetch("date") %></span>
+        <span class="mode">Profilo verificato</span>
+      </div>
+    </template>
+  <% end %>
+
+  <% academy_locations.each_value do |location| %>
+    <template id="location-<%= location.fetch("slug") %>" data-modal-title="<%= location.fetch("name") %>">
+      <div class="profile">
+        <span class="location-pin" style="width:72px;height:72px;font-size:25px">⌖</span>
+        <div>
+          <h4><%= location.fetch("name") %></h4>
+          <p><%= location.fetch("city") %></p>
+          <span class="mode practice"><%= location.fetch("type") %></span>
+        </div>
+      </div>
+      <div class="profile-meta">
+        <span class="mode">Modulo disponibile</span>
+        <span class="mode info">Vedi calendario</span>
+        <span class="mode">Contatta il centro</span>
+      </div>
+    </template>
+  <% end %>
 
   <script>
   (() => {
     const root = document.getElementById('academy-curriculum');
     if (!root || root.dataset.initialized === 'true') return;
     root.dataset.initialized = 'true';
-    const people = [
-      {name:'Laura Bianchi', role:'Fisioterapista', category:'red', categoryLabel:'Professionista sanitario', img:'https://i.pravatar.cc/160?img=47', date:'Giugno 2026'},
-      {name:'Andrea Rinaldi', role:'Osteopata', category:'red', categoryLabel:'Professionista sanitario', img:'https://i.pravatar.cc/160?img=12', date:'Maggio 2026'},
-      {name:'Sara Moretti', role:'Chinesiologa', category:'blue', categoryLabel:'Insegnante non sanitario', img:'https://i.pravatar.cc/160?img=32', date:'Aprile 2026'},
-      {name:'Paolo Ferri', role:'Fisioterapista', category:'red', categoryLabel:'Professionista sanitario', img:'https://i.pravatar.cc/160?img=11', date:'Marzo 2026'},
-      {name:'Giulia Conti', role:'Allenatrice', category:'blue', categoryLabel:'Insegnante non sanitario', img:'https://i.pravatar.cc/160?img=45', date:'Febbraio 2026'},
-      {name:'Matteo Romano', role:'Massoterapista', category:'green', categoryLabel:'Professionista del benessere', img:'https://i.pravatar.cc/160?img=14', date:'Gennaio 2026'}
-    ];
-
-    const locations = [
-      {name:'Centro PosturaCorretta', city:'Brescia', type:'In presenza'},
-      {name:'Studio Movimento', city:'Calvisano', type:'In presenza'},
-      {name:'Aula online', city:'Online', type:'Diretta video'},
-      {name:'Giardino del Corpo', city:'Viadana di Calvisano', type:'Eventi'}
-    ];
-    const moduleLocations = [[0,2],[0,1,2],[0,2],[1,2,3],[0,1],[2,3],[0,2],[1,2,3]];
-
-    const modules = [
-      {n:'00', id:'m0', title:'Intro: basi e fondamenti', desc:'La visione della postura e le basi fisiologiche del percorso.', participants:186, modes:['info','practice','teach'], people:[0,1,2,3,4], lessons:[['Perché la postura','Le migliori metodiche per imparare a leggere il corpo.'],['Rosso, verde, blu','Come usare il percorso rispettando i diversi ambiti degli insegnanti.'],['Informati, pratica, insegna','I diversi livelli di partecipazione.'],['Massaggio, presenza e autotrattamento','Presa di coscienza corporea e ascolto.']]},
-      {n:'01', id:'m1', title:'Igiene Posturale', desc:'I concetti essenziali per trasformare le abitudini quotidiane.', participants:142, modes:['info','practice','teach'], people:[0,2,3,4,5], lessons:[['Mobilità articolare','Recuperare possibilità di movimento.'],['Punti di tensione','Riconoscere e ascoltare le tensioni.'],['Vie di discesa','Accompagnare il corpo verso il rilascio.'],['Recettori sensoriali','Vista, appoggi e orientamento.']]},
-      {n:'02', id:'m2', title:'Principi di Fisioterapia', desc:'Uno sguardo biologico ai grandi sistemi vitali del corpo.', participants:96, modes:['info','practice','teach'], people:[0,1,3,5], lessons:[['Sistema respiratorio','Respirazione, torace e scambi.'],['Sistema nervoso e urogenitale','Regolazione, sensibilità e funzioni.'],['Sistema muscolo-scheletrico','Movimento, carico e adattamento.'],['Sistema cardiocircolatorio','Flussi e distribuzione.'],['Sistema linfatico e digerente','Drenaggio, nutrimento ed eliminazione.']]},
-      {n:'03', id:'m3', title:'Biomeccanica Comportamentale (GDS)', desc:'Le catene muscolari e il loro significato psicofisiologico.', participants:74, modes:['info','practice','teach'], people:[0,2,4,5], lessons:[['Le 5 direzioni di movimento','La mappa generale del metodo.'],['Catena AM','Flessione e protezione.'],['Catena AL','Rotazione interna e adattamento.'],['Catena PM','Estensione e verticalità.'],['Catena PL','Rotazione esterna e apertura.'],['Catene PA/AP','Tra controllo e rilascio.']]},
-      {n:'04', id:'m4', title:'Principi di Osteopatia', desc:'Relazioni tra struttura, fascia, visceri e regolazione.', participants:61, modes:['info','practice','teach'], people:[1,3,5], lessons:[['Eliminare le disfunzioni','Mobilità e capacità di adattamento.'],['Il sistema fasciale','Continuità e trasmissione delle tensioni.'],['Il sistema viscerale','Organi, spazi e movimento.'],['Il sistema cranio-sacrale','Ascolto e ritmi profondi.'],['Il sistema neurovegetativo','Equilibrio tra attivazione e recupero.']]},
-      {n:'05', id:'m5', title:'Bioritmi: Corpo e Coscienza', desc:'I parametri strutturali ed energetici della coscienza somatica.', participants:53, modes:['info','practice','teach'], people:[0,2,4,5], lessons:[['Le 2 circolazioni','Scambio tra dentro e fuori.'],['I 3 centri di gravità','Testa, torace e bacino.'],['I 4 tipi di movimento','Qualità e direzioni fondamentali.'],['I 5 elementi','Il ritmo stagionale.'],['Le 6 coppie di meridiani','Relazioni funzionali.'],['I 7 centri neurolinfatici','Una mappa di lettura corporea.']]},
-      {n:'06', id:'m6', title:'Sequenza di Kinesiologia Applicata', desc:'Un processo ordinato di osservazione, test e riequilibrio.', participants:39, modes:['info','practice','teach'], people:[1,2,3], lessons:[['Preparazione al test','Contesto e affidabilità.'],['Test muscolare','Ascoltare la risposta del sistema.'],['Localizzazione terapeutica','Cercare relazioni significative.'],['Riequilibrio e verifica','Intervenire e ritestare.']]},
-      {n:'07', id:'m7', title:'Altre metodiche posturali', desc:'Confrontare mappe diverse senza perdere il filo del percorso.', participants:28, modes:['info','practice','teach'], people:[0,1,2,3,4,5], lessons:[['Mézières e RPG','Le catene e l’allungamento globale.'],['Feldenkrais','Apprendimento attraverso il movimento.'],['Alexander e consapevolezza','Uso di sé e organizzazione.'],['Sintesi del percorso','Costruire la propria mappa integrata.']]}
-    ];
-
-    const modeLabel = {info:'Informati', practice:'Pratica', teach:'Insegna'};
     const moduleList = root.querySelector('#moduleList');
-    const avatar = (idx, extra='') => `<button class="avatar teacher-${people[idx].category} ${extra}" data-person="${idx}" aria-label="Apri il profilo di ${people[idx].name}"><img src="${people[idx].img}" alt="" onerror="this.style.display='none';this.parentNode.textContent='${people[idx].name.split(' ').map(x=>x[0]).join('')}'"></button>`;
+    const sideLinks = Array.from(root.querySelectorAll('.side a[data-module-target]'));
 
-    function renderModules() {
-      moduleList.innerHTML = modules.map((m, mi) => `
-        <article class="module ${mi === 1 ? 'open' : ''}" id="${m.id}" data-modes="${m.modes.join(' ')}" data-search="${(m.title+' '+m.desc+' '+m.lessons.flat().join(' ')).toLowerCase()}">
-          <div class="module-top">
-            <span class="module-index">${m.n}</span>
-            <span class="module-title"><h3>${m.title}</h3><p>${m.desc}</p><span class="participant-count">${m.participants} partecipanti hanno svolto il modulo</span></span>
-            <span class="modes">${m.modes.map(x=>`<span class="mode ${x}">${modeLabel[x]}</span>`).join('')}</span>
-            <span class="teachers"><span class="avatars">${m.people.slice(0,3).reverse().map(i=>avatar(i)).join('')}<button class="avatar more" data-module="${mi}" aria-label="Vedi tutti gli insegnanti">+${Math.max(0,m.people.length-3)}</button></span></span>
-            <button class="chevron" aria-label="Apri ${m.title}" aria-expanded="${mi === 1}">⌄</button>
-          </div>
-          <div class="module-body">
-            <div class="module-tabs" role="tablist" aria-label="Sezioni di ${m.title}">
-              ${[['info','Informati'],['practice','Pratica'],['teach','Insegna'],['locations','Centri e luoghi'],['teachers','Insegnanti'],['participants','Partecipanti']].map((tab,ti)=>`<button class="module-tab ${ti===0?'active':''}" type="button" role="tab" aria-selected="${ti===0}" data-module-tab="${tab[0]}">${tab[1]}</button>`).join('')}
-            </div>
-
-            <div class="tab-panel active" data-panel="info">
-              <p class="panel-intro">Tutte le informazioni e i contenuti per conoscere il modulo, seguirne le lezioni e approfondire gli argomenti.</p>
-              <div class="lessons">
-                <div class="body-title"><span>${m.lessons.length} lezioni</span><span>Contenuti del modulo</span></div>
-                ${m.lessons.map((l,i)=>`<div class="lesson"><span class="lesson-num">${String(i+1).padStart(2,'0')}</span><span><strong>${l[0]}</strong><small>${l[1]}</small></span><span class="lesson-status">✓ disponibile</span></div>`).join('')}
-              </div>
-            </div>
-
-            <div class="tab-panel" data-panel="practice">
-              <p class="panel-intro">Scegli come trasformare le informazioni in esperienza concreta.</p>
-              <div class="option-grid">
-                <div class="option-card"><span class="option-icon">◌</span><strong>Pratica autonoma</strong><p>Esercizi, sequenze e indicazioni da seguire in autonomia.</p></div>
-                <div class="option-card"><span class="option-icon">●</span><strong>Pratica individuale</strong><p>Un percorso personale accompagnato da un insegnante.</p></div>
-                <div class="option-card"><span class="option-icon">◎</span><strong>Pratica di gruppo</strong><p>Incontri online o in presenza con altri partecipanti.</p></div>
-              </div>
-            </div>
-
-            <div class="tab-panel" data-panel="teach">
-              <p class="panel-intro">Il percorso per imparare a trasmettere questo modulo e diventare insegnante.</p>
-              <div class="option-grid">
-                <div class="option-card"><span class="option-icon">1</span><strong>Requisiti</strong><p>Completa Informati e Pratica prima di accedere alla formazione.</p></div>
-                <div class="option-card"><span class="option-icon">2</span><strong>Tirocinio</strong><p>Affianca un insegnante durante un percorso reale.</p></div>
-                <div class="option-card"><span class="option-icon">3</span><strong>Abilitazione</strong><p>Verifica finale e autorizzazione a insegnare il modulo.</p></div>
-              </div>
-            </div>
-
-            <div class="tab-panel" data-panel="locations">
-              <p class="panel-intro">Centri, studi e luoghi nei quali è possibile praticare o seguire il modulo.</p>
-              <div class="location-list">${moduleLocations[mi].map(i=>`<button class="location-card" type="button" data-location="${i}"><span class="location-pin">⌖</span><span><strong>${locations[i].name}</strong><small>${locations[i].city} · ${locations[i].type}</small></span><em>Dettagli</em></button>`).join('')}</div>
-            </div>
-
-            <div class="tab-panel" data-panel="teachers">
-              <p class="panel-intro">Gli insegnanti abilitati al modulo. Il bordo indica l’ambito di provenienza: rosso sanitario, verde benessere, blu non sanitario.</p>
-              <div class="teacher-grid">${m.people.map(i=>`<div class="person">${avatar(i)}<span><strong>${people[i].name}</strong><span>${people[i].role} · ${people[i].categoryLabel}</span></span></div>`).join('')}</div>
-            </div>
-
-            <div class="tab-panel" data-panel="participants">
-              <p class="panel-intro">Le persone che hanno iniziato, praticato o completato il modulo.</p>
-              <div class="participant-grid">
-                <div class="participant-stat"><strong>${m.participants}</strong><span>Partecipanti complessivi</span><div class="participant-bar"><i style="width:100%"></i></div></div>
-                <div class="participant-stat"><strong>${Math.round(m.participants*.72)}</strong><span>Hanno completato Informati</span><div class="participant-bar"><i style="width:72%"></i></div></div>
-                <div class="participant-stat"><strong>${Math.round(m.participants*.46)}</strong><span>Hanno partecipato a Pratica</span><div class="participant-bar"><i style="width:46%"></i></div></div>
-                <div class="participant-stat"><strong>${Math.max(3,Math.round(m.participants*.12))}</strong><span>Nel percorso Insegna</span><div class="participant-bar"><i style="width:12%"></i></div></div>
-              </div>
-            </div>
-          </div>
-        </article>`).join('');
-    }
-
-    renderModules();
     let currentFilter = 'all';
+    let currentArea = root.querySelector('.workspace')?.dataset.initialArea || 'all';
     const search = root.querySelector('#search');
+    function setActiveModule(moduleId) {
+      sideLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.moduleTarget === moduleId);
+      });
+    }
     function applyFilters() {
       const q = search.value.trim().toLowerCase();
       let visible = 0;
       root.querySelectorAll('.module').forEach(el => {
         const matchesText = !q || el.dataset.search.includes(q);
         const matchesMode = currentFilter === 'all' || el.dataset.modes.split(' ').includes(currentFilter);
-        el.hidden = !(matchesText && matchesMode);
+        const matchesArea = currentArea === 'all' || el.dataset.area === currentArea;
+        el.hidden = !(matchesText && matchesMode && matchesArea);
         if (!el.hidden) visible++;
       });
+      sideLinks.forEach(link => {
+        const linkedModule = document.getElementById(link.dataset.moduleTarget);
+        link.hidden = !linkedModule || linkedModule.hidden;
+      });
+      const activeLink = sideLinks.find(link => link.classList.contains('active'));
+      const activeModule = activeLink ? document.getElementById(activeLink.dataset.moduleTarget) : null;
+      if (!activeModule || activeModule.hidden) {
+        const firstVisibleModule = root.querySelector('.module:not([hidden])');
+        if (firstVisibleModule) setActiveModule(firstVisibleModule.id);
+      }
       root.querySelector('#empty').style.display = visible ? 'none' : 'block';
     }
     search.addEventListener('input', applyFilters);
@@ -456,15 +493,16 @@
       root.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active'); currentFilter = btn.dataset.filter; applyFilters();
     }));
+    applyFilters();
     moduleList.addEventListener('click', e => {
       const top = e.target.closest('.module-top');
-      const personBtn = e.target.closest('[data-person]');
-      const moduleBtn = e.target.closest('[data-module]');
+      const link = e.target.closest('a[href]');
       const tabBtn = e.target.closest('[data-module-tab]');
-      const locationBtn = e.target.closest('[data-location]');
-      if (personBtn) { e.stopPropagation(); showPerson(+personBtn.dataset.person); return; }
-      if (moduleBtn) { e.stopPropagation(); showRoster(+moduleBtn.dataset.module); return; }
-      if (locationBtn) { e.stopPropagation(); showLocation(+locationBtn.dataset.location); return; }
+      const modalBtn = e.target.closest('[data-modal-template]');
+      const lessonBtn = e.target.closest('[data-lesson-template]');
+      if (modalBtn) { e.stopPropagation(); openTemplate(modalBtn.dataset.modalTemplate); return; }
+      if (link) return;
+      if (lessonBtn) { e.stopPropagation(); openTemplate(lessonBtn.dataset.lessonTemplate); return; }
       if (tabBtn) {
         e.stopPropagation();
         const card = tabBtn.closest('.module');
@@ -472,12 +510,46 @@
         card.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.dataset.panel === tabBtn.dataset.moduleTab));
         return;
       }
-      if (top) { const card = top.closest('.module'); card.classList.toggle('open'); top.querySelector('.chevron').setAttribute('aria-expanded', card.classList.contains('open')); }
+      if (top) {
+        const card = top.closest('.module');
+        card.classList.toggle('open');
+        top.querySelector('.chevron').setAttribute('aria-expanded', card.classList.contains('open'));
+        setActiveModule(card.id);
+      }
     });
+    sideLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const card = document.getElementById(link.dataset.moduleTarget);
+        if (!card) return;
+        card.classList.add('open');
+        card.querySelector('.chevron')?.setAttribute('aria-expanded', 'true');
+        setActiveModule(card.id);
+      });
+    });
+
+    function handleHashChange() {
+      const hash = window.location.hash;
+      if (!hash) return;
+      const moduleId = hash.substring(1);
+      const card = document.getElementById(moduleId);
+      if (!card || !card.classList.contains('module')) return;
+      card.classList.add('open');
+      const chevron = card.querySelector('.chevron');
+      if (chevron) chevron.setAttribute('aria-expanded', 'true');
+      setActiveModule(moduleId);
+    }
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+
+    document.addEventListener("turbo:before-cache", () => {
+      const r = document.getElementById('academy-curriculum');
+      if (r) delete r.dataset.initialized;
+    }, { once: true });
     root.querySelector('#academyOpenAll').addEventListener('click', e => {
       const opening = ![...root.querySelectorAll('.module:not([hidden])')].every(x=>x.classList.contains('open'));
       root.querySelectorAll('.module:not([hidden])').forEach(x=>{ x.classList.toggle('open', opening); x.querySelector('.chevron').setAttribute('aria-expanded', opening); });
-      e.currentTarget.textContent = opening ? 'Chiudi tutti i moduli' : 'Apri tutti i moduli';
+      const label = opening ? 'Chiudi tutti i moduli' : 'Apri tutti i moduli';
+      e.currentTarget.innerHTML = `📂 <span>${label}</span>`;
     });
 
     const modal = root.querySelector('#modal');
@@ -485,24 +557,296 @@
     const modalContent = root.querySelector('#modalContent');
     function openModal(){ modal.classList.add('open'); document.body.style.overflow='hidden'; }
     function closeModal(){ modal.classList.remove('open'); document.body.style.overflow=''; }
-    function showPerson(i) {
-      const p = people[i]; modalTitle.textContent='Insegnante';
-      modalContent.innerHTML=`<div class="profile">${avatar(i)}<div><h4>${p.name}</h4><p>${p.role}</p><span class="mode ${p.category==='red'?'teach':p.category==='green'?'practice':'info'}">${p.categoryLabel}</span></div></div><div class="profile-meta"><span class="mode teach">Insegnante</span><span class="mode">Dal ${p.date}</span><span class="mode">Profilo verificato</span></div>`;
+    function openTemplate(templateId) {
+      const template = document.getElementById(templateId);
+      if (!template) return;
+      modalTitle.textContent = template.dataset.modalTitle || template.content.querySelector('h1, h2, h3, h4')?.textContent || 'Dettaglio';
+      modalContent.innerHTML = '';
+      modalContent.appendChild(template.content.cloneNode(true));
       openModal();
     }
-    function showRoster(mi) {
-      const ids = mi === undefined ? people.map((_,i)=>i) : modules[mi].people;
-      modalTitle.textContent = mi === undefined ? 'Insegnanti dell’Accademia' : `Insegnanti di ${modules[mi].title}`;
-      modalContent.innerHTML=`<div class="roster-list">${ids.map(i=>`<div class="person" style="padding:8px 0;border-bottom:1px solid #edf1f6">${avatar(i)}<span><strong>${people[i].name}</strong><span>${people[i].role} · ${people[i].categoryLabel}</span></span></div>`).join('')}</div>`;
+    root.addEventListener('click', e => {
+      const modalBtn = e.target.closest('[data-modal-template]');
+      if (!modalBtn || moduleList.contains(modalBtn)) return;
+      e.preventDefault();
+      openTemplate(modalBtn.dataset.modalTemplate);
+    });
+    window.showAcademyMethod = function() {
+      modalTitle.textContent = "Come funziona l'accademia";
+      modalContent.innerHTML = `
+       <div
+  class="academy-modal-method"
+  style="
+    font-family: Inter, sans-serif;
+    line-height: 1.6;
+    color: #475569;
+  "
+>
+  <!-- INTRODUZIONE -->
+  <div style="margin-bottom: 22px;">
+    <span
+      style="
+        display: block;
+        margin-bottom: 6px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #2563eb;
+      "
+    >
+      Diffondiamo la conoscenza delle metodiche posturali
+    </span>
+
+    <h3
+      style="
+        margin: 0 0 10px;
+        font-size: 19px;
+        line-height: 1.3;
+        font-weight: 800;
+        color: #1e293b;
+      "
+    >
+      Una mappa per conoscere il corpo e orientarsi tra le metodiche
+    </h3>
+
+     <p style="margin: 0 0 10px; font-size: 13px;">
+      L’Accademia propone un percorso generale, accessibile anche
+      a chi parte da zero. Presenta le basi  delle principali metodiche posturali usate in ambito terapeutico, 
+      con l'obiettivo di aiutare le persone a conoscere il proprio corpo, comprenderne possibilità e limiti e scegliere con maggiore consapevolezza il proprio percorso di salute.
+    </p>
+
+    <p style="margin: 0; font-size: 13px;">
+      Gli insegnanti posturacorretta hanno appreso i principi base delle metodiche presenti nei moduli e 
+      accompagnano lepersone con semplici esercizi che hanno il compito di riattivare i sistemi fisiologici e di far comprendere le differenze tra le metodiche.
+      far conoscere come funziona il corpo e come le metodiche osservano e intervengono sui diversi sistemi fisiologici.
+      Le persone in questo modo possono comprendere le differenze tra le metodiche e scegliere con maggiore consapevolezza cosa inserire nel proprio percorso di salute.
+    </p>
+
+  </div>
+
+  <!-- I QUATTRO ELEMENTI -->
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    "
+  >
+    <!-- PERSONA -->
+    <div
+      style="
+        padding: 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+      "
+    >
+      <span
+        style="
+          display: block;
+          margin-bottom: 5px;
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #64748b;
+        "
+      >
+        Per chi parte da zero
+      </span>
+
+      <h4
+        style="
+          margin: 0 0 7px;
+          font-size: 14px;
+          line-height: 1.35;
+          color: #1e293b;
+        "
+      >
+        La persona conosce e si orienta
+      </h4>
+
+      <p style="margin: 0; font-size: 12px;">
+        Impara ad ascoltare il corpo, conosce i principi delle diverse
+        metodiche e comprende quale approccio potrebbe essere più adatto
+        nei diversi momenti del proprio percorso.
+      </p>
+    </div>
+
+    <!-- METODICA -->
+    <div
+      style="
+        padding: 16px;
+        background: #faf5ff;
+        border: 1px solid #e9d5ff;
+        border-radius: 14px;
+      "
+    >
+      <span
+        style="
+          display: block;
+          margin-bottom: 5px;
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #7c3aed;
+        "
+      >
+        Metodiche e scuole
+      </span>
+
+      <h4
+        style="
+          margin: 0 0 7px;
+          font-size: 14px;
+          line-height: 1.35;
+          color: #581c87;
+        "
+      >
+        La metodica fa conoscere la propria visione
+      </h4>
+
+      <p style="margin: 0; font-size: 12px; color: #6b21a8;">
+        Molte metodiche sono conosciute soprattutto dagli addetti ai lavori
+        e arrivano alle persone soltanto come terapia. Nell’Accademia possono
+        presentare i propri principi e far conoscere il loro modo di osservare
+        il corpo.
+      </p>
+    </div>
+
+    <!-- INSEGNANTE -->
+    <div
+      style="
+        padding: 16px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 14px;
+      "
+    >
+      <span
+        style="
+          display: block;
+          margin-bottom: 5px;
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #2563eb;
+        "
+      >
+        Insegnanti PosturaCorretta
+      </span>
+
+      <h4
+        style="
+          margin: 0 0 7px;
+          font-size: 14px;
+          line-height: 1.35;
+          color: #1e3a8a;
+        "
+      >
+        L’insegnante presenta le basi
+      </h4>
+
+      <p style="margin: 0; font-size: 12px; color: #1e40af;">
+        È formato dall’Accademia per accompagnare le persone, collegare i
+        diversi principi e trasformare le informazioni in pratica. Non
+        sostituisce lo specialista della singola metodica.
+      </p>
+    </div>
+
+    <!-- PROFESSIONISTA -->
+    <div
+      style="
+        padding: 16px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 14px;
+      "
+    >
+      <span
+        style="
+          display: block;
+          margin-bottom: 5px;
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #059669;
+        "
+      >
+        Professionisti delle metodiche
+      </span>
+
+      <h4
+        style="
+          margin: 0 0 7px;
+          font-size: 14px;
+          line-height: 1.35;
+          color: #065f46;
+        "
+      >
+        Il professionista approfondisce e interviene
+      </h4>
+
+      <p style="margin: 0; font-size: 12px; color: #047857;">
+        È formato dalle scuole della propria metodica e ne approfondisce
+        strumenti e applicazioni. Rappresenta il riferimento per valutazioni,
+        trattamenti e interventi specifici, nell’ambito delle proprie
+        competenze professionali.
+      </p>
+    </div>
+  </div>
+
+  <!-- COLLEGAMENTO -->
+  <div
+    style="
+      margin-top: 16px;
+      padding: 16px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      text-align: center;
+    "
+  >
+    <p
+      style="
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #1e293b;
+      "
+    >
+      Conosci le basi
+      <span style="padding: 0 5px; color: #94a3b8;">→</span>
+      prova e comprendi
+      <span style="padding: 0 5px; color: #94a3b8;">→</span>
+      scegli come approfondire
+    </p>
+
+    <p
+      style="
+        max-width: 650px;
+        margin: 0 auto;
+        font-size: 12px;
+        color: #64748b;
+      "
+    >
+      PosturaCorretta crea un ponte: avvicina le persone alle metodiche,
+      ne presenta i principi fondamentali e le mette in contatto con i
+      professionisti formati dalle rispettive scuole.
+    </p>
+  </div>
+</div>
+      `;
       openModal();
     }
-    function showLocation(i) {
-      const location = locations[i];
-      modalTitle.textContent = location.name;
-      modalContent.innerHTML=`<div class="profile"><span class="location-pin" style="width:72px;height:72px;font-size:25px">⌖</span><div><h4>${location.name}</h4><p>${location.city}</p><span class="mode practice">${location.type}</span></div></div><div class="profile-meta"><span class="mode">Modulo disponibile</span><span class="mode info">Vedi calendario</span><span class="mode">Contatta il centro</span></div>`;
-      openModal();
-    }
-    root.querySelector('[data-roster]').addEventListener('click',()=>showRoster());
+    root.querySelectorAll('[data-modal-template]').forEach(btn => {
+      if (btn.closest('#moduleList')) return;
+      btn.addEventListener('click', () => openTemplate(btn.dataset.modalTemplate));
+    });
     root.querySelector('#closeModal').addEventListener('click', closeModal);
     modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
     document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });

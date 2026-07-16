@@ -1,0 +1,14 @@
+<% module_locations = local_assigns[:module_locations] || [] %>
+
+<div class="tab-panel" data-panel="locations">
+  <p class="panel-intro">Centri, studi e luoghi nei quali è possibile praticare o seguire il modulo.</p>
+  <div class="location-list">
+    <% module_locations.each do |location| %>
+      <button class="location-card" type="button" data-modal-template="location-<%= location.fetch("slug") %>">
+        <span class="location-pin">⌖</span>
+        <span><strong><%= location.fetch("name") %></strong><small><%= location.fetch("city") %> · <%= location.fetch("type") %></small></span>
+        <em>Dettagli</em>
+      </button>
+    <% end %>
+  </div>
+</div>

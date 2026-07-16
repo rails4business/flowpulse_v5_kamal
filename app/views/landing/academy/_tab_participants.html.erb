@@ -1,0 +1,11 @@
+<% academy_module = local_assigns[:academy_module] %>
+
+<div class="tab-panel" data-panel="participants">
+  <p class="panel-intro">Le persone che hanno iniziato, praticato o completato il modulo.</p>
+  <div class="participant-grid">
+    <div class="participant-stat"><strong><%= academy_module.fetch("participants") %></strong><span>Partecipanti complessivi</span><div class="participant-bar"><i style="width:100%"></i></div></div>
+    <div class="participant-stat"><strong><%= (academy_module.fetch("participants") * 0.72).round %></strong><span>Hanno completato Informati</span><div class="participant-bar"><i style="width:72%"></i></div></div>
+    <div class="participant-stat"><strong><%= (academy_module.fetch("participants") * 0.46).round %></strong><span>Hanno partecipato a Pratica</span><div class="participant-bar"><i style="width:46%"></i></div></div>
+    <div class="participant-stat"><strong><%= [3, (academy_module.fetch("participants") * 0.12).round].max %></strong><span>Nel percorso Insegna</span><div class="participant-bar"><i style="width:12%"></i></div></div>
+  </div>
+</div>

@@ -1,0 +1,426 @@
+paths:
+  cura:
+    color: "red"
+    kicker: "Stop al Dolore · Cura e Riabilitazione"
+    title: "Dal dolore alla cura guidata."
+    description: "Per chi parte da dolore, sintomi, diagnosi, patologia o fase acuta. Il primo obiettivo è mettere ordine e capire quale aiuto serve davvero."
+    stepsTitle: "Parti da ciò che senti adesso."
+    steps:
+      - label: "Diario della salute"
+        title: "Cosa sta succedendo?"
+        description: "Registra dolore, eventi, trattamenti, diagnosi, attività e segnali del corpo."
+        tags: ["Diario", "Sintomi", "Eventi"]
+      - label: "Stop al Dolore"
+        title: "Hai già una diagnosi e un piano per uscire dalla fase acuta?"
+        description: "Ti aiutiamo a orientarti e a trovare il professionista che possa accompagnarti in questa fase delicata."
+        tags: ["Dolore", "Professionisti", "Linee guida"]
+      - label: "Primo aiuto per il dolore"
+        title: "È possibile diminuire il dolore in sicurezza?"
+        description: "Suggerimenti pratici e video con posizioni, movimenti ed esercizi delicati da utilizzare quando sono indicati. In presenza di segnali d’allarme, trauma importante o peggioramento, interrompi la pratica e rivolgiti a un professionista sanitario."
+        tags: ["Suggerimenti", "Video", "Esercizi"]
+      - label: "Valutazione Postura e Fisiologia"
+        title: "Quali sistemi sono in difficoltà?"
+        description: "Una valutazione per osservare articolazioni, compensi, respirazione, recupero e abitudini."
+        tags: ["Valutazione", "Schede", "Percorso"]
+      - label: "Percorso terapeutico per la cura della patologia"
+        title: "Come creare un percorso terapeutico?"
+        description: "Un piano guidato con i professionisti della salute per trattare le cause del dolore, curare la patologia e recuperare mobilità fisiologica."
+        tags: ["Pianificazione", "Appuntamenti", "Professionisti"]
+        appointments:
+          - name: "Incontro 1: Valutazione posturale clinica"
+            prof: "Fisioterapista / Osteopata"
+            desc: "Analisi dei recettori, dei compensi e dei punti di sofferenza per tracciare il piano iniziale."
+          - name: "Incontro 2: Trattamento e rilascio"
+            prof: "Professionista sanitario"
+            desc: "Seduta mirata per decongestionare le catene in tensione e ridurre il dolore acuto."
+          - name: "Incontro 3: Rieducazione posturale"
+            prof: "Insegnante qualificato"
+            desc: "Esercizi attivi personalizzati per ristabilire equilibrio e prevenire ricadute."
+          - name: "Incontro 4: Follow-up e autonomia"
+            prof: "Team del percorso"
+            desc: "Verifica dei risultati e impostazione della pratica da svolgere in autonomia."
+
+  prevenzione:
+    color: "orange"
+    kicker: "Prevenzione"
+    title: "Previeni i problemi legati alla tua attività."
+    description: "Per chi vuole prevenire difficoltà legate a lavoro, sport, età, postura quotidiana o fasi specifiche della vita."
+    stepsTitle: "Costruisci una prevenzione concreta."
+    steps:
+      - label: "Osserva"
+        title: "Conosci i rischi della tua attività principale?"
+        description: "Riconosci carichi, abitudini e segnali precoci prima che diventino un problema."
+        tags: ["Checklist", "Lavoro", "Sport"]
+      - label: "Organizza"
+        title: "Quale routine puoi sostenere?"
+        description: "Trasforma mobilità, recupero e ascolto corporeo in appuntamenti semplici e ripetibili."
+        tags: ["Routine", "Mobilità", "Recupero"]
+      - label: "Verifica"
+        title: "La prevenzione sta funzionando?"
+        description: "Controlla periodicamente i segnali del corpo e adatta il programma alle nuove esigenze."
+        tags: ["Controlli", "Progressi", "Adattamento"]
+
+  performance:
+    color: "amber"
+    kicker: "Performance"
+    title: "Migliora il modo in cui lavori, studi e usi il corpo."
+    description: "Per chi vuole migliorare prestazioni, energia, capacità cognitive, organizzazione e rapporto con gli strumenti digitali."
+    stepsTitle: "Allena le risorse che sostengono la prestazione."
+    steps:
+      - label: "Fondamenta"
+        title: "Hai energia sufficiente per ciò che vuoi fare?"
+        description: "Parti da sonno, recupero, respirazione, movimento e qualità dell'attenzione."
+        tags: ["Energia", "Recupero", "Attenzione"]
+      - label: "Metodo"
+        title: "Come organizzi lavoro e studio?"
+        description: "Costruisci ritmi, strumenti e ambienti che riducano dispersione e sovraccarico."
+        tags: ["Lavoro", "Studio", "IA"]
+      - label: "Sviluppo"
+        title: "Quale capacità vuoi migliorare?"
+        description: "Definisci una pratica progressiva e misura ciò che cambia nella vita reale."
+        tags: ["Obiettivi", "Pratica", "Verifica"]
+
+  fisiologia:
+    color: "blue"
+    kicker: "Postura e Fisiologia"
+    title: "Capire il corpo per prendersene cura."
+    description: "Per chi vuole conoscere e riattivare articolazioni, muscoli, respiro, recupero, sistema nervoso, bioritmi e postura."
+    stepsTitle: "Impara una cosa alla volta."
+    steps:
+      - label: "Informati"
+        title: "Vuoi capire come funziona il corpo?"
+        description: "Colleghiamo postura, movimento, respiro, recupero e segnali quotidiani."
+        tags: ["Fisiologia", "Sistemi", "Lezioni"]
+      - label: "Valutazione Postura e Fisiologia"
+        title: "Quali sistemi sono in difficoltà?"
+        description: "Puoi entrare nel percorso anche da qui: osserviamo articolazioni, compensi, respirazione, recupero e abitudini per definire da dove iniziare."
+        tags: ["Valutazione", "Schede", "Percorso"]
+      - label: "Pratica"
+        title: "Vuoi iniziare con una pratica semplice?"
+        description: "Mobilità articolare, punti di tensione, via di discesa, recettori e routine quotidiana."
+        tags: ["Mobilità", "Autotrattamento", "Routine"]
+        modules:
+          - - "Modulo 01"
+            - "Igiene Posturale"
+            - ["Mobilità articolare", "Punti di tensione", "Vie di discesa", "Recettori sensoriali"]
+          - - "Modulo 02"
+            - "Principi di fisioterapia"
+            - []
+          - - "Modulo 03"
+            - "Biomeccanica comportamentale"
+            - ["Introduzione al Metodo GDS"]
+          - - "Modulo 04"
+            - "Principi di osteopatia"
+            - []
+          - - "Modulo 05"
+            - "Bioritmi circadiani"
+            - ["Introduzione al metodo Corpo e Coscienza"]
+      - label: "Insegna"
+        title: "Vuoi accompagnare altre persone?"
+        description: "Accedi allo spazio degli insegnanti, al tirocinio e agli strumenti per proporre i moduli."
+        tags: ["Insegnanti", "Tirocinio", "Didattica"]
+
+  benessere:
+    color: "emerald"
+    kicker: "Benessere Integrato"
+    title: "Costruisci un programma per stare meglio."
+    description: "Per chi vuole migliorare salute, energia, abitudini e qualità della vita mettendo in relazione le diverse aree del benessere."
+    stepsTitle: "Metti ordine nella tua salute."
+    steps:
+      - label: "Diario della salute"
+        title: "Stai già facendo qualcosa per la tua salute?"
+        description: "Registra attività, trattamenti, alimentazione, sonno, movimento e progressi."
+        tags: ["Diario", "Abitudini", "Progressi"]
+      - label: "Stato di salute"
+        title: "Quali ambiti stai trascurando?"
+        description: "Osserva recupero e autotrattamenti, movimento, emozioni, piante e rimedi, nutrizione."
+        tags: ["5 aree", "Prevenzione", "Stile di vita"]
+      - label: "Programma integrato"
+        title: "Da dove vuoi partire?"
+        description: "Costruisci un programma sostenibile con pratiche, professionisti e obiettivi progressivi."
+        tags: ["Programma", "Professionisti", "Routine"]
+
+  ambiente:
+    color: "violet"
+    kicker: "Il Giardino del Corpo · Corpo e ambiente"
+    title: "Il corpo vive dentro un ambiente."
+    description: "Esplora il rapporto tra corpo, natura, territorio, stagioni, tradizioni, cultura, abitudini e stile di vita."
+    stepsTitle: "Ritrova un rapporto vivo con il territorio."
+    steps:
+      - label: "Osserva"
+        title: "In quale ambiente vive il tuo corpo?"
+        description: "Leggi spazi, ritmi, stagioni e abitudini che sostengono o consumano la tua energia."
+        tags: ["Ambiente", "Stagioni", "Ritmi"]
+      - label: "Partecipa"
+        title: "Quale esperienza vuoi vivere?"
+        description: "Camminate, laboratori, calendario agricolo, pratiche in natura e tradizioni locali."
+        tags: ["Natura", "Territorio", "Esperienze"]
+      - label: "Coltiva"
+        title: "Cosa vuoi riportare nella quotidianità?"
+        description: "Trasforma l'esperienza in una relazione più consapevole con luoghi, risorse e comunità."
+        tags: ["Sovranità", "Comunità", "Continuità"]
+
+  potenziale:
+    color: "violet"
+    kicker: "Il Giardino del Corpo · Potenziale umano"
+    title: "Scopri e coltiva le tue potenzialità."
+    description: "Esplora corpo, emozioni, relazioni, creatività, espressione, capacità cognitive e crescita armonica."
+    stepsTitle: "Dai spazio a ciò che può crescere."
+    steps:
+      - label: "Ascolta"
+        title: "Quali possibilità chiedono spazio?"
+        description: "Riconosci desideri, inclinazioni, limiti e risorse senza separarli dal corpo."
+        tags: ["Desideri", "Corpo", "Consapevolezza"]
+      - label: "Esplora"
+        title: "In quale linguaggio ti esprimi meglio?"
+        description: "Musica, arte, gioco, lettura, teatro, movimento, memoria e pensiero creativo."
+        tags: ["Creatività", "Espressione", "Cognizione"]
+      - label: "Realizza"
+        title: "Come trasformi un'intuizione in un progetto?"
+        description: "Collega pratica personale, incontri, progetti e contributo alla comunità."
+        tags: ["Progetti", "Relazioni", "Crescita"]
+
+colorClasses:
+  red:
+    text: "text-red-700"
+    bg: "bg-red-600"
+    hover: "hover:bg-red-700"
+    soft: "bg-red-50"
+    border: "border-red-200"
+    ring: "ring-red-500"
+  orange:
+    text: "text-orange-700"
+    bg: "bg-orange-500"
+    hover: "hover:bg-orange-600"
+    soft: "bg-orange-50"
+    border: "border-orange-200"
+    ring: "ring-orange-500"
+  amber:
+    text: "text-amber-700"
+    bg: "bg-amber-500"
+    hover: "hover:bg-amber-600"
+    soft: "bg-amber-50"
+    border: "border-amber-200"
+    ring: "ring-amber-500"
+  blue:
+    text: "text-blue-700"
+    bg: "bg-blue-600"
+    hover: "hover:bg-blue-700"
+    soft: "bg-blue-50"
+    border: "border-blue-200"
+    ring: "ring-blue-500"
+  emerald:
+    text: "text-emerald-700"
+    bg: "bg-emerald-600"
+    hover: "hover:bg-emerald-700"
+    soft: "bg-emerald-50"
+    border: "border-emerald-200"
+    ring: "ring-emerald-500"
+  violet:
+    text: "text-violet-700"
+    bg: "bg-violet-700"
+    hover: "hover:bg-violet-800"
+    soft: "bg-violet-50"
+    border: "border-violet-200"
+    ring: "ring-violet-500"
+
+pathTeams:
+  cura:
+    initiator:
+      role: "Iniziatore del percorso"
+      name: "Fisioterapista / Osteopata"
+      program: "Programma terapeutico iniziale"
+      mode: "standard + personalizzabile"
+    professionals:
+      - role: "Professionista sanitario"
+        program: "Trattamento e recupero"
+        area: "Recupero"
+      - role: "Insegnante qualificato"
+        program: "Rieducazione posturale"
+        area: "Movimento"
+      - role: "Medico di riferimento"
+        program: "Controllo clinico quando serve"
+        area: "Cura"
+  prevenzione:
+    initiator:
+      role: "Iniziatore del percorso"
+      name: "Professionista della prevenzione"
+      program: "Programma prevenzione e abitudini"
+      mode: "standard + personalizzabile"
+    professionals:
+      - role: "Fisioterapista"
+        program: "Mobilita e segnali precoci"
+        area: "Recupero"
+      - role: "Trainer / insegnante del movimento"
+        program: "Routine sostenibile"
+        area: "Movimento"
+      - role: "Consulente ergonomia"
+        program: "Lavoro, sport e postura quotidiana"
+        area: "Ambiente"
+  performance:
+    initiator:
+      role: "Iniziatore del percorso"
+      name: "Trainer / insegnante del movimento"
+      program: "Programma energia e prestazione"
+      mode: "standard + personalizzabile"
+    professionals:
+      - role: "Fisioterapista"
+        program: "Carico, recupero e prevenzione"
+        area: "Recupero"
+      - role: "Coach / formatore"
+        program: "Metodo di lavoro e studio"
+        area: "Mentale"
+      - role: "Professionista digitale"
+        program: "Strumenti, organizzazione e IA"
+        area: "Performance"
+  fisiologia:
+    initiator:
+      role: "Iniziatore del percorso"
+      name: "Insegnante Postura e Fisiologia"
+      program: "Programma didattico iniziale"
+      mode: "standard + personalizzabile"
+    professionals:
+      - role: "Fisioterapista"
+        program: "Principi di fisioterapia"
+        area: "Recupero"
+      - role: "Osteopata"
+        program: "Principi di osteopatia"
+        area: "Recupero"
+      - role: "Insegnante GDS / metodiche posturali"
+        program: "Biomeccanica e pratica"
+        area: "Movimento"
+  benessere:
+    initiator:
+      role: "Iniziatore del percorso"
+      name: "Professionista del benessere integrato"
+      program: "Programma sulle 5 aree"
+      mode: "standard + personalizzabile"
+    professionals:
+      - role: "Fisioterapista / osteopata"
+        program: "Recupero e autotrattamenti"
+        area: "Recupero"
+      - role: "Trainer / insegnante movimento"
+        program: "Movimento e allenamento"
+        area: "Movimento"
+      - role: "Psicologo / counselor"
+        program: "Aspetti emotivi e mentali"
+        area: "Emozioni"
+      - role: "Nutrizionista"
+        program: "Nutrizione"
+        area: "Nutrizione"
+      - role: "Erborista / medico esperto"
+        program: "Piante, integratori e farmaci"
+        area: "Piante"
+  ambiente:
+    initiator:
+      role: "Iniziatore del percorso"
+      name: "Facilitatore del Giardino del Corpo"
+      program: "Programma corpo e ambiente"
+      mode: "standard + personalizzabile"
+    professionals:
+      - role: "Guida / facilitatore territoriale"
+        program: "Esperienze in natura"
+        area: "Territorio"
+      - role: "Professionista del movimento"
+        program: "Pratiche all'aperto"
+        area: "Movimento"
+      - role: "Operatore agricolo / culturale"
+        program: "Stagioni, tradizioni e luoghi"
+        area: "Ambiente"
+  potenziale:
+    initiator:
+      role: "Iniziatore del percorso"
+      name: "Facilitatore del potenziale umano"
+      program: "Programma espressione e crescita"
+      mode: "standard + personalizzabile"
+    professionals:
+      - role: "Insegnante movimento / teatro"
+        program: "Corpo, voce e presenza"
+        area: "Espressione"
+      - role: "Coach / facilitatore"
+        program: "Obiettivi e progettualita"
+        area: "Crescita"
+      - role: "Artista / musicista / educatore"
+        program: "Creativita e relazione"
+        area: "Creativita"
+
+pathProfessionals:
+  cura:
+    - name: "Marco"
+      role: "Fisioterapista"
+      fit: "Iniziatore per valutazione, dolore e piano terapeutico iniziale."
+      image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=700"
+    - name: "Andrea Rinaldi"
+      role: "Osteopata"
+      fit: "Supporto su mobilita, tensioni, compensi e sistema fasciale."
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=700"
+    - name: "Laura Bianchi"
+      role: "Fisioterapista"
+      fit: "Follow-up, recupero funzionale e progressione degli esercizi."
+      image: "https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&q=80&w=700"
+  prevenzione:
+    - name: "Sara Moretti"
+      role: "Chinesiologa"
+      fit: "Routine preventive, igiene posturale e lettura delle abitudini."
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=700"
+    - name: "Paolo Ferri"
+      role: "Fisioterapista biomeccanico"
+      fit: "Appoggi, cammino, carico e prevenzione nelle attivita quotidiane."
+      image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=700"
+  performance:
+    - name: "Giulia Conti"
+      role: "Movement coach"
+      fit: "Allenamento, progressioni a corpo libero e gestione dell'energia."
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=700"
+    - name: "Paolo Ferri"
+      role: "Fisioterapista biomeccanico"
+      fit: "Carico, recupero e prevenzione per migliorare senza sovraccaricare."
+      image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=700"
+  fisiologia:
+    - name: "Marco"
+      role: "Fisioterapista e docente"
+      fit: "Lettura iniziale tra postura, sistemi corporei e segnali quotidiani."
+      image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=700"
+    - name: "Sara Moretti"
+      role: "Chinesiologa"
+      fit: "Moduli educativi, biomeccanica GDS e pratica posturale."
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=700"
+    - name: "Andrea Rinaldi"
+      role: "Osteopata"
+      fit: "Principi di osteopatia e ascolto corporeo integrato."
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=700"
+  benessere:
+    - name: "Matteo Romano"
+      role: "Massoterapista"
+      fit: "Autotrattamento, recupero e consapevolezza corporea."
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=700"
+    - name: "Elena Serra"
+      role: "Nutrizionista"
+      fit: "Abitudini alimentari, ritmo quotidiano e sostenibilita del cambiamento."
+      image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=700"
+    - name: "Marta Leone"
+      role: "Psicologa / counselor"
+      fit: "Stress, continuita e rapporto tra corpo, emozioni e abitudini."
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=700"
+    - name: "Nadia Riva"
+      role: "Erborista"
+      fit: "Piante, rimedi tradizionali e risorse naturali del territorio."
+      image: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&q=80&w=700"
+  potenziale:
+    - name: "Marta Leone"
+      role: "Psicologa / counselor"
+      fit: "Consapevolezza, desideri, blocchi e continuita del percorso."
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=700"
+    - name: "Giulia Conti"
+      role: "Movement coach"
+      fit: "Corpo, presenza, espressione e pratica creativa del movimento."
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=700"
+  ambiente:
+    - name: "Luca Marino"
+      role: "Facilitatore territoriale"
+      fit: "Esperienze in natura, luoghi, stagioni e comunita."
+      image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=700"
+    - name: "Nadia Riva"
+      role: "Erborista"
+      fit: "Piante, tradizioni locali e lettura prudente delle risorse naturali."
+      image: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&q=80&w=700"

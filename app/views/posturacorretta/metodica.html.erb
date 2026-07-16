@@ -1,0 +1,119 @@
+<%= render "posturacorretta/header" %>
+
+<% professionals = methodology_professionals_for(@methodology_professionals, @methodology.fetch("slug")) %>
+<% schools = methodology_schools_for(@methodology_schools, @methodology.fetch("slug")) %>
+
+<main class="min-h-screen bg-slate-50">
+  <section class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-6 py-10">
+      <a href="<%= posturacorretta_metodiche_path %>" class="text-sm font-bold text-blue-700">← Tutte le metodiche</a>
+      <div class="mt-6 grid gap-8 lg:grid-cols-[1fr_320px] lg:items-end">
+        <div>
+          <div class="flex flex-wrap items-center gap-3">
+            <% if @methodology.fetch("logo_url").present? %>
+              <img src="<%= @methodology.fetch("logo_url") %>" alt="<%= @methodology.fetch("title") %>" class="h-14 w-14 rounded-2xl border border-slate-200 object-contain bg-white p-2">
+            <% else %>
+              <span class="grid h-14 w-14 place-items-center rounded-2xl border border-blue-100 bg-blue-50 text-lg font-extrabold text-blue-700"><%= @methodology.fetch("title").first %></span>
+            <% end %>
+            <span class="rounded-full border px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide <%= methodology_badge_classes(@methodology.fetch("badge")) %>">
+              <%= methodology_badge_label(@methodology.fetch("badge")) %>
+            </span>
+          </div>
+          <h1 class="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl"><%= @methodology.fetch("title") %></h1>
+          <div class="mt-3 flex items-center gap-3">
+            <% if @methodology.fetch("founder_image_url").present? %>
+              <img src="<%= @methodology.fetch("founder_image_url") %>" alt="<%= @methodology.fetch("founder") %>" class="h-11 w-11 rounded-full border border-slate-200 object-cover">
+            <% end %>
+            <p class="text-sm font-semibold text-slate-500">Fondatore: <%= @methodology.fetch("founder") %></p>
+          </div>
+          <p class="mt-4 max-w-3xl text-base leading-7 text-slate-600"><%= @methodology.fetch("short_description") %></p>
+          <% if @methodology.fetch("website_url").present? %>
+            <a href="<%= @methodology.fetch("website_url") %>" target="_blank" rel="noopener" class="mt-5 inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 transition hover:bg-blue-100">
+              Sito ufficiale: <%= methodology_website_host(@methodology.fetch("website_url")) %>
+            </a>
+          <% end %>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <strong class="block text-3xl tracking-tight text-slate-950"><%= professionals.size %></strong>
+              <span class="mt-1 block text-xs font-extrabold uppercase tracking-[0.16em] text-slate-500">Professionisti</span>
+            </div>
+            <div>
+              <strong class="block text-3xl tracking-tight text-slate-950"><%= schools.size %></strong>
+              <span class="mt-1 block text-xs font-extrabold uppercase tracking-[0.16em] text-slate-500">Scuole</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <article class="prose prose-slate max-w-none rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <%= methodology_markdown(@methodology.fetch("content_path")) %>
+    </article>
+
+    <aside class="space-y-4">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-950">Scuole di formazione</h2>
+        <p class="mt-1 text-sm leading-6 text-slate-600">Scuole o enti che formano professionisti su questa metodica.</p>
+      </div>
+
+      <% schools.each do |school| %>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-950"><%= school.fetch("name") %></h3>
+              <p class="mt-1 text-sm leading-6 text-slate-600"><%= school.fetch("description") %></p>
+            </div>
+            <span class="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-slate-600">
+              <%= school.fetch("fixed_location") ? "Sede" : "Diffusa" %>
+            </span>
+          </div>
+
+          <% if school.fetch("address").present? || school.fetch("city").present? || school.fetch("province").present? %>
+            <p class="mt-3 text-sm font-semibold text-slate-500">
+              <%= [school.fetch("address"), school.fetch("city"), school.fetch("province")].reject(&:blank?).join(" · ") %>
+            </p>
+          <% end %>
+
+          <% if school.fetch("website_url").present? %>
+            <a href="<%= school.fetch("website_url") %>" target="_blank" rel="noopener" class="mt-3 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900">
+              Sito scuola: <%= methodology_website_host(school.fetch("website_url")) %>
+            </a>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-950">Professionisti</h2>
+        <p class="mt-1 text-sm leading-6 text-slate-600">Professionisti collegati a questa metodica. Un professionista può essere presente in più metodiche.</p>
+      </div>
+
+      <% professionals.each do |professional| %>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-950"><%= professional.fetch("first_name") %> <%= professional.fetch("last_name") %></h3>
+              <p class="mt-1 text-sm text-slate-600"><%= professional.fetch("profession") %></p>
+            </div>
+            <span class="rounded-full border px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide <%= methodology_badge_classes(professional.fetch("badge")) %>">
+              <%= methodology_badge_label(professional.fetch("badge")) %>
+            </span>
+          </div>
+          <p class="mt-3 text-sm font-semibold text-slate-500"><%= professional.fetch("city") %> (<%= professional.fetch("province") %>)</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <% professional.fetch("methodologies").each do |methodology_slug| %>
+              <% linked_methodology = @methodologies_by_slug[methodology_slug] %>
+              <% next unless linked_methodology %>
+              <a href="<%= posturacorretta_metodica_path(methodology_slug) %>" class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+                <%= linked_methodology.fetch("title") %>
+              </a>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </aside>
+  </section>
+</main>

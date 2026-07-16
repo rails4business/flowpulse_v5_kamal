@@ -1,11 +1,12 @@
 <%
   is_home = current_page?(posturacorretta_path) || current_page?("/posturacorretta")
+  is_accademia = current_page?(posturacorretta_accademia_path) rescue false
   is_percorso = current_page?(posturacorretta_percorso_path) rescue false
+  is_metodiche = request.path.start_with?(posturacorretta_metodiche_path) rescue false
   is_contenuti = current_page?(posturacorretta_contenuti_path) rescue false
   is_filosofia = current_page?(posturacorretta_filosofia_path) rescue false
   is_eventi = current_page?(posturacorretta_eventi_path) rescue false
   is_progetti = current_page?(posturacorretta_progetti_path) rescue false
-  is_collabora = current_page?(posturacorretta_collabora_path) rescue false
 %>
 
 <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -20,13 +21,17 @@
 
     <!-- Desktop Inline Nav Links (Shortened, hidden on mobile) -->
     <nav class="hidden md:flex items-center gap-4 lg:gap-6" aria-label="Navigazione principale PosturaCorretta">
-      <a href="<%= posturacorretta_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_home ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
+      <a href="<%= posturacorretta_accademia_path %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_accademia ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Accademia
       </a>
       <a href="<%= posturacorretta_percorso_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_percorso ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Percorso
+      </a>
+      <a href="<%= posturacorretta_metodiche_path %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_metodiche ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
+        Metodiche
       </a>
       <a href="<%= posturacorretta_contenuti_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_contenuti ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
@@ -44,10 +49,6 @@
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_progetti ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Progetti
       </a>
-      <a href="<%= posturacorretta_collabora_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_collabora ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
-        Collabora
-      </a>
     </nav>
 
     <!-- Mobile Hamburger Toggle Button (hidden on desktop) -->
@@ -63,13 +64,13 @@
 
   <!-- Mobile Dropdown Menu Drawer (hidden on desktop) -->
   <div id="mobile-dropdown-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-6 py-4 shadow-inner space-y-1">
-    <a href="<%= posturacorretta_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_home ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Accademia</a>
+    <a href="<%= posturacorretta_accademia_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_accademia ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Accademia</a>
     <a href="<%= posturacorretta_percorso_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_percorso ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Percorso personalizzato</a>
+    <a href="<%= posturacorretta_metodiche_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Metodiche</a>
     <a href="<%= posturacorretta_contenuti_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_contenuti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Contenuti</a>
     <a href="<%= posturacorretta_filosofia_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_filosofia ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Libro e Visione</a>
     <a href="<%= posturacorretta_eventi_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_eventi ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Eventi e Community</a>
     <a href="<%= posturacorretta_progetti_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_progetti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Progetti</a>
-    <a href="<%= posturacorretta_collabora_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_collabora ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Collabora</a>
   </div>
 </header>
 

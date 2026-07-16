@@ -1,0 +1,29 @@
+<%
+  teacher = local_assigns[:teacher]
+  module_titles ||= local_assigns[:module_titles]
+  if !module_titles && @academy_modules
+    module_titles = @academy_modules.each_with_object({}) { |mod, h| h[mod.fetch("slug")] = mod.fetch("title") }
+  end
+  module_titles ||= {}
+  modules_taught = teacher.fetch("active_modules").map { |slug| module_titles[slug] }.compact
+  category_color = case teacher.fetch("category")
+                   when "red" then "#ef4444"
+                   when "green" then "#10b981"
+                   when "blue" then "#2563eb"
+                   else "#94a3b8"
+                   end
+%>
+
+<div class="person" style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #edf1f6; align-items: start; text-align: left;">
+  <%= academy_teacher_avatar(teacher) %>
+  <div style="flex: 1; min-width: 0;">
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+      <strong style="font-size: 15px; color: var(--navy);"><%= teacher.fetch("name") %></strong>
+      <span class="category-dot" style="background-color: <%= category_color %>; width: 10px; height: 10px; border-radius: 50%; display: inline-block;" title="<%= teacher.fetch("category_label") %>"></span>
+    </div>
+    <p style="margin: 4px 0 2px; font-size: 13px; color: #475569; line-height: 1.4;"><%= teacher.fetch("role") %> · <%= teacher.fetch("city") %> (<%= teacher.fetch("province") %>)</p>
+    <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.4;">
+      <strong>Abilitato per:</strong> <%= modules_taught.join(", ") %>
+    </p>
+  </div>
+</div>
