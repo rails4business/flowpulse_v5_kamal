@@ -34,6 +34,6 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   test "should get collabora" do
     get posturacorretta_collabora_url
     assert_response :success
-    assert_includes response.body, "Progetti in corso"
+    assert_includes response.body, "Collabora"
   end
 end

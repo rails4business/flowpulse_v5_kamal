@@ -79,7 +79,7 @@ class LibroControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "Hidden Entry"
-    assert_includes response.body, "Nascosto"
+    assert_not_includes response.body, "Nascosto"
   end
 
   test "show should return 404 for non-existent chapter" do

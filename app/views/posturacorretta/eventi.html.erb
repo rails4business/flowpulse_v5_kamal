@@ -2,49 +2,747 @@
   <%= render "posturacorretta/header" %>
 <% end %>
 
-<div id="top" class="text-slate-900 antialiased">
+<div id="top" class="text-slate-900 antialiased bg-slate-50">
 
-  <!-- EVENTI -->
-  <section class="border-t border-slate-200 bg-slate-50 px-5 py-20 md:py-24 min-h-[calc(100vh-4rem)] flex items-center">
-    <div class="mx-auto w-full max-w-6xl">
-      <div class="grid gap-12 items-center lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
-            Eventi e Community
-          </p>
-          <h1 class="mt-4 text-4xl font-semibold tracking-tight text-slate-955 md:text-6xl md:leading-[1.04]">
-            Eventi per vivere il percorso, non solo studiarlo.
-          </h1>
-          <p class="mt-6 text-lg leading-8 text-slate-600">
-            Camminate, incontri, attività sul territorio, movimento, natura, musica, buon cibo, scambio trattamenti e momenti di comunità.
-          </p>
-          <div class="mt-8">
-            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20informazioni%20sui%20prossimi%20eventi%20PosturaCorretta."
-               target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center justify-center rounded-2xl bg-violet-750 px-6 py-4 text-base font-semibold text-white transition hover:bg-violet-850 shadow-sm">
-              Chiedi informazioni sugli eventi →
-            </a>
-          </div>
-        </div>
-
-        <div class="grid gap-5 sm:grid-cols-2">
-          <a href="https://www.youtube.com/posturacorretta" target="_blank" rel="noopener noreferrer" class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-600">Video & Ricerca</p>
-            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">YouTube</h3>
-            <p class="mt-4 text-base leading-7 text-slate-600">Approfondimenti, esercizi, eventi e costruzione pubblica del progetto.</p>
-            <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-red-600">Vai al canale <span class="transition group-hover:translate-x-1">→</span></div>
-          </a>
-
-          <a href="https://www.instagram.com/posturacorretta" target="_blank" rel="noopener noreferrer" class="group rounded-[1.75rem] border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:border-pink-200 hover:shadow-xl">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-pink-600">Community & Eventi</p>
-            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Instagram</h3>
-            <p class="mt-4 text-base leading-7 text-slate-600">Dietro le quinte, caroselli, eventi e aggiornamenti quotidiani.</p>
-            <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-pink-600">Segui la pagina <span class="transition group-hover:translate-x-1">→</span></div>
-          </a>
-        </div>
-      </div>
+  <!-- HERO SECTION -->
+  <section class="px-5 pt-16 pb-12 text-center">
+    <div class="mx-auto w-full max-w-3xl">
+      <p class="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
+        Eventi e Community
+      </p>
+      <h1 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+        Eventi per vivere il percorso, non solo studiarlo.
+      </h1>
+      <p class="mt-4 text-base leading-relaxed text-slate-600 max-w-2xl mx-auto">
+        Clicca su un evento per visualizzare il programma dettagliato e prenotare il tuo posto.
+      </p>
     </div>
   </section>
 
+  <!-- EVENTI INTERACTIVE GRID SECTION -->
+  <section class="px-5 pb-20">
+    <div class="mx-auto w-full max-w-5xl">
+      
+      <!-- Top Level Tabs & Search Bar -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-5 mb-6">
+        <!-- Macro Tabs -->
+        <div class="flex gap-2" role="group" aria-label="Sezione principale">
+          <button type="button" onclick="switchMacroTab('events')" id="tab-macro-events" class="macro-tab shrink-0 rounded-full px-5 py-2.5 text-xs font-bold transition bg-slate-950 text-white shadow-sm">
+            Tutti gli Eventi
+          </button>
+          <button type="button" onclick="switchMacroTab('places')" id="tab-macro-places" class="macro-tab shrink-0 rounded-full px-5 py-2.5 text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:border-slate-350 hover:text-slate-950">
+            Luoghi
+          </button>
+          <button type="button" onclick="switchMacroTab('teachers')" id="tab-macro-teachers" class="macro-tab shrink-0 rounded-full px-5 py-2.5 text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:border-slate-350 hover:text-slate-950">
+            Conduttori
+          </button>
+        </div>
+
+        <!-- Search Bar Input -->
+        <div class="relative w-full md:max-w-xs">
+          <span class="absolute inset-y-0 left-3.5 flex items-center text-slate-400 select-none pointer-events-none">🔍</span>
+          <input type="text" id="event-search-input" oninput="renderEvents()" placeholder="Cerca eventi..." class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+        </div>
+      </div>
+
+      <!-- Sub Level Controls Row (Temporal Filters) -->
+      <div id="sub-controls-row" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 mb-8 border-b border-slate-100">
+        <!-- Sub-Tabs (Temporal) -->
+        <div class="flex gap-2" role="group" aria-label="Filtro temporale">
+          <button type="button" onclick="switchTemporalTab('future')" id="tab-temp-future" class="temp-tab shrink-0 rounded-full px-4 py-2 text-xs font-bold transition bg-slate-900 text-white shadow-sm">
+            Prossimi
+          </button>
+          <button type="button" onclick="switchTemporalTab('past')" id="tab-temp-past" class="temp-tab shrink-0 rounded-full px-4 py-2 text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:border-slate-350 hover:text-slate-950">
+            Passati
+          </button>
+        </div>
+
+        <!-- Date Filter Inputs -->
+        <div class="flex items-center gap-3 self-end sm:self-auto" id="date-filter-container">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500" id="filter-date-label">Mostra dal:</span>
+          <input type="date" id="event-date-filter" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+          <button type="button" onclick="clearDateFilter()" class="text-xs font-bold text-slate-400 hover:text-slate-600">Azzera</button>
+        </div>
+      </div>
+
+      <!-- Active Filters Bar -->
+      <div id="active-filters-bar" class="hidden flex-wrap items-center gap-2 mb-6 -mt-2">
+        <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">Filtri attivi:</span>
+        <span id="filter-tag" class="inline-flex items-center gap-1.5 rounded-xl border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-700 shadow-sm">
+          <span id="filter-tag-text">📍 Clusone</span>
+          <button type="button" onclick="clearFilters()" class="select-none text-sm font-black text-violet-500 hover:text-violet-800 focus:outline-none">×</button>
+        </span>
+      </div>
+
+      <!-- Events Grid -->
+      <div id="events-grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200">
+        <!-- Cards dynamically inserted here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="events-empty" class="hidden rounded-lg border border-dashed border-slate-300 bg-white py-16 text-center">
+        <span class="text-3xl">📅</span>
+        <p class="mt-4 font-bold text-slate-900 text-lg">Nessun evento trovato</p>
+        <p class="mt-2 text-sm text-slate-500">Prova a cambiare il filtro della data o passa alla scheda degli eventi passati.</p>
+      </div>
+
+      <!-- General WhatsApp CTA -->
+      <div class="mt-16 text-center">
+        <p class="text-sm text-slate-500 mb-4">Vuoi proporre un evento o ricevere aggiornamenti diretti?</p>
+        <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20informazioni%20sui%20prossimi%20eventi%20PosturaCorretta."
+           target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center justify-center rounded-lg bg-violet-700 px-8 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-violet-800 active:scale-[0.98]">
+          Contattaci su WhatsApp →
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MODALE DETTAGLI EVENTO -->
+  <div id="event-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative flex max-h-[90vh] w-full max-w-2xl scale-95 flex-col rounded-lg border border-slate-100 bg-white p-6 opacity-0 shadow-2xl transition-all duration-300 md:p-8" id="event-modal-card">
+      
+      <!-- Close icon -->
+      <button type="button" onclick="closeEventModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 text-2xl font-bold focus:outline-none transition">
+        ✕
+      </button>
+
+      <!-- Modal Content Body -->
+      <div class="overflow-y-auto pr-1 flex-1 scrollbar-thin">
+        <div class="flex flex-col gap-6" id="event-modal-content">
+          <!-- Dynamically inserted details -->
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="mt-6 border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
+        <a id="event-modal-register-btn" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex flex-1 items-center justify-center rounded-xl bg-violet-700 px-6 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-violet-800 active:scale-[0.98]">
+          Iscriviti ora su WhatsApp →
+        </a>
+        <button type="button" onclick="closeEventModal()" class="rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+          Chiudi
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <%= render "posturacorretta/footer" %>
 </div>
+
+<script>
+(() => {
+  // Event data with programs, locations, and teachers
+  const events = [
+    {
+      id: 1,
+      title: "Camminata ed Esercizi di Mobilità in Val Seriana",
+      date: "2026-07-28",
+      formattedDate: "28 Luglio 2026",
+      location: "Clusone (BG)",
+      locationKey: "clusone",
+      teachers: ["Marco", "Sara Moretti"],
+      description: "Una camminata guidata per esplorare il movimento, rilassare le catene posteriori ed imparare a camminare in salita con stabilità strutturale.",
+      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+      type: "future",
+      waText: "Ciao, vorrei iscrivermi alla camminata in Val Seriana del 28 Luglio.",
+      program: [
+        "09:00 — Ritrovo dei partecipanti presso il parcheggio di Clusone",
+        "09:30 — Sessione iniziale: esercizi di mobilità articolare e respirazione cosciente",
+        "10:15 — Inizio camminata: focus sugli appoggi dei piedi e l'uso corretto del baricentro in salita",
+        "12:30 — Sosta pranzo al sacco e condivisione di gruppo",
+        "14:00 — Esercizi di allungamento catene posteriori e scarico finale",
+        "15:30 — Rientro previsto al punto di partenza"
+      ]
+    },
+    {
+      id: 2,
+      title: "Pratica di DNS ed Animal Flow all'aperto",
+      date: "2026-08-12",
+      formattedDate: "12 Agosto 2026",
+      location: "Parco dei Colli, Bergamo",
+      locationKey: "parco-colli",
+      teachers: ["Marco", "Giulia Conti"],
+      description: "Pratica collettiva di stabilizzazione neuromuscolare ed esplorazione dei movimenti arcaici ed evolutivi sul prato.",
+      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=800",
+      type: "future",
+      waText: "Ciao, vorrei maggiori informazioni sulla lezione di DNS e Animal Flow del 12 Agosto.",
+      program: [
+        "18:00 — Ritrovo sul prato principale del Parco dei Colli",
+        "18:15 — Teoria ed esercizi pratici di respirazione diaframmatica (DNS)",
+        "19:00 — Transizioni a terra ed elementi base del metodo Animal Flow",
+        "19:45 — Sequenza dinamica globale di integrazione posturale",
+        "20:00 — Rilassamento finale e saluti"
+      ]
+    },
+    {
+      id: 3,
+      title: "Ritiro Somatico e Contatto in Natura",
+      date: "2026-09-05",
+      formattedDate: "05 Settembre 2026",
+      location: "Il Giardino del Corpo, Toscana",
+      locationKey: "toscana",
+      teachers: ["Marco", "Andrea Rinaldi", "Laura Bianchi"],
+      description: "Due giorni dedicati all'ascolto di sé, respirazione cosciente, percorsi sensoriali ed alimentazione naturale in agriturismo rigenerativo.",
+      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=800",
+      type: "future",
+      waText: "Ciao, sono interessato al ritiro somatico in Toscana del 5 Settembre.",
+      program: [
+        "Venerdì 16:00 — Arrivo, accoglienza, tisana di benvenuto e sistemazione camere",
+        "Sabato 07:30 — Pratica corporea al risveglio e riscaldamento articolare",
+        "Sabato 10:00 — Camminata sensoriale a piedi scalzi nel bosco dell'agriturismo",
+        "Sabato 15:30 — Laboratorio di autotrattamento fasciale ed igiene posturale",
+        "Domenica 09:00 — Movimenti evolutivi, respirazione ed integrazione delle 5 aree della salute",
+        "Domenica 13:00 — Pranzo rigenerativo finale e cerchio di chiusura"
+      ]
+    },
+    {
+      id: 4,
+      title: "Seminario sulle Catene Muscolari GDS",
+      date: "2026-06-15",
+      formattedDate: "15 Giugno 2026",
+      location: "Studio PosturaCorretta, Bergamo",
+      locationKey: "studio-pc",
+      teachers: ["Marco", "Sara Moretti", "Matteo Romano"],
+      description: "Un pomeriggio teorico-pratico per comprendere le proprie tipologie psicocorporee e i relativi allungamenti e bilanciamenti somatici.",
+      image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800",
+      type: "past",
+      waText: "Ciao, vorrei sapere quando si terrà il prossimo seminario sulle Catene Muscolari GDS dopo quello di Giugno.",
+      program: [
+        "14:30 — Registrazione partecipanti ed introduzione alle 5 famiglie muscolari",
+        "15:00 — Test pratico di auto-valutazione posturale",
+        "16:00 — Esercizi specifici per le catene anteriori e posteriori",
+        "17:30 — Integrazione posturale nel gesto quotidiano",
+        "18:00 — Spazio domande e conclusione"
+      ]
+    },
+    {
+      id: 5,
+      title: "Camminata Consapevole Primaverile",
+      date: "2026-05-10",
+      formattedDate: "10 Maggio 2026",
+      location: "Parco del Serio, Seriate",
+      locationKey: "parco-serio",
+      teachers: ["Marco", "Paolo Ferri"],
+      description: "Ritrovare ritmo, allineamento e presenza mentale riscoprendo le sponde del fiume Serio a piedi scalzi e mobilità cosciente.",
+      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
+      type: "past",
+      waText: "Ciao, vorrei sapere quando replicate la camminata consapevole del Serio.",
+      program: [
+        "08:30 — Ritrovo e cerchio iniziale di presenza mentale",
+        "09:00 — Camminata silenciosa guidata: ascolto dei suoni e del proprio passo",
+        "10:15 — Sosta sul fiume: esperienza di grounding (piedi scalzi) e respirazione",
+        "11:30 — Cerchio di condivisione e riflessioni posturali",
+        "12:00 — Conclusione attività"
+      ]
+    },
+    {
+      id: 6,
+      title: "Introduzione al Corpo come Giardino",
+      date: "2026-04-18",
+      formattedDate: "18 Aprile 2026",
+      location: "Spazio Rigenera, Milano",
+      locationKey: "milano",
+      teachers: ["Marco"],
+      description: "Presentazione interattiva del libro ed introduzione alla visione futura dell'agriturismo rigenerativo.",
+      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800",
+      type: "past",
+      waText: "Ciao, vorrei informazioni sulle prossime presentazioni del libro in programma a Milano.",
+      program: [
+        "20:30 — Inizio presentazione del libro 'Il corpo, un mondo da scoprire' a cura di Marco",
+        "21:15 — Domande e risposte sul legame tra postura, natura ed abitudini",
+        "21:45 — Brindisi di saluto e firma delle copie cartacee"
+      ]
+    }
+  ];
+
+  const places = [
+    {
+      key: "clusone",
+      name: "Clusone (BG)",
+      description: "Camminate montane e mobilità nei boschi della Val Seriana.",
+      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      key: "parco-colli",
+      name: "Parco dei Colli, Bergamo",
+      description: "Pratiche all'aperto, stabilizzazione DNS ed Animal Flow a due passi dalla città.",
+      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      key: "toscana",
+      name: "Il Giardino del Corpo, Toscana",
+      description: "Ritiro somatico e percorsi di benessere integrato in agriturismo rigenerativo.",
+      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      key: "studio-pc",
+      name: "Studio PosturaCorretta, Bergamo",
+      description: "Seminari teorico-pratico di anatomia esperienziale e catene GDS.",
+      image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      key: "parco-serio",
+      name: "Parco del Serio, Seriate",
+      description: "Grounding e camminate a piedi scalzi lungo le sponde del fiume Serio.",
+      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      key: "milano",
+      name: "Spazio Rigenera, Milano",
+      description: "Presentazioni interattive del libro e conferenze sulla salute naturale.",
+      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800"
+    }
+  ];
+
+  const teachers = [
+    {
+      name: "Marco",
+      role: "Fisioterapista & Ideatore PC",
+      description: "Ideatore di PosturaCorretta, specializzato in DNS e terapie integrate del movimento.",
+      image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      name: "Sara Moretti",
+      role: "Chinesiologa",
+      description: "Esperta di ginnastica posturale, catene muscolari GDS e riequilibrio fasciale.",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      name: "Giulia Conti",
+      role: "Movement Coach",
+      description: "Insegnante certificata di Animal Flow e mobilità articolare a corpo libero.",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      name: "Andrea Rinaldi",
+      role: "Osteopata",
+      description: "Specializzato in rilascio somato-emozionale ed integrazione strutturale.",
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      name: "Laura Bianchi",
+      role: "Fisioterapista",
+      description: "Esperta in riabilitazione neurofunzionale e percorsi di cura personalizzati.",
+      image: "https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      name: "Paolo Ferri",
+      role: "Fisioterapista Biomeccanico",
+      description: "Specialista nella rieducazione del cammino e riequilibrio degli appoggi plantari.",
+      image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      name: "Matteo Romano",
+      role: "Massoterapista",
+      description: "Specializzato in terapia miofasciale e decontratturante ad indirizzo sportivo.",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800"
+    }
+  ];
+
+  let currentMacroTab = "events"; // 'events', 'places', 'teachers'
+  let currentTemporalTab = "future"; // 'future', 'past'
+  let selectedLocation = null; // { key, name }
+  let selectedTeacher = null; // string
+
+  // Helper count logic
+  const getEventCountForPlace = (key) => events.filter(e => e.locationKey === key).length;
+  const getEventCountForTeacher = (name) => events.filter(e => e.teachers.includes(name)).length;
+
+  function renderEvents() {
+    const grid = document.getElementById("events-grid");
+    const emptyState = document.getElementById("events-empty");
+    const dateFilter = document.getElementById("event-date-filter").value;
+    const query = document.getElementById("event-search-input").value.trim().toLowerCase();
+
+    // Toggle active filters bar visibility
+    const filterBar = document.getElementById("active-filters-bar");
+    const filterTagText = document.getElementById("filter-tag-text");
+    if ((selectedLocation || selectedTeacher) && currentMacroTab === "events") {
+      filterBar.classList.remove("hidden");
+      filterBar.classList.add("flex");
+      if (selectedLocation) {
+        filterTagText.innerHTML = `📍 Luogo: <strong>${selectedLocation.name}</strong>`;
+      } else {
+        filterTagText.innerHTML = `👤 Professionista: <strong>${selectedTeacher}</strong>`;
+      }
+    } else {
+      filterBar.classList.add("hidden");
+      filterBar.classList.remove("flex");
+    }
+
+    // 1. PLACES RENDERING
+    if (currentMacroTab === "places") {
+      const filteredPlaces = places.filter(p => {
+        if (!query) return true;
+        return p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
+      });
+
+      if (filteredPlaces.length === 0) {
+        grid.classList.add("hidden");
+        emptyState.classList.remove("hidden");
+      } else {
+        emptyState.classList.add("hidden");
+        grid.classList.remove("hidden");
+
+        grid.innerHTML = filteredPlaces.map(p => {
+          const count = getEventCountForPlace(p.key);
+          return `
+            <button type="button" onclick="filterByLocation('${p.key}', '${p.name}')" class="group relative aspect-[16/11] w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-950 text-left shadow-sm transition duration-300 hover:border-slate-300 hover:shadow-md sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none">
+              <img src="${p.image}" alt="${p.name}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition duration-500 group-hover:scale-105 group-hover:opacity-90" loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent"></div>
+              
+              <!-- Event Count Badge -->
+              <div class="absolute left-4 top-4 z-10 rounded-xl bg-violet-700 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
+                ${count} ${count === 1 ? 'Evento' : 'Eventi'}
+              </div>
+
+              <!-- Bottom Text Overlay -->
+              <div class="absolute inset-x-0 bottom-0 z-10 flex flex-col p-5 md:p-6">
+                <span class="text-[10px] font-black uppercase tracking-wider text-violet-300">📍 Località</span>
+                <h3 class="mt-1 text-lg font-black text-white leading-snug group-hover:text-violet-200 transition">
+                  ${p.name}
+                </h3>
+                <p class="mt-1.5 text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                  ${p.description}
+                </p>
+              </div>
+            </button>
+          `;
+        }).join("");
+      }
+      return;
+    }
+
+    // 2. TEACHERS RENDERING
+    if (currentMacroTab === "teachers") {
+      const filteredTeachers = teachers.filter(t => {
+        if (!query) return true;
+        return t.name.toLowerCase().includes(query) || t.role.toLowerCase().includes(query) || t.description.toLowerCase().includes(query);
+      });
+
+      if (filteredTeachers.length === 0) {
+        grid.classList.add("hidden");
+        emptyState.classList.remove("hidden");
+      } else {
+        emptyState.classList.add("hidden");
+        grid.classList.remove("hidden");
+
+        grid.innerHTML = filteredTeachers.map(t => {
+          const count = getEventCountForTeacher(t.name);
+          return `
+            <button type="button" onclick="filterByTeacher('${t.name}')" class="group relative aspect-[16/11] w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-950 text-left shadow-sm transition duration-300 hover:border-slate-300 hover:shadow-md sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none">
+              <img src="${t.image}" alt="${t.name}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition duration-500 group-hover:scale-105 group-hover:opacity-90" loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent"></div>
+              
+              <!-- Event Count Badge -->
+              <div class="absolute left-4 top-4 z-10 rounded-xl bg-violet-700 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
+                Presenza in ${count} ${count === 1 ? 'evento' : 'eventi'}
+              </div>
+
+              <!-- Bottom Text Overlay -->
+              <div class="absolute inset-x-0 bottom-0 z-10 flex flex-col p-5 md:p-6">
+                <span class="text-[10px] font-black uppercase tracking-wider text-violet-300">${t.role}</span>
+                <h3 class="mt-1 text-lg font-black text-white leading-snug group-hover:text-violet-200 transition">
+                  ${t.name}
+                </h3>
+                <p class="mt-1.5 text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                  ${t.description}
+                </p>
+              </div>
+            </button>
+          `;
+        }).join("");
+      }
+      return;
+    }
+
+    // 3. EVENTS RENDERING
+    const filteredEvents = events.filter(e => {
+      // Temporal Tab Filter
+      if (e.type !== currentTemporalTab) return false;
+
+      // Date Picker Filter
+      if (dateFilter) {
+        if (currentTemporalTab === "future") {
+          if (e.date < dateFilter) return false;
+        } else {
+          if (e.date > dateFilter) return false;
+        }
+      }
+
+      // Location filter
+      if (selectedLocation && e.locationKey !== selectedLocation.key) return false;
+
+      // Teacher filter
+      if (selectedTeacher && !e.teachers.includes(selectedTeacher)) return false;
+
+      // Search Query filter
+      if (query) {
+        const matchesTitle = e.title.toLowerCase().includes(query);
+        const matchesDesc = e.description.toLowerCase().includes(query);
+        const matchesLoc = e.location.toLowerCase().includes(query);
+        const matchesTeachers = e.teachers.some(t => t.toLowerCase().includes(query));
+        if (!matchesTitle && !matchesDesc && !matchesLoc && !matchesTeachers) return false;
+      }
+
+      return true;
+    });
+
+    if (filteredEvents.length === 0) {
+      grid.classList.add("hidden");
+      emptyState.classList.remove("hidden");
+    } else {
+      emptyState.classList.add("hidden");
+      grid.classList.remove("hidden");
+
+      grid.innerHTML = filteredEvents.map(e => `
+        <button type="button" onclick="openEventModal(${e.id})" class="group relative aspect-[16/11] w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-950 text-left shadow-sm transition duration-300 hover:border-slate-300 hover:shadow-md sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none">
+          <img src="${e.image}" alt="${e.title}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition duration-500 group-hover:scale-105 group-hover:opacity-90" loading="lazy">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent"></div>
+          
+          <!-- Top date badge overlay -->
+          <div class="absolute left-4 top-4 z-10 rounded-xl bg-white/90 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-sm backdrop-blur-md">
+            ${e.formattedDate}
+          </div>
+
+          <!-- Top hover helper overlay -->
+          <div class="absolute right-4 top-4 z-10 rounded-xl bg-white/25 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100">
+            Leggi Programma 🔎
+          </div>
+
+          <!-- Bottom Text Overlay -->
+          <div class="absolute inset-x-0 bottom-0 z-10 flex flex-col p-5 md:p-6">
+            <span onclick="event.stopPropagation(); filterByLocation('${e.locationKey}', '${e.location}')" class="text-[10px] font-black uppercase tracking-wider text-violet-300 hover:text-violet-200 cursor-pointer transition select-none self-start">
+              📍 ${e.location}
+            </span>
+            <h3 class="mt-1.5 text-lg font-black text-white leading-snug group-hover:text-violet-200 transition line-clamp-2">
+              ${e.title}
+            </h3>
+            <p class="mt-2 text-xs text-slate-300 line-clamp-3 leading-relaxed">
+              ${e.description}
+            </p>
+          </div>
+        </button>
+      `).join("");
+    }
+  }
+
+  window.renderEvents = renderEvents;
+
+  window.openEventModal = function(id) {
+    const event = events.find(e => e.id === id);
+    if (!event) return;
+    const modal = document.getElementById("event-modal");
+    const card = document.getElementById("event-modal-card");
+    const content = document.getElementById("event-modal-content");
+    const registerBtn = document.getElementById("event-modal-register-btn");
+
+    content.innerHTML = `
+      <div class="grid gap-6 md:grid-cols-[160px_1fr]">
+        <div class="hidden aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-xl bg-slate-100 shadow-sm md:block" onclick="filterByLocation('${event.locationKey}', '${event.location}')" title="Filtra per questo luogo">
+          <img src="${event.image}" alt="${event.title}" class="h-full w-full object-cover hover:scale-[1.02] transition duration-300">
+        </div>
+        <div>
+          <button type="button" onclick="event.stopPropagation(); filterByLocation('${event.locationKey}', '${event.location}')" class="inline-flex rounded-full bg-violet-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-violet-700 transition hover:bg-violet-200" title="Filtra per questo luogo">
+            📍 ${event.location}
+          </button>
+          <h2 class="mt-2.5 text-2xl font-black leading-snug text-slate-950">${event.title}</h2>
+          <div class="flex items-center gap-2 mt-3 text-xs text-slate-500 font-semibold">
+            <span>📅 Data dell'evento:</span>
+            <span class="text-slate-800 font-bold">${event.formattedDate}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="border-t border-slate-100 pt-5">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Descrizione</h4>
+        <p class="text-sm leading-relaxed text-slate-655">${event.description}</p>
+      </div>
+
+      <!-- Teachers -->
+      <div class="border-t border-slate-100 pt-5">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Insegnanti e Conduttori presenti</h4>
+        <div class="flex flex-wrap gap-2">
+          ${event.teachers.map(teacher => `
+            <button type="button" onclick="event.stopPropagation(); filterByTeacher('${teacher}')" class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition" title="Filtra eventi con questo professionista">
+              👤 ${teacher}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+
+      <!-- Detailed Program -->
+      <div class="border-t border-slate-100 pt-5">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Programma della giornata</h4>
+        <ul class="space-y-3">
+          ${event.program.map(step => {
+            const parts = step.split(" — ");
+            if (parts.length === 2) {
+              return `
+                <li class="flex items-start gap-3 text-sm">
+                  <span class="font-bold text-violet-700 whitespace-nowrap bg-violet-50 rounded-lg px-2.5 py-1 text-xs mt-0.5 border border-violet-100/50">${parts[0]}</span>
+                  <span class="text-slate-600 mt-1 leading-normal">${parts[1]}</span>
+                </li>
+              `;
+            } else {
+              return `
+                <li class="flex items-start gap-3 text-sm text-slate-600">
+                  <span class="text-violet-700 mt-1">•</span>
+                  <span class="leading-normal">${step}</span>
+                </li>
+              `;
+            }
+          }).join("")}
+        </ul>
+      </div>
+    `;
+
+    // Configure Register button URL
+    registerBtn.href = `https://wa.me/393792891488?text=${encodeURIComponent(event.waText)}`;
+
+    // Show modal and run entrance animation
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => {
+      card.classList.remove("scale-95", "opacity-0");
+      card.classList.add("scale-100", "opacity-100");
+    }, 10);
+  };
+
+  window.closeEventModal = function() {
+    const modal = document.getElementById("event-modal");
+    const card = document.getElementById("event-modal-card");
+
+    card.classList.remove("scale-100", "opacity-100");
+    card.classList.add("scale-95", "opacity-0");
+    
+    setTimeout(() => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+    }, 300);
+  };
+
+  window.filterByLocation = function(key, name) {
+    selectedLocation = { key, name };
+    selectedTeacher = null;
+    closeEventModal();
+    switchMacroTab("events");
+  };
+
+  window.filterByTeacher = function(name) {
+    selectedTeacher = name;
+    selectedLocation = null;
+    closeEventModal();
+    switchMacroTab("events");
+  };
+
+  window.clearFilters = function() {
+    selectedLocation = null;
+    selectedTeacher = null;
+    renderEvents();
+  };
+
+  window.switchMacroTab = function(tab) {
+    currentMacroTab = tab;
+
+    // Highlight macro tab button active state
+    const macroTabs = ["events", "places", "teachers"];
+    macroTabs.forEach(t => {
+      const btn = document.getElementById(`tab-macro-${t}`);
+      if (t === tab) {
+        btn.className = "macro-tab shrink-0 rounded-full px-5 py-2.5 text-xs font-bold transition bg-slate-950 text-white shadow-sm";
+      } else {
+        btn.className = "macro-tab shrink-0 rounded-full px-5 py-2.5 text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:border-slate-350 hover:text-slate-950";
+      }
+    });
+
+    // Toggle sub controls row visibility & update search bar placeholder
+    const subControlsRow = document.getElementById("sub-controls-row");
+    const searchInput = document.getElementById("event-search-input");
+    
+    if (tab === "events") {
+      subControlsRow.classList.remove("hidden");
+      subControlsRow.classList.add("flex");
+      searchInput.placeholder = "Cerca eventi...";
+    } else {
+      subControlsRow.classList.add("hidden");
+      subControlsRow.classList.remove("flex");
+      if (tab === "places") {
+        searchInput.placeholder = "Cerca luoghi...";
+      } else {
+        searchInput.placeholder = "Cerca Conduttori...";
+      }
+    }
+
+    // Trigger render with opacity transition animation
+    const grid = document.getElementById("events-grid");
+    grid.style.opacity = 0;
+    setTimeout(() => {
+      renderEvents();
+      grid.style.opacity = 1;
+    }, 150);
+  };
+
+  window.switchTemporalTab = function(tab) {
+    currentTemporalTab = tab;
+
+    // Toggle sub temporal tabs styles
+    const futureBtn = document.getElementById("tab-temp-future");
+    const pastBtn = document.getElementById("tab-temp-past");
+    const dateLabel = document.getElementById("filter-date-label");
+
+    if (tab === "future") {
+      futureBtn.className = "temp-tab shrink-0 rounded-full px-4 py-2 text-xs font-bold transition bg-slate-900 text-white shadow-sm";
+      pastBtn.className = "temp-tab shrink-0 rounded-full px-4 py-2 text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:border-slate-350 hover:text-slate-950";
+      dateLabel.textContent = "Mostra dal:";
+    } else {
+      pastBtn.className = "temp-tab shrink-0 rounded-full px-4 py-2 text-xs font-bold transition bg-slate-900 text-white shadow-sm";
+      futureBtn.className = "temp-tab shrink-0 rounded-full px-4 py-2 text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:border-slate-350 hover:text-slate-950";
+      dateLabel.textContent = "Mostra fino al:";
+    }
+
+    // Trigger render
+    const grid = document.getElementById("events-grid");
+    grid.style.opacity = 0;
+    setTimeout(() => {
+      renderEvents();
+      grid.style.opacity = 1;
+    }, 150);
+  };
+
+  window.clearDateFilter = function() {
+    document.getElementById("event-date-filter").value = "";
+    renderEvents();
+  };
+
+  function initializeEventsPage() {
+    const dateFilter = document.getElementById("event-date-filter");
+    const modal = document.getElementById("event-modal");
+    if (!dateFilter || !modal) return;
+
+    if (dateFilter.dataset.eventsInitialized !== "true") {
+      dateFilter.addEventListener("change", renderEvents);
+      dateFilter.dataset.eventsInitialized = "true";
+    }
+
+    if (modal.dataset.eventsInitialized !== "true") {
+      modal.addEventListener("click", function(e) {
+        if (e.target === this) {
+          closeEventModal();
+        }
+      });
+      modal.dataset.eventsInitialized = "true";
+    }
+
+    renderEvents();
+  }
+
+  document.addEventListener("DOMContentLoaded", initializeEventsPage);
+  document.addEventListener("turbo:load", initializeEventsPage);
+})();
+</script>

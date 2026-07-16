@@ -14,9 +14,11 @@ Rails.application.routes.draw do
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
   get "posturacorretta" => "landing#posturacorretta", as: :posturacorretta
   get "posturacorretta/percorso" => "posturacorretta#percorso", as: :posturacorretta_percorso
+  get "posturacorretta/professionisti" => "posturacorretta#professionisti", as: :posturacorretta_professionisti
   get "posturacorretta/contenuti" => "posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/eventi" => "posturacorretta#eventi", as: :posturacorretta_eventi
   get "posturacorretta/filosofia" => "posturacorretta#filosofia", as: :posturacorretta_filosofia
+  get "posturacorretta/progetti" => "posturacorretta#progetti", as: :posturacorretta_progetti
   get "posturacorretta/collabora" => "posturacorretta#collabora", as: :posturacorretta_collabora
 
   # Dashboard utente loggato

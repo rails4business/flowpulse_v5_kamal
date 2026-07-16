@@ -113,8 +113,7 @@ Qui inizia il testo del capitolo scritto in standard Markdown...
           <p class="text-xs leading-relaxed">
             <strong>Come mettere a breve/pubblicare capitoli?</strong><br>
             Impostando <code>access: "draft"</code> il capitolo mostrerà il badge <strong>"A breve"</strong> nell'indice e presenterà una pagina segnaposto ai visitatori. I superadmin, purché loggati e in modalità attiva, potranno vederne l'intero testo per revisionarlo. 
-            Impostando <code>access: "free"</code> il capitolo diventa visibile pubblicamente a tutti.
-            Impostando <code>access: "hide"</code> il capitolo viene tolto dall'indice e dall'aside per i visitatori, e l'URL diretto risponde come contenuto non trovato. I superadmin lo vedono con il badge <strong>"Nascosto"</strong>.
+            Impostando <code>access: "hide"</code> il capitolo viene tolto dall'indice e dall'aside sia per i visitatori che per i superadmin (evitando di affollare l'indice dell'aside), ma rimane accessibile tramite URL diretto per i soli superadmin (rispondendo come non trovato per i visitatori).
           </p>
         </div>
       </section>

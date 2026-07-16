@@ -78,7 +78,7 @@
     .workspace { max-width: 1280px; margin: -36px auto 0; padding: 0 24px 90px; position: relative; z-index: 3; }
     .toolbar {
       display: grid;
-      grid-template-columns: minmax(220px, 1fr) auto;
+      grid-template-columns: 1fr;
       gap: 16px;
       align-items: center;
       padding: 18px;
@@ -148,11 +148,15 @@
     .modes { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 240px; }
     .mode { display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px; border-radius: 9px; background: #f3f6fa; color: #56657a; font-size: 10px; font-weight: 800; white-space: nowrap; }
     .mode::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #91a0b3; }
-    .mode.one { color: var(--orange); background: var(--orange-wash); }
-    .mode.one::before { background: #e18a3c; }
-    .mode.group { color: var(--green); background: var(--green-wash); }
-    .mode.group::before { background: #31a68a; }
-    .professionals { display: flex; align-items: center; justify-content: flex-end; min-width: 128px; }
+    .mode.info { color: var(--blue); background: var(--sky); }
+    .mode.info::before { background: var(--blue); }
+    .mode.practice { color: var(--green); background: var(--green-wash); }
+    .mode.practice::before { background: #31a68a; }
+    .mode.teach { color: var(--violet); background: var(--violet-wash); }
+    .mode.teach::before { background: var(--violet); }
+    .participant-count { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; color: #64748b; font-size: 11px; font-weight: 750; }
+    .participant-count::before { content: "●"; color: #8aa3c4; font-size: 7px; }
+    .teachers { display: flex; align-items: center; justify-content: flex-end; min-width: 128px; }
     .avatars { display: flex; flex-direction: row-reverse; justify-content: flex-end; }
     .avatar {
       position: relative;
@@ -169,14 +173,22 @@
     }
     .avatar:first-child { margin-left: 0; }
     .avatar img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .avatar.teacher-red { border-color: #ef6a6a; }
+    .avatar.teacher-green { border-color: #38a982; }
+    .avatar.teacher-blue { border-color: #4c8de8; }
     .avatar.more { display: grid; place-items: center; background: var(--navy); color: white; font-size: 10px; font-weight: 850; }
     .chevron { display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 9px; color: #7b8799; background: transparent; cursor: pointer; transition: transform .25s, background .2s; }
     .chevron:hover { background: #eef3f9; }
     .module.open .chevron { transform: rotate(180deg); }
 
     .module-body { display: none; border-top: 1px solid #edf1f6; background: #fbfcfe; }
-    .module.open .module-body { display: grid; grid-template-columns: minmax(0,1.5fr) minmax(230px,.65fr); }
-    .lessons { padding: 22px 24px 25px 94px; }
+    .module.open .module-body { display: block; }
+    .module-tabs { display: flex; gap: 5px; overflow-x: auto; padding: 12px 22px 0 94px; background: white; scrollbar-width: thin; }
+    .module-tab { flex: 0 0 auto; padding: 10px 13px; border: 0; border-bottom: 2px solid transparent; color: #718096; background: transparent; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .module-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .tab-panel { display: none; padding: 22px 24px 25px 94px; }
+    .tab-panel.active { display: block; }
+    .lessons { padding: 0; }
     .body-title { display: flex; justify-content: space-between; margin-bottom: 10px; color: #8a95a5; font-size: 10px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
     .lesson { display: grid; grid-template-columns: 39px minmax(0, 1fr) auto; gap: 13px; align-items: center; padding: 12px 9px; border-bottom: 1px solid #edf1f6; border-radius: 10px; }
     .lesson:last-child { border-bottom: 0; }
@@ -193,6 +205,26 @@
     .person strong { display: block; font-size: 12px; }
     .person span { color: var(--muted); font-size: 10px; }
     .view-all { width: 100%; margin-top: 16px; padding: 10px; border: 1px solid var(--line); border-radius: 11px; color: var(--blue); background: white; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .panel-intro { max-width: 720px; margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+    .option-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+    .option-card { padding: 17px; border: 1px solid var(--line); border-radius: 15px; background: white; }
+    .option-card strong { display: block; margin-bottom: 5px; font-size: 13px; }
+    .option-card p { margin: 0; color: var(--muted); font-size: 11px; }
+    .option-icon { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 12px; border-radius: 11px; color: var(--blue); background: var(--sky); font-size: 15px; }
+    .location-list, .participant-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .location-card { display: grid; grid-template-columns: 38px 1fr auto; gap: 11px; align-items: center; width: 100%; padding: 14px; border: 1px solid var(--line); border-radius: 14px; text-align: left; background: white; cursor: pointer; }
+    .location-card:hover { border-color: #9dbbe8; }
+    .location-pin { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; color: var(--green); background: var(--green-wash); }
+    .location-card strong { display: block; font-size: 12px; }
+    .location-card small { color: var(--muted); }
+    .location-card em { color: var(--blue); font-size: 11px; font-style: normal; font-weight: 800; }
+    .teacher-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 11px; }
+    .teacher-grid .person { padding: 13px; border: 1px solid var(--line); border-radius: 14px; background: white; }
+    .participant-stat { padding: 18px; border: 1px solid var(--line); border-radius: 15px; background: white; }
+    .participant-stat strong { display: block; font-size: 26px; letter-spacing: -.03em; }
+    .participant-stat span { color: var(--muted); font-size: 11px; }
+    .participant-bar { height: 7px; margin-top: 13px; overflow: hidden; border-radius: 99px; background: #e8edf4; }
+    .participant-bar i { display: block; height: 100%; border-radius: inherit; background: var(--blue); }
     .empty { display: none; padding: 55px; border: 1px dashed #bdc9d8; border-radius: 18px; color: var(--muted); text-align: center; background: white; }
 
     .modal { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; padding: 20px; background: rgba(11,26,49,.56); backdrop-filter: blur(8px); }
@@ -215,7 +247,7 @@
       .side { display: none; }
       .module-top { grid-template-columns: 48px minmax(0, 1fr) auto 26px; }
       .modes { grid-column: 2 / -1; grid-row: 2; justify-content: flex-start; max-width: none; }
-      .professionals { grid-column: 3; grid-row: 1; }
+      .teachers { grid-column: 3; grid-row: 1; }
       .chevron { grid-column: 4; grid-row: 1; }
     }
     @media (max-width: 720px) {
@@ -235,91 +267,35 @@
       .module-index { width: 43px; height: 43px; border-radius: 13px; }
       .module-title h3 { font-size: 16px; }
       .module-title p { display: none; }
-      .professionals { grid-column: 2; grid-row: 2; justify-content: flex-start; }
+      .teachers { grid-column: 2; grid-row: 2; justify-content: flex-start; }
       .chevron { grid-column: 3; }
       .modes { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; }
-      .module.open .module-body { grid-template-columns: 1fr; }
-      .lessons { padding: 17px 14px; }
+      .module-tabs { padding: 10px 14px 0; }
+      .tab-panel { padding: 17px 14px; }
       .lesson { grid-template-columns: 32px 1fr; }
       .lesson-status { display: none; }
-      .roster { border-top: 1px solid #edf1f6; border-left: 0; }
+      .option-grid, .location-list, .participant-grid, .teacher-grid { grid-template-columns: 1fr; }
     }
   }
 </style>
-<section class="flex min-h-[calc(100vh-4rem)] items-center px-5 py-10 md:py-12 xl:py-8">
-      <div class="mx-auto w-full max-w-6xl">
-        <div class="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] xl:gap-10">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-              PosturaCorretta
-            </p>
-            <h1 class="mt-4 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl md:leading-[1.05] xl:text-5xl">
-              Trova la giusta posizione da cui osservare il mondo.
-              <span class="mt-2 block text-blue-700">Inizia dalla salute!</span>
-            </h1>
-            <p class="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg xl:mt-4">
-             Partiamo dalle metodiche posturali per imparare a leggere il corpo, come si relaziona con l’ambiente per migliorare la nostra salute e la nostra vita.
-            </p>
-          </div>
 
-          <div class="rounded-[2rem] border border-blue-100 bg-white p-3 shadow-soft xl:p-4">
-            <img src="https://ik.imagekit.io/posturacorretta/img_home_postura_corretta.png?tr=w-1100,q-85" alt="PosturaCorretta: trova la giusta posizione da cui osservare il mondo" class="mx-auto aspect-[16/10] w-full rounded-[1.5rem] object-contain xl:max-h-[300px]">
-          </div>
-        </div>
 
-        <div class="mt-8 grid gap-4 md:grid-cols-2 xl:mt-7 xl:grid-cols-5">
-          <a href="?tab=percorso#percorso" data-landing-tab="percorso" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Percorso</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Personalizzato</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Scegli gli aspetti della salute su cui vuoi lavorare e costruisci il percorso più adatto a te.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Inizia<span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-
-          <a href="?tab=accademia#accademia" data-landing-tab="accademia" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Accademia</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Impara</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5"> Con le metodiche posturali, comprendi e riattiva i sistemi del corpo.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Inizia l'accademia <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-
-          <a href="?tab=eventi#eventi" data-landing-tab="eventi" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Eventi e Community</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Vivi il percorso</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Incontri, camminate, attività e momenti di comunità sul territorio.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Guarda <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-          <a href="?tab=filosofia#filosofia" data-landing-tab="filosofia" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Il libro</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">Il corpo, un mondo da scoprire</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Dalla PosturaCorretta all'agriturismo rigenerativo Il Giardino del Corpo.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Scopri il libro <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-
-          <a href="?tab=collabora#collabora" data-landing-tab="collabora" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Progetti</p>
-            <h2 class="mt-2 text-lg font-semibold text-slate-950">In corso</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Aggiornamenti, cantieri aperti e prossimi sviluppi del progetto.</p>
-            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Leggi gli aggiornamenti <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
-          </a>
-        </div>
-      </div>
-    </section>
 <section id="academy-curriculum" aria-labelledby="academy-curriculum-title">
   <section class="hero" id="top">
     <div class="hero-inner">
       <div>
         <p class="eyebrow">Postura e fisiologia</p>
         <h1 id="academy-curriculum-title">Un percorso da vivere, una competenza da trasmettere.</h1>
-        <p class="hero-copy">Esplora moduli e lezioni, scegli come partecipare e incontra i professionisti formati in ogni area.</p>
+        <p class="hero-copy">Esplora moduli e lezioni, passa dall’informazione alla pratica e incontra gli insegnanti di ogni area.</p>
         <div class="hero-actions">
           <button class="button secondary" id="academyOpenAll" type="button">Apri tutti i moduli</button>
-          <button class="button primary" type="button" data-roster>Tutti i professionisti</button>
+          <button class="button primary" type="button" data-roster>Tutti gli insegnanti</button>
         </div>
       </div>
       <div class="summary" aria-label="Riepilogo del corso">
         <div><strong>8</strong><span>Moduli</span></div>
         <div><strong>38</strong><span>Lezioni</span></div>
-        <div><strong>24</strong><span>Professionisti</span></div>
+        <div><strong>24</strong><span>Insegnanti</span></div>
       </div>
     </div>
   </section>
@@ -327,12 +303,6 @@
   <main class="workspace">
     <div class="toolbar">
       <label class="search"><span class="sr-only">Cerca modulo o lezione</span><input id="search" type="search" placeholder="Cerca un modulo o una lezione…"></label>
-      <div class="filter-tabs" role="group" aria-label="Filtra per modalità">
-        <button class="filter-tab active" data-filter="all">Tutti</button>
-        <button class="filter-tab" data-filter="self">Autonomia</button>
-        <button class="filter-tab" data-filter="one">Singolo</button>
-        <button class="filter-tab" data-filter="group">Gruppo</button>
-      </div>
     </div>
 
     <div class="content-grid">
@@ -350,7 +320,7 @@
 
       <section>
         <div class="section-head">
-          <div><h2>Il programma</h2><p>Apri un modulo per vedere lezioni e persone formate.</p></div>
+          <div><h2>Il programma</h2><p>Apri un modulo per vedere lezioni, partecipanti e insegnanti.</p></div>
           <div class="legend"><span><i></i> Formazione completata</span><span>⌄ Apri modulo</span></div>
         </div>
         <div class="module-list" id="moduleList"></div>
@@ -361,7 +331,7 @@
 
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
-      <div class="modal-head"><h3 id="modalTitle">Professionista formato</h3><button class="close" id="closeModal" aria-label="Chiudi">✕</button></div>
+      <div class="modal-head"><h3 id="modalTitle">Insegnante</h3><button class="close" id="closeModal" aria-label="Chiudi">✕</button></div>
       <div class="modal-content" id="modalContent"></div>
     </div>
   </div>
@@ -372,49 +342,97 @@
     if (!root || root.dataset.initialized === 'true') return;
     root.dataset.initialized = 'true';
     const people = [
-      {name:'Laura Bianchi', role:'Fisioterapista', img:'https://i.pravatar.cc/160?img=47', mode:'Gruppo', date:'Giugno 2026'},
-      {name:'Andrea Rinaldi', role:'Osteopata', img:'https://i.pravatar.cc/160?img=12', mode:'Singolo', date:'Maggio 2026'},
-      {name:'Sara Moretti', role:'Chinesiologa', img:'https://i.pravatar.cc/160?img=32', mode:'Gruppo', date:'Aprile 2026'},
-      {name:'Paolo Ferri', role:'Fisioterapista', img:'https://i.pravatar.cc/160?img=11', mode:'Singolo', date:'Marzo 2026'},
-      {name:'Giulia Conti', role:'Professionista del movimento', img:'https://i.pravatar.cc/160?img=45', mode:'Gruppo', date:'Febbraio 2026'},
-      {name:'Matteo Romano', role:'Massoterapista', img:'https://i.pravatar.cc/160?img=14', mode:'Gruppo', date:'Gennaio 2026'}
+      {name:'Laura Bianchi', role:'Fisioterapista', category:'red', categoryLabel:'Professionista sanitario', img:'https://i.pravatar.cc/160?img=47', date:'Giugno 2026'},
+      {name:'Andrea Rinaldi', role:'Osteopata', category:'red', categoryLabel:'Professionista sanitario', img:'https://i.pravatar.cc/160?img=12', date:'Maggio 2026'},
+      {name:'Sara Moretti', role:'Chinesiologa', category:'blue', categoryLabel:'Insegnante non sanitario', img:'https://i.pravatar.cc/160?img=32', date:'Aprile 2026'},
+      {name:'Paolo Ferri', role:'Fisioterapista', category:'red', categoryLabel:'Professionista sanitario', img:'https://i.pravatar.cc/160?img=11', date:'Marzo 2026'},
+      {name:'Giulia Conti', role:'Allenatrice', category:'blue', categoryLabel:'Insegnante non sanitario', img:'https://i.pravatar.cc/160?img=45', date:'Febbraio 2026'},
+      {name:'Matteo Romano', role:'Massoterapista', category:'green', categoryLabel:'Professionista del benessere', img:'https://i.pravatar.cc/160?img=14', date:'Gennaio 2026'}
     ];
+
+    const locations = [
+      {name:'Centro PosturaCorretta', city:'Brescia', type:'In presenza'},
+      {name:'Studio Movimento', city:'Calvisano', type:'In presenza'},
+      {name:'Aula online', city:'Online', type:'Diretta video'},
+      {name:'Giardino del Corpo', city:'Viadana di Calvisano', type:'Eventi'}
+    ];
+    const moduleLocations = [[0,2],[0,1,2],[0,2],[1,2,3],[0,1],[2,3],[0,2],[1,2,3]];
 
     const modules = [
-      {n:'00', id:'m0', title:'Intro: basi e fondamenti', desc:'La visione della postura e le basi fisiologiche del percorso.', modes:['self','one','group'], people:[0,1,2,3,4], lessons:[['Perché la postura','Le migliori metodiche per imparare a leggere il corpo.'],['Rosso, verde, blu','Come usare il percorso rispettando i ruoli professionali.'],['Informati, pratica, insegna','I diversi livelli di partecipazione.'],['Massaggio, presenza e autotrattamento','Presa di coscienza corporea e ascolto.']]},
-      {n:'01', id:'m1', title:'Igiene Posturale', desc:'I concetti essenziali per trasformare le abitudini quotidiane.', modes:['self','one','group'], people:[0,2,3,4,5], lessons:[['Mobilità articolare','Recuperare possibilità di movimento.'],['Punti di tensione','Riconoscere e ascoltare le tensioni.'],['Vie di discesa','Accompagnare il corpo verso il rilascio.'],['Recettori sensoriali','Vista, appoggi e orientamento.']]},
-      {n:'02', id:'m2', title:'Principi di Fisioterapia', desc:'Uno sguardo biologico ai grandi sistemi vitali del corpo.', modes:['self','group'], people:[0,1,3,5], lessons:[['Sistema respiratorio','Respirazione, torace e scambi.'],['Sistema nervoso e urogenitale','Regolazione, sensibilità e funzioni.'],['Sistema muscolo-scheletrico','Movimento, carico e adattamento.'],['Sistema cardiocircolatorio','Flussi e distribuzione.'],['Sistema linfatico e digerente','Drenaggio, nutrimento ed eliminazione.']]},
-      {n:'03', id:'m3', title:'Biomeccanica Comportamentale (GDS)', desc:'Le catene muscolari e il loro significato psicofisiologico.', modes:['one','group'], people:[0,2,4,5], lessons:[['Le 5 direzioni di movimento','La mappa generale del metodo.'],['Catena AM','Flessione e protezione.'],['Catena AL','Rotazione interna e adattamento.'],['Catena PM','Estensione e verticalità.'],['Catena PL','Rotazione esterna e apertura.'],['Catene PA/AP','Tra controllo e rilascio.']]},
-      {n:'04', id:'m4', title:'Principi di Osteopatia', desc:'Relazioni tra struttura, fascia, visceri e regolazione.', modes:['self','one'], people:[1,3,5], lessons:[['Eliminare le disfunzioni','Mobilità e capacità di adattamento.'],['Il sistema fasciale','Continuità e trasmissione delle tensioni.'],['Il sistema viscerale','Organi, spazi e movimento.'],['Il sistema cranio-sacrale','Ascolto e ritmi profondi.'],['Il sistema neurovegetativo','Equilibrio tra attivazione e recupero.']]},
-      {n:'05', id:'m5', title:'Bioritmi: Corpo e Coscienza', desc:'I parametri strutturali ed energetici della coscienza somatica.', modes:['self','group'], people:[0,2,4,5], lessons:[['Le 2 circolazioni','Scambio tra dentro e fuori.'],['I 3 centri di gravità','Testa, torace e bacino.'],['I 4 tipi di movimento','Qualità e direzioni fondamentali.'],['I 5 elementi','Il ritmo stagionale.'],['Le 6 coppie di meridiani','Relazioni funzionali.'],['I 7 centri neurolinfatici','Una mappa di lettura corporea.']]},
-      {n:'06', id:'m6', title:'Sequenza di Kinesiologia Applicata', desc:'Un processo ordinato di osservazione, test e riequilibrio.', modes:['one','group'], people:[1,2,3], lessons:[['Preparazione al test','Contesto e affidabilità.'],['Test muscolare','Ascoltare la risposta del sistema.'],['Localizzazione terapeutica','Cercare relazioni significative.'],['Riequilibrio e verifica','Intervenire e ritestare.']]},
-      {n:'07', id:'m7', title:'Altre metodiche posturali', desc:'Confrontare mappe diverse senza perdere il filo del percorso.', modes:['self','group'], people:[0,1,2,3,4,5], lessons:[['Mézières e RPG','Le catene e l’allungamento globale.'],['Feldenkrais','Apprendimento attraverso il movimento.'],['Alexander e consapevolezza','Uso di sé e organizzazione.'],['Sintesi del percorso','Costruire la propria mappa integrata.']]}
+      {n:'00', id:'m0', title:'Intro: basi e fondamenti', desc:'La visione della postura e le basi fisiologiche del percorso.', participants:186, modes:['info','practice','teach'], people:[0,1,2,3,4], lessons:[['Perché la postura','Le migliori metodiche per imparare a leggere il corpo.'],['Rosso, verde, blu','Come usare il percorso rispettando i diversi ambiti degli insegnanti.'],['Informati, pratica, insegna','I diversi livelli di partecipazione.'],['Massaggio, presenza e autotrattamento','Presa di coscienza corporea e ascolto.']]},
+      {n:'01', id:'m1', title:'Igiene Posturale', desc:'I concetti essenziali per trasformare le abitudini quotidiane.', participants:142, modes:['info','practice','teach'], people:[0,2,3,4,5], lessons:[['Mobilità articolare','Recuperare possibilità di movimento.'],['Punti di tensione','Riconoscere e ascoltare le tensioni.'],['Vie di discesa','Accompagnare il corpo verso il rilascio.'],['Recettori sensoriali','Vista, appoggi e orientamento.']]},
+      {n:'02', id:'m2', title:'Principi di Fisioterapia', desc:'Uno sguardo biologico ai grandi sistemi vitali del corpo.', participants:96, modes:['info','practice','teach'], people:[0,1,3,5], lessons:[['Sistema respiratorio','Respirazione, torace e scambi.'],['Sistema nervoso e urogenitale','Regolazione, sensibilità e funzioni.'],['Sistema muscolo-scheletrico','Movimento, carico e adattamento.'],['Sistema cardiocircolatorio','Flussi e distribuzione.'],['Sistema linfatico e digerente','Drenaggio, nutrimento ed eliminazione.']]},
+      {n:'03', id:'m3', title:'Biomeccanica Comportamentale (GDS)', desc:'Le catene muscolari e il loro significato psicofisiologico.', participants:74, modes:['info','practice','teach'], people:[0,2,4,5], lessons:[['Le 5 direzioni di movimento','La mappa generale del metodo.'],['Catena AM','Flessione e protezione.'],['Catena AL','Rotazione interna e adattamento.'],['Catena PM','Estensione e verticalità.'],['Catena PL','Rotazione esterna e apertura.'],['Catene PA/AP','Tra controllo e rilascio.']]},
+      {n:'04', id:'m4', title:'Principi di Osteopatia', desc:'Relazioni tra struttura, fascia, visceri e regolazione.', participants:61, modes:['info','practice','teach'], people:[1,3,5], lessons:[['Eliminare le disfunzioni','Mobilità e capacità di adattamento.'],['Il sistema fasciale','Continuità e trasmissione delle tensioni.'],['Il sistema viscerale','Organi, spazi e movimento.'],['Il sistema cranio-sacrale','Ascolto e ritmi profondi.'],['Il sistema neurovegetativo','Equilibrio tra attivazione e recupero.']]},
+      {n:'05', id:'m5', title:'Bioritmi: Corpo e Coscienza', desc:'I parametri strutturali ed energetici della coscienza somatica.', participants:53, modes:['info','practice','teach'], people:[0,2,4,5], lessons:[['Le 2 circolazioni','Scambio tra dentro e fuori.'],['I 3 centri di gravità','Testa, torace e bacino.'],['I 4 tipi di movimento','Qualità e direzioni fondamentali.'],['I 5 elementi','Il ritmo stagionale.'],['Le 6 coppie di meridiani','Relazioni funzionali.'],['I 7 centri neurolinfatici','Una mappa di lettura corporea.']]},
+      {n:'06', id:'m6', title:'Sequenza di Kinesiologia Applicata', desc:'Un processo ordinato di osservazione, test e riequilibrio.', participants:39, modes:['info','practice','teach'], people:[1,2,3], lessons:[['Preparazione al test','Contesto e affidabilità.'],['Test muscolare','Ascoltare la risposta del sistema.'],['Localizzazione terapeutica','Cercare relazioni significative.'],['Riequilibrio e verifica','Intervenire e ritestare.']]},
+      {n:'07', id:'m7', title:'Altre metodiche posturali', desc:'Confrontare mappe diverse senza perdere il filo del percorso.', participants:28, modes:['info','practice','teach'], people:[0,1,2,3,4,5], lessons:[['Mézières e RPG','Le catene e l’allungamento globale.'],['Feldenkrais','Apprendimento attraverso il movimento.'],['Alexander e consapevolezza','Uso di sé e organizzazione.'],['Sintesi del percorso','Costruire la propria mappa integrata.']]}
     ];
 
-    const modeLabel = {self:'Autonomia', one:'Singolo', group:'Gruppo'};
+    const modeLabel = {info:'Informati', practice:'Pratica', teach:'Insegna'};
     const moduleList = root.querySelector('#moduleList');
-    const avatar = (idx, extra='') => `<button class="avatar ${extra}" data-person="${idx}" aria-label="Apri il profilo di ${people[idx].name}"><img src="${people[idx].img}" alt="" onerror="this.style.display='none';this.parentNode.textContent='${people[idx].name.split(' ').map(x=>x[0]).join('')}'"></button>`;
+    const avatar = (idx, extra='') => `<button class="avatar teacher-${people[idx].category} ${extra}" data-person="${idx}" aria-label="Apri il profilo di ${people[idx].name}"><img src="${people[idx].img}" alt="" onerror="this.style.display='none';this.parentNode.textContent='${people[idx].name.split(' ').map(x=>x[0]).join('')}'"></button>`;
 
     function renderModules() {
       moduleList.innerHTML = modules.map((m, mi) => `
         <article class="module ${mi === 1 ? 'open' : ''}" id="${m.id}" data-modes="${m.modes.join(' ')}" data-search="${(m.title+' '+m.desc+' '+m.lessons.flat().join(' ')).toLowerCase()}">
           <div class="module-top">
             <span class="module-index">${m.n}</span>
-            <span class="module-title"><h3>${m.title}</h3><p>${m.desc}</p></span>
+            <span class="module-title"><h3>${m.title}</h3><p>${m.desc}</p><span class="participant-count">${m.participants} partecipanti hanno svolto il modulo</span></span>
             <span class="modes">${m.modes.map(x=>`<span class="mode ${x}">${modeLabel[x]}</span>`).join('')}</span>
-            <span class="professionals"><span class="avatars">${m.people.slice(0,3).reverse().map(i=>avatar(i)).join('')}<button class="avatar more" data-module="${mi}" aria-label="Vedi tutti i professionisti">+${Math.max(0,m.people.length-3)}</button></span></span>
+            <span class="teachers"><span class="avatars">${m.people.slice(0,3).reverse().map(i=>avatar(i)).join('')}<button class="avatar more" data-module="${mi}" aria-label="Vedi tutti gli insegnanti">+${Math.max(0,m.people.length-3)}</button></span></span>
             <button class="chevron" aria-label="Apri ${m.title}" aria-expanded="${mi === 1}">⌄</button>
           </div>
           <div class="module-body">
-            <div class="lessons">
-              <div class="body-title"><span>${m.lessons.length} lezioni</span><span>Contenuti del modulo</span></div>
-              ${m.lessons.map((l,i)=>`<div class="lesson"><span class="lesson-num">${String(i+1).padStart(2,'0')}</span><span><strong>${l[0]}</strong><small>${l[1]}</small></span><span class="lesson-status">✓ disponibile</span></div>`).join('')}
+            <div class="module-tabs" role="tablist" aria-label="Sezioni di ${m.title}">
+              ${[['info','Informati'],['practice','Pratica'],['teach','Insegna'],['locations','Centri e luoghi'],['teachers','Insegnanti'],['participants','Partecipanti']].map((tab,ti)=>`<button class="module-tab ${ti===0?'active':''}" type="button" role="tab" aria-selected="${ti===0}" data-module-tab="${tab[0]}">${tab[1]}</button>`).join('')}
             </div>
-            <aside class="roster">
-              <div class="body-title"><span>Professionisti formati</span></div>
-              <div class="roster-list">${m.people.slice(0,3).map(i=>`<div class="person">${avatar(i)}<span><strong>${people[i].name}</strong><span>${people[i].role} · ${people[i].mode}</span></span></div>`).join('')}</div>
-              <button class="view-all" data-module="${mi}">Vedi tutti (${m.people.length})</button>
-            </aside>
+
+            <div class="tab-panel active" data-panel="info">
+              <p class="panel-intro">Tutte le informazioni e i contenuti per conoscere il modulo, seguirne le lezioni e approfondire gli argomenti.</p>
+              <div class="lessons">
+                <div class="body-title"><span>${m.lessons.length} lezioni</span><span>Contenuti del modulo</span></div>
+                ${m.lessons.map((l,i)=>`<div class="lesson"><span class="lesson-num">${String(i+1).padStart(2,'0')}</span><span><strong>${l[0]}</strong><small>${l[1]}</small></span><span class="lesson-status">✓ disponibile</span></div>`).join('')}
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="practice">
+              <p class="panel-intro">Scegli come trasformare le informazioni in esperienza concreta.</p>
+              <div class="option-grid">
+                <div class="option-card"><span class="option-icon">◌</span><strong>Pratica autonoma</strong><p>Esercizi, sequenze e indicazioni da seguire in autonomia.</p></div>
+                <div class="option-card"><span class="option-icon">●</span><strong>Pratica individuale</strong><p>Un percorso personale accompagnato da un insegnante.</p></div>
+                <div class="option-card"><span class="option-icon">◎</span><strong>Pratica di gruppo</strong><p>Incontri online o in presenza con altri partecipanti.</p></div>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="teach">
+              <p class="panel-intro">Il percorso per imparare a trasmettere questo modulo e diventare insegnante.</p>
+              <div class="option-grid">
+                <div class="option-card"><span class="option-icon">1</span><strong>Requisiti</strong><p>Completa Informati e Pratica prima di accedere alla formazione.</p></div>
+                <div class="option-card"><span class="option-icon">2</span><strong>Tirocinio</strong><p>Affianca un insegnante durante un percorso reale.</p></div>
+                <div class="option-card"><span class="option-icon">3</span><strong>Abilitazione</strong><p>Verifica finale e autorizzazione a insegnare il modulo.</p></div>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="locations">
+              <p class="panel-intro">Centri, studi e luoghi nei quali è possibile praticare o seguire il modulo.</p>
+              <div class="location-list">${moduleLocations[mi].map(i=>`<button class="location-card" type="button" data-location="${i}"><span class="location-pin">⌖</span><span><strong>${locations[i].name}</strong><small>${locations[i].city} · ${locations[i].type}</small></span><em>Dettagli</em></button>`).join('')}</div>
+            </div>
+
+            <div class="tab-panel" data-panel="teachers">
+              <p class="panel-intro">Gli insegnanti abilitati al modulo. Il bordo indica l’ambito di provenienza: rosso sanitario, verde benessere, blu non sanitario.</p>
+              <div class="teacher-grid">${m.people.map(i=>`<div class="person">${avatar(i)}<span><strong>${people[i].name}</strong><span>${people[i].role} · ${people[i].categoryLabel}</span></span></div>`).join('')}</div>
+            </div>
+
+            <div class="tab-panel" data-panel="participants">
+              <p class="panel-intro">Le persone che hanno iniziato, praticato o completato il modulo.</p>
+              <div class="participant-grid">
+                <div class="participant-stat"><strong>${m.participants}</strong><span>Partecipanti complessivi</span><div class="participant-bar"><i style="width:100%"></i></div></div>
+                <div class="participant-stat"><strong>${Math.round(m.participants*.72)}</strong><span>Hanno completato Informati</span><div class="participant-bar"><i style="width:72%"></i></div></div>
+                <div class="participant-stat"><strong>${Math.round(m.participants*.46)}</strong><span>Hanno partecipato a Pratica</span><div class="participant-bar"><i style="width:46%"></i></div></div>
+                <div class="participant-stat"><strong>${Math.max(3,Math.round(m.participants*.12))}</strong><span>Nel percorso Insegna</span><div class="participant-bar"><i style="width:12%"></i></div></div>
+              </div>
+            </div>
           </div>
         </article>`).join('');
     }
@@ -442,8 +460,18 @@
       const top = e.target.closest('.module-top');
       const personBtn = e.target.closest('[data-person]');
       const moduleBtn = e.target.closest('[data-module]');
+      const tabBtn = e.target.closest('[data-module-tab]');
+      const locationBtn = e.target.closest('[data-location]');
       if (personBtn) { e.stopPropagation(); showPerson(+personBtn.dataset.person); return; }
       if (moduleBtn) { e.stopPropagation(); showRoster(+moduleBtn.dataset.module); return; }
+      if (locationBtn) { e.stopPropagation(); showLocation(+locationBtn.dataset.location); return; }
+      if (tabBtn) {
+        e.stopPropagation();
+        const card = tabBtn.closest('.module');
+        card.querySelectorAll('.module-tab').forEach(btn => { btn.classList.toggle('active', btn === tabBtn); btn.setAttribute('aria-selected', btn === tabBtn); });
+        card.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.dataset.panel === tabBtn.dataset.moduleTab));
+        return;
+      }
       if (top) { const card = top.closest('.module'); card.classList.toggle('open'); top.querySelector('.chevron').setAttribute('aria-expanded', card.classList.contains('open')); }
     });
     root.querySelector('#academyOpenAll').addEventListener('click', e => {
@@ -458,14 +486,20 @@
     function openModal(){ modal.classList.add('open'); document.body.style.overflow='hidden'; }
     function closeModal(){ modal.classList.remove('open'); document.body.style.overflow=''; }
     function showPerson(i) {
-      const p = people[i]; modalTitle.textContent='Professionista formato';
-      modalContent.innerHTML=`<div class="profile">${avatar(i)}<div><h4>${p.name}</h4><p>${p.role}</p><span class="mode ${p.mode==='Gruppo'?'group':'one'}">Formazione in ${p.mode.toLowerCase()}</span></div></div><div class="profile-meta"><span class="mode group">Completato</span><span class="mode">${p.date}</span><span class="mode">Profilo verificato</span></div>`;
+      const p = people[i]; modalTitle.textContent='Insegnante';
+      modalContent.innerHTML=`<div class="profile">${avatar(i)}<div><h4>${p.name}</h4><p>${p.role}</p><span class="mode ${p.category==='red'?'teach':p.category==='green'?'practice':'info'}">${p.categoryLabel}</span></div></div><div class="profile-meta"><span class="mode teach">Insegnante</span><span class="mode">Dal ${p.date}</span><span class="mode">Profilo verificato</span></div>`;
       openModal();
     }
     function showRoster(mi) {
       const ids = mi === undefined ? people.map((_,i)=>i) : modules[mi].people;
-      modalTitle.textContent = mi === undefined ? 'Professionisti dell’Accademia' : `Formati in ${modules[mi].title}`;
-      modalContent.innerHTML=`<div class="roster-list">${ids.map(i=>`<div class="person" style="padding:8px 0;border-bottom:1px solid #edf1f6">${avatar(i)}<span><strong>${people[i].name}</strong><span>${people[i].role} · formazione in ${people[i].mode.toLowerCase()}</span></span></div>`).join('')}</div>`;
+      modalTitle.textContent = mi === undefined ? 'Insegnanti dell’Accademia' : `Insegnanti di ${modules[mi].title}`;
+      modalContent.innerHTML=`<div class="roster-list">${ids.map(i=>`<div class="person" style="padding:8px 0;border-bottom:1px solid #edf1f6">${avatar(i)}<span><strong>${people[i].name}</strong><span>${people[i].role} · ${people[i].categoryLabel}</span></span></div>`).join('')}</div>`;
+      openModal();
+    }
+    function showLocation(i) {
+      const location = locations[i];
+      modalTitle.textContent = location.name;
+      modalContent.innerHTML=`<div class="profile"><span class="location-pin" style="width:72px;height:72px;font-size:25px">⌖</span><div><h4>${location.name}</h4><p>${location.city}</p><span class="mode practice">${location.type}</span></div></div><div class="profile-meta"><span class="mode">Modulo disponibile</span><span class="mode info">Vedi calendario</span><span class="mode">Contatta il centro</span></div>`;
       openModal();
     }
     root.querySelector('[data-roster]').addEventListener('click',()=>showRoster());

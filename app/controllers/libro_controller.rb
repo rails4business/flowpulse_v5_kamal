@@ -149,7 +149,7 @@ class LibroController < ApplicationController
       slug = item["slug"]
       access = access_map[slug].presence || item["access"].presence || "draft"
 
-      next if hidden_access?(access) && !Current.user&.superadmin_user?
+      next if hidden_access?(access)
 
       chapter_num = nil
       outline_number = nil

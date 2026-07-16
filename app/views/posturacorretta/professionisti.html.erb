@@ -1,0 +1,296 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<%
+  professional_scopes = {
+    "potenziale" => "Potenziale umano",
+    "ambiente" => "Corpo e ambiente"
+  }
+
+  professional_categories = {
+    "recupero" => { label: "Recupero e cura", scope: "potenziale" },
+    "movimento" => { label: "Movimento", scope: "potenziale" },
+    "fisiologia" => { label: "Postura e fisiologia", scope: "potenziale" },
+    "benessere" => { label: "Benessere integrato", scope: "potenziale" },
+    "nutrizione" => { label: "Nutrizione", scope: "potenziale" },
+    "emotivo" => { label: "Emotivo e mentale", scope: "potenziale" },
+    "piante" => { label: "Piante e rimedi", scope: "potenziale" },
+    "territorio" => { label: "Territorio", scope: "ambiente" }
+  }
+
+  professionals = [
+    {
+      name: "Marco",
+      role: "Fisioterapista e iniziatore del progetto",
+      scope: "potenziale",
+      category: "recupero",
+      area: "Recupero e cura",
+      badge: "Iniziatore percorso",
+      program: "Valutazione Postura e Fisiologia",
+      description: "Imposta la lettura iniziale, collega sintomi, abitudini e sistemi corporei, e coordina il primo programma.",
+      image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Laura Bianchi",
+      role: "Fisioterapista",
+      scope: "potenziale",
+      category: "recupero",
+      area: "Recupero e cura",
+      badge: "Professionista aggiunto",
+      program: "Recupero funzionale e follow-up",
+      description: "Segue riabilitazione, progressione degli esercizi e controllo dei segnali durante il percorso.",
+      image: "https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Andrea Rinaldi",
+      role: "Osteopata",
+      scope: "potenziale",
+      category: "recupero",
+      area: "Recupero e cura",
+      badge: "Professionista aggiunto",
+      program: "Trattamento, ascolto corporeo e sistema fasciale",
+      description: "Lavora su mobilita, tensioni, compensi e regolazione neurovegetativa quando il percorso lo richiede.",
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Sara Moretti",
+      role: "Chinesiologa",
+      scope: "potenziale",
+      category: "fisiologia",
+      area: "Postura e fisiologia",
+      badge: "Iniziatore percorso",
+      program: "Igiene posturale e biomeccanica GDS",
+      description: "Accompagna moduli educativi su catene muscolari, mobilita articolare e pratica posturale.",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Giulia Conti",
+      role: "Movement coach",
+      scope: "potenziale",
+      category: "movimento",
+      area: "Movimento",
+      badge: "Professionista aggiunto",
+      program: "Movimento e allenamento",
+      description: "Integra mobilita, Animal Flow, progressioni a corpo libero e routine sostenibili.",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Paolo Ferri",
+      role: "Fisioterapista biomeccanico",
+      scope: "potenziale",
+      category: "movimento",
+      area: "Movimento",
+      badge: "Professionista aggiunto",
+      program: "Appoggi, cammino e carico",
+      description: "Aiuta a leggere appoggi, cammino, carico e gesto quotidiano nei percorsi di prevenzione e performance.",
+      image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Elena Serra",
+      role: "Nutrizionista",
+      scope: "potenziale",
+      category: "nutrizione",
+      area: "Nutrizione",
+      badge: "Professionista aggiunto",
+      program: "Nutrizione e abitudini alimentari",
+      description: "Collega alimentazione, ritmo quotidiano, obiettivi e sostenibilita del cambiamento.",
+      image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Marta Leone",
+      role: "Psicologa / counselor",
+      scope: "potenziale",
+      category: "emotivo",
+      area: "Emotivo e mentale",
+      badge: "Professionista aggiunto",
+      program: "Aspetti emotivi e mentali",
+      description: "Lavora su continuita, stress, narrazione personale e rapporto tra corpo, emozioni e abitudini.",
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Nadia Riva",
+      role: "Erborista",
+      scope: "potenziale",
+      category: "piante",
+      area: "Piante e rimedi",
+      badge: "Professionista aggiunto",
+      program: "Piante, integratori e rimedi tradizionali",
+      description: "Porta una lettura prudente e territoriale delle risorse naturali, sempre in dialogo con le figure sanitarie.",
+      image: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Luca Marino",
+      role: "Facilitatore territoriale",
+      scope: "ambiente",
+      category: "territorio",
+      area: "Territorio",
+      badge: "Iniziatore percorso",
+      program: "Corpo e ambiente",
+      description: "Organizza esperienze in natura, camminate, laboratori e collegamenti con luoghi del territorio.",
+      image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=700"
+    },
+    {
+      name: "Matteo Romano",
+      role: "Massoterapista",
+      scope: "potenziale",
+      category: "benessere",
+      area: "Benessere integrato",
+      badge: "Professionista aggiunto",
+      program: "Autotrattamento e recupero",
+      description: "Aiuta a integrare massaggio, consapevolezza corporea e routine di recupero nei programmi integrati.",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=700"
+    }
+  ]
+%>
+
+<div id="top" class="bg-slate-50 text-slate-900 antialiased">
+  <section class="border-t border-slate-100 px-5 py-12 md:py-16">
+    <div class="mx-auto max-w-6xl">
+      <header class="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[0.22em] text-blue-700">Rete professionale</p>
+          <h1 class="mt-3 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">Professionisti che possono entrare nel percorso.</h1>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+            Ogni percorso puo avere un iniziatore che tiene il filo e altri professionisti che aggiungono il proprio programma.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+          <p class="text-sm font-semibold text-slate-950">Come funziona</p>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            <div class="rounded-xl bg-blue-50 p-4">
+              <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-700">Iniziatore</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Apre il percorso, imposta il primo programma e coordina le aggiunte.</p>
+            </div>
+            <div class="rounded-xl bg-slate-50 p-4">
+              <p class="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Aggiunto</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600">Entra con il suo programma quando serve una competenza specifica.</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="mt-10 inline-flex w-full rounded-2xl bg-blue-50 p-1.5 sm:w-auto" aria-label="Ambiti rete professionale">
+        <% professional_scopes.each_with_index do |(key, label), index| %>
+          <button type="button" data-professional-scope="<%= key %>" class="professional-scope flex-1 rounded-xl px-4 py-2.5 text-sm font-bold transition sm:flex-none <%= index.zero? ? 'bg-blue-700 text-white shadow-sm' : 'text-blue-700 hover:bg-white/60' %>">
+            <%= label %>
+          </button>
+        <% end %>
+      </nav>
+
+      <nav class="mt-6 flex gap-2 overflow-x-auto pb-3 no-scrollbar" aria-label="Categorie professionisti">
+        <button type="button" data-professional-filter="tutti" data-category-scope="all" class="professional-filter shrink-0 rounded-full bg-slate-950 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition">
+          Tutti
+        </button>
+        <% professional_categories.each do |key, category| %>
+          <button type="button" data-professional-filter="<%= key %>" data-category-scope="<%= category[:scope] %>" class="professional-filter shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:border-slate-300 hover:text-slate-950">
+            <%= category[:label] %>
+          </button>
+        <% end %>
+      </nav>
+
+      <div class="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3" id="professional-grid">
+        <% professionals.each do |professional| %>
+          <article class="professional-card overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg" data-scope="<%= professional[:scope] %>" data-category="<%= professional[:category] %>" data-search="<%= [professional[:name], professional[:role], professional[:area], professional[:program], professional[:description]].join(' ').downcase %>">
+            <div class="aspect-[16/9] bg-slate-100">
+              <img src="<%= professional[:image] %>" alt="<%= professional[:name] %>" class="h-full w-full object-cover">
+            </div>
+            <div class="p-5">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-blue-700"><%= professional[:area] %></span>
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600"><%= professional[:badge] %></span>
+              </div>
+              <h2 class="mt-4 text-xl font-black tracking-tight text-slate-950"><%= professional[:name] %></h2>
+              <p class="mt-1 text-sm font-semibold text-slate-500"><%= professional[:role] %></p>
+              <p class="mt-4 text-sm font-bold text-slate-900"><%= professional[:program] %></p>
+              <p class="mt-2 text-sm leading-6 text-slate-600"><%= professional[:description] %></p>
+              <div class="mt-5 flex gap-2">
+                <a href="<%= posturacorretta_percorso_path %>" class="inline-flex flex-1 items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">Usa nel percorso</a>
+                <a href="https://wa.me/393792891488?text=<%= ERB::Util.url_encode("Ciao, vorrei informazioni su #{professional[:name]} per un percorso PosturaCorretta.") %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Contatta</a>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+
+      <div id="professional-empty" class="mt-8 hidden rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+        <p class="font-black text-slate-900">Nessun professionista in questa categoria</p>
+        <p class="mt-2 text-sm text-slate-500">La rete e in costruzione: puoi proporre una collaborazione dalla pagina Collabora.</p>
+      </div>
+    </div>
+  </section>
+
+  <%= render "posturacorretta/footer" %>
+</div>
+
+<script>
+  (() => {
+    const scopeButtons = document.querySelectorAll("[data-professional-scope]");
+    const buttons = document.querySelectorAll("[data-professional-filter]");
+    const cards = document.querySelectorAll(".professional-card");
+    const empty = document.getElementById("professional-empty");
+    const activeScopeClasses = ["bg-blue-700", "text-white", "shadow-sm"];
+    const inactiveScopeClasses = ["text-blue-700", "hover:bg-white/60"];
+    const activeClasses = ["bg-slate-950", "text-white", "shadow-sm"];
+    const inactiveClasses = ["border", "border-slate-200", "bg-white", "text-slate-600", "hover:border-slate-300", "hover:text-slate-950"];
+    let activeScope = "potenziale";
+    let activeCategory = "tutti";
+
+    function renderFilters() {
+      let visible = 0;
+
+      scopeButtons.forEach(button => {
+        const active = button.dataset.professionalScope === activeScope;
+        button.classList.remove(...activeScopeClasses, ...inactiveScopeClasses);
+        button.classList.add(...(active ? activeScopeClasses : inactiveScopeClasses));
+        button.setAttribute("aria-selected", active.toString());
+      });
+
+      buttons.forEach(button => {
+        const belongsToScope = button.dataset.categoryScope === "all" || button.dataset.categoryScope === activeScope;
+        const active = button.dataset.professionalFilter === activeCategory;
+        button.classList.remove(...activeClasses, ...inactiveClasses);
+        button.classList.add(...(active ? activeClasses : inactiveClasses));
+        button.classList.toggle("hidden", !belongsToScope);
+        button.setAttribute("aria-selected", active.toString());
+      });
+
+      cards.forEach(card => {
+        const matchesScope = card.dataset.scope === activeScope;
+        const matchesCategory = activeCategory === "tutti" || card.dataset.category === activeCategory;
+        const shouldShow = matchesScope && matchesCategory;
+        card.classList.toggle("hidden", !shouldShow);
+        if (shouldShow) visible += 1;
+      });
+
+      empty.classList.toggle("hidden", visible !== 0);
+    }
+
+    function activateScope(scope) {
+      activeScope = scope;
+      activeCategory = "tutti";
+      renderFilters();
+    }
+
+    function activateFilter(category) {
+      activeCategory = category;
+      renderFilters();
+    }
+
+    scopeButtons.forEach(button => {
+      button.addEventListener("click", () => activateScope(button.dataset.professionalScope));
+    });
+
+    buttons.forEach(button => {
+      button.addEventListener("click", () => activateFilter(button.dataset.professionalFilter));
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedScope = params.get("ambito") || "potenziale";
+    const requestedCategory = params.get("categoria") || "tutti";
+    activeScope = document.querySelector(`[data-professional-scope="${requestedScope}"]`) ? requestedScope : "potenziale";
+    activeCategory = document.querySelector(`[data-professional-filter="${requestedCategory}"][data-category-scope="${activeScope}"], [data-professional-filter="${requestedCategory}"][data-category-scope="all"]`) ? requestedCategory : "tutti";
+    renderFilters();
+  })();
+</script>
