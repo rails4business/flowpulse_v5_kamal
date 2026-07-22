@@ -1,0 +1,471 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<%
+  quick_links = [
+    {
+      eyebrow: "Accademia",
+      title: "Conosci e pratica",
+      description: "Comprendi il corpo e sperimenta le principali metodiche posturali, anche partendo da zero.",
+      cta: "Inizia l’Accademia",
+      path: posturacorretta_accademia_path
+    },
+    {
+      eyebrow: "Percorso",
+      title: "Costruisci il tuo percorso",
+      description: "Scegli gli aspetti della salute su cui lavorare e crea un percorso adatto alle tue necessità.",
+      cta: "Inizia il percorso",
+      path: posturacorretta_percorso_path
+    },
+    {
+      eyebrow: "Eventi e community",
+      title: "Vivi l’esperienza",
+      description: "Incontri, camminate, attività e occasioni per conoscere persone e realtà del territorio.",
+      cta: "Scopri gli eventi",
+      path: posturacorretta_eventi_path
+    },
+    {
+      eyebrow: "Il libro",
+      title: "Il corpo, un mondo da scoprire",
+      description: "Dall’Accademia PosturaCorretta al progetto rigenerativo Il Giardino del Corpo.",
+      cta: "Scopri il libro",
+      path: posturacorretta_filosofia_path
+    },
+    {
+      eyebrow: "Progetti",
+      title: "Segui ciò che sta nascendo",
+      description: "Cantieri aperti, aggiornamenti e possibilità di partecipare allo sviluppo del progetto.",
+      cta: "Esplora i progetti",
+      path: posturacorretta_progetti_path
+    }
+  ]
+
+  human_areas = [
+    {
+      slug: "overview",
+      verb: "Postura",
+      title: "Come può aiutarti la postura?",
+      description: "Le metodiche posturali aiutano a osservare come il corpo si organizza, si muove e si adatta alle attività e all’ambiente. Possono offrire un punto di partenza per comprendere meglio la salute e orientare il percorso più adatto.",
+      topics: "Corpo • Movimento • Fisiologia • Abitudini • Ambiente",
+      positive: "Osservare la persona nel suo insieme",
+      blockage: "Fermarsi soltanto al singolo sintomo",
+      positive_label: "Il punto di partenza",
+      blockage_label: "Il limite da evitare",
+      overview: true,
+      position: "top-0 z-[8] sm:top-0",
+      button_classes: "from-white via-blue-100 to-blue-300 text-blue-950 shadow-blue-900/10 ring-2 ring-blue-200 focus-visible:ring-blue-300",
+      panel_classes: "border-blue-200 bg-white",
+      badge_classes: "bg-blue-700 text-white",
+      title_classes: "text-blue-950",
+      copy_classes: "text-slate-700",
+      accent_classes: "text-blue-800",
+      positive_classes: "border-blue-200 text-blue-950",
+      positive_label_classes: "text-blue-600"
+    },
+    {
+      slug: "community",
+      verb: "Appartengo",
+      title: "Stile di vita, ambiente e territorio",
+      description: "Il rapporto della persona con i luoghi, la natura, le relazioni, i gruppi e la comunità di cui fa parte.",
+      topics: "Ambiente • Territorio • Natura • Relazioni • Gruppi • Comunità",
+      positive: "Mi sento parte del tutto",
+      blockage: "Separazione e attaccamento",
+      position: "top-16 z-[7] sm:top-20",
+      button_classes: "from-violet-300/90 via-violet-500/75 to-violet-700/60 text-white shadow-violet-900/10 focus-visible:ring-violet-300",
+      panel_classes: "border-violet-200 bg-violet-50",
+      badge_classes: "bg-violet-600 text-white",
+      title_classes: "text-violet-950",
+      copy_classes: "text-violet-900",
+      accent_classes: "text-violet-800",
+      positive_classes: "border-violet-200 text-violet-950",
+      positive_label_classes: "text-violet-600"
+    },
+    {
+      slug: "evolution",
+      verb: "Comprendo",
+      title: "Evoluzione armonica",
+      description: "Modelli e pratiche per osservare le sfere dell’essere umano, sviluppare consapevolezza e trasformare le abitudini.",
+      topics: "Modelli • Sfere dell’essere umano • Consapevolezza • Visione • Abitudini",
+      positive: "Vedo con chiarezza",
+      blockage: "Illusione e confusione",
+      position: "top-32 z-[6] sm:top-40",
+      button_classes: "from-indigo-300/90 via-indigo-500/75 to-indigo-700/60 text-white shadow-indigo-900/10 focus-visible:ring-indigo-300",
+      panel_classes: "border-indigo-200 bg-indigo-50",
+      badge_classes: "bg-indigo-600 text-white",
+      title_classes: "text-indigo-950",
+      copy_classes: "text-indigo-900",
+      accent_classes: "text-indigo-800",
+      positive_classes: "border-indigo-200 text-indigo-950",
+      positive_label_classes: "text-indigo-600"
+    },
+    {
+      slug: "expression",
+      verb: "Esprimo",
+      title: "Educazione e Accademia Postura e Fisiologia",
+      description: "Educazione, divulgazione e studio del corpo per conoscere, praticare e trasmettere ciò che si è appreso.",
+      topics: "Educazione • Accademia • Divulgazione • Studio • Insegnamento",
+      positive: "Comunico ciò che sento e conosco",
+      blockage: "Menzogna e non detto",
+      position: "top-48 z-[5] sm:top-60",
+      button_classes: "from-sky-300/90 via-sky-500/75 to-sky-700/60 text-white shadow-sky-900/10 focus-visible:ring-sky-300",
+      panel_classes: "border-sky-200 bg-sky-50",
+      badge_classes: "bg-sky-600 text-white",
+      title_classes: "text-sky-950",
+      copy_classes: "text-sky-900",
+      accent_classes: "text-sky-800",
+      positive_classes: "border-sky-200 text-sky-950",
+      positive_label_classes: "text-sky-600"
+    },
+    {
+      slug: "wellbeing",
+      verb: "Armonizzo",
+      title: "Benessere e servizi alla persona",
+      description: "Discipline e servizi rivolti all’equilibrio, alla cura di sé e alla qualità della relazione con il proprio corpo e con gli altri.",
+      topics: "Discipline bio-naturali • Fitness • Estetica • Servizi alla persona",
+      positive: "Amo e accolgo",
+      blockage: "Dolore e chiusura",
+      position: "top-64 z-[4] sm:top-80",
+      button_classes: "from-emerald-300/95 via-emerald-500/85 to-emerald-700/70 text-white shadow-emerald-900/20 focus-visible:ring-emerald-300",
+      panel_classes: "border-emerald-200 bg-emerald-50",
+      badge_classes: "bg-emerald-600 text-white",
+      title_classes: "text-emerald-950",
+      copy_classes: "text-emerald-900",
+      accent_classes: "text-emerald-800",
+      positive_classes: "border-emerald-200 text-emerald-950",
+      positive_label_classes: "text-emerald-600"
+    },
+    {
+      slug: "performance",
+      verb: "Agisco",
+      title: "Performance, lavoro e formazione",
+      description: "Sviluppare capacità fisiche, professionali e cognitive per agire con maggiore autonomia ed efficacia.",
+      topics: "Performance • Lavoro • Formazione • Capacità cognitive • Tecnologia • IA",
+      positive: "Esprimo la mia volontà",
+      blockage: "Vergogna e senso d’impotenza",
+      position: "top-80 z-[3] sm:top-[25rem]",
+      button_classes: "from-amber-200/90 via-amber-400/80 to-amber-600/65 text-amber-950 shadow-amber-900/10 focus-visible:ring-amber-300",
+      panel_classes: "border-amber-200 bg-amber-50",
+      badge_classes: "bg-amber-400 text-amber-950",
+      title_classes: "text-amber-950",
+      copy_classes: "text-amber-900",
+      accent_classes: "text-amber-800",
+      positive_classes: "border-amber-200 text-amber-950",
+      positive_label_classes: "text-amber-600"
+    },
+    {
+      slug: "vitality",
+      verb: "Sento",
+      title: "Prevenzione nelle attività",
+      description: "Imparare ad ascoltare il corpo e prevenire i rischi nelle attività quotidiane, sportive, lavorative e ricreative.",
+      topics: "Attività quotidiane • Sport • Ergonomia • Lavoro • Sicurezza",
+      positive: "Provo piacere",
+      blockage: "Senso di colpa",
+      position: "top-96 z-[2] sm:top-[30rem]",
+      button_classes: "from-orange-200/90 via-orange-500/80 to-orange-700/65 text-white shadow-orange-900/10 focus-visible:ring-orange-300",
+      panel_classes: "border-orange-200 bg-orange-50",
+      badge_classes: "bg-orange-500 text-white",
+      title_classes: "text-orange-950",
+      copy_classes: "text-orange-900",
+      accent_classes: "text-orange-800",
+      positive_classes: "border-orange-200 text-orange-950",
+      positive_label_classes: "text-orange-600"
+    },
+    {
+      slug: "care",
+      verb: "Esisto",
+      title: "Cura, patologie e riabilitazione",
+      description: "L’ambito sanitario dedicato alla diagnosi, al dolore, alla terapia, alla riabilitazione e all’accompagnamento professionale.",
+      topics: "Patologie • Dolore • Terapia • Riabilitazione",
+      positive: "Mi sento al sicuro",
+      blockage: "Paura",
+      position: "top-[28rem] z-[1] sm:top-[35rem]",
+      button_classes: "from-red-300/90 via-red-500/80 to-red-800/65 text-white shadow-red-900/10 focus-visible:ring-red-300",
+      panel_classes: "border-red-200 bg-red-50",
+      badge_classes: "bg-red-600 text-white",
+      title_classes: "text-red-950",
+      copy_classes: "text-red-900",
+      accent_classes: "text-red-800",
+      positive_classes: "border-red-200 text-red-950",
+      positive_label_classes: "text-red-600"
+    }
+  ]
+
+  audiences = [
+    {
+      initial: "S",
+      eyebrow: "Area sanitaria",
+      title: "Professionisti sanitari",
+      description: "Percorsi, metodiche e contenuti per approfondire la lettura del corpo e accompagnare cura, terapia e riabilitazione.",
+      topics: "Cura • Valutazione • Terapia • Riabilitazione",
+      card_classes: "border-red-200 bg-red-50",
+      icon_classes: "bg-red-600 text-white",
+      eyebrow_classes: "text-red-600",
+      title_classes: "text-red-950",
+      copy_classes: "text-red-800",
+      topics_classes: "text-red-700"
+    },
+    {
+      initial: "B",
+      eyebrow: "Area benessere",
+      title: "Professionisti del benessere",
+      description: "Percorsi, metodiche e contenuti da integrare nelle attività dedicate al movimento, all’equilibrio e alla cura della persona.",
+      topics: "Movimento • Prevenzione • Benessere • Servizi",
+      card_classes: "border-emerald-200 bg-emerald-50",
+      icon_classes: "bg-emerald-600 text-white",
+      eyebrow_classes: "text-emerald-600",
+      title_classes: "text-emerald-950",
+      copy_classes: "text-emerald-800",
+      topics_classes: "text-emerald-700"
+    },
+    {
+      initial: "T",
+      eyebrow: "Aperto a tutti",
+      title: "Educazione accessibile a tutti",
+      description: "Contenuti divulgativi e pratiche di base per conoscere il corpo, comprendere la propria salute e scegliere con maggiore consapevolezza.",
+      topics: "Informazione • Pratica • Consapevolezza • Autonomia",
+      card_classes: "border-sky-200 bg-sky-50",
+      icon_classes: "bg-sky-600 text-white",
+      eyebrow_classes: "text-sky-600",
+      title_classes: "text-sky-950",
+      copy_classes: "text-sky-800",
+      topics_classes: "text-sky-700"
+    }
+  ]
+%>
+
+<div id="top" class="bg-white text-slate-900 antialiased">
+  <!-- Hero, postura e sette ambiti in un unico componente -->
+  <section id="human-areas" class="bg-gradient-to-b from-blue-50/70 via-white to-slate-50/70 px-5 py-12 md:py-16 xl:py-20" aria-labelledby="human-areas-title" data-human-areas>
+    <div class="mx-auto max-w-6xl">
+      <header class="mx-auto max-w-3xl text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+          PosturaCorretta
+        </p>
+
+        <h1 id="human-areas-title" class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+          Trova la giusta posizione da cui osservare il mondo.
+          <span class="mt-2 block text-blue-700">Inizia dalla salute.</span>
+        </h1>
+
+        <p class="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 md:text-lg md:leading-8">
+          Seleziona <strong class="font-semibold text-slate-800">Postura</strong>
+          per scoprire da dove partiamo oppure scegli uno dei sette colori
+          per esplorare i diversi ambiti della persona.
+        </p>
+      </header>
+
+      <div class="mt-10 grid items-center gap-10 lg:mt-14 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] lg:gap-16">
+        <!-- Cerchi sovrapposti -->
+        <div class="relative mx-auto h-[36rem] w-full max-w-xs isolation-isolate sm:h-[44rem]" role="tablist" aria-label="Postura e sette ambiti dell’essere umano">
+          <% human_areas.each do |area| %>
+            <% selected = area.fetch(:slug) == "overview" %>
+            <button
+              type="button"
+              id="area-tab-<%= area.fetch(:slug) %>"
+              class="absolute left-1/2 flex h-32 w-32 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br p-4 text-center text-base font-bold opacity-80 shadow-lg backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 sm:h-36 sm:w-36 <%= area.fetch(:position) %> <%= area.fetch(:button_classes) %> <%= "z-[9] scale-110 opacity-100 shadow-xl ring-4 ring-white/80" if selected %>"
+              role="tab"
+              aria-selected="<%= selected %>"
+              aria-controls="area-panel-<%= area.fetch(:slug) %>"
+              tabindex="<%= selected ? 0 : -1 %>"
+              data-area-tab
+            >
+              <%= area.fetch(:verb) %>
+            </button>
+          <% end %>
+        </div>
+
+        <!-- Pannelli -->
+        <div class="relative min-h-[30rem]" aria-live="polite">
+          <% human_areas.each do |area| %>
+            <% selected = area.fetch(:slug) == "overview" %>
+            <article
+              id="area-panel-<%= area.fetch(:slug) %>"
+              class="rounded-[1.75rem] border p-6 shadow-sm md:p-8 <%= area.fetch(:panel_classes) %> <%= "hidden" unless selected %>"
+              role="tabpanel"
+              aria-labelledby="area-tab-<%= area.fetch(:slug) %>"
+              data-area-panel
+            >
+              <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] <%= area.fetch(:badge_classes) %>">
+                <%= area.fetch(:verb) %>
+              </span>
+
+              <h3 class="mt-5 text-2xl font-semibold tracking-tight <%= area.fetch(:title_classes) %>">
+                <%= area.fetch(:title) %>
+              </h3>
+
+              <p class="mt-4 text-base leading-7 <%= area.fetch(:copy_classes) %>">
+                <%= area.fetch(:description) %>
+              </p>
+
+              <% if area[:overview] %>
+                <div class="mt-5 overflow-hidden rounded-2xl border border-blue-100 bg-blue-50/70 p-2">
+                  <img
+                    src="https://ik.imagekit.io/posturacorretta/img_home_postura_corretta.png?tr=w-900,q-85"
+                    alt="PosturaCorretta: il corpo come punto di partenza per osservare la salute"
+                    class="mx-auto aspect-[16/7] w-full rounded-xl object-contain"
+                  >
+                </div>
+              <% end %>
+
+              <p class="mt-5 text-sm font-semibold leading-6 <%= area.fetch(:accent_classes) %>">
+                <%= area.fetch(:topics) %>
+              </p>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                <div class="rounded-2xl border bg-white/70 p-4 <%= area.fetch(:positive_classes) %>">
+                  <p class="text-xs font-bold uppercase tracking-wider <%= area.fetch(:positive_label_classes) %>">
+                    <%= area.fetch(:positive_label, "Espressione positiva") %>
+                  </p>
+                  <p class="mt-2 font-semibold"><%= area.fetch(:positive) %></p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white/70 p-4 text-slate-800">
+                  <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <%= area.fetch(:blockage_label, "Ciò che blocca") %>
+                  </p>
+                  <p class="mt-2 font-semibold"><%= area.fetch(:blockage) %></p>
+                </div>
+              </div>
+            </article>
+          <% end %>
+
+          <p class="mt-5 text-center text-sm leading-6 text-slate-500 lg:text-left">
+            I sette ambiti costituiscono una
+            <strong class="font-semibold text-slate-700">mappa simbolica e interdisciplinare</strong>
+            della persona, non una classificazione clinica.
+          </p>
+        </div>
+      </div>
+
+      <!-- Pubblici -->
+      <section class="mt-14 border-t border-slate-200 pt-12 md:mt-20 md:pt-16" aria-labelledby="audiences-title">
+        <header class="mx-auto max-w-3xl text-center">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
+            A chi è rivolto
+          </p>
+          <h2 id="audiences-title" class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
+            Percorsi per persone e professionisti
+          </h2>
+          <p class="mt-4 text-base leading-7 text-slate-600">
+            Puoi partire da zero, approfondire la tua pratica oppure integrare
+            nuovi contenuti nel tuo lavoro, nel rispetto delle competenze di ogni figura.
+          </p>
+        </header>
+
+        <div class="mt-8 grid gap-5 md:grid-cols-3">
+          <% audiences.each do |audience| %>
+            <article class="flex h-full flex-col rounded-[1.75rem] border p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg <%= audience.fetch(:card_classes) %>">
+              <div class="flex h-11 w-11 items-center justify-center rounded-2xl text-lg font-bold <%= audience.fetch(:icon_classes) %>" aria-hidden="true">
+                <%= audience.fetch(:initial) %>
+              </div>
+
+              <p class="mt-5 text-xs font-bold uppercase tracking-[0.16em] <%= audience.fetch(:eyebrow_classes) %>">
+                <%= audience.fetch(:eyebrow) %>
+              </p>
+
+              <h3 class="mt-2 text-xl font-semibold tracking-tight <%= audience.fetch(:title_classes) %>">
+                <%= audience.fetch(:title) %>
+              </h3>
+
+              <p class="mt-3 text-sm leading-6 <%= audience.fetch(:copy_classes) %>">
+                <%= audience.fetch(:description) %>
+              </p>
+
+              <p class="mt-auto pt-5 text-sm font-semibold <%= audience.fetch(:topics_classes) %>">
+                <%= audience.fetch(:topics) %>
+              </p>
+            </article>
+          <% end %>
+        </div>
+
+        <p class="mx-auto mt-6 max-w-3xl text-center text-sm leading-6 text-slate-500">
+          Ogni contenuto indica a chi è rivolto e quali competenze professionali
+          sono necessarie per applicarlo.
+        </p>
+      </section>
+    </div>
+
+    <script>
+      (() => {
+        const root = document.currentScript.closest("[data-human-areas]");
+        if (!root || root.dataset.humanAreasReady === "true") return;
+        root.dataset.humanAreasReady = "true";
+
+        const tabs = Array.from(root.querySelectorAll("[data-area-tab]"));
+        const panels = Array.from(root.querySelectorAll("[data-area-panel]"));
+        const activeClasses = ["z-[9]", "scale-110", "opacity-100", "shadow-xl", "ring-4", "ring-white/80"];
+
+        function selectTab(tab, moveFocus = false) {
+          tabs.forEach((item) => {
+            const selected = item === tab;
+            item.setAttribute("aria-selected", String(selected));
+            item.tabIndex = selected ? 0 : -1;
+            activeClasses.forEach((className) => item.classList.toggle(className, selected));
+          });
+
+          panels.forEach((panel) => {
+            panel.classList.toggle("hidden", panel.id !== tab.getAttribute("aria-controls"));
+          });
+
+          if (moveFocus) tab.focus();
+        }
+
+        tabs.forEach((tab, index) => {
+          tab.addEventListener("click", () => selectTab(tab));
+          tab.addEventListener("keydown", (event) => {
+            if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+            event.preventDefault();
+
+            let nextIndex = index;
+            if (event.key === "ArrowDown") nextIndex = (index + 1) % tabs.length;
+            if (event.key === "ArrowUp") nextIndex = (index - 1 + tabs.length) % tabs.length;
+            if (event.key === "Home") nextIndex = 0;
+            if (event.key === "End") nextIndex = tabs.length - 1;
+            selectTab(tabs[nextIndex], true);
+          });
+        });
+      })();
+    </script>
+  </section>
+
+  <!-- Secondo blocco: modi per iniziare -->
+  <section class="border-t border-slate-200 bg-white px-5 py-14 md:py-20" aria-labelledby="start-title">
+    <div class="mx-auto max-w-6xl">
+      <header class="mx-auto max-w-3xl text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
+          Da dove vuoi iniziare?
+        </p>
+        <h2 id="start-title" class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
+          Conosci, pratica e partecipa.
+        </h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          Entra dall’Accademia, costruisci il tuo percorso oppure segui eventi,
+          contenuti e progetti di PosturaCorretta.
+        </p>
+      </header>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <% quick_links.each do |link| %>
+          <a href="<%= link.fetch(:path) %>" class="group flex h-full flex-col rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
+              <%= link.fetch(:eyebrow) %>
+            </p>
+            <h3 class="mt-2 text-lg font-semibold leading-6 text-slate-950">
+              <%= link.fetch(:title) %>
+            </h3>
+            <p class="mt-3 text-sm leading-6 text-slate-600">
+              <%= link.fetch(:description) %>
+            </p>
+            <span class="mt-auto inline-flex items-center pt-5 text-sm font-semibold text-blue-700">
+              <%= link.fetch(:cta) %>
+              <span class="ml-1 transition group-hover:translate-x-1" aria-hidden="true">→</span>
+            </span>
+          </a>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <%= render "posturacorretta/footer" %>
+</div>

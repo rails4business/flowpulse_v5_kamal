@@ -18,22 +18,21 @@ module PosturacorrettaMethodologiesHelper
   end
 
   def methodology_badge_classes(badge)
-    {
-      "rosso" => "border-red-200 bg-red-50 text-red-700",
-      "verde" => "border-emerald-200 bg-emerald-50 text-emerald-700",
-      "blu" => "border-blue-200 bg-blue-50 text-blue-700"
-    }.fetch(badge.to_s, "border-slate-200 bg-slate-50 text-slate-700")
+    methodology_audience(badge).fetch("classes", "border-slate-200 bg-slate-50 text-slate-700")
   end
 
   def methodology_badge_label(badge)
-    {
-      "rosso" => "Professionisti sanitari",
-      "verde" => "Professionisti del benessere",
-      "blu" => "Aperti a tutti"
-    }.fetch(badge.to_s, badge.to_s)
+    methodology_audience(badge).fetch("label", badge.to_s)
   end
 
   def methodology_website_host(website_url)
     website_url.to_s.sub(%r{\Ahttps?://}, "").sub(%r{/.*\z}, "")
+  end
+
+  private
+
+  def methodology_audience(badge)
+    @posturacorretta_taxonomies ||= PosturacorrettaTaxonomies.load
+    @posturacorretta_taxonomies.fetch("audiences", {}).fetch(badge.to_s, {})
   end
 end

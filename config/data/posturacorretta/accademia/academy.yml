@@ -12,6 +12,7 @@ paths:
     areas:
       - slug: recupero
         title: "Recupero"
+        taxonomy_area: recupero
         description: "Moduli dedicati a recupero, ascolto corporeo, postura, fisiologia e metodiche di riequilibrio."
         modules:
           - introduzione
@@ -19,8 +20,7 @@ paths:
           - principi-di-fisioterapia
           - biomeccanica-comportamentale-gds
           - principi-di-osteopatia
-          - bioritmi-corpo-e-coscienza
-          - sequenza-di-kinesiologia-applicata
+          - introduzione-al-metodo-corpo-e-coscienza
           - altre-metodiche-posturali
 
 modules:
@@ -112,10 +112,15 @@ modules:
         title: "Sistema linfatico e digerente"
         description: "Drenaggio, nutrimento ed eliminazione."
         content_path: "principi-di-fisioterapia/sistema-linfatico-e-digerente.md"
+      - number: "06"
+        slug: scopri-di-piu-sulla-metodica-e-sui-professionisti-formati
+        title: "Scopri di più sulla metodica"
+        description: "Approfondisci le basi pratiche e trova i docenti ed i professionisti accreditati."
+        link_url: "/posturacorretta/metodiche"
 
   - number: "03"
     slug: biomeccanica-comportamentale-gds
-    title: "Biomeccanica Comportamentale (GDS)"
+    title: "Introduzione alla biomeccanica comportamentale (GDS)"
     description: "Le catene muscolari e il loro significato psicofisiologico."
     participants: 74
     modes: [info, practice, teach]
@@ -151,6 +156,11 @@ modules:
         title: "Catene PA/AP"
         description: "Tra controllo e rilascio."
         content_path: "biomeccanica-comportamentale-gds/catene-pa-ap.md"
+      - number: "07"
+        slug: scopri-di-piu-sulla-metodica-e-sui-professionisti-formati
+        title: "Scopri di più sulla metodica"
+        description: "Approfondisci la biomeccanica comportamentale GDS e i relativi professionisti abilitati."
+        methodology_link: "gds"
 
   - number: "04"
     slug: principi-di-osteopatia
@@ -185,10 +195,15 @@ modules:
         title: "Il sistema neurovegetativo"
         description: "Equilibrio tra attivazione e recupero."
         content_path: "principi-di-osteopatia/il-sistema-neurovegetativo.md"
+      - number: "06"
+        slug: scopri-di-piu-sulla-metodica-e-sui-professionisti-formati
+        title: "Scopri di più sulla metodica"
+        description: "Approfondisci i principi dell'osteopatia ed esplora i professionisti specializzati."
+        methodology_link: "osteopatia"
 
   - number: "05"
-    slug: bioritmi-corpo-e-coscienza
-    title: "Bioritmi: Corpo e Coscienza"
+    slug: introduzione-al-metodo-corpo-e-coscienza
+    title: "Introduzione al metodo Corpo e Coscienza"
     description: "I parametri strutturali ed energetici della coscienza somatica."
     participants: 53
     modes: [info, practice, teach]
@@ -224,49 +239,25 @@ modules:
         title: "I 7 centri neurolinfatici"
         description: "Una mappa di lettura corporea."
         content_path: "bioritmi-corpo-e-coscienza/i-7-centri-neurolinfatici.md"
+      - number: "07"
+        slug: scopri-di-piu-sulla-metodica-e-sui-professionisti-formati
+        title: "Scopri di più sulla metodica"
+        description: "Approfondisci il metodo Corpo e Coscienza ed esplora l'elenco dei professionisti formati."
+        methodology_link: "bioritmi-corpo-coscienza"
 
   - number: "06"
-    slug: sequenza-di-kinesiologia-applicata
-    title: "Sequenza di Kinesiologia Applicata"
-    description: "Un processo ordinato di osservazione, test e riequilibrio."
-    participants: 39
-    modes: [info, practice, teach]
-    methodologies: [kinesiologia-applicata]
-    lessons:
-      - number: "01"
-        slug: preparazione-al-test
-        title: "Preparazione al test"
-        description: "Contesto e affidabilità."
-        content_path: "sequenza-di-kinesiologia-applicata/preparazione-al-test.md"
-      - number: "02"
-        slug: test-muscolare
-        title: "Test muscolare"
-        description: "Ascoltare la risposta del sistema."
-        content_path: "sequenza-di-kinesiologia-applicata/test-muscolare.md"
-      - number: "03"
-        slug: localizzazione-terapeutica
-        title: "Localizzazione terapeutica"
-        description: "Cercare relazioni significative."
-        content_path: "sequenza-di-kinesiologia-applicata/localizzazione-terapeutica.md"
-      - number: "04"
-        slug: riequilibrio-e-verifica
-        title: "Riequilibrio e verifica"
-        description: "Intervenire e ritestare."
-        content_path: "sequenza-di-kinesiologia-applicata/riequilibrio-e-verifica.md"
-
-  - number: "07"
     slug: altre-metodiche-posturali
     title: "Altre metodiche posturali"
     description: "Confrontare mappe diverse senza perdere il filo del percorso."
     participants: 28
     modes: [info, practice, teach]
-    methodologies: [mezieres-rpg, feldenkrais, alexander]
+    methodologies: [mezieres, rpg, feldenkrais, alexander]
     lessons:
       - number: "01"
-        slug: mezieres-e-rpg
-        title: "Mézières e RPG"
-        description: "Le catene e l'allungamento globale."
-        content_path: "altre-metodiche-posturali/mezieres-e-rpg.md"
+        slug: sequenza-di-kinesiologia-applicata
+        title: "Sequenza di Kinesiologia Applicata"
+        description: "Meridiani e muscoli."
+        content_path: "kinesiologia-applicata/sequenza-di-kinesiologia-applicata.md"
       - number: "02"
         slug: feldenkrais
         title: "Feldenkrais"

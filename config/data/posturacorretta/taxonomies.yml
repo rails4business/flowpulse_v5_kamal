@@ -1,0 +1,257 @@
+audiences:
+  rosso:
+    label: "Professionisti sanitari"
+    short_label: "Sanitari"
+    description: "Percorsi, metodiche e contenuti rivolti a professionisti sanitari."
+    color: "rosso"
+    classes: "border-red-200 bg-red-50 text-red-700"
+  verde:
+    label: "Professionisti del benessere"
+    short_label: "Benessere"
+    description: "Percorsi, metodiche e contenuti rivolti a professionisti del benessere."
+    color: "verde"
+    classes: "border-emerald-200 bg-emerald-50 text-emerald-700"
+  blu:
+    label: "Educazione aperta a tutti"
+    short_label: "Aperti a tutti"
+    description: "Percorsi, metodiche e contenuti divulgativi accessibili anche a chi parte da zero."
+    color: "blu"
+    classes: "border-blue-200 bg-blue-50 text-blue-700"
+
+center:
+  key: "postura"
+  label: "Postura"
+  short_label: "Postura"
+  title: "Postura e metodiche posturali"
+  meaning: "Il punto da cui osservare il corpo"
+  description: "Partiamo dalla postura per osservare il corpo e mettere in relazione recupero, movimento, ascolto, nutrimento e regolazione. Le metodiche posturali ci offrono mappe e strumenti diversi per comprenderla e accompagnarne il cambiamento."
+  imperative: "Osservati"
+  action: "Osservare, collegare, valutare, accompagnare"
+  color: "postura"
+  classes: "border-blue-200 bg-blue-50 text-blue-700"
+
+areas:
+  recupero:
+    element: "Acqua"
+    label: "Recupero"
+    short_label: "Recupero"
+    title: "Recupero e terapia"
+    meaning: "Riposo, trattamento, rigenerazione"
+    description: "Area dedicata al riposo, al recupero profondo, alla terapia, ai trattamenti manuali, all’autotrattamento e alla ricostruzione delle energie disponibili."
+    imperative: "Recupera"
+    action: "Fermarsi, trattare, recuperare, rigenerare"
+    color: "acqua"
+    classes: "border-sky-200 bg-sky-50 text-sky-700"
+    scopes:
+      - cura-patologie-riabilitazione
+      - prevenzione-attivita
+
+  movimento:
+    element: "Legno"
+    label: "Movimento"
+    short_label: "Movimento"
+    title: "Movimento e allenamento"
+    meaning: "Avvio, direzione, crescita"
+    description: "Area dedicata al movimento, alla mobilità, alla coordinazione, alla forza, all’allenamento e alla capacità di adattarsi e svilupparsi."
+    imperative: "Muoviti"
+    action: "Iniziare, muovere, orientare, sviluppare"
+    color: "legno"
+    classes: "border-emerald-200 bg-emerald-50 text-emerald-700"
+    scopes:
+      - prevenzione-attivita
+      - performance-lavoro-formazione
+
+  ascolto:
+    element: "Fuoco"
+    label: "Ascolto"
+    short_label: "Ascolto"
+    title: "Ascolto e coscienza"
+    meaning: "Percezione, emozioni, pensiero, relazione"
+    description: "Area dedicata all’ascolto del corpo, alla coscienza, alle emozioni, ai pensieri, all’attenzione, alla concentrazione, alla meditazione e alla relazione."
+    imperative: "Ascoltati"
+    action: "Percepire, sentire, comprendere, relazionarsi"
+    color: "fuoco"
+    classes: "border-red-200 bg-red-50 text-red-700"
+    scopes:
+      - benessere-servizi-persona
+      - evoluzione-armonica
+
+  nutrimento:
+    element: "Terra"
+    label: "Nutrimento"
+    short_label: "Nutrimento"
+    title: "Nutrimento e assimilazione"
+    meaning: "Digestione, assimilazione, sostegno"
+    description: "Area dedicata all’alimentazione, alla digestione, all’assimilazione, alle abitudini alimentari e alla costruzione delle risorse necessarie al corpo."
+    imperative: "Nutriti"
+    action: "Nutrire, assimilare, sostenere, costruire"
+    color: "terra"
+    classes: "border-yellow-200 bg-yellow-50 text-yellow-800"
+    scopes:
+      - benessere-servizi-persona
+      - stile-vita-territorio
+
+  regolazione:
+    element: "Metallo"
+    label: "Regolazione"
+    short_label: "Regolazione"
+    title: "Fisiologia e regolazione"
+    meaning: "Ordine, ritmo, selezione, risposta"
+    description: "Area dedicata alla conoscenza della fisiologia, ai ritmi corporei, alla regolazione dei sistemi, alla selezione e all’eliminazione, utilizzando quando appropriato piante officinali, fitoterapia e altri strumenti."
+    imperative: "Regola"
+    action: "Ordinare, ritmare, selezionare, regolare"
+    color: "metallo"
+    classes: "border-zinc-300 bg-zinc-50 text-zinc-700"
+    scopes:
+      - educazione-accademia
+      - benessere-servizi-persona
+
+scopes:
+  cura-patologie-riabilitazione:
+    title: "Cura • Patologie • Riabilitazione"
+    description: "Ambito dedicato a situazioni di cura, patologie, dolore, riabilitazione e accompagnamento professionale."
+    slug: "esisto"
+    positive: "Mi sento al sicuro"
+    blockage: "La paura"
+    token: "root"
+    width: 76
+    color: "root"
+    classes: "border-red-200 bg-red-50 text-red-700"
+  prevenzione-attivita:
+    title: "Prevenzione nelle attività"
+    description: "Ambito dedicato alla prevenzione nelle attività quotidiane, sportive, lavorative e ricreative."
+    slug: "sento"
+    positive: "Provo piacere"
+    blockage: "Il senso di colpa"
+    token: "sacral"
+    width: 80
+    color: "sacral"
+    classes: "border-orange-200 bg-orange-50 text-orange-700"
+  performance-lavoro-formazione:
+    title: "Performances • Lavoro • Formazione • Capacità cognitive • IA"
+    description: "Ambito dedicato a performance, lavoro, formazione, capacità cognitive, apprendimento e relazione con le nuove tecnologie."
+    slug: "agisco"
+    positive: "Esprimo la mia volontà"
+    blockage: "La vergogna"
+    token: "solar"
+    width: 84
+    color: "solar"
+    classes: "border-amber-200 bg-amber-50 text-amber-800"
+  benessere-servizi-persona:
+    title: "Benessere • Discipline bio-naturali • Fitness • Estetica • Servizi alla persona"
+    description: "Ambito dedicato al benessere, alle discipline bio-naturali, al fitness, all’estetica e ai servizi alla persona."
+    slug: "armonizzo"
+    positive: "Integro e armonizzo"
+    blockage: "Il dolore e la chiusura"
+    token: "heart"
+    width: 88
+    color: "heart"
+    classes: "border-emerald-200 bg-emerald-50 text-emerald-700"
+  educazione-accademia:
+    title: "Educazione • Accademia Postura e fisiologia"
+    description: "Ambito dedicato a educazione, accademia, divulgazione, studio del corpo e percorsi di consapevolezza."
+    slug: "esprimo"
+    positive: "Comunico la mia verità"
+    blockage: "La menzogna e il non detto"
+    token: "throat"
+    width: 92
+    color: "throat"
+    classes: "border-sky-200 bg-sky-50 text-sky-700"
+  evoluzione-armonica:
+    title: "Evoluzione armonica • Modelli • Sfere dell’essere umano • Abitudini"
+    description: "Ambito dedicato a modelli di crescita, sfere dell’essere umano, abitudini e sviluppo armonico della persona."
+    slug: "comprendo"
+    positive: "Vedo con chiarezza"
+    blockage: "L’illusione"
+    token: "third"
+    width: 96
+    color: "third"
+    classes: "border-indigo-200 bg-indigo-50 text-indigo-700"
+  stile-vita-territorio:
+    title: "Stile di vita • Ambiente • Territorio • Gruppo"
+    description: "Ambito dedicato allo stile di vita, all’ambiente, al territorio, alla comunità e alla relazione con i luoghi."
+    slug: "mi-connetto"
+    positive: "Mi sento parte del tutto"
+    blockage: "La separazione e l’isolamento"
+    token: "crown"
+    width: 100
+    color: "crown"
+    classes: "border-violet-200 bg-violet-50 text-violet-700"
+
+home_links:
+  - key: "accademia"
+    eyebrow: "Accademia"
+    title: "Conosci e pratica"
+    description: "Comprendi il corpo e sperimenta le principali metodiche posturali, anche partendo da zero."
+    cta: "Inizia l’Accademia"
+    route_key: "accademia"
+  - key: "percorso"
+    eyebrow: "Percorso"
+    source:
+      section: "areas"
+      slug: "recupero"
+    cta: "Inizia il percorso"
+    route_key: "percorso"
+  - key: "eventi"
+    eyebrow: "Eventi e community"
+    source:
+      section: "scopes"
+      slug: "stile-vita-territorio"
+    cta: "Scopri gli eventi"
+    route_key: "eventi"
+  - key: "libro"
+    eyebrow: "Il libro"
+    source:
+      section: "scopes"
+      slug: "evoluzione-armonica"
+    cta: "Scopri il libro"
+    route_key: "filosofia"
+  - key: "progetti"
+    eyebrow: "Progetti"
+    source:
+      section: "scopes"
+      slug: "performance-lavoro-formazione"
+    cta: "Esplora i progetti"
+    route_key: "progetti"
+
+dimensions:
+  corpo:
+    element: "Terra"
+    label: "Corpo"
+    short_label: "Corpo"
+    question: "Di cosa ho bisogno?"
+    meaning: "Bisogni, sensazioni, struttura e fisiologia"
+    description: "La dimensione fisica attraverso cui percepiamo bisogni e sensazioni e con cui ci sosteniamo, respiriamo, ci muoviamo e ci adattiamo."
+    action: "Percepire, sostenere, respirare, muoversi"
+    color: "terra"
+    classes: "border-yellow-200 bg-yellow-50 text-yellow-800"
+  emozioni:
+    element: "Acqua"
+    label: "Emozioni"
+    short_label: "Emozioni"
+    question: "Cosa provo?"
+    meaning: "Emozioni, stati affettivi, sensibilità e relazione"
+    description: "La dimensione affettiva attraverso cui proviamo emozioni, entriamo in relazione e reagiamo a ciò che viviamo."
+    action: "Provare, accogliere, esprimere, relazionarsi"
+    color: "acqua"
+    classes: "border-sky-200 bg-sky-50 text-sky-700"
+  mente:
+    element: "Aria"
+    label: "Mente"
+    short_label: "Mente"
+    question: "Che significato attribuisco a ciò che vivo?"
+    meaning: "Pensieri, immagini, convinzioni e significati"
+    description: "La dimensione cognitiva attraverso cui osserviamo, interpretiamo e attribuiamo significato alla nostra esperienza."
+    action: "Osservare, comprendere, interpretare, immaginare"
+    color: "aria"
+    classes: "border-indigo-200 bg-indigo-50 text-indigo-700"
+  ispirazione:
+    element: "Fuoco"
+    label: "Ispirazione"
+    short_label: "Ispirazione"
+    question: "Cosa mi anima e verso dove voglio andare?"
+    meaning: "Vitalità, valori, intenzione e direzione"
+    description: "La dimensione esistenziale e motivazionale che comprende ciò che ci fa sentire vivi, ciò che per noi conta e la direzione verso cui scegliamo di muoverci."
+    action: "Animare, scegliere, orientare, realizzare"
+    color: "fuoco"
+    classes: "border-red-200 bg-red-50 text-red-700"

@@ -3,10 +3,8 @@
   module_id = "m#{module_index}"
   teacher_slugs = academy_module.fetch("teachers")
   location_slugs = academy_module.fetch("locations")
-  methodology_slugs = academy_module.fetch("methodologies", [])
   module_teachers = teacher_slugs.map { |slug| academy_teacher(academy_teachers, slug) }
   module_locations = location_slugs.map { |slug| academy_location(academy_locations, slug) }
-  methodology_path = methodology_slugs.one? ? posturacorretta_metodica_path(methodology_slugs.first) : posturacorretta_metodiche_path
   search_text = [
     academy_module.fetch("title"),
     academy_module.fetch("description"),
@@ -28,12 +26,6 @@
       <p><%= academy_module.fetch("description") %></p>
     </span>
     <span class="modes module-stats">
-      <% if methodology_slugs.any? %>
-        <a class="stat-pill methodology-count" href="<%= methodology_path %>">
-          <strong><%= methodology_slugs.size %></strong>
-          <span>Metodica</span>
-        </a>
-      <% end %>
       <button class="stat-pill participants" type="button" data-modal-template="module-participants-<%= academy_module.fetch("slug") %>">
         <strong><%= academy_module.fetch("participants") %></strong>
         <span>Partecipanti</span>

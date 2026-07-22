@@ -1,0 +1,676 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<%
+  taxonomies = @posturacorretta_taxonomies || {}
+  taxonomy_audiences = taxonomies.fetch("audiences", {})
+  taxonomy_areas = taxonomies.fetch("areas", {})
+  taxonomy_scopes = taxonomies.fetch("scopes", {})
+%>
+
+<div id="top" class="text-slate-900 antialiased">
+  <section class="flex min-h-[calc(100vh-4rem)] items-center px-5 py-10 md:py-12 xl:py-8">
+      <div class="mx-auto w-full max-w-6xl">
+        <div class="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] xl:gap-10">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+              PosturaCorretta
+            </p>
+            <h1 class="mt-4 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl md:leading-[1.05] xl:text-5xl">
+              Trova la giusta posizione da cui osservare il mondo.
+              <span class="mt-2 block text-blue-700">Inizia dalla salute!</span>
+            </h1>
+            <p class="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg xl:mt-4">
+             Partiamo dalle metodiche posturali per imparare a leggere il corpo, come si relaziona con l’ambiente per migliorare la nostra salute e la nostra vita.
+            </p>
+          </div>
+
+          <div class="rounded-[2rem] border border-blue-100 bg-white p-3 shadow-soft xl:p-4">
+            <img src="https://ik.imagekit.io/posturacorretta/img_home_postura_corretta.png?tr=w-1100,q-85" alt="PosturaCorretta: trova la giusta posizione da cui osservare il mondo" class="mx-auto aspect-[16/10] w-full rounded-[1.5rem] object-contain xl:max-h-[300px]">
+          </div>
+        </div>
+
+        <div class="mt-8 grid gap-4 md:grid-cols-2 xl:mt-7 xl:grid-cols-5">
+                   <a href="<%= posturacorretta_accademia_path %>" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Accademia</p>
+            <h2 class="mt-2 text-lg font-semibold text-slate-955">Pratica</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5"> Con le metodiche posturali, comprendi e riattiva i sistemi del corpo.</p>
+            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Inizia l'accademia <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
+          </a>
+          <a href="<%= posturacorretta_percorso_path %>" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Percorso</p>
+            <h2 class="mt-2 text-lg font-semibold text-slate-955">Personalizzato</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Scegli gli aspetti della salute su cui vuoi lavorare e costruisci il percorso più adatto a te.</p>
+            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Inizia <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
+          </a>
+
+          <a href="<%= posturacorretta_eventi_path %>" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Eventi e Community</p>
+            <h2 class="mt-2 text-lg font-semibold text-slate-955">Vivi il percorso</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Incontri, camminate, attività e momenti di comunità sul territorio.</p>
+            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Guarda <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
+          </a>
+          <a href="<%= posturacorretta_filosofia_path %>" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Il libro</p>
+            <h2 class="mt-2 text-lg font-semibold text-slate-955">Il corpo, un mondo da scoprire</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Dalla PosturaCorretta all'agriturismo rigenerativo Il Giardino del Corpo.</p>
+            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Scopri il libro <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
+          </a>
+
+          <a href="<%= posturacorretta_progetti_path %>" class="group rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl xl:p-4 keychainify-checked">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Progetti</p>
+            <h2 class="mt-2 text-lg font-semibold text-slate-955">In corso</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600 xl:leading-5">Aggiornamenti, cantieri aperti e prossimi sviluppi del progetto.</p>
+            <span class="mt-4 inline-flex text-sm font-semibold text-blue-700 xl:mt-3">Leggi gli aggiornamenti <span class="ml-1 transition group-hover:translate-x-1">→</span></span>
+          </a>
+        </div>
+
+        <section class="mt-8 rounded-[1.75rem] border border-slate-200 bg-white/90 p-5 shadow-sm xl:mt-7 xl:p-6" aria-labelledby="taxonomy-map-title">
+         <div class="mt-5 grid gap-3 md:grid-cols-3">
+            <% taxonomy_audiences.each do |_slug, audience| %>
+              <article class="rounded-2xl border p-4 <%= audience.fetch("classes") %>">
+                <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] opacity-80"><%= audience.fetch("short_label") %></p>
+                <h3 class="mt-1 text-base font-bold"><%= audience.fetch("label") %></h3>
+                <p class="mt-2 text-xs leading-5 opacity-80"><%= audience.fetch("description") %></p>
+              </article>
+            <% end %>
+          </div>
+         
+
+          
+
+          <div class="mt-5 grid gap-3 lg:hidden">
+            <% taxonomy_areas.each do |_slug, area| %>
+              <details class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <summary class="cursor-pointer list-none">
+                  <span class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400"><%= area.fetch("element") %></span>
+                  <span class="mt-1 block text-base font-bold text-slate-950"><%= area.fetch("label") %> · <%= area.fetch("imperative") %></span>
+                  <span class="mt-1 block text-sm font-semibold text-slate-700"><%= area.fetch("title") %></span>
+                  <span class="mt-1 block text-xs leading-5 text-slate-600"><%= area.fetch("description") %></span>
+                </summary>
+                <div class="mt-3 grid gap-2">
+                  <% taxonomy_scopes.each do |scope_slug, scope| %>
+                    <% linked = area.fetch("scopes", []).include?(scope_slug) %>
+                    <div class="rounded-xl border p-3 text-xs <%= linked ? area.fetch("classes") : scope.fetch("classes") %>">
+                      <span class="mb-1 inline-flex rounded-full border border-current/20 bg-white/60 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide"><%= scope.fetch("slug") %></span>
+                      <strong class="block"><%= scope.fetch("title") %></strong>
+                      <span class="mt-1 block font-semibold opacity-90"><%= scope.fetch("positive") %></span>
+                      <span class="mt-1 block opacity-80"><%= linked ? area.fetch("action") : "Possibile collegamento futuro" %></span>
+                      <span class="mt-1 block opacity-70"><%= scope.fetch("blockage") %></span>
+                    </div>
+                  <% end %>
+                </div>
+              </details>
+            <% end %>
+          </div>
+        </section>
+      </div>
+    </section>
+    
+    <!-- Cura e riabilitazione
+Patologie • Dolore • Terapia • Riabilitazione
+Prevenzione e sicurezza
+Attività quotidiane • Ergonomia • Lavoro • Rischi
+Performance e apprendimento
+Lavoro • Formazione • Capacità cognitive • Tecnologia • IA
+Benessere e servizi alla persona
+Discipline bio-naturali • Relax • Trattamenti benessere • Estetica
+Sport e discipline corporee
+Fitness • Sport • Danza • Nuoto • Arti marziali
+Evoluzione personale
+Modelli • Sfere dell’essere umano • Consapevolezza • Abitudini
+Stile di vita e comunità
+Ambiente • Territorio • Relazioni • Gruppi • Comunità<br>
+    ---
+    stop al dolore - percorso terapeutico - benessere integrato - postura e fisiologia - il giardino del corpo?
+-->
+     <section class="border-y border-slate-200 bg-white px-5 py-12 md:py-16" aria-labelledby="human-areas-title" data-human-areas>
+  <div class="mx-auto max-w-6xl">
+    <header class="mx-auto max-w-3xl text-center">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
+        Gli ambiti dell’essere umano
+      </p>
+      <h2 id="human-areas-title" class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
+        Dal corpo alla relazione con il tutto.
+      </h2>
+      <p class="mt-4 text-base leading-7 text-slate-600">
+        Seleziona un ambito per scoprire professionisti, metodiche e attività collegate.
+      </p>
+    </header>
+
+    <div class="mt-10 grid items-center gap-8 lg:mt-14 lg:grid-cols-[minmax(19rem,0.85fr)_minmax(0,1.15fr)] lg:gap-14">
+
+  <!-- Cerchi sovrapposti -->
+  <div
+    class="relative mx-auto h-[34rem] w-full max-w-sm isolation-isolate sm:h-[38rem]"
+    role="tablist"
+    aria-label="Sette ambiti dell’essere umano"
+  >
+
+    <button
+      type="button"
+      id="area-tab-community"
+      class="absolute left-1/2 top-0 z-[7] flex h-40 w-40 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br from-violet-300/90 via-violet-500/75 to-violet-700/60 p-5 text-center text-lg font-bold text-white opacity-80 shadow-lg shadow-violet-900/10 backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-violet-300 sm:h-48 sm:w-48"
+      role="tab"
+      aria-selected="false"
+      aria-controls="area-panel-community"
+      tabindex="-1"
+      data-area-tab
+    >
+      Appartengo
+    </button>
+
+    <button
+      type="button"
+      id="area-tab-evolution"
+      class="absolute left-1/2 top-16 z-[6] flex h-40 w-40 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br from-indigo-300/90 via-indigo-500/75 to-indigo-700/60 p-5 text-center text-lg font-bold text-white opacity-80 shadow-lg shadow-indigo-900/10 backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300 sm:top-[4.5rem] sm:h-48 sm:w-48"
+      role="tab"
+      aria-selected="false"
+      aria-controls="area-panel-evolution"
+      tabindex="-1"
+      data-area-tab
+    >
+      Comprendo
+    </button>
+
+    <button
+      type="button"
+      id="area-tab-expression"
+      class="absolute left-1/2 top-32 z-[5] flex h-40 w-40 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br from-sky-300/90 via-sky-500/75 to-sky-700/60 p-5 text-center text-lg font-bold text-white opacity-80 shadow-lg shadow-sky-900/10 backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-sky-300 sm:top-36 sm:h-48 sm:w-48"
+      role="tab"
+      aria-selected="false"
+      aria-controls="area-panel-expression"
+      tabindex="-1"
+      data-area-tab
+    >
+      Esprimo
+    </button>
+
+    <button
+      type="button"
+      id="area-tab-wellbeing"
+      class="absolute left-1/2 top-48 z-[4] flex h-40 w-40 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br from-emerald-300/95 via-emerald-500/85 to-emerald-700/70 p-5 text-center text-lg font-bold text-white opacity-80 shadow-lg shadow-emerald-900/20 backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300 sm:top-[13.5rem] sm:h-48 sm:w-48"
+      role="tab"
+      aria-selected="false"
+      aria-controls="area-panel-wellbeing"
+      tabindex="-1"
+      data-area-tab
+    >
+      Armonizzo
+    </button>
+
+    <button
+      type="button"
+      id="area-tab-performance"
+      class="absolute left-1/2 top-64 z-[8] flex h-40 w-40 -translate-x-1/2 scale-110 items-center justify-center rounded-full bg-gradient-to-br from-amber-200/90 via-amber-400/80 to-amber-600/65 p-5 text-center text-lg font-bold text-amber-950 opacity-100 shadow-xl shadow-amber-900/10 ring-4 ring-white/80 backdrop-blur-sm transition duration-300 hover:scale-[1.15] focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-300 sm:top-72 sm:h-48 sm:w-48"
+      role="tab"
+      aria-selected="true"
+      aria-controls="area-panel-performance"
+      tabindex="0"
+      data-area-tab
+    >
+      Agisco
+    </button>
+
+    <button
+      type="button"
+      id="area-tab-vitality"
+      class="absolute left-1/2 top-80 z-[2] flex h-40 w-40 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br from-orange-200/90 via-orange-500/80 to-orange-700/65 p-5 text-center text-lg font-bold text-white opacity-80 shadow-lg shadow-orange-900/10 backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300 sm:top-[22.5rem] sm:h-48 sm:w-48"
+      role="tab"
+      aria-selected="false"
+      aria-controls="area-panel-vitality"
+      tabindex="-1"
+      data-area-tab
+    >
+      Sento
+    </button>
+
+    <button
+      type="button"
+      id="area-tab-care"
+      class="absolute left-1/2 top-96 z-[1] flex h-40 w-40 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br from-red-300/90 via-red-500/80 to-red-800/65 p-5 text-center text-lg font-bold text-white opacity-80 shadow-lg shadow-red-900/10 backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-red-300 sm:top-[27rem] sm:h-48 sm:w-48"
+      role="tab"
+      aria-selected="false"
+      aria-controls="area-panel-care"
+      tabindex="-1"
+      data-area-tab
+    >
+      Esisto
+    </button>
+  </div>
+
+  <!-- Descrizione dell’ambito selezionato -->
+  <div class="relative min-h-72" aria-live="polite">
+
+    <!-- APPARTENGO -->
+    <article
+      id="area-panel-community"
+      class="hidden rounded-[1.75rem] border border-violet-200 bg-violet-50 p-6 shadow-sm md:p-8"
+      role="tabpanel"
+      aria-labelledby="area-tab-community"
+      data-area-panel
+    >
+      <span class="inline-flex rounded-full bg-violet-600 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white">
+        Appartengo
+      </span>
+
+      <h3 class="mt-5 text-2xl font-semibold tracking-tight text-violet-950">
+        Stile di vita, ambiente e territorio
+      </h3>
+
+      <p class="mt-4 text-base leading-7 text-violet-900">
+        Il rapporto della persona con i luoghi, la natura, le relazioni,
+        i gruppi e la comunità di cui fa parte.
+      </p>
+
+      <p class="mt-5 text-sm font-semibold leading-6 text-violet-800">
+        Ambiente • Territorio • Natura • Relazioni • Gruppi • Comunità
+      </p>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-violet-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-violet-600">
+            Espressione positiva
+          </p>
+          <p class="mt-2 font-semibold text-violet-950">
+            Mi sento parte del tutto
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Ciò che blocca
+          </p>
+          <p class="mt-2 font-semibold text-slate-800">
+            Separazione e attaccamento
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- COMPRENDO -->
+    <article
+      id="area-panel-evolution"
+      class="hidden rounded-[1.75rem] border border-indigo-200 bg-indigo-50 p-6 shadow-sm md:p-8"
+      role="tabpanel"
+      aria-labelledby="area-tab-evolution"
+      data-area-panel
+    >
+      <span class="inline-flex rounded-full bg-indigo-600 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white">
+        Comprendo
+      </span>
+
+      <h3 class="mt-5 text-2xl font-semibold tracking-tight text-indigo-950">
+        Evoluzione armonica
+      </h3>
+
+      <p class="mt-4 text-base leading-7 text-indigo-900">
+        Modelli e pratiche per osservare le sfere dell’essere umano,
+        sviluppare consapevolezza e trasformare le proprie abitudini.
+      </p>
+
+      <p class="mt-5 text-sm font-semibold leading-6 text-indigo-800">
+        Modelli • Sfere dell’essere umano • Consapevolezza • Visione • Abitudini
+      </p>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-indigo-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-indigo-600">
+            Espressione positiva
+          </p>
+          <p class="mt-2 font-semibold text-indigo-950">
+            Vedo con chiarezza
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Ciò che blocca
+          </p>
+          <p class="mt-2 font-semibold text-slate-800">
+            L’illusione
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- ESPRIMO -->
+    <article
+      id="area-panel-expression"
+      class="hidden rounded-[1.75rem] border border-sky-200 bg-sky-50 p-6 shadow-sm md:p-8"
+      role="tabpanel"
+      aria-labelledby="area-tab-expression"
+      data-area-panel
+    >
+      <span class="inline-flex rounded-full bg-sky-600 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white">
+        Esprimo
+      </span>
+
+      <h3 class="mt-5 text-2xl font-semibold tracking-tight text-sky-950">
+        Educazione e Accademia Postura e Fisiologia
+      </h3>
+
+      <p class="mt-4 text-base leading-7 text-sky-900">
+        Educazione, divulgazione e studio del corpo per conoscere,
+        praticare e trasmettere ciò che si è appreso.
+      </p>
+
+      <p class="mt-5 text-sm font-semibold leading-6 text-sky-800">
+        Educazione • Accademia • Divulgazione • Studio • Insegnamento
+      </p>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-sky-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-sky-600">
+            Espressione positiva
+          </p>
+          <p class="mt-2 font-semibold text-sky-950">
+            Comunico la mia verità
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Ciò che blocca
+          </p>
+          <p class="mt-2 font-semibold text-slate-800">
+            La menzogna e il non detto
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- ARMONIZZO -->
+    <article
+      id="area-panel-wellbeing"
+      class="hidden rounded-[1.75rem] border border-emerald-200 bg-emerald-50 p-6 shadow-sm md:p-8"
+      role="tabpanel"
+      aria-labelledby="area-tab-wellbeing"
+      data-area-panel
+    >
+      <span class="inline-flex rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white">
+        Armonizzo
+      </span>
+
+      <h3 class="mt-5 text-2xl font-semibold tracking-tight text-emerald-950">
+        Benessere e servizi alla persona
+      </h3>
+
+      <p class="mt-4 text-base leading-7 text-emerald-900">
+        Discipline e servizi rivolti all’equilibrio della persona,
+        alla cura di sé e alla cura del proprio corpo. Stare bene è il primo passo per avere delle buone relazioni.
+      </p>
+
+      <p class="mt-5 text-sm font-semibold leading-6 text-emerald-800">
+        Discipline bio-naturali • Fitness • Estetica • Servizi alla persona
+      </p>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-emerald-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-600">
+            Espressione positiva
+          </p>
+          <p class="mt-2 font-semibold text-emerald-950">
+            Amo e accolgo
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Ciò che blocca
+          </p>
+          <p class="mt-2 font-semibold text-slate-800">
+            Il dolore e la chiusura
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- AGISCO -->
+    <article
+      id="area-panel-performance"
+      class="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-6 shadow-sm md:p-8"
+      role="tabpanel"
+      aria-labelledby="area-tab-performance"
+      data-area-panel
+    >
+      <span class="inline-flex rounded-full bg-amber-400 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-amber-950">
+        Agisco
+      </span>
+
+      <h3 class="mt-5 text-2xl font-semibold tracking-tight text-amber-950">
+        Performance, lavoro e formazione
+      </h3>
+
+      <p class="mt-4 text-base leading-7 text-amber-900">
+        Sviluppare capacità fisiche, professionali e cognitive
+        per agire con maggiore autonomia ed efficacia.
+      </p>
+
+      <p class="mt-5 text-sm font-semibold leading-6 text-amber-800">
+        Performance • Lavoro • Formazione • Capacità cognitive • Tecnologia • IA
+      </p>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-amber-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-amber-600">
+            Espressione positiva
+          </p>
+          <p class="mt-2 font-semibold text-amber-950">
+            Esprimo la mia volontà
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Ciò che blocca
+          </p>
+          <p class="mt-2 font-semibold text-slate-800">
+            La vergogna e il senso d’impotenza
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- SENTO -->
+    <article
+      id="area-panel-vitality"
+      class="hidden rounded-[1.75rem] border border-orange-200 bg-orange-50 p-6 shadow-sm md:p-8"
+      role="tabpanel"
+      aria-labelledby="area-tab-vitality"
+      data-area-panel
+    >
+      <span class="inline-flex rounded-full bg-orange-500 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white">
+        Sento
+      </span>
+
+      <h3 class="mt-5 text-2xl font-semibold tracking-tight text-orange-950">
+        Prevenzione nelle attività
+      </h3>
+
+      <p class="mt-4 text-base leading-7 text-orange-900">
+        Imparare ad ascoltare il corpo e prevenire i rischi
+        nelle attività quotidiane, sportive, lavorative e ricreative.
+      </p>
+
+      <p class="mt-5 text-sm font-semibold leading-6 text-orange-800">
+        Attività quotidiane • Sport • Ergonomia • Lavoro • Sicurezza
+      </p>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-orange-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-orange-600">
+            Espressione positiva
+          </p>
+          <p class="mt-2 font-semibold text-orange-950">
+            Provo piacere
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Ciò che blocca
+          </p>
+          <p class="mt-2 font-semibold text-slate-800">
+            Il senso di colpa
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- ESISTO -->
+    <article
+      id="area-panel-care"
+      class="hidden rounded-[1.75rem] border border-red-200 bg-red-50 p-6 shadow-sm md:p-8"
+      role="tabpanel"
+      aria-labelledby="area-tab-care"
+      data-area-panel
+    >
+      <span class="inline-flex rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white">
+        Esisto
+      </span>
+
+      <h3 class="mt-5 text-2xl font-semibold tracking-tight text-red-950">
+        Cura, patologie e riabilitazione
+      </h3>
+
+      <p class="mt-4 text-base leading-7 text-red-900">
+        L’ambito sanitario dedicato alla diagnosi, al dolore,
+        alla terapia, alla riabilitazione e all’accompagnamento professionale.
+      </p>
+
+      <p class="mt-5 text-sm font-semibold leading-6 text-red-800">
+        Patologie • Dolore • Terapia • Riabilitazione
+      </p>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-red-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-red-600">
+            Espressione positiva
+          </p>
+          <p class="mt-2 font-semibold text-red-950">
+            Mi sento al sicuro
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white/70 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Ciò che blocca
+          </p>
+          <p class="mt-2 font-semibold text-slate-800">
+            La paura
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <p class="mt-5 text-center text-sm leading-6 text-slate-500 lg:text-left">
+      I sette ambiti rappresentano una
+      <strong class="font-semibold text-slate-700">
+        mappa simbolica e interdisciplinare
+      </strong>
+      della persona, non una classificazione clinica.
+    </p>
+  </div>
+</div>
+    <!-- Cinque elementi / aree d’intervento -->
+   <!--div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <article class="rounded-2xl border border-zinc-300 bg-zinc-50 p-5 shadow-sm sm:col-span-2 xl:col-span-1">
+      <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-zinc-500">
+        Acqua
+      </p>
+      <h3 class="mt-2 text-xl font-semibold text-zinc-950">Recupero </h3>
+      <p class="mt-3 text-sm leading-6 text-zinc-600">
+          Riposo • Riserve • Rigenerazione
+      </p>
+    </article>
+
+    <article class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+      <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-600">
+        Legno
+      </p>
+      <h3 class="mt-2 text-xl font-semibold text-emerald-950">Movimento</h3>
+      <p class="mt-3 text-sm leading-6 text-emerald-700">
+        Avvio • Direzione • Crescita
+      </p>
+    </article>
+
+    <article class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm">
+      <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-red-600">
+        Fuoco
+      </p>
+      <h3 class="mt-2 text-xl font-semibold text-red-950">Ascolto</h3>
+      <p class="mt-3 text-sm leading-6 text-red-700">
+        Presenza • Emozioni • Relazione • Coscienza
+      </p>
+    </article>
+
+    <article class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+      <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-amber-600">
+        Terra
+      </p>
+      <h3 class="mt-2 text-xl font-semibold text-amber-950">Nutrimento</h3>
+      <p class="mt-3 text-sm leading-6 text-amber-700">
+        Digestione • Assimilazione • Sostegno
+      </p>
+    </article>
+    <article class="rounded-2xl border border-sky-200 bg-sky-50 p-5 shadow-sm">
+      <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-sky-600">
+        Metallo
+      </p>
+      <h3 class="mt-2 text-xl font-semibold text-sky-950">Regolazione</h3>
+      <p class="mt-3 text-sm leading-6 text-sky-700">
+      
+        Ordine • Ritmo • Selezione • Eliminazione
+      </p>
+    </article>
+
+    
+  </div-->
+  </div>
+
+  <script>
+    (() => {
+      const root = document.currentScript.closest("[data-human-areas]");
+      if (!root || root.dataset.humanAreasReady === "true") return;
+      root.dataset.humanAreasReady = "true";
+
+      const tabs = Array.from(root.querySelectorAll("[data-area-tab]"));
+      const panels = Array.from(root.querySelectorAll("[data-area-panel]"));
+      const activeClasses = ["z-[8]", "scale-110", "opacity-100", "shadow-xl", "ring-4", "ring-white/80"];
+
+      function selectTab(tab, moveFocus = false) {
+        tabs.forEach((item) => {
+          const selected = item === tab;
+          item.setAttribute("aria-selected", String(selected));
+          item.tabIndex = selected ? 0 : -1;
+          activeClasses.forEach((className) => item.classList.toggle(className, selected));
+        });
+
+        panels.forEach((panel) => {
+          panel.classList.toggle("hidden", panel.id !== tab.getAttribute("aria-controls"));
+        });
+
+        if (moveFocus) tab.focus();
+      }
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => selectTab(tab));
+        tab.addEventListener("keydown", (event) => {
+          if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+          event.preventDefault();
+
+          let nextIndex = index;
+          if (event.key === "ArrowDown") nextIndex = (index + 1) % tabs.length;
+          if (event.key === "ArrowUp") nextIndex = (index - 1 + tabs.length) % tabs.length;
+          if (event.key === "Home") nextIndex = 0;
+          if (event.key === "End") nextIndex = tabs.length - 1;
+          selectTab(tabs[nextIndex], true);
+        });
+      });
+    })();
+  </script>
+</section>
+    <%= render "posturacorretta/footer" %>
+</div>

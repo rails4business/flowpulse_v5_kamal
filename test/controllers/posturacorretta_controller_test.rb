@@ -55,4 +55,10 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_collabora_url
     assert_redirected_to posturacorretta_progetti_url
   end
+
+  test "should get progetti" do
+    get posturacorretta_progetti_url
+    assert_response :success
+    assert_includes response.body, "Progetti"
+  end
 end

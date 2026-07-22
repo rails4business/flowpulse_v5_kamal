@@ -11,6 +11,10 @@ class PosturacorrettaController < ApplicationController
     @color_classes = data.fetch("colorClasses", {})
     @path_teams = data.fetch("pathTeams", {})
     @path_professionals = data.fetch("pathProfessionals", {})
+
+    taxonomies = PosturacorrettaTaxonomies.load
+    @scopes = taxonomies.fetch("scopes", {})
+    @areas = taxonomies.fetch("areas", {})
   end
   def professionisti
     data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/professionisti/professionisti.yml"), permitted_classes: [], aliases: false) || {}
@@ -32,9 +36,7 @@ class PosturacorrettaController < ApplicationController
     @teachers = data.fetch("teachers", [])
   end
   def filosofia; end
-  def progetti
-    render :collabora
-  end
+  def progetti; end
   def collabora
     redirect_to posturacorretta_progetti_path
   end

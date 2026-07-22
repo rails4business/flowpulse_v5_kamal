@@ -1,0 +1,238 @@
+<%
+  # The @scopes hash is loaded from taxonomies.yml
+  scopes = @scopes || {}
+  
+  # Mappa UI per ogni token (chakra) per mantenere i colori esatti e le posizioni
+  ui_map = {
+    "root" => {
+      position: "top-96 z-[1] sm:top-[30rem]",
+      button_classes: "from-red-300/90 via-red-500/80 to-red-800/65 text-white shadow-red-900/10 focus-visible:ring-red-300",
+      panel_classes: "border-red-200 bg-red-50",
+      badge_classes: "bg-red-600 text-white",
+      title_classes: "text-red-950",
+      copy_classes: "text-red-900",
+      accent_classes: "text-red-800",
+      positive_classes: "border-red-200 text-red-950",
+      positive_label_classes: "text-red-600",
+      short_label: "Patologia"
+    },
+    "sacral" => {
+      position: "top-80 z-[2] sm:top-[25rem]",
+      button_classes: "from-orange-200/90 via-orange-500/80 to-orange-700/65 text-white shadow-orange-900/10 focus-visible:ring-orange-300",
+      panel_classes: "border-orange-200 bg-orange-50",
+      badge_classes: "bg-orange-500 text-white",
+      title_classes: "text-orange-950",
+      copy_classes: "text-orange-900",
+      accent_classes: "text-orange-800",
+      positive_classes: "border-orange-200 text-orange-950",
+      positive_label_classes: "text-orange-600",
+      short_label: "Prevenzione"
+    },
+    "solar" => {
+      position: "top-64 z-[3] sm:top-80",
+      button_classes: "from-amber-200/90 via-amber-400/80 to-amber-600/65 text-amber-950 shadow-amber-900/10 focus-visible:ring-amber-300",
+      panel_classes: "border-amber-200 bg-amber-50",
+      badge_classes: "bg-amber-400 text-amber-950",
+      title_classes: "text-amber-950",
+      copy_classes: "text-amber-900",
+      accent_classes: "text-amber-800",
+      positive_classes: "border-amber-200 text-amber-950",
+      positive_label_classes: "text-amber-600",
+      short_label: "Performances"
+    },
+    "heart" => {
+      position: "top-48 z-[4] sm:top-60",
+      button_classes: "from-emerald-300/95 via-emerald-500/85 to-emerald-700/70 text-white shadow-emerald-900/20 focus-visible:ring-emerald-300",
+      panel_classes: "border-emerald-200 bg-emerald-50",
+      badge_classes: "bg-emerald-600 text-white",
+      title_classes: "text-emerald-950",
+      copy_classes: "text-emerald-900",
+      accent_classes: "text-emerald-800",
+      positive_classes: "border-emerald-200 text-emerald-950",
+      positive_label_classes: "text-emerald-600",
+      short_label: "Benessere"
+    },
+    "throat" => {
+      position: "top-32 z-[5] sm:top-40",
+      button_classes: "from-sky-300/90 via-sky-500/75 to-sky-700/60 text-white shadow-sky-900/10 focus-visible:ring-sky-300",
+      panel_classes: "border-sky-200 bg-sky-50",
+      badge_classes: "bg-sky-600 text-white",
+      title_classes: "text-sky-950",
+      copy_classes: "text-sky-900",
+      accent_classes: "text-sky-800",
+      positive_classes: "border-sky-200 text-sky-950",
+      positive_label_classes: "text-sky-600",
+      short_label: "Educazione"
+    },
+    "third" => {
+      position: "top-16 z-[6] sm:top-20",
+      button_classes: "from-indigo-300/90 via-indigo-500/75 to-indigo-700/60 text-white shadow-indigo-900/10 focus-visible:ring-indigo-300",
+      panel_classes: "border-indigo-200 bg-indigo-50",
+      badge_classes: "bg-indigo-600 text-white",
+      title_classes: "text-indigo-950",
+      copy_classes: "text-indigo-900",
+      accent_classes: "text-indigo-800",
+      positive_classes: "border-indigo-200 text-indigo-950",
+      positive_label_classes: "text-indigo-600",
+      short_label: "Mondo interno"
+    },
+    "crown" => {
+      position: "top-0 z-[7] sm:top-0",
+      button_classes: "from-violet-300/90 via-violet-500/75 to-violet-700/60 text-white shadow-violet-900/10 focus-visible:ring-violet-300",
+      panel_classes: "border-violet-200 bg-violet-50",
+      badge_classes: "bg-violet-600 text-white",
+      title_classes: "text-violet-950",
+      copy_classes: "text-violet-900",
+      accent_classes: "text-violet-800",
+      positive_classes: "border-violet-200 text-violet-950",
+      positive_label_classes: "text-violet-600",
+      short_label: "Relazioni"
+    }
+  }
+
+  # Build the human_areas array correctly ordered (from Crown down to Root, to render correctly with z-index)
+  ordered_tokens = %w[crown third throat heart solar sacral root]
+  color_areas = ordered_tokens.filter_map do |t|
+    scope = scopes.values.find { |s| s["token"] == t }
+    next unless scope
+    ui = ui_map[t]
+    {
+      slug: scope["slug"], # esisto, sento, ecc.
+      verb: scope["slug"].capitalize, 
+      title: scope["title"],
+      description: scope["description"],
+      topics: "", # Non presente nel nuovo YML, si può aggiungere dopo
+      positive: scope["positive"],
+      blockage: scope["blockage"],
+      positive_label: "Espressione positiva",
+      blockage_label: "Ciò che blocca",
+      percorso: scope["short_label"] || ui[:short_label],
+      position: ui[:position],
+      button_classes: ui[:button_classes],
+      panel_classes: ui[:panel_classes],
+      badge_classes: ui[:badge_classes],
+      title_classes: ui[:title_classes],
+      copy_classes: ui[:copy_classes],
+      accent_classes: ui[:accent_classes],
+      positive_classes: ui[:positive_classes],
+      positive_label_classes: ui[:positive_label_classes]
+    }
+  end
+%>
+
+<section id="human-areas" class="px-5 py-12 md:py-16 xl:py-20" aria-labelledby="human-areas-title" data-human-areas>
+  <div class="mx-auto max-w-6xl">
+    <header class="max-w-3xl">
+      <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">Gli Ambiti dell'Essere Umano</p>
+      <h2 id="human-areas-title" class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+        La mappa per orientare <span class="text-blue-700">il tuo percorso</span>
+      </h2>
+      <p class="mt-4 text-base leading-7 text-slate-600">
+        Esplora i sette ambiti della salute e dell'esperienza umana. Clicca sui cerchi per scoprire i dettagli.
+      </p>
+    </header>
+    
+    <div class="mt-10 grid items-center gap-10 lg:mt-14 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] lg:gap-16">
+      
+      <!-- Tab Postura + cerchi sovrapposti -->
+      <div class="mx-auto w-full max-w-xs" role="tablist" aria-label="Sette ambiti dell’essere umano">
+        <div class="relative h-[32rem] w-full isolation-isolate sm:h-[38rem]">
+        <% color_areas.each_with_index do |area, index| %>
+          <% selected = index == 0 %>
+          <button
+            type="button"
+            id="area-tab-<%= area.fetch(:slug) %>"
+            class="absolute left-1/2 flex h-32 w-32 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br p-4 text-center text-base font-bold opacity-80 shadow-lg backdrop-blur-sm transition duration-300 hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-4 sm:h-36 sm:w-36 <%= area.fetch(:position) %> <%= area.fetch(:button_classes) %> <%= "z-[9] scale-110 opacity-100 shadow-xl ring-4 ring-white/80" if selected %>"
+            role="tab"
+            aria-selected="<%= selected %>"
+            aria-controls="area-panel-<%= area.fetch(:slug) %>"
+            tabindex="<%= selected ? 0 : -1 %>"
+            data-area-tab
+            data-active-classes="z-[9] scale-110 opacity-100 shadow-xl ring-4 ring-white/80"
+          >
+            <%= area.fetch(:percorso) %>
+          </button>
+        <% end %>
+        </div>
+      </div>
+
+      <!-- Pannelli -->
+      <div class="relative min-h-[30rem]" aria-live="polite">
+        <% color_areas.each_with_index do |area, index| %>
+          <% selected = index == 0 %>
+          <article
+            id="area-panel-<%= area.fetch(:slug) %>"
+            class="rounded-[1.5rem] border p-6 shadow-sm md:p-7 <%= area.fetch(:panel_classes) %> <%= "hidden" unless selected %>"
+            role="tabpanel"
+            aria-labelledby="area-tab-<%= area.fetch(:slug) %>"
+            data-area-panel
+          >
+            <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] <%= area.fetch(:badge_classes) %>">
+              <%= area.fetch(:verb) %>
+            </span>
+
+            <h3 class="mt-5 text-2xl font-semibold tracking-tight <%= area.fetch(:title_classes) %>">
+              <%= area.fetch(:title) %>
+            </h3>
+
+            <p class="mt-4 text-base leading-7 <%= area.fetch(:copy_classes) %>">
+              <%= area.fetch(:description) %>
+            </p>
+
+            <div class="mt-6 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-2xl border bg-white/70 p-4 <%= area.fetch(:positive_classes) %>">
+                <p class="text-xs font-bold uppercase tracking-wider <%= area.fetch(:positive_label_classes) %>">
+                  <%= area.fetch(:positive_label, "Espressione positiva") %>
+                </p>
+                <p class="mt-2 font-semibold"><%= area.fetch(:positive) %></p>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 bg-white/70 p-4 text-slate-800">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  <%= area.fetch(:blockage_label, "Ciò che blocca") %>
+                </p>
+                <p class="mt-2 font-semibold"><%= area.fetch(:blockage) %></p>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (() => {
+    const root = document.getElementById("human-areas");
+    if (!root || root.dataset.humanAreasReady === "true") return;
+    root.dataset.humanAreasReady = "true";
+
+    const tabs = Array.from(root.querySelectorAll("[data-area-tab]"));
+    const panels = Array.from(root.querySelectorAll("[data-area-panel]"));
+    const activeClassesFor = (tab) => (tab.dataset.activeClasses || "").split(" ").filter(Boolean);
+
+    function selectTab(tab, moveFocus = false) {
+      tabs.forEach((item) => {
+        const selected = item === tab;
+        item.setAttribute("aria-selected", String(selected));
+        item.tabIndex = selected ? 0 : -1;
+        if (selected) {
+          activeClassesFor(item).forEach(c => item.classList.add(c));
+        } else {
+          activeClassesFor(item).forEach(c => item.classList.remove(c));
+        }
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle("hidden", panel.id !== tab.getAttribute("aria-controls"));
+      });
+      if (moveFocus) {
+        document.getElementById(tab.getAttribute("aria-controls")).focus();
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => selectTab(tab, false));
+    });
+  })();
+</script>

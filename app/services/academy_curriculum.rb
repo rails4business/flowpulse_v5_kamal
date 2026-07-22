@@ -12,7 +12,7 @@ class AcademyCurriculum
   ].freeze
   REQUIRED_PATH_KEYS = %w[slug title description areas].freeze
   REQUIRED_AREA_KEYS = %w[slug title description modules].freeze
-  REQUIRED_LESSON_KEYS = %w[number slug title description content_path].freeze
+  REQUIRED_LESSON_KEYS = %w[number slug title description].freeze
   REQUIRED_TEACHER_KEYS = %w[slug name role category category_label img date active_modules city province].freeze
   REQUIRED_CENTER_KEYS = %w[slug name city type active_modules].freeze
 
@@ -49,7 +49,7 @@ class AcademyCurriculum
     module_slugs = modules.map { |academy_module| academy_module["slug"] }
     validate_related_records!(data.fetch("teachers"), REQUIRED_TEACHER_KEYS, module_slugs, "insegnante")
     validate_related_records!(data.fetch("locations"), REQUIRED_CENTER_KEYS, module_slugs, "centro")
-    validate_paths!(data.fetch("paths", []), module_slugs)
+    validate_paths!(data.fetch("paths", []), module_slugs, PosturacorrettaTaxonomies.load.fetch("areas").keys)
     validate_module_methodologies!(modules, data.fetch("methodologies", {}))
 
     modules.each do |academy_module|
@@ -63,7 +63,9 @@ class AcademyCurriculum
         missing = REQUIRED_LESSON_KEYS - lesson.keys
         raise ArgumentError, "Lezione academy incompleta: #{missing.join(', ')}" if missing.any?
 
-        validate_content_path!(lesson["content_path"])
+        if lesson["content_path"].present?
+          validate_content_path!(lesson["content_path"])
+        end
       end
     end
   end
@@ -116,7 +118,7 @@ class AcademyCurriculum
     end
   end
 
-  def validate_paths!(paths, module_slugs)
+  def validate_paths!(paths, module_slugs, taxonomy_area_slugs)
     raise ArgumentError, "config/academy.yml deve contenere paths" unless paths.is_a?(Array)
 
     paths.each do |path|
@@ -132,6 +134,11 @@ class AcademyCurriculum
 
         unknown_modules = area.fetch("module_slugs", []) - module_slugs
         raise ArgumentError, "Area academy #{area['slug']} collegata a moduli inesistenti: #{unknown_modules.join(', ')}" if unknown_modules.any?
+
+        taxonomy_area = area["taxonomy_area"]
+        if taxonomy_area.present? && !taxonomy_area_slugs.include?(taxonomy_area)
+          raise ArgumentError, "Area academy #{area['slug']} collegata a tassonomia inesistente: #{taxonomy_area}"
+        end
       end
     end
   end

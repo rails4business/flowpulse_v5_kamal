@@ -1,6 +1,7 @@
 class LandingController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
+  before_action :load_posturacorretta_taxonomies, only: :posturacorretta
 
 
   def flowpulse
@@ -24,5 +25,11 @@ class LandingController < ApplicationController
 
   def igieneposturale
  
+  end
+
+  private
+
+  def load_posturacorretta_taxonomies
+    @posturacorretta_taxonomies = PosturacorrettaTaxonomies.load
   end
 end

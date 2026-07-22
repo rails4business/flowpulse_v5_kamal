@@ -1,459 +1,450 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Layout spostabile – 3 pezzi + cerchi sotto</title>
 
-    <style>
-      :root {
-        --crown: #8e24aa;
-        --third: #3949ab;
-        --throat: #1e88e5;
-        --heart: #43a047;
-        --solar: #fdd835;
-        --sacral: #fb8c00;
-        --root: #e53935;
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Layout spostabile – 3 pezzi + cerchi sotto</title>
 
-        --bg: #fff;
+  <style>
+    :root {
+      --crown: #8e24aa;
+      --third: #3949ab;
+      --throat: #1e88e5;
+      --heart: #43a047;
+      --solar: #fdd835;
+      --sacral: #fb8c00;
+      --root: #e53935;
 
-        --size: min(480px, 58vmin, 78vw);
-        --step: 0.058;
-        --white: 5.3px;
-        --radius: 20px;
-      }
+      --bg: #fff;
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        background: var(--bg);
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
-          Arial;
-        overflow: hidden; /* così trascini senza “saltare” la pagina */
-      }
+      --size: min(480px, 58vmin, 78vw);
+      --step: 0.058;
+      --white: 5.3px;
+      --radius: 20px;
+    }
 
-      /* “tavolo da lavoro” */
-      .board {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-      }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+        Arial;
+      overflow: hidden;
+      /* così trascini senza “saltare” la pagina */
+    }
 
-      /* unità comune */
-      .unit {
-        --h: calc(var(--size) * var(--step));
-      }
+    /* “tavolo da lavoro” */
+    .board {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
 
-      /* pezzi spostabili */
-      .piece {
-        position: absolute;
-        width: var(--size);
-        cursor: grab;
-        user-select: none;
-        touch-action: none;
-      }
-      .piece:active {
-        cursor: grabbing;
-      }
+    /* unità comune */
+    .unit {
+      --h: calc(var(--size) * var(--step));
+    }
 
-      /* livelli */
-      #circles {
-        z-index: 1;
-      }
-      #claims {
-        z-index: 3;
-      }
-      #areas {
-        z-index: 3;
-      }
+    /* pezzi spostabili */
+    .piece {
+      position: absolute;
+      width: var(--size);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+    }
 
-      /* PIRAMIDI */
-      .piramide {
-        display: flex;
-        flex-direction: column;
-        gap: var(--white);
-        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.1));
-      }
-      .bar {
-        height: var(--h);
-        width: var(--w, 100%);
-        border-radius: var(--radius);
-        display: flex;
-        align-items: center;
-        padding: 0 22px;
-        font-weight: 900;
-        font-size: clamp(14px, calc(var(--h) * 0.38), 30px);
-        line-height: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      .darkText {
-        color: #1f1f1f;
-      }
-      .lightText {
-        color: #fff;
-      }
+    .piece:active {
+      cursor: grabbing;
+    }
 
-      /* barra superiore non a piramide */
-      #claims .bar {
-        width: 100%;
-      }
+    /* livelli */
+    #circles {
+      z-index: 1;
+    }
 
-      /* ambiti: scalini a sinistra */
-      #areas .bar {
-        margin-left: 0;
-        margin-right: auto;
-      }
+    #claims {
+      z-index: 3;
+    }
 
-      /* CERCHI */
-      .stage {
-        width: var(--size);
-        aspect-ratio: 1/1;
-        position: relative;
-      }
-      .ring {
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        box-shadow: 0 0 0 var(--white) #fff inset;
-      }
-      .r1 {
-        background: var(--crown);
-        inset: 0%;
-      }
-      .r2 {
-        background: var(--third);
-        inset: 7%;
-      }
-      .r3 {
-        background: var(--throat);
-        inset: 14%;
-      }
-      .r4 {
-        background: var(--heart);
-        inset: 21%;
-      }
-      .r5 {
-        background: var(--solar);
-        inset: 28%;
-      }
-      .r6 {
-        background: var(--sacral);
-        inset: 35%;
-      }
-      .r7 {
-        background: var(--root);
-        inset: 42%;
-      }
+    #areas {
+      z-index: 3;
+    }
 
-      /* posizioni iniziali (poi puoi trascinare) */
-      #claims {
-        left: 4vw;
-        top: 2vh;
-      }
-      #circles {
-        left: 30vw;
-        top: 24vh;
-      }
-      #areas {
-        left: 4vw;
-        top: 62vh;
-      }
+    /* PIRAMIDI */
+    .piramide {
+      display: flex;
+      flex-direction: column;
+      gap: var(--white);
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.1));
+    }
 
-      /* mini maniglia visiva (facoltativa) */
-      .handle {
-        position: absolute;
-        top: -14px;
-        left: 0;
-        font-size: 12px;
-        color: #444;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 999px;
-        padding: 6px 10px;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-        user-select: none;
-      }
-    </style>
-  </head>
+    .bar {
+      height: var(--h);
+      width: var(--w, 100%);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      padding: 0 22px;
+      font-weight: 900;
+      font-size: clamp(14px, calc(var(--h) * 0.38), 30px);
+      line-height: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
 
-  <body>
-    <div class="board unit">
-      <!-- AFFERMAZIONI (sopra) -->
-      <section
-        id="claims"
-        class="piece"
-        data-key="claims"
-        aria-label="Affermazioni"
-      >
-        <div class="piramide">
-          <div
-            class="bar lightText"
-            style="--w: 100%; background: var(--crown)"
-          >
-            Ho il diritto di conoscere, di connettermi con il tutto e di avere
-            consapevolezza universale
-          </div>
-          <div class="bar lightText" style="--w: 96%; background: var(--third)">
-            Ho il diritto, di percepire oltre l’ovvio, di vedere la verità, di
-            essere intuitivo,
-          </div>
-          <div
-            class="bar lightText"
-            style="--w: 92%; background: var(--throat)"
-          >
-            Ho il diritto di parlare la mia verità, di esprimermi liberamente e
-            di ascoltare
-          </div>
-          <div class="bar lightText" style="--w: 88%; background: var(--heart)">
-            Ho il diritto di amare ed essere amato, di ricevere e offrire amore,
-            compassione e perdono
-          </div>
-          <div class="bar darkText" style="--w: 84%; background: var(--solar)">
-            Ho il diritto di agire, di avere potere personale, di prendere
-            decisioni
-          </div>
-          <div
-            class="bar lightText"
-            style="--w: 80%; background: var(--sacral)"
-          >
-            Ho il diritto di provare gioia e piacere, di essere creativo e di
-            seguire i miei desideri
-          </div>
-          <div class="bar lightText" style="--w: 76%; background: var(--root)">
-            Ho il diritto di esistere, di essere qui, di avere ciò di cui ho
-            bisogno per vivere
-          </div>
+    .darkText {
+      color: #1f1f1f;
+    }
+
+    .lightText {
+      color: #fff;
+    }
+
+    /* barra superiore non a piramide */
+    #claims .bar {
+      width: 100%;
+    }
+
+    /* ambiti: scalini a sinistra */
+    #areas .bar {
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    /* CERCHI */
+    .stage {
+      width: var(--size);
+      aspect-ratio: 1/1;
+      position: relative;
+    }
+
+    .ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      box-shadow: 0 0 0 var(--white) #fff inset;
+    }
+
+    .r1 {
+      background: var(--crown);
+      inset: 0%;
+    }
+
+    .r2 {
+      background: var(--third);
+      inset: 7%;
+    }
+
+    .r3 {
+      background: var(--throat);
+      inset: 14%;
+    }
+
+    .r4 {
+      background: var(--heart);
+      inset: 21%;
+    }
+
+    .r5 {
+      background: var(--solar);
+      inset: 28%;
+    }
+
+    .r6 {
+      background: var(--sacral);
+      inset: 35%;
+    }
+
+    .r7 {
+      background: var(--root);
+      inset: 42%;
+    }
+
+    /* posizioni iniziali (poi puoi trascinare) */
+    #claims {
+      left: 4vw;
+      top: 2vh;
+    }
+
+    #circles {
+      left: 30vw;
+      top: 24vh;
+    }
+
+    #areas {
+      left: 4vw;
+      top: 62vh;
+    }
+
+    /* mini maniglia visiva (facoltativa) */
+    .handle {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      font-size: 12px;
+      color: #444;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      padding: 6px 10px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="board unit">
+    <!-- AFFERMAZIONI (sopra) -->
+    <section id="claims" class="piece" data-key="claims" aria-label="Affermazioni">
+      <div class="piramide">
+        <div class="bar lightText" style="--w: 100%; background: var(--crown)">
+          Ho il diritto di conoscere, di connettermi con il tutto e di avere
+          consapevolezza universale
         </div>
-      </section>
-
-      <!-- CERCHI (sempre sotto) -->
-      <section
-        id="circles"
-        class="piece"
-        data-key="circles"
-        aria-label="Cerchi concentrici"
-      >
-        <div class="stage">
-          <div class="ring r1"></div>
-          <div class="ring r2"></div>
-          <div class="ring r3"></div>
-          <div class="ring r4"></div>
-          <div class="ring r5"></div>
-          <div class="ring r6"></div>
-          <div class="ring r7"></div>
+        <div class="bar lightText" style="--w: 96%; background: var(--third)">
+          Ho il diritto, di percepire oltre l’ovvio, di vedere la verità, di
+          essere intuitivo,
         </div>
-      </section>
-
-      <!-- AMBITI (sopra) -->
-      <section id="areas" class="piece" data-key="areas" aria-label="Ambiti">
-        <div class="piramide">
-          <div class="bar lightText" style="--w: 76%; background: var(--root)">
-            Cura • Patologie • Riabilitazione
-          </div>
-          <div
-            class="bar lightText"
-            style="--w: 80%; background: var(--sacral)"
-          >
-            Prevenzione nelle attività
-          </div>
-          <div class="bar darkText" style="--w: 84%; background: var(--solar)">
-            Performances • Lavoro • Formazione • Capacità cognitive • IA
-          </div>
-          <div class="bar lightText" style="--w: 88%; background: var(--heart)">
-            Benessere • D-bionat.-fitness-estetica-servizi-alla-p
-          </div>
-          <div
-            class="bar lightText"
-            style="--w: 92%; background: var(--throat)"
-          >
-            Educazione • Accademia Postura e fisiologia
-          </div>
-          <div class="bar lightText" style="--w: 96%; background: var(--third)">
-            Stile di vita • Ambiente Territorio • Abitudini  • Calendario Contadino
-          </div>
-          <div
-            class="bar lightText"
-            style="--w: 100%; background: var(--crown)"
-          >
-            Evoluzione armonica • modelli • sfere dell'essere umano
-          </div>
+        <div class="bar lightText" style="--w: 92%; background: var(--throat)">
+          Ho il diritto di parlare la mia verità, di esprimermi liberamente e
+          di ascoltare
         </div>
-      </section>
-    </div>
+        <div class="bar lightText" style="--w: 88%; background: var(--heart)">
+          Ho il diritto di amare ed essere amato, di ricevere e offrire amore,
+          compassione e perdono
+        </div>
+        <div class="bar darkText" style="--w: 84%; background: var(--solar)">
+          Ho il diritto di agire, di avere potere personale, di prendere
+          decisioni
+        </div>
+        <div class="bar lightText" style="--w: 80%; background: var(--sacral)">
+          Ho il diritto di provare gioia e piacere, di essere creativo e di
+          seguire i miei desideri
+        </div>
+        <div class="bar lightText" style="--w: 76%; background: var(--root)">
+          Ho il diritto di esistere, di essere qui, di avere ciò di cui ho
+          bisogno per vivere
+        </div>
+      </div>
+    </section>
 
-    <script>
-      // Drag + salva posizione in localStorage (con clamp dentro viewport)
-      const pieces = document.querySelectorAll(".piece");
+    <!-- CERCHI (sempre sotto) -->
+    <section id="circles" class="piece" data-key="circles" aria-label="Cerchi concentrici">
+      <div class="stage">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="ring r4"></div>
+        <div class="ring r5"></div>
+        <div class="ring r6"></div>
+        <div class="ring r7"></div>
+      </div>
+    </section>
 
-      function loadPos(el) {
-        const key = el.dataset.key;
-        const raw = localStorage.getItem("pos:" + key);
-        if (!raw) return;
-        try {
-          const { left, top } = JSON.parse(raw);
-          if (typeof left === "number") el.style.left = left + "px";
-          if (typeof top === "number") el.style.top = top + "px";
-        } catch (e) {}
-      }
+    <!-- AMBITI (sopra) -->
+    <section id="areas" class="piece" data-key="areas" aria-label="Ambiti">
+      <div class="piramide">
+        <div class="bar lightText" style="--w: 76%; background: var(--root)">
+          Cura • Patologie • Riabilitazione
+        </div>
+        <div class="bar lightText" style="--w: 80%; background: var(--sacral)">
+          Prevenzione nelle attività
+        </div>
+        <div class="bar darkText" style="--w: 84%; background: var(--solar)">
+          Performances • Lavoro • Formazione • Capacità cognitive • IA
+        </div>
+        <div class="bar lightText" style="--w: 88%; background: var(--heart)">
+          Benessere • D-bionat. - 
+        </div>
+        <div class="bar lightText" style="--w: 92%; background: var(--throat)">
+          Fitness sport Discipline danza nuoto arti marziali 
+        </div>
+        <div class="bar lightText" style="--w: 96%; background: var(--third)">
+          Evoluzione armonica • modelli • sfere dell'essere umano • Abitudini
+        </div>
+        <div class="bar lightText" style="--w: 100%; background: var(--crown)">
+          Stile di vita • Ambiente Territorio Gruppo
+        </div>
+      </div>
+    </section>
+  </div>
 
-      function savePos(el) {
-        const key = el.dataset.key;
-        const left = el.offsetLeft;
-        const top = el.offsetTop;
-        localStorage.setItem("pos:" + key, JSON.stringify({ left, top }));
-      }
+  <script>
+    // Drag + salva posizione in localStorage (con clamp dentro viewport)
+    const pieces = document.querySelectorAll(".piece");
 
-      function clampToViewport(el) {
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const rect = el.getBoundingClientRect();
-        const maxLeft = vw - rect.width;
-        const maxTop = vh - rect.height;
+    function loadPos(el) {
+      const key = el.dataset.key;
+      const raw = localStorage.getItem("pos:" + key);
+      if (!raw) return;
+      try {
+        const { left, top } = JSON.parse(raw);
+        if (typeof left === "number") el.style.left = left + "px";
+        if (typeof top === "number") el.style.top = top + "px";
+      } catch (e) { }
+    }
 
-        const left = Math.max(0, Math.min(el.offsetLeft, maxLeft));
-        const top = Math.max(0, Math.min(el.offsetTop, maxTop));
+    function savePos(el) {
+      const key = el.dataset.key;
+      const left = el.offsetLeft;
+      const top = el.offsetTop;
+      localStorage.setItem("pos:" + key, JSON.stringify({ left, top }));
+    }
 
-        el.style.left = left + "px";
-        el.style.top = top + "px";
-      }
+    function clampToViewport(el) {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const rect = el.getBoundingClientRect();
+      const maxLeft = vw - rect.width;
+      const maxTop = vh - rect.height;
 
-      pieces.forEach(loadPos);
+      const left = Math.max(0, Math.min(el.offsetLeft, maxLeft));
+      const top = Math.max(0, Math.min(el.offsetTop, maxTop));
 
-      pieces.forEach((el) => {
-        let startX = 0,
-          startY = 0,
-          startLeft = 0,
-          startTop = 0,
-          dragging = false;
+      el.style.left = left + "px";
+      el.style.top = top + "px";
+    }
 
-        const onDown = (ev) => {
-          dragging = true;
-          el.style.zIndex = el.id === "circles" ? 1 : 4;
-          const p = ev.touches ? ev.touches[0] : ev;
-          startX = p.clientX;
-          startY = p.clientY;
-          startLeft = el.offsetLeft;
-          startTop = el.offsetTop;
-          ev.preventDefault();
-        };
+    pieces.forEach(loadPos);
 
-        const onMove = (ev) => {
-          if (!dragging) return;
-          const p = ev.touches ? ev.touches[0] : ev;
-          const dx = p.clientX - startX;
-          const dy = p.clientY - startY;
-          el.style.left = startLeft + dx + "px";
-          el.style.top = startTop + dy + "px";
-          clampToViewport(el);
-        };
+    pieces.forEach((el) => {
+      let startX = 0,
+        startY = 0,
+        startLeft = 0,
+        startTop = 0,
+        dragging = false;
 
-        const onUp = () => {
-          if (!dragging) return;
-          dragging = false;
-          el.style.zIndex = el.id === "circles" ? 1 : 3;
-          clampToViewport(el);
-          savePos(el);
-        };
+      const onDown = (ev) => {
+        dragging = true;
+        el.style.zIndex = el.id === "circles" ? 1 : 4;
+        const p = ev.touches ? ev.touches[0] : ev;
+        startX = p.clientX;
+        startY = p.clientY;
+        startLeft = el.offsetLeft;
+        startTop = el.offsetTop;
+        ev.preventDefault();
+      };
 
-        el.addEventListener("mousedown", onDown);
-        window.addEventListener("mousemove", onMove);
-        window.addEventListener("mouseup", onUp);
+      const onMove = (ev) => {
+        if (!dragging) return;
+        const p = ev.touches ? ev.touches[0] : ev;
+        const dx = p.clientX - startX;
+        const dy = p.clientY - startY;
+        el.style.left = startLeft + dx + "px";
+        el.style.top = startTop + dy + "px";
+        clampToViewport(el);
+      };
 
-        el.addEventListener("touchstart", onDown, { passive: false });
-        window.addEventListener("touchmove", onMove, { passive: false });
-        window.addEventListener("touchend", onUp);
-      });
-
-      // --- Modalità CHIOCCIOLA / SPIRALE ---------------------------------
-
-      function setPos(el, x, y) {
-        el.style.left = Math.round(x) + "px";
-        el.style.top = Math.round(y) + "px";
+      const onUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        el.style.zIndex = el.id === "circles" ? 1 : 3;
         clampToViewport(el);
         savePos(el);
-      }
+      };
 
-      // Spirale di Archimede: r = a + b*theta
-      function spiralPoint(cx, cy, theta, a, b) {
-        const r = a + b * theta;
-        return {
-          x: cx + r * Math.cos(theta),
-          y: cy + r * Math.sin(theta),
-        };
-      }
+      el.addEventListener("mousedown", onDown);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
 
-      function layoutSpiral() {
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
+      el.addEventListener("touchstart", onDown, { passive: false });
+      window.addEventListener("touchmove", onMove, { passive: false });
+      window.addEventListener("touchend", onUp);
+    });
 
-        // centro chiocciola un po' spostato a destra (di solito sta meglio)
-        const cx = vw * 0.55;
-        const cy = vh * 0.48;
+    // --- Modalità CHIOCCIOLA / SPIRALE ---------------------------------
 
-        // parametri spirale: a = r iniziale, b = "distanza tra giri"
-        const a = 10;
-        const b = 55;
+    function setPos(el, x, y) {
+      el.style.left = Math.round(x) + "px";
+      el.style.top = Math.round(y) + "px";
+      clampToViewport(el);
+      savePos(el);
+    }
 
-        // ordine dei pezzi lungo la spirale (puoi cambiarlo)
-        const order = [
-          document.querySelector("#claims"),
-          document.querySelector("#circles"),
-          document.querySelector("#areas"),
-        ].filter(Boolean);
+    // Spirale di Archimede: r = a + b*theta
+    function spiralPoint(cx, cy, theta, a, b) {
+      const r = a + b * theta;
+      return {
+        x: cx + r * Math.cos(theta),
+        y: cy + r * Math.sin(theta),
+      };
+    }
 
-        // scegli theta distanziati (più alto = più esterno)
-        const thetas = [1.2, 2.6, 4.0];
+    function layoutSpiral() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
 
-        order.forEach((el, i) => {
-          const { x, y } = spiralPoint(cx, cy, thetas[i], a, b);
-          setPos(el, x - el.offsetWidth * 0.5, y - el.offsetHeight * 0.5);
-        });
-      }
+      // centro chiocciola un po' spostato a destra (di solito sta meglio)
+      const cx = vw * 0.55;
+      const cy = vh * 0.48;
 
-      // --- Griglia (aiuto visivo) -----------------------------------------
-      let gridOn = false;
-      const grid = document.createElement("div");
-      grid.style.position = "fixed";
-      grid.style.inset = "0";
-      grid.style.pointerEvents = "none";
-      grid.style.opacity = "0.25";
-      grid.style.backgroundImage =
-        "linear-gradient(to right, rgba(0,0,0,0.12) 1px, transparent 1px), " +
-        "linear-gradient(to bottom, rgba(0,0,0,0.12) 1px, transparent 1px)";
-      grid.style.backgroundSize = "32px 32px";
-      grid.style.display = "none";
-      document.body.appendChild(grid);
+      // parametri spirale: a = r iniziale, b = "distanza tra giri"
+      const a = 10;
+      const b = 55;
 
-      function toggleGrid() {
-        gridOn = !gridOn;
-        grid.style.display = gridOn ? "block" : "none";
-      }
+      // ordine dei pezzi lungo la spirale (puoi cambiarlo)
+      const order = [
+        document.querySelector("#claims"),
+        document.querySelector("#circles"),
+        document.querySelector("#areas"),
+      ].filter(Boolean);
 
-      // --- Reset -----------------------------------------------------------
-      function resetPositions() {
-        ["claims", "circles", "areas"].forEach((k) =>
-          localStorage.removeItem("pos:" + k)
-        );
-        // ricarica posizioni CSS di default
-        document.querySelector("#claims")?.removeAttribute("style");
-        document.querySelector("#circles")?.removeAttribute("style");
-        document.querySelector("#areas")?.removeAttribute("style");
-      }
+      // scegli theta distanziati (più alto = più esterno)
+      const thetas = [1.2, 2.6, 4.0];
 
-      // Shortcuts
-      window.addEventListener("keydown", (e) => {
-        const key = e.key.toLowerCase();
-        if (key === "s") layoutSpiral(); // S = spirale
-        if (key === "g") toggleGrid(); // G = griglia
-        if (key === "r") resetPositions(); // R = reset
+      order.forEach((el, i) => {
+        const { x, y } = spiralPoint(cx, cy, thetas[i], a, b);
+        setPos(el, x - el.offsetWidth * 0.5, y - el.offsetHeight * 0.5);
       });
+    }
 
-      // se ridimensioni finestra, clamp
-      window.addEventListener("resize", () => {
-        pieces.forEach((el) => clampToViewport(el));
-      });
-    </script>
-  </body>
+    // --- Griglia (aiuto visivo) -----------------------------------------
+    let gridOn = false;
+    const grid = document.createElement("div");
+    grid.style.position = "fixed";
+    grid.style.inset = "0";
+    grid.style.pointerEvents = "none";
+    grid.style.opacity = "0.25";
+    grid.style.backgroundImage =
+      "linear-gradient(to right, rgba(0,0,0,0.12) 1px, transparent 1px), " +
+      "linear-gradient(to bottom, rgba(0,0,0,0.12) 1px, transparent 1px)";
+    grid.style.backgroundSize = "32px 32px";
+    grid.style.display = "none";
+    document.body.appendChild(grid);
+
+    function toggleGrid() {
+      gridOn = !gridOn;
+      grid.style.display = gridOn ? "block" : "none";
+    }
+
+    // --- Reset -----------------------------------------------------------
+    function resetPositions() {
+      ["claims", "circles", "areas"].forEach((k) =>
+        localStorage.removeItem("pos:" + k)
+      );
+      // ricarica posizioni CSS di default
+      document.querySelector("#claims")?.removeAttribute("style");
+      document.querySelector("#circles")?.removeAttribute("style");
+      document.querySelector("#areas")?.removeAttribute("style");
+    }
+
+    // Shortcuts
+    window.addEventListener("keydown", (e) => {
+      const key = e.key.toLowerCase();
+      if (key === "s") layoutSpiral(); // S = spirale
+      if (key === "g") toggleGrid(); // G = griglia
+      if (key === "r") resetPositions(); // R = reset
+    });
+
+    // se ridimensioni finestra, clamp
+    window.addEventListener("resize", () => {
+      pieces.forEach((el) => clampToViewport(el));
+    });
+  </script>
+</body>
+
 </html>

@@ -1,18 +1,38 @@
-<button
-  type="button"
-  class="lesson"
-  data-lesson-template="lesson-<%= academy_module.fetch("slug") %>-<%= lesson.fetch("slug") %>"
->
-  <span class="lesson-num"><%= lesson.fetch("number") %></span>
-  <span>
-    <strong><%= lesson.fetch("title") %></strong>
-    <small><%= lesson.fetch("description") %></small>
-  </span>
-  <span class="lesson-status">✓ disponibile</span>
-</button>
+<%
+  methodology_link = lesson["methodology_link"]
+  link_url = if methodology_link.present?
+               posturacorretta_metodica_path(methodology_link)
+             else
+               lesson["link_url"]
+             end
+%>
 
-<template id="lesson-<%= academy_module.fetch("slug") %>-<%= lesson.fetch("slug") %>">
-  <article class="academy-lesson-content">
-    <%= academy_markdown(lesson.fetch("content_path")) %>
-  </article>
-</template>
+<% if link_url %>
+  <a class="lesson" href="<%= link_url %>">
+    <span class="lesson-num"><%= lesson.fetch("number") %></span>
+    <span>
+      <strong><%= lesson.fetch("title") %></strong>
+      <small><%= lesson.fetch("description") %></small>
+    </span>
+    <span class="lesson-status" style="color: var(--blue);">→ scopri di più</span>
+  </a>
+<% else %>
+  <button
+    type="button"
+    class="lesson"
+    data-lesson-template="lesson-<%= academy_module.fetch("slug") %>-<%= lesson.fetch("slug") %>"
+  >
+    <span class="lesson-num"><%= lesson.fetch("number") %></span>
+    <span>
+      <strong><%= lesson.fetch("title") %></strong>
+      <small><%= lesson.fetch("description") %></small>
+    </span>
+    <span class="lesson-status">✓ disponibile</span>
+  </button>
+
+  <template id="lesson-<%= academy_module.fetch("slug") %>-<%= lesson.fetch("slug") %>">
+    <article class="academy-lesson-content">
+      <%= academy_markdown(lesson.fetch("content_path")) %>
+    </article>
+  </template>
+<% end %>

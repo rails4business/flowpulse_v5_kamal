@@ -2,11 +2,13 @@
   is_home = current_page?(posturacorretta_path) || current_page?("/posturacorretta")
   is_accademia = current_page?(posturacorretta_accademia_path) rescue false
   is_percorso = current_page?(posturacorretta_percorso_path) rescue false
-  is_metodiche = request.path.start_with?(posturacorretta_metodiche_path) rescue false
-  is_contenuti = current_page?(posturacorretta_contenuti_path) rescue false
+   is_contenuti = current_page?(posturacorretta_contenuti_path) rescue false
   is_filosofia = current_page?(posturacorretta_filosofia_path) rescue false
+  is_metodiche = request.path.start_with?(posturacorretta_metodiche_path) rescue false
+ 
   is_eventi = current_page?(posturacorretta_eventi_path) rescue false
   is_progetti = current_page?(posturacorretta_progetti_path) rescue false
+  
 %>
 
 <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -16,7 +18,9 @@
       <img
         src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
         alt="PosturaCorretta"
-        class="h-8 w-auto">
+        class="h-8 w-auto"
+        onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');">
+      <span class="hidden text-lg font-extrabold tracking-tight text-blue-700">PosturaCorretta</span>
     </a>
 
     <!-- Desktop Inline Nav Links (Shortened, hidden on mobile) -->
@@ -29,10 +33,7 @@
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_percorso ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Percorso
       </a>
-      <a href="<%= posturacorretta_metodiche_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_metodiche ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
-        Metodiche
-      </a>
+      
       <a href="<%= posturacorretta_contenuti_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_contenuti ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Contenuti
@@ -40,6 +41,10 @@
       <a href="<%= posturacorretta_filosofia_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_filosofia ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Libro
+      </a>
+      <a href="<%= posturacorretta_metodiche_path %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_metodiche ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
+        Metodiche
       </a>
       <a href="<%= posturacorretta_eventi_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_eventi ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">

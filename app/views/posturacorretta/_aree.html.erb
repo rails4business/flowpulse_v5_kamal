@@ -1,0 +1,43 @@
+<% areas = @areas || {} %>
+<section class="px-5 py-10 md:py-16">
+  <div class="mx-auto w-full max-w-6xl">
+    <header class="max-w-3xl">
+      <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">Le 5 Aree d'Intervento</p>
+      <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+        Le aree per <span class="text-blue-700">agire sul corpo</span>
+      </h2>
+      <p class="mt-4 text-base leading-7 text-slate-600">
+        In ogni ambito della vita puoi utilizzare strumenti diversi. Le aree d'intervento ti aiutano a capire che tipo di lavoro stai facendo con il corpo.
+      </p>
+    </header>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <% areas.each do |key, area| %>
+        <article class="flex flex-col rounded-3xl border p-6 shadow-sm transition hover:shadow-md <%= area.fetch('classes') %>">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex rounded-full bg-white/60 px-3 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm ring-1 ring-black/5">
+              <%= area.fetch('element') %>
+            </span>
+            <span class="text-sm font-bold uppercase tracking-widest opacity-80">
+              <%= area.fetch('imperative') %>
+            </span>
+          </div>
+          
+          <h3 class="mt-5 text-2xl font-bold tracking-tight">
+            <%= area.fetch('title') %>
+          </h3>
+          <p class="mt-2 text-sm font-semibold opacity-90">
+            <%= area.fetch('meaning') %>
+          </p>
+          <p class="mt-4 flex-1 text-sm leading-6 opacity-80">
+            <%= area.fetch('description') %>
+          </p>
+          <div class="mt-6 border-t border-black/10 pt-4">
+            <p class="text-xs font-bold uppercase tracking-wider opacity-60">Azione</p>
+            <p class="mt-1 text-sm font-medium opacity-90"><%= area.fetch('action') %></p>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </div>
+</section>

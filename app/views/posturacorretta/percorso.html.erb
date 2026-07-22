@@ -2,96 +2,194 @@
   <%= render "posturacorretta/header" %>
 <% end %>
 
-<div id="top" class="text-slate-900 antialiased">
-  <section id="percorso" class="px-5 py-10 md:py-16">
-    <div class="mx-auto w-full max-w-6xl">
-      <header class="max-w-3xl">
-        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-          Percorso personalizzato
-        </p>
-        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
-          Costruisci <span class="text-blue-700">il tuo percorso integrato</span>
-        </h1>
-        <p class="mt-4 text-base leading-7 text-slate-600">
-          Parti dal bisogno che senti oggi. Scegli un programma: il percorso completo comparirà subito sotto, senza aprire altre finestre.
-        </p>
-      </header>
-
-      <!-- PROGRAM SELECTOR -->
-      <div class="mt-9 max-w-2xl rounded-2xl border border-slate-200 bg-slate-50 p-5 md:p-6">
-        <label for="path-select" class="block text-lg font-semibold tracking-tight text-slate-950">
-          Da dove vuoi iniziare?
-        </label>
-        <p class="mt-1 text-sm leading-6 text-slate-500">
-          Scegli il bisogno più vicino alla tua situazione attuale.
-        </p>
-        <div class="relative mt-4">
-          <select id="path-select" aria-controls="path-panel"
-            class="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3.5 pl-4 pr-12 text-sm font-semibold text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-            <option value="" selected disabled>Seleziona il tuo percorso…</option>
-            <option value="cura">🩹 Stop al Dolore</option>
-            <option value="prevenzione">🛡️ Prevenzione</option>
-            <option value="performance">⚡ Performance</option>
-            <option value="fisiologia">🌀 Postura e Fisiologia</option>
-            <option value="benessere">🌱 Benessere</option>
-            <option value="giardino">🌳 Il Giardino del Corpo</option>
-          </select>
-          <svg class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- The selected path is rendered here, in the normal page flow. -->
-      <div id="path-panel" role="region" aria-live="polite"
-        class="mt-7 hidden overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-        <div id="path-panel-head" class="border-b border-red-100 bg-red-50 px-6 py-7 md:px-9 md:py-9">
-          <p id="path-kicker" class="text-xs font-semibold uppercase tracking-[0.22em] text-red-700"></p>
-          <h2 id="path-title" class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl"></h2>
-          <p id="path-description" class="mt-3 max-w-3xl text-sm leading-6 text-slate-600 md:text-base md:leading-7"></p>
-        </div>
-
-        <div class="px-6 py-7 md:px-9 md:py-9">
-          <!-- Only visible for Il Giardino del Corpo. -->
-          <div id="garden-subtabs" class="mb-8 hidden" role="tablist" aria-label="Aree del Giardino del Corpo">
-            <div class="inline-flex w-full rounded-2xl bg-violet-50 p-1.5 sm:w-auto">
-              <button type="button" data-garden-key="potenziale" role="tab" aria-selected="true"
-                class="pc-garden-tab flex-1 rounded-xl bg-violet-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm sm:flex-none">
-                Potenziale umano
-              </button>
-              <button type="button" data-garden-key="ambiente" role="tab" aria-selected="false"
-                class="pc-garden-tab flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-violet-700 sm:flex-none">
-                Corpo e ambiente
-              </button>
-            </div>
-          </div>
-
-          <div id="path-team" class="mb-9"></div>
-
-          <h3 id="path-steps-title" class="text-lg font-semibold text-slate-950"></h3>
-          <div id="path-steps" class="mt-7 space-y-8"></div>
-
-          <div class="mt-9 flex flex-col gap-3 border-t border-slate-100 pt-7 sm:flex-row sm:items-center sm:justify-between">
-            <p class="text-sm text-slate-500">Vuoi costruire questo percorso con il professionista giusto?</p>
-            <div class="flex flex-col gap-2 sm:flex-row">
-              <a id="path-whatsapp-link"
-                href="https://wa.me/393792891488"
-                target="_blank" rel="noopener noreferrer"
-                class="inline-flex items-center justify-center rounded-xl bg-red-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-red-700">
-                Inizia questo percorso →
-              </a>
-            </div>
-          </div>
-        </div>
+<div id="top" class="text-slate-900 antialiased relative">
+  
+  <!-- TABS HEADER -->
+  <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="mx-auto max-w-6xl px-5 py-4">
+      <div class="mx-auto max-w-fit rounded-full bg-slate-100 p-1.5 shadow-inner">
+        <nav class="flex space-x-1 overflow-x-auto" aria-label="Tabs" data-percorso-tabs>
+          <button class="whitespace-nowrap rounded-full px-6 py-2.5 text-sm font-semibold transition bg-white text-blue-900 shadow-sm ring-1 ring-black/5" aria-selected="true" data-tab-button="inizia-ora">
+            Inizia ora
+          </button>
+          <button class="whitespace-nowrap rounded-full px-6 py-2.5 text-sm font-semibold transition text-slate-600 hover:text-slate-900" aria-selected="false" data-tab-button="ambiti">
+            Ambiti
+          </button>
+          <button class="whitespace-nowrap rounded-full px-6 py-2.5 text-sm font-semibold transition text-slate-600 hover:text-slate-900" aria-selected="false" data-tab-button="aree">
+            Aree
+          </button>
+          <button class="whitespace-nowrap rounded-full px-6 py-2.5 text-sm font-semibold transition text-slate-600 hover:text-slate-900" aria-selected="false" data-tab-button="professionisti">
+            Professionisti
+          </button>
+        </nav>
       </div>
     </div>
-  </section>
+  </div>
+
+  <div class="min-h-screen bg-slate-50">
+    <!-- INIZIA ORA -->
+    <div id="panel-inizia-ora" data-tab-panel="inizia-ora">
+      <section id="percorso" class="px-5 py-10 md:py-16">
+        <div class="mx-auto w-full max-w-6xl">
+          <header class="max-w-3xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+              Percorso personalizzato
+            </p>
+            <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+              Costruisci <span class="text-blue-700">il tuo percorso integrato</span>
+            </h1>
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              Parti dal bisogno che senti oggi. Scegli un programma: il percorso completo comparirà subito sotto, senza aprire altre finestre.
+            </p>
+          </header>
+
+
+
+          <!-- PROGRAM SELECTOR -->
+          <div class="mt-9 max-w-2xl rounded-2xl border border-slate-200 bg-slate-50 p-5 md:p-6">
+            <label for="path-select" class="block text-lg font-semibold tracking-tight text-slate-950">
+              Da dove vuoi iniziare?
+            </label>
+            <p class="mt-1 text-sm leading-6 text-slate-500">
+              Scegli il bisogno più vicino alla tua situazione attuale.
+            </p>
+            <div class="relative mt-4">
+              <select id="path-select" aria-controls="path-panel"
+                class="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3.5 pl-4 pr-12 text-sm font-semibold text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+                <option value="" selected disabled>Seleziona il tuo percorso…</option>
+                <option value="cura">🩹 Stop al dolore</option>
+                <option value="cura">🏥 Percorso terapeutico</option>
+                <option value="prevenzione">🛡️ Prevenzione</option>
+                <option value="performance">⚡ Performances</option>
+                <option value="fisiologia">🌀 Postura e fisiologia</option>
+                <option value="benessere">🌱 Benessere integrato</option>
+                <option value="giardino">🌳 Il giardino del corpo</option>
+              </select>
+              <svg class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- The selected path is rendered here, in the normal page flow. -->
+          <div id="path-panel" role="region" aria-live="polite"
+            class="mt-7 hidden overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+            <div id="path-panel-head" class="border-b border-red-100 bg-red-50 px-6 py-7 md:px-9 md:py-9">
+              <p id="path-kicker" class="text-xs font-semibold uppercase tracking-[0.22em] text-red-700"></p>
+              <h2 id="path-title" class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl"></h2>
+              <p id="path-description" class="mt-3 max-w-3xl text-sm leading-6 text-slate-600 md:text-base md:leading-7"></p>
+            </div>
+
+            <div class="px-6 py-7 md:px-9 md:py-9">
+              <!-- Only visible for Il Giardino del Corpo. -->
+              <div id="garden-subtabs" class="mb-8 hidden" role="tablist" aria-label="Aree del Giardino del Corpo">
+                <div class="inline-flex w-full rounded-2xl bg-violet-50 p-1.5 sm:w-auto">
+                  <button type="button" data-garden-key="potenziale" role="tab" aria-selected="true"
+                    class="pc-garden-tab flex-1 rounded-xl bg-violet-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm sm:flex-none">
+                    Potenziale umano
+                  </button>
+                  <button type="button" data-garden-key="ambiente" role="tab" aria-selected="false"
+                    class="pc-garden-tab flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-violet-700 sm:flex-none">
+                    Corpo e ambiente
+                  </button>
+                </div>
+              </div>
+
+              <div id="path-team" class="mb-9"></div>
+
+              <h3 id="path-steps-title" class="text-lg font-semibold text-slate-950"></h3>
+              <div id="path-steps" class="mt-7 space-y-8"></div>
+
+              <div class="mt-9 flex flex-col gap-3 border-t border-slate-100 pt-7 sm:flex-row sm:items-center sm:justify-between">
+                <p class="text-sm text-slate-500">Vuoi costruire questo percorso con il professionista giusto?</p>
+                <div class="flex flex-col gap-2 sm:flex-row">
+                  <a id="path-whatsapp-link"
+                    href="https://wa.me/393792891488"
+                    target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center rounded-xl bg-red-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-red-700">
+                    Inizia questo percorso →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- AMBITI -->
+    <div id="panel-ambiti" data-tab-panel="ambiti" class="hidden">
+      <%= render "posturacorretta/chakras_ambiti" %>
+    </div>
+
+    <!-- AREE -->
+    <div id="panel-aree" data-tab-panel="aree" class="hidden">
+      <%= render "posturacorretta/aree" %>
+    </div>
+
+    <!-- PROFESSIONISTI -->
+    <div id="panel-professionisti" data-tab-panel="professionisti" class="hidden">
+      <section class="px-5 py-10 md:py-16">
+        <div class="mx-auto w-full max-w-6xl">
+          <header class="max-w-3xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+              Rete e professionisti
+            </p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
+              Cerca i <span class="text-blue-700">professionisti più adatti</span>
+            </h2>
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              I professionisti che collaborano con noi sono selezionati per competenze e ambiti d'intervento. Cerca quello più adatto al tuo percorso e prenota un colloquio conoscitivo.
+            </p>
+          </header>
+          <div class="mt-10 grid gap-5 md:grid-cols-3">
+            <article class="flex flex-col rounded-[1.5rem] border p-6 border-red-200 bg-red-50 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+              <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-red-600">Sanitari</p>
+              <h3 class="mt-3 text-xl font-bold text-red-950">Professionisti sanitari</h3>
+              <p class="mt-3 text-sm leading-6 text-red-900">Percorsi, metodiche e contenuti rivolti a professionisti sanitari.</p>
+            </article>
+            <article class="flex flex-col rounded-[1.5rem] border p-6 border-emerald-200 bg-emerald-50 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+              <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-emerald-600">Benessere</p>
+              <h3 class="mt-3 text-xl font-bold text-emerald-950">Professionisti del benessere</h3>
+              <p class="mt-3 text-sm leading-6 text-emerald-900">Percorsi, metodiche e contenuti rivolti a professionisti del benessere.</p>
+            </article>
+            <article class="flex flex-col rounded-[1.5rem] border p-6 border-sky-200 bg-sky-50 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+              <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-sky-600">Aperti a tutti</p>
+              <h3 class="mt-3 text-xl font-bold text-sky-950">Educazione aperta a tutti</h3>
+              <p class="mt-3 text-sm leading-6 text-sky-900">Percorsi, metodiche e contenuti divulgativi accessibili anche a chi parte da zero.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <%= render "posturacorretta/footer" %>
 </div>
 
 <script>
 (() => {
+  // --- TABS LOGIC ---
+  const tabButtons = document.querySelectorAll('[data-tab-button]');
+  const tabPanels = document.querySelectorAll('[data-tab-panel]');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const tabName = button.dataset.tabButton;
+      
+      tabButtons.forEach(btn => {
+        btn.setAttribute('aria-selected', 'false');
+        btn.className = "whitespace-nowrap rounded-full px-6 py-2.5 text-sm font-semibold transition text-slate-600 hover:text-slate-900";
+      });
+      tabPanels.forEach(panel => panel.classList.add('hidden'));
+      
+      button.setAttribute('aria-selected', 'true');
+      button.className = "whitespace-nowrap rounded-full px-6 py-2.5 text-sm font-semibold transition bg-white text-blue-900 shadow-sm ring-1 ring-black/5";
+      document.querySelector(`[data-tab-panel="${tabName}"]`).classList.remove('hidden');
+    });
+  });
+
+  // --- PATH SELECTION LOGIC ---
   const academyPaths = <%= raw @paths.to_json %>;
   const colorClasses = <%= raw @color_classes.to_json %>;
   const pathTeams = <%= raw @path_teams.to_json %>;
@@ -225,47 +323,53 @@
               </div>
             ` : ""}
             ${appointments.length ? `
-              <div class="mt-5 grid gap-3 md:grid-cols-2">
-                ${appointments.map(app => `
-                  <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <h5 class="text-sm font-semibold text-slate-950">${escapeHtml(app.name)}</h5>
-                    <p class="mt-1.5 text-xs leading-5 text-slate-600">${escapeHtml(app.desc)}</p>
-                    <p class="mt-3 text-[11px] font-semibold ${c.text}">👤 ${escapeHtml(app.prof)}</p>
+              <div class="mt-4 flex flex-wrap gap-3">
+                ${appointments.map(([time, desc]) => `
+                  <div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${c.soft} text-xs font-semibold ${c.text}">${escapeHtml(time)}</span>
+                    <span class="text-sm font-medium text-slate-700">${escapeHtml(desc)}</span>
                   </div>
                 `).join("")}
               </div>
             ` : ""}
           </article>
         `;
-      }).join("");
+      }).join('<div class="my-8 h-px bg-slate-100"></div>');
 
-      const waLink = root.querySelector("#path-whatsapp-link");
-      const message = `Ciao, vorrei iniziare il percorso “${path.kicker}” con PosturaCorretta.`;
-      waLink.href = `https://wa.me/393792891488?text=${encodeURIComponent(message)}`;
-      waLink.className = `inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-sm font-semibold text-white transition ${c.bg} ${c.hover}`;
+      const whatsappBtn = root.querySelector("#path-whatsapp-link");
+      if (whatsappBtn) {
+        whatsappBtn.href = path.whatsapp ? `https://wa.me/393792891488?text=${encodeURIComponent(path.whatsapp)}` : "https://wa.me/393792891488";
+        whatsappBtn.className = `inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-sm font-semibold text-white transition ${c.bgHover}`;
+      }
+
+      gardenSubtabs.classList.toggle("hidden", pathKey !== "giardino");
+      if (pathKey === "giardino") setGardenTabState();
+
+      panel.classList.remove("hidden");
     }
 
-    pathSelect.addEventListener("change", () => {
-      const selectedKey = pathSelect.value;
-      const isGarden = selectedKey === "giardino";
-      const pathKey = isGarden ? activeGardenKey : selectedKey;
-      gardenSubtabs.classList.toggle("hidden", !isGarden);
-      if (isGarden) setGardenTabState();
-      renderPath(pathKey);
-      panel.classList.remove("hidden");
-      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    pathSelect.addEventListener("change", (e) => {
+      const key = e.target.value;
+      if (key && academyPaths[key]) {
+        if (key === "giardino") activeGardenKey = "potenziale";
+        renderPath(key);
+      } else {
+        panel.classList.add("hidden");
+      }
     });
 
     gardenTabs.forEach(tab => {
       tab.addEventListener("click", () => {
         activeGardenKey = tab.dataset.gardenKey;
-        setGardenTabState();
-        renderPath(activeGardenKey);
+        renderPath("giardino");
       });
     });
-
   };
 
-  initializePaths();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializePaths);
+  } else {
+    initializePaths();
+  }
 })();
 </script>
