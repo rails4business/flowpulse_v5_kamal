@@ -20,7 +20,8 @@ class LandingController < ApplicationController
   end
 
   def posturacorretta
- 
+    @home_data = YAML.load_file(Rails.root.join('config/data/posturacorretta/home/home.yml'))
+    @audiences = YAML.load_file(Rails.root.join('config/data/posturacorretta/shared/audiences.yml'))
   end
 
   def igieneposturale

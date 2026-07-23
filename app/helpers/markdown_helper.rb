@@ -68,6 +68,14 @@ module MarkdownHelper
     ).html_safe
   end
 
+  def inline_markdown(text)
+    return "".html_safe if text.blank?
+
+    html = markdown(text.to_s.gsub(/\s*\n+\s*/, " ")).to_s
+    html = html.delete_prefix("<p>").sub(%r{</p>\s*\z}, "")
+    html.html_safe
+  end
+
   private
 
   def permitted_tags

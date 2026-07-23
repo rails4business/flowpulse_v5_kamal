@@ -1,0 +1,140 @@
+components:
+  # 1. Hero componibile
+  - type: section
+    classes: "bg-white"
+    children:
+      - type: row
+        classes: "mx-auto grid max-w-screen-xl grid-cols-1 gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-16"
+        children:
+          - type: column
+            classes: "flex flex-col justify-center gap-8"
+            children:
+              - type: title
+                data:
+                  align: left
+                  kicker: "Con posturacorretta"
+                  title: "Trova la giusta posizione da cui osservare il mondo."
+                  subtitle: "Inizia dalla salute. Migliora il modo in cui vivi, lavori e impari."
+              - type: accordion
+                items:
+                  - question: "Il tuo percorso della salute funziona?"
+                    answer: "I percorsi della salute utilizzano **approcci che non considerano la globalità** della persona, e spesso chi si vanta di considerare la globalità perde di vista la scienza e la medicina ufficiale. Con postura corretta  abbiamo utilizzato i principi delle metodiche posturali e il concetto di postura che non è soltanto il modo in cui stiamo seduti o in piedi, ma il modo in cui il corpo si organizza, si muove e si adatta a ciò che viviamo. In questo modo abbiamo costruito delle linee guida che possono aiutare te e i professionisti che ti seguono nel migliorare il  tuo percorso"
+                  - question: "Un Percorso integrato portrebbe risolvere il tuo problema?"
+                    id: "domanda-metodiche"
+                    answer: "Nel 90% dei casi un professionista sanitario come un medico o un fisioterapista non riesce a collaborare con un professionista del benessere come un personal trainer o un istruttore di yoga. Con PosturaCorretta abbiamo creato delle linee guida che permettono se accettate da professionisti e dal paziente seguito di lavorare per risovlere il tuo problema."
+                  - question: "Ti piacerebbe avere una posturacorretta?"
+                    answer: "La postura corretta non è soltanto stare ben dritti con la schiena, è più simile alla capacità di suonare uno strumento musicale.  Con l'accademia impari ad ascoltare e capire come funzionano i sistemi del corpo per usarli a tuo vantaggio, per migliorare la tua salute e il tuo benessere, come apprendi e come ti muovi questo ti permetterà di avere vantaggi in molti ambiti della tua vita."
+          - type: column
+            classes: "min-h-64 sm:min-h-80"
+            children:
+              - type: image
+                data:
+                  url: "https://ik.imagekit.io/posturacorretta/img_home_postura_corretta.png?tr=w-1100,q-85"
+                  alt: "PosturaCorretta: partire dal corpo per ampliare lo sguardo sulla salute e sulla persona"
+
+  # 2. Iniziare Section
+  - type: section
+    classes: "scroll-mt-8 bg-gray-50 py-16 sm:py-24"
+    children:
+      - type: row
+        classes: "mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8"
+        children:
+          - type: column
+            classes: "w-full mb-12"
+            children:
+              - type: section_header
+                data:
+                  kicker: "Come iniziare"
+                  title: "Scegli il tuo punto d’ingresso"
+                  subtitle: "Parti dall’Accademia per conoscere e praticare oppure dal Percorso per orientarti a partire dalla tua situazione."
+          - type: row
+            classes: "grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12"
+            children:
+              - type: column
+                classes: "col-span-1"
+                children:
+                  - type: card
+                    item:
+                      eyebrow: "Conosci • Pratica • Insegna"
+                      title: "Accademia"
+                      description: "Impara a conoscere il corpo e la fisiologia attraverso le principali metodiche posturali, partendo anche da zero."
+                      cta: "Scopri l’Accademia"
+                      route: "accademia"
+              - type: column
+                classes: "col-span-1"
+                children:
+                  - type: card
+                    item:
+                      eyebrow: "Dalla situazione agli step"
+                      title: "Percorso"
+                      description: "Osserva cosa sta accadendo, orientati tra le possibilità e costruisci un percorso personale con l’aiuto più adatto."
+                      cta: "Inizia il tuo percorso"
+                      route: "percorso"
+
+  # 4. Altre Opzioni Section
+  - type: section
+    classes: "mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-16"
+    children:
+      - type: row
+        classes: "mb-8"
+        children:
+          - type: column
+            classes: "w-full"
+            children:
+              - type: section_header
+                data: 
+                  kicker: 'Puoi anche esplorare'
+                  title: 'Altre Risorse'
+      - type: row
+        classes: "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        children:
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  title: "Contenuti"
+                  eyebrow: "Informati"
+                  description: "Video, articoli, guide ed esercizi per approfondire postura, fisiologia e salute."
+                  cta: "Guarda i contenuti"
+                  route: "contenuti"
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  title: "Libro"
+                  eyebrow: "La visione"
+                  description: "Il corpo, un mondo da scoprire: dalla salute alla relazione con ciò che ci circonda."
+                  cta: "Scopri il libro"
+                  route: "libro"
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  title: "Metodiche"
+                  eyebrow: "Approcci"
+                  description: "Conosci e confronta le diverse mappe utilizzate per osservare e lavorare con il corpo."
+                  cta: "Esplora le metodiche"
+                  route: "metodiche"
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  title: "Eventi"
+                  eyebrow: "Partecipa"
+                  description: "Incontri, esperienze e attività per conoscere persone, luoghi e pratiche sul territorio."
+                  cta: "Vedi gli eventi"
+                  route: "eventi"
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  title: "Progetti"
+                  eyebrow: "Collabora"
+                  description: "Segui ciò che sta nascendo, proponi il tuo contributo oppure entra nel gruppo di lavoro."
+                  cta: "Scopri i progetti"
+                  route: "progetti"

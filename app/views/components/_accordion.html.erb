@@ -1,0 +1,31 @@
+<div class="space-y-2">
+  <% items.each do |item| %>
+    <details class="group [&_summary::-webkit-details-marker]:hidden">
+      <summary class="list-none cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-3 font-medium text-gray-900 hover:bg-gray-50">
+        <span class="flex w-full items-center justify-between gap-4">
+          <span><%= inline_markdown(item["question"]) %></span>
+
+          <svg
+            aria-hidden="true"
+            class="size-5 shrink-0 transition-transform duration-300 group-open:-rotate-180"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </span>
+      </summary>
+
+      <div class="p-4">
+        <p class="text-gray-700"><%= inline_markdown(item["answer"]) %></p>
+      </div>
+    </details>
+  <% end %>
+</div>

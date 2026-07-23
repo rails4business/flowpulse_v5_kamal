@@ -1,0 +1,25 @@
+<%
+  alignment = {
+    "left" => "text-left",
+    "center" => "text-center",
+    "right" => "text-right"
+  }.fetch(data["align"], "text-left")
+%>
+
+<header class="<%= alignment %>">
+  <% if data["kicker"].present? %>
+    <p class="text-sm font-semibold uppercase tracking-widest text-indigo-600">
+      <%= inline_markdown(data["kicker"]) %>
+    </p>
+  <% end %>
+
+  <h1 class="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+    <%= inline_markdown(data["title"]) %>
+  </h1>
+
+  <% if data["subtitle"].present? %>
+    <p class="mt-4 text-lg text-gray-600">
+      <%= inline_markdown(data["subtitle"]) %>
+    </p>
+  <% end %>
+</header>

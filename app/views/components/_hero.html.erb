@@ -1,0 +1,40 @@
+<section>
+  <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+      <div class="relative h-64 overflow-hidden rounded-lg sm:h-80 lg:order-last lg:h-full">
+        <img
+          alt="<%= data['image']['alt'] %>"
+          src="<%= data['image']['url'] %>"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
+
+      <div class="lg:py-24">
+        <% if data['kicker'].present? %>
+          <p class="text-sm font-semibold uppercase tracking-widest text-indigo-600">
+            <%= data['kicker'] %>
+          </p>
+        <% end %>
+
+        <h2 class="mt-4 text-3xl font-bold sm:text-4xl text-gray-900">
+          <%= data['title'] %>
+        </h2>
+
+        <% if data['subtitle'].present? %>
+          <p class="mt-4 text-gray-600 text-lg">
+            <%= data['subtitle'] %>
+          </p>
+        <% end %>
+
+        <% if data['cta'].present? %>
+          <a
+            href="<%= data['cta_url'] || '#' %>"
+            class="mt-8 inline-block rounded bg-indigo-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-400"
+          >
+            <%= data['cta'] %>
+          </a>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
