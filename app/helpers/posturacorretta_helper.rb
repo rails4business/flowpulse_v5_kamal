@@ -5,7 +5,8 @@ module PosturacorrettaHelper
     "eventi" => "eventi-posturacorretta",
     "contenuti" => "produzione-contenuti-posturacorretta",
     "metodiche" => "organizzazione-metodiche",
-    "libro" => "libro-il-corpo-un-mondo-da-scoprire"
+    "libro" => "libro-il-corpo-un-mondo-da-scoprire",
+    "progetti" => "piattaforma-flowpulse-rails4business"
   }.freeze
 
   def posturacorretta_revision_project

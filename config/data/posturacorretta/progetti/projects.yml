@@ -3,9 +3,10 @@ projects:
     content_path: "progetti/contenuti/accademia-posturacorretta.md"
     title: "Accademia PosturaCorretta"
     category: "Formazione"
-    status: "in_progress"
-    status_label: "In realizzazione"
-    summary: "Percorso formativo online e in presenza per conoscere, praticare e insegnare le metodiche posturali."
+    status: "future"
+    generaimpresa_origin: "generaimpresa"
+    status_label: "Futuro"
+    summary: "Percorso formativo online per conoscere e approfondire postura, fisiologia e metodiche posturali."
     owner: "@markpostura"
     updated_at: "2026-07-24"
     milestones:
@@ -13,8 +14,8 @@ projects:
         date: "2026-01-15"
         state: "completed"
       implementation:
-        date: "2026-03-01"
-        state: "completed"
+        date:
+        state: "planned"
       launch:
         date: "2026-12-20"
         state: "planned"
@@ -23,125 +24,56 @@ projects:
         state: "planned"
     finances:
       project_cost: 18000
-    contributors:
-      - participant: "markpostura"
-        contributions:
-          - type: "money"
-            value: 12000
-          - type: "time"
-            value: 5000
-            hours: 184
-        capital_repaid: 2000
-        profit_received: 500
-    operational_activities:
-      - title: "Registrazione delle lezioni introduttive"
-        type: "Registrazione video"
-        status: "confirmed"
-        starts_at: "2026-09-12T09:00:00+02:00"
-        ends_at: "2026-09-12T13:00:00+02:00"
-        location: "Studio PosturaCorretta, Milano"
-        assignee: "@markpostura"
-        supplier: "Videomaker da confermare"
-        estimated_cost: 450
-        actual_cost:
-        notes: "Registrazione e montaggio delle prime quattro lezioni."
-      - title: "Giornata di presentazione dell’Accademia"
-        type: "Evento"
-        status: "planned"
-        starts_at: "2026-12-20T15:00:00+01:00"
-        ends_at: "2026-12-20T18:00:00+01:00"
-        location: "Da definire"
-        assignee: "@markpostura"
-        supplier:
-        estimated_cost: 700
-        actual_cost:
-        notes: "Presentazione del percorso, dei docenti e delle modalità di iscrizione."
+    contributors: []
+    operational_activities: []
     steps:
-      - title: "Definire struttura e aree dell’Accademia"
-        description: "Organizzare percorsi, aree, moduli e lezioni."
-        status: "completed"
+      - title: "Definire la struttura dell’Accademia online"
+        description: "Organizzare aree formative, moduli, lezioni e modalità di consultazione online."
+        status: "pending"
         assignee: "@markpostura"
-        assigned_at: "2026-02-20"
+        assigned_at:
         estimated_cost: 1200
-        started_at: "2026-03-01"
-        completed_at: "2026-03-20"
-      - title: "Creare il catalogo delle metodiche"
-        description: "Raccogliere schede, scuole e professionisti collegati."
-        status: "completed"
+        started_at:
+        completed_at:
+      - title: "Progettare il percorso introduttivo"
+        description: "Definire la progressione che accompagna chi parte da zero tra postura, fisiologia e metodiche."
+        status: "pending"
         assignee: "@markpostura"
-        assigned_at: "2026-03-15"
+        assigned_at:
         estimated_cost: 1800
-        started_at: "2026-03-21"
-        completed_at: "2026-04-30"
-      - title: "Preparare i contenuti introduttivi"
-        description: "Pubblicare le lezioni fondamentali per chi parte da zero."
-        status: "completed"
-        assignee: "@markpostura"
-        assigned_at: "2026-04-20"
-        estimated_cost: 2400
-        started_at: "2026-05-01"
-        completed_at: "2026-06-15"
-      - title: "Completare le lezioni delle aree formative"
-        description: "Revisionare e pubblicare i contenuti ancora in bozza."
-        status: "in_progress"
-        assignee: "@markpostura"
-        assigned_at: "2026-06-10"
-        estimated_cost: 5200
-        started_at: "2026-06-16"
-        completed_at:
-        tasks:
-          - title: "Revisionare i testi delle lezioni"
-            assignee: "@markpostura"
-            started_at: "2026-07-05T09:00:00+02:00"
-            completed_at: "2026-07-05T12:30:00+02:00"
-          - title: "Preparare immagini e materiali"
-            assignee: "@markpostura"
-            started_at: "2026-07-24T09:00:00+02:00"
-            completed_at:
-          - title: "Pubblicare le lezioni definitive"
-            assignee: "@markpostura"
-            started_at:
-            completed_at:
-      - title: "Collegare insegnanti e sedi"
-        description: "Associare docenti, attività in presenza e luoghi."
-        status: "pending"
-        assignee: "@markpostura"
-        assigned_at: "2026-07-01"
-        estimated_cost: 1400
         started_at:
         completed_at:
-        tasks:
-          - title: "Confermare gli insegnanti"
-            assignee: "@markpostura"
-            started_at:
-            completed_at:
-          - title: "Associare le sedi disponibili"
-            assignee: "@markpostura"
-            started_at:
-            completed_at:
-      - title: "Attivare iscrizioni e percorsi"
-        description: "Definire accessi, calendario e modalità di partecipazione."
+      - title: "Produrre testi, immagini e video"
+        description: "Creare i materiali delle lezioni online e organizzarli in un formato coerente."
         status: "pending"
         assignee: "@markpostura"
-        assigned_at: "2026-07-01"
-        estimated_cost: 2000
+        assigned_at:
+        estimated_cost: 6200
         started_at:
         completed_at:
-        tasks:
-          - title: "Definire il calendario"
-            assignee: "@markpostura"
-            started_at:
-            completed_at:
-          - title: "Attivare il modulo di iscrizione"
-            assignee: "@markpostura"
-            started_at:
-            completed_at:
+      - title: "Configurare accessi e fruizione online"
+        description: "Predisporre navigazione, iscrizione e accesso ai contenuti dell’Accademia."
+        status: "pending"
+        assignee: "@markpostura"
+        assigned_at:
+        estimated_cost: 4200
+        started_at:
+        completed_at:
+      - title: "Testare e pubblicare l’Accademia"
+        description: "Verificare contenuti e percorso con un primo gruppo online prima della pubblicazione."
+        status: "pending"
+        assignee: "@markpostura"
+        assigned_at:
+        estimated_cost: 4600
+        started_at:
+        completed_at:
 
   - slug: "libro-il-corpo-un-mondo-da-scoprire"
     content_path: "progetti/contenuti/libro-il-corpo-un-mondo-da-scoprire.md"
     title: "Il corpo, un mondo da scoprire"
     category: "Libro"
     status: "in_progress"
+    generaimpresa_origin: "generaimpresa"
     status_label: "In realizzazione"
     summary: "Il libro che racconta la visione di PosturaCorretta e accompagna il lettore dentro l’ecosistema."
     owner: "@markpostura"
@@ -164,13 +96,12 @@ projects:
     contributors:
       - participant: "markpostura"
         contributions:
-          - type: "money"
-            value: 4000
           - type: "time"
-            value: 1600
-            hours: 60
-        capital_repaid: 500
-        profit_received: 100
+            value: 600
+            hours: 15
+            hourly_rate: 40
+        capital_repaid: 0
+        profit_received: 0
     steps:
       - title: "Definire indice e struttura"
         description: "Ordinare parti, sezioni e capitoli."
@@ -240,6 +171,7 @@ projects:
     title: "Eventi PosturaCorretta"
     category: "Community"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Incontri ed esperienze sul territorio per collegare persone, professionisti, pratiche e luoghi."
     owner: "@markpostura"
@@ -352,6 +284,7 @@ projects:
     title: "Piattaforma Flowpulse con Rails4Business"
     category: "Piattaforma"
     status: "in_progress"
+    generaimpresa_origin: "generaimpresa"
     status_label: "In realizzazione"
     summary: "Round 1 dedicato alla realizzazione dell’MVP di Flowpulse e alla chiusura dei flussi essenziali della piattaforma."
     owner: "@markpostura"
@@ -557,6 +490,7 @@ projects:
     title: "Definire la proposta PosturaCorretta"
     category: "Strategia"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Chiarire pubblici, proposte, dinamiche economiche e listino, verificando infine che la home comunichi correttamente il progetto."
     owner: "@markpostura"
@@ -609,6 +543,7 @@ projects:
     title: "Organizzare le metodiche"
     category: "Metodiche"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Costruire il catalogo dei percorsi completi, collegando metodiche, scuole, requisiti e professionisti formati."
     owner: "@markpostura"
@@ -661,6 +596,7 @@ projects:
     title: "Percorsi personalizzati e linee guida"
     category: "Orientamento"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Aiutare ogni persona a passare dalla scoperta iniziale alla metodica e al professionista più coerenti con i propri bisogni."
     owner: "@markpostura"
@@ -713,6 +649,7 @@ projects:
     title: "Accesso professionisti e clienti"
     category: "Piattaforma"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Definire identità, ruoli, verifica dei professionisti e aree personali per accedere ai servizi PosturaCorretta."
     owner: "@markpostura"
@@ -765,6 +702,7 @@ projects:
     title: "Organizzare la produzione dei contenuti"
     category: "Contenuti"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Creare un processo ripetibile per ideare, produrre, revisionare e pubblicare testi, immagini, lezioni e video."
     owner: "@markpostura"
@@ -814,11 +752,12 @@ projects:
 
   - slug: "transizione-canale-youtube"
     content_path: "progetti/contenuti/transizione-canale-youtube.md"
-    title: "Transizione del canale YouTube"
+    title: "Vecchia gestione del canale YouTube"
     category: "Contenuti"
     status: "in_progress"
+    generaimpresa_origin: "historical_import"
     status_label: "In realizzazione"
-    summary: "Chiudere la vecchia gestione del canale YouTube e trasferire contenuti, ruoli e programmazione nel nuovo processo editoriale."
+    summary: "Inventario della gestione storica del canale YouTube, dei video prodotti, del lavoro svolto e delle risorse impiegate."
     owner: "@markpostura"
     workers:
       - "fabrizio"
@@ -839,8 +778,11 @@ projects:
       - participant: "markpostura"
         contributions:
           - type: "money"
-            value: 21000
-            description: "Produzione di 350 video a 60 € per video"
+            value: 10500
+            description: "Quota monetaria della produzione di 350 video"
+          - type: "time"
+            value: 10500
+            description: "Valore del tempo dedicato alla produzione di 350 video"
         capital_repaid: 0
         profit_received: 0
     operational_activities: []
@@ -883,6 +825,7 @@ projects:
     title: "Manuali di Igiene Posturale e Principi di Fisioterapia"
     category: "Pubblicazioni"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -942,6 +885,7 @@ projects:
     title: "Video online di Igiene Posturale e Principi di Fisioterapia"
     category: "Video"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1002,6 +946,7 @@ projects:
     title: "Test di Igiene Posturale in gruppo"
     category: "Percorsi"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1061,6 +1006,7 @@ projects:
     title: "Stop al dolore"
     category: "Linea guida"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Uno strumento per affiancare il paziente nella fase acuta, aiutarlo a trovare il professionista adatto e organizzare il passaggio verso il percorso terapeutico."
     owner: "@markpostura"
@@ -1108,6 +1054,7 @@ projects:
     title: "Percorso terapeutico"
     category: "Linea guida"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Uno strumento condiviso per costruire, organizzare e seguire il percorso terapeutico insieme ai professionisti adatti."
     owner: "@markpostura"
@@ -1155,6 +1102,7 @@ projects:
     title: "Benessere integrato"
     category: "Percorso"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Un percorso che collega conoscenza del corpo, abitudini quotidiane, movimento, recupero e orientamento consapevole."
     owner: "@markpostura"
@@ -1202,6 +1150,7 @@ projects:
     title: "Accademia Postura e Fisiologia"
     category: "Corso Accademia"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Un corso introduttivo per conoscere postura, fisiologia e relazioni tra struttura, movimento e funzioni del corpo."
     owner: "@markpostura"
@@ -1249,6 +1198,7 @@ projects:
     title: "Il giardino del corpo"
     category: "Corso Accademia"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Un’esperienza educativa che usa la metafora del giardino per osservare, conoscere e coltivare il rapporto con il proprio corpo."
     owner: "@markpostura"
@@ -1296,6 +1246,7 @@ projects:
     title: "1impegno"
     category: "Rails4Business"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Il diario operativo di Flowpulse per rendere visibili impegni, tempo, risorse, continuità e risultati nei percorsi personali e di lavoro."
     owner: "@rails4business"
@@ -1365,6 +1316,7 @@ projects:
     title: "Ricerca, sviluppo ed evoluzione di PosturaCorretta"
     category: "Progetto storico"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1465,6 +1417,7 @@ projects:
     title: "Prototipo magliette per operatori"
     category: "Prototipo fisico"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1497,6 +1450,7 @@ projects:
     title: "Prototipo copri-materassini PosturaCorretta"
     category: "Prototipo fisico"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1529,6 +1483,7 @@ projects:
     title: "Prototipo kit per l’Igiene Posturale"
     category: "Prototipo fisico"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1561,6 +1516,7 @@ projects:
     title: "Prototipo sgabello propriocettivo per la schiena"
     category: "Prototipo fisico"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1593,6 +1549,7 @@ projects:
     title: "Prototipo lettino inarcato con rulli massaggianti"
     category: "Prototipo fisico"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1625,6 +1582,7 @@ projects:
     title: "Prototipo card anatomiche PosturaCorretta"
     category: "Prototipo fisico"
     status: "future"
+    generaimpresa_origin: "generaimpresa"
     status_label: "Futuro"
     summary: "Kit di card fisiche con illustrazioni anatomiche per facilitare spiegazione, apprendimento e dialogo durante corsi e percorsi."
     owner: "@markpostura"
@@ -1650,6 +1608,7 @@ projects:
     title: "Prototipo sede PosturaCorretta in legno"
     category: "Prototipo fisico"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1689,6 +1648,7 @@ projects:
     title: "Test adesivi PosturaCorretta in vetta"
     category: "Sperimentazione"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1720,6 +1680,7 @@ projects:
     title: "Test del percorso Benessere Integrato"
     category: "Percorso"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"
@@ -1751,6 +1712,7 @@ projects:
     title: "Prima versione di Benessere Integrato"
     category: "Percorso"
     status: "launched"
+    generaimpresa_origin: "historical_import"
     status_label: "Lanciato"
     operation_status: "concluded"
     operation_status_label: "Concluso"

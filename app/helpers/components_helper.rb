@@ -22,7 +22,16 @@ module ComponentsHelper
     technical_contributor = project.fetch("contributors", []).find { |contributor| contributor["participant"] == "rails4business" }
     implementation_responsible = technical_contributor&.dig("participant") || owner
     launched = project["status"] == "launched"
-    in_progress = project["status"] == "in_progress"
+    contribution_value = project.fetch("contributors", []).sum do |contributor|
+      contributor.fetch("contributions", []).sum do |contribution|
+        contribution["value"].presence || contribution["hours"].to_f * contribution["hourly_rate"].to_f
+      end
+    end
+    implementation_started =
+      milestones.dig("implementation", "state") == "completed" ||
+      project.fetch("steps", []).any? do |step|
+        %w[in_progress completed].include?(step["status"]) || step["started_at"].present?
+      end
 
     defaults = {
       "planning" => {
@@ -35,13 +44,13 @@ module ComponentsHelper
         "label" => "Reperimento delle risorse",
         "responsible" => financier,
         "date" => nil,
-        "status" => launched || in_progress ? "completed" : "planned"
+        "status" => launched || implementation_started ? "completed" : (contribution_value.positive? ? "in_progress" : "planned")
       },
       "implementation" => {
         "label" => "Realizzazione",
         "responsible" => implementation_responsible,
         "date" => milestones.dig("implementation", "date"),
-        "status" => launched ? "completed" : (in_progress ? "in_progress" : "planned")
+        "status" => launched ? "completed" : (implementation_started ? "in_progress" : "planned")
       },
       "testing" => {
         "label" => "Test e messa a punto",
@@ -56,7 +65,7 @@ module ComponentsHelper
         "status" => milestones.dig("launch", "state") == "completed" ? "completed" : "planned"
       },
       "repayment" => {
-        "label" => "Investimenti restituiti",
+        "label" => "Rientro completato",
         "responsible" => financier,
         "date" => milestones.dig("repayment", "date"),
         "status" => launched || milestones.dig("repayment", "state") == "completed" ? "completed" : "planned"
@@ -64,14 +73,49 @@ module ComponentsHelper
     }
 
     overrides = project.fetch("lifecycle", {})
-    defaults.map do |key, phase|
+    phases = defaults.map do |key, phase|
       phase.merge(overrides.fetch(key, {})).merge("key" => key)
+    end
+
+    phases.map do |phase|
+      if phase["status"] == "completed" &&
+          (phase["date"].blank? || phase["responsible"].blank? || phase["responsible"] == "Da assegnare")
+        phase.merge("status" => "completed_incomplete")
+      else
+        phase
+      end
     end
   end
 
   def project_repaid?(project)
     project["status"] == "launched" ||
-      project_lifecycle(project).all? { |phase| phase["status"] == "completed" }
+      project_lifecycle(project).all? { |phase| %w[completed completed_incomplete].include?(phase["status"]) }
+  end
+
+  def project_generaimpresa_origin(project)
+    project["generaimpresa_origin"].presence || "generaimpresa"
+  end
+
+  def historical_project?(project)
+    project_generaimpresa_origin(project) == "historical_import"
+  end
+
+  def project_generaimpresa_badge(project)
+    if historical_project?(project)
+      {
+        label: "Precedente a GeneraImpresa",
+        symbol: "◷",
+        classes: "border-amber-300 bg-amber-100 text-amber-900",
+        description: "Progetto realizzato prima di GeneraImpresa e caricato successivamente come ricostruzione storica."
+      }
+    else
+      {
+        label: "Gestito con GeneraImpresa",
+        symbol: "G",
+        classes: "border-emerald-200 bg-emerald-50 text-emerald-700",
+        description: "Progetto nato o gestito attraverso GeneraImpresa."
+      }
+    end
   end
 
   def project_contribution_totals(project)

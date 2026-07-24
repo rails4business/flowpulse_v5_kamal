@@ -1,0 +1,141 @@
+<%
+  contributors = projects
+    .flat_map { |project| project.fetch("contributors", []).map { |person| person["participant"] } }
+    .compact
+    .map { |name| name.to_s.delete_prefix("@") }
+    .uniq
+  makers = projects.flat_map do |project|
+    project.fetch("workers", []) +
+      project.fetch("steps", [])
+             .select { |step| step["status"] == "completed" }
+             .map { |step| step["assignee"] }
+  end
+    .reject { |name| name.blank? || name == "Da assegnare" }
+    .map { |name| name.to_s.delete_prefix("@") }
+    .uniq
+  portfolio_totals = projects.map { |project| project_contribution_totals(project) }
+  money_invested = portfolio_totals.sum { |totals| totals[:money] }
+  time_invested = portfolio_totals.sum { |totals| totals[:time] }
+  profit_paid = portfolio_totals.sum { |totals| totals[:profit_received] }
+  total_contributions = money_invested + time_invested
+  money = ->(value) { number_to_currency(value, unit: "€", precision: 0, delimiter: ".", separator: ",", format: "%n %u") }
+  historical = origin == "historical_import"
+  summary_key = "#{origin}-#{status_filter}"
+  invested_value = if total_contributions.positive?
+    money.call(total_contributions)
+  elsif historical
+    "Da ricostruire"
+  else
+    "Non ancora investito"
+  end
+  return_value = profit_paid.positive? ? money.call(profit_paid) : "Non ancora distribuito"
+  summary_cards = [
+    {
+      key: "contributors",
+      label: "Contributori",
+      value: contributors.size,
+      value_class: "text-slate-950",
+      hint: "Chi investe tempo o denaro.",
+      description: historical ? "Persone individuate nella ricostruzione storica come fonti di denaro o tempo per i progetti." : "I contributori sostengono i progetti investendo denaro, tempo di lavoro o entrambi.",
+      people: contributors
+    },
+    {
+      key: "makers",
+      label: "Realizzatori",
+      value: makers.size,
+      value_class: "text-indigo-600",
+      hint: "Chi partecipa alla realizzazione.",
+      description: "I realizzatori sono le persone che svolgono concretamente il lavoro necessario per portare avanti i progetti.",
+      people: makers
+    },
+    {
+      key: "invested",
+      label: historical ? "Valore investito" : "Valore investito totale",
+      value: invested_value,
+      value_class: "text-emerald-600",
+      hint: historical ? "Stima di denaro + valore del tempo." : "Denaro + valore del tempo.",
+      description: historical ? "È una ricostruzione indicativa del denaro e del tempo impiegati prima dell’introduzione di GeneraImpresa." : "È la somma del denaro investito e del valore economico attribuito al tempo dedicato ai progetti.",
+      breakdown: [["Denaro", money.call(money_invested)], ["Valore del tempo", money.call(time_invested)]]
+    }
+  ]
+  unless historical
+    summary_cards << {
+      key: "returns",
+      label: "Rendimento distribuito",
+      value: return_value,
+      value_class: "text-violet-600",
+      hint: "Guadagno oltre al capitale restituito.",
+      description: "Indica esclusivamente il guadagno riconosciuto ai contributori, senza includere la restituzione del capitale investito.",
+      example: "Esempio: se un contributore investe 3.000 € e riceve complessivamente 3.500 €, il capitale restituito è 3.000 € e il rendimento è 500 €."
+    }
+  end
+%>
+
+<div data-project-summary
+     data-project-summary-origin="<%= origin %>"
+     data-project-summary-status="<%= status_filter %>"
+     data-project-summary-count="<%= projects.size %>"
+     <%= "hidden" unless origin == "generaimpresa" && status_filter == "all" %>>
+  <% if historical %>
+    <p class="mx-auto mt-5 max-w-2xl text-center text-sm text-slate-500">
+      Questi progetti sono stati caricati successivamente per ricostruire attività, tempo e risorse investite. I valori possono essere stimati.
+    </p>
+  <% end %>
+
+  <dl class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 <%= historical ? "lg:grid-cols-3" : "lg:grid-cols-4" %>">
+    <% summary_cards.each do |card| %>
+      <div class="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-indigo-300 hover:shadow-md">
+        <button type="button"
+                class="h-full w-full p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500"
+                data-project-summary-open="<%= summary_key %>-<%= card[:key] %>"
+                aria-haspopup="dialog"
+                aria-controls="project-summary-<%= summary_key %>-<%= card[:key] %>">
+          <dt class="text-xs font-bold uppercase tracking-widest text-slate-500"><%= card[:label] %></dt>
+          <dd class="mt-2 text-2xl font-black <%= card[:value_class] %>"><%= card[:value] %></dd>
+          <span class="mt-1 block text-xs text-slate-400"><%= card[:hint] %></span>
+          <span class="mt-3 inline-flex items-center gap-1 text-xs font-bold text-indigo-600">Scopri di più <span aria-hidden="true">→</span></span>
+        </button>
+      </div>
+    <% end %>
+  </dl>
+
+  <% summary_cards.each do |card| %>
+    <dialog id="project-summary-<%= summary_key %>-<%= card[:key] %>"
+            class="m-auto w-full max-w-[calc(100%_-_2rem)] rounded-2xl bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/60 sm:max-w-lg"
+            data-project-summary-dialog>
+      <div class="p-6 sm:p-7">
+        <div class="flex items-start justify-between gap-6">
+          <div>
+            <p class="text-xs font-black uppercase tracking-widest text-indigo-600">Come viene calcolato</p>
+            <h2 class="mt-2 text-2xl font-black"><%= card[:label] %></h2>
+          </div>
+          <button type="button"
+                  class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xl text-slate-500 transition hover:bg-slate-200 hover:text-slate-900"
+                  data-project-summary-close
+                  aria-label="Chiudi">×</button>
+        </div>
+        <p class="mt-5 leading-7 text-slate-600"><%= card[:description] %></p>
+        <% if card[:people].present? %>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <% card[:people].each do |person| %>
+              <span class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-bold text-slate-700">@<%= person %></span>
+            <% end %>
+          </div>
+        <% end %>
+        <% if card[:breakdown].present? %>
+          <dl class="mt-5 divide-y divide-slate-100 rounded-xl bg-slate-50 px-4">
+            <% card[:breakdown].each do |label, value| %>
+              <div class="flex items-center justify-between gap-4 py-3">
+                <dt class="text-sm text-slate-500"><%= label %></dt>
+                <dd class="font-black text-slate-900"><%= value %></dd>
+              </div>
+            <% end %>
+          </dl>
+        <% end %>
+        <% if card[:example].present? %>
+          <p class="mt-5 rounded-xl bg-violet-50 p-4 text-sm leading-6 text-violet-800"><%= card[:example] %></p>
+        <% end %>
+      </div>
+    </dialog>
+  <% end %>
+</div>

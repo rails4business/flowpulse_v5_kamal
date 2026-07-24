@@ -48,20 +48,32 @@
   </div>
 </div>
 
-<div class="mt-8 flex flex-wrap justify-center gap-2" data-project-filters>
-  <% [["all", "Tutti"], ["future", "Futuri"], ["in_progress", "In realizzazione"], ["launched", "Progetti lanciati"], ["repaid", "Restituiti"]].each do |value, label| %>
+<div class="mt-8 flex flex-wrap justify-center gap-2" data-project-filters data-project-filter-set="generaimpresa">
+  <% [["all", "Tutti"], ["future", "Futuri"], ["in_progress", "In realizzazione"], ["launched", "Progetti lanciati"], ["repaid", "Rientro completato"]].each do |value, label| %>
     <button type="button"
             class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-600 data-[active=true]:bg-indigo-600 data-[active=true]:text-white"
             data-project-filter="<%= value %>"
             data-active="<%= value == "all" %>">
       <%= label %>
-      <span class="ml-1 opacity-70">(<%= if value == "all"
+      <span class="ml-1 opacity-70" data-project-filter-count> (<%= if value == "all"
                                            projects.size
                                          elsif value == "repaid"
                                            repaid_projects_count
                                          else
                                            projects.count { |project| project["status"] == value }
                                          end %>)</span>
+    </button>
+  <% end %>
+</div>
+
+<div class="mt-8 flex flex-wrap justify-center gap-2" data-project-filters data-project-filter-set="historical_import" hidden>
+  <% [["open", "Aperti"], ["closed", "Chiusi"]].each do |value, label| %>
+    <button type="button"
+            class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-600 data-[active=true]:bg-indigo-600 data-[active=true]:text-white"
+            data-project-filter="<%= value %>"
+            data-active="<%= value == "open" %>">
+      <%= label %>
+      <span class="ml-1 opacity-70" data-project-filter-count>(0)</span>
     </button>
   <% end %>
 </div>
@@ -73,7 +85,7 @@
             data-operation-filter="<%= value %>"
             data-active="<%= value == "all" %>">
       <%= label %>
-      <span class="ml-1 opacity-70">(<%= value == "all" ? projects.count { |project| project["status"] == "launched" } : projects.count { |project| project["operation_status"] == value } %>)</span>
+      <span class="ml-1 opacity-70" data-operation-filter-count>(<%= value == "all" ? projects.count { |project| project["status"] == "launched" } : projects.count { |project| project["operation_status"] == value } %>)</span>
     </button>
   <% end %>
 </div>
@@ -81,9 +93,8 @@
 <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2" data-project-grid>
   <% projects.each do |project| %>
     <%
-      steps = project.fetch("steps", [])
-      completed = steps.count { |step| step["status"] == "completed" }
       lifecycle = project_lifecycle(project)
+      completed_phases = lifecycle.count { |phase| %w[completed completed_incomplete].include?(phase["status"]) }
       launch_phase = lifecycle.find { |phase| phase["key"] == "launch" }
       date_label = project["status"] == "launched" ? "Lanciato" : "Lancio previsto"
       finances = project.fetch("finances", {})
@@ -94,6 +105,9 @@
       resources_percentage = resources_needed.positive? ? [((resources_collected.to_f / resources_needed) * 100).round, 100].min : 0
       resources_missing = [resources_needed - resources_collected, 0].max
       repaid = project_repaid?(project)
+      generaimpresa_origin = project_generaimpresa_origin(project)
+      generaimpresa_badge = project_generaimpresa_badge(project)
+      historical_project = historical_project?(project)
       search_text = [
         project["title"],
         project["summary"],
@@ -109,11 +123,19 @@
        data-project-card
        data-project-search-text="<%= search_text %>"
        data-project-status="<%= project["status"] %>"
+       data-project-origin="<%= generaimpresa_origin %>"
        data-project-repaid="<%= repaid %>"
        data-operation-status="<%= project["operation_status"] %>">
-      <article class="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md">
+      <article class="flex h-full flex-col rounded-2xl border p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md <%= historical_project ? "border-amber-200 bg-amber-50/60 hover:border-amber-300" : "border-emerald-100 bg-white hover:border-emerald-300" %>">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <span class="text-xs font-black uppercase tracking-widest text-slate-400"><%= project["category"] %></span>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-black uppercase tracking-widest text-slate-400"><%= project["category"] %></span>
+            <span class="inline-flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-2.5 text-[10px] font-black uppercase tracking-wide <%= generaimpresa_badge[:classes] %>"
+                  title="<%= generaimpresa_badge[:description] %>">
+              <span class="grid size-5 place-items-center rounded-full bg-current/10 text-[10px]" aria-hidden="true"><%= generaimpresa_badge[:symbol] %></span>
+              <%= generaimpresa_badge[:label] %>
+            </span>
+          </div>
           <span class="rounded-full border px-3 py-1 text-xs font-bold <%= status_classes.fetch(project["status"], status_classes["future"]) %>">
             <%= project["status_label"] %>
             <% if project["status"] == "launched" && project["operation_status"].present? %>
@@ -162,15 +184,22 @@
           </div>
         <% end %>
 
-        <div class="mt-auto pt-6" role="img" aria-label="<%= completed %> step conclusi su <%= steps.size %>">
-          <span class="sr-only"><%= completed %> step conclusi su <%= steps.size %></span>
-          <div class="flex flex-wrap gap-2" title="<%= completed %> step conclusi su <%= steps.size %>">
-            <% steps.each do |step| %>
-              <% dot_color = step["status"] == "completed" ? "#059669" : (step["status"] == "in_progress" ? "#4f46e5" : "#cbd5e1") %>
-              <span aria-hidden="true" class="size-2.5 rounded-full" style="background-color: <%= dot_color %>"></span>
-            <% end %>
+        <% unless historical_project %>
+          <div class="mt-auto pt-6" role="img" aria-label="<%= completed_phases %> fasi completate su 6">
+            <span class="sr-only"><%= completed_phases %> fasi completate su 6</span>
+            <div class="flex flex-wrap gap-2" title="<%= completed_phases %> fasi completate su 6">
+              <% lifecycle.each do |phase| %>
+                <% dot_style = case phase["status"]
+                               when "completed" then "background-color:#059669;border-color:#059669;"
+                               when "completed_incomplete" then "background-color:#ffffff;border-color:#059669;"
+                               when "in_progress" then "background-color:#4f46e5;border-color:#4f46e5;"
+                               else "background-color:#cbd5e1;border-color:#cbd5e1;"
+                               end %>
+                <span aria-hidden="true" class="size-2.5 rounded-full border-2" style="<%= dot_style %>"></span>
+              <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
 
       </article>
     </a>
@@ -190,13 +219,16 @@
 
     let selectedProjectStatus = "all";
     let selectedOperationStatus = "all";
+    let selectedOrigin = "generaimpresa";
     let projectSearchQuery = "";
     const operationFilters = root.querySelector("[data-operation-filters]");
-    const projectSummary = root.querySelector("[data-project-summary]");
+    const projectSummaries = root.querySelectorAll("[data-project-summary]");
     const projectSearch = root.querySelector("[data-project-search]");
     const projectEmpty = root.querySelector("[data-project-empty]");
-    const validProjectStatuses = new Set(["all", "future", "in_progress", "launched", "repaid"]);
+    const validGeneraimpresaStatuses = new Set(["all", "future", "in_progress", "launched", "repaid"]);
+    const validHistoricalStatuses = new Set(["open", "closed"]);
     const validOperationStatuses = new Set(["all", "active", "concluded", "paused"]);
+    const validOrigins = new Set(["generaimpresa", "historical_import"]);
     const normalizeSearch = (value) =>
       value.toLocaleLowerCase("it").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
@@ -205,6 +237,12 @@
       root.querySelectorAll("[data-project-card]").forEach((card) => {
         const matchesProject =
           selectedProjectStatus === "all" ||
+          (selectedProjectStatus === "open"
+            ? !(card.dataset.projectStatus === "launched" && card.dataset.operationStatus === "concluded")
+            : false) ||
+          (selectedProjectStatus === "closed"
+            ? card.dataset.projectStatus === "launched" && card.dataset.operationStatus === "concluded"
+            : false) ||
           (selectedProjectStatus === "repaid"
             ? card.dataset.projectRepaid === "true"
             : card.dataset.projectStatus === selectedProjectStatus);
@@ -214,33 +252,70 @@
         const matchesSearch =
           projectSearchQuery === "" ||
           normalizeSearch(card.dataset.projectSearchText || "").includes(projectSearchQuery);
-        card.hidden = !matchesProject || !matchesOperation || !matchesSearch;
+        const matchesOrigin = card.dataset.projectOrigin === selectedOrigin;
+        card.hidden = !matchesProject || !matchesOperation || !matchesSearch || !matchesOrigin;
         if (!card.hidden) visibleProjects += 1;
       });
       if (projectEmpty) projectEmpty.hidden = visibleProjects > 0;
     };
 
     const renderProjectFilters = () => {
+      const originCards = [...root.querySelectorAll("[data-project-card]")]
+        .filter((card) => card.dataset.projectOrigin === selectedOrigin);
+      root.querySelectorAll("[data-project-filter-set]").forEach((group) => {
+        group.hidden = group.dataset.projectFilterSet !== selectedOrigin;
+      });
       root.querySelectorAll("[data-project-filter]").forEach((item) => {
         item.dataset.active = String(item.dataset.projectFilter === selectedProjectStatus);
+        const value = item.dataset.projectFilter;
+        const count = originCards.filter((card) =>
+          value === "all" ||
+          (value === "open"
+            ? !(card.dataset.projectStatus === "launched" && card.dataset.operationStatus === "concluded")
+            : false) ||
+          (value === "closed"
+            ? card.dataset.projectStatus === "launched" && card.dataset.operationStatus === "concluded"
+            : false) ||
+          (value === "repaid" ? card.dataset.projectRepaid === "true" : card.dataset.projectStatus === value)
+        ).length;
+        const counter = item.querySelector("[data-project-filter-count]");
+        if (counter) counter.textContent = `(${count})`;
       });
       root.querySelectorAll("[data-operation-filter]").forEach((item) => {
         item.dataset.active = String(item.dataset.operationFilter === selectedOperationStatus);
+        const value = item.dataset.operationFilter;
+        const launchedCards = originCards.filter((card) => card.dataset.projectStatus === "launched");
+        const count = launchedCards.filter((card) => value === "all" || card.dataset.operationStatus === value).length;
+        const counter = item.querySelector("[data-operation-filter-count]");
+        if (counter) counter.textContent = `(${count})`;
       });
-      operationFilters.hidden = selectedProjectStatus !== "launched";
-      if (projectSummary) projectSummary.hidden = selectedProjectStatus !== "all";
+      root.querySelectorAll("[data-origin-filter]").forEach((item) => {
+        item.dataset.active = String(item.dataset.originFilter === selectedOrigin);
+      });
+      operationFilters.hidden = selectedOrigin !== "generaimpresa" || selectedProjectStatus !== "launched";
+      projectSummaries.forEach((summary) => {
+        summary.hidden =
+          summary.dataset.projectSummaryOrigin !== selectedOrigin ||
+          summary.dataset.projectSummaryStatus !== selectedProjectStatus ||
+          Number(summary.dataset.projectSummaryCount) === 0;
+      });
       applyProjectFilters();
     };
 
     const readProjectFiltersFromUrl = () => {
       const params = new URLSearchParams(window.location.search);
-      const requestedProjectStatus = params.get("stato") || "all";
       const requestedOperationStatus = params.get("operativo") || "all";
+      const requestedOrigin = params.get("origine") || "generaimpresa";
       const requestedSearch = params.get("cerca") || "";
 
-      selectedProjectStatus = validProjectStatuses.has(requestedProjectStatus) ? requestedProjectStatus : "all";
+      selectedOrigin = validOrigins.has(requestedOrigin) ? requestedOrigin : "generaimpresa";
+      const requestedProjectStatus = params.get("stato") || (selectedOrigin === "historical_import" ? "open" : "all");
+      const validProjectStatuses = selectedOrigin === "historical_import" ? validHistoricalStatuses : validGeneraimpresaStatuses;
+      selectedProjectStatus = validProjectStatuses.has(requestedProjectStatus)
+        ? requestedProjectStatus
+        : (selectedOrigin === "historical_import" ? "open" : "all");
       selectedOperationStatus =
-        selectedProjectStatus === "launched" && validOperationStatuses.has(requestedOperationStatus)
+        selectedOrigin === "generaimpresa" && selectedProjectStatus === "launched" && validOperationStatuses.has(requestedOperationStatus)
           ? requestedOperationStatus
           : "all";
       projectSearchQuery = normalizeSearch(requestedSearch);
@@ -262,6 +337,7 @@
       } else {
         url.searchParams.delete("operativo");
       }
+      url.searchParams.set("origine", selectedOrigin);
 
       window.history.pushState({}, "", url);
       renderProjectFilters();
@@ -291,6 +367,15 @@
     root.querySelectorAll("[data-operation-filter]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedOperationStatus = button.dataset.operationFilter;
+        writeProjectFiltersToUrl();
+      });
+    });
+
+    root.querySelectorAll("[data-origin-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedOrigin = button.dataset.originFilter;
+        selectedProjectStatus = selectedOrigin === "historical_import" ? "open" : "all";
+        selectedOperationStatus = "all";
         writeProjectFiltersToUrl();
       });
     });
