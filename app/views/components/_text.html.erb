@@ -1,0 +1,23 @@
+<%
+  alignment = {
+    "left" => "text-left",
+    "center" => "text-center",
+    "right" => "text-right"
+  }.fetch(data["align"], "text-left")
+
+  size = {
+    "small" => "text-sm",
+    "base" => "text-base",
+    "large" => "text-lg"
+  }.fetch(data["size"], "text-base")
+
+  color = {
+    "muted" => "text-gray-500",
+    "default" => "text-gray-700",
+    "dark" => "text-gray-900"
+  }.fetch(data["color"], "text-gray-700")
+%>
+
+<p class="<%= [alignment, size, color, data["classes"]].compact.join(" ") %>">
+  <%= inline_markdown(data["text"]) %>
+</p>

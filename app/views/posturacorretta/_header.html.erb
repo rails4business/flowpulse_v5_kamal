@@ -5,9 +5,9 @@
    is_eventi = current_page?(posturacorretta_eventi_path) rescue false
    is_contenuti = current_page?(posturacorretta_contenuti_path) rescue false
   is_metodiche = request.path.start_with?(posturacorretta_metodiche_path) rescue false
- is_filosofia = current_page?(posturacorretta_filosofia_path) rescue false
+ is_libro = current_page?(posturacorretta_libro_path) rescue false
  
-  is_progetti = current_page?(posturacorretta_progetti_path) rescue false
+  is_progetti = request.path.start_with?(posturacorretta_progetti_path) rescue false
   
 %>
 
@@ -38,21 +38,21 @@
         Percorso
       </a>
       
-      <a href="<%= posturacorretta_contenuti_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_contenuti ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
-        Contenuti
-      </a>
+      
       <a href="<%= posturacorretta_eventi_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_eventi ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Eventi
       </a>
-      
+      <a href="<%= posturacorretta_contenuti_path %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_contenuti ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
+        Contenuti
+      </a>
       <a href="<%= posturacorretta_metodiche_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_metodiche ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Metodiche
       </a>
-      <a href="<%= posturacorretta_filosofia_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_filosofia ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
+      <a href="<%= posturacorretta_libro_path %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_libro ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700" %>">
         Libro
       </a>
       
@@ -80,7 +80,7 @@
     <a href="<%= posturacorretta_percorso_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_percorso ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Percorso personalizzato</a>
     <a href="<%= posturacorretta_metodiche_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Metodiche</a>
     <a href="<%= posturacorretta_contenuti_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_contenuti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Contenuti</a>
-    <a href="<%= posturacorretta_filosofia_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_filosofia ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Libro e Visione</a>
+    <a href="<%= posturacorretta_libro_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_libro ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Libro</a>
     <a href="<%= posturacorretta_eventi_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_eventi ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Eventi e Community</a>
     <a href="<%= posturacorretta_progetti_path %>" class="block rounded-xl px-4 py-2.5 text-sm font-bold transition <%= is_progetti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Progetti</a>
   </div>

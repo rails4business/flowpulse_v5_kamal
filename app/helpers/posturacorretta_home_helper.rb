@@ -32,7 +32,7 @@ module PosturacorrettaHomeHelper
     when "accademia" then posturacorretta_accademia_path
     when "percorso" then posturacorretta_percorso_path
     when "eventi" then posturacorretta_eventi_path
-    when "filosofia" then posturacorretta_filosofia_path
+    when "libro" then posturacorretta_libro_path
     when "progetti" then posturacorretta_progetti_path
     else
       raise ArgumentError, "Route PosturaCorretta non gestita: #{route_key}"

@@ -25,6 +25,11 @@
   <body class="min-h-screen bg-white text-slate-950">
     <%= yield :landing_nav if content_for?(:landing_nav) %>
 
+    <% revision_project_slug = posturacorretta_revision_project if respond_to?(:posturacorretta_revision_project) %>
+    <% if revision_project_slug %>
+      <%= render "posturacorretta/revision_banner", project_slug: revision_project_slug %>
+    <% end %>
+
     <% if notice = flash[:notice] %>
       <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <p class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"><%= notice %></p>

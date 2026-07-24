@@ -1,0 +1,302 @@
+<%
+  project_order = {
+    ["in_progress", nil] => 0,
+    ["future", nil] => 1,
+    ["launched", "active"] => 2,
+    ["launched", "paused"] => 3,
+    ["launched", "concluded"] => 4
+  }
+  projects = items.to_a.sort_by do |project|
+    rank = if project_repaid?(project)
+      6
+    else
+      project_order.fetch([project["status"], project["operation_status"]], project_order.fetch([project["status"], nil], 5))
+    end
+    [rank, project["title"].to_s]
+  end
+  status_classes = {
+    "future" => "border-amber-200 bg-amber-50 text-amber-700",
+    "in_progress" => "border-indigo-200 bg-indigo-50 text-indigo-700",
+    "launched" => "border-emerald-200 bg-emerald-50 text-emerald-700"
+  }
+  operation_labels = {
+    "active" => "In attività",
+    "concluded" => "Concluso",
+    "paused" => "In sospeso"
+  }
+  format_date = ->(value) { value.present? ? Date.iso8601(value).strftime("%d/%m/%Y") : "Da definire" }
+  money = ->(value) { number_to_currency(value.to_i, unit: "€", precision: 0, delimiter: ".", separator: ",", format: "%n %u") }
+  repaid_projects_count = projects.count { |project| project_repaid?(project) }
+%>
+
+<div class="mx-auto mt-8 max-w-2xl">
+  <label for="project-search" class="sr-only">Cerca nei progetti</label>
+  <div class="relative">
+    <svg aria-hidden="true"
+         class="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+    </svg>
+    <input id="project-search"
+           type="search"
+           autocomplete="off"
+           placeholder="Cerca per titolo, categoria o partecipante…"
+           class="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-sm text-slate-950 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+           data-project-search>
+  </div>
+</div>
+
+<div class="mt-8 flex flex-wrap justify-center gap-2" data-project-filters>
+  <% [["all", "Tutti"], ["future", "Futuri"], ["in_progress", "In realizzazione"], ["launched", "Progetti lanciati"], ["repaid", "Restituiti"]].each do |value, label| %>
+    <button type="button"
+            class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-600 data-[active=true]:bg-indigo-600 data-[active=true]:text-white"
+            data-project-filter="<%= value %>"
+            data-active="<%= value == "all" %>">
+      <%= label %>
+      <span class="ml-1 opacity-70">(<%= if value == "all"
+                                           projects.size
+                                         elsif value == "repaid"
+                                           repaid_projects_count
+                                         else
+                                           projects.count { |project| project["status"] == value }
+                                         end %>)</span>
+    </button>
+  <% end %>
+</div>
+
+<div class="mt-3 flex flex-wrap justify-center gap-2" data-operation-filters hidden>
+  <% [["all", "Tutti"], ["active", "In attività"], ["paused", "In sospeso"], ["concluded", "Conclusi"]].each do |value, label| %>
+    <button type="button"
+            class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-500 transition hover:border-emerald-300 hover:text-emerald-700 data-[active=true]:border-emerald-600 data-[active=true]:bg-emerald-600 data-[active=true]:text-white"
+            data-operation-filter="<%= value %>"
+            data-active="<%= value == "all" %>">
+      <%= label %>
+      <span class="ml-1 opacity-70">(<%= value == "all" ? projects.count { |project| project["status"] == "launched" } : projects.count { |project| project["operation_status"] == value } %>)</span>
+    </button>
+  <% end %>
+</div>
+
+<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2" data-project-grid>
+  <% projects.each do |project| %>
+    <%
+      steps = project.fetch("steps", [])
+      completed = steps.count { |step| step["status"] == "completed" }
+      lifecycle = project_lifecycle(project)
+      launch_phase = lifecycle.find { |phase| phase["key"] == "launch" }
+      date_label = project["status"] == "launched" ? "Lanciato" : "Lancio previsto"
+      finances = project.fetch("finances", {})
+      contribution_totals = project_contribution_totals(project)
+      financial_untracked = finances["tracking"] == "untracked"
+      resources_collected = contribution_totals[:total]
+      resources_needed = finances["project_cost"].to_i
+      resources_percentage = resources_needed.positive? ? [((resources_collected.to_f / resources_needed) * 100).round, 100].min : 0
+      resources_missing = [resources_needed - resources_collected, 0].max
+      repaid = project_repaid?(project)
+      search_text = [
+        project["title"],
+        project["summary"],
+        project["category"],
+        project["owner"],
+        project.fetch("workers", []),
+        project.fetch("contributors", []).map { |contributor| contributor["participant"] }
+      ].flatten.compact.join(" ")
+    %>
+
+    <a href="<%= posturacorretta_progetto_path(project.fetch("slug")) %>"
+       class="block rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+       data-project-card
+       data-project-search-text="<%= search_text %>"
+       data-project-status="<%= project["status"] %>"
+       data-project-repaid="<%= repaid %>"
+       data-operation-status="<%= project["operation_status"] %>">
+      <article class="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <span class="text-xs font-black uppercase tracking-widest text-slate-400"><%= project["category"] %></span>
+          <span class="rounded-full border px-3 py-1 text-xs font-bold <%= status_classes.fetch(project["status"], status_classes["future"]) %>">
+            <%= project["status_label"] %>
+            <% if project["status"] == "launched" && project["operation_status"].present? %>
+              · <%= operation_labels.fetch(project["operation_status"], project["operation_status_label"]) %>
+            <% end %>
+          </span>
+        </div>
+
+        <h3 class="mt-4 text-xl font-black text-slate-950"><%= inline_markdown(project["title"]) %></h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600"><%= inline_markdown(project["summary"]) %></p>
+
+        <dl class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs">
+          <div class="flex items-baseline gap-2">
+            <dt class="font-semibold text-slate-400">Responsabile</dt>
+            <dd class="font-bold text-indigo-700">@<%= project["owner"].to_s.delete_prefix("@") %></dd>
+          </div>
+          <% if launch_phase&.dig("date").present? %>
+            <div class="flex items-baseline gap-2">
+              <dt class="font-semibold text-slate-400"><%= date_label %></dt>
+              <dd class="font-bold text-slate-900"><%= format_date.call(launch_phase["date"]) %></dd>
+            </div>
+          <% end %>
+        </dl>
+
+        <% if !financial_untracked && resources_needed.positive? %>
+          <div class="mt-5 border-t border-slate-100 pt-5">
+            <div class="flex items-center justify-between gap-3 text-[11px]">
+              <span class="font-bold text-slate-900">Risorse raccolte</span>
+              <span class="font-bold">
+                <strong class="text-emerald-700"><%= money.call(resources_collected) %></strong>
+                <span class="text-slate-400"> / </span>
+                <strong class="text-slate-950"><%= money.call(resources_needed) %></strong>
+              </span>
+            </div>
+            <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"
+                 role="progressbar"
+                 aria-label="Risorse raccolte"
+                 aria-valuemin="0"
+                 aria-valuemax="<%= resources_needed %>"
+                 aria-valuenow="<%= [resources_collected, resources_needed].min %>">
+              <div class="h-full rounded-full bg-emerald-600" style="width: <%= resources_percentage %>%"></div>
+            </div>
+            <p class="mt-1.5 text-right text-[11px] text-slate-500">
+              <%= resources_missing.positive? ? "#{resources_percentage}% · mancano #{money.call(resources_missing)}" : "100% · risorse necessarie raggiunte" %>
+            </p>
+          </div>
+        <% end %>
+
+        <div class="mt-auto pt-6" role="img" aria-label="<%= completed %> step conclusi su <%= steps.size %>">
+          <span class="sr-only"><%= completed %> step conclusi su <%= steps.size %></span>
+          <div class="flex flex-wrap gap-2" title="<%= completed %> step conclusi su <%= steps.size %>">
+            <% steps.each do |step| %>
+              <% dot_color = step["status"] == "completed" ? "#059669" : (step["status"] == "in_progress" ? "#4f46e5" : "#cbd5e1") %>
+              <span aria-hidden="true" class="size-2.5 rounded-full" style="background-color: <%= dot_color %>"></span>
+            <% end %>
+          </div>
+        </div>
+
+      </article>
+    </a>
+  <% end %>
+</div>
+
+<div class="mt-10 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center" data-project-empty hidden>
+  <p class="font-bold text-slate-900">Nessun progetto trovato</p>
+  <p class="mt-1 text-sm text-slate-500">Prova a modificare la ricerca o a selezionare un altro filtro.</p>
+</div>
+
+<script>
+  (() => {
+    const root = document.getElementById("progetti-section");
+    if (!root || root.dataset.projectUiReady === "true") return;
+    root.dataset.projectUiReady = "true";
+
+    let selectedProjectStatus = "all";
+    let selectedOperationStatus = "all";
+    let projectSearchQuery = "";
+    const operationFilters = root.querySelector("[data-operation-filters]");
+    const projectSummary = root.querySelector("[data-project-summary]");
+    const projectSearch = root.querySelector("[data-project-search]");
+    const projectEmpty = root.querySelector("[data-project-empty]");
+    const validProjectStatuses = new Set(["all", "future", "in_progress", "launched", "repaid"]);
+    const validOperationStatuses = new Set(["all", "active", "concluded", "paused"]);
+    const normalizeSearch = (value) =>
+      value.toLocaleLowerCase("it").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+    const applyProjectFilters = () => {
+      let visibleProjects = 0;
+      root.querySelectorAll("[data-project-card]").forEach((card) => {
+        const matchesProject =
+          selectedProjectStatus === "all" ||
+          (selectedProjectStatus === "repaid"
+            ? card.dataset.projectRepaid === "true"
+            : card.dataset.projectStatus === selectedProjectStatus);
+        const matchesOperation = selectedProjectStatus !== "launched" ||
+          selectedOperationStatus === "all" ||
+          card.dataset.operationStatus === selectedOperationStatus;
+        const matchesSearch =
+          projectSearchQuery === "" ||
+          normalizeSearch(card.dataset.projectSearchText || "").includes(projectSearchQuery);
+        card.hidden = !matchesProject || !matchesOperation || !matchesSearch;
+        if (!card.hidden) visibleProjects += 1;
+      });
+      if (projectEmpty) projectEmpty.hidden = visibleProjects > 0;
+    };
+
+    const renderProjectFilters = () => {
+      root.querySelectorAll("[data-project-filter]").forEach((item) => {
+        item.dataset.active = String(item.dataset.projectFilter === selectedProjectStatus);
+      });
+      root.querySelectorAll("[data-operation-filter]").forEach((item) => {
+        item.dataset.active = String(item.dataset.operationFilter === selectedOperationStatus);
+      });
+      operationFilters.hidden = selectedProjectStatus !== "launched";
+      if (projectSummary) projectSummary.hidden = selectedProjectStatus !== "all";
+      applyProjectFilters();
+    };
+
+    const readProjectFiltersFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      const requestedProjectStatus = params.get("stato") || "all";
+      const requestedOperationStatus = params.get("operativo") || "all";
+      const requestedSearch = params.get("cerca") || "";
+
+      selectedProjectStatus = validProjectStatuses.has(requestedProjectStatus) ? requestedProjectStatus : "all";
+      selectedOperationStatus =
+        selectedProjectStatus === "launched" && validOperationStatuses.has(requestedOperationStatus)
+          ? requestedOperationStatus
+          : "all";
+      projectSearchQuery = normalizeSearch(requestedSearch);
+      if (projectSearch) projectSearch.value = requestedSearch;
+
+      renderProjectFilters();
+    };
+
+    const writeProjectFiltersToUrl = () => {
+      const url = new URL(window.location.href);
+      if (selectedProjectStatus === "all") {
+        url.searchParams.delete("stato");
+      } else {
+        url.searchParams.set("stato", selectedProjectStatus);
+      }
+
+      if (selectedProjectStatus === "launched" && selectedOperationStatus !== "all") {
+        url.searchParams.set("operativo", selectedOperationStatus);
+      } else {
+        url.searchParams.delete("operativo");
+      }
+
+      window.history.pushState({}, "", url);
+      renderProjectFilters();
+    };
+
+    const writeProjectSearchToUrl = () => {
+      const url = new URL(window.location.href);
+      const query = projectSearch.value.trim();
+      projectSearchQuery = normalizeSearch(query);
+      if (query === "") {
+        url.searchParams.delete("cerca");
+      } else {
+        url.searchParams.set("cerca", query);
+      }
+      window.history.replaceState({}, "", url);
+      applyProjectFilters();
+    };
+
+    root.querySelectorAll("[data-project-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedProjectStatus = button.dataset.projectFilter;
+        selectedOperationStatus = "all";
+        writeProjectFiltersToUrl();
+      });
+    });
+
+    root.querySelectorAll("[data-operation-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedOperationStatus = button.dataset.operationFilter;
+        writeProjectFiltersToUrl();
+      });
+    });
+
+    if (projectSearch) projectSearch.addEventListener("input", writeProjectSearchToUrl);
+    window.addEventListener("popstate", readProjectFiltersFromUrl);
+    readProjectFiltersFromUrl();
+  })();
+</script>

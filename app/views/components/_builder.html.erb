@@ -1,30 +1,38 @@
 <%
   # Il builder ricorsivo. Gestisce la gerarchia: Section -> Row -> Column -> Component
   # component = hash con 'type' (section, row, column, o nome componente), 'classes', 'children' o 'data'
+  context = local_assigns.fetch(:context, {})
 %>
 
 <% if component['type'] == 'section' %>
   <section class="<%= component['classes'] %>">
     <% component['children']&.each do |child| %>
-      <%= render "components/builder", component: child %>
+      <%= render "components/builder", component: child, context: context %>
     <% end %>
   </section>
 
 <% elsif component['type'] == 'row' %>
   <div class="row <%= component['classes'] %>">
     <% component['children']&.each do |child| %>
-      <%= render "components/builder", component: child %>
+      <%= render "components/builder", component: child, context: context %>
     <% end %>
   </div>
 
 <% elsif component['type'] == 'column' %>
   <div class="col <%= component['classes'] %>">
     <% component['children']&.each do |child| %>
-      <%= render "components/builder", component: child %>
+      <%= render "components/builder", component: child, context: context %>
     <% end %>
   </div>
 
 <% else %>
   <%# Se non è un elemento di layout, è un componente reale (hero, accordion, card, ecc.) %>
-  <%= render "components/#{component['type']}", data: component['data'], items: component['items'], item: component['item'] %>
+  <%
+    resolved_items = component['source'].present? ? context[component['source']] : component['items']
+    component_path = component['type'].include?('/') ? component['type'] : "components/#{component['type']}"
+  %>
+  <%= render component_path,
+             data: component['data'],
+             items: resolved_items,
+             item: component['item'] %>
 <% end %>

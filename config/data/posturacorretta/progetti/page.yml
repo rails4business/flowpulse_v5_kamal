@@ -1,0 +1,16 @@
+components:
+  - type: section
+    classes: "mx-auto max-w-screen-xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16"
+    children:
+      - type: title
+        data:
+          align: center
+          kicker: "Prendi il controllo dei tuoi progetti con GeneraImpresa"
+          title: "Progetti"
+          subtitle: "Segui i progetti futuri, in realizzazione o già avviati."
+
+      - type: project_summary
+        source: projects
+
+      - type: project_grid
+        source: projects

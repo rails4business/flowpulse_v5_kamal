@@ -12,17 +12,20 @@ components:
               - type: title
                 data:
                   align: left
-                  kicker: "Con posturacorretta"
-                  title: "Trova la giusta posizione da cui osservare il mondo."
-                  subtitle: "Inizia dalla salute. Migliora il modo in cui vivi, lavori e impari."
+                  kicker: "Cambiare punto di vista fa la differenza"
+                  title: "Trova la giusta posizione da cui osservare il mondo"
+                  subtitle: "La tua postura, ha un impatto sulla tua salute e determina il modo in cui vivi lavori e impari."
               - type: accordion
                 items:
                   - question: "Il tuo percorso della salute funziona?"
                     answer: "I percorsi della salute utilizzano **approcci che non considerano la globalità** della persona, e spesso chi si vanta di considerare la globalità perde di vista la scienza e la medicina ufficiale. Con postura corretta  abbiamo utilizzato i principi delle metodiche posturali e il concetto di postura che non è soltanto il modo in cui stiamo seduti o in piedi, ma il modo in cui il corpo si organizza, si muove e si adatta a ciò che viviamo. In questo modo abbiamo costruito delle linee guida che possono aiutare te e i professionisti che ti seguono nel migliorare il  tuo percorso"
+                    cta:
+                      label: "Ottimizza o crea il tuo percorso"
+                      route: "posturacorretta/percorso"
                   - question: "Un Percorso integrato portrebbe risolvere il tuo problema?"
                     id: "domanda-metodiche"
                     answer: "Nel 90% dei casi un professionista sanitario come un medico o un fisioterapista non riesce a collaborare con un professionista del benessere come un personal trainer o un istruttore di yoga. Con PosturaCorretta abbiamo creato delle linee guida che permettono se accettate da professionisti e dal paziente seguito di lavorare per risovlere il tuo problema."
-                  - question: "Ti piacerebbe avere una posturacorretta?"
+                  - question: "Vorresti avere una postura corretta?"
                     answer: "La postura corretta non è soltanto stare ben dritti con la schiena, è più simile alla capacità di suonare uno strumento musicale.  Con l'accademia impari ad ascoltare e capire come funzionano i sistemi del corpo per usarli a tuo vantaggio, per migliorare la tua salute e il tuo benessere, come apprendi e come ti muovi questo ti permetterà di avere vantaggi in molti ambiti della tua vita."
           - type: column
             classes: "min-h-64 sm:min-h-80"
@@ -45,31 +48,41 @@ components:
               - type: section_header
                 data:
                   kicker: "Come iniziare"
-                  title: "Scegli il tuo punto d’ingresso"
-                  subtitle: "Parti dall’Accademia per conoscere e praticare oppure dal Percorso per orientarti a partire dalla tua situazione."
+                  title: "Da dove vuoi iniziare?"
+                  subtitle: "Trova la tua posturacorretta, dai uno sprint al tuo percorso della salute o partecipa agli eventi."
           - type: row
-            classes: "grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12"
+            classes: "grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12"
             children:
               - type: column
                 classes: "col-span-1"
                 children:
                   - type: card
                     item:
-                      eyebrow: "Conosci • Pratica • Insegna"
-                      title: "Accademia"
-                      description: "Impara a conoscere il corpo e la fisiologia attraverso le principali metodiche posturali, partendo anche da zero."
+                      eyebrow: "Impara • Pratica • Insegna"
+                      title: "Migliora la tua postura"
+                      description: "Riattiva i tuoi sistemi e impara a conoscere la tua fisiologia con semplici esperienze, grazie alle principali metodiche posturali."
                       cta: "Scopri l’Accademia"
-                      route: "accademia"
+                      route: "posturacorretta/accademia"
               - type: column
                 classes: "col-span-1"
                 children:
                   - type: card
                     item:
-                      eyebrow: "Dalla situazione agli step"
-                      title: "Percorso"
-                      description: "Osserva cosa sta accadendo, orientati tra le possibilità e costruisci un percorso personale con l’aiuto più adatto."
+                      eyebrow: "Percorso per la salute"
+                      title: "Percorso personalizzato"
+                      description: "Le nostre linee guida ti aiuteranno a ottimizza il tuo percorso della salute e se necessario supporteranno te e i professionisti da cui seguito ad organizzare un percorso integrato. "
                       cta: "Inizia il tuo percorso"
-                      route: "percorso"
+                      route: "posturacorretta/percorso"
+              - type: column
+                classes: "col-span-1"
+                children:
+                  - type: card
+                    item:
+                      eyebrow: "Partecipa"
+                      title: "Eventi"
+                      description: "Incontri ed esperienze che uniscono le attività per la salute a pratiche espressive e iniziative sul territorio, anche in luoghi naturali, per vivere la salute e riconnettersi a se stessi."
+                      cta: "Vedi gli eventi"
+                      route: "posturacorretta/eventi"
 
   # 4. Altre Opzioni Section
   - type: section
@@ -86,7 +99,7 @@ components:
                   kicker: 'Puoi anche esplorare'
                   title: 'Altre Risorse'
       - type: row
-        classes: "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        classes: "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
         children:
           - type: column
             classes: "col-span-1"
@@ -97,7 +110,7 @@ components:
                   eyebrow: "Informati"
                   description: "Video, articoli, guide ed esercizi per approfondire postura, fisiologia e salute."
                   cta: "Guarda i contenuti"
-                  route: "contenuti"
+                  route: "posturacorretta/contenuti"
           - type: column
             classes: "col-span-1"
             children:
@@ -115,19 +128,9 @@ components:
                 item:
                   title: "Metodiche"
                   eyebrow: "Approcci"
-                  description: "Conosci e confronta le diverse mappe utilizzate per osservare e lavorare con il corpo."
+                  description: "Conosci e confronta le diverse metodiche utilizzate per lavorare sul corpo e sulla postura e scopri la storia dei fondatori."
                   cta: "Esplora le metodiche"
-                  route: "metodiche"
-          - type: column
-            classes: "col-span-1"
-            children:
-              - type: card
-                item:
-                  title: "Eventi"
-                  eyebrow: "Partecipa"
-                  description: "Incontri, esperienze e attività per conoscere persone, luoghi e pratiche sul territorio."
-                  cta: "Vedi gli eventi"
-                  route: "eventi"
+                  route: "posturacorretta/metodiche"
           - type: column
             classes: "col-span-1"
             children:
@@ -137,4 +140,22 @@ components:
                   eyebrow: "Collabora"
                   description: "Segui ciò che sta nascendo, proponi il tuo contributo oppure entra nel gruppo di lavoro."
                   cta: "Scopri i progetti"
-                  route: "progetti"
+                  route: "posturacorretta/progetti"
+
+  # Pubblici (dati condivisi da audiences.yml)
+  - type: section
+    classes: "mx-auto mt-16 max-w-screen-xl border-t border-gray-100 px-4 pt-16 sm:px-6 lg:px-8"
+    children:
+      - type: section_header
+        data:
+          kicker: "Qui i professionisti sanitari e del benessere lavorano insieme"
+          title: "Costruisci il tuo percorso integrato"
+      - type: feature_grid
+        source: audiences
+      - type: text
+        data:
+          text: "La comunicazione e il confronto, la verificare dei risultati, il controllo sui percorsi, permettono di bilanciare la sicurezza e la libertà, razionalità e intuito, approccio scientifico e visione olistica."
+          align: center
+          size: small
+          color: muted
+          classes: "mx-auto mt-8 max-w-3xl leading-6"

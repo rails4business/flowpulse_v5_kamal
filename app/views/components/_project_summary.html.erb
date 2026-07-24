@@ -1,0 +1,146 @@
+<%
+  projects = items.to_a
+  contributors = projects
+    .flat_map { |project| project.fetch("contributors", []).map { |person| person["participant"] } }
+    .compact
+    .map { |name| name.to_s.delete_prefix("@") }
+    .uniq
+  makers = projects.flat_map do |project|
+    project.fetch("workers", []) +
+      project.fetch("steps", [])
+             .select { |step| step["status"] == "completed" }
+             .map { |step| step["assignee"] }
+  end
+    .reject { |name| name.blank? || name == "Da assegnare" }
+    .map { |name| name.to_s.delete_prefix("@") }
+    .uniq
+  portfolio_totals = projects.map { |project| project_contribution_totals(project) }
+  money_invested = portfolio_totals.sum { |totals| totals[:money] }
+  time_invested = portfolio_totals.sum { |totals| totals[:time] }
+  profit_paid = portfolio_totals.sum { |totals| totals[:profit_received] }
+  total_contributions = money_invested + time_invested
+  money = ->(value) { number_to_currency(value, unit: "€", precision: 0, delimiter: ".", separator: ",", format: "%n %u") }
+  summary_cards = [
+    {
+      key: "contributors",
+      label: "Contributori",
+      value: contributors.size,
+      value_class: "text-slate-950",
+      hint: "Chi investe tempo o denaro.",
+      description: "I contributori sostengono economicamente i progetti investendo denaro, tempo di lavoro o entrambi e quando il progetto è lanciato ricevono un ritorno economico proporzionale al loro investimento che è stato precedentemente pattuito, in base al progetto.",
+      people: contributors
+    },
+    {
+      key: "makers",
+      label: "Realizzatori",
+      value: makers.size,
+      value_class: "text-indigo-600",
+      hint: "Chi partecipa alla realizzazione.",
+      description: "I realizzatori sono persone o professionisti che svolgono concretamente il lavoro necessario per realizzare e portare a termine i progetti.",
+      people: makers
+    },
+    {
+      key: "invested",
+      label: "Valore investito totale",
+      value: money.call(total_contributions),
+      value_class: "text-emerald-600",
+      hint: "Denaro + valore del tempo.",
+      description: "È la somma del denaro investito e del valore economico attribuito al tempo dedicato ai progetti.",
+      breakdown: [["Denaro investito", money.call(money_invested)], ["Valore del tempo", money.call(time_invested)]]
+    },
+    {
+      key: "returns",
+      label: "Rendimento distribuito",
+      value: money.call(profit_paid),
+      value_class: "text-violet-600",
+      hint: "Guadagno oltre al capitale restituito.",
+      description: "Indica solo il guadagno sull'investimento, ottenuto dal contributore, non considerando il la somma investita che viene restituita al termine del progetto. Il rendimento è stabilito in base al capitale investito e al tempo dedicato al progetto.",
+      example: "Esempio: se il contributore investe 3.000 € e riceve in totale 3.500 €, recupera i 3.000 € investiti e ottiene un rendimento di 500 €."
+   }
+  ]
+%>
+
+<div data-project-summary>
+  <dl class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <% summary_cards.each do |card| %>
+      <div class="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-indigo-300 hover:shadow-md">
+        <button type="button"
+                class="h-full w-full p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500"
+                data-project-summary-open="<%= card[:key] %>"
+                aria-haspopup="dialog"
+                aria-controls="project-summary-<%= card[:key] %>">
+          <dt class="text-xs font-bold uppercase tracking-widest text-slate-500"><%= card[:label] %></dt>
+          <dd class="mt-2 text-2xl font-black <%= card[:value_class] %>"><%= card[:value] %></dd>
+          <span class="mt-1 block text-xs text-slate-400"><%= card[:hint] %></span>
+          <span class="mt-3 inline-flex items-center gap-1 text-xs font-bold text-indigo-600">Scopri di più <span aria-hidden="true">→</span></span>
+        </button>
+      </div>
+    <% end %>
+  </dl>
+
+  <% summary_cards.each do |card| %>
+    <dialog id="project-summary-<%= card[:key] %>"
+            class="m-auto w-full max-w-[calc(100%_-_2rem)] sm:max-w-lg rounded-2xl bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/60"
+            data-project-summary-dialog="<%= card[:key] %>">
+      <div class="p-6 sm:p-7">
+        <div class="flex items-start justify-between gap-6">
+          <div>
+            <p class="text-xs font-black uppercase tracking-widest text-indigo-600">Come viene calcolato</p>
+            <h2 class="mt-2 text-2xl font-black"><%= card[:label] %></h2>
+          </div>
+          <button type="button"
+                  class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xl text-slate-500 transition hover:bg-slate-200 hover:text-slate-900"
+                  data-project-summary-close
+                  aria-label="Chiudi">×</button>
+        </div>
+
+        <p class="mt-5 leading-7 text-slate-600"><%= card[:description] %></p>
+
+        <% if card[:people].present? %>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <% card[:people].each do |person| %>
+              <span class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-bold text-slate-700">@<%= person.to_s.delete_prefix("@") %></span>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if card[:breakdown].present? %>
+          <dl class="mt-5 divide-y divide-slate-100 rounded-xl bg-slate-50 px-4">
+            <% card[:breakdown].each do |label, value| %>
+              <div class="flex items-center justify-between gap-4 py-3">
+                <dt class="text-sm text-slate-500"><%= label %></dt>
+                <dd class="font-black text-slate-900"><%= value %></dd>
+              </div>
+            <% end %>
+          </dl>
+        <% end %>
+
+        <% if card[:example].present? %>
+          <p class="mt-5 rounded-xl bg-violet-50 p-4 text-sm leading-6 text-violet-800"><%= card[:example] %></p>
+        <% end %>
+      </div>
+    </dialog>
+  <% end %>
+</div>
+
+<script>
+  (() => {
+    const summary = document.querySelector("[data-project-summary]");
+    if (!summary || summary.dataset.modalsReady === "true") return;
+    summary.dataset.modalsReady = "true";
+
+    summary.querySelectorAll("[data-project-summary-open]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const dialog = summary.querySelector(`[data-project-summary-dialog="${button.dataset.projectSummaryOpen}"]`);
+        if (dialog) dialog.showModal();
+      });
+    });
+
+    summary.querySelectorAll("[data-project-summary-dialog]").forEach((dialog) => {
+      dialog.querySelector("[data-project-summary-close]")?.addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    });
+  })();
+</script>

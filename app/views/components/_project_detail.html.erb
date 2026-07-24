@@ -1,0 +1,303 @@
+<%
+  steps = project.fetch("steps", [])
+  finances = project.fetch("finances", {})
+  financial_untracked = finances["tracking"] == "untracked"
+  contribution_totals = project_contribution_totals(project)
+  lifecycle = project_lifecycle(project)
+  operational_activities = project.fetch("operational_activities", [])
+  workers = project.fetch("workers", [])
+  financiers = (
+    project.fetch("financiers", []) +
+    project.fetch("contributors", []).select { |contributor| contributor.fetch("contributions", []).any? { |contribution| contribution["type"] == "money" } }.map { |contributor| contributor["participant"] }
+  ).compact.uniq
+  completed_steps = steps.count { |step| step["status"] == "completed" }
+  progress = steps.any? ? ((completed_steps.to_f / steps.size) * 100).round : 0
+  money = ->(value) { number_to_currency(value.to_i, unit: "€", precision: 0, delimiter: ".", separator: ",", format: "%n %u") }
+  format_date = ->(value) { value.present? ? Date.iso8601(value).strftime("%d/%m/%Y") : "Da definire" }
+  format_datetime = ->(value) { value.present? ? Time.iso8601(value).strftime("%d/%m/%Y %H:%M") : "—" }
+  duration = lambda do |started_at, completed_at|
+    next "—" unless started_at.present? && completed_at.present?
+
+    minutes = ((Time.iso8601(completed_at) - Time.iso8601(started_at)) / 60).round
+    hours, remaining_minutes = minutes.divmod(60)
+    [("#{hours}h" if hours.positive?), ("#{remaining_minutes}m" if remaining_minutes.positive?)].compact.join(" ")
+  end
+  lifecycle_statuses = {
+    "planned" => ["Da iniziare", "border-slate-200 bg-slate-50 text-slate-500"],
+    "in_progress" => ["In corso", "border-indigo-200 bg-indigo-50 text-indigo-700"],
+    "completed" => ["Completato", "border-emerald-200 bg-emerald-50 text-emerald-700"]
+  }
+  project_tabs = {
+    "overview" => "Panoramica",
+    "realization" => "Realizzazione",
+    "activities" => "Attività operative"
+  }
+  activity_statuses = {
+    "planned" => ["Pianificata", "border-amber-200 bg-amber-50 text-amber-700"],
+    "confirmed" => ["Confermata", "border-indigo-200 bg-indigo-50 text-indigo-700"],
+    "completed" => ["Conclusa", "border-emerald-200 bg-emerald-50 text-emerald-700"],
+    "cancelled" => ["Annullata", "border-rose-200 bg-rose-50 text-rose-700"]
+  }
+  filtered_activities = operational_activities.select do |activity|
+    case @activity_status
+    when "upcoming" then %w[planned confirmed].include?(activity["status"])
+    when "completed" then activity["status"] == "completed"
+    when "cancelled" then activity["status"] == "cancelled"
+    else true
+    end
+  end
+%>
+
+<header class="border-b border-slate-200 bg-slate-50">
+  <div class="mx-auto max-w-screen-xl px-4 pt-10 sm:px-6 lg:px-8">
+    <p class="text-xs font-black uppercase tracking-widest text-indigo-600"><%= project["category"] %> · <%= project["status_label"] %></p>
+    <h1 class="mt-2 max-w-4xl text-3xl font-black text-slate-950 sm:text-5xl"><%= inline_markdown(project["title"]) %></h1>
+    <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600"><%= inline_markdown(project["summary"]) %></p>
+
+    <nav class="mt-7 flex gap-1 overflow-x-auto border-b border-slate-200" aria-label="Sezioni del progetto">
+      <%= link_to "← Progetti",
+        posturacorretta_progetti_path,
+        class: "mr-2 whitespace-nowrap border-b-2 border-transparent px-3 py-3 text-sm font-bold text-indigo-600 hover:border-indigo-200 hover:text-indigo-800 sm:mr-4" %>
+      <% project_tabs.each do |key, label| %>
+        <%= link_to label,
+          posturacorretta_progetto_path(project["slug"], tab: key),
+          class: "whitespace-nowrap border-b-2 px-4 py-3 text-sm font-bold transition #{ @project_tab == key ? "border-indigo-600 text-indigo-700" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800" }",
+          aria: (@project_tab == key ? { current: "page" } : {}) %>
+      <% end %>
+    </nav>
+  </div>
+</header>
+
+<% if @project_tab == "overview" %>
+  <main class="bg-white">
+    <div class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+    <section>
+      <h2 class="text-lg font-black text-slate-950">Ciclo di vita del progetto</h2>
+      <ol class="mt-6 grid grid-cols-1 lg:grid-cols-6">
+        <% lifecycle.each_with_index do |phase, index| %>
+          <% status_label, status_classes = lifecycle_statuses.fetch(phase["status"], lifecycle_statuses["planned"]) %>
+          <% completed = phase["status"] == "completed"; active = phase["status"] == "in_progress" %>
+          <li class="relative flex min-w-0 gap-4 pb-7 last:pb-0 lg:block lg:px-2 lg:pb-0 lg:text-center">
+            <% unless index == lifecycle.size - 1 %>
+              <span aria-hidden="true" class="absolute bottom-0 left-[15px] top-8 w-0.5 lg:bottom-auto lg:left-1/2 lg:right-[-50%] lg:top-[15px] lg:h-0.5 lg:w-auto" style="background-color: <%= completed ? "#059669" : "#e2e8f0" %>"></span>
+            <% end %>
+            <span class="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-black lg:mx-auto"
+                  style="<%= completed ? "background-color:#059669;border-color:#059669;color:#ffffff;" : (active ? "background-color:#4f46e5;border-color:#4f46e5;color:#ffffff;" : "background-color:#ffffff;border-color:#cbd5e1;color:#64748b;") %>">
+              <%= index + 1 %>
+            </span>
+            <div class="min-w-0 lg:mt-3">
+              <strong class="block text-xs leading-5 text-slate-900"><%= phase["label"] %></strong>
+              <span class="mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider <%= status_classes %>"><%= status_label %></span>
+              <span class="mt-2 block text-xs font-bold text-indigo-700">@<%= phase["responsible"].to_s.delete_prefix("@") %></span>
+              <time class="mt-0.5 block text-[11px] text-slate-500"><%= format_date.call(phase["date"]) %></time>
+            </div>
+          </li>
+        <% end %>
+      </ol>
+    </section>
+
+    <section class="mt-10 max-w-4xl border-t border-slate-200 pt-8">
+      <div class="markdown-content"><%= builder_markdown(project["content_path"]) %></div>
+    </section>
+
+    <% related_projects = project.fetch("related_projects", []).filter_map { |slug| @projects.find { |item| item["slug"] == slug } } %>
+    <% if related_projects.any? %>
+      <section class="mt-10 max-w-4xl border-t border-slate-200 pt-8">
+        <h2 class="text-lg font-black text-slate-950">Progetti collegati</h2>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+          <% related_projects.each do |related_project| %>
+            <%= link_to safe_join([
+              content_tag(:span, related_project["status_label"], class: "text-xs font-bold uppercase tracking-wider text-indigo-600"),
+              content_tag(:strong, related_project["title"], class: "mt-1 block text-slate-950")
+            ]), posturacorretta_progetto_path(related_project["slug"]), class: "rounded-xl border border-slate-200 bg-white p-4 transition hover:border-indigo-300 hover:bg-indigo-50" %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+    </div>
+  </main>
+<% elsif @project_tab == "realization" %>
+<main class="mx-auto max-w-screen-xl space-y-12 px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+  <section>
+    <h2 class="text-2xl font-black text-slate-950">Roadmap</h2>
+    <p class="mt-2 text-sm text-slate-500">Apri uno step per vedere stato, incarico, costo stimato e task di lavoro.</p>
+    <div class="mt-5 max-w-2xl">
+      <div class="flex justify-between text-xs font-bold text-slate-500">
+        <span>Avanzamento della realizzazione</span>
+        <span><%= completed_steps %>/<%= steps.size %> step · <%= progress %>%</span>
+      </div>
+      <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
+        <div class="h-full rounded-full bg-indigo-600" style="width: <%= progress %>%"></div>
+      </div>
+    </div>
+    <ol class="mt-5 space-y-3">
+      <% steps.each_with_index do |step, index| %>
+        <%
+          assigned = step["assignee"].present? && step["assignee"] != "Da assegnare"
+          started = step["started_at"].present?
+          finished = step["completed_at"].present?
+          current = started && !finished
+          state_label = finished ? "Concluso" : (started ? "In corso" : (assigned ? "Da iniziare" : "Da assegnare"))
+          state_classes = finished ? "bg-emerald-50 text-emerald-700 border-emerald-200" : (started ? "bg-indigo-50 text-indigo-700 border-indigo-200" : "bg-slate-50 text-slate-600 border-slate-200")
+        %>
+        <li>
+          <details class="group rounded-xl border border-slate-200 bg-white" <%= "open" if current %>>
+            <summary class="list-none cursor-pointer px-4 py-4 sm:px-5 [&::-webkit-details-marker]:hidden">
+              <span class="flex w-full items-center justify-between gap-4">
+                <span class="flex min-w-0 items-center gap-3">
+                  <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-black text-slate-600"><%= index + 1 %></span>
+                  <span class="min-w-0">
+                    <strong class="block text-sm text-slate-950 sm:text-base"><%= step["title"] %></strong>
+                    <% if step["description"].present? %>
+                      <span class="mt-1 block text-xs leading-5 text-slate-500"><%= step["description"] %></span>
+                    <% end %>
+                    <span class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+                      <span class="whitespace-nowrap"><strong class="text-slate-700">Costo:</strong> <%= money.call(step["estimated_cost"]) %></span>
+                      <span class="hidden text-slate-300 sm:inline">·</span>
+                      <span class="whitespace-nowrap"><strong class="text-slate-700">Assegnato:</strong> <%= step["assignee"] %><%= " · #{format_date.call(step["assigned_at"])}" if step["assigned_at"].present? %></span>
+                      <span class="hidden text-slate-300 sm:inline">·</span>
+                      <span class="whitespace-nowrap"><strong class="text-slate-700">Inizio:</strong> <%= started ? format_date.call(step["started_at"]) : "—" %></span>
+                      <span class="hidden text-slate-300 sm:inline">·</span>
+                      <span class="whitespace-nowrap"><strong class="text-slate-700">Fine:</strong> <%= finished ? format_date.call(step["completed_at"]) : "—" %></span>
+                    </span>
+                  </span>
+                </span>
+                <span class="flex shrink-0 items-center gap-3">
+                  <span class="hidden rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider sm:inline-flex <%= state_classes %>"><%= state_label %></span>
+                  <svg aria-hidden="true" class="size-5 text-slate-400 transition-transform group-open:-rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                  </svg>
+                </span>
+              </span>
+            </summary>
+
+            <div class="border-t border-slate-100 px-4 py-5 sm:px-5">
+              <% if step.fetch("tasks", []).any? %>
+                <div>
+                  <div class="mt-3 hidden grid-cols-[minmax(0,1.5fr)_minmax(8rem,.7fr)_minmax(9rem,.8fr)_minmax(9rem,.8fr)_minmax(6rem,.45fr)] gap-4 border-b border-slate-200 px-3 pb-2 text-[10px] font-black uppercase tracking-wider text-slate-400 sm:grid">
+                    <span>Attività di lavoro</span>
+                    <span>Persona</span>
+                    <span>Inizio</span>
+                    <span>Fine</span>
+                    <span>Tempo</span>
+                  </div>
+                  <ol>
+                    <% step["tasks"].each do |task| %>
+                      <%
+                        task_started = task["started_at"].present?
+                        task_finished = task["completed_at"].present?
+                      %>
+                      <li class="grid gap-2 border-b border-slate-200 px-3 py-3 text-xs last:border-b-0 sm:grid-cols-[minmax(0,1.5fr)_minmax(8rem,.7fr)_minmax(9rem,.8fr)_minmax(9rem,.8fr)_minmax(6rem,.45fr)] sm:items-center sm:gap-4">
+                        <div class="flex min-w-0 items-center gap-2">
+                          <span class="flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-black <%= task_finished ? "bg-emerald-600 text-white" : (task_started ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400") %>"><%= task_finished ? "✓" : (task_started ? "→" : "·") %></span>
+                          <strong class="text-sm text-slate-800"><%= task["title"] %></strong>
+                        </div>
+                        <span class="text-slate-500"><span class="font-bold text-slate-400 sm:hidden">Persona: </span><%= task["assignee"] %></span>
+                        <span class="whitespace-nowrap text-slate-500"><span class="font-bold text-slate-400 sm:hidden">Inizio: </span><%= format_datetime.call(task["started_at"]) %></span>
+                        <span class="whitespace-nowrap text-slate-500"><span class="font-bold text-slate-400 sm:hidden">Fine: </span><%= format_datetime.call(task["completed_at"]) %></span>
+                        <span class="whitespace-nowrap font-bold text-slate-700"><span class="font-bold text-slate-400 sm:hidden">Tempo: </span><%= duration.call(task["started_at"], task["completed_at"]) %></span>
+                      </li>
+                    <% end %>
+                  </ol>
+                </div>
+              <% end %>
+            </div>
+          </details>
+        </li>
+      <% end %>
+    </ol>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-black text-slate-950">Investimenti nel progetto</h2>
+    <% if workers.any? %>
+      <p class="mt-2 text-sm text-slate-500">Realizzatori: <strong class="text-slate-800"><%= workers.map { |slug| "@#{slug}" }.join(", ") %></strong></p>
+    <% end %>
+    <% if financiers.any? %>
+      <p class="mt-2 text-sm text-slate-500">Finanziatore: <strong class="text-slate-800"><%= financiers.map { |slug| "@#{slug}" }.join(", ") %></strong></p>
+    <% end %>
+    <dl class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Costo progetto</dt><dd class="mt-1 text-xl font-black"><%= financial_untracked ? "Da ricostruire" : money.call(finances["project_cost"]) %></dd></div>
+      <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Investito totale</dt><dd class="mt-1 text-xl font-black text-emerald-700"><%= financial_untracked ? "Non tracciato" : money.call(contribution_totals[:total]) %></dd><% unless financial_untracked %><span class="mt-2 block text-xs text-slate-500">Denaro <%= money.call(contribution_totals[:money]) %> · tempo <%= money.call(contribution_totals[:time]) %></span><% end %></div>
+      <div class="rounded-xl bg-violet-50 p-4"><dt class="text-xs font-bold uppercase text-violet-500">Ritornato ai contributori</dt><dd class="mt-1 text-xl font-black text-violet-700"><%= financial_untracked ? "Da ricostruire" : money.call(contribution_totals[:capital_repaid] + contribution_totals[:profit_received]) %></dd><% unless financial_untracked %><span class="mt-2 block text-xs text-violet-600">di cui guadagno <%= money.call(contribution_totals[:profit_received]) %></span><% end %></div>
+    </dl>
+
+    <div class="mt-5 overflow-x-auto rounded-xl border border-slate-200">
+      <table class="min-w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase text-slate-500"><tr><th class="px-4 py-3">Partecipante</th><th class="px-4 py-3">Contributi</th><th class="px-4 py-3">Valore totale</th><th class="px-4 py-3">Ritorno totale</th></tr></thead>
+        <tbody class="divide-y divide-slate-100">
+          <% project.fetch("contributors", []).each do |contributor| %>
+            <% contributions = contributor.fetch("contributions", []) %>
+            <tr>
+              <td class="px-4 py-3 font-bold text-indigo-700">@<%= contributor["participant"] %></td>
+              <td class="px-4 py-3 text-slate-600">
+                <% contributions.each do |contribution| %>
+                  <span class="block"><%= contribution["type"] == "time" ? "Tempo" : "Denaro" %><% if contribution["hours"].present? %> · <%= contribution["hours"] %> ore<% end %></span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-slate-600">
+                <% contributions.each do |contribution| %>
+                  <span class="block"><%= contribution["value"].present? ? money.call(contribution["value"]) : "Non quantificato" %></span>
+                <% end %>
+                <strong class="mt-1 block text-slate-900">Totale <%= contributions.all? { |contribution| contribution["value"].blank? } ? "da ricostruire" : money.call(contributions.sum { |contribution| contribution["value"].to_i }) %></strong>
+              </td>
+              <td class="px-4 py-3 font-bold text-violet-700"><%= money.call(contributor["capital_repaid"].to_i + contributor["profit_received"].to_i) %><span class="block text-xs font-normal text-slate-400">di cui guadagno <%= money.call(contributor["profit_received"]) %></span></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 text-xs text-slate-500">La restituzione termina alla data indicata: non sono previste rendite permanenti.</p>
+  </section>
+</main>
+<% elsif @project_tab == "activities" %>
+  <main class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h2 class="text-2xl font-black text-slate-950">Attività operative</h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Appuntamenti, produzioni e spese successive all’avvio del progetto.</p>
+      </div>
+      <nav class="flex gap-2 overflow-x-auto" aria-label="Filtra attività operative">
+        <% [["", "Tutte"], ["upcoming", "Prossime"], ["completed", "Concluse"], ["cancelled", "Annullate"]].each do |value, label| %>
+          <% active = (@activity_status || "") == value %>
+          <%= link_to label,
+            posturacorretta_progetto_path(project["slug"], tab: "activities", activity_status: value.presence),
+            class: "whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-bold transition #{active ? "" : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-700"}",
+            style: (active ? "background-color: #4f46e5; border-color: #4338ca; color: #ffffff;" : nil),
+            aria: (active ? { current: "page" } : {}) %>
+        <% end %>
+      </nav>
+    </div>
+
+    <% if filtered_activities.any? %>
+      <div class="mt-7 space-y-4">
+        <% filtered_activities.each do |activity| %>
+          <% status_label, status_classes = activity_statuses.fetch(activity["status"], ["Da definire", "border-slate-200 bg-slate-50 text-slate-600"]) %>
+          <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div class="flex flex-col gap-4 p-5 lg:flex-row lg:items-start lg:justify-between">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider <%= status_classes %>"><%= status_label %></span>
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-400"><%= activity["type"] %></span>
+                </div>
+                <h3 class="mt-3 text-lg font-black text-slate-950"><%= activity["title"] %></h3>
+                <% if activity["notes"].present? %><p class="mt-2 text-sm leading-6 text-slate-600"><%= activity["notes"] %></p><% end %>
+              </div>
+              <div class="grid shrink-0 grid-cols-2 gap-x-6 gap-y-3 text-xs sm:grid-cols-4 lg:min-w-[40rem]">
+                <div><span class="block font-bold uppercase text-slate-400">Quando</span><strong class="mt-1 block text-slate-800"><%= format_datetime.call(activity["starts_at"]) %></strong><span class="text-slate-500"><%= duration.call(activity["starts_at"], activity["ends_at"]) %></span></div>
+                <div><span class="block font-bold uppercase text-slate-400">Luogo</span><strong class="mt-1 block text-slate-800"><%= activity["location"].presence || "Da definire" %></strong></div>
+                <div><span class="block font-bold uppercase text-slate-400">Responsabile</span><strong class="mt-1 block text-slate-800"><%= activity["assignee"].presence || "Da assegnare" %></strong><span class="text-slate-500"><%= activity["supplier"] %></span></div>
+                <div><span class="block font-bold uppercase text-slate-400">Costo</span><strong class="mt-1 block text-slate-800"><%= money.call(activity["actual_cost"].presence || activity["estimated_cost"]) %></strong><span class="text-slate-500"><%= activity["actual_cost"].present? ? "effettivo" : "previsto" %></span></div>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="mt-7 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center">
+        <p class="font-bold text-slate-700">Nessuna attività in questa categoria.</p>
+        <p class="mt-1 text-sm text-slate-500">Le nuove attività possono essere aggiunte nel file YAML del progetto.</p>
+      </div>
+    <% end %>
+  </main>
+<% end %>

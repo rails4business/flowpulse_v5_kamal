@@ -20,8 +20,10 @@ Rails.application.routes.draw do
   get "posturacorretta/professionisti" => "posturacorretta#professionisti", as: :posturacorretta_professionisti
   get "posturacorretta/contenuti" => "posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/eventi" => "posturacorretta#eventi", as: :posturacorretta_eventi
-  get "posturacorretta/filosofia" => "posturacorretta#filosofia", as: :posturacorretta_filosofia
+  get "posturacorretta/libro" => "posturacorretta#libro", as: :posturacorretta_libro
+  get "posturacorretta/filosofia" => redirect("/posturacorretta/libro", status: 301), as: :posturacorretta_filosofia
   get "posturacorretta/progetti" => "posturacorretta#progetti", as: :posturacorretta_progetti
+  get "posturacorretta/progetti/:slug" => "posturacorretta#progetto", as: :posturacorretta_progetto
   get "posturacorretta/collabora" => "posturacorretta#collabora", as: :posturacorretta_collabora
 
   # Dashboard utente loggato

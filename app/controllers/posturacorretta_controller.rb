@@ -3,6 +3,7 @@ class PosturacorrettaController < ApplicationController
   allow_unauthenticated_access
   before_action :load_academy_curriculum, only: :accademia
   before_action :load_methodologies, only: %i[metodiche metodica]
+  before_action :load_projects, only: %i[progetti progetto]
 
   def accademia; end
   def percorso
@@ -35,13 +36,32 @@ class PosturacorrettaController < ApplicationController
     @places = data.fetch("places", [])
     @teachers = data.fetch("teachers", [])
   end
-  def filosofia; end
-  def progetti; end
+  def libro; end
+  def progetti
+    root = Rails.root.join("config/data/posturacorretta/progetti")
+    @page_data = YAML.safe_load_file(root.join("page.yml"), permitted_classes: [], aliases: false) || {}
+  end
+  def progetto
+    @project = @projects.find { |project| project["slug"] == params[:slug] }
+    return redirect_to posturacorretta_progetti_path, alert: "Progetto non trovato" unless @project
+
+    @project_tab = %w[overview realization activities].include?(params[:tab]) ? params[:tab] : "overview"
+    @activity_status = %w[upcoming completed cancelled].include?(params[:activity_status]) ? params[:activity_status] : nil
+  end
   def collabora
     redirect_to posturacorretta_progetti_path
   end
 
   private
+
+  def load_projects
+    root = Rails.root.join("config/data/posturacorretta/progetti")
+    data = YAML.safe_load_file(root.join("projects.yml"), permitted_classes: [], aliases: false) || {}
+    participants_data = YAML.safe_load_file(root.join("progetti_partecipanti.yml"), permitted_classes: [], aliases: false) || {}
+    @projects = data.fetch("projects", [])
+    @project_participants = participants_data.fetch("participants", [])
+    @project_participants_by_slug = @project_participants.index_by { |participant| participant.fetch("slug") }
+  end
 
   def load_academy_curriculum
     @academy_curriculum = AcademyCurriculum.load

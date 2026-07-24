@@ -1,0 +1,15 @@
+<aside class="border-b border-amber-200 bg-amber-50" aria-label="Stato della sezione">
+  <div class="mx-auto flex max-w-screen-xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+    <div class="flex min-w-0 items-start gap-3">
+      <span class="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-black text-amber-700" aria-hidden="true">↻</span>
+      <div>
+        <strong class="block text-sm text-amber-950">Sezione in evoluzione</strong>
+        <p class="mt-0.5 text-xs leading-5 text-amber-800">La pagina è disponibile in anteprima. Contenuti e funzionalità sono in revisione all’interno del relativo progetto.</p>
+      </div>
+    </div>
+    <div class="flex shrink-0 items-center gap-3 pl-10 sm:pl-0">
+      <%= link_to "Segui il progetto", posturacorretta_progetto_path(project_slug), class: "text-xs font-black text-amber-900 underline decoration-amber-400 underline-offset-4 hover:text-amber-700" %>
+      <%= link_to "Tutti i progetti", posturacorretta_progetti_path, class: "text-xs font-bold text-amber-700 hover:text-amber-900" %>
+    </div>
+  </div>
+</aside>

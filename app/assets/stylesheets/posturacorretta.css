@@ -1219,3 +1219,28 @@
   padding-left: 1rem;
 }
 .markdown-content img { border-radius: .5rem; }
+
+.accordion-cta {
+  align-items: center;
+  background: #4f46e5;
+  border-radius: .5rem;
+  color: #fff;
+  display: inline-flex;
+  font-size: .875rem;
+  font-weight: 600;
+  gap: .5rem;
+  margin-top: 1rem;
+  padding: .625rem 1rem;
+  text-decoration: none;
+  transition: background-color .2s ease, transform .2s ease;
+}
+
+.accordion-cta:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.accordion-cta:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
+}

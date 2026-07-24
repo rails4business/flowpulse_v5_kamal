@@ -6,24 +6,10 @@
   <main class="pb-16 lg:pb-24">
     
     <% @home_data['components'].each do |component| %>
-      <%= render "components/builder", component: component %>
+      <%= render "components/builder",
+                 component: component,
+                 context: { "audiences" => @audiences } %>
     <% end %>
-
-    <!-- 5. Pubblici Section (Shared Data) -->
-    <section class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 border-t border-gray-100 pt-16 mt-16">
-      
-      <%= render "components/section_header", data: { 
-        'kicker' => 'A chi è rivolto', 
-        'title' => 'Scegli il tuo percorso in base alla tua professione' 
-      } %>
-
-      <%= render "components/feature_grid", items: @audiences %>
-      
-      <p class="mx-auto mt-8 max-w-3xl text-center text-sm leading-6 text-gray-500">
-        Ogni contenuto indica a chi è rivolto e quali competenze professionali sono necessarie per applicarlo.
-      </p>
-
-    </section>
 
   </main>
 

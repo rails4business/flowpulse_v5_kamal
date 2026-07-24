@@ -1,0 +1,64 @@
+<% items ||= [] %>
+
+<% if items.empty? %>
+  <div class="col-span-full border border-dashed border-slate-300 rounded-2xl bg-white p-12 text-center text-slate-500">
+    Nessun progetto in questa sezione.
+  </div>
+<% else %>
+  <% items.each do |p| %>
+    <% 
+      # Calcoli basilari per simulare le card originali
+      dash = p['fundedDash'] || 0
+      rate = p['dashRate'] || 100
+      equivalent = p['funded'] + (dash * rate)
+      pc = [100, ((equivalent / p['initial'].to_f) * 100).round].min rescue 0
+      
+      ready = pc >= 100 && p['owner'] != 'Da assegnare'
+      status_text = ready ? '● Pronto' : p['status']
+      
+      cls = if p['type'] == 'App'
+              'bg-blue-50 text-blue-700 border-blue-200'
+            elsif p['status'] == 'Raccolta'
+              'bg-amber-50 text-amber-700 border-amber-200'
+            else
+              'bg-emerald-50 text-emerald-700 border-emerald-200'
+            end
+    %>
+
+    <article class="flex flex-col border border-slate-200 rounded-[1.25rem] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-md">
+      <div class="flex items-center justify-between gap-3">
+        <span class="inline-flex rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest <%= cls %>">
+          <%= p['type'] %>
+        </span>
+        <span class="text-xs font-bold text-slate-500"><%= status_text %></span>
+      </div>
+      
+      <h4 class="mt-4 text-xl font-bold tracking-tight text-slate-900"><%= p['name'] %></h4>
+      <p class="mt-2 min-h-[3rem] text-sm leading-relaxed text-slate-600"><%= p['output'] %></p>
+      
+      <div class="mt-5 border-t border-slate-100 pt-5">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-500 font-medium">Raccolta</span>
+          <strong class="font-bold text-slate-900"><%= pc %>% di <%= number_to_currency(p['initial'], precision: 0, locale: :it) %></strong>
+        </div>
+        
+        <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+          <div class="h-full rounded-full bg-teal-500" style="width: <%= pc %>%"></div>
+        </div>
+        
+        <p class="mt-2 text-[11px] font-medium text-slate-500">
+          <%= number_to_currency(p['funded'], precision: 0, locale: :it) %> + <%= number_with_delimiter(dash, locale: :it) %> DASH
+        </p>
+      </div>
+      
+      <div class="mt-5 flex-1 rounded-xl border border-slate-100 bg-slate-50 p-3.5">
+        <span class="block text-[10px] font-black uppercase tracking-widest text-slate-400">Owner</span>
+        <strong class="mt-1 block text-sm font-bold text-slate-700"><%= p['owner'] %></strong>
+      </div>
+      
+      <div class="mt-4 flex items-center justify-between text-xs">
+        <span class="font-medium text-slate-400"><%= p['done'] %>/<%= p['steps'] %> step completati</span>
+      </div>
+    </article>
+  <% end %>
+<% end %>
