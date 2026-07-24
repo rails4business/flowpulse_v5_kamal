@@ -67,9 +67,26 @@ class DomainsController < ApplicationController
       target_action = Current.domain.target_action
 
       if target_controller == "landing"
+        prepare_landing_target(target_action)
         render "landing/#{target_action}"
       else
         render "#{target_controller}/#{target_action}"
       end
+    end
+
+    def prepare_landing_target(target_action)
+      return unless target_action == "posturacorretta"
+
+      @home_data = YAML.safe_load_file(
+        Rails.root.join("config/data/posturacorretta/home/home.yml"),
+        permitted_classes: [],
+        aliases: false
+      ) || {}
+      @audiences = YAML.safe_load_file(
+        Rails.root.join("config/data/posturacorretta/shared/audiences.yml"),
+        permitted_classes: [],
+        aliases: false
+      ) || {}
+      @posturacorretta_taxonomies = PosturacorrettaTaxonomies.load
     end
 end

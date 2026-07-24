@@ -5,10 +5,10 @@
 <div id="top" class="bg-white text-slate-900 antialiased" data-posturacorretta-home>
   <main class="pb-16 lg:pb-24">
     
-    <% @home_data['components'].each do |component| %>
+    <% @home_data.to_h.fetch("components", []).each do |component| %>
       <%= render "components/builder",
                  component: component,
-                 context: { "audiences" => @audiences } %>
+                 context: { "audiences" => @audiences.to_h } %>
     <% end %>
 
   </main>
