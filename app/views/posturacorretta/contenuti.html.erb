@@ -64,13 +64,15 @@
         <% category = @catalog.fetch(key.to_sym, nil) %>
         <% next unless category %>
         <% colors = blog_color_classes.fetch(category[:color] || "slate", blog_color_classes["blue"]) %>
-        <section id="blog-section-<%= key %>" class="blog-section pt-6 md:pt-8 <%= 'hidden' unless category_index.zero? %>" data-category="<%= key %>" data-video-count="<%= category[:articles].size %>">
+        <section id="blog-section-<%= key %>" class="blog-section pt-6 md:pt-8 <%= 'hidden' unless category_index.zero? %>" data-category="<%= key %>" data-video-count="<%= category[:articles].size %>" data-count-singular="<%= key == 'corsi' ? 'corso' : 'video' %>" data-count-plural="<%= key == 'corsi' ? 'corsi' : 'video' %>">
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="article-list-<%= key %>">
             <% category[:articles].each do |article| %>
               <% creator = postura_creators.fetch(article[:author]) %>
               <% is_video = article[:format] == "video" %>
-              <% article_href = posturacorretta_articolo_path(article[:slug]) %>
-              <a href="<%= article_href %>" class="blog-article group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-subcategory="<%= article[:subcategory] %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format]].join(' ').downcase %>">
+              <% is_course = article[:item_type] == "course" %>
+              <% external_article = article[:url].present? %>
+              <% article_href = external_article ? article[:url] : posturacorretta_articolo_path(article[:slug]) %>
+              <a href="<%= article_href %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if external_article %> class="blog-article group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-subcategory="<%= article[:subcategory] %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format]].join(' ').downcase %>">
                 <% if is_video %>
                   <div class="aspect-video w-full overflow-hidden bg-slate-100 relative">
                     <img src="https://img.youtube.com/vi/<%= article[:slug] %>/mqdefault.jpg" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
@@ -83,8 +85,11 @@
                 <% end %>
                 <div class="flex flex-1 flex-col p-5 md:p-6">
                   <div class="flex items-center justify-between gap-3">
-                    <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider <%= is_video ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700' %>">
-                      <% if is_video %>
+                    <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider <%= is_course ? 'bg-blue-50 text-blue-700' : (is_video ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700') %>">
+                      <% if is_course %>
+                        <%= render "posturacorretta/nav_icon", name: "academy", classes: "size-3.5 shrink-0" %>
+                        Corso
+                      <% elsif is_video %>
                         <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5"><path d="M5.5 4.8a1 1 0 0 1 1.52-.85l7.2 4.7a1 1 0 0 1 0 1.7l-7.2 4.7A1 1 0 0 1 5.5 14.2V4.8Z"></path></svg>
                         Video
                       <% else %>
@@ -102,7 +107,7 @@
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-black <%= creator[:color] %>"><%= creator[:initials] %></span>
                     <div class="min-w-0">
                       <p class="truncate text-xs font-bold text-slate-700"><%= creator[:name] %></p>
-                      <p class="text-[10px] text-slate-400"><%= article[:time] %> <%= is_video ? 'di visione' : 'di lettura' %></p>
+                      <p class="text-[10px] text-slate-400"><%= article[:time] %><%= is_course ? "" : (is_video ? " di visione" : " di lettura") %></p>
                     </div>
                   </div>
                   <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition group-hover:bg-slate-900 group-hover:text-white"><%= is_video ? '↗' : '→' %></span>
@@ -211,7 +216,8 @@
 
     const visibleCount = document.getElementById("content-visible-count");
     const videoCount = Number(selectedSection.dataset.videoCount || 0);
-    if (visibleCount) visibleCount.textContent = `${videoCount} video`;
+    const countLabel = videoCount === 1 ? selectedSection.dataset.countSingular : selectedSection.dataset.countPlural;
+    if (visibleCount) visibleCount.textContent = `${videoCount} ${countLabel}`;
 
     // Sync the category select and highlight Contenuti if it's a public category
     if (key !== "corsi") {
