@@ -37,27 +37,40 @@
 <div id="top" class="bg-white text-slate-900 antialiased">
   <section class="border-t border-slate-200/70 px-4 py-10 md:px-6 md:py-16 min-h-[calc(100vh-4rem)]">
     <div class="mx-auto max-w-5xl">
-      <div class="mb-8 grid gap-4 sm:grid-cols-[1fr_minmax(14rem,20rem)_1fr] sm:items-center">
-        <div class="inline-flex justify-self-start rounded-full bg-slate-100 p-1 shadow-inner">
-          <button type="button" onclick="switchMacroTab('contenuti')" id="macro-tab-contenuti" class="macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition">Contenuti</button>
-          <button type="button" onclick="switchMacroTab('corsi')" id="macro-tab-corsi" class="macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition">Corsi</button>
-        </div>
-
-        <div class="relative w-full sm:justify-self-center" id="category-select-container">
-          <select id="category-select" onchange="window.switchBlogCategory(this.value)" class="w-full appearance-none rounded-2xl border border-slate-400 bg-slate-100 py-3.5 pl-5 pr-10 text-sm font-bold text-slate-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
-            <% blog_category_order.each do |key| %>
-              <% category = @catalog.fetch(key.to_sym) %>
-              <option value="<%= key %>"><%= category[:label] %></option>
-            <% end %>
-          </select>
-          <div class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
-            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path></svg>
+      <div class="relative mb-8 flex min-h-[3rem] flex-col gap-4 sm:flex-row sm:items-center">
+        <div id="header-controls" class="flex w-full min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+          <div class="inline-flex justify-self-start rounded-full bg-slate-100 p-1 shadow-inner shrink-0">
+            <button type="button" onclick="switchMacroTab('contenuti')" id="macro-tab-contenuti" class="macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition">Contenuti</button>
+            <button type="button" onclick="switchMacroTab('corsi')" id="macro-tab-corsi" class="macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition">Corsi</button>
           </div>
+
+          <div class="relative w-full sm:w-[16rem]" id="category-select-container">
+            <select id="category-select" onchange="window.switchBlogCategory(this.value)" class="w-full appearance-none rounded-2xl border border-slate-400 bg-slate-100 py-3.5 pl-5 pr-10 text-sm font-bold text-slate-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
+              <% blog_category_order.each do |key| %>
+                <% category = @catalog.fetch(key.to_sym) %>
+                <option value="<%= key %>"><%= category[:label] %></option>
+              <% end %>
+            </select>
+            <div class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path></svg>
+            </div>
+          </div>
+
+          <label class="relative block w-full sm:w-48 sm:focus-within:w-64">
+            <span class="sr-only">Cerca nei contenuti</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="pointer-events-none absolute left-3 top-1/2 z-20 h-5 w-5 -translate-y-1/2 text-slate-400">
+              <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
+              <path d="m20 20-3.5-3.5" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+            <input id="blog-search" type="search" placeholder="Cerca un video..." class="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
+          </label>
         </div>
 
-        <span id="content-visible-count" class="justify-self-start rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500 sm:justify-self-end" aria-live="polite">
-          <%= @catalog.fetch(:tutti)[:articles].size %> video
-        </span>
+        <div class="flex shrink-0 items-center sm:ml-auto">
+          <span id="content-visible-count" class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500 whitespace-nowrap" aria-live="polite">
+            <%= @catalog.fetch(:tutti)[:articles].size %> video
+          </span>
+        </div>
       </div>
 
       <% (blog_category_order + ["corsi"]).each_with_index do |key, category_index| %>
@@ -207,19 +220,17 @@
 </div>
 
 <script>
+  let activeBlogCategory = "tutti";
+
   window.switchBlogCategory = function(key) {
     const selectedSection = document.getElementById(`blog-section-${key}`);
     if (!selectedSection) return;
 
     document.querySelectorAll(".blog-section").forEach(section => section.classList.add("hidden"));
     selectedSection.classList.remove("hidden");
+    activeBlogCategory = key;
 
-    const visibleCount = document.getElementById("content-visible-count");
-    const videoCount = Number(selectedSection.dataset.videoCount || 0);
-    const countLabel = videoCount === 1 ? selectedSection.dataset.countSingular : selectedSection.dataset.countPlural;
-    if (visibleCount) visibleCount.textContent = `${videoCount} ${countLabel}`;
-
-    // Sync the category select and highlight Contenuti if it's a public category
+    // Sync the category select and highlight Contenuti se è pubblica
     if (key !== "corsi") {
       const categorySelect = document.getElementById("category-select");
       categorySelect.value = key;
@@ -235,7 +246,33 @@
     const url = new URL(window.location);
     url.searchParams.set("categoria", key);
     history.replaceState({}, "", url);
+
+    // Reset e applica filtri di ricerca
+    document.getElementById("blog-search").value = "";
+    applyBlogFilters();
   };
+
+  function applyBlogFilters() {
+    const section = document.getElementById(`blog-section-${activeBlogCategory}`);
+    if (!section) return;
+
+    const query = document.getElementById("blog-search").value.trim().toLowerCase();
+    let visible = 0;
+
+    section.querySelectorAll(".blog-article").forEach(article => {
+      const matchesSearch = !query || article.dataset.search.includes(query);
+      article.classList.toggle("hidden", !matchesSearch);
+      if (matchesSearch) visible += 1;
+    });
+
+    const countLabel = document.getElementById("content-visible-count");
+    if(countLabel) {
+      countLabel.textContent = `${visible} ${visible === 1 ? section.dataset.countSingular : section.dataset.countPlural}`;
+    }
+
+    const emptyState = section.querySelector(".blog-empty");
+    if (emptyState) emptyState.classList.toggle("hidden", visible > 0);
+  }
 
   window.switchMacroTab = function(tab) {
     const btnContenuti = document.getElementById("macro-tab-contenuti");
@@ -254,6 +291,7 @@
   };
 
   document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("blog-search").addEventListener("input", applyBlogFilters);
     const params = new URLSearchParams(window.location.search);
     const requestedCategory = params.get("categoria") || params.get("subtab") || "tutti";
 
