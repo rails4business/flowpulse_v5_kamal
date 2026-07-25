@@ -1254,10 +1254,16 @@
   --pc-muted: #6b7280;
   --pc-line: #e5e7eb;
   --pc-soft: #f9fafb;
-  --pc-brand: #047857;
-  --pc-brand-dark: #065f46;
-  --pc-brand-soft: #ecfdf5;
-  --pc-focus: rgba(5, 150, 105, .22);
+  --pc-brand: #2563eb;
+  --pc-brand-dark: #1d4ed8;
+  --pc-brand-soft: #eff6ff;
+  --pc-success: #059669;
+  --pc-success-dark: #047857;
+  --pc-success-soft: #ecfdf5;
+  --pc-progress: #4f46e5;
+  --pc-warning: #d97706;
+  --pc-danger: #dc2626;
+  --pc-focus: rgba(37, 99, 235, .22);
   --pc-shadow: 0 1px 2px rgba(17, 24, 39, .05);
   background: #fff;
   color: var(--pc-ink);
@@ -1271,8 +1277,8 @@
 }
 
 .posturacorretta-ui ::selection {
-  background: #a7f3d0;
-  color: #064e3b;
+  background: #bfdbfe;
+  color: #1e3a8a;
 }
 
 .posturacorretta-ui :where(a, button, input, select, textarea, summary) {
@@ -1324,12 +1330,12 @@
 
 .posturacorretta-ui .markdown-content a {
   color: var(--pc-brand);
-  text-decoration-color: #6ee7b7;
+  text-decoration-color: #93c5fd;
   text-underline-offset: 3px;
 }
 
 .posturacorretta-ui .markdown-content blockquote {
-  border-left-color: #6ee7b7;
+  border-left-color: #93c5fd;
   background: var(--pc-brand-soft);
   border-radius: 0 .5rem .5rem 0;
   color: #374151;

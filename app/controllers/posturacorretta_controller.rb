@@ -4,6 +4,7 @@ class PosturacorrettaController < ApplicationController
   before_action :load_academy_curriculum, only: :accademia
   before_action :load_methodologies, only: %i[metodiche metodica]
   before_action :load_projects, only: %i[progetti progetto]
+  before_action :load_catalog, only: %i[contenuti articolo]
 
   def accademia; end
   def percorso
@@ -30,6 +31,22 @@ class PosturacorrettaController < ApplicationController
     return redirect_to posturacorretta_metodiche_path, alert: "Metodica non trovata" unless @methodology
   end
   def contenuti; end
+  def articolo
+    @article = nil
+    @category_key = nil
+    @catalog.each do |cat_key, category|
+      found = category[:articles].find { |a| a[:slug] == params[:slug] }
+      if found
+        @article = found
+        @category_key = cat_key
+        break
+      end
+    end
+    return redirect_to posturacorretta_contenuti_path, alert: "Articolo non trovato" unless @article
+
+    markdown_file = Rails.root.join("config/data/posturacorretta/contenuti/articoli", "#{params[:slug]}.md")
+    @content = File.exist?(markdown_file) ? File.read(markdown_file) : nil
+  end
   def eventi
     data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/eventi/eventi.yml"), permitted_classes: [], aliases: false) || {}
     @events = data.fetch("events", [])
@@ -54,6 +71,11 @@ class PosturacorrettaController < ApplicationController
   end
 
   private
+
+  def load_catalog
+    catalog_path = Rails.root.join("config/data/posturacorretta/contenuti/catalog.yml")
+    @catalog = File.exist?(catalog_path) ? YAML.safe_load_file(catalog_path, permitted_classes: [], aliases: false, symbolize_names: true) || {} : {}
+  end
 
   def load_projects
     root = Rails.root.join("config/data/posturacorretta/progetti")

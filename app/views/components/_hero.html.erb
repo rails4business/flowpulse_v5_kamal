@@ -13,7 +13,7 @@
 
       <div class="lg:py-24">
         <% if data['kicker'].present? %>
-          <p class="text-sm font-semibold uppercase tracking-widest text-emerald-700">
+          <p class="text-sm font-semibold uppercase tracking-widest text-blue-700">
             <%= data['kicker'] %>
           </p>
         <% end %>
@@ -31,7 +31,7 @@
         <% if data['cta'].present? %>
           <a
             href="<%= data['cta_url'] || '#' %>"
-            class="mt-8 inline-block rounded-lg border border-emerald-700 bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+            class="mt-8 inline-block rounded-lg border border-blue-600 bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
           >
             <%= data['cta'] %>
           </a>

@@ -1,8 +1,8 @@
-<a href="<%= item['route'] %>" class="pc-component pc-card group relative block h-full rounded-lg bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2">
-  <div class="flex h-full flex-col justify-between rounded-lg border border-gray-200 p-6 shadow-sm transition group-hover:border-emerald-300 group-hover:bg-emerald-50/40 sm:p-8">
+<a href="<%= item['route'] %>" class="pc-component pc-card group relative block h-full rounded-lg bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+  <div class="flex h-full flex-col justify-between rounded-lg border border-gray-200 p-6 shadow-sm transition group-hover:border-blue-300 group-hover:bg-blue-50/40 sm:p-8">
     <div>
       <% if item['eyebrow'].present? %>
-        <p class="text-xs font-bold uppercase tracking-widest text-emerald-700">
+        <p class="text-xs font-bold uppercase tracking-widest text-blue-700">
           <%= inline_markdown(item['eyebrow']) %>
         </p>
       <% end %>
@@ -20,11 +20,11 @@
 
     <% if item['cta'].present? %>
       <div class="mt-8 flex items-center justify-between border-t border-gray-100 pt-6">
-        <span class="text-sm font-semibold text-emerald-700 group-hover:underline">
+        <span class="text-sm font-semibold text-blue-700 group-hover:underline">
           <%= inline_markdown(item['cta']) %>
         </span>
         
-        <span class="rounded-full bg-emerald-700 p-2 text-white transition-transform group-hover:translate-x-1">
+        <span class="rounded-full bg-blue-600 p-2 text-white transition-transform group-hover:translate-x-1">
           <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
