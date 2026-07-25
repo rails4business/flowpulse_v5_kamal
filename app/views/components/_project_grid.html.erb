@@ -27,67 +27,85 @@
   format_date = ->(value) { value.present? ? Date.iso8601(value).strftime("%d/%m/%Y") : "Da definire" }
   money = ->(value) { number_to_currency(value.to_i, unit: "€", precision: 0, delimiter: ".", separator: ",", format: "%n %u") }
   repaid_projects_count = projects.count { |project| project_repaid?(project) }
+  generaimpresa_projects = projects.select { |project| project_generaimpresa_origin(project) == "generaimpresa" }
+  historical_projects = projects.select { |project| project_generaimpresa_origin(project) == "historical_import" }
+  generaimpresa_status_options = [["in_progress", "In realizzazione"], ["launched", "Progetti lanciati"], ["repaid", "Rientro completato"], ["future", "Futuri"], ["all", "Tutti"]].map do |value, label|
+    count = if value == "all"
+      generaimpresa_projects.size
+    elsif value == "repaid"
+      generaimpresa_projects.count { |project| project_repaid?(project) }
+    else
+      generaimpresa_projects.count { |project| project["status"] == value }
+    end
+    [value, "#{label} (#{count})"]
+  end
 %>
 
-<div class="mx-auto mt-8 max-w-2xl">
-  <label for="project-search" class="sr-only">Cerca nei progetti</label>
-  <div class="relative">
-    <svg aria-hidden="true"
-         class="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400"
-         viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
-    </svg>
-    <input id="project-search"
-           type="search"
-           autocomplete="off"
-           placeholder="Cerca per titolo, categoria o partecipante…"
-           class="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-sm text-slate-950 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-           data-project-search>
+<div class="mt-8">
+  <div class="flex items-center gap-2" data-project-toolbar>
+    <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2 overflow-visible sm:flex-nowrap" data-project-toolbar-filters>
+      <div class="w-28 shrink-0 sm:w-52">
+        <label for="project-origin" class="sr-only">Origine dei progetti</label>
+        <select id="project-origin"
+                class="hidden"
+                data-origin-select>
+          <option value="generaimpresa">GeneraImpresa (<%= generaimpresa_projects.size %>)</option>
+          <option value="historical_import">Precedenti (<%= historical_projects.size %>)</option>
+        </select>
+        <%= render "components/project_dropdown",
+                   select_id: "project-origin",
+                   selected: "generaimpresa",
+                   options: [["generaimpresa", "GeneraImpresa (#{generaimpresa_projects.size})"], ["historical_import", "Precedenti (#{historical_projects.size})"]],
+                   mobile_badges: {
+                     "generaimpresa" => { badge: "GI", suffix: "(#{generaimpresa_projects.size})", classes: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+                     "historical_import" => { badge: "P", suffix: "(#{historical_projects.size})", classes: "border-amber-200 bg-amber-50 text-amber-800" }
+                   } %>
+      </div>
+
+      <div class="w-40 shrink-0 sm:w-56" data-project-filter-set="generaimpresa">
+        <label for="generaimpresa-project-status" class="sr-only">Stato dei progetti</label>
+        <select id="generaimpresa-project-status"
+                class="hidden"
+                data-project-filter-select>
+          <% generaimpresa_status_options.each do |value, label| %>
+            <option value="<%= value %>"><%= label %></option>
+          <% end %>
+        </select>
+        <%= render "components/project_dropdown",
+                   select_id: "generaimpresa-project-status",
+                   selected: "in_progress",
+                   options: generaimpresa_status_options %>
+      </div>
+
+      <div class="w-36 shrink-0 sm:w-44" data-operation-filters hidden>
+        <label for="project-operation-status" class="sr-only">Attività del progetto</label>
+        <select id="project-operation-status"
+                class="hidden"
+                data-operation-filter-select>
+          <option value="active">Attivi</option>
+          <option value="paused">In sospeso</option>
+          <option value="concluded">Conclusi</option>
+          <option value="all">Tutti</option>
+        </select>
+        <%= render "components/project_dropdown",
+                   select_id: "project-operation-status",
+                   selected: "active",
+                   options: [["active", "Attivi"], ["paused", "In sospeso"], ["concluded", "Conclusi"], ["all", "Tutti"]] %>
+      </div>
+    </div>
+
+    <div class="relative ml-auto hidden min-w-0 flex-1 sm:max-w-xs" data-project-search-wrap>
+      <label for="project-search" class="sr-only">Cerca nei progetti</label>
+      <input id="project-search" type="search" autocomplete="off" placeholder="Cerca progetto..." class="w-full rounded-lg border-slate-300 bg-slate-50 py-2.5 pl-3 pr-10 text-sm focus:border-emerald-500 focus:bg-white focus:ring-emerald-500" data-project-search>
+      <button type="button" class="absolute inset-y-0 right-0 grid w-10 place-items-center text-slate-400 hover:text-slate-700" aria-label="Chiudi ricerca" data-project-search-close>×</button>
+    </div>
+
+    <button type="button" class="ml-auto grid size-10 shrink-0 place-items-center rounded-lg border border-slate-300 bg-white text-slate-600 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700" aria-label="Cerca nei progetti" aria-expanded="false" data-project-search-toggle>
+      <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
+      </svg>
+    </button>
   </div>
-</div>
-
-<div class="mt-8 flex flex-wrap justify-center gap-2" data-project-filters data-project-filter-set="generaimpresa">
-  <% [["all", "Tutti"], ["future", "Futuri"], ["in_progress", "In realizzazione"], ["launched", "Progetti lanciati"], ["repaid", "Rientro completato"]].each do |value, label| %>
-    <button type="button"
-            class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-600 data-[active=true]:bg-indigo-600 data-[active=true]:text-white"
-            data-project-filter="<%= value %>"
-            data-active="<%= value == "all" %>">
-      <%= label %>
-      <span class="ml-1 opacity-70" data-project-filter-count> (<%= if value == "all"
-                                           projects.size
-                                         elsif value == "repaid"
-                                           repaid_projects_count
-                                         else
-                                           projects.count { |project| project["status"] == value }
-                                         end %>)</span>
-    </button>
-  <% end %>
-</div>
-
-<div class="mt-8 flex flex-wrap justify-center gap-2" data-project-filters data-project-filter-set="historical_import" hidden>
-  <% [["open", "Aperti"], ["closed", "Chiusi"]].each do |value, label| %>
-    <button type="button"
-            class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-600 data-[active=true]:bg-indigo-600 data-[active=true]:text-white"
-            data-project-filter="<%= value %>"
-            data-active="<%= value == "open" %>">
-      <%= label %>
-      <span class="ml-1 opacity-70" data-project-filter-count>(0)</span>
-    </button>
-  <% end %>
-</div>
-
-<div class="mt-3 flex flex-wrap justify-center gap-2" data-operation-filters hidden>
-  <% [["all", "Tutti"], ["active", "In attività"], ["paused", "In sospeso"], ["concluded", "Conclusi"]].each do |value, label| %>
-    <button type="button"
-            class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-500 transition hover:border-emerald-300 hover:text-emerald-700 data-[active=true]:border-emerald-600 data-[active=true]:bg-emerald-600 data-[active=true]:text-white"
-            data-operation-filter="<%= value %>"
-            data-active="<%= value == "all" %>">
-      <%= label %>
-      <span class="ml-1 opacity-70" data-operation-filter-count>(<%= value == "all" ? projects.count { |project| project["status"] == "launched" } : projects.count { |project| project["operation_status"] == value } %>)</span>
-    </button>
-  <% end %>
 </div>
 
 <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2" data-project-grid>
@@ -119,88 +137,87 @@
     %>
 
     <a href="<%= posturacorretta_progetto_path(project.fetch("slug")) %>"
-       class="block rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+       class="group block h-full rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
        data-project-card
        data-project-search-text="<%= search_text %>"
        data-project-status="<%= project["status"] %>"
        data-project-origin="<%= generaimpresa_origin %>"
        data-project-repaid="<%= repaid %>"
        data-operation-status="<%= project["operation_status"] %>">
-      <article class="flex h-full flex-col rounded-2xl border p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md <%= historical_project ? "border-amber-200 bg-amber-50/60 hover:border-amber-300" : "border-emerald-100 bg-white hover:border-emerald-300" %>">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="text-xs font-black uppercase tracking-widest text-slate-400"><%= project["category"] %></span>
-            <span class="inline-flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-2.5 text-[10px] font-black uppercase tracking-wide <%= generaimpresa_badge[:classes] %>"
-                  title="<%= generaimpresa_badge[:description] %>">
-              <span class="grid size-5 place-items-center rounded-full bg-current/10 text-[10px]" aria-hidden="true"><%= generaimpresa_badge[:symbol] %></span>
-              <%= generaimpresa_badge[:label] %>
-            </span>
-          </div>
-          <span class="rounded-full border px-3 py-1 text-xs font-bold <%= status_classes.fetch(project["status"], status_classes["future"]) %>">
-            <%= project["status_label"] %>
-            <% if project["status"] == "launched" && project["operation_status"].present? %>
-              · <%= operation_labels.fetch(project["operation_status"], project["operation_status_label"]) %>
-            <% end %>
-          </span>
-        </div>
+      <article class="flex h-full flex-col overflow-hidden rounded-2xl border <%= historical_project ? "border-amber-200 bg-amber-50/60" : "border-slate-200 bg-white" %> shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
 
-        <h3 class="mt-4 text-xl font-black text-slate-950"><%= inline_markdown(project["title"]) %></h3>
-        <p class="mt-2 text-sm leading-6 text-slate-600"><%= inline_markdown(project["summary"]) %></p>
+        <!-- Accent Top Bar -->
+        <div class="h-1.5 w-full <%= historical_project ? "bg-gradient-to-r from-amber-300 to-amber-500" : "bg-gradient-to-r from-indigo-500 to-emerald-400" %>"></div>
 
-        <dl class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs">
-          <div class="flex items-baseline gap-2">
-            <dt class="font-semibold text-slate-400">Responsabile</dt>
-            <dd class="font-bold text-indigo-700">@<%= project["owner"].to_s.delete_prefix("@") %></dd>
-          </div>
-          <% if launch_phase&.dig("date").present? %>
-            <div class="flex items-baseline gap-2">
-              <dt class="font-semibold text-slate-400"><%= date_label %></dt>
-              <dd class="font-bold text-slate-900"><%= format_date.call(launch_phase["date"]) %></dd>
-            </div>
-          <% end %>
-        </dl>
-
-        <% if !financial_untracked && resources_needed.positive? %>
-          <div class="mt-5 border-t border-slate-100 pt-5">
-            <div class="flex items-center justify-between gap-3 text-[11px]">
-              <span class="font-bold text-slate-900">Risorse raccolte</span>
-              <span class="font-bold">
-                <strong class="text-emerald-700"><%= money.call(resources_collected) %></strong>
-                <span class="text-slate-400"> / </span>
-                <strong class="text-slate-950"><%= money.call(resources_needed) %></strong>
+        <div class="flex flex-1 flex-col p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[10px] font-black uppercase tracking-widest text-slate-400"><%= project["category"] %></span>
+              <span class="grid size-6 place-items-center rounded-full border text-[9px] font-black uppercase <%= generaimpresa_badge[:classes] %>"
+                    title="<%= generaimpresa_badge[:label] %> — <%= generaimpresa_badge[:description] %>"
+                    aria-label="<%= generaimpresa_badge[:label] %>">
+                <%= generaimpresa_badge[:symbol] %>
               </span>
             </div>
-            <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"
-                 role="progressbar"
-                 aria-label="Risorse raccolte"
-                 aria-valuemin="0"
-                 aria-valuemax="<%= resources_needed %>"
-                 aria-valuenow="<%= [resources_collected, resources_needed].min %>">
-              <div class="h-full rounded-full bg-emerald-600" style="width: <%= resources_percentage %>%"></div>
-            </div>
-            <p class="mt-1.5 text-right text-[11px] text-slate-500">
-              <%= resources_missing.positive? ? "#{resources_percentage}% · mancano #{money.call(resources_missing)}" : "100% · risorse necessarie raggiunte" %>
-            </p>
-          </div>
-        <% end %>
-
-        <% unless historical_project %>
-          <div class="mt-auto pt-6" role="img" aria-label="<%= completed_phases %> fasi completate su 6">
-            <span class="sr-only"><%= completed_phases %> fasi completate su 6</span>
-            <div class="flex flex-wrap gap-2" title="<%= completed_phases %> fasi completate su 6">
-              <% lifecycle.each do |phase| %>
-                <% dot_style = case phase["status"]
-                               when "completed" then "background-color:#059669;border-color:#059669;"
-                               when "completed_incomplete" then "background-color:#ffffff;border-color:#059669;"
-                               when "in_progress" then "background-color:#4f46e5;border-color:#4f46e5;"
-                               else "background-color:#cbd5e1;border-color:#cbd5e1;"
-                               end %>
-                <span aria-hidden="true" class="size-2.5 rounded-full border-2" style="<%= dot_style %>"></span>
+            <span class="rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider <%= status_classes.fetch(project["status"], status_classes["future"]) %>">
+              <%= project["status_label"] %>
+              <% if project["status"] == "launched" && project["operation_status"].present? %>
+                · <%= operation_labels.fetch(project["operation_status"], project["operation_status_label"]) %>
               <% end %>
-            </div>
+            </span>
           </div>
-        <% end %>
 
+          <h3 class="mt-5 text-xl font-black text-slate-950 transition-colors group-hover:text-indigo-600"><%= inline_markdown(project["title"]) %></h3>
+          <p class="mt-2 text-sm leading-relaxed text-slate-600 line-clamp-3"><%= inline_markdown(project["summary"]) %></p>
+
+          <dl class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="grid size-6 place-items-center rounded-full bg-indigo-50 text-[10px] font-black text-indigo-700"><%= project["owner"].to_s.delete_prefix("@").chars.first.upcase %></span>
+              <dd class="font-bold text-slate-700">@<%= project["owner"].to_s.delete_prefix("@") %></dd>
+            </div>
+            <% if launch_phase&.dig("date").present? %>
+              <div class="flex items-center gap-2">
+                <dt class="font-medium text-slate-400"><%= date_label %></dt>
+                <dd class="font-bold text-slate-900"><%= format_date.call(launch_phase["date"]) %></dd>
+              </div>
+            <% end %>
+          </dl>
+
+          <div class="mt-auto pt-8">
+            <% if !financial_untracked && resources_needed.positive? %>
+              <div class="flex items-end justify-between gap-3">
+                <span class="font-bold">
+                  <strong class="text-base text-emerald-600"><%= money.call(resources_collected) %></strong>
+                  <span class="text-[11px] font-medium text-slate-400"> raccolti su <%= money.call(resources_needed) %></span>
+                </span>
+                <span class="text-xs font-black text-slate-400"><%= resources_percentage %>%</span>
+              </div>
+              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div class="h-full rounded-full bg-emerald-500" style="width: <%= resources_percentage %>%"></div>
+              </div>
+            <% end %>
+          </div>
+
+          <% unless historical_project %>
+            <div class="mt-5 border-t border-slate-100 pt-5" role="img" aria-label="<%= completed_phases %> fasi completate su 6">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Roadmap del progetto</span>
+                <div class="flex gap-1.5" title="<%= completed_phases %> fasi completate su 6">
+                  <% lifecycle.each do |phase| %>
+                    <% dot_style = case phase["status"]
+                                   when "completed" then "bg-emerald-500"
+                                   when "completed_incomplete" then "border-2 border-emerald-500 bg-white"
+                                   when "in_progress" then "bg-indigo-500"
+                                   else "bg-slate-200"
+                                   end %>
+                    <span aria-hidden="true" class="size-2 rounded-full <%= dot_style %>"></span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+        </div>
       </article>
     </a>
   <% end %>
@@ -217,20 +234,56 @@
     if (!root || root.dataset.projectUiReady === "true") return;
     root.dataset.projectUiReady = "true";
 
-    let selectedProjectStatus = "all";
+    let selectedProjectStatus = "in_progress";
     let selectedOperationStatus = "all";
     let selectedOrigin = "generaimpresa";
     let projectSearchQuery = "";
     const operationFilters = root.querySelector("[data-operation-filters]");
     const projectSummaries = root.querySelectorAll("[data-project-summary]");
     const projectSearch = root.querySelector("[data-project-search]");
+    const projectSearchWrap = root.querySelector("[data-project-search-wrap]");
+    const projectSearchToggle = root.querySelector("[data-project-search-toggle]");
+    const projectSearchClose = root.querySelector("[data-project-search-close]");
+    const projectToolbarFilters = root.querySelector("[data-project-toolbar-filters]");
+    const originSelect = root.querySelector("[data-origin-select]");
     const projectEmpty = root.querySelector("[data-project-empty]");
     const validGeneraimpresaStatuses = new Set(["all", "future", "in_progress", "launched", "repaid"]);
-    const validHistoricalStatuses = new Set(["open", "closed"]);
+    const validHistoricalStatuses = new Set(["all"]);
     const validOperationStatuses = new Set(["all", "active", "concluded", "paused"]);
     const validOrigins = new Set(["generaimpresa", "historical_import"]);
     const normalizeSearch = (value) =>
       value.toLocaleLowerCase("it").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+    const closeProjectDropdowns = (except = null) => {
+      root.querySelectorAll("[data-project-dropdown]").forEach((dropdown) => {
+        if (dropdown === except) return;
+        dropdown.querySelector("[data-project-dropdown-menu]")?.classList.add("hidden");
+        dropdown.querySelectorAll("[data-project-dropdown-toggle]").forEach((button) => button.setAttribute("aria-expanded", "false"));
+        dropdown.querySelector("[data-project-dropdown-chevron]")?.classList.remove("rotate-180");
+      });
+    };
+
+    const syncProjectDropdowns = () => {
+      root.querySelectorAll("[data-project-dropdown]").forEach((dropdown) => {
+        const select = document.getElementById(dropdown.dataset.selectTarget);
+        if (!select) return;
+        const label = dropdown.querySelector("[data-project-dropdown-label]");
+        const selectedText = select.options[select.selectedIndex]?.textContent || "";
+        const desktopLabel = label?.querySelector("[data-project-dropdown-desktop-label]");
+        if (desktopLabel) {
+          desktopLabel.textContent = selectedText;
+          label.querySelectorAll("[data-project-dropdown-mobile-option]").forEach((option) => {
+            option.classList.toggle("hidden", option.dataset.projectDropdownMobileOption !== select.value);
+            option.classList.toggle("inline-flex", option.dataset.projectDropdownMobileOption === select.value);
+          });
+        } else if (label) {
+          label.textContent = selectedText;
+        }
+        dropdown.querySelectorAll("[data-project-dropdown-value]").forEach((item) => {
+          item.dataset.active = String(item.dataset.projectDropdownValue === select.value);
+        });
+      });
+    };
 
     const applyProjectFilters = () => {
       let visibleProjects = 0;
@@ -281,6 +334,11 @@
         const counter = item.querySelector("[data-project-filter-count]");
         if (counter) counter.textContent = `(${count})`;
       });
+      root.querySelectorAll("[data-project-filter-select]").forEach((select) => {
+        if ([...select.options].some((option) => option.value === selectedProjectStatus)) {
+          select.value = selectedProjectStatus;
+        }
+      });
       root.querySelectorAll("[data-operation-filter]").forEach((item) => {
         item.dataset.active = String(item.dataset.operationFilter === selectedOperationStatus);
         const value = item.dataset.operationFilter;
@@ -289,8 +347,15 @@
         const counter = item.querySelector("[data-operation-filter-count]");
         if (counter) counter.textContent = `(${count})`;
       });
+      root.querySelectorAll("[data-operation-filter-select]").forEach((select) => {
+        select.value = selectedOperationStatus;
+      });
+      if (originSelect) originSelect.value = selectedOrigin;
+      syncProjectDropdowns();
       root.querySelectorAll("[data-origin-filter]").forEach((item) => {
-        item.dataset.active = String(item.dataset.originFilter === selectedOrigin);
+        const active = item.dataset.originFilter === selectedOrigin;
+        item.dataset.active = String(active);
+        item.setAttribute("aria-pressed", String(active));
       });
       operationFilters.hidden = selectedOrigin !== "generaimpresa" || selectedProjectStatus !== "launched";
       projectSummaries.forEach((summary) => {
@@ -304,22 +369,23 @@
 
     const readProjectFiltersFromUrl = () => {
       const params = new URLSearchParams(window.location.search);
-      const requestedOperationStatus = params.get("operativo") || "all";
+      const requestedOperationStatus = params.get("operativo") || "active";
       const requestedOrigin = params.get("origine") || "generaimpresa";
       const requestedSearch = params.get("cerca") || "";
 
       selectedOrigin = validOrigins.has(requestedOrigin) ? requestedOrigin : "generaimpresa";
-      const requestedProjectStatus = params.get("stato") || (selectedOrigin === "historical_import" ? "open" : "all");
+      const requestedProjectStatus = params.get("stato") || (selectedOrigin === "historical_import" ? "all" : "in_progress");
       const validProjectStatuses = selectedOrigin === "historical_import" ? validHistoricalStatuses : validGeneraimpresaStatuses;
       selectedProjectStatus = validProjectStatuses.has(requestedProjectStatus)
         ? requestedProjectStatus
-        : (selectedOrigin === "historical_import" ? "open" : "all");
+        : (selectedOrigin === "historical_import" ? "all" : "in_progress");
       selectedOperationStatus =
         selectedOrigin === "generaimpresa" && selectedProjectStatus === "launched" && validOperationStatuses.has(requestedOperationStatus)
           ? requestedOperationStatus
           : "all";
       projectSearchQuery = normalizeSearch(requestedSearch);
       if (projectSearch) projectSearch.value = requestedSearch;
+      setProjectSearchOpen(requestedSearch.trim() !== "");
 
       renderProjectFilters();
     };
@@ -356,10 +422,30 @@
       applyProjectFilters();
     };
 
+    function setProjectSearchOpen(open) {
+      if (!projectSearchWrap || !projectSearchToggle || !projectToolbarFilters) return;
+
+      projectSearchWrap.hidden = !open;
+      projectSearchWrap.classList.toggle("hidden", !open);
+      projectSearchToggle.hidden = open;
+      projectToolbarFilters.classList.toggle("hidden", open);
+      projectToolbarFilters.classList.toggle("sm:flex", open);
+      projectSearchToggle.setAttribute("aria-expanded", String(open));
+      if (open) projectSearch.focus();
+    }
+
     root.querySelectorAll("[data-project-filter]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedProjectStatus = button.dataset.projectFilter;
         selectedOperationStatus = "all";
+        writeProjectFiltersToUrl();
+      });
+    });
+
+    root.querySelectorAll("[data-project-filter-select]").forEach((select) => {
+      select.addEventListener("change", () => {
+        selectedProjectStatus = select.value;
+        selectedOperationStatus = select.value === "launched" ? "active" : "all";
         writeProjectFiltersToUrl();
       });
     });
@@ -371,13 +457,68 @@
       });
     });
 
+    root.querySelectorAll("[data-operation-filter-select]").forEach((select) => {
+      select.addEventListener("change", () => {
+        selectedOperationStatus = select.value;
+        writeProjectFiltersToUrl();
+      });
+    });
+
     root.querySelectorAll("[data-origin-filter]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedOrigin = button.dataset.originFilter;
-        selectedProjectStatus = selectedOrigin === "historical_import" ? "open" : "all";
+        selectedProjectStatus = selectedOrigin === "historical_import" ? "all" : "in_progress";
         selectedOperationStatus = "all";
         writeProjectFiltersToUrl();
       });
+    });
+
+    root.querySelectorAll("[data-project-dropdown]").forEach((dropdown) => {
+      const menu = dropdown.querySelector("[data-project-dropdown-menu]");
+      const toggles = dropdown.querySelectorAll("[data-project-dropdown-toggle]");
+
+      toggles.forEach((button) => {
+        button.addEventListener("click", () => {
+          const opening = menu.classList.contains("hidden");
+          closeProjectDropdowns(dropdown);
+          menu.classList.toggle("hidden", !opening);
+          toggles.forEach((toggle) => toggle.setAttribute("aria-expanded", String(opening)));
+          dropdown.querySelector("[data-project-dropdown-chevron]")?.classList.toggle("rotate-180", opening);
+        });
+      });
+
+      dropdown.querySelectorAll("[data-project-dropdown-value]").forEach((item) => {
+        item.addEventListener("click", () => {
+          const select = document.getElementById(dropdown.dataset.selectTarget);
+          if (!select) return;
+          select.value = item.dataset.projectDropdownValue;
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+          closeProjectDropdowns();
+        });
+      });
+    });
+
+    if (originSelect) {
+      originSelect.addEventListener("change", () => {
+        selectedOrigin = originSelect.value;
+        selectedProjectStatus = selectedOrigin === "historical_import" ? "all" : "in_progress";
+        selectedOperationStatus = "all";
+        writeProjectFiltersToUrl();
+      });
+    }
+
+    projectSearchToggle?.addEventListener("click", () => setProjectSearchOpen(true));
+    projectSearchClose?.addEventListener("click", () => {
+      projectSearch.value = "";
+      writeProjectSearchToUrl();
+      setProjectSearchOpen(false);
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest("[data-project-dropdown]")) closeProjectDropdowns();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeProjectDropdowns();
     });
 
     if (projectSearch) projectSearch.addEventListener("input", writeProjectSearchToUrl);

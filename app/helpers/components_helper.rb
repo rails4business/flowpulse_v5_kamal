@@ -104,14 +104,14 @@ module ComponentsHelper
     if historical_project?(project)
       {
         label: "Precedente a GeneraImpresa",
-        symbol: "◷",
+        symbol: "P",
         classes: "border-amber-300 bg-amber-100 text-amber-900",
         description: "Progetto realizzato prima di GeneraImpresa e caricato successivamente come ricostruzione storica."
       }
     else
       {
         label: "Gestito con GeneraImpresa",
-        symbol: "G",
+        symbol: "GI",
         classes: "border-emerald-200 bg-emerald-50 text-emerald-700",
         description: "Progetto nato o gestito attraverso GeneraImpresa."
       }

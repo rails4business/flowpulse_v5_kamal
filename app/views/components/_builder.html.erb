@@ -5,21 +5,21 @@
 %>
 
 <% if component['type'] == 'section' %>
-  <section class="<%= component['classes'] %>">
+  <section class="pc-section <%= component['classes'] %>">
     <% component['children']&.each do |child| %>
       <%= render "components/builder", component: child, context: context %>
     <% end %>
   </section>
 
 <% elsif component['type'] == 'row' %>
-  <div class="row <%= component['classes'] %>">
+  <div class="row pc-row <%= component['classes'] %>">
     <% component['children']&.each do |child| %>
       <%= render "components/builder", component: child, context: context %>
     <% end %>
   </div>
 
 <% elsif component['type'] == 'column' %>
-  <div class="col <%= component['classes'] %>">
+  <div class="col pc-column <%= component['classes'] %>">
     <% component['children']&.each do |child| %>
       <%= render "components/builder", component: child, context: context %>
     <% end %>

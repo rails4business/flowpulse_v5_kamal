@@ -45,7 +45,8 @@ class PosturacorrettaController < ApplicationController
     @project = @projects.find { |project| project["slug"] == params[:slug] }
     return redirect_to posturacorretta_progetti_path, alert: "Progetto non trovato" unless @project
 
-    @project_tab = %w[overview realization activities].include?(params[:tab]) ? params[:tab] : "overview"
+    requested_tab = %w[overview progress realization activities].include?(params[:tab]) ? params[:tab] : "overview"
+    @project_tab = @project["generaimpresa_origin"] == "historical_import" ? "overview" : requested_tab
     @activity_status = %w[upcoming completed cancelled].include?(params[:activity_status]) ? params[:activity_status] : nil
   end
   def collabora

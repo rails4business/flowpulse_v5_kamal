@@ -6,7 +6,7 @@
   ]
   status_groups_by_origin = {
     "generaimpresa" => %w[all future in_progress launched repaid],
-    "historical_import" => %w[open closed]
+    "historical_import" => %w[all]
   }
   projects_for_status = lambda do |origin_projects, status|
     case status
@@ -24,17 +24,6 @@
   end
 %>
 
-<div class="mt-8 flex flex-wrap justify-center gap-2" data-origin-filters>
-  <% summary_groups.each do |origin, label| %>
-    <button type="button"
-            class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700 data-[active=true]:border-emerald-600 data-[active=true]:bg-emerald-600 data-[active=true]:text-white"
-            data-origin-filter="<%= origin %>"
-            data-active="<%= origin == "generaimpresa" %>">
-      <%= label %>
-      <span class="ml-1 opacity-70">(<%= projects.count { |project| project_generaimpresa_origin(project) == origin } %>)</span>
-    </button>
-  <% end %>
-</div>
 
 <% summary_groups.each do |origin, _label| %>
   <% origin_projects = projects.select { |project| project_generaimpresa_origin(project) == origin } %>

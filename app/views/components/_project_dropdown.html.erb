@@ -1,0 +1,60 @@
+<%
+  selected_option = options.find { |value, _label| value == selected } || options.first
+  mobile_badges = local_assigns.fetch(:mobile_badges, {})
+%>
+
+<div class="relative inline-flex w-full min-w-0" data-project-dropdown data-select-target="<%= select_id %>">
+  <span class="inline-flex w-full min-w-0 divide-x divide-slate-300 overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm">
+    <button type="button"
+            class="min-w-0 flex-1 truncate px-3 py-2.5 text-left text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950 focus:relative sm:text-sm"
+            data-project-dropdown-toggle
+            data-project-dropdown-label>
+      <% if mobile_badges.any? %>
+        <% options.each do |value, _label| %>
+          <% compact = mobile_badges[value] %>
+          <span class="<%= value == selected ? "inline-flex" : "hidden" %> items-center gap-2 sm:hidden"
+                data-project-dropdown-mobile-option="<%= value %>">
+            <span class="grid size-7 place-items-center rounded-full border text-[9px] font-black <%= compact[:classes] %>"><%= compact[:badge] %></span>
+            <span><%= compact[:suffix] %></span>
+          </span>
+        <% end %>
+        <span class="hidden truncate sm:inline" data-project-dropdown-desktop-label><%= selected_option&.last %></span>
+      <% else %>
+        <%= selected_option&.last %>
+      <% end %>
+    </button>
+
+    <button type="button"
+            class="grid w-10 shrink-0 place-items-center text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-950 focus:relative"
+            aria-label="Apri menu"
+            aria-expanded="false"
+            data-project-dropdown-toggle>
+      <svg aria-hidden="true" class="size-4 transition-transform" data-project-dropdown-chevron viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+      </svg>
+    </button>
+  </span>
+
+  <div role="menu"
+       class="absolute left-0 top-12 z-30 hidden min-w-full w-max max-w-72 overflow-hidden rounded-lg border border-slate-300 bg-white shadow-lg"
+       data-project-dropdown-menu>
+    <% options.each do |value, label| %>
+      <button type="button"
+              class="block w-full whitespace-nowrap px-3 py-2 text-left text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950 data-[active=true]:bg-emerald-50 data-[active=true]:font-bold data-[active=true]:text-emerald-700"
+              role="menuitem"
+              data-project-dropdown-value="<%= value %>"
+              data-active="<%= value == selected %>">
+        <% if mobile_badges.any? %>
+          <% compact = mobile_badges[value] %>
+          <span class="inline-flex items-center gap-2 sm:hidden">
+            <span class="grid size-7 place-items-center rounded-full border text-[9px] font-black <%= compact[:classes] %>"><%= compact[:badge] %></span>
+            <span><%= compact[:suffix] %></span>
+          </span>
+          <span class="hidden sm:inline"><%= label %></span>
+        <% else %>
+          <%= label %>
+        <% end %>
+      </button>
+    <% end %>
+  </div>
+</div>

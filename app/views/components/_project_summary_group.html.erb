@@ -82,7 +82,11 @@
     </p>
   <% end %>
 
-  <dl class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 <%= historical ? "lg:grid-cols-3" : "lg:grid-cols-4" %>">
+  <div class="mt-16 border-t border-slate-200 pt-10 text-center">
+    <h3 class="text-lg font-bold text-slate-900">Riepilogo delle attività</h3>
+  </div>
+
+  <dl class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 <%= historical ? "lg:grid-cols-3" : "lg:grid-cols-4" %>">
     <% summary_cards.each do |card| %>
       <div class="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-indigo-300 hover:shadow-md">
         <button type="button"

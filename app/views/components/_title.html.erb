@@ -6,14 +6,14 @@
   }.fetch(data["align"], "text-left")
 %>
 
-<header class="<%= alignment %>">
+<header class="pc-component pc-title <%= alignment %>">
   <% if data["kicker"].present? %>
-    <p class="text-sm font-semibold uppercase tracking-widest text-indigo-600">
+    <p class="text-sm font-semibold uppercase tracking-widest text-emerald-700">
       <%= inline_markdown(data["kicker"]) %>
     </p>
   <% end %>
 
-  <h1 class="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+  <h1 class="<%= "mt-4" if data["kicker"].present? %> text-3xl font-bold text-gray-900 sm:text-4xl">
     <%= inline_markdown(data["title"]) %>
   </h1>
 
