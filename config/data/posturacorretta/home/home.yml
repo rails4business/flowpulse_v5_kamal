@@ -18,15 +18,31 @@ components:
               - type: accordion
                 items:
                   - question: "Il tuo percorso della salute funziona?"
-                    answer: "I percorsi della salute utilizzano **approcci che non considerano la globalità** della persona, e spesso chi si vanta di considerare la globalità perde di vista la scienza e la medicina ufficiale. Con postura corretta  abbiamo utilizzato i principi delle metodiche posturali e il concetto di postura che non è soltanto il modo in cui stiamo seduti o in piedi, ma il modo in cui il corpo si organizza, si muove e si adatta a ciò che viviamo. In questo modo abbiamo costruito delle linee guida che possono aiutare te e i professionisti che ti seguono nel migliorare il  tuo percorso"
+                    answer:
+                      - "Molti percorsi si concentrano sul **singolo problema** e rischiano di perdere di vista la *persona nel suo insieme*. Altri parlano di **globalità**, ma senza collegarla con chiarezza alla *scienza* e alla medicina ufficiale."
+                      - "PosturaCorretta ti propone **7 ambiti** su cui puoi lavorare. Così è possibile creare un percorso personalizzato che può accompagnarti gradualmente *dal lavoro sul problema al lavoro sulla globalità e viceversa*. "
                     cta:
-                      label: "Ottimizza o crea il tuo percorso"
+                      label: "Vai ai 7 ambiti per saperne di più"
                       route: "posturacorretta/percorso"
-                  - question: "Un Percorso integrato portrebbe risolvere il tuo problema?"
-                    id: "domanda-metodiche"
-                    answer: "Nel 90% dei casi un professionista sanitario come un medico o un fisioterapista non riesce a collaborare con un professionista del benessere come un personal trainer o un istruttore di yoga. Con PosturaCorretta abbiamo creato delle linee guida che permettono se accettate da professionisti e dal paziente seguito di lavorare per risovlere il tuo problema."
+                  - question: "Un **percorso integrato** potrebbe aiutarti?"
+                    id: "domanda-percorso-integrato"
+                    answer:
+                      - "Quando ti affidi sia a **professionisti sanitari** sia a **professionisti del benessere**, potresti ricevere *indicazioni contrastanti*. Questo può creare disorientamento e rendere il tuo percorso frammentato. Può accadere anche tra professionisti della stessa area, ma con specializzazioni e approcci differenti."
+                      - "Spesso manca una **visione comune**: ogni professionista interviene sul proprio ambito senza sapere come il suo lavoro si inserisce nel *percorso complessivo*."
+                      - "Per questo, partendo dai principi delle principali **metodiche posturali**, abbiamo elaborato **linee guida condivise**. I diversi professionisti possono così lavorare in autonomia, ma all’interno di un *percorso integrato*: ognuno mantiene il proprio ruolo, rispetta quello degli altri e condivide la **visione fisiologica** e le ragioni alla base delle strategie adottate."
+                    cta:
+                      label: "Inizia il tuo percorso integrato"
+                      route: "posturacorretta/percorso"
                   - question: "Vorresti avere una postura corretta?"
-                    answer: "La postura corretta non è soltanto stare ben dritti con la schiena, è più simile alla capacità di suonare uno strumento musicale.  Con l'accademia impari ad ascoltare e capire come funzionano i sistemi del corpo per usarli a tuo vantaggio, per migliorare la tua salute e il tuo benessere, come apprendi e come ti muovi questo ti permetterà di avere vantaggi in molti ambiti della tua vita."
+                    id: "domanda-postura-corretta"
+                    answer:
+                      - "Avere una postura corretta non significa soltanto stare dritti con la schiena. È più simile a **imparare a suonare uno strumento**: richiede ascolto, coordinazione e pratica."
+                      - "Con l’**Accademia** impari a conoscere i sistemi del corpo e a utilizzarli con maggiore consapevolezza. Questo può migliorare il modo in cui **ti muovi, lavori e impari**, sostenendo la tua salute e il tuo benessere."
+                      - "Se sei un **professionista della salute o del benessere**, questo percorso può ampliare la tua visione della salute e cambiare il modo in cui osservi e accompagni le persone. Potrai inoltre scegliere di **trasmettere le conoscenze acquisite** attraverso il tuo lavoro."
+                      - "Il percorso ti permette soprattutto di approfondire il funzionamento del tuo corpo e di sviluppare una maggiore consapevolezza. È un passo fondamentale per iniziare a guardare il corpo da un *nuovo punto di vista*: non soltanto come qualcosa da correggere o curare, ma come un **mondo da scoprire**."          
+                    cta:
+                      label: "Vai all’Accademia"
+                      route: "posturacorretta/accademia"
           - type: column
             classes: "min-h-64 sm:min-h-80"
             children:

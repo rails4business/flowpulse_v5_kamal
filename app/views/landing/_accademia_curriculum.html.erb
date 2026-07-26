@@ -16,6 +16,57 @@
 <section id="academy-curriculum" aria-labelledby="academy-curriculum-title">
   <section class="hero" id="top">
     <div class="hero-inner">
+      <div class="pentagon-container" style="max-width: 400px; margin: 0 auto 32px;">
+        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto" style="filter: drop-shadow(0 10px 15px rgba(0,0,0,0.05));">
+          <style>
+            .link { stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 4 4; }
+            .node { fill: white; stroke-width: 3; }
+            .text { font-family: Inter, sans-serif; font-size: 10px; font-weight: 800; text-anchor: middle; dominant-baseline: middle; fill: #334155; }
+            .center-text { font-size: 11px; fill: #1e293b; }
+            .water { stroke: #6d28d9; }    /* Benessere Integrato */
+            .fire { stroke: #e11d48; }     /* Stop al dolore */
+            .earth { stroke: #f97316; }    /* Prevenzione */
+            .metal { stroke: #2563eb; }    /* Performance */
+            .wood { stroke: #16a34a; }     /* Attività Corporee */
+            .center-node { stroke: #334155; fill: #f8fafc; }
+          </style>
+          
+          <!-- Outer connection lines (the pentagon) -->
+          <polygon points="150,40 254,115 215,238 85,238 46,115" fill="none" class="link" stroke-dasharray="none" stroke-opacity="0.5" />
+          
+          <!-- Lines from center to nodes -->
+          <line x1="150" y1="150" x2="150" y2="40" class="link" />
+          <line x1="150" y1="150" x2="254" y2="115" class="link" />
+          <line x1="150" y1="150" x2="215" y2="238" class="link" />
+          <line x1="150" y1="150" x2="85" y2="238" class="link" />
+          <line x1="150" y1="150" x2="46" y2="115" class="link" />
+          
+          <!-- Top (Water / Recupero) -->
+          <circle cx="150" cy="40" r="32" class="node water" style="fill: #6d28d9;" />
+          <text x="150" y="42" class="text" style="fill: white;">Recupero</text>
+
+          <!-- Right Top (Fire / Ascolto) -->
+          <circle cx="254" cy="115" r="32" class="node fire" />
+          <text x="254" y="117" class="text">Ascolto</text>
+
+          <!-- Right Bottom (Earth / Nutrimento) -->
+          <circle cx="215" cy="238" r="32" class="node earth" />
+          <text x="215" y="240" class="text">Nutrimento</text>
+
+          <!-- Left Bottom (Metal / Regolazione) -->
+          <circle cx="85" cy="238" r="32" class="node metal" />
+          <text x="85" y="240" class="text">Regolazione</text>
+
+          <!-- Left Top (Wood / Movimento) -->
+          <circle cx="46" cy="115" r="32" class="node wood" />
+          <text x="46" y="117" class="text">Movimento</text>
+
+          <!-- Center -->
+          <circle cx="150" cy="150" r="42" class="node center-node" style="fill: #334155; stroke: #1e293b;" />
+          <text x="150" y="145" class="text center-text" style="fill: white;">Postura e</text>
+          <text x="150" y="157" class="text center-text" style="fill: white;">Fisiologia</text>
+        </svg>
+      </div>
       <div>
         <p class="eyebrow">Postura e fisiologia</p>
     <h1 id="academy-curriculum-title">
@@ -40,20 +91,19 @@
   </section>
 
   <main class="workspace" data-initial-area="<%= active_area_slug %>">
-    <div class="toolbar">
-      <% if academy_areas.first %>
-        <% active_area = academy_areas.first %>
-        <span class="area-badge">
-          <span><%= active_area.fetch("title") %></span>
-          <span class="area-count"><%= active_area.fetch("modules").size %> moduli</span>
-        </span>
-      <% end %>
-      <label class="search"><span class="sr-only">Cerca modulo o lezione</span><input id="search" type="search" placeholder="Cerca un modulo o una lezione…"></label>
-    </div>
-
     <div class="content-grid">
-      <nav class="side" aria-label="Indice dei moduli">
-        <p class="side-label">Indice del percorso</p>
+      <nav class="side" aria-label="Indice dell'Accademia">
+        <label class="search" style="margin-bottom: 16px; display: block;">
+          <span class="sr-only">Cerca modulo o lezione</span>
+          <input id="search" type="search" placeholder="Cerca modulo o lezione…" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px;">
+        </label>
+      
+        <p class="side-label">Inizia</p>
+        <a href="#top" id="nav-top">
+          <span>La Mappa dell'Accademia</span>
+        </a>
+
+        <p class="side-label" style="margin-top: 24px;">Percorsi</p>
         <% academy_modules.each_with_index do |academy_module, index| %>
           <a class="<%= "active" if index.zero? %>" href="#m<%= index %>" data-module-target="m<%= index %>">
             <span class="side-num"><%= academy_module.fetch("number") %></span>

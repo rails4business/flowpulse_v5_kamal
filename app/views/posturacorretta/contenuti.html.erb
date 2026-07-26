@@ -4,7 +4,7 @@
 
 <%
   postura_creators = {
-    "mark" => { name: "Mark Postura", initials: "MP", role: "Fisioterapista", color: "bg-blue-100 text-blue-700" },
+    "markpostura" => { name: "Mark Postura", initials: "MP", role: "Fisioterapista", color: "bg-blue-100 text-blue-700" },
     "belleri" => { name: "Marco Belleri", initials: "MB", role: "Osteopata bio-olistico", color: "bg-violet-100 text-violet-700" },
     "damiata" => { name: "Giovanni Damiata", initials: "GD", role: "Medico M.G. · Fitoterapia europea", color: "bg-emerald-100 text-emerald-700" },
     "frapporti" => { name: "Giovanni Frapporti", initials: "GF", role: "Chinesiologo", color: "bg-amber-100 text-amber-700" }
@@ -80,7 +80,9 @@
         <section id="blog-section-<%= key %>" class="blog-section pt-6 md:pt-8 <%= 'hidden' unless category_index.zero? %>" data-category="<%= key %>" data-video-count="<%= category[:articles].size %>" data-count-singular="<%= key == 'corsi' ? 'corso' : 'video' %>" data-count-plural="<%= key == 'corsi' ? 'corsi' : 'video' %>">
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="article-list-<%= key %>">
             <% category[:articles].each do |article| %>
-              <% creator = postura_creators.fetch(article[:author]) %>
+              <% creator = postura_creators.fetch(article[:author]) do
+                   { name: article[:author].presence || "PosturaCorretta", initials: "PC", role: "Autore", color: "bg-slate-100 text-slate-700" }
+                 end %>
               <% is_video = article[:format] == "video" %>
               <% is_course = article[:item_type] == "course" %>
               <% external_article = article[:url].present? %>

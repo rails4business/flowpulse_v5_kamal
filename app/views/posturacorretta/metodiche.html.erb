@@ -2,7 +2,7 @@
   <%= render "posturacorretta/header" %>
 <% end %>
 
-<main class="min-h-screen bg-slate-50">
+<main class="min-h-screen bg-white">
   <section class="border-b border-slate-200 bg-white">
     <div class="mx-auto max-w-7xl px-6 py-12">
       <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700">Archivio metodiche</p>
@@ -15,7 +15,7 @@
     </div>
   </section>
 
-  <section class="mx-auto grid max-w-7xl gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3">
+  <section class="mx-auto grid max-w-7xl gap-4 bg-white px-6 py-8 md:grid-cols-2 xl:grid-cols-3">
     <% @methodologies.each do |methodology| %>
       <% professionals = methodology_professionals_for(@methodology_professionals, methodology.fetch("slug")) %>
       <a href="<%= posturacorretta_metodica_path(methodology.fetch("slug")) %>" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg">
