@@ -759,9 +759,15 @@ projects:
     status_label: "In realizzazione"
     summary: "Inventario della gestione storica del canale YouTube, dei video prodotti, del lavoro svolto e delle risorse impiegate."
     owner: "@markpostura"
+    primary_worker: "fabrizio"
     workers:
       - "fabrizio"
       - "markpostura"
+      - "marcobelleri"
+    worker_roles:
+      fabrizio: "Realizzatore principale"
+      markpostura: "Ideazione, registrazione e gestione del canale"
+      marcobelleri: "Partecipazione alla realizzazione dei contenuti"
     financiers:
       - "markpostura"
     updated_at: "2026-07-24"
@@ -773,16 +779,34 @@ projects:
       launch: { date: "2026-09-30", state: "planned" }
       repayment: { date: null, state: "planned" }
     finances:
-      project_cost: 21000
+      tracking: "estimated"
+      project_cost: 18000
+    results:
+      measured_at: "2026-07-27"
+      videos_published: 300
+      lifetime:
+        subscribers: 30800
+        total_views: 2400000
+        watch_time_hours: 138900
+        estimated_revenue: 5407.28
+      last_365_days:
+        total_views: 596000
+        watch_time_hours: 23500
+        watch_time_change_percentage: -15
+        subscribers_gained: 4000
+        subscribers_change_percentage: -31
+        estimated_revenue: 1150.52
+      channel_estimated_value:
+      valuation_basis: "Da definire separando capacità reddituale, pubblico e valore storico dei contenuti"
     contributors:
       - participant: "markpostura"
         contributions:
           - type: "money"
-            value: 10500
-            description: "Quota monetaria della produzione di 350 video"
+            value: 7500
+            description: "Costo stimato per la produzione di 300 video, circa 25 € per video"
           - type: "time"
             value: 10500
-            description: "Valore del tempo dedicato alla produzione di 350 video"
+            description: "Valore stimato del tempo investito in ideazione, registrazione, revisione, pubblicazione e gestione di 300 video"
         capital_repaid: 0
         profit_received: 0
     operational_activities: []
