@@ -65,7 +65,7 @@ module ComponentsHelper
         "status" => milestones.dig("launch", "state") == "completed" ? "completed" : "planned"
       },
       "repayment" => {
-        "label" => "Rientro completato",
+        "label" => "Rientro degli investimenti",
         "responsible" => financier,
         "date" => milestones.dig("repayment", "date"),
         "status" => launched || milestones.dig("repayment", "state") == "completed" ? "completed" : "planned"

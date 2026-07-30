@@ -1342,6 +1342,126 @@
   padding: .75rem 1rem;
 }
 
+/* Documenti Markdown del Percorso: stessa gerarchia e ritmo delle pagine HTML. */
+.posturacorretta-ui .path-document-content {
+  color: #475569;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.posturacorretta-ui .path-document-content > * {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.posturacorretta-ui .path-document-content > * + * {
+  margin-top: 1rem;
+}
+
+.posturacorretta-ui .path-document-content h1,
+.posturacorretta-ui .path-document-content h2,
+.posturacorretta-ui .path-document-content h3 {
+  color: #0f172a;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.12;
+  scroll-margin-top: 6.5rem;
+}
+
+.posturacorretta-ui .path-document-content h1 {
+  font-size: clamp(2.4rem, 5vw, 3.5rem);
+  margin-bottom: 1.25rem;
+}
+
+.posturacorretta-ui .path-document-content h2 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  margin-top: 3rem;
+}
+
+.posturacorretta-ui .path-document-content h3 {
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  margin-top: 2rem;
+}
+
+.posturacorretta-ui .path-document-content h1 + *,
+.posturacorretta-ui .path-document-content h2 + *,
+.posturacorretta-ui .path-document-content h3 + * {
+  margin-top: .85rem;
+}
+
+.posturacorretta-ui .path-document-content p,
+.posturacorretta-ui .path-document-content li {
+  color: #475569;
+}
+
+.posturacorretta-ui .path-document-content ul,
+.posturacorretta-ui .path-document-content ol {
+  display: grid;
+  gap: .5rem;
+  padding-left: 1.5rem;
+}
+
+.posturacorretta-ui .path-document-content strong {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.posturacorretta-ui .path-document-content em {
+  color: #64748b;
+}
+
+.posturacorretta-ui .path-document-content hr {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin-block: 2.5rem;
+}
+
+.posturacorretta-ui .path-document-toc-list {
+  display: grid;
+  gap: .65rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.posturacorretta-ui .path-document-toc-item {
+  margin: 0;
+}
+
+.posturacorretta-ui .path-document-toc-level-2 {
+  padding-left: .75rem;
+}
+
+.posturacorretta-ui .path-document-toc-level-3 {
+  padding-left: 1.5rem;
+}
+
+.posturacorretta-ui .path-document-toc-link {
+  color: #64748b;
+  display: block;
+  font-size: .8125rem;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color .15s ease;
+}
+
+.posturacorretta-ui .path-document-toc-level-1 .path-document-toc-link {
+  color: #334155;
+  font-size: .875rem;
+  font-weight: 700;
+}
+
+.posturacorretta-ui .path-document-toc-link:hover,
+.posturacorretta-ui .path-document-toc-link:focus-visible {
+  color: var(--pc-brand);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 .posturacorretta-ui .accordion-cta {
   border: 1px solid var(--pc-brand);
   background: var(--pc-brand);

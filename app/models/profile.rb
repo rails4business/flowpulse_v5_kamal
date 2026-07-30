@@ -2,6 +2,14 @@ class Profile < ApplicationRecord
   belongs_to :user
   has_many :role_assignments, dependent: :destroy
   has_many :traveler_subscriptions, dependent: :destroy
+  has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
+  has_many :created_data_commitments,
+           class_name: "Brands::Impegno::Commitment",
+           foreign_key: :created_by_profile_id,
+           inverse_of: :created_by_profile,
+           dependent: :restrict_with_error
+  has_many :assigned_data_commitments, class_name: "Brands::Impegno::Commitment", foreign_key: :assignee_profile_id, dependent: :nullify
+  has_many :responsible_data_commitments, class_name: "Brands::Impegno::Commitment", foreign_key: :responsible_profile_id, dependent: :nullify
 
   validates :user_id, uniqueness: true
   validates :username, presence: true,

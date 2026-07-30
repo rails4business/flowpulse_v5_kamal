@@ -40,6 +40,18 @@
       <dd class="mt-1 break-all text-slate-950"><%= @domain.logo_square_url.presence || "-" %></dd>
     </div>
     <div>
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Favicon URL</dt>
+      <dd class="mt-1 break-all text-slate-950"><%= @domain.favicon_url.presence || "Punto rosso predefinito" %></dd>
+    </div>
+    <div>
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Titolo del sito</dt>
+      <dd class="mt-1 text-slate-950"><%= @domain.site_title.presence || "-" %></dd>
+    </div>
+    <div class="md:col-span-2">
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Descrizione del sito</dt>
+      <dd class="mt-1 text-slate-950"><%= @domain.site_description.presence || "-" %></dd>
+    </div>
+    <div>
       <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Creator world</dt>
       <dd class="mt-1 text-slate-950"><%= @domain.role_assignment&.display_name || "-" %></dd>
     </div>

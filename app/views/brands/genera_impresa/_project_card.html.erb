@@ -1,0 +1,12 @@
+<% status_label = { "future" => "Futuro", "in_progress" => "In realizzazione", "launched" => "Lanciato" }.fetch(project["status"], project["status_label"].presence || "Progetto") %>
+<article class="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
+  <div class="flex items-start justify-between gap-3">
+    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-600"><%= status_label %></span>
+    <span class="text-xs font-bold text-slate-400"><%= project["category"] %></span>
+  </div>
+  <h3 class="mt-4 text-lg font-black leading-6 text-slate-950"><%= project["title"] %></h3>
+  <p class="mt-2 line-clamp-3 text-sm leading-6 text-slate-600"><%= project["summary"] %></p>
+  <div class="mt-auto pt-5">
+    <%= link_to "Vedi il progetto →", genera_impresa_project_path(project.fetch("slug")), class: "text-sm font-black text-red-600 hover:text-red-700" %>
+  </div>
+</article>

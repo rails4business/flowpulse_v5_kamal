@@ -17,6 +17,21 @@ class PosturacorrettaController < ApplicationController
     taxonomies = PosturacorrettaTaxonomies.load
     @scopes = taxonomies.fetch("scopes", {})
     @areas = taxonomies.fetch("areas", {})
+
+    aside_data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/percorso/aside.yml"), permitted_classes: [], aliases: false) || {}
+    @aside_items = aside_data.fetch("items", [])
+
+    requested_slug = params[:page].presence || "inizia"
+    @current_item = find_aside_item(@aside_items, requested_slug) || find_aside_item(@aside_items, "inizia")
+
+    if @current_item
+      if @current_item["type"] == "markdown"
+        md_path = Rails.root.join("config/data", @current_item["source"])
+        @page_content = File.exist?(md_path) ? File.read(md_path) : "Contenuto non trovato."
+      else
+        @page_partial = @current_item["source"]
+      end
+    end
   end
   def professionisti
     data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/professionisti/professionisti.yml"), permitted_classes: [], aliases: false) || {}
@@ -62,15 +77,56 @@ class PosturacorrettaController < ApplicationController
     @project = @projects.find { |project| project["slug"] == params[:slug] }
     return redirect_to posturacorretta_progetti_path, alert: "Progetto non trovato" unless @project
 
-    requested_tab = %w[overview progress realization activities].include?(params[:tab]) ? params[:tab] : "overview"
+    requested_tab = %w[overview phases activities].include?(params[:tab]) ? params[:tab] : "overview"
+    requested_tab = "phases" if %w[progress realization].include?(params[:tab])
     @project_tab = @project["generaimpresa_origin"] == "historical_import" ? "overview" : requested_tab
+    requested_phase = params[:tab] == "realization" ? "implementation" : params[:phase]
+    @project_phase = %w[planning funding implementation testing launch repayment].include?(requested_phase) ? requested_phase : "planning"
     @activity_status = %w[upcoming completed cancelled].include?(params[:activity_status]) ? params[:activity_status] : nil
+    @data_commitments = if @project["generaimpresa_origin"] == "generaimpresa"
+      Brands::Impegno::Commitment.for_genera_impresa_project(@project.fetch("slug")).order(:starts_at)
+    else
+      Brands::Impegno::Commitment.none
+    end
   end
-  def collabora
-    redirect_to posturacorretta_progetti_path
+  def collabora; end
+  def collabora_professionisti; end
+  def collabora_digital
+    load_projects
+    @freelance_tasks = []
+
+    @projects.each do |project|
+      %w[planning_activities funding_activities operational_activities].each do |phase|
+        activities = project[phase] || []
+        activities.each do |activity|
+          if activity["delega"] == true && activity["status"] == "pending"
+            @freelance_tasks << {
+              project_name: project["name"],
+              project_slug: project["slug"],
+              title: activity["title"],
+              type: activity["type"],
+              budget: activity["budget"],
+              deadline: activity["deadline"],
+              notes: activity["notes"]
+            }
+          end
+        end
+      end
+    end
   end
 
   private
+
+  def find_aside_item(items, slug)
+    items.each do |item|
+      return item if item["slug"] == slug
+      if item["children"].present?
+        found = find_aside_item(item["children"], slug)
+        return found if found
+      end
+    end
+    nil
+  end
 
   def load_catalog
     catalog_path = Rails.root.join("config/data/posturacorretta/contenuti/catalog.yml")
@@ -79,7 +135,7 @@ class PosturacorrettaController < ApplicationController
 
   def load_projects
     root = Rails.root.join("config/data/posturacorretta/progetti")
-    data = YAML.safe_load_file(root.join("projects.yml"), permitted_classes: [], aliases: false) || {}
+    data = PosturacorrettaProjectCatalog.load
     participants_data = YAML.safe_load_file(root.join("progetti_partecipanti.yml"), permitted_classes: [], aliases: false) || {}
     @projects = data.fetch("projects", [])
     @project_participants = participants_data.fetch("participants", [])

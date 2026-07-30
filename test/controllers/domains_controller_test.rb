@@ -74,6 +74,26 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Flowpulse"
   end
 
+  test "renders GeneraImpresa on its domain with domain metadata" do
+    Domain.create!(
+      hostname: "generaimpresa.it",
+      target_controller: "brands/genera_impresa",
+      target_action: "index",
+      locale: "it",
+      site_title: "GeneraImpresa ufficiale",
+      site_description: "Catalogo pubblico dei progetti",
+      favicon_url: "https://cdn.example.com/generaimpresa.png"
+    )
+    host! "generaimpresa.it"
+
+    get root_url
+
+    assert_response :success
+    assert_includes response.body, "GeneraImpresa"
+    assert_select "meta[name='description'][content=?]", GeneraImpresaCatalog.load.site.fetch("description")
+    assert_select "link[rel='icon'][href='https://cdn.example.com/generaimpresa.png']"
+  end
+
   test "redirects canonical domain aliases" do
     Domain.create!(
       hostname: "www.posturacorretta.org",

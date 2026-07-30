@@ -1,22 +1,22 @@
 Il progetto ricostruisce la **vecchia gestione del canale YouTube**, precedente all’introduzione di GeneraImpresa, senza perdere contenuti, risultati, storico e conoscenze operative.
 
-La gestione precedente comprende la produzione di circa **300 video**. Il costo monetario è stimato in **7.500 €**, calcolato su una media di **25 € per video**. A questo si aggiungono **10.500 €** come valore del tempo investito in ideazione, registrazione, revisione, pubblicazione e gestione del canale. Il valore storico complessivo stimato è quindi di **18.000 €**.
+La gestione precedente comprende la produzione di circa **300 video**. Il costo monetario è stimato in **7.500 €**. A questo si aggiungono circa **10.000 €** come valore del tempo investito in ideazione, registrazione, revisione, pubblicazione e gestione del canale. Il valore storico complessivo stimato è quindi di **17.500 €**.
 
 ## Persone coinvolte
 
-- **@fabrizio** — realizzatore principale.
-- **@markpostura** — ideazione, registrazione, gestione del canale e finanziamento del progetto.
-- **@marcobelleri** — partecipazione alla realizzazione dei contenuti.
+- **@fabrizio** — realizzatore principale; il suo lavoro è stato retribuito e non viene classificato come investimento in tempo.
+- **@markpostura** — ideazione, registrazione e gestione del canale; ha inoltre investito denaro e tempo non retribuito.
+- **@marcobelleri** — collaboratore occasionale in circa **15 video**; ha sostenuto il costo dei propri video e investito parte del proprio tempo.
 
-Il denaro e il valore del tempo investito sono attribuiti a **@markpostura**. I ruoli di realizzazione descrivono invece chi ha partecipato concretamente alla produzione.
+Dei **17.500 €** complessivamente investiti, **16.900 €** sono attribuiti a **@markpostura** — 7.125 € in denaro e 9.775 € in tempo — e **600 €** a **@marcobelleri** — 375 € in denaro e 225 € in tempo. Queste sono stime storiche prudenziali.
 
 ## Risultati raggiunti
 
-Al **27 luglio 2026**, il canale ha raggiunto circa **30.800 iscritti**, **2,4 milioni di visualizzazioni** e **138.900 ore di visualizzazione** nell’intera durata. Le entrate stimate complessive indicate da YouTube sono pari a **5.407,28 €**.
+Al **27 luglio 2026**, il canale ha raggiunto circa **30.800 iscritti**, **2,4 milioni di visualizzazioni** e **138.900 ore di visualizzazione** nell’intera durata.
 
-Negli ultimi 365 giorni il canale ha registrato **596.000 visualizzazioni**, **23.500 ore di visualizzazione**, **4.000 nuovi iscritti netti** e **1.150,52 €** di entrate stimate. Il tempo di visualizzazione risulta inferiore del **15%** e la crescita degli iscritti del **31%** rispetto ai 365 giorni precedenti.
+Negli ultimi 365 giorni il canale ha registrato **596.000 visualizzazioni**, **23.500 ore di visualizzazione** e **4.000 nuovi iscritti netti**. Il tempo di visualizzazione risulta inferiore del **15%** e la crescita degli iscritti del **31%** rispetto ai 365 giorni precedenti.
 
-Il **valore stimato del canale** resta distinto dai **18.000 € investiti** e dalle entrate ottenute. Verrà calcolato separatamente, dichiarando data, metodo e ipotesi della valutazione.
+Poiché si tratta di un progetto precedente a GeneraImpresa, non vengono ricostruiti né attribuiti guadagni, restituzioni o rendimenti ai singoli investitori.
 
 ## Obiettivo
 

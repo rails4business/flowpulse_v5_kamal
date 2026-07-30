@@ -1,9 +1,10 @@
 class Domain < ApplicationRecord
-  store_accessor :settings, :logo_full_url, :logo_square_url
+  store_accessor :settings, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url
 
   belongs_to :role_assignment, optional: true
   belongs_to :node, optional: true
   has_many :traveler_subscriptions, dependent: :destroy
+  has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
 
   before_validation :normalize_hosts
   before_validation :normalize_brand_settings
@@ -100,6 +101,9 @@ class Domain < ApplicationRecord
       self.settings = settings.to_h
       self.logo_full_url = logo_full_url.to_s.strip.presence
       self.logo_square_url = logo_square_url.to_s.strip.presence
+      self.site_title = site_title.to_s.strip.presence
+      self.site_description = site_description.to_s.strip.presence
+      self.favicon_url = favicon_url.to_s.strip.presence
       self.settings = settings.to_h.compact.presence
     end
 

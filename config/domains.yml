@@ -25,12 +25,48 @@ default: &default
 
   posturacorretta.org:
     locale: it
-    target_controller: landing
-    target_action: posturacorretta
+    target_controller: brands/posturacorretta
+    target_action: home
     primary: true
+    site_title: "PosturaCorretta"
+    site_description: "Percorsi, programmi, contenuti e professionisti per conoscere e prendersi cura del corpo."
+    favicon_url: "https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png"
 
   www.posturacorretta.org:
     canonical_host: posturacorretta.org
+
+  generaimpresa.it:
+    locale: it
+    target_controller: brands/genera_impresa
+    target_action: index
+    primary: true
+    site_title: "GeneraImpresa — Dai progetti ai risultati"
+    site_description: "Brand, progetti, persone e risorse: GeneraImpresa rende visibile il percorso che trasforma un’idea in un progetto realizzato."
+
+  www.generaimpresa.it:
+    canonical_host: generaimpresa.it
+
+  svuotamente.it:
+    locale: it
+    target_controller: brands/svuotamente
+    target_action: index
+    primary: true
+    site_title: "SvuotaMente — Libera lo spazio, recupera il valore"
+    site_description: "Vendi ciò che vale, dona ciò che può servire e libera gli spazi entro una data."
+
+  www.svuotamente.it:
+    canonical_host: svuotamente.it
+
+  impegno.it:
+    locale: it
+    target_controller: brands/impegno/home
+    target_action: index
+    primary: true
+    site_title: "Impegno — Il tuo tempo, in un solo posto"
+    site_description: "Calendario personale per appuntamenti, attività e tempo lavorato, filtrabile per brand."
+
+  www.impegno.it:
+    canonical_host: impegno.it
 
   igieneposturale.it:
     locale: it

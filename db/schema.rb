@@ -10,9 +10,55 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_30_143849) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "data_commitments", force: :cascade do |t|
+    t.datetime "actual_ended_at"
+    t.datetime "actual_started_at"
+    t.boolean "all_day", default: false, null: false
+    t.bigint "assignee_profile_id"
+    t.boolean "blocks_calendar", default: true, null: false
+    t.string "calendar_key", null: false
+    t.string "calendar_label", null: false
+    t.string "contribution_type", default: "time_investment", null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_profile_id", null: false
+    t.text "description"
+    t.bigint "domain_id", null: false
+    t.datetime "ends_at"
+    t.jsonb "genera_impresa", default: {}, null: false
+    t.decimal "hourly_rate", precision: 10, scale: 2
+    t.string "kind", default: "work", null: false
+    t.string "location_address"
+    t.string "location_name"
+    t.jsonb "metadata", default: {}, null: false
+    t.string "online_url"
+    t.string "pricing_type", default: "hourly", null: false
+    t.bigint "profile_id", null: false
+    t.bigint "responsible_profile_id"
+    t.datetime "starts_at", null: false
+    t.string "status", default: "completed", null: false
+    t.bigint "subject_id"
+    t.string "subject_type"
+    t.string "title", null: false
+    t.decimal "total_price", precision: 12, scale: 2
+    t.datetime "updated_at", null: false
+    t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
+    t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
+    t.index ["created_by_profile_id"], name: "index_data_commitments_on_created_by_profile_id"
+    t.index ["domain_id"], name: "index_data_commitments_on_domain_id"
+    t.index ["genera_impresa"], name: "index_data_commitments_on_genera_impresa", using: :gin
+    t.index ["kind"], name: "index_data_commitments_on_kind"
+    t.index ["profile_id", "calendar_key", "starts_at"], name: "index_commitments_on_owner_calendar_start"
+    t.index ["profile_id", "calendar_key"], name: "index_one_active_timer_per_calendar", unique: true, where: "(((status)::text = 'in_progress'::text) AND (actual_ended_at IS NULL))"
+    t.index ["profile_id"], name: "index_data_commitments_on_profile_id"
+    t.index ["responsible_profile_id"], name: "index_data_commitments_on_responsible_profile_id"
+    t.index ["starts_at"], name: "index_data_commitments_on_starts_at"
+    t.index ["status"], name: "index_data_commitments_on_status"
+    t.index ["subject_type", "subject_id"], name: "index_data_commitments_on_subject"
+  end
 
   create_table "domains", force: :cascade do |t|
     t.boolean "active", default: true, null: false
@@ -151,6 +197,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_143849) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "data_commitments", "domains"
+  add_foreign_key "data_commitments", "profiles"
+  add_foreign_key "data_commitments", "profiles", column: "assignee_profile_id"
+  add_foreign_key "data_commitments", "profiles", column: "created_by_profile_id"
+  add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
   add_foreign_key "domains", "nodes"
   add_foreign_key "domains", "role_assignments"
   add_foreign_key "node_contents", "nodes"

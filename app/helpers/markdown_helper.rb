@@ -1,6 +1,7 @@
 # app/helpers/markdown_helper.rb
 require "redcarpet"
 require "uri"
+require "nokogiri"
 
 # Prova a caricare Rouge (per evidenziare il codice). Se manca, fai fallback.
 begin
@@ -76,6 +77,23 @@ module MarkdownHelper
     html.html_safe
   end
 
+  def markdown_toc(text)
+    return "".html_safe if text.blank?
+
+    fragment = Nokogiri::HTML.fragment(markdown(text).to_s)
+    headings = fragment.css("h1, h2, h3").filter_map do |heading|
+      heading_id = heading["id"].to_s
+      next if heading_id.blank?
+
+      level = heading.name.delete_prefix("h").to_i
+      content_tag(:li, class: "path-document-toc-item path-document-toc-level-#{level}") do
+        link_to heading.text.squish, "##{heading_id}", class: "path-document-toc-link"
+      end
+    end
+
+    content_tag(:ul, safe_join(headings), class: "path-document-toc-list")
+  end
+
   private
 
   def permitted_tags
@@ -84,7 +102,7 @@ module MarkdownHelper
   end
 
   def permitted_attributes
-    %w[href title src alt width height allow allowfullscreen frameborder referrerpolicy]
+    %w[href title src alt width height allow allowfullscreen frameborder referrerpolicy id]
   end
 
   def build_youtube_embed(attrs)

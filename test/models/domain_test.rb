@@ -35,12 +35,17 @@ class DomainTest < ActiveSupport::TestCase
       canonical_host: "posturacorretta.org",
       logo_full_url: "https://cdn.example.com/logo-full.png",
       logo_square_url: "https://cdn.example.com/logo-square.png",
+      favicon_url: "https://cdn.example.com/favicon.png",
+      site_title: "PosturaCorretta",
+      site_description: "Descrizione del dominio",
       locale: "it"
     )
 
     assert_equal "posturacorretta.org", Domain.export_to_hash["www.posturacorretta.org"]["canonical_host"]
     assert_equal "https://cdn.example.com/logo-full.png", Domain.export_to_hash["www.posturacorretta.org"]["logo_full_url"]
     assert_equal "https://cdn.example.com/logo-square.png", Domain.export_to_hash["www.posturacorretta.org"]["logo_square_url"]
+    assert_equal "https://cdn.example.com/favicon.png", Domain.export_to_hash["www.posturacorretta.org"]["favicon_url"]
+    assert_equal "PosturaCorretta", Domain.export_to_hash["www.posturacorretta.org"]["site_title"]
   end
 
   test "display hostname removes www prefix" do

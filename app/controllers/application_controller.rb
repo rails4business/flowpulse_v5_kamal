@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   include CurrentDomain
   include FlowRoles::ControllerHelpers
   helper_method :dashboard_current_section
+  helper_method :active_data_commitment
   helper_method :public_node_visible?, :public_node_navigable?, :public_node_accessible_children
   before_action :resume_session
   before_action :ensure_active_role_assignment
@@ -21,6 +22,15 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+    def active_data_commitment
+      return unless Current.user&.profile
+
+      @active_data_commitment ||= Current.user.profile.data_commitments
+        .where(status: "in_progress", actual_ended_at: nil)
+        .order(actual_started_at: :desc)
+        .first
+    end
 
     def dashboard_current_section
       @dashboard_current_section || :dashboard

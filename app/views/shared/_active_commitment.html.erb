@@ -1,0 +1,35 @@
+<%
+  context = commitment.genera_impresa.to_h
+  source_path = if context["project_slug"].present?
+    posturacorretta_progetto_path(
+      context.fetch("project_slug"),
+      tab: "phases",
+      phase: context["phase_key"].presence || "implementation",
+      anchor: "task-#{context['step_key']}-#{context['task_key']}"
+    )
+  else
+    data_commitments_path(tab: "upcoming", anchor: "commitment-#{commitment.id}")
+  end
+%>
+<aside class="border-b border-emerald-200 bg-emerald-50" aria-label="Attività in corso" data-controller="timer" data-timer-started-at-value="<%= commitment.actual_started_at.iso8601 %>">
+  <div class="mx-auto flex max-w-screen-xl flex-col gap-3 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+    <div class="flex min-w-0 items-center gap-3">
+      <span class="relative flex size-3 shrink-0"><span class="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60"></span><span class="relative inline-flex size-3 rounded-full bg-emerald-600"></span></span>
+      <div class="min-w-0"><p class="text-[10px] font-black uppercase tracking-wider text-emerald-700">Attività in corso</p><p class="truncate text-sm font-bold text-slate-950"><%= commitment.description.presence || commitment.title %></p></div>
+      <span class="shrink-0 rounded-md bg-white px-2 py-1 font-mono text-sm font-black tabular-nums text-emerald-700 shadow-sm" data-timer-target="output">00:00:00</span>
+    </div>
+    <div class="flex shrink-0 items-center gap-2 pl-6 sm:pl-0"><%= link_to "Apri il task", source_path, class: "rounded-lg px-3 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100" %><button type="button" command="show-modal" commandfor="complete-commitment-<%= commitment.id %>" class="rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800">■ Concludi</button></div>
+  </div>
+
+  <dialog id="complete-commitment-<%= commitment.id %>" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+    <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4"><div><p class="text-xs font-black uppercase tracking-wider text-emerald-600">Concludi attività</p><h2 class="mt-1 text-lg font-black text-slate-950"><%= commitment.description.presence || commitment.title %></h2></div><button type="button" command="close" commandfor="complete-commitment-<%= commitment.id %>" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button></div>
+    <% complete_form = form_with url: complete_data_commitment_path(commitment), method: :patch, scope: :data_commitment, class: "space-y-5 p-5" do |form| %>
+      <div class="grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-4"><div><p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Inizio effettivo</p><p class="mt-1 text-sm font-bold text-slate-900"><%= commitment.actual_started_at.strftime("%d/%m/%Y · %H:%M") %></p></div><div><p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Tempo impiegato</p><p class="mt-1 font-mono text-xl font-black text-emerald-700" data-timer-target="output">00:00:00</p></div></div>
+      <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :pricing_type, "Valorizzazione", class: "text-xs font-bold text-slate-700" %><%= form.select :pricing_type, [["Tariffa oraria", "hourly"], ["Prezzo fisso", "fixed"], ["Nessun valore", "none"]], { selected: commitment.pricing_type }, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm", data: { timer_target: "pricing", action: "timer#calculateValue" } %></div><div class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2"><p class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Valore stimato</p><p class="mt-1 text-lg font-black text-emerald-800" data-timer-target="value">—</p></div></div>
+      <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :hourly_rate, "Tariffa €/h", class: "text-xs font-bold text-slate-700" %><%= form.number_field :hourly_rate, value: commitment.hourly_rate, min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm", data: { timer_target: "rate", action: "input->timer#calculateValue" } %></div><div><%= form.label :total_price, "Prezzo fisso €", class: "text-xs font-bold text-slate-700" %><%= form.number_field :total_price, value: (commitment.total_price if commitment.pricing_type == "fixed"), min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm", data: { timer_target: "fixed", action: "input->timer#calculateValue" } %></div></div>
+      <p class="text-xs leading-5 text-slate-500">La fine effettiva verrà registrata quando confermi. Potrai correggere successivamente gli orari da Impegno.</p>
+      <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="complete-commitment-<%= commitment.id %>" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600">Continua attività</button><%= form.submit "Conferma conclusione", class: "cursor-pointer rounded-lg bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800" %></div>
+    <% end %>
+    <%= complete_form %>
+  </dialog>
+</aside>

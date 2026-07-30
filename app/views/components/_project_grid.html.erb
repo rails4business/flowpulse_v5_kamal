@@ -126,6 +126,10 @@
       generaimpresa_origin = project_generaimpresa_origin(project)
       generaimpresa_badge = project_generaimpresa_badge(project)
       historical_project = historical_project?(project)
+      investor_names = (
+        project.fetch("financiers", []) +
+        project.fetch("contributors", []).map { |contributor| contributor["participant"] }
+      ).compact.map { |name| name.to_s.delete_prefix("@") }.uniq
       search_text = [
         project["title"],
         project["summary"],
@@ -183,8 +187,21 @@
             <% end %>
           </dl>
 
+          <% if investor_names.any? %>
+            <div class="mt-3 flex items-start gap-2 text-xs">
+              <span class="shrink-0 font-medium text-slate-400">Investitori</span>
+              <span class="font-bold text-emerald-700"><%= investor_names.map { |name| "@#{name}" }.join(", ") %></span>
+            </div>
+          <% end %>
+
           <div class="mt-auto pt-8">
-            <% if !financial_untracked && resources_needed.positive? %>
+            <% if historical_project && !financial_untracked && resources_collected.positive? %>
+              <div class="border-t border-amber-200 pt-4">
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Valore investito</span>
+                <strong class="mt-1 block text-lg text-emerald-700"><%= money.call(resources_collected) %></strong>
+                <span class="text-xs text-slate-500">Denaro <%= money.call(contribution_totals[:money]) %> · Tempo <%= money.call(contribution_totals[:time]) %></span>
+              </div>
+            <% elsif !financial_untracked && resources_needed.positive? %>
               <div class="flex items-end justify-between gap-3">
                 <span class="font-bold">
                   <strong class="text-base text-emerald-600"><%= money.call(resources_collected) %></strong>

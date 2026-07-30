@@ -1,0 +1,33 @@
+site:
+  name: "GeneraImpresa"
+  tagline: "Dalle idee ai progetti, con persone e risorse visibili."
+  description: "Uno spazio pubblico per presentare brand, seguire i progetti e documentare ciò che serve per realizzarli."
+
+brands:
+  - slug: "posturacorretta"
+    name: "PosturaCorretta"
+    description: "Conoscere il corpo, orientarsi e costruire percorsi collegando programmi, professionisti e metodiche."
+    website_url: "https://posturacorretta.org"
+    logo_url: "https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png"
+    default: true
+    exclude_project_slugs:
+      - "piattaforma-flowpulse-rails4business"
+      - "1impegno"
+
+  - slug: "flowpulse"
+    name: "Flowpulse"
+    description: "Piattaforma modulare per organizzare progetti, attività, domini e servizi digitali."
+    website_url: "https://flowpulse.net"
+    project_slugs: ["piattaforma-flowpulse-rails4business"]
+
+  - slug: "impegno"
+    name: "Impegno"
+    description: "La base condivisa per appuntamenti, attività, eventi e impegni personali."
+    website_url: "/impegno"
+    project_slugs: ["1impegno"]
+
+  - slug: "svuotamente"
+    name: "SvuotaMente"
+    description: "Una webapp per vendere, donare e destinare gli oggetti, liberando gli spazi entro una data."
+    website_url: "/brands/svuotamente"
+    project_slugs: ["webapp-svuotamente"]

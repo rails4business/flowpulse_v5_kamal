@@ -112,6 +112,9 @@ module Admin
       assert_response :success
       assert_select "input[name='domain[logo_full_url]']"
       assert_select "input[name='domain[logo_square_url]']"
+      assert_select "input[name='domain[favicon_url]']"
+      assert_select "input[name='domain[site_title]']"
+      assert_select "textarea[name='domain[site_description]']"
       assert_select "input[type='hidden'][name='domain[role_assignment_id]']"
       assert_select "input[type='text'][id='domain_role_assignment_id_input']"
       assert_select "input[type='hidden'][name='domain[node_id]']"

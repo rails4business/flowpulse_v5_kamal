@@ -1,6 +1,7 @@
 <%
   steps = project.fetch("steps", [])
   finances = project.fetch("finances", {})
+  historical_project = historical_project?(project)
   financial_untracked = finances["tracking"] == "untracked"
   contribution_totals = project_contribution_totals(project)
   resources_collected = contribution_totals[:total]
@@ -11,6 +12,8 @@
   operational_activities = project.fetch("operational_activities", [])
   results = project.fetch("results", {})
   workers = project.fetch("workers", [])
+  work_records = project.fetch("work_records", [])
+  work_records_by_participant = work_records.index_by { |record| record["participant"].to_s.delete_prefix("@") }
   owner_slug = project["owner"].to_s.delete_prefix("@")
   collaborators = (
     workers +
@@ -20,7 +23,7 @@
     .reject { |name| name.blank? || name == "Da assegnare" || name == owner_slug }
     .uniq
   generaimpresa_badge = project_generaimpresa_badge(project)
-  historical_project = historical_project?(project)
+  team_members = historical_project ? workers.map { |worker| worker.to_s.delete_prefix("@") }.uniq : collaborators
   return_project_status = project["status"] == "future" ? "future" : (project["status"] == "in_progress" ? "in_progress" : "launched")
   return_projects_path = if historical_project
     posturacorretta_progetti_path(origine: project_generaimpresa_origin(project))
@@ -37,7 +40,6 @@
   completed_steps = steps.count { |step| step["status"] == "completed" }
   progress = steps.any? ? ((completed_steps.to_f / steps.size) * 100).round : 0
   money = ->(value) { number_to_currency(value.to_i, unit: "€", precision: 0, delimiter: ".", separator: ",", format: "%n %u") }
-  precise_money = ->(value) { number_to_currency(value.to_f, unit: "€", precision: 2, delimiter: ".", separator: ",", format: "%n %u") }
   compact_number = lambda do |value|
     number = value.to_f
     next "—" unless number.positive?
@@ -53,14 +55,63 @@
     end
   end
   format_date = ->(value) { value.present? ? Date.iso8601(value).strftime("%d/%m/%Y") : "Da definire" }
-  format_datetime = ->(value) { value.present? ? Time.iso8601(value).strftime("%d/%m/%Y %H:%M") : "—" }
-  duration = lambda do |started_at, completed_at|
-    next "—" unless started_at.present? && completed_at.present?
+  format_datetime = ->(value) { value.present? ? Time.zone.parse(value.to_s).strftime("%d/%m/%Y %H:%M") : "—" }
+  minutes_between = lambda do |started_at, completed_at|
+    next nil unless started_at.present? && completed_at.present?
 
-    minutes = ((Time.iso8601(completed_at) - Time.iso8601(started_at)) / 60).round
+    ((Time.iso8601(completed_at) - Time.iso8601(started_at)) / 60).round
+  end
+  format_minutes = lambda do |minutes|
+    next "—" unless minutes
+
     hours, remaining_minutes = minutes.divmod(60)
     [("#{hours}h" if hours.positive?), ("#{remaining_minutes}m" if remaining_minutes.positive?)].compact.join(" ")
   end
+  duration = lambda do |started_at, completed_at|
+    minutes = minutes_between.call(started_at, completed_at)
+    format_minutes.call(minutes)
+  end
+  commitment_work_logs = Array(@data_commitments).group_by do |commitment|
+    [commitment.genera_impresa["step_key"], commitment.genera_impresa["task_key"]]
+  end.transform_values do |commitments|
+    commitments.map do |commitment|
+      {
+        "participant" => "@#{commitment.profile.username}",
+        "commitment_id" => commitment.id,
+        "description" => commitment.description.presence || commitment.title,
+        "started_at" => (commitment.actual_started_at || commitment.starts_at)&.iso8601,
+        "completed_at" => (commitment.actual_ended_at || commitment.ends_at)&.iso8601,
+        "hourly_rate" => commitment.hourly_rate,
+        "total_price" => commitment.total_price,
+        "pricing_type" => commitment.pricing_type,
+        "contribution_type" => commitment.contribution_type
+      }
+    end
+  end
+  work_logs_for = lambda do |step, task|
+    logs = task.fetch("work_logs", []) + commitment_work_logs.fetch([step["key"], task["key"]], [])
+    next logs if logs.any?
+    next [] unless task["started_at"].present? || task["completed_at"].present?
+
+    [{
+      "participant" => task["assignee"],
+      "description" => task["title"],
+      "started_at" => task["started_at"],
+      "completed_at" => task["completed_at"]
+    }]
+  end
+  hourly_rate_for = lambda do |work_log|
+    participant_slug = work_log["participant"].to_s.delete_prefix("@")
+    work_log["hourly_rate"].presence || @project_participants_by_slug.dig(participant_slug, "default_hourly_rate")
+  end
+  work_value = lambda do |work_log|
+    next work_log["total_price"] if work_log["total_price"].present?
+
+    minutes = minutes_between.call(work_log["started_at"], work_log["completed_at"])
+    rate = hourly_rate_for.call(work_log)
+    minutes && rate.present? ? (minutes / 60.0) * rate.to_f : nil
+  end
+  work_money = ->(value) { value.present? ? number_to_currency(value, unit: "€", precision: 2, delimiter: ".", separator: ",", format: "%n %u") : "—" }
   lifecycle_statuses = {
     "planned" => ["Da iniziare", "border-slate-200 bg-slate-50 text-slate-500"],
     "in_progress" => ["In corso", "border-indigo-200 bg-indigo-50 text-indigo-700"],
@@ -72,8 +123,7 @@
   else
     {
       "overview" => "Panoramica",
-      "progress" => "Avanzamento",
-      "realization" => "Realizzazione",
+      "phases" => "Fasi del progetto",
       "activities" => "Attività operative"
     }
   end
@@ -127,6 +177,49 @@
   </div>
 </header>
 
+<% if @project_tab == "phases" %>
+  <div class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+      <ol class="grid grid-cols-1 lg:grid-cols-6" aria-label="Fasi del progetto">
+        <% lifecycle.each_with_index do |phase, index| %>
+          <%
+            selected = @project_phase == phase["key"]
+            completed = phase["status"] == "completed"
+            completed_incomplete = phase["status"] == "completed_incomplete"
+            phase_status_label, phase_status_classes = lifecycle_statuses.fetch(phase["status"], lifecycle_statuses["planned"])
+            phase_date = phase["date"].present? ? format_date.call(phase["date"]) : "Data da definire"
+            circle_style = if selected
+              "background-color:#2563eb;border-color:#2563eb;color:#ffffff;"
+            elsif completed
+              "background-color:#059669;border-color:#059669;color:#ffffff;"
+            elsif completed_incomplete
+              "background-color:#ffffff;border-color:#059669;color:#047857;"
+            else
+              "background-color:#ffffff;border-color:#cbd5e1;color:#64748b;"
+            end
+          %>
+          <li class="relative flex min-w-0 gap-4 pb-7 last:pb-0 lg:block lg:px-2 lg:pb-0 lg:text-center">
+            <% unless index == lifecycle.size - 1 %>
+              <span aria-hidden="true" class="absolute bottom-0 left-[15px] top-8 w-0.5 lg:bottom-auto lg:left-1/2 lg:right-[-50%] lg:top-[15px] lg:h-0.5 lg:w-auto" style="background-color:<%= completed ? "#059669" : "#e2e8f0" %>;"></span>
+            <% end %>
+            <a href="<%= posturacorretta_progetto_path(project["slug"], tab: "phases", phase: phase["key"]) %>"
+               <%= 'aria-current="step"'.html_safe if selected %>
+               class="group/phase relative z-10 flex min-w-0 gap-4 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 lg:block">
+              <span class="flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-black lg:mx-auto" style="<%= circle_style %>"><%= index + 1 %></span>
+              <span class="min-w-0 lg:mt-3 lg:block">
+                <strong class="block text-xs leading-5 <%= selected ? "text-blue-700" : "text-slate-900" %> group-hover/phase:text-blue-700"><%= phase["label"] %></strong>
+                <span class="mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider <%= phase_status_classes %>"><%= phase_status_label %></span>
+                <span class="mt-2 block text-xs font-bold text-indigo-700">@<%= phase["responsible"].to_s.delete_prefix("@") %></span>
+                <time class="mt-0.5 block text-[11px] text-slate-500"><%= phase_date %></time>
+              </span>
+            </a>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  </div>
+<% end %>
+
 <% if @project_tab == "overview" %>
   <main class="bg-white">
     <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -148,12 +241,11 @@
                 <% end %>
               </div>
 
-              <dl class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <dl class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <div class="rounded-xl border border-slate-200 bg-white p-4"><dt class="text-xs font-bold uppercase text-slate-400">Video</dt><dd class="mt-1 text-xl font-black text-slate-950"><%= results["videos_published"] %></dd></div>
                 <div class="rounded-xl border border-slate-200 bg-white p-4"><dt class="text-xs font-bold uppercase text-slate-400">Iscritti</dt><dd class="mt-1 text-xl font-black text-slate-950"><%= compact_number.call(lifetime_results["subscribers"]) %></dd></div>
                 <div class="rounded-xl border border-slate-200 bg-white p-4"><dt class="text-xs font-bold uppercase text-slate-400">Visualizzazioni</dt><dd class="mt-1 text-xl font-black text-slate-950"><%= compact_number.call(lifetime_results["total_views"]) %></dd></div>
                 <div class="rounded-xl border border-slate-200 bg-white p-4"><dt class="text-xs font-bold uppercase text-slate-400">Ore viste</dt><dd class="mt-1 text-xl font-black text-slate-950"><%= compact_number.call(lifetime_results["watch_time_hours"]) %></dd></div>
-                <div class="col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 sm:col-span-2"><dt class="text-xs font-bold uppercase text-emerald-700">Entrate stimate complessive</dt><dd class="mt-1 text-xl font-black text-emerald-800"><%= precise_money.call(lifetime_results["estimated_revenue"]) %></dd></div>
               </dl>
 
               <% if yearly_results.present? %>
@@ -161,8 +253,7 @@
                   <strong class="text-slate-950">Ultimi 365 giorni:</strong>
                   <%= compact_number.call(yearly_results["total_views"]) %> visualizzazioni,
                   <%= compact_number.call(yearly_results["watch_time_hours"]) %> ore,
-                  +<%= compact_number.call(yearly_results["subscribers_gained"]) %> iscritti e
-                  <%= precise_money.call(yearly_results["estimated_revenue"]) %> di entrate stimate.
+                  +<%= compact_number.call(yearly_results["subscribers_gained"]) %> iscritti.
                 </div>
               <% end %>
             </section>
@@ -193,10 +284,44 @@
 
           <!-- Funding / Resources Card -->
           <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400"><%= historical_project ? "Risorse ricostruite" : "Risorse del progetto" %></h3>
+            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400"><%= historical_project ? "Valore investito ricostruito" : "Risorse del progetto" %></h3>
 
             <% if financial_untracked %>
                <p class="mt-4 text-sm text-slate-500">Dati finanziari da ricostruire o non tracciati.</p>
+            <% elsif historical_project %>
+               <div class="mt-4">
+                 <span class="text-4xl font-black tracking-tight text-emerald-600"><%= money.call(contribution_totals[:total]) %></span>
+                 <p class="mt-1 text-xs font-semibold text-slate-500">Denaro e valore del tempo effettivamente investiti.</p>
+               </div>
+
+               <div class="mt-6 flex divide-x divide-slate-100 border-t border-slate-100 pt-4 text-center">
+                 <div class="flex-1">
+                   <p class="text-base font-black text-slate-800"><%= money.call(contribution_totals[:money]) %></p>
+                   <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Denaro investito</p>
+                 </div>
+                 <div class="flex-1">
+                   <p class="text-base font-black text-slate-800"><%= money.call(contribution_totals[:time]) %></p>
+                   <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tempo investito</p>
+                 </div>
+               </div>
+
+               <% if project.fetch("contributors", []).any? %>
+                 <div class="mt-5 space-y-3 border-t border-slate-100 pt-5">
+                   <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Investimenti per persona</p>
+                   <% project.fetch("contributors").each do |contributor| %>
+                     <% contributor_money = contributor.fetch("contributions", []).select { |item| item["type"] == "money" }.sum { |item| item["value"].to_i } %>
+                     <% contributor_time = contributor.fetch("contributions", []).select { |item| item["type"] == "time" }.sum { |item| item["value"].to_i } %>
+                     <% contributor_hours = contributor.fetch("contributions", []).select { |item| item["type"] == "time" }.sum { |item| item["hours"].to_i } %>
+                     <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                       <div class="flex items-center justify-between gap-3">
+                         <strong class="text-sm text-emerald-700">@<%= contributor["participant"] %></strong>
+                         <strong class="text-sm text-slate-950"><%= money.call(contributor_money + contributor_time) %></strong>
+                       </div>
+                       <p class="mt-1 text-xs text-slate-500">Denaro <%= money.call(contributor_money) %> · Tempo <%= money.call(contributor_time) %><%= " (#{contributor_hours} ore investite)" if contributor_hours.positive? %></p>
+                     </div>
+                   <% end %>
+                 </div>
+               <% end %>
             <% else %>
                <div class="mt-4 flex items-baseline gap-2">
                  <span class="text-4xl font-black tracking-tight text-emerald-600"><%= money.call(resources_collected) %></span>
@@ -216,11 +341,11 @@
                <div class="mt-6 flex divide-x divide-slate-100 border-t border-slate-100 pt-4 text-center">
                  <div class="flex-1">
                    <p class="text-base font-black text-slate-800"><%= money.call(contribution_totals[:money]) %></p>
-                   <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Denaro</p>
+                   <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Denaro investito</p>
                  </div>
                  <div class="flex-1">
                    <p class="text-base font-black text-slate-800"><%= money.call(contribution_totals[:time]) %></p>
-                   <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Valore Tempo</p>
+                   <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Valore del tempo</p>
                  </div>
                </div>
             <% end %>
@@ -240,15 +365,16 @@
                 <p class="mt-1 text-sm font-bold text-indigo-700">@<%= owner_slug %></p>
               </div>
 
-              <% if collaborators.any? %>
+              <% if team_members.any? %>
                 <div>
-                  <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Collaboratori (<%= collaborators.size %>)</p>
+                  <p class="text-[10px] font-black uppercase tracking-widest text-slate-400"><%= historical_project ? "Realizzatori" : "Collaboratori" %> (<%= team_members.size %>)</p>
                   <div class="mt-2 flex flex-wrap gap-1.5">
-                    <% collaborators.each do |collaborator| %>
+                    <% team_members.each do |collaborator| %>
                       <% primary_worker = collaborator == project["primary_worker"].to_s.delete_prefix("@") %>
                       <% worker_role = project.fetch("worker_roles", {})[collaborator] %>
+                      <% work_record = work_records_by_participant[collaborator] || {} %>
                       <span title="<%= worker_role %>" class="rounded-md border px-2 py-1 text-[11px] font-bold shadow-sm <%= primary_worker ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-700" %>">
-                        @<%= collaborator %><%= " · principale" if primary_worker %>
+                        @<%= collaborator %><%= " · principale" if primary_worker %><%= " · circa #{work_record["videos"]} video" if work_record["videos"].present? %><%= " · #{work_record["hours_worked"]} ore lavorate" if work_record["hours_worked"].present? %><%= " · lavoro retribuito" if work_record["paid"] == true %>
                       </span>
                     <% end %>
                   </div>
@@ -272,70 +398,29 @@
       </div>
     </div>
   </main>
-<% elsif @project_tab == "progress" %>
+<% elsif @project_tab == "phases" && @project_phase != "implementation" %>
+  <% selected_phase = lifecycle.find { |phase| phase["key"] == @project_phase } || lifecycle.first %>
+  <% selected_phase_index = lifecycle.index(selected_phase).to_i + 1 %>
+  <% selected_status_label, selected_status_classes = lifecycle_statuses.fetch(selected_phase["status"], lifecycle_statuses["planned"]) %>
+  <% selected_phase_date = selected_phase["date"].present? ? format_date.call(selected_phase["date"]) : "Data da definire" %>
   <main class="bg-white">
     <div class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-      <section>
-        <ol class="grid grid-cols-1 lg:grid-cols-6" aria-label="Avanzamento del progetto">
-          <% lifecycle.each_with_index do |phase, index| %>
-            <% status_label, status_classes = lifecycle_statuses.fetch(phase["status"], lifecycle_statuses["planned"]) %>
-            <% completed = phase["status"] == "completed"; completed_incomplete = phase["status"] == "completed_incomplete"; active = phase["status"] == "in_progress" %>
-            <% phase_date = phase["date"].present? ? format_date.call(phase["date"]) : (historical_project && (completed || completed_incomplete) ? "Data da ricostruire" : "Data da definire") %>
-            <li class="relative flex min-w-0 gap-4 pb-7 last:pb-0 lg:block lg:px-2 lg:pb-0 lg:text-center">
-              <% unless index == lifecycle.size - 1 %>
-                <span aria-hidden="true" class="absolute bottom-0 left-[15px] top-8 w-0.5 lg:bottom-auto lg:left-1/2 lg:right-[-50%] lg:top-[15px] lg:h-0.5 lg:w-auto" style="background-color: <%= completed ? "#059669" : "#e2e8f0" %>"></span>
-              <% end %>
-              <span class="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-black lg:mx-auto"
-                    style="<%= completed ? "background-color:#059669;border-color:#059669;color:#ffffff;" : (completed_incomplete ? "background-color:#ffffff;border-color:#059669;color:#047857;" : (active ? "background-color:#4f46e5;border-color:#4f46e5;color:#ffffff;" : "background-color:#ffffff;border-color:#cbd5e1;color:#64748b;")) %>">
-                <%= index + 1 %>
-              </span>
-              <% if completed || completed_incomplete %>
-                <a href="#fase-<%= phase["key"] %>" class="group/phase min-w-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 lg:mt-3">
-                  <strong class="block text-xs leading-5 text-slate-900 underline-offset-2 group-hover/phase:text-emerald-700 group-hover/phase:underline"><%= phase["label"] %></strong>
-                  <span class="mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider <%= status_classes %>"><%= status_label %></span>
-                  <span class="mt-2 block text-xs font-bold text-indigo-700">@<%= phase["responsible"].to_s.delete_prefix("@") %></span>
-                  <time class="mt-0.5 block text-[11px] text-slate-500"><%= phase_date %></time>
-                </a>
-              <% else %>
-                <div class="min-w-0 lg:mt-3">
-                  <strong class="block text-xs leading-5 text-slate-900"><%= phase["label"] %></strong>
-                  <span class="mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider <%= status_classes %>"><%= status_label %></span>
-                  <span class="mt-2 block text-xs font-bold text-indigo-700">@<%= phase["responsible"].to_s.delete_prefix("@") %></span>
-                  <time class="mt-0.5 block text-[11px] text-slate-500"><%= phase_date %></time>
-                </div>
-              <% end %>
-            </li>
-          <% end %>
-        </ol>
-      </section>
-
-      <section class="mt-12 max-w-4xl border-t border-slate-200 pt-8">
-        <h2 class="text-xl font-black text-slate-950">Dettaglio delle fasi</h2>
-        <div class="mt-5 divide-y divide-slate-200 border-y border-slate-200">
-          <% lifecycle.each_with_index do |phase, index| %>
-            <% completed = phase["status"] == "completed"; completed_incomplete = phase["status"] == "completed_incomplete" %>
-            <% phase_date = phase["date"].present? ? format_date.call(phase["date"]) : (historical_project && (completed || completed_incomplete) ? "Data da ricostruire" : "Data da definire") %>
-            <article id="fase-<%= phase["key"] %>" class="scroll-mt-28 py-5">
-              <div class="flex flex-wrap items-center gap-3">
-                <span class="flex size-7 items-center justify-center rounded-full bg-slate-100 text-xs font-black text-slate-600"><%= index + 1 %></span>
-                <h3 class="text-base font-black text-slate-950"><%= phase["label"] %></h3>
-                <span class="rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider <%= lifecycle_statuses.fetch(phase["status"], lifecycle_statuses["planned"])[1] %>">
-                  <%= lifecycle_statuses.fetch(phase["status"], lifecycle_statuses["planned"])[0] %>
-                </span>
-              </div>
-              <p class="mt-2 pl-10 text-xs text-slate-500">
-                <strong>@<%= phase["responsible"].to_s.delete_prefix("@") %></strong>
-                <span class="mx-1">·</span>
-                <%= phase_date %>
-              </p>
-              <p class="mt-3 pl-10 text-sm leading-6 text-slate-500">Informazioni da definire.</p>
-            </article>
-          <% end %>
+      <section class="max-w-3xl">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="flex size-9 items-center justify-center rounded-full bg-blue-50 text-sm font-black text-blue-700"><%= selected_phase_index %></span>
+          <p class="text-xs font-black uppercase tracking-widest text-blue-700">Fase del progetto</p>
+          <span class="rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider <%= selected_status_classes %>"><%= selected_status_label %></span>
         </div>
+        <h2 class="mt-5 text-3xl font-black tracking-tight text-slate-950"><%= selected_phase["label"] %></h2>
+        <dl class="mt-7 grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:grid-cols-2">
+          <div><dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Responsabile</dt><dd class="mt-1 font-bold text-indigo-700">@<%= selected_phase["responsible"].to_s.delete_prefix("@") %></dd></div>
+          <div><dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Data</dt><dd class="mt-1 font-bold text-slate-900"><%= selected_phase_date %></dd></div>
+        </dl>
+        <p class="mt-6 text-sm leading-7 text-slate-600">Le informazioni specifiche di questa fase verranno completate durante l’avanzamento del progetto.</p>
       </section>
     </div>
   </main>
-<% elsif @project_tab == "realization" %>
+<% elsif @project_tab == "phases" && @project_phase == "implementation" %>
 <main class="mx-auto max-w-screen-xl space-y-12 px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
   <section>
     <h2 class="text-2xl font-black text-slate-950">Roadmap</h2>
@@ -355,6 +440,9 @@
           assigned = step["assignee"].present? && step["assignee"] != "Da assegnare"
           started = step["started_at"].present?
           finished = step["completed_at"].present?
+          step_estimated_hours = step["estimated_hours"].presence || step.fetch("tasks", []).sum { |task| task["estimated_hours"].to_f }
+          step_work_logs = step.fetch("tasks", []).flat_map { |task| work_logs_for.call(step, task) }
+          step_worked_minutes = step_work_logs.sum { |work_log| minutes_between.call(work_log["started_at"], work_log["completed_at"]).to_i }
           current = started && !finished
           state_label = finished ? "Concluso" : (started ? "In corso" : (assigned ? "Da iniziare" : "Da assegnare"))
           state_classes = finished ? "bg-emerald-50 text-emerald-700 border-emerald-200" : (started ? "bg-indigo-50 text-indigo-700 border-indigo-200" : "bg-slate-50 text-slate-600 border-slate-200")
@@ -375,9 +463,11 @@
                       <span class="hidden text-slate-300 sm:inline">·</span>
                       <span class="whitespace-nowrap"><strong class="text-slate-700">Assegnato:</strong> <%= step["assignee"] %><%= " · #{format_date.call(step["assigned_at"])}" if step["assigned_at"].present? %></span>
                       <span class="hidden text-slate-300 sm:inline">·</span>
-                      <span class="whitespace-nowrap"><strong class="text-slate-700">Inizio:</strong> <%= started ? format_date.call(step["started_at"]) : "—" %></span>
-                      <span class="hidden text-slate-300 sm:inline">·</span>
-                      <span class="whitespace-nowrap"><strong class="text-slate-700">Fine:</strong> <%= finished ? format_date.call(step["completed_at"]) : "—" %></span>
+                      <span class="whitespace-nowrap"><strong class="text-slate-700">Tempo stimato:</strong> <%= step_estimated_hours.to_f.positive? ? "#{step_estimated_hours.to_f % 1 == 0 ? step_estimated_hours.to_i : step_estimated_hours}h" : "—" %></span>
+                      <% if step_worked_minutes.positive? %>
+                        <span class="hidden text-slate-300 sm:inline">·</span>
+                        <span class="whitespace-nowrap"><strong class="text-slate-700">Tempo lavorato:</strong> <%= format_minutes.call(step_worked_minutes) %></span>
+                      <% end %>
                     </span>
                   </span>
                 </span>
@@ -392,33 +482,164 @@
 
             <div class="border-t border-slate-100 px-4 py-5 sm:px-5">
               <% if step.fetch("tasks", []).any? %>
-                <div>
-                  <div class="mt-3 hidden grid-cols-[minmax(0,1.5fr)_minmax(8rem,.7fr)_minmax(9rem,.8fr)_minmax(9rem,.8fr)_minmax(6rem,.45fr)] gap-4 border-b border-slate-200 px-3 pb-2 text-[10px] font-black uppercase tracking-wider text-slate-400 sm:grid">
-                    <span>Attività di lavoro</span>
-                    <span>Persona</span>
-                    <span>Inizio</span>
-                    <span>Fine</span>
-                    <span>Tempo</span>
-                  </div>
-                  <ol>
-                    <% step["tasks"].each do |task| %>
-                      <%
-                        task_started = task["started_at"].present?
-                        task_finished = task["completed_at"].present?
-                      %>
-                      <li class="grid gap-2 border-b border-slate-200 px-3 py-3 text-xs last:border-b-0 sm:grid-cols-[minmax(0,1.5fr)_minmax(8rem,.7fr)_minmax(9rem,.8fr)_minmax(9rem,.8fr)_minmax(6rem,.45fr)] sm:items-center sm:gap-4">
-                        <div class="flex min-w-0 items-center gap-2">
-                          <span class="flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-black <%= task_finished ? "bg-emerald-600 text-white" : (task_started ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400") %>"><%= task_finished ? "✓" : (task_started ? "→" : "·") %></span>
-                          <strong class="text-sm text-slate-800"><%= task["title"] %></strong>
+                <ol class="space-y-4">
+                  <% step["tasks"].each do |task| %>
+                    <%
+                      task_logs = work_logs_for.call(step, task)
+                      running_commitment = Array(@data_commitments).find { |commitment| commitment.tracking? && commitment.genera_impresa["task_key"] == task["key"] }
+                      task_started = task_logs.any? { |work_log| work_log["started_at"].present? }
+                      task_finished = task_logs.any? && task_logs.all? { |work_log| work_log["completed_at"].present? }
+                      task_worked_minutes = task_logs.sum { |work_log| minutes_between.call(work_log["started_at"], work_log["completed_at"]).to_i }
+                    %>
+                    <li id="task-<%= step["key"] %>-<%= task["key"] %>" class="overflow-hidden rounded-xl border border-slate-200 bg-white" data-controller="commitment-form">
+                      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 px-4 py-2 border-b border-slate-200 text-xs">
+                        <div class="flex flex-wrap items-center gap-3 min-w-0">
+                          <span class="flex size-5 shrink-0 items-center justify-center rounded-full text-[9px] font-black <%= task_finished ? "bg-emerald-600 text-white" : (task_started ? "bg-indigo-600 text-white" : "bg-white text-slate-400 ring-1 ring-slate-200") %>"><%= task_finished ? "✓" : (task_started ? "→" : "·") %></span>
+                          <strong class="text-sm text-slate-800 truncate max-w-[200px] md:max-w-[300px]" title="<%= task["title"] %>"><%= task["title"] %></strong>
+                          <span class="hidden sm:inline-block w-px h-4 bg-slate-300"></span>
+                          <span class="text-slate-600 whitespace-nowrap"><span class="font-bold text-slate-400">Resp: </span><%= task["assignee"] %></span>
+                          <span class="hidden sm:inline-block w-px h-4 bg-slate-300"></span>
+                          <span class="font-bold text-slate-700 whitespace-nowrap"><span class="text-slate-400">Stima: </span><%= task["estimated_cost"].present? ? money.call(task["estimated_cost"]) : "—" %></span>
                         </div>
-                        <span class="text-slate-500"><span class="font-bold text-slate-400 sm:hidden">Persona: </span><%= task["assignee"] %></span>
-                        <span class="whitespace-nowrap text-slate-500"><span class="font-bold text-slate-400 sm:hidden">Inizio: </span><%= format_datetime.call(task["started_at"]) %></span>
-                        <span class="whitespace-nowrap text-slate-500"><span class="font-bold text-slate-400 sm:hidden">Fine: </span><%= format_datetime.call(task["completed_at"]) %></span>
-                        <span class="whitespace-nowrap font-bold text-slate-700"><span class="font-bold text-slate-400 sm:hidden">Tempo: </span><%= duration.call(task["started_at"], task["completed_at"]) %></span>
-                      </li>
-                    <% end %>
-                  </ol>
-                </div>
+
+                        <div class="flex flex-wrap items-center justify-end gap-2 shrink-0">
+                          <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 hidden lg:inline-block mr-1">Attività</span>
+                          <% if Current.user&.superadmin_user? && step["key"].present? && task["key"].present? %>
+                            <button type="button" class="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700 transition hover:bg-blue-100" data-action="commitment-form#open"><span aria-hidden="true">+</span> Aggiungi</button>
+                            <% if running_commitment %>
+                              <button type="button" command="show-modal" commandfor="complete-commitment-<%= running_commitment.id %>" class="rounded-md bg-slate-950 px-2 py-1 text-[11px] font-bold text-white hover:bg-slate-800">■ Concludi</button>
+                            <% else %>
+                              <button type="button" command="show-modal" commandfor="start-task-<%= step.fetch("key") %>-<%= task.fetch("key") %>" class="rounded-md bg-emerald-600 px-2 py-1 text-[11px] font-bold text-white hover:bg-emerald-700">▶ Inizia</button>
+                            <% end %>
+                          <% end %>
+                        </div>
+                      </div>
+
+                      <div class="overflow-x-auto">
+                        <table class="min-w-[72rem] w-full text-left text-xs">
+                          <thead class="border-b border-slate-200 bg-white text-[10px] font-black uppercase tracking-wider text-slate-400">
+                            <tr>
+                              <th class="px-3 py-2">Persona</th>
+                              <th class="px-3 py-2">Lavoro svolto</th>
+                              <th class="px-3 py-2">Inizio</th>
+                              <th class="px-3 py-2">Fine</th>
+                              <th class="px-3 py-2">Tempo reale</th>
+                              <th class="px-3 py-2">€/ora</th>
+                              <th class="px-3 py-2">Valore</th>
+                              <th class="px-3 py-2">Tipo</th>
+                              <th class="px-3 py-2 text-right">Azioni</th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-slate-100">
+                            <% if task_logs.any? %>
+                              <% task_logs.each do |work_log| %>
+                                <% rate = hourly_rate_for.call(work_log) %>
+                                <% contribution_label = { "time_investment" => "Tempo investito", "money_investment" => "Denaro investito", "paid" => "Retribuito", "unpaid" => "Non retribuito" }.fetch(work_log["contribution_type"], "Da definire") %>
+                                <tr>
+                                  <td class="px-3 py-3 font-bold text-indigo-700"><%= work_log["participant"] %></td>
+                                  <td class="max-w-xs px-3 py-3 text-slate-700"><%= work_log["description"].presence || task["title"] %></td>
+                                  <td class="whitespace-nowrap px-3 py-3 text-slate-500"><%= format_datetime.call(work_log["started_at"]) %></td>
+                                  <td class="whitespace-nowrap px-3 py-3 text-slate-500"><%= format_datetime.call(work_log["completed_at"]) %></td>
+                                  <td class="whitespace-nowrap px-3 py-3 font-bold text-slate-700"><%= duration.call(work_log["started_at"], work_log["completed_at"]) %></td>
+                                  <td class="whitespace-nowrap px-3 py-3 text-slate-600"><%= rate.present? ? money.call(rate) : "—" %></td>
+                                  <td class="whitespace-nowrap px-3 py-3 font-bold text-slate-900"><%= work_money.call(work_value.call(work_log)) %></td>
+                                  <td class="whitespace-nowrap px-3 py-3 text-slate-600"><%= contribution_label %></td>
+                                  <td class="whitespace-nowrap px-3 py-3 text-right"><% if work_log["commitment_id"] %><%= button_to "Elimina", data_commitment_path(work_log["commitment_id"]), method: :delete, form: { data: { turbo_confirm: "Eliminare definitivamente questa attività?" } }, class: "text-xs font-bold text-red-600 hover:text-red-700" %><% else %><span class="text-slate-300">—</span><% end %></td>
+                                </tr>
+                              <% end %>
+                            <% else %>
+                              <tr><td colspan="9" class="px-3 py-4 text-center text-slate-400">Nessuno slot di lavoro registrato.</td></tr>
+                            <% end %>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <% if task_worked_minutes.positive? %>
+                        <p class="border-t border-slate-100 px-4 py-2 text-right text-xs font-bold text-slate-600">Tempo lavorato: <%= format_minutes.call(task_worked_minutes) %></p>
+                      <% end %>
+
+                      <% if Current.user&.superadmin_user? && step["key"].present? && task["key"].present? %>
+                        <dialog id="start-task-<%= step.fetch("key") %>-<%= task.fetch("key") %>" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+                          <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
+                            <div><p class="text-xs font-black uppercase tracking-wider text-emerald-600">Avvia il timer</p><h5 class="mt-1 text-lg font-black text-slate-950"><%= task["title"] %></h5></div>
+                            <button type="button" command="close" commandfor="start-task-<%= step.fetch("key") %>-<%= task.fetch("key") %>" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
+                          </div>
+                          <% start_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
+                            <%= hidden_field_tag :project_slug, project.fetch("slug") %>
+                            <%= hidden_field_tag :step_key, step.fetch("key") %>
+                            <%= hidden_field_tag :task_key, task.fetch("key") %>
+                            <%= hidden_field_tag :start_now, true %>
+                            <div><%= form.label :description, "Cosa stai per fare?", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 3, required: true, autofocus: true, placeholder: "Descrivi brevemente l’attività che stai iniziando…", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100" %></div>
+                            <div class="grid gap-4 sm:grid-cols-3">
+                              <div><%= form.label :pricing_type, "Valorizzazione", class: "text-xs font-bold text-slate-700" %><%= form.select :pricing_type, [["Tariffa oraria", "hourly"], ["Prezzo fisso", "fixed"], ["Nessun valore", "none"]], { selected: "hourly" }, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div>
+                              <div><%= form.label :hourly_rate, "Tariffa €/h", class: "text-xs font-bold text-slate-700" %><%= form.number_field :hourly_rate, value: @project_participants_by_slug.dig(Current.user.profile&.username, "default_hourly_rate"), min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+                              <div><%= form.label :total_price, "Prezzo fisso €", class: "text-xs font-bold text-slate-700" %><%= form.number_field :total_price, min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+                            </div>
+                            <p class="text-xs leading-5 text-slate-500">Il tempo effettivo partirà quando confermi.</p>
+                            <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="start-task-<%= step.fetch("key") %>-<%= task.fetch("key") %>" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Conferma e inizia", class: "cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700" %></div>
+                          <% end %>
+                          <%= start_form %>
+                        </dialog>
+
+                        <dialog class="m-auto w-[calc(100%-2rem)] max-w-2xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50" data-commitment-form-target="dialog" data-action="click->commitment-form#closeOnBackdrop cancel->commitment-form#close">
+                          <div class="border-b border-slate-200 px-5 py-4 sm:px-6">
+                            <div class="flex items-start justify-between gap-4">
+                              <div>
+                                <p class="text-xs font-black uppercase tracking-wider text-blue-600">Nuovo impegno · GeneraImpresa</p>
+                                <h5 class="mt-1 text-lg font-black text-slate-950"><%= task["title"] %></h5>
+                                <p class="mt-1 text-xs text-slate-500">Verrà inserito nel calendario di @<%= Current.user.profile&.username %>.</p>
+                              </div>
+                              <button type="button" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Chiudi" data-action="commitment-form#close">✕</button>
+                            </div>
+                          </div>
+
+                          <% commitment_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-5 p-5 sm:p-6" do |form| %>
+                            <%= hidden_field_tag :project_slug, project.fetch("slug") %>
+                            <%= hidden_field_tag :step_key, step.fetch("key") %>
+                            <%= hidden_field_tag :task_key, task.fetch("key") %>
+
+                            <div>
+                              <%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %>
+                              <%= form.text_field :title, value: task["title"], required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" %>
+                            </div>
+                            <div>
+                              <%= form.label :description, "Cosa hai fatto", class: "text-xs font-bold text-slate-700" %>
+                              <%= form.text_area :description, rows: 3, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" %>
+                            </div>
+                            <div class="grid gap-4 sm:grid-cols-2">
+                              <div><%= form.label :starts_at, "Inizio", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+                              <div><%= form.label :ends_at, "Fine", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+                            </div>
+                            <div class="grid gap-4 sm:grid-cols-2">
+                              <div>
+                                <%= form.label :pricing_type, "Calcolo del valore", class: "text-xs font-bold text-slate-700" %>
+                                <%= form.select :pricing_type, [["Tariffa oraria", "hourly"], ["Importo fisso", "fixed"], ["Nessun valore", "none"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm", data: { commitment_form_target: "pricingType", action: "commitment-form#pricingChanged" } %>
+                              </div>
+                              <div>
+                                <%= form.label :contribution_type, "Tipo di contributo", class: "text-xs font-bold text-slate-700" %>
+                                <%= form.select :contribution_type, [["Tempo investito", "time_investment"], ["Retribuito", "paid"], ["Non retribuito", "unpaid"], ["Denaro investito", "money_investment"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
+                              </div>
+                            </div>
+                            <div data-commitment-form-target="hourlyFields">
+                              <%= form.label :hourly_rate, "Tariffa oraria (€)", class: "text-xs font-bold text-slate-700" %>
+                              <%= form.number_field :hourly_rate, value: @project_participants_by_slug.dig(Current.user.profile&.username, "default_hourly_rate"), min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %>
+                              <p class="mt-1 text-xs text-slate-400">Il totale viene calcolato da durata × tariffa.</p>
+                            </div>
+                            <div hidden data-commitment-form-target="fixedFields">
+                              <%= form.label :total_price, "Importo totale (€)", class: "text-xs font-bold text-slate-700" %>
+                              <%= form.number_field :total_price, min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %>
+                            </div>
+                            <div class="flex justify-end gap-2 border-t border-slate-100 pt-4">
+                              <button type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50" data-action="commitment-form#close">Annulla</button>
+                              <%= form.submit "Registra attività", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
+                            </div>
+                          <% end %>
+                          <%= commitment_form %>
+                        </dialog>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ol>
               <% end %>
             </div>
           </details>

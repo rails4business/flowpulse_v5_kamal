@@ -160,6 +160,9 @@ projects:
       - title: "Preparare pubblicazione e distribuzione"
         description: "Definire formati, canali e percorso di lancio."
         status: "pending"
+        delega: true
+        budget: 500
+        deadline: "2026-08-30"
         assignee: "@markpostura"
         assigned_at: "2026-07-01"
         estimated_cost: 1400
@@ -265,6 +268,7 @@ projects:
       - title: "Preparare programma e iscrizioni"
         description: "Pubblicare agenda, posti disponibili e modalità di accesso."
         status: "pending"
+        delega: true
         assignee: "@markpostura"
         assigned_at:
         estimated_cost: 1800
@@ -595,12 +599,12 @@ projects:
     content_path: "progetti/contenuti/percorsi-personalizzati-linee-guida.md"
     title: "Percorsi personalizzati e linee guida"
     category: "Orientamento"
-    status: "future"
+    status: "in_progress"
     generaimpresa_origin: "generaimpresa"
-    status_label: "Futuro"
+    status_label: "In Realizzazione"
     summary: "Aiutare ogni persona a passare dalla scoperta iniziale alla metodica e al professionista più coerenti con i propri bisogni."
     owner: "@markpostura"
-    updated_at: "2026-07-24"
+    updated_at: "2026-07-29"
     milestones:
       presentation: { date: "2026-10-01", state: "planned" }
       implementation: { date: "2027-07-01", state: "planned" }
@@ -611,15 +615,48 @@ projects:
     contributors: []
     operational_activities: []
     steps:
-      - title: "Raccogliere bisogni e obiettivi"
+      - key: "raccogliere-bisogni-obiettivi"
+        title: "Raccogliere bisogni e obiettivi"
         description: "Definire domande e informazioni necessarie per comprendere la persona."
         status: "pending"
         assignee: "@markpostura"
         assigned_at:
         estimated_cost: 1400
+        estimated_hours: 35
         started_at:
         completed_at:
-      - title: "Preparare le linee guida"
+        tasks:
+          - key: "definire-profili-tipo"
+            title: "Definire profili tipo e loro bisogni"
+            assignee: "@markpostura"
+            estimated_cost: 320
+            started_at:
+            completed_at:
+            work_logs: []
+          - key: "questionario-autovalutazione"
+            title: "Elaborare un questionario di autovalutazione guidato"
+            assignee: "@markpostura"
+            estimated_cost: 400
+            started_at:
+            completed_at:
+            work_logs: []
+          - key: "chiarire-ruoli"
+            title: "Chiarire ruoli: Accademia, metodiche, professionisti"
+            assignee: "@markpostura"
+            estimated_cost: 320
+            started_at:
+            completed_at:
+            work_logs: []
+          - key: "testi-introduttivi-cautelativi"
+            title: "Preparare testi introduttivi e cautelativi"
+            assignee: "@markpostura"
+            estimated_cost: 360
+            started_at:
+            completed_at:
+            work_logs: []
+
+      - key: "preparare-linee-guida"
+        title: "Preparare le linee guida"
         description: "Creare indicazioni informative chiare, prudenti e verificabili."
         status: "pending"
         assignee: "@markpostura"
@@ -627,7 +664,29 @@ projects:
         estimated_cost: 1800
         started_at:
         completed_at:
-      - title: "Collegare Accademia e metodiche"
+        tasks:
+          - key: "struttura-flusso-orientamento"
+            title: "Definire struttura e flusso di orientamento"
+            assignee: "@markpostura"
+            started_at:
+            completed_at:
+          - key: "linee-guida-iniziali"
+            title: "Creare le linee guida iniziali (funzione informativo-cautelativa)"
+            assignee: "@markpostura"
+            started_at:
+            completed_at:
+          - key: "interfacce-navigazione-collegamento"
+            title: "Progettare le interfacce di navigazione e collegamento"
+            assignee: "@markpostura"
+            started_at:
+            completed_at:
+          - key: "testi-accompagnamento-percorsi"
+            title: "Preparare i testi per l’introduzione e l’accompagnamento ai percorsi"
+            assignee: "@markpostura"
+            started_at:
+            completed_at:
+      - key: "collegare-accademia-metodiche"
+        title: "Collegare Accademia e metodiche"
         description: "Suggerire contenuti introduttivi e possibili percorsi completi senza confonderne i ruoli."
         status: "pending"
         assignee: "@markpostura"
@@ -635,7 +694,8 @@ projects:
         estimated_cost: 2000
         started_at:
         completed_at:
-      - title: "Collegare professionisti e verifica del percorso"
+      - key: "collegare-professionisti-verifica"
+        title: "Collegare professionisti e verifica del percorso"
         description: "Consentire il passaggio al professionista e la successiva raccolta dei risultati."
         status: "pending"
         assignee: "@markpostura"
@@ -767,9 +827,22 @@ projects:
     worker_roles:
       fabrizio: "Realizzatore principale"
       markpostura: "Ideazione, registrazione e gestione del canale"
-      marcobelleri: "Partecipazione alla realizzazione dei contenuti"
+      marcobelleri: "Collaborazione occasionale alla realizzazione di circa 15 video"
+    work_records:
+      - participant: "fabrizio"
+        role: "Realizzatore principale"
+        paid: true
+      - participant: "markpostura"
+        role: "Ideazione, registrazione e gestione del canale"
+        paid: false
+      - participant: "marcobelleri"
+        role: "Collaboratore occasionale"
+        videos: 15
+        hours_worked: 15
+        paid: false
     financiers:
       - "markpostura"
+      - "marcobelleri"
     updated_at: "2026-07-24"
     related_projects:
       - "produzione-contenuti-posturacorretta"
@@ -780,7 +853,7 @@ projects:
       repayment: { date: null, state: "planned" }
     finances:
       tracking: "estimated"
-      project_cost: 18000
+      project_cost: 17500
     results:
       measured_at: "2026-07-27"
       videos_published: 300
@@ -788,25 +861,33 @@ projects:
         subscribers: 30800
         total_views: 2400000
         watch_time_hours: 138900
-        estimated_revenue: 5407.28
       last_365_days:
         total_views: 596000
         watch_time_hours: 23500
         watch_time_change_percentage: -15
         subscribers_gained: 4000
         subscribers_change_percentage: -31
-        estimated_revenue: 1150.52
-      channel_estimated_value:
-      valuation_basis: "Da definire separando capacità reddituale, pubblico e valore storico dei contenuti"
     contributors:
       - participant: "markpostura"
         contributions:
           - type: "money"
-            value: 7500
-            description: "Costo stimato per la produzione di 300 video, circa 25 € per video"
+            value: 7125
+            description: "Denaro investito nella produzione dei video, esclusi i circa 15 video sostenuti da @marcobelleri"
           - type: "time"
-            value: 10500
-            description: "Valore stimato del tempo investito in ideazione, registrazione, revisione, pubblicazione e gestione di 300 video"
+            value: 9775
+            description: "Valore stimato del tempo non retribuito investito in ideazione, registrazione, copertine, pubblicazione e gestione del canale"
+        capital_repaid: 0
+        profit_received: 0
+      - participant: "marcobelleri"
+        contributions:
+          - type: "money"
+            value: 375
+            description: "Costo stimato sostenuto direttamente per circa 15 video, a 25 € per video"
+          - type: "time"
+            value: 225
+            hours: 15
+            hourly_rate: 15
+            description: "Valore prudenziale del tempo non retribuito investito nella partecipazione a circa 15 video"
         capital_repaid: 0
         profit_received: 0
     operational_activities: []

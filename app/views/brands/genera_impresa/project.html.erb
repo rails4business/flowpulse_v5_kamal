@@ -1,0 +1,32 @@
+<% content_for :title, "#{@project['title']} — GeneraImpresa" %>
+<% content_for :description, @project["summary"] %>
+<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+<% steps = @project.fetch("steps", []) %>
+<% completed = steps.count { |step| step["status"] == "completed" } %>
+
+<main class="min-h-screen bg-white">
+  <section class="border-b border-slate-200">
+    <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <%= link_to "← #{@brand&.fetch('name', 'Progetti')}", @brand ? genera_impresa_brand_path(@brand.fetch("slug")) : genera_impresa_path, class: "text-sm font-bold text-slate-500 hover:text-slate-900" %>
+      <p class="mt-8 text-xs font-black uppercase tracking-wider text-red-600"><%= @project["category"] %></p>
+      <h1 class="mt-3 text-4xl font-black tracking-tight sm:text-5xl"><%= @project["title"] %></h1>
+      <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600"><%= @project["summary"] %></p>
+      <dl class="mt-8 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Responsabile</dt><dd class="mt-1 font-black"><%= @project["owner"].presence || "Da definire" %></dd></div>
+        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Stato</dt><dd class="mt-1 font-black"><%= @project["status_label"].presence || @project["status"].to_s.humanize %></dd></div>
+        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Avanzamento</dt><dd class="mt-1 font-black"><%= completed %>/<%= steps.size %> step</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-black">Step del progetto</h2>
+    <ol class="mt-6 divide-y divide-slate-200 border-y border-slate-200">
+      <% steps.each_with_index do |step, index| %><li class="flex gap-4 py-5"><span class="flex size-8 shrink-0 items-center justify-center rounded-full <%= step['status'] == 'completed' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500' %> text-xs font-black"><%= step['status'] == 'completed' ? '✓' : index + 1 %></span><div><h3 class="font-black"><%= step["title"] %></h3><p class="mt-1 text-sm leading-6 text-slate-600"><%= step["description"] %></p></div></li><% end %>
+    </ol>
+    <% if @project["public_path"].present? %>
+      <%= link_to "Apri la webapp →", @project["public_path"], class: "mt-8 inline-flex rounded-lg bg-red-600 px-4 py-2.5 text-sm font-black text-white hover:bg-red-700" %>
+    <% elsif @project["source"] == "posturacorretta" && @project["generaimpresa_origin"] == "generaimpresa" %>
+      <%= link_to "Apri la scheda operativa su PosturaCorretta →", posturacorretta_progetto_path(@project.fetch("slug")), class: "mt-8 inline-flex rounded-lg bg-red-600 px-4 py-2.5 text-sm font-black text-white hover:bg-red-700" %>
+    <% end %>
+  </section>
+</main>

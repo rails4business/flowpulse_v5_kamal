@@ -2,145 +2,89 @@
   <%= render "posturacorretta/header" %>
 <% end %>
 
-<%
-  guide_keys = %w[cura prevenzione performance fisiologia benessere ambiente potenziale]
-  guides = guide_keys.filter_map { |key| [key, @paths[key]] if @paths[key].present? }
-%>
+<div id="top" class="bg-white text-slate-900 antialiased min-h-screen">
 
-<div id="top" class="bg-white text-slate-900 antialiased">
+  <%# -- SUPERADMIN DEBUG BANNER -- %>
+  <% if Current.user&.superadmin_user? %>
+    <div class="bg-indigo-600 text-white text-sm font-semibold py-2 px-4 flex justify-between items-center shadow-inner">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+        <span>Area Superadmin: Hub Documentale "Percorso"</span>
+      </div>
+      <div class="text-xs font-mono opacity-90 truncate max-w-lg" title="/Users/hselectronics/Documents/Code/flowpulse_v_5/config/data/posturacorretta/percorso">
+        Path: /config/data/posturacorretta/percorso
+      </div>
+    </div>
+  <% end %>
+
   <main>
-    <section id="linee-guida" class="scroll-mt-24 px-5 py-12 md:py-20">
+    <section class="px-5 py-12 md:py-20">
       <div class="mx-auto w-full max-w-6xl">
-        <div class="grid gap-10 lg:grid-cols-[13rem_minmax(0,1fr)]">
+        <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
+
+          <%# -- DINAMIC ASIDE (2 Levels) -- %>
           <aside class="hidden lg:block">
-            <nav class="sticky top-24 space-y-1 border-l border-slate-200 pl-4 text-sm" aria-label="Indice della pagina">
-              <a href="#inizia" class="block py-1.5 font-semibold text-blue-700">Inizia</a>
-              <a href="#guide" class="block py-1.5 text-slate-600 hover:text-blue-700">Linee guida</a>
-              <a href="#ambiti" class="block py-1.5 text-slate-600 hover:text-blue-700">Ambiti</a>
-              <a href="#aree" class="block py-1.5 text-slate-600 hover:text-blue-700">Aree</a>
-              <a href="#professionisti" class="block py-1.5 text-slate-600 hover:text-blue-700">Professionisti</a>
+            <nav class="sticky top-24 space-y-4 text-sm" aria-label="Indice della pagina">
+              <% @aside_items.each do |item| %>
+                <div class="space-y-1">
+                  <% if item["type"] == "group" %>
+                    <p class="pt-2 pb-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-950"><%= item["title"] %></p>
+                  <% else %>
+                    <a href="<%= posturacorretta_percorso_path(page: item['slug']) %>" class="block py-1.5 font-semibold <%= params[:page] == item['slug'] || (params[:page].blank? && item['slug'] == 'inizia') ? 'text-blue-700' : 'text-slate-900 hover:text-blue-700' %>">
+                      <%= item["title"] %>
+                    </a>
+                  <% end %>
+
+                  <% if item["children"].present? %>
+                    <div class="-ml-1 mt-1 space-y-1 border-l border-slate-100 pl-3">
+                      <% item["children"].each do |child| %>
+                        <a href="<%= posturacorretta_percorso_path(page: child['slug']) %>" class="block py-1.5 text-sm <%= params[:page] == child['slug'] ? 'text-blue-700 font-medium' : 'text-slate-500 hover:text-blue-700' %>">
+                          <%= child["title"] %>
+                        </a>
+                        <% if child["children"].present? %>
+                          <div class="ml-2 space-y-1 border-l border-slate-100 pl-3">
+                            <% child["children"].each do |grandchild| %>
+                              <a href="<%= posturacorretta_percorso_path(page: grandchild['slug']) %>" class="block py-1 text-xs <%= params[:page] == grandchild['slug'] ? 'font-medium text-blue-700' : 'text-slate-500 hover:text-blue-700' %>">
+                                <%= grandchild["title"] %>
+                              </a>
+                            <% end %>
+                          </div>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
             </nav>
           </aside>
 
-          <div class="min-w-0 space-y-16">
-            <section id="inizia" class="scroll-mt-24">
-              <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_18rem] xl:items-start">
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">Percorso PosturaCorretta</p>
-                  <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl">Linee guida per orientarti</h1>
-                  <p class="mt-4 max-w-3xl text-base leading-7 text-slate-600">
-                    Le linee guida collegano bisogni, ambiti della vita, aree d'intervento e professionisti. Puoi consultarle liberamente e approfondirle un passo alla volta.
-                  </p>
-                  <p class="mt-4 max-w-3xl text-sm leading-6 text-slate-500">
-                    Scegli il bisogno più vicino alla tua situazione attuale. Per ora il menu apre la linea guida corrispondente; in seguito raccoglierà i dati utili per un primo orientamento personalizzato.
-                  </p>
+          <%# -- DINAMIC CONTENT AREA -- %>
+          <div class="min-w-0">
+            <% if @page_content.present? %>
+              <div class="flex flex-col xl:flex-row gap-10 xl:items-start">
+                <article class="path-document-content markdown-content min-w-0 flex-1">
+                  <%= markdown(@page_content) %>
+                </article>
 
-                  <div class="mt-6 max-w-xl">
-                    <label for="path-select" class="block text-sm font-semibold text-slate-950">Da dove vuoi iniziare?</label>
-                    <div class="relative mt-2">
-                      <select id="path-select" class="w-full appearance-none rounded-lg border border-slate-400 bg-white py-3 pl-4 pr-11 text-sm font-semibold text-slate-900 shadow-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100">
-                        <option value="" selected>Seleziona il tuo percorso…</option>
-                        <option value="cura">Stop al dolore</option>
-                        <option value="cura">Percorso terapeutico</option>
-                        <option value="prevenzione">Prevenzione</option>
-                        <option value="performance">Performance</option>
-                        <option value="fisiologia">Postura e fisiologia</option>
-                        <option value="benessere">Benessere integrato</option>
-                        <option value="potenziale">Il giardino del corpo</option>
-                      </select>
-                      <svg aria-hidden="true" class="pointer-events-none absolute right-4 top-1/2 size-5 -translate-y-1/2 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
-                      </svg>
-                    </div>
-                    <button id="path-start-button" type="button" disabled class="mt-3 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto">
-                      Inizia il percorso
-                      <span aria-hidden="true" class="ml-2">&rarr;</span>
-                    </button>
-                  </div>
-                </div>
-
-                <aside class="rounded-xl border border-blue-200 bg-blue-50 p-5" aria-label="Raccolta dati in preparazione">
-                  <span class="inline-flex rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-blue-700">In preparazione</span>
-                  <h3 class="mt-3 font-semibold text-slate-950">Raccolta dati iniziale</h3>
-                  <p class="mt-2 text-sm leading-6 text-slate-600">Esigenze, obiettivi, attività e informazioni utili per orientare il percorso.</p>
-                  <p class="mt-3 border-t border-blue-200 pt-3 text-xs leading-5 text-slate-500">Non sostituisce valutazioni, diagnosi o professionisti sanitari.</p>
+                <aside class="hidden xl:block w-64 shrink-0 sticky top-24">
+                  <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-4">Indice della pagina</div>
+                  <nav class="path-document-toc border-l border-slate-200 pl-4" aria-label="Titoli del documento">
+                    <%= markdown_toc(@page_content) %>
+                  </nav>
                 </aside>
               </div>
-            </section>
-
-            <section id="guide" class="scroll-mt-24">
-              <h3 class="text-2xl font-semibold tracking-tight text-slate-950">Da dove puoi partire</h3>
-              <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                Scegli la guida più vicina alla tua situazione. I contenuti verranno completati e aggiornati progressivamente.
-              </p>
-
-              <div class="mt-6 divide-y divide-slate-200 border-y border-slate-200">
-                <% guides.each do |key, guide| %>
-                  <details id="guida-<%= key %>" class="group scroll-mt-24">
-                    <summary class="flex cursor-pointer list-none items-start justify-between gap-5 py-5 [&::-webkit-details-marker]:hidden">
-                      <span>
-                        <span class="block text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= guide["kicker"] %></span>
-                        <span class="mt-1 block text-lg font-semibold text-slate-950"><%= guide["title"] %></span>
-                        <span class="mt-2 block max-w-3xl text-sm leading-6 text-slate-600"><%= guide["description"] %></span>
-                      </span>
-                      <svg aria-hidden="true" class="mt-1 size-5 shrink-0 text-slate-500 transition group-open:-rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="m6 9 6 6 6-6" />
-                      </svg>
-                    </summary>
-
-                    <% if guide["steps"].present? %>
-                      <div class="pb-6">
-                        <p class="mb-4 text-sm font-semibold text-slate-900"><%= guide["stepsTitle"] %></p>
-                        <ol class="grid gap-3 md:grid-cols-2">
-                          <% guide["steps"].each_with_index do |step, index| %>
-                            <li class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                              <p class="text-xs font-semibold uppercase tracking-wide text-blue-700"><%= index + 1 %> · <%= step["label"] %></p>
-                              <h4 class="mt-2 font-semibold text-slate-950"><%= step["title"] %></h4>
-                              <p class="mt-2 text-sm leading-6 text-slate-600"><%= step["description"] %></p>
-                            </li>
-                          <% end %>
-                        </ol>
-                      </div>
-                    <% end %>
-                  </details>
-                <% end %>
+            <% elsif @page_partial.present? %>
+              <%= render @page_partial %>
+            <% else %>
+              <div class="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-700">
+                <svg class="mx-auto h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <h3 class="font-bold text-lg mb-1">Contenuto non trovato</h3>
+                <p>La pagina richiesta non esiste o è stata rimossa.</p>
+                <a href="<%= posturacorretta_percorso_path(page: 'inizia') %>" class="mt-4 inline-block font-semibold underline">Torna all'inizio</a>
               </div>
-            </section>
-
-            <section id="ambiti" class="scroll-mt-24 border-t border-slate-200 pt-12">
-              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                <%= render "posturacorretta/chakras_ambiti" %>
-              </div>
-            </section>
-
-            <section id="aree" class="scroll-mt-24 border-t border-slate-200 pt-12">
-              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                <%= render "posturacorretta/aree" %>
-              </div>
-            </section>
-
-            <section id="professionisti" class="scroll-mt-24 border-t border-slate-200 pt-12">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Professionisti</p>
-              <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Chi può accompagnarti?</h3>
-              <p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-                Ogni figura mantiene il proprio ruolo. Le linee guida aiutano a comprendere quando può essere utile un professionista sanitario, del benessere o una proposta educativa aperta a tutti.
-              </p>
-
-              <div class="mt-6 grid gap-4 md:grid-cols-3">
-                <% [
-                  ["Sanitari", "Professionisti sanitari", "Valutazione, diagnosi, cura, riabilitazione e attività riservate alle professioni sanitarie.", "border-red-200 bg-red-50", "text-red-700", "text-red-950", "text-red-900"],
-                  ["Benessere", "Professionisti del benessere", "Pratiche e attività dedicate al benessere, nel rispetto dei confini professionali.", "border-emerald-200 bg-emerald-50", "text-emerald-700", "text-emerald-950", "text-emerald-900"],
-                  ["Educazione", "Proposte aperte a tutti", "Conoscenze ed esperienze introduttive per conoscere meglio il corpo e orientarsi.", "border-blue-200 bg-blue-50", "text-blue-700", "text-blue-950", "text-blue-900"]
-                ].each do |eyebrow, title, description, card_classes, eyebrow_classes, title_classes, copy_classes| %>
-                  <article class="rounded-xl border p-5 shadow-sm <%= card_classes %>">
-                    <p class="text-xs font-semibold uppercase tracking-[0.15em] <%= eyebrow_classes %>"><%= eyebrow %></p>
-                    <h4 class="mt-2 font-semibold <%= title_classes %>"><%= title %></h4>
-                    <p class="mt-2 text-sm leading-6 <%= copy_classes %>"><%= description %></p>
-                  </article>
-                <% end %>
-              </div>
-            </section>
+            <% end %>
           </div>
+
         </div>
       </div>
     </section>
@@ -148,44 +92,3 @@
 
   <%= render "posturacorretta/footer" %>
 </div>
-
-<script>
-  (() => {
-    const initializePathSelect = () => {
-      const select = document.getElementById("path-select");
-      const startButton = document.getElementById("path-start-button");
-      if (!select || !startButton || select.dataset.ready === "true") return;
-      select.dataset.ready = "true";
-
-      const openGuide = (key) => {
-        if (!key) return;
-        const guide = document.getElementById(`guida-${key}`);
-        if (!guide) return;
-        guide.open = true;
-        history.replaceState(null, "", `#guida-${key}`);
-        guide.scrollIntoView({ behavior: "smooth", block: "start" });
-      };
-
-      const syncStartButton = () => {
-        startButton.disabled = !select.value;
-      };
-
-      select.addEventListener("change", syncStartButton);
-      startButton.addEventListener("click", () => openGuide(select.value));
-
-      const match = window.location.hash.match(/^#guida-(.+)$/);
-      if (match) {
-        select.value = match[1];
-        const guide = document.getElementById(`guida-${match[1]}`);
-        if (guide) guide.open = true;
-      }
-      syncStartButton();
-    };
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initializePathSelect);
-    } else {
-      initializePathSelect();
-    }
-  })();
-</script>

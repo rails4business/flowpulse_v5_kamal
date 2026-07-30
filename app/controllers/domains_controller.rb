@@ -69,6 +69,18 @@ class DomainsController < ApplicationController
       if target_controller == "landing"
         prepare_landing_target(target_action)
         render "landing/#{target_action}"
+      elsif target_controller == "brands/genera_impresa" && target_action == "index"
+        @catalog = GeneraImpresaCatalog.load
+        @site = @catalog.site
+        @brands = @catalog.brands
+        render "brands/genera_impresa/index"
+      elsif target_controller == "brands/svuotamente" && target_action == "index"
+        render "brands/svuotamente/index", layout: false
+      elsif target_controller == "brands/impegno/home" && target_action == "index"
+        render "brands/impegno/home/index"
+      elsif target_controller == "brands/posturacorretta" && target_action == "home"
+        prepare_landing_target("posturacorretta")
+        render "landing/posturacorretta"
       else
         render "#{target_controller}/#{target_action}"
       end

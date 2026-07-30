@@ -12,20 +12,34 @@ Rails.application.routes.draw do
   get "markpostura" => "landing#markpostura", as: :markpostura
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
-  get "posturacorretta" => "landing#posturacorretta", as: :posturacorretta
-  get "posturacorretta/accademia" => "posturacorretta#accademia", as: :posturacorretta_accademia
-  get "posturacorretta/percorso" => "posturacorretta#percorso", as: :posturacorretta_percorso
-  get "posturacorretta/metodiche" => "posturacorretta#metodiche", as: :posturacorretta_metodiche
-  get "posturacorretta/metodiche/:slug" => "posturacorretta#metodica", as: :posturacorretta_metodica
-  get "posturacorretta/professionisti" => "posturacorretta#professionisti", as: :posturacorretta_professionisti
-  get "posturacorretta/contenuti" => "posturacorretta#contenuti", as: :posturacorretta_contenuti
-  get "posturacorretta/contenuti/:slug" => "posturacorretta#articolo", as: :posturacorretta_articolo
-  get "posturacorretta/eventi" => "posturacorretta#eventi", as: :posturacorretta_eventi
-  get "posturacorretta/libro" => "posturacorretta#libro", as: :posturacorretta_libro
+  get "posturacorretta" => "brands/posturacorretta#home", as: :posturacorretta
+  get "posturacorretta/accademia" => "brands/posturacorretta#accademia", as: :posturacorretta_accademia
+  get "posturacorretta/percorso" => "brands/posturacorretta#percorso", as: :posturacorretta_percorso
+  get "posturacorretta/metodiche" => "brands/posturacorretta#metodiche", as: :posturacorretta_metodiche
+  get "posturacorretta/metodiche/:slug" => "brands/posturacorretta#metodica", as: :posturacorretta_metodica
+  get "posturacorretta/professionisti" => "brands/posturacorretta#professionisti", as: :posturacorretta_professionisti
+  get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
+  get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo
+  get "posturacorretta/eventi" => "brands/posturacorretta#eventi", as: :posturacorretta_eventi
+  get "posturacorretta/libro" => "brands/posturacorretta#libro", as: :posturacorretta_libro
   get "posturacorretta/filosofia" => redirect("/posturacorretta/libro", status: 301), as: :posturacorretta_filosofia
-  get "posturacorretta/progetti" => "posturacorretta#progetti", as: :posturacorretta_progetti
-  get "posturacorretta/progetti/:slug" => "posturacorretta#progetto", as: :posturacorretta_progetto
-  get "posturacorretta/collabora" => "posturacorretta#collabora", as: :posturacorretta_collabora
+  get "posturacorretta/progetti" => "brands/posturacorretta#progetti", as: :posturacorretta_progetti
+  get "posturacorretta/progetti/:slug" => "brands/posturacorretta#progetto", as: :posturacorretta_progetto
+  resources :data_commitments, controller: "brands/impegno/commitments", only: %i[index create update destroy], path: "impegni" do
+    member do
+      patch :start
+      patch :complete
+    end
+  end
+  get "posturacorretta/collabora" => "brands/posturacorretta#collabora", as: :posturacorretta_collabora
+  get "posturacorretta/collabora/professionisti" => "brands/posturacorretta#collabora_professionisti", as: :posturacorretta_collabora_professionisti
+  get "posturacorretta/collabora/digital" => "brands/posturacorretta#collabora_digital", as: :posturacorretta_collabora_digital
+  get "generaimpresa" => "brands/genera_impresa#index", as: :genera_impresa
+  get "generaimpresa/brand/:slug" => "brands/genera_impresa#brand", as: :genera_impresa_brand
+  get "generaimpresa/progetti/:slug" => "brands/genera_impresa#project", as: :genera_impresa_project
+  get "brands/svuotamente" => "brands/svuotamente#index", as: :svuotamente
+  get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
+  get "impegno" => "brands/impegno/home#index", as: :impegno
 
   # Dashboard utente loggato
   get "dashboard" => "home#dashboard", as: :dashboard

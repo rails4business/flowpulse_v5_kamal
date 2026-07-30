@@ -1,0 +1,35 @@
+<% content_for :title, "Impegno — Il tuo tempo, in un solo posto" %>
+<% content_for :description, "Organizza appuntamenti, attività e tempo lavorato in un calendario personale collegato ai tuoi brand." %>
+
+<header class="border-b border-slate-200 bg-white">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <% brand_link = link_to impegno_path, class: "flex items-center gap-3 font-black text-slate-950" do %>
+      <span class="flex size-9 items-center justify-center rounded-xl bg-blue-600 text-sm text-white">I</span>
+      <span>Impegno</span>
+    <% end %>
+    <%= brand_link %>
+    <%= link_to authenticated? ? "Apri il calendario" : "Accedi", authenticated? ? data_commitments_path : new_session_path(return_to: data_commitments_path), class: "rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
+  </div>
+</header>
+
+<main class="bg-white">
+  <section class="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_25rem] lg:py-24">
+    <div>
+      <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-wider text-blue-700">Calendario personale</span>
+      <h1 class="mt-5 max-w-3xl text-4xl font-black tracking-tight text-slate-950 sm:text-6xl">Il tuo tempo, in un solo posto.</h1>
+      <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Raccogli appuntamenti, attività e tempo lavorato. Guarda tutto insieme oppure filtra il calendario per PosturaCorretta, GeneraImpresa, SvuotaMente e gli altri brand a cui partecipi.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <%= link_to "Apri Impegno →", authenticated? ? data_commitments_path : new_user_path(return_to: data_commitments_path), class: "rounded-lg bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-700" %>
+        <% unless authenticated? %><%= link_to "Ho già un account", new_session_path(return_to: data_commitments_path), class: "rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-50" %><% end %>
+      </div>
+    </div>
+    <aside class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+      <p class="text-xs font-black uppercase tracking-wider text-blue-700">Un calendario, più contesti</p>
+      <ul class="mt-5 space-y-3 text-sm font-bold text-slate-700">
+        <% ["Tutti i brand", "PosturaCorretta", "GeneraImpresa", "SvuotaMente"].each_with_index do |label, index| %>
+          <li class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3"><span class="size-2 rounded-full <%= index.zero? ? 'bg-blue-600' : 'bg-slate-300' %>"></span><%= label %></li>
+        <% end %>
+      </ul>
+    </aside>
+  </section>
+</main>

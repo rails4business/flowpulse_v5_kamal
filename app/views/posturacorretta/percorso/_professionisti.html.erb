@@ -1,0 +1,21 @@
+<section id="professionisti" class="scroll-mt-24">
+  <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Professionisti</p>
+  <h3 class="mt-2 text-2xl font-black tracking-tight text-slate-950">Chi può accompagnarti?</h3>
+  <p class="mt-3 max-w-3xl text-sm leading-normal text-slate-600">
+    Ogni figura mantiene il proprio ruolo. Le linee guida aiutano a comprendere quando può essere utile un professionista sanitario, del benessere o una proposta educativa aperta a tutti.
+  </p>
+
+  <div class="mt-6 grid gap-4 md:grid-cols-3">
+    <% [
+      ["Sanitari", "Professionisti sanitari", "Valutazione, diagnosi, cura, riabilitazione e attività riservate alle professioni sanitarie.", "border-red-200 bg-red-50", "text-red-700", "text-red-950", "text-red-900"],
+      ["Benessere", "Professionisti del benessere", "Pratiche e attività dedicate al benessere, nel rispetto dei confini professionali.", "border-emerald-200 bg-emerald-50", "text-emerald-700", "text-emerald-950", "text-emerald-900"],
+      ["Educazione", "Proposte aperte a tutti", "Conoscenze ed esperienze introduttive per conoscere meglio il corpo e orientarsi.", "border-blue-200 bg-blue-50", "text-blue-700", "text-blue-950", "text-blue-900"]
+    ].each do |eyebrow, title, description, card_classes, eyebrow_classes, title_classes, copy_classes| %>
+      <article class="rounded-xl border p-5 shadow-sm <%= card_classes %>">
+        <p class="text-xs font-semibold uppercase tracking-[0.15em] <%= eyebrow_classes %>"><%= eyebrow %></p>
+        <h4 class="mt-2 text-xl font-black <%= title_classes %>"><%= title %></h4>
+        <p class="mt-2 text-sm leading-normal <%= copy_classes %>"><%= description %></p>
+      </article>
+    <% end %>
+  </div>
+</section>

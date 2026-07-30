@@ -1,0 +1,41 @@
+<% content_for :title, "GeneraImpresa — Brand e progetti" %>
+<% content_for :description, @site["description"] %>
+<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+
+<div class="bg-slate-50 text-slate-950">
+  <section class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <span class="inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-black uppercase tracking-wider text-red-700">Progetti trasparenti</span>
+      <h1 class="mt-5 max-w-4xl text-4xl font-black tracking-tight sm:text-6xl"><%= @site["tagline"] %></h1>
+      <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600"><%= @site["description"] %></p>
+    </div>
+  </section>
+
+  <section id="brand" class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <p class="text-xs font-black uppercase tracking-wider text-red-600">Organizzazioni e identità</p>
+    <h2 class="mt-2 text-3xl font-black">Brand</h2>
+    <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Un brand può raccogliere molti progetti oppure nascere attorno a un unico progetto.</p>
+    <div class="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <% @brands.each do |brand| %>
+        <% brand_card = link_to genera_impresa_brand_path(brand.fetch("slug")), class: "rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-red-200 hover:shadow-md" do %>
+          <div class="flex items-center gap-4">
+            <% if brand["logo_url"].present? %><%= image_tag brand["logo_url"], alt: "", class: "size-12 rounded-full object-contain" %><% else %><span class="flex size-12 items-center justify-center rounded-full bg-red-600 text-xs font-black text-white"><%= brand["name"].first(2).upcase %></span><% end %>
+            <div><h3 class="font-black text-slate-950"><%= brand["name"] %></h3><p class="mt-0.5 text-xs font-bold text-slate-400"><%= brand.fetch("projects", []).size %> <%= brand.fetch("projects", []).one? ? "progetto" : "progetti" %></p></div>
+          </div>
+          <p class="mt-4 text-sm leading-6 text-slate-600"><%= brand["description"] %></p>
+        <% end %>
+        <%= brand_card %>
+      <% end %>
+    </div>
+  </section>
+
+  <section id="progetti" class="border-t border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <p class="text-xs font-black uppercase tracking-wider text-red-600">Dal progetto al risultato</p>
+      <h2 class="mt-2 text-3xl font-black">Progetti</h2>
+      <div class="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <% @catalog.projects.each do |project| %><%= render "brands/genera_impresa/project_card", project: project %><% end %>
+      </div>
+    </div>
+  </section>
+</div>

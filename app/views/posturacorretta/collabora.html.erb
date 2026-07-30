@@ -1,0 +1,78 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<div class="bg-white text-slate-900 antialiased min-h-screen">
+  <div class="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-base font-semibold leading-7 text-blue-600 uppercase tracking-widest">PosturaCorretta</h2>
+      <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl font-['Cormorant_Garamond']">Collabora con noi</p>
+      <p class="mt-6 text-lg leading-8 text-gray-600">
+        Unisciti alla nostra rete per migliorare la vita delle persone. Che tu sia un professionista della salute, un investitore o un esperto digitale, abbiamo uno spazio per te.
+      </p>
+    </div>
+
+    <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-auto lg:max-w-none lg:grid-cols-3 lg:gap-8">
+      
+      <!-- Card Professionisti -->
+      <a href="<%= posturacorretta_collabora_professionisti_path %>" class="group flex flex-col justify-between rounded-3xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+        <div>
+          <div class="flex items-center gap-x-4">
+            <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 group-hover:text-emerald-700 transition-colors">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold leading-8 text-gray-900">Professionisti</h3>
+          </div>
+          <p class="mt-6 text-base leading-7 text-gray-600">Per esperti della salute, del benessere e del movimento che desiderano entrare nella nostra rete clinica ed educativa.</p>
+        </div>
+        <div class="mt-8 flex items-center gap-x-2 text-sm font-semibold leading-6 text-emerald-600 group-hover:text-emerald-700">
+          Scopri le modalità d'ingresso
+          <span aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+
+      <!-- Card Investitori (Progetti) -->
+      <a href="<%= posturacorretta_progetti_path %>" class="group flex flex-col justify-between rounded-3xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+        <div>
+          <div class="flex items-center gap-x-4">
+            <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.315 48.315 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold leading-8 text-gray-900">Investitori</h3>
+          </div>
+          <p class="mt-6 text-base leading-7 text-gray-600">Esplora i nostri progetti di ricerca e sviluppo. Sostieni economicamente la crescita della piattaforma e dei prototipi.</p>
+        </div>
+        <div class="mt-8 flex items-center gap-x-2 text-sm font-semibold leading-6 text-indigo-600 group-hover:text-indigo-700">
+          Visualizza i progetti
+          <span aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+
+      <!-- Card Digital -->
+      <a href="<%= posturacorretta_collabora_digital_path %>" class="group flex flex-col justify-between rounded-3xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+        <div>
+          <div class="flex items-center gap-x-4">
+            <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-orange-50 text-orange-600 group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold leading-8 text-gray-900">Digital & Tech</h3>
+          </div>
+          <p class="mt-6 text-base leading-7 text-gray-600">Aiutaci a far crescere la piattaforma, la SEO, e la gestione operativa. Task tecnici e collaborazioni digitali.</p>
+        </div>
+        <div class="mt-8 flex items-center gap-x-2 text-sm font-semibold leading-6 text-orange-600 group-hover:text-orange-700">
+          Vedi i task aperti
+          <span aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<%= render "posturacorretta/footer" %>

@@ -1,0 +1,45 @@
+projects:
+  - slug: "webapp-svuotamente"
+    source: "generaimpresa"
+    title: "Webapp SvuotaMente"
+    category: "Piattaforma digitale"
+    status: "in_progress"
+    status_label: "In realizzazione"
+    summary: "Progettare e realizzare la webapp che accompagna persone e organizzazioni nel vendere, donare e destinare gli oggetti entro una scadenza."
+    owner: "@markpostura"
+    public_path: "/brands/svuotamente"
+    steps:
+      - key: "validare-proposta"
+        title: "Validare la proposta e il flusso"
+        description: "Chiarire utenti, casi d’uso, scadenze e passaggi dal censimento alla destinazione degli oggetti."
+        status: "in_progress"
+        assignee: "@markpostura"
+        tasks:
+          - key: "verificare-prototipo"
+            title: "Verificare il prototipo navigabile"
+            assignee: "@markpostura"
+            work_logs: []
+      - key: "costruire-mvp"
+        title: "Costruire l’MVP"
+        description: "Trasformare il prototipo HTML in una webapp con account, spazi, inventario e richieste."
+        status: "pending"
+        assignee: "@rails4business"
+        tasks:
+          - key: "modellare-dati"
+            title: "Modellare spazi, oggetti, destinazioni e scadenze"
+            assignee: "@rails4business"
+            work_logs: []
+          - key: "implementare-flussi"
+            title: "Implementare i flussi principali della webapp"
+            assignee: "@rails4business"
+            work_logs: []
+      - key: "testare-lancio"
+        title: "Testare e preparare il lancio"
+        description: "Provare l’MVP con i primi casi reali, correggere il flusso e preparare la pubblicazione."
+        status: "pending"
+        assignee: "@markpostura"
+        tasks:
+          - key: "test-primi-utenti"
+            title: "Eseguire il test con i primi utenti"
+            assignee: "@markpostura"
+            work_logs: []

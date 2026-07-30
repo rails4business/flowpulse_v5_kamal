@@ -16,7 +16,27 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   test "should get percorso" do
     get posturacorretta_percorso_url
     assert_response :success
-    assert_includes response.body, "Costruisci"
+    assert_includes response.body, "Inizia un percorso"
+    assert_includes response.body, "Pazienti"
+    assert_includes response.body, "Come iniziare il percorso"
+  end
+
+  test "should render professional guide from markdown" do
+    get posturacorretta_percorso_url(page: "professionisti-iniziare-percorso")
+
+    assert_response :success
+    assert_select "h1", text: "Come iniziare il percorso"
+    assert_select "nav[aria-label='Titoli del documento'] a[href='#raccogliere-le-informazioni-iniziali']", text: "Raccogliere le informazioni iniziali"
+  end
+
+  test "markdown percorso has a linked heading-only index" do
+    get posturacorretta_percorso_url(page: "stop-al-dolore")
+
+    assert_response :success
+    assert_select "article.path-document-content h1#stop-al-dolore", "Stop al dolore"
+    assert_select "nav.path-document-toc a[href='#stop-al-dolore']", "Stop al dolore"
+    assert_operator css_select("nav.path-document-toc a").size, :>=, 10
+    assert_select "nav.path-document-toc", text: /Questa linea guida/, count: 0
   end
 
   test "should get metodiche index" do
@@ -36,7 +56,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   test "should get contenuti" do
     get posturacorretta_contenuti_url
     assert_response :success
-    assert_includes response.body, "PosturaCorretta Blog"
+    assert_includes response.body, "Contenuti"
   end
 
   test "should get eventi" do
@@ -56,9 +76,10 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to posturacorretta_libro_url
   end
 
-  test "collabora redirects to progetti" do
+  test "should get collabora" do
     get posturacorretta_collabora_url
-    assert_redirected_to posturacorretta_progetti_url
+    assert_response :success
+    assert_includes response.body, "Collabora con noi"
   end
 
   test "should get progetti" do

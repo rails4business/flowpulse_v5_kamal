@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Flowpulse V 5" %></title>
+    <% page_domain = Current.domain || current_domain %>
+    <% page_title = content_for(:title).presence || page_domain&.site_title.presence || "Flowpulse" %>
+    <% page_description = content_for(:description).presence || page_domain&.site_description.presence || "Progetti, percorsi e strumenti digitali." %>
+    <% fallback_favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23dc2626'/%3E%3C/svg%3E" %>
+    <% page_favicon = page_domain&.favicon_url.presence || page_domain&.logo_square_url.presence || fallback_favicon %>
+    <title><%= page_title %></title>
+    <meta name="description" content="<%= page_description %>">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Flowpulse V 5">
+    <meta name="application-name" content="<%= page_domain&.site_title.presence || page_title %>">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -14,9 +20,8 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="icon" href="<%= page_favicon %>">
+    <link rel="apple-touch-icon" href="<%= page_favicon %>">
 
     <%= stylesheet_link_tag "normalize", "tailwind", "application", "posturacorretta", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
@@ -24,6 +29,7 @@
 
   <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if content_for?(:landing_nav) && (request.path.start_with?("/posturacorretta") || controller_name.in?(%w[domains landing])) %>">
     <%= yield :landing_nav if content_for?(:landing_nav) %>
+    <%= render "shared/active_commitment", commitment: active_data_commitment if content_for?(:landing_nav) && active_data_commitment %>
 
     <% revision_project_slug = posturacorretta_revision_project if respond_to?(:posturacorretta_revision_project) %>
     <% if revision_project_slug %>
