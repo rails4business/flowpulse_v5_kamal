@@ -33,7 +33,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_percorso_url(page: "stop-al-dolore")
 
     assert_response :success
-    assert_select "article.path-document-content h1#stop-al-dolore", "Stop al dolore"
+    assert_select "article.pc-rich-text h1#stop-al-dolore", "Stop al dolore"
     assert_select "nav.path-document-toc a[href='#stop-al-dolore']", "Stop al dolore"
     assert_operator css_select("nav.path-document-toc a").size, :>=, 10
     assert_select "nav.path-document-toc", text: /Questa linea guida/, count: 0
@@ -51,6 +51,8 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Godelieve Denys-Struyf"
     assert_includes response.body, "Professionisti collegati"
+    assert_select "body.posturacorretta-ui"
+    assert_select "article.pc-rich-text h1", text: "Biomeccanica Comportamentale GDS"
   end
 
   test "should get contenuti" do

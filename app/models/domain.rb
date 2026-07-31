@@ -1,5 +1,5 @@
 class Domain < ApplicationRecord
-  store_accessor :settings, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url
+  store_accessor :settings, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url, :social_image_url
 
   belongs_to :role_assignment, optional: true
   belongs_to :node, optional: true
@@ -104,6 +104,7 @@ class Domain < ApplicationRecord
       self.site_title = site_title.to_s.strip.presence
       self.site_description = site_description.to_s.strip.presence
       self.favicon_url = favicon_url.to_s.strip.presence
+      self.social_image_url = social_image_url.to_s.strip.presence
       self.settings = settings.to_h.compact.presence
     end
 

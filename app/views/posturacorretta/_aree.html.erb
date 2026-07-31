@@ -6,38 +6,123 @@
       <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
         Le aree per <span class="text-blue-700">agire sul corpo</span>
       </h2>
-      <p class="mt-4 text-base leading-7 text-slate-600">
-        In ogni ambito della vita puoi utilizzare strumenti diversi. Le aree d'intervento ti aiutano a capire che tipo di lavoro stai facendo con il corpo.
-      </p>
+      <div class="mt-5 space-y-4 text-base leading-relaxed text-slate-600">
+        <p>
+          La fisiologia è la materia che studia il funzionamento del nostro corpo. Sappiamo che è fortemente influenzata dalla chimica, ma subisce anche l'impatto di dinamiche più sottili che i nostri attuali strumenti faticano a misurare oggettivamente.
+        </p>
+        <p>
+          La Medicina Tradizionale Cinese ha un'impostazione che da millenni considera questa visione globale, ma spesso non si adatta facilmente al nostro modello medico occidentale.
+        </p>
+        <p>
+          Per questo in <strong>PosturaCorretta</strong>, analizzando le migliori metodiche posturali, abbiamo creato dei modelli (le Aree) per aiutare i professionisti a integrare la solidità scientifica con questa profonda visione globale. Le metodiche posturali diventano così un ponte, capace di tradurre e unificare il linguaggio tra medici, fisioterapisti, operatori del benessere ed esperti di medicina tradizionale cinese.
+        </p>
+      </div>
     </header>
 
-    <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <% areas.each do |key, area| %>
-        <article class="flex flex-col rounded-3xl border p-6 shadow-sm transition hover:shadow-md <%= area.fetch('classes') %>">
-          <div class="flex items-center justify-between">
-            <span class="inline-flex rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm ring-1 ring-white/30 backdrop-blur-sm">
-              <%= area.fetch('element') %>
-            </span>
-            <span class="text-sm font-bold uppercase tracking-widest opacity-80">
-              <%= area.fetch('imperative') %>
-            </span>
+    <div id="horizontal-areas" class="mt-12">
+      <%# TABS %>
+      <div role="tablist" aria-label="Aree di intervento" class="flex flex-nowrap overflow-x-auto gap-2 pb-4 mb-2 no-scrollbar">
+        <% first = true %>
+        <% areas.each do |key, area| %>
+          <% 
+             tab_active = area.fetch('classes')
+             tab_inactive = "bg-slate-100 text-slate-500 hover:bg-slate-200 border-transparent"
+          %>
+          <button 
+            type="button" 
+            role="tab" 
+            aria-selected="<%= first %>" 
+            aria-controls="area-panel-<%= key %>"
+            data-area-h-tab
+            data-active-classes="<%= tab_active %>"
+            data-inactive-classes="<%= tab_inactive %>"
+            class="whitespace-nowrap px-5 py-2.5 text-sm font-bold uppercase tracking-wider rounded-xl border transition-all <%= first ? tab_active : tab_inactive %>"
+          >
+            <%= area.fetch('label') %>
+          </button>
+          <% first = false %>
+        <% end %>
+      </div>
+
+      <%# PANELS %>
+      <div class="relative min-h-[300px]">
+        <% first = true %>
+        <% areas.each do |key, area| %>
+          <div 
+            id="area-panel-<%= key %>" 
+            role="tabpanel" 
+            data-area-h-panel
+            class="<%= first ? 'block' : 'hidden' %>"
+          >
+            <article class="flex flex-col md:flex-row gap-8 rounded-3xl border p-8 shadow-sm <%= area.fetch('classes') %>">
+              
+              <div class="md:w-1/3 shrink-0 flex flex-col justify-between">
+                <div>
+                  <span class="inline-flex rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm ring-1 ring-white/30 backdrop-blur-sm">
+                    <%= area.fetch('element') %>
+                  </span>
+                  <p class="mt-3 text-sm font-bold uppercase tracking-widest opacity-80">
+                    <%= area.fetch('imperative') %>
+                  </p>
+                  <h3 class="mt-2 text-3xl font-black font-['Cormorant_Garamond'] tracking-tight">
+                    <%= area.fetch('title') %>
+                  </h3>
+                  <p class="mt-2 text-sm font-semibold opacity-90">
+                    <%= area.fetch('meaning') %>
+                  </p>
+                </div>
+                <div class="mt-8 border-t border-current/20 pt-4">
+                  <p class="text-xs font-bold uppercase tracking-wider opacity-60">Azione</p>
+                  <p class="mt-1 text-sm font-medium opacity-90"><%= area.fetch('action') %></p>
+                </div>
+              </div>
+              
+              <div class="md:w-2/3 flex items-center">
+                <p class="text-lg md:text-xl leading-relaxed opacity-90">
+                  <%= area.fetch('description') %>
+                </p>
+              </div>
+
+            </article>
           </div>
-          
-          <h3 class="mt-5 text-2xl font-bold tracking-tight">
-            <%= area.fetch('title') %>
-          </h3>
-          <p class="mt-2 text-sm font-semibold opacity-90">
-            <%= area.fetch('meaning') %>
-          </p>
-          <p class="mt-4 flex-1 text-sm leading-6 opacity-80">
-            <%= area.fetch('description') %>
-          </p>
-          <div class="mt-6 border-t border-current/20 pt-4">
-            <p class="text-xs font-bold uppercase tracking-wider opacity-60">Azione</p>
-            <p class="mt-1 text-sm font-medium opacity-90"><%= area.fetch('action') %></p>
-          </div>
-        </article>
-      <% end %>
+          <% first = false %>
+        <% end %>
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  (() => {
+    const root = document.getElementById("horizontal-areas");
+    if (!root || root.dataset.areasReady === "true") return;
+    root.dataset.areasReady = "true";
+
+    const tabs = Array.from(root.querySelectorAll("[data-area-h-tab]"));
+    const panels = Array.from(root.querySelectorAll("[data-area-h-panel]"));
+
+    function selectTab(tab) {
+      tabs.forEach((item) => {
+        const selected = item === tab;
+        item.setAttribute("aria-selected", String(selected));
+        const activeCls = item.dataset.activeClasses.split(" ");
+        const inactiveCls = item.dataset.inactiveClasses.split(" ");
+        if (selected) {
+          item.classList.remove(...inactiveCls);
+          item.classList.add(...activeCls);
+        } else {
+          item.classList.remove(...activeCls);
+          item.classList.add(...inactiveCls);
+        }
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle("hidden", panel.id !== tab.getAttribute("aria-controls"));
+      });
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => selectTab(tab));
+    });
+  })();
+</script>

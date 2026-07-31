@@ -7,8 +7,10 @@ class PosturacorrettaMethodologies
   CONTENT_ROOT = Rails.root.join("config/data/posturacorretta/metodiche")
 
   REQUIRED_METHODOLOGY_KEYS = %w[
-    slug title founder founder_image_url short_description badge logo_url website_url content_path
+    slug title profession postural_methodology healing_methodology founder founder_image_url
+    short_description badge logo_url website_url content_path
   ].freeze
+  METHODOLOGY_BOOLEAN_KEYS = %w[profession postural_methodology healing_methodology].freeze
   REQUIRED_PROFESSIONAL_KEYS = %w[
     slug first_name last_name profession badge city province latitude longitude methodologies
   ].freeze
@@ -46,10 +48,19 @@ class PosturacorrettaMethodologies
     raise ArgumentError, "scuole.yml deve contenere schools" unless schools.is_a?(Array)
 
     methodology_slugs = methodologies.map { |methodology| methodology["slug"] }
+    duplicate_slugs = methodology_slugs.tally.select { |_slug, count| count > 1 }.keys
+    if duplicate_slugs.any?
+      raise ArgumentError, "Slug metodiche duplicati: #{duplicate_slugs.join(', ')}"
+    end
 
     methodologies.each do |methodology|
       missing = REQUIRED_METHODOLOGY_KEYS - methodology.keys
       raise ArgumentError, "Metodica incompleta: #{missing.join(', ')}" if missing.any?
+
+      invalid_booleans = METHODOLOGY_BOOLEAN_KEYS.reject { |key| methodology[key].in?([true, false]) }
+      if invalid_booleans.any?
+        raise ArgumentError, "Booleani metodica non validi per #{methodology.fetch('slug')}: #{invalid_booleans.join(', ')}"
+      end
 
       validate_content_path!(methodology.fetch("content_path"))
     end

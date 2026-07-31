@@ -1,21 +1,23 @@
 # Prevenzione
 
-Questa linea guida aiuta a prevenire difficoltà legate a lavoro, sport, età, postura quotidiana o fasi specifiche della vita.
+Questo tipo di programma è indicato per supportare l'utente nella prevenzione di difficoltà legate al lavoro, allo sport, all'età, alle abitudini posturali quotidiane o a fasi specifiche della vita. L'obiettivo del professionista è educare, monitorare e fornire strumenti pratici per evitare l'insorgenza di sintomi.
 
-## 1. Osservare
+## 1. Valutazione e Osservazione
 
-### Conosci i rischi della tua attività principale?
+### Conosci i rischi dell'attività principale del cliente?
 
-Riconosci carichi, gesti ripetuti, tempi di recupero, condizioni ambientali e segnali precoci prima che diventino un problema.
+Il professionista deve mappare i carichi, i gesti ripetuti, i tempi di recupero e le condizioni ambientali dell'utente. È fondamentale istruire il cliente a riconoscere i segnali precoci (affaticamento, rigidità) prima che si trasformino in un problema clinico.
 
-## 2. Organizzare
+## 2. Organizzazione del Piano Preventivo
 
-### Quale routine puoi sostenere?
+### Quale routine proporre?
 
-Trasforma mobilità, recupero, pause e ascolto corporeo in appuntamenti semplici e ripetibili. Una routine realistica è più utile di un programma perfetto ma impraticabile.
+L'efficacia della prevenzione si basa sulla costanza. Il programma deve trasformare esercizi di mobilità, strategie di recupero, pause attive e ascolto corporeo in appuntamenti semplici e ripetibili. 
+Una routine realistica e sostenibile ha molto più valore di un programma perfetto ma impraticabile nel contesto di vita del cliente.
 
-## 3. Verificare
+## 3. Verifica e Follow-up
 
-### La prevenzione sta funzionando?
+### Il programma di prevenzione sta funzionando?
 
-Controlla periodicamente i segnali del corpo e adatta il programma quando cambiano attività, carichi o condizioni personali. In presenza di sintomi persistenti chiedi una valutazione professionale.
+Il professionista deve pianificare check-up periodici per controllare i segnali del corpo e riadattare il programma al variare delle attività, dei carichi o delle condizioni personali dell'utente. 
+Se durante il monitoraggio emergono sintomi persistenti, il programma preventivo va sospeso a favore di una rivalutazione o di un referral medico.

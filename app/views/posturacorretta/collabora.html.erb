@@ -6,16 +6,16 @@
   <div class="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-24">
     <div class="mx-auto max-w-3xl text-center">
       <h2 class="text-base font-semibold leading-7 text-blue-600 uppercase tracking-widest">PosturaCorretta</h2>
-      <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl font-['Cormorant_Garamond']">Collabora con noi</p>
+      <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Collabora con noi</p>
       <p class="mt-6 text-lg leading-8 text-gray-600">
         Unisciti alla nostra rete per migliorare la vita delle persone. Che tu sia un professionista della salute, un investitore o un esperto digitale, abbiamo uno spazio per te.
       </p>
     </div>
 
-    <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-auto lg:max-w-none lg:grid-cols-3 lg:gap-8">
+    <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-auto lg:max-w-4xl lg:grid-cols-2 lg:gap-8">
       
       <!-- Card Professionisti -->
-      <a href="<%= posturacorretta_collabora_professionisti_path %>" class="group flex flex-col justify-between rounded-3xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+      <a href="<%= posturacorretta_collabora_professionisti_path %>" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
         <div>
           <div class="flex items-center gap-x-4">
             <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 group-hover:text-emerald-700 transition-colors">
@@ -34,7 +34,7 @@
       </a>
 
       <!-- Card Investitori (Progetti) -->
-      <a href="<%= posturacorretta_progetti_path %>" class="group flex flex-col justify-between rounded-3xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+      <a href="<%= posturacorretta_progetti_path %>" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
         <div>
           <div class="flex items-center gap-x-4">
             <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">
@@ -53,7 +53,7 @@
       </a>
 
       <!-- Card Digital -->
-      <a href="<%= posturacorretta_collabora_digital_path %>" class="group flex flex-col justify-between rounded-3xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+      <a href="<%= posturacorretta_collabora_digital_path %>" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
         <div>
           <div class="flex items-center gap-x-4">
             <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-orange-50 text-orange-600 group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors">
@@ -67,6 +67,27 @@
         </div>
         <div class="mt-8 flex items-center gap-x-2 text-sm font-semibold leading-6 text-orange-600 group-hover:text-orange-700">
           Vedi i task aperti
+          <span aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+
+      <!-- Card Sostieni -->
+      <a href="#" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+        <div>
+          <div class="flex items-center gap-x-4">
+            <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-rose-50 text-rose-600 group-hover:bg-rose-100 group-hover:text-rose-700 transition-colors">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold leading-8 text-gray-900">Sostieni</h3>
+          </div>
+          <p class="mt-6 text-base leading-7 text-gray-600">
+            Sostieni il progetto PosturaCorretta. Aiutaci a costruire una cultura della salute basata su conoscenza, esperienza e collaborazione.
+          </p>
+        </div>
+        <div class="mt-8 flex items-center gap-x-2 text-sm font-semibold leading-6 text-rose-600 group-hover:text-rose-700">
+          Fai una donazione
           <span aria-hidden="true">&rarr;</span>
         </div>
       </a>

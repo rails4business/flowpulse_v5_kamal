@@ -34,6 +34,17 @@
         </div>
         <h2 class="mt-4 text-xl font-bold text-slate-950"><%= methodology.fetch("title") %></h2>
         <p class="mt-1 text-sm font-semibold text-slate-500">Fondatore: <%= methodology.fetch("founder") %></p>
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          <% if methodology.fetch("profession") %>
+            <span class="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-red-700">Professione</span>
+          <% end %>
+          <% if methodology.fetch("postural_methodology") %>
+            <span class="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-blue-700">Metodica posturale</span>
+          <% end %>
+          <% if methodology.fetch("healing_methodology") %>
+            <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">Metodica per la guarigione</span>
+          <% end %>
+        </div>
         <p class="mt-3 text-sm leading-6 text-slate-600"><%= methodology.fetch("short_description") %></p>
         <% if methodology.fetch("website_url").present? %>
           <span class="mt-3 block text-xs font-bold text-slate-500">Sito: <%= methodology_website_host(methodology.fetch("website_url")) %></span>

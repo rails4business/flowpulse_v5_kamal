@@ -36,6 +36,7 @@ class DomainTest < ActiveSupport::TestCase
       logo_full_url: "https://cdn.example.com/logo-full.png",
       logo_square_url: "https://cdn.example.com/logo-square.png",
       favicon_url: "https://cdn.example.com/favicon.png",
+      social_image_url: "https://cdn.example.com/social.png",
       site_title: "PosturaCorretta",
       site_description: "Descrizione del dominio",
       locale: "it"
@@ -45,6 +46,7 @@ class DomainTest < ActiveSupport::TestCase
     assert_equal "https://cdn.example.com/logo-full.png", Domain.export_to_hash["www.posturacorretta.org"]["logo_full_url"]
     assert_equal "https://cdn.example.com/logo-square.png", Domain.export_to_hash["www.posturacorretta.org"]["logo_square_url"]
     assert_equal "https://cdn.example.com/favicon.png", Domain.export_to_hash["www.posturacorretta.org"]["favicon_url"]
+    assert_equal "https://cdn.example.com/social.png", Domain.export_to_hash["www.posturacorretta.org"]["social_image_url"]
     assert_equal "PosturaCorretta", Domain.export_to_hash["www.posturacorretta.org"]["site_title"]
   end
 

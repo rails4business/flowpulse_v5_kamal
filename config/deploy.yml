@@ -37,7 +37,7 @@ env:
     - POSTGRES_PASSWORD
   clear:
     SOLID_QUEUE_IN_PUMA: false
-    RUN_DB_PREPARE_ON_BOOT: false
+    RUN_DB_PREPARE_ON_BOOT: true
     RAILS_LOG_TO_STDOUT: true
     DB_HOST: flowpulse_v_5-db
     DB_PORT: 5432

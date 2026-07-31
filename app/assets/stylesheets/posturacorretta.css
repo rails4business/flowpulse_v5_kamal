@@ -1250,6 +1250,7 @@
    public site and all YAML builder components.
    ---------------------------------------------------- */
 .posturacorretta-ui {
+  --pc-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --pc-ink: #111827;
   --pc-muted: #6b7280;
   --pc-line: #e5e7eb;
@@ -1267,13 +1268,17 @@
   --pc-shadow: 0 1px 2px rgba(17, 24, 39, .05);
   background: #fff;
   color: var(--pc-ink);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--pc-font-sans);
 }
 
 .posturacorretta-ui *,
 .posturacorretta-ui *::before,
 .posturacorretta-ui *::after {
   box-sizing: border-box;
+}
+
+.posturacorretta-ui :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--pc-font-sans);
 }
 
 .posturacorretta-ui ::selection {
@@ -1342,26 +1347,26 @@
   padding: .75rem 1rem;
 }
 
-/* Documenti Markdown del Percorso: stessa gerarchia e ritmo delle pagine HTML. */
-.posturacorretta-ui .path-document-content {
+/* Unico stile per tutti i documenti Markdown PosturaCorretta. */
+.posturacorretta-ui .pc-rich-text {
   color: #475569;
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.75;
 }
 
-.posturacorretta-ui .path-document-content > * {
+.posturacorretta-ui .pc-rich-text > * {
   margin-bottom: 0;
   margin-top: 0;
 }
 
-.posturacorretta-ui .path-document-content > * + * {
+.posturacorretta-ui .pc-rich-text > * + * {
   margin-top: 1rem;
 }
 
-.posturacorretta-ui .path-document-content h1,
-.posturacorretta-ui .path-document-content h2,
-.posturacorretta-ui .path-document-content h3 {
+.posturacorretta-ui .pc-rich-text h1,
+.posturacorretta-ui .pc-rich-text h2,
+.posturacorretta-ui .pc-rich-text h3 {
   color: #0f172a;
   font-family: inherit;
   font-weight: 700;
@@ -1370,49 +1375,77 @@
   scroll-margin-top: 6.5rem;
 }
 
-.posturacorretta-ui .path-document-content h1 {
+.posturacorretta-ui .pc-rich-text h1 {
   font-size: clamp(2.4rem, 5vw, 3.5rem);
   margin-bottom: 1.25rem;
 }
 
-.posturacorretta-ui .path-document-content h2 {
+.posturacorretta-ui .pc-rich-text h2 {
   font-size: clamp(1.75rem, 3vw, 2.25rem);
   margin-top: 3rem;
 }
 
-.posturacorretta-ui .path-document-content h3 {
+.posturacorretta-ui .pc-rich-text h3 {
   font-size: clamp(1.3rem, 2vw, 1.6rem);
   margin-top: 2rem;
 }
 
-.posturacorretta-ui .path-document-content h1 + *,
-.posturacorretta-ui .path-document-content h2 + *,
-.posturacorretta-ui .path-document-content h3 + * {
+.posturacorretta-ui .pc-rich-text h1 + *,
+.posturacorretta-ui .pc-rich-text h2 + *,
+.posturacorretta-ui .pc-rich-text h3 + * {
   margin-top: .85rem;
 }
 
-.posturacorretta-ui .path-document-content p,
-.posturacorretta-ui .path-document-content li {
+.posturacorretta-ui .pc-rich-text p,
+.posturacorretta-ui .pc-rich-text li {
   color: #475569;
 }
 
-.posturacorretta-ui .path-document-content ul,
-.posturacorretta-ui .path-document-content ol {
+.posturacorretta-ui .pc-rich-text ul,
+.posturacorretta-ui .pc-rich-text ol {
   display: grid;
   gap: .5rem;
   padding-left: 1.5rem;
 }
 
-.posturacorretta-ui .path-document-content strong {
+.posturacorretta-ui .pc-rich-text ul {
+  list-style: disc;
+}
+
+.posturacorretta-ui .pc-rich-text ol {
+  list-style: decimal;
+}
+
+.posturacorretta-ui .pc-rich-text strong {
   color: #1e293b;
   font-weight: 700;
 }
 
-.posturacorretta-ui .path-document-content em {
+.posturacorretta-ui .pc-rich-text em {
   color: #64748b;
 }
 
-.posturacorretta-ui .path-document-content hr {
+.posturacorretta-ui .pc-rich-text a {
+  color: var(--pc-brand);
+  text-decoration: underline;
+  text-decoration-color: #93c5fd;
+  text-underline-offset: 3px;
+}
+
+.posturacorretta-ui .pc-rich-text blockquote {
+  border-left: 4px solid #93c5fd;
+  border-radius: 0 .5rem .5rem 0;
+  background: var(--pc-brand-soft);
+  color: #374151;
+  font-style: italic;
+  padding: .75rem 1rem;
+}
+
+.posturacorretta-ui .pc-rich-text img {
+  border-radius: .5rem;
+}
+
+.posturacorretta-ui .pc-rich-text hr {
   border: 0;
   border-top: 1px solid #e2e8f0;
   margin-block: 2.5rem;

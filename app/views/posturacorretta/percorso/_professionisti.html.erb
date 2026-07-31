@@ -9,12 +9,17 @@
     <% [
       ["Sanitari", "Professionisti sanitari", "Valutazione, diagnosi, cura, riabilitazione e attività riservate alle professioni sanitarie.", "border-red-200 bg-red-50", "text-red-700", "text-red-950", "text-red-900"],
       ["Benessere", "Professionisti del benessere", "Pratiche e attività dedicate al benessere, nel rispetto dei confini professionali.", "border-emerald-200 bg-emerald-50", "text-emerald-700", "text-emerald-950", "text-emerald-900"],
-      ["Educazione", "Proposte aperte a tutti", "Conoscenze ed esperienze introduttive per conoscere meglio il corpo e orientarsi.", "border-blue-200 bg-blue-50", "text-blue-700", "text-blue-950", "text-blue-900"]
+      ["Educazione", "Insegnanti PosturaCorretta", "Educazione e sensibilizzazione alla conoscenza del corpo e all'ascolto.", "border-blue-200 bg-blue-50", "text-blue-700", "text-blue-950", "text-blue-900"]
     ].each do |eyebrow, title, description, card_classes, eyebrow_classes, title_classes, copy_classes| %>
-      <article class="rounded-xl border p-5 shadow-sm <%= card_classes %>">
+      <article class="flex flex-col rounded-2xl border p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md <%= card_classes %>">
         <p class="text-xs font-semibold uppercase tracking-[0.15em] <%= eyebrow_classes %>"><%= eyebrow %></p>
         <h4 class="mt-2 text-xl font-black <%= title_classes %>"><%= title %></h4>
-        <p class="mt-2 text-sm leading-normal <%= copy_classes %>"><%= description %></p>
+        <p class="mt-2 flex-1 text-sm leading-normal <%= copy_classes %>"><%= description %></p>
+        <div class="mt-5 border-t border-current/10 pt-4">
+          <a href="#" class="inline-flex items-center text-sm font-bold hover:underline <%= eyebrow_classes %>">
+            Scopri di più <span aria-hidden="true" class="ml-1">&rarr;</span>
+          </a>
+        </div>
       </article>
     <% end %>
   </div>

@@ -8,7 +8,7 @@
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-3xl text-center">
         <h2 class="text-base font-semibold leading-7 text-orange-200 uppercase tracking-widest">Bacheca Lavori</h2>
-        <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl font-['Cormorant_Garamond']">Task Digitali & Freelance</p>
+        <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">Task Digitali & Freelance</p>
         <p class="mt-6 text-lg leading-8 text-orange-100">
           Aiutaci a sviluppare PosturaCorretta. In questa pagina trovi i task tecnici, operativi e digitali a cui stiamo lavorando. Se hai le competenze giuste, candidati per prenderne in carico uno!
         </p>
@@ -29,7 +29,7 @@
                 <span class="inline-flex items-center rounded-full bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700 ring-1 ring-inset ring-orange-600/10"><%= task[:type] || 'Sviluppo' %></span>
                 <span class="text-sm font-medium text-gray-500">Progetto: <%= task[:project_name] %></span>
               </div>
-              <h3 class="text-2xl font-bold text-gray-900 mb-2 font-['Cormorant_Garamond']"><%= task[:title] %></h3>
+              <h3 class="mb-2 text-2xl font-bold text-gray-900"><%= task[:title] %></h3>
               <p class="text-gray-600 text-sm leading-relaxed mb-6"><%= task[:notes] || task[:description] || 'Nessuna descrizione aggiuntiva fornita.' %></p>
               
               <div class="flex flex-wrap gap-4 text-sm">

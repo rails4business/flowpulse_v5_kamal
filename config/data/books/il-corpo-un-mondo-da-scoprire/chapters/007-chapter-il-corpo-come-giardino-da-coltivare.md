@@ -5,6 +5,6 @@ color: "verde"
 access: "draft"
 ---
 
-# Il corpo come giardino da coltivare
+Siamo arrivati alla fine del viaggio qui ci si rende conto dell'importanza non solo del singolo essere umano ma del gruppo di esseri umani molte attività come il teatro la musica la danza la lotta e molte altre cose siano nate con lo sviluppo stesso dell'essere umano che in gruppo ha la possibilità di modificare l'ambiente in cui viviamo e gli stili di vita, e quando questo porta ad allontanarci troppo dalla natura è necessario trovare un modo per riequilibrarsi e rimanere in connessione. 
 
-In questa parte apriamo una metafora concreta: il corpo come ecosistema. Non una macchina da riparare soltanto quando si rompe, ma un giardino da osservare, nutrire, proteggere e far evolvere.
+

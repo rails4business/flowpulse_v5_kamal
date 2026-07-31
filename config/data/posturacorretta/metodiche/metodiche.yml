@@ -1,6 +1,9 @@
 methodologies:
   - slug: gds
     title: "Biomeccanica Comportamentale GDS"
+    profession: false
+    postural_methodology: true
+    healing_methodology: false
     founder: "Godelieve Denys-Struyf"
     founder_image_url: ""
     short_description: "Una lettura del corpo attraverso catene muscolari, comportamento e direzioni di movimento."
@@ -11,6 +14,9 @@ methodologies:
 
   - slug: osteopatia
     title: "Osteopatia"
+    profession: true
+    postural_methodology: true
+    healing_methodology: true
     founder: "Andrew Taylor Still"
     founder_image_url: ""
     short_description: "Un approccio manuale che osserva la relazione tra struttura, funzione, mobilità e capacità di autoregolazione."
@@ -21,9 +27,12 @@ methodologies:
 
   - slug: mezieres
     title: "Mézières"
+    profession: false
+    postural_methodology: true
+    healing_methodology: true
     founder: "Françoise Mézières"
     founder_image_url: ""
-    short_description: "Metodiche orientate all'allungamento globale, alle catene muscolari e alla riorganizzazione posturale."
+    short_description: "Una metodica autonoma di osservazione e lavoro posturale sviluppata da Françoise Mézières."
     badge: "rosso"
     logo_url: ""
     website_url: ""
@@ -31,26 +40,35 @@ methodologies:
   
   - slug: rpg
     title: "RPG"
+    profession: false
+    postural_methodology: true
+    healing_methodology: true
     founder: "Philippe Souchard"
     founder_image_url: "" 
-    short_description: "Metodiche orientate all'allungamento globale, alle catene muscolari e alla riorganizzazione posturale."
+    short_description: "La Rieducazione Posturale Globale, presentata come metodica distinta con principi e percorso formativo propri."
     badge: "rosso"
     logo_url: ""
     website_url: ""
     content_path: "contenuti/rpg.md"
 
-  - slug: rpg
-    title: "RPG"
+  - slug: souchard
+    title: "Metodo Souchard"
+    profession: false
+    postural_methodology: true
+    healing_methodology: true
     founder: "Philippe Souchard"
     founder_image_url: ""
-    short_description: "Metodiche orientate all'allungamento globale, alle catene muscolari e alla riorganizzazione posturale."
+    short_description: "La proposta metodologica attribuita a Philippe Souchard, catalogata separatamente dalla RPG e dal metodo Mézières."
     badge: "rosso"
     logo_url: ""
     website_url: ""
-    content_path: "contenuti/rpg.md"
+    content_path: "contenuti/souchard.md"
 
   - slug: feldenkrais
     title: "Feldenkrais"
+    profession: false
+    postural_methodology: true
+    healing_methodology: false
     founder: "Moshé Feldenkrais"
     founder_image_url: ""
     short_description: "Un metodo di apprendimento somatico che usa movimento, attenzione e percezione per ampliare le possibilità del corpo."
@@ -61,6 +79,9 @@ methodologies:
 
   - slug: alexander
     title: "Tecnica Alexander"
+    profession: false
+    postural_methodology: true
+    healing_methodology: false
     founder: "Frederick Matthias Alexander"
     founder_image_url: ""
     short_description: "Una pratica educativa sull'uso di sé, sull'organizzazione del movimento e sulla relazione tra attenzione e postura."
@@ -71,6 +92,9 @@ methodologies:
 
   - slug: kinesiologia-applicata
     title: "Kinesiologia Applicata"
+    profession: false
+    postural_methodology: false
+    healing_methodology: true
     founder: "George Goodheart"
     founder_image_url: ""
     short_description: "Una sequenza di osservazione, test muscolare e verifica per leggere relazioni funzionali del corpo."
@@ -81,6 +105,9 @@ methodologies:
 
   - slug: bioritmi-corpo-coscienza
     title: "Corpo e Coscienza"
+    profession: false
+    postural_methodology: false
+    healing_methodology: true
     founder: "Georges Courchinoux"
     founder_image_url: ""
     short_description: "Una mappa di ritmi, centri, movimenti ed elementi per leggere il corpo come sistema in relazione."

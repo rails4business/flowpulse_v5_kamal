@@ -1,33 +1,36 @@
 # Benessere integrato
 
-Questa linea guida è rivolta a chi vuole migliorare salute, energia, abitudini e qualità della vita mettendo in relazione le diverse aree del benessere.
+Questo tipo di programma è concepito per accompagnare l'utente che desidera migliorare salute, energia, abitudini e qualità della vita, mettendo in relazione le diverse aree del benessere. Il professionista ha il ruolo di facilitatore, aiutando il cliente a coordinare risorse e professionisti senza creare sovraccarico.
 
-## 1. Diario della salute
+## 1. Diario della salute e raccolta dati
 
-### Cosa stai già facendo per la tua salute?
+### Cosa sta già facendo il cliente per la sua salute?
 
-Registra attività, trattamenti, alimentazione, sonno, movimento e cambiamenti osservati. Il diario permette di riconoscere continuità, sovrapposizioni e aspetti trascurati.
+Il primo step per il professionista è guidare il cliente nella registrazione delle attività in corso: trattamenti, alimentazione, sonno, movimento e cambiamenti osservati. Il diario è lo strumento clinico/educativo che permette di mappare le abitudini, riconoscere continuità, evitare sovrapposizioni e far emergere gli aspetti trascurati.
 
-## 2. Stato di salute
+## 2. Valutazione dello stato di salute
 
 ### Quali ambiti richiedono attenzione?
 
-Osserva senza giudizio alcune aree collegate fra loro:
+L'operatore, all'interno delle proprie competenze, guida l'osservazione sistemica di aree interconnesse:
 
-- recupero, sonno e autotrattamenti;
-- movimento e attività corporee;
-- emozioni, relazioni e gestione dello stress;
-- alimentazione e abitudini quotidiane;
-- ambiente, ritmi e risorse personali.
+- Recupero, sonno e autotrattamenti;
+- Movimento e attività corporee;
+- Emozioni, relazioni e gestione dello stress;
+- Alimentazione e abitudini quotidiane;
+- Ambiente, ritmi e risorse personali.
 
-Quando emergono sintomi o problemi sanitari, il riferimento resta il professionista competente.
+Qualora durante questa valutazione emergano sintomi o problemi sanitari non diagnosticati, il professionista deve immediatamente richiedere o suggerire una valutazione medica specializzata.
 
-## 3. Programma integrato
+## 3. Strutturazione del programma integrato
 
-### Da dove vuoi partire?
+### Qual è il punto di partenza ottimale?
 
-Scegli un obiettivo concreto e costruisci un programma sostenibile con attività, professionisti e verifiche progressive. Integrare non significa fare tutto insieme, ma coordinare ciò che è davvero utile.
+Il professionista aiuta a scegliere un obiettivo concreto e costruisce un programma sostenibile, definendo priorità, eventuali altri professionisti da coinvolgere e scadenze per le verifiche progressive. 
+Il principio cardine è: **integrare non significa fare tutto insieme**, ma coordinare ciò che è davvero utile e praticabile.
 
-## Verificare il programma
+## 4. Verifica e Follow-up
 
-Confronta periodicamente obiettivi, attività svolte e cambiamenti osservati. Il programma può essere adattato, sospeso o concluso senza perdere la storia registrata nel diario.
+### Il programma è efficace?
+
+Il professionista confronta periodicamente gli obiettivi iniziali con le attività svolte e i cambiamenti registrati. Il programma può essere adattato, sospeso o concluso senza mai disperdere lo storico registrato nel diario del cliente.

@@ -1,7 +1,11 @@
-# Mézières e RPG
+# Metodo Mézières
 
-Mézières e RPG sono approcci che mettono al centro catene muscolari, allungamento globale e riorganizzazione posturale.
+Il metodo Mézières viene presentato come una **metodica autonoma**, legata al lavoro e alla ricerca di Françoise Mézières.
 
-In PosturaCorretta vengono presentati come riferimenti utili per comprendere tensioni, compensi e strategie di adattamento del corpo.
+## Identità della metodica
 
-Il contenuto completo potrà distinguere storia, principi, differenze tra scuole e possibili integrazioni nel percorso personale.
+Nel catalogo PosturaCorretta possiede una scheda, una storia e riferimenti formativi propri. Non viene usato come sinonimo di RPG o Metodo Souchard.
+
+## Contenuti da approfondire
+
+La scheda potrà raccogliere progressivamente principi, modalità di lavoro, storia, scuole e professionisti formati specificamente nel metodo Mézières.

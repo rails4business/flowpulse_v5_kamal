@@ -1,7 +1,11 @@
-# Mézières e RPG
+# RPG
 
-Mézières e RPG sono approcci che mettono al centro catene muscolari, allungamento globale e riorganizzazione posturale.
+La RPG, Rieducazione Posturale Globale, viene catalogata come **metodica distinta**, con una propria scheda e riferimenti dedicati.
 
-In PosturaCorretta vengono presentati come riferimenti utili per comprendere tensioni, compensi e strategie di adattamento del corpo.
+## Identità della metodica
 
-Il contenuto completo potrà distinguere storia, principi, differenze tra scuole e possibili integrazioni nel percorso personale.
+La vicinanza storica o concettuale con altri approcci non comporta la loro sovrapposizione. Professionisti, scuole e contenuti devono essere collegati alla RPG soltanto quando il riferimento è specifico.
+
+## Contenuti da approfondire
+
+La scheda potrà raccogliere progressivamente storia, principi, modalità di lavoro, formazione e professionisti collegati alla RPG.

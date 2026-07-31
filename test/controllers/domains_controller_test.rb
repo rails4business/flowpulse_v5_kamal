@@ -35,13 +35,29 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "renders configured domain target" do
-    Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+    Domain.create!(
+      hostname: "posturacorretta.org",
+      target_controller: "landing",
+      target_action: "posturacorretta",
+      locale: "it",
+      site_title: "PosturaCorretta",
+      site_description: "Percorsi per conoscere e prendersi cura del corpo.",
+      favicon_url: "https://cdn.example.com/posturacorretta-icon.png",
+      social_image_url: "https://cdn.example.com/posturacorretta-social.png"
+    )
     host! "posturacorretta.org"
 
     get root_url
 
     assert_response :success
     assert_includes response.body, "PosturaCorretta"
+    assert_select "title", text: "PosturaCorretta"
+    assert_select "meta[name='description'][content='Percorsi per conoscere e prendersi cura del corpo.']"
+    assert_select "link[rel='icon'][href='https://cdn.example.com/posturacorretta-icon.png']"
+    assert_select "meta[property='og:title'][content='PosturaCorretta']"
+    assert_select "meta[property='og:description'][content='Percorsi per conoscere e prendersi cura del corpo.']"
+    assert_select "meta[property='og:image'][content='https://cdn.example.com/posturacorretta-social.png']"
+    assert_select "meta[name='twitter:image'][content='https://cdn.example.com/posturacorretta-social.png']"
   end
 
   test "resolves current domain from forwarded host" do
