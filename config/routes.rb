@@ -25,7 +25,11 @@ Rails.application.routes.draw do
   get "posturacorretta/filosofia" => redirect("/posturacorretta/libro", status: 301), as: :posturacorretta_filosofia
   get "posturacorretta/progetti" => "brands/posturacorretta#progetti", as: :posturacorretta_progetti
   get "posturacorretta/progetti/:slug" => "brands/posturacorretta#progetto", as: :posturacorretta_progetto
+  get "posturacorretta/impegno" => "brands/impegno/commitments#index", defaults: { brand_scope: "posturacorretta" }, as: :posturacorretta_impegno
   resources :data_commitments, controller: "brands/impegno/commitments", only: %i[index create update destroy], path: "impegni" do
+    collection do
+      post :complete_step
+    end
     member do
       patch :start
       patch :complete
@@ -33,6 +37,7 @@ Rails.application.routes.draw do
   end
   get "posturacorretta/collabora" => "brands/posturacorretta#collabora", as: :posturacorretta_collabora
   get "posturacorretta/collabora/professionisti" => "brands/posturacorretta#collabora_professionisti", as: :posturacorretta_collabora_professionisti
+  get "posturacorretta/collabora/professionisti/:slug" => "brands/posturacorretta#collabora_professionisti_guida", as: :posturacorretta_collabora_professionisti_guida
   get "posturacorretta/collabora/digital" => "brands/posturacorretta#collabora_digital", as: :posturacorretta_collabora_digital
   get "generaimpresa" => "brands/genera_impresa#index", as: :genera_impresa
   get "generaimpresa/brand/:slug" => "brands/genera_impresa#brand", as: :genera_impresa_brand

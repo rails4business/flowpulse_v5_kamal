@@ -39,7 +39,18 @@
                     <div class="-ml-1 mt-1 space-y-1 border-l border-slate-100 pl-3">
                       <% item["children"].each do |child| %>
                         <% child_active = params[:page] == child["slug"] || (params[:page].blank? && child["slug"] == "inizia") %>
-                        <a href="<%= posturacorretta_percorso_path(page: child['slug']) %>" class="block py-1.5 text-sm <%= child_active ? 'font-semibold text-blue-700 underline decoration-2 underline-offset-4' : 'text-slate-500 hover:text-blue-700' %>">
+                        <% adherence_link = child["slug"] == "professionisti-aderisci-linee-guida" %>
+                        <% integrated_guide_link = child["slug"] == "professionisti-percorso-integrato" %>
+                        <% child_classes = if adherence_link
+                          "mt-2 border-t border-slate-200 pt-3 pb-1.5 font-bold text-emerald-700 hover:text-emerald-800 #{'underline decoration-2 underline-offset-4' if child_active}"
+                        elsif integrated_guide_link
+                          "py-1.5 font-normal text-slate-500 hover:text-blue-700"
+                        elsif child_active
+                          "py-1.5 font-semibold text-blue-700 underline decoration-2 underline-offset-4"
+                        else
+                          "py-1.5 text-slate-500 hover:text-blue-700"
+                        end %>
+                        <a href="<%= posturacorretta_percorso_path(page: child['slug']) %>" class="block text-sm <%= child_classes %>">
                           <%= child["title"] %>
                         </a>
                         <% if child["children"].present? %>
@@ -61,7 +72,26 @@
 
           <%# -- DINAMIC CONTENT AREA -- %>
           <div class="min-w-0">
+            <% current_page_slug = @current_item&.fetch("slug", nil) %>
+            <% adherence_page = current_page_slug == "professionisti-aderisci-linee-guida" %>
+            <% professional_page = @professional_page_slugs.include?(current_page_slug) %>
             <% if @page_content.present? %>
+              <% if adherence_page %>
+                <section id="adesione-linee-guida" class="mb-10 scroll-mt-24 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8" aria-labelledby="integrated-path-cta-title">
+                  <p class="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">Prossimo passo</p>
+                  <h2 id="integrated-path-cta-title" class="mt-2 text-2xl font-bold">Aderisci alle Linee guida del Percorso</h2>
+                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Entra nella rete professionale di PosturaCorretta. In futuro potrai creare una cerchia di collaboratori, individuare le competenze necessarie e invitare altri professionisti nei tuoi percorsi integrati.</p>
+                  <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <a href="https://wa.me/393792891488?text=<%= ERB::Util.url_encode('Ciao, vorrei aderire alle Linee guida del Percorso PosturaCorretta e ricevere informazioni sulla futura rete di collaboratori.') %>" target="_blank" rel="noopener noreferrer" class="pc-cta-primary">
+                      Aderisci
+                    </a>
+                    <a href="https://wa.me/393792891488?text=<%= ERB::Util.url_encode('Ciao, vorrei maggiori informazioni sulle Linee guida del Percorso e sulla futura cerchia dei collaboratori di PosturaCorretta.') %>" target="_blank" rel="noopener noreferrer" class="pc-cta-secondary">
+                      Chiedi informazioni
+                    </a>
+                  </div>
+                </section>
+              <% end %>
+
               <div class="flex flex-col xl:flex-row gap-10 xl:items-start">
                 <%= render "posturacorretta/shared/rich_text",
                            rendered_content: markdown(@page_content),
@@ -74,8 +104,21 @@
                   </nav>
                 </aside>
               </div>
+
+              <% if professional_page && !adherence_page %>
+                <%= render "posturacorretta/percorso/integrated_path_prompt" %>
+              <% end %>
+
+              <% if adherence_page %>
+                <div class="mt-8 border-t border-slate-200 pt-5 text-right">
+                  <a href="#adesione-linee-guida" class="pc-inline-cta">Torna all'adesione <span aria-hidden="true">&uarr;</span></a>
+                </div>
+              <% end %>
             <% elsif @page_partial.present? %>
               <%= render @page_partial %>
+              <% if professional_page && !adherence_page %>
+                <%= render "posturacorretta/percorso/integrated_path_prompt" %>
+              <% end %>
             <% else %>
               <div class="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-700">
                 <svg class="mx-auto h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>

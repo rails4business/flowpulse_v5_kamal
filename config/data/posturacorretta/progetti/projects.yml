@@ -117,6 +117,7 @@ projects:
         assignee: "@markpostura"
         assigned_at: "2026-04-10"
         estimated_cost: 1200
+        estimated_hours: 30
         started_at: "2026-04-16"
         completed_at: "2026-05-31"
       - title: "Revisionare i contenuti"
@@ -294,7 +295,7 @@ projects:
     owner: "@markpostura"
     financiers:
       - "markpostura"
-    updated_at: "2026-07-24"
+    updated_at: "2026-08-01"
     milestones:
       presentation:
         date: "2026-05-01"
@@ -373,12 +374,13 @@ projects:
             completed_at: "2026-05-30T17:00:00+02:00"
       - title: "Integrare il nucleo Rails4Business"
         description: "Collegare organizzazioni, ruoli, flussi operativi e componenti condivisi."
-        status: "in_progress"
+        status: "completed"
         assignee: "@markpostura"
         assigned_at: "2026-06-01"
         estimated_cost: 2800
+        estimated_hours: 70
         started_at: "2026-06-01"
-        completed_at:
+        completed_at: "2026-08-01"
         tasks:
           - title: "Impostare organizzazioni e ruoli"
             assignee: "@markpostura"
@@ -402,8 +404,8 @@ projects:
             completed_at: "2026-07-24T17:00:00+02:00"
           - title: "Completare il nucleo dei flussi operativi"
             assignee: "@markpostura"
-            started_at:
-            completed_at:
+            started_at: "2026-08-01T09:00:00+02:00"
+            completed_at: "2026-08-01T17:00:00+02:00"
       - title: "Completare builder e contenuti pubblici"
         description: "Chiudere pagine YAML/Markdown, componenti riutilizzabili e gestione dei contenuti."
         status: "in_progress"
@@ -599,12 +601,12 @@ projects:
     content_path: "progetti/contenuti/percorsi-personalizzati-linee-guida.md"
     title: "Percorsi personalizzati e linee guida"
     category: "Orientamento"
-    status: "in_progress"
+    status: "future"
     generaimpresa_origin: "generaimpresa"
-    status_label: "In Realizzazione"
-    summary: "Aiutare ogni persona a passare dalla scoperta iniziale alla metodica e al professionista più coerenti con i propri bisogni."
+    status_label: "Revisione successiva"
+    summary: "Rivedere percorsi personalizzati e linee guida dopo la chiusura delle funzioni essenziali della piattaforma."
     owner: "@markpostura"
-    updated_at: "2026-07-29"
+    updated_at: "2026-08-01"
     milestones:
       presentation: { date: "2026-10-01", state: "planned" }
       implementation: { date: "2027-07-01", state: "planned" }

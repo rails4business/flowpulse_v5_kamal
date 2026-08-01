@@ -11,6 +11,35 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_accademia_url
     assert_response :success
     assert_includes response.body, "Accademia"
+    assert_select "#collabora-accademia"
+    assert_select "#collabora-accademia h2", text: "Chi aiuta le persone a conoscere il proprio corpo?"
+    assert_select "#collabora-accademia h4", text: "Porta l'Accademia nel tuo centro"
+    assert_select "#collabora-accademia h4", text: "Segreteria e team management"
+  end
+
+  test "renders professional collaboration guides from markdown" do
+    {
+      "contenuti-video" => "Collabora alla creazione di contenuti",
+      "promuovi-metodica-professione" => "Presenta una metodica o una professione",
+      "eventi" => "Organizza o partecipa a un evento"
+    }.each do |slug, title|
+      get posturacorretta_collabora_professionisti_guida_url(slug)
+
+      assert_response :success
+      assert_select "article.pc-rich-text h1", text: title
+    end
+  end
+
+  test "redirects the integrated collaboration guide into percorso" do
+    get posturacorretta_collabora_professionisti_guida_url("percorso-integrato")
+
+    assert_redirected_to posturacorretta_percorso_path(page: "professionisti-percorso-integrato")
+  end
+
+  test "redirects an unknown professional collaboration guide" do
+    get posturacorretta_collabora_professionisti_guida_url("inesistente")
+
+    assert_redirected_to posturacorretta_collabora_professionisti_path
   end
 
   test "should get percorso" do
@@ -18,7 +47,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Inizia un percorso"
     assert_includes response.body, "Pazienti"
-    assert_includes response.body, "Come iniziare il percorso"
+    assert_includes response.body, "Inizia da qui"
   end
 
   test "should render professional guide from markdown" do
@@ -27,6 +56,50 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Come iniziare il percorso"
     assert_select "nav[aria-label='Titoli del documento'] a[href='#raccogliere-le-informazioni-iniziali']", text: "Raccogliere le informazioni iniziali"
+  end
+
+  test "renders the integrated professional path as a guide" do
+    get posturacorretta_percorso_url(page: "professionisti-percorso-integrato")
+
+    assert_response :success
+    assert_select "h1", text: "Collaborare in un percorso integrato"
+    assert_select "a[href='#{posturacorretta_percorso_path(page: 'professionisti-percorso-integrato')}'].font-normal.text-slate-500", text: "Collaborare in un percorso integrato"
+    assert_select "a.pc-inline-cta[href='#{posturacorretta_percorso_path(page: 'professionisti-aderisci-linee-guida')}']", text: /Scopri come aderire/
+    assert_select "a[href^='https://wa.me/']", count: 0
+    assert_includes response.body, "La futura cerchia dei collaboratori"
+  end
+
+  test "renders adherence as the final professional guideline with whatsapp calls to action" do
+    get posturacorretta_percorso_url(page: "professionisti-aderisci-linee-guida")
+
+    assert_response :success
+    assert_select "h1", text: "Aderisci alle Linee guida del Percorso"
+    assert_select "section#adesione-linee-guida h2", text: "Aderisci alle Linee guida del Percorso"
+    assert_select "a.pc-cta-primary[href^='https://wa.me/393792891488?text=']", text: "Aderisci", count: 1
+    assert_select "a.pc-cta-secondary[href^='https://wa.me/393792891488?text=']", text: "Chiedi informazioni", count: 1
+    assert_select "a.pc-inline-cta[href='#adesione-linee-guida']", text: /Torna all'adesione/
+  end
+
+
+  test "links professional guidelines to adherence" do
+    get posturacorretta_percorso_url(page: "professionisti-iniziare-percorso")
+
+    assert_response :success
+    assert_select "a.pc-inline-cta[href='#{posturacorretta_percorso_path(page: 'professionisti-aderisci-linee-guida')}']", text: /Scopri come aderire/
+  end
+
+  test "renders physiological reasoning and outcome measurement guidelines" do
+    get posturacorretta_percorso_url(page: "professionisti-ragionamento-fisiologico")
+    assert_response :success
+    assert_select "h1", text: "Spiegare il ragionamento fisiologico"
+    assert_select "h2", text: "Due livelli di spiegazione"
+    assert_select "h2", text: "Dichiarare i risultati attesi"
+
+    get posturacorretta_percorso_url(page: "professionisti-misurare-risultati")
+    assert_response :success
+    assert_select "h1", text: "Misurare i risultati"
+    assert_select "h2", text: "Migliorare senza confondere esperienza e prova scientifica"
+    assert_select "h2", text: "Strumento futuro"
   end
 
   test "markdown percorso has a linked heading-only index" do

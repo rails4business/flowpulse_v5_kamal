@@ -137,6 +137,56 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
+  test "superadmin completes and reopens a GeneraImpresa step without activities" do
+    assert_difference -> { DataCommitment.count }, 1 do
+      post complete_step_data_commitments_url, params: {
+        project_slug: "percorsi-personalizzati-linee-guida",
+        step_key: "raccogliere-bisogni-obiettivi",
+        completion_note: "Definizione conclusa sulla base dei materiali già disponibili."
+      }
+    end
+
+    marker = DataCommitment.last
+    assert_equal "step_completion", marker.genera_impresa["record_type"]
+    assert_equal "raccogliere-bisogni-obiettivi", marker.genera_impresa["step_key"]
+    assert_equal false, marker.blocks_calendar
+    assert marker.metadata["missing_data_at_completion"].any?
+    assert_redirected_to posturacorretta_progetto_url("percorsi-personalizzati-linee-guida", tab: "phases", phase: "implementation", anchor: "step-raccogliere-bisogni-obiettivi")
+
+    assert_difference -> { DataCommitment.count }, -1 do
+      delete data_commitment_url(marker)
+    end
+  end
+
+  test "superadmin records an activity on a step without assigning a task" do
+    assert_difference -> { DataCommitment.count }, 1 do
+      post data_commitments_url, params: {
+        project_slug: "percorsi-personalizzati-linee-guida",
+        step_key: "raccogliere-bisogni-obiettivi",
+        data_commitment: {
+          title: "Revisione libera dello step",
+          description: "Riorganizzati i materiali prima di definire il task corretto.",
+          starts_at: "2026-08-01T09:00",
+          ends_at: "2026-08-01T10:30",
+          pricing_type: "hourly",
+          hourly_rate: "40",
+          contribution_type: "time_investment"
+        }
+      }
+    end
+
+    commitment = DataCommitment.last
+    assert_equal "raccogliere-bisogni-obiettivi", commitment.genera_impresa["step_key"]
+    assert_nil commitment.genera_impresa["task_key"]
+    assert_equal BigDecimal("60"), commitment.total_price
+    assert_redirected_to posturacorretta_progetto_url("percorsi-personalizzati-linee-guida", tab: "phases", phase: "implementation", anchor: "step-raccogliere-bisogni-obiettivi")
+
+    get posturacorretta_progetto_url("percorsi-personalizzati-linee-guida", tab: "phases", phase: "implementation")
+    assert_response :success
+    assert_includes response.body, "Riorganizzati i materiali prima di definire il task corretto."
+    assert_includes response.body, "Non ancora associate a un task"
+  end
+
   test "PosturaCorretta commitments are private and scoped to the current domain" do
     other_domain = Domain.create!(
       hostname: "flowpulse.net",
@@ -151,13 +201,22 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
 
     get data_commitments_url
     assert_response :success
-    assert_includes response.body, "Impegni PosturaCorretta"
+    assert_includes response.body, "Calendario PosturaCorretta"
     assert_includes response.body, "Impegno PosturaCorretta"
     assert_not_includes response.body, "Impegno Flowpulse"
 
     delete session_url
     get data_commitments_url
     assert_redirected_to new_session_url
+  end
+
+  test "PosturaCorretta exposes its dedicated calendar path" do
+    get posturacorretta_impegno_url
+
+    assert_response :success
+    assert_select "title", text: /Calendario PosturaCorretta/
+    assert_select "h1", text: "Calendario PosturaCorretta"
+    assert_select "a[href='#{posturacorretta_impegno_path(tab: 'past')}']", text: /Passati/
   end
 
   test "same logical calendar cannot contain overlapping commitments" do

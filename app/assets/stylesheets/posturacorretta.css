@@ -1432,6 +1432,58 @@
   text-underline-offset: 3px;
 }
 
+/* CTA esplicite: non dipendono dai colori ereditati o dalle utility Tailwind. */
+.posturacorretta-ui .pc-inline-cta {
+  align-items: center;
+  color: var(--pc-brand-dark);
+  display: inline-flex;
+  font-size: .875rem;
+  font-weight: 700;
+  gap: .4rem;
+  text-decoration: none;
+}
+
+.posturacorretta-ui .pc-inline-cta:hover {
+  color: #1e3a8a;
+}
+
+.posturacorretta-ui .pc-cta-primary,
+.posturacorretta-ui .pc-cta-secondary {
+  align-items: center;
+  border-radius: .5rem;
+  display: inline-flex;
+  font-size: .875rem;
+  font-weight: 700;
+  justify-content: center;
+  padding: .625rem 1rem;
+  text-decoration: none;
+  transition: background-color .2s, border-color .2s, color .2s;
+}
+
+.posturacorretta-ui .pc-cta-primary {
+  background: #059669;
+  border: 1px solid #059669;
+  color: #fff;
+}
+
+.posturacorretta-ui .pc-cta-primary:hover {
+  background: #047857;
+  border-color: #047857;
+  color: #fff;
+}
+
+.posturacorretta-ui .pc-cta-secondary {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+
+.posturacorretta-ui .pc-cta-secondary:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
 .posturacorretta-ui .pc-rich-text blockquote {
   border-left: 4px solid #93c5fd;
   border-radius: 0 .5rem .5rem 0;

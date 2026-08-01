@@ -6,7 +6,11 @@ module Brands
       layout "landing"
 
   def index
-    @scoped_domain = current_domain if current_domain&.target_controller == "brands/posturacorretta" || current_domain&.target_action == "posturacorretta"
+    @scoped_domain = if params[:brand_scope] == "posturacorretta"
+      Domain.find_for_host("posturacorretta.org")
+    elsif current_domain&.target_controller == "brands/posturacorretta" || current_domain&.target_action == "posturacorretta"
+      current_domain
+    end
     @domains = available_domains
 
     @profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
@@ -36,7 +40,7 @@ module Brands
 
     start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
     if start_now && profile.data_commitments.where(status: "in_progress", actual_ended_at: nil).exists?
-      return redirect_to project_path(project, step, task), alert: "Hai già un’attività in corso. Concludila prima di iniziarne un’altra."
+      return redirect_to activity_return_path(project, step, task), alert: "Hai già un’attività in corso. Concludila prima di iniziarne un’altra."
     end
 
     commitment = Commitment.new(start_now ? {} : data_commitment_params)
@@ -49,9 +53,9 @@ module Brands
     commitment.kind = "work"
     if start_now
       activity_description = params.dig(:data_commitment, :description).to_s.strip
-      return redirect_to(project_path(project, step, task), alert: "Scrivi cosa stai per fare.") if activity_description.blank?
+      return redirect_to(activity_return_path(project, step, task), alert: "Scrivi cosa stai per fare.") if activity_description.blank?
 
-      commitment.title = task.fetch("title")
+      commitment.title = task&.fetch("title") || "Attività dello step: #{step.fetch('title')}"
       commitment.description = activity_description
       commitment.starts_at = Time.current
       commitment.actual_started_at = Time.current
@@ -68,14 +72,14 @@ module Brands
       "project_slug" => project.fetch("slug"),
       "phase_key" => "implementation",
       "step_key" => step.fetch("key"),
-      "task_key" => task.fetch("key")
-    }
+      "task_key" => task&.fetch("key")
+    }.compact
 
     if commitment.save
       notice = start_now ? "Timer avviato." : "Attività registrata nel calendario."
-      redirect_to project_path(project, step, task), notice: notice
+      redirect_to activity_return_path(project, step, task), notice: notice
     else
-      redirect_to project_path(project, step, task), alert: commitment.errors.full_messages.to_sentence
+      redirect_to activity_return_path(project, step, task), alert: commitment.errors.full_messages.to_sentence
     end
   end
 
@@ -140,6 +144,45 @@ module Brands
     commitment.actual_ended_at = Time.current
     commitment.save!
     redirect_to commitment_return_path(commitment), notice: "Attività conclusa."
+  end
+
+  def complete_step
+    return redirect_to(data_commitments_path, alert: "Solo il superadmin può concludere gli step GeneraImpresa.") unless Current.user&.superadmin_user?
+
+    project, step = find_genera_impresa_step!
+    note = params[:completion_note].to_s.strip
+    return redirect_to(project_step_path(project, step), alert: "Specifica cosa è stato concluso o perché lo step viene chiuso senza attività.") if note.blank?
+
+    profile = current_profile
+    domain = current_domain || Domain.find_for_host("posturacorretta.org")
+    raise ActiveRecord::RecordNotFound, "Dominio PosturaCorretta non configurato" unless domain
+
+    marker_context = {
+      "project_slug" => project.fetch("slug"),
+      "phase_key" => "implementation",
+      "step_key" => step.fetch("key"),
+      "record_type" => "step_completion"
+    }
+    existing = profile.data_commitments.where(status: "completed").find { |item| item.genera_impresa.to_h.slice(*marker_context.keys) == marker_context }
+    return redirect_to(project_step_path(project, step), notice: "Lo step risulta già concluso.") if existing
+
+    missing_data = step_missing_data(step)
+    profile.data_commitments.create!(
+      profile: profile,
+      created_by_profile: profile,
+      domain: domain,
+      title: "Step concluso: #{step.fetch('title')}",
+      description: note,
+      kind: "work",
+      status: "completed",
+      starts_at: Time.current,
+      pricing_type: "none",
+      contribution_type: "unpaid",
+      blocks_calendar: false,
+      genera_impresa: marker_context,
+      metadata: { "missing_data_at_completion" => missing_data }
+    )
+    redirect_to project_step_path(project, step), notice: missing_data.any? ? "Step concluso. Sono indicati i dati ancora mancanti." : "Step concluso."
   end
 
   def destroy
@@ -210,11 +253,16 @@ module Brands
     def commitment_return_path(commitment)
       genera_impresa = commitment.genera_impresa.to_h
       if genera_impresa["project_slug"].present?
+        anchor = if genera_impresa["record_type"] == "step_completion" || genera_impresa["task_key"].blank?
+          "step-#{genera_impresa['step_key']}"
+        else
+          "task-#{genera_impresa['step_key']}-#{genera_impresa['task_key']}"
+        end
         return posturacorretta_progetto_path(
           genera_impresa.fetch("project_slug"),
           tab: "phases",
           phase: genera_impresa["phase_key"].presence || "implementation",
-          anchor: "task-#{genera_impresa['step_key']}-#{genera_impresa['task_key']}"
+          anchor: anchor
         )
       end
 
@@ -237,10 +285,32 @@ module Brands
       raise ActiveRecord::RecordNotFound, "Progetto non trovato" unless project&.dig("generaimpresa_origin") == "generaimpresa"
 
       step = project.fetch("steps", []).find { |item| item["key"] == params[:step_key] }
-      task = step&.fetch("tasks", [])&.find { |item| item["key"] == params[:task_key] }
-      raise ActiveRecord::RecordNotFound, "Step o task non trovato" unless step && task
+      task = step&.fetch("tasks", [])&.find { |item| item["key"] == params[:task_key] } if params[:task_key].present?
+      raise ActiveRecord::RecordNotFound, "Step non trovato" unless step
+      raise ActiveRecord::RecordNotFound, "Task non trovato" if params[:task_key].present? && task.nil?
 
       [project, step, task]
+    end
+
+    def find_genera_impresa_step!
+      data = PosturacorrettaProjectCatalog.load
+      project = data.fetch("projects", []).find { |item| item["slug"] == params[:project_slug] }
+      raise ActiveRecord::RecordNotFound, "Progetto non trovato" unless project&.dig("generaimpresa_origin") == "generaimpresa"
+
+      step = project.fetch("steps", []).find { |item| item["key"] == params[:step_key] }
+      raise ActiveRecord::RecordNotFound, "Step non trovato" unless step
+
+      [project, step]
+    end
+
+    def step_missing_data(step)
+      {
+        "responsabile" => step["assignee"].blank? || step["assignee"] == "Da assegnare",
+        "data di assegnazione" => step["assigned_at"].blank?,
+        "costo stimato" => step["estimated_cost"].blank?,
+        "tempo stimato" => step["estimated_hours"].blank? && step.fetch("tasks", []).none? { |task| task["estimated_hours"].present? },
+        "data di inizio" => step["started_at"].blank?
+      }.select { |_label, missing| missing }.keys
     end
 
     def data_commitment_params
@@ -264,6 +334,20 @@ module Brands
         phase: "implementation",
         anchor: "task-#{step.fetch('key')}-#{task.fetch('key')}"
       )
+    end
+
+
+    def project_step_path(project, step)
+      posturacorretta_progetto_path(
+        project.fetch("slug"),
+        tab: "phases",
+        phase: "implementation",
+        anchor: "step-#{step.fetch('key')}"
+      )
+    end
+
+    def activity_return_path(project, step, task)
+      task ? project_path(project, step, task) : project_step_path(project, step)
     end
     end
   end

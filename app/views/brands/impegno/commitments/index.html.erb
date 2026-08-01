@@ -1,13 +1,15 @@
-<% content_for :title, "Impegno" %>
 <% posturacorretta_domain = @scoped_domain.present? %>
+<% calendar_path = posturacorretta_domain ? posturacorretta_impegno_path : data_commitments_path %>
+<% calendar_url = ->(**params) { posturacorretta_domain ? posturacorretta_impegno_path(**params) : data_commitments_path(**params) } %>
+<% content_for :title, posturacorretta_domain ? "Calendario PosturaCorretta" : "Impegno" %>
 
 <header class="border-b border-slate-200 bg-white">
   <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
-    <% home_link = link_to data_commitments_path, class: "flex items-center gap-2 text-lg font-black text-slate-950" do %>
+    <% home_link = link_to calendar_path, class: "flex items-center gap-2 text-lg font-black text-slate-950" do %>
       <% if posturacorretta_domain %>
         <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-8 w-auto">
         <span class="hidden h-6 border-l border-slate-200 sm:block" aria-hidden="true"></span>
-        <span class="text-sm font-bold text-slate-500 sm:text-base">Impegno</span>
+        <span class="text-sm font-bold text-slate-500 sm:text-base">Calendario</span>
       <% else %>
         <span class="flex size-9 items-center justify-center rounded-xl bg-blue-600 text-sm text-white">1</span>
         <span>Impegno</span>
@@ -28,14 +30,14 @@
               <p class="truncate text-xs text-slate-500"><%= Current.user.email_address %></p>
             </div>
             <div class="my-1 border-t border-slate-100"></div>
-            <%= link_to "I miei impegni", data_commitments_path, class: "block rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700" %>
+            <%= link_to posturacorretta_domain ? "Calendario" : "I miei impegni", calendar_path, class: "block rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700" %>
             <%= link_to "Profilo", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
             <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
           </div>
         </details>
       <% else %>
-        <%= link_to "Accedi", new_session_path(return_to: data_commitments_path), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100" %>
-        <%= link_to "Registrati", new_user_path(return_to: data_commitments_path), class: "rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
+        <%= link_to "Accedi", new_session_path(return_to: calendar_path), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100" %>
+        <%= link_to "Registrati", new_user_path(return_to: calendar_path), class: "rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
       <% end %>
     </div>
   </div>
@@ -50,8 +52,8 @@
         <h1 class="mt-6 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">I tuoi impegni, in un solo posto</h1>
         <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-slate-600">Inizia con un elenco semplice: cosa devi fare, in quale dominio e quando.</p>
         <div class="mt-8 flex flex-wrap justify-center gap-3">
-          <%= link_to "Registrati", new_user_path(return_to: data_commitments_path), class: "rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700" %>
-          <%= link_to "Accedi", new_session_path(return_to: data_commitments_path), class: "rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
+          <%= link_to "Registrati", new_user_path(return_to: calendar_path), class: "rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700" %>
+          <%= link_to "Accedi", new_session_path(return_to: calendar_path), class: "rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
         </div>
       </section>
     <% else %>
@@ -65,17 +67,17 @@
           [("#{hours}h" if hours.positive?), ("#{remaining}m" if remaining.positive?)].compact.join(" ")
         end
       %>
-      <% upcoming_tab = link_to data_commitments_path(tab: "upcoming", date: @commitment_date&.iso8601), aria: { current: ("page" if @commitment_tab == "upcoming") }, class: "commitment-period-tab rounded-md px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:text-slate-900" do %>
+      <% upcoming_tab = link_to calendar_url.call(**{ tab: "upcoming", date: @commitment_date&.iso8601 }.compact), aria: { current: ("page" if @commitment_tab == "upcoming") }, class: "commitment-period-tab rounded-md px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:text-slate-900" do %>
         Prossimi <span class="ml-1 text-xs opacity-75">(<%= @upcoming_commitments.size %>)</span>
       <% end %>
-      <% past_tab = link_to data_commitments_path(tab: "past", date: @commitment_date&.iso8601), aria: { current: ("page" if @commitment_tab == "past") }, class: "commitment-period-tab rounded-md px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:text-slate-900" do %>
+      <% past_tab = link_to calendar_url.call(**{ tab: "past", date: @commitment_date&.iso8601 }.compact), aria: { current: ("page" if @commitment_tab == "past") }, class: "commitment-period-tab rounded-md px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:text-slate-900" do %>
         Passati <span class="ml-1 text-xs opacity-75">(<%= @past_commitments.size %>)</span>
       <% end %>
 
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4 mb-4">
         <div class="flex flex-wrap items-center gap-4">
           <div>
-            <h1 class="text-2xl font-black tracking-tight text-slate-950"><%= posturacorretta_domain ? "Impegni PosturaCorretta" : "I miei impegni" %></h1>
+            <h1 class="text-2xl font-black tracking-tight text-slate-950"><%= posturacorretta_domain ? "Calendario PosturaCorretta" : "I miei impegni" %></h1>
             <% if posturacorretta_domain %><p class="mt-0.5 text-xs font-medium text-slate-500">Solo gli impegni collegati a PosturaCorretta.</p><% end %>
           </div>
           
@@ -86,12 +88,12 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
-          <% date_filter = form_with url: data_commitments_path, method: :get, class: "flex items-center gap-2" do |form| %>
+          <% date_filter = form_with url: calendar_path, method: :get, class: "flex items-center gap-2" do |form| %>
             <%= hidden_field_tag :tab, @commitment_tab %>
             <%= form.label :date, "Cerca per data", class: "sr-only" %>
             <%= form.date_field :date, value: @commitment_date&.iso8601, class: "h-9 w-36 rounded-lg border border-slate-300 bg-white px-2.5 text-sm text-slate-700" %>
             <%= form.submit "Cerca", class: "cursor-pointer h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
-            <% if @commitment_date %><%= link_to "Azzera", data_commitments_path(tab: @commitment_tab), class: "text-xs font-bold text-slate-500 hover:text-slate-700" %><% end %>
+            <% if @commitment_date %><%= link_to "Azzera", calendar_path, class: "text-xs font-bold text-slate-500 hover:text-slate-700" %><% end %>
           <% end %>
           <%= date_filter %>
           <button type="button" command="show-modal" commandfor="record-commitment-dialog" class="h-9 rounded-lg border border-blue-200 bg-white px-3 text-sm font-bold text-blue-700 shadow-sm hover:bg-blue-50">● Registra</button>

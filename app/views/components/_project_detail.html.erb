@@ -37,7 +37,8 @@
     project.fetch("financiers", []) +
     project.fetch("contributors", []).map { |contributor| contributor["participant"] }
   ).compact.map { |name| name.to_s.delete_prefix("@") }.uniq
-  completed_steps = steps.count { |step| step["status"] == "completed" }
+  step_completion_markers = Array(@data_commitments).select { |commitment| commitment.genera_impresa["record_type"] == "step_completion" && commitment.status == "completed" }.index_by { |commitment| commitment.genera_impresa["step_key"] }
+  completed_steps = steps.count { |step| step["status"] == "completed" || step_completion_markers.key?(step["key"]) }
   progress = steps.any? ? ((completed_steps.to_f / steps.size) * 100).round : 0
   money = ->(value) { number_to_currency(value.to_i, unit: "€", precision: 0, delimiter: ".", separator: ",", format: "%n %u") }
   compact_number = lambda do |value|
@@ -71,7 +72,7 @@
     minutes = minutes_between.call(started_at, completed_at)
     format_minutes.call(minutes)
   end
-  commitment_work_logs = Array(@data_commitments).group_by do |commitment|
+  commitment_work_logs = Array(@data_commitments).reject { |commitment| commitment.genera_impresa["record_type"] == "step_completion" }.group_by do |commitment|
     [commitment.genera_impresa["step_key"], commitment.genera_impresa["task_key"]]
   end.transform_values do |commitments|
     commitments.map do |commitment|
@@ -439,15 +440,23 @@
         <%
           assigned = step["assignee"].present? && step["assignee"] != "Da assegnare"
           started = step["started_at"].present?
-          finished = step["completed_at"].present?
+          completion_marker = step_completion_markers[step["key"]]
+          finished = step["status"] == "completed" || step["completed_at"].present? || completion_marker.present?
           step_estimated_hours = step["estimated_hours"].presence || step.fetch("tasks", []).sum { |task| task["estimated_hours"].to_f }
-          step_work_logs = step.fetch("tasks", []).flat_map { |task| work_logs_for.call(step, task) }
+          step_free_logs = commitment_work_logs.fetch([step["key"], nil], [])
+          step_work_logs = step.fetch("tasks", []).flat_map { |task| work_logs_for.call(step, task) } + step_free_logs
           step_worked_minutes = step_work_logs.sum { |work_log| minutes_between.call(work_log["started_at"], work_log["completed_at"]).to_i }
           current = started && !finished
-          state_label = finished ? "Concluso" : (started ? "In corso" : (assigned ? "Da iniziare" : "Da assegnare"))
+          missing_step_data = []
+          missing_step_data << "responsabile" unless assigned
+          missing_step_data << "data di assegnazione" if step["assigned_at"].blank?
+          missing_step_data << "costo stimato" if step["estimated_cost"].blank?
+          missing_step_data << "tempo stimato" unless step_estimated_hours.to_f.positive?
+          missing_step_data << "data di inizio" unless started || step_work_logs.any?
+          state_label = finished ? (missing_step_data.any? ? "Concluso · dati mancanti" : "Concluso") : (started ? "In corso" : (assigned ? "Da iniziare" : "Da assegnare"))
           state_classes = finished ? "bg-emerald-50 text-emerald-700 border-emerald-200" : (started ? "bg-indigo-50 text-indigo-700 border-indigo-200" : "bg-slate-50 text-slate-600 border-slate-200")
         %>
-        <li>
+        <li id="step-<%= step["key"] %>">
           <details class="group rounded-xl border border-slate-200 bg-white" <%= "open" if current %>>
             <summary class="list-none cursor-pointer px-4 py-4 sm:px-5 [&::-webkit-details-marker]:hidden">
               <span class="flex w-full items-center justify-between gap-4">
@@ -481,6 +490,81 @@
             </summary>
 
             <div class="border-t border-slate-100 px-4 py-5 sm:px-5">
+              <div class="mb-4 flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div class="text-xs text-slate-600">
+                  <% if completion_marker %>
+                    <p><strong class="text-emerald-700">Step concluso manualmente:</strong> <%= completion_marker.description %></p>
+                  <% else %>
+                    <p>Puoi registrare le attività oppure concludere lo step anche senza attività.</p>
+                  <% end %>
+                  <% if missing_step_data.any? %>
+                    <p class="mt-1 text-amber-700"><strong>Dati mancanti:</strong> <%= missing_step_data.join(", ") %>.</p>
+                  <% end %>
+                </div>
+                <% if Current.user&.superadmin_user? %>
+                  <div class="flex shrink-0 flex-wrap gap-2">
+                    <button type="button" command="show-modal" commandfor="free-activity-<%= step.fetch("key") %>" class="pc-cta-secondary">+ Attività dello step</button>
+                    <% if completion_marker %>
+                      <%= button_to "Riapri step", data_commitment_path(completion_marker), method: :delete, form: { data: { turbo_confirm: "Riaprire questo step? La registrazione della chiusura verrà eliminata." } }, class: "pc-cta-secondary shrink-0" %>
+                    <% elsif !finished %>
+                      <button type="button" command="show-modal" commandfor="complete-step-<%= step.fetch("key") %>" class="pc-cta-primary shrink-0">Concludi step</button>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+
+              <% if step_free_logs.any? %>
+                <section class="mb-4 overflow-hidden rounded-xl border border-amber-200 bg-white" aria-label="Attività dello step non associate">
+                  <div class="flex items-center justify-between gap-3 border-b border-amber-100 bg-amber-50 px-4 py-2.5">
+                    <div><h5 class="text-sm font-bold text-amber-900">Attività dello step</h5><p class="text-[11px] text-amber-700">Non ancora associate a un task.</p></div>
+                    <span class="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-amber-700"><%= step_free_logs.size %></span>
+                  </div>
+                  <div class="divide-y divide-slate-100">
+                    <% step_free_logs.each do |work_log| %>
+                      <% rate = hourly_rate_for.call(work_log) %>
+                      <div class="grid gap-2 px-4 py-3 text-xs sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] sm:items-center">
+                        <div><strong class="block text-slate-900"><%= work_log["description"] %></strong><span class="text-slate-500"><%= work_log["participant"] %> · <%= format_datetime.call(work_log["started_at"]) %>–<%= format_datetime.call(work_log["completed_at"]) %></span></div>
+                        <span class="font-bold text-slate-700"><%= duration.call(work_log["started_at"], work_log["completed_at"]) %></span>
+                        <span class="font-bold text-slate-900"><%= work_money.call(work_value.call(work_log)) %></span>
+                        <% if work_log["commitment_id"] %><%= button_to "Elimina", data_commitment_path(work_log["commitment_id"]), method: :delete, form: { data: { turbo_confirm: "Eliminare questa attività dello step?" } }, class: "text-xs font-bold text-red-600 hover:text-red-700" %><% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                </section>
+              <% end %>
+
+              <% if Current.user&.superadmin_user? %>
+                <dialog id="free-activity-<%= step.fetch("key") %>" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+                  <div class="border-b border-slate-200 px-5 py-4"><p class="text-xs font-black uppercase tracking-wider text-amber-600">Attività non associata a un task</p><h5 class="mt-1 text-lg font-black text-slate-950"><%= step["title"] %></h5></div>
+                  <% free_activity_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
+                    <%= hidden_field_tag :project_slug, project.fetch("slug") %>
+                    <%= hidden_field_tag :step_key, step.fetch("key") %>
+                    <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Revisione dei materiali disponibili", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+                    <div><%= form.label :description, "Cosa hai fatto", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 3, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+                    <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :starts_at, "Inizio", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div><div><%= form.label :ends_at, "Fine", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div></div>
+                    <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :pricing_type, "Valorizzazione", class: "text-xs font-bold text-slate-700" %><%= form.select :pricing_type, [["Tariffa oraria", "hourly"], ["Prezzo fisso", "fixed"], ["Nessun valore", "none"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div><div><%= form.label :contribution_type, "Tipo", class: "text-xs font-bold text-slate-700" %><%= form.select :contribution_type, [["Tempo investito", "time_investment"], ["Retribuito", "paid"], ["Non retribuito", "unpaid"], ["Denaro investito", "money_investment"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div></div>
+                    <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :hourly_rate, "Tariffa €/h", class: "text-xs font-bold text-slate-700" %><%= form.number_field :hourly_rate, value: @project_participants_by_slug.dig(Current.user.profile&.username, "default_hourly_rate"), min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div><div><%= form.label :total_price, "Prezzo fisso €", class: "text-xs font-bold text-slate-700" %><%= form.number_field :total_price, min: 0, step: 0.01, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div></div>
+                    <p class="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">L'attività resterà nello step senza task. Potrà essere associata quando task e step saranno gestiti dal database.</p>
+                    <div class="flex justify-end gap-2"><button type="button" command="close" commandfor="free-activity-<%= step.fetch("key") %>" class="pc-cta-secondary">Annulla</button><%= form.submit "Registra attività", class: "pc-cta-primary cursor-pointer" %></div>
+                  <% end %>
+                  <%= free_activity_form %>
+                </dialog>
+              <% end %>
+
+              <% if Current.user&.superadmin_user? && !finished %>
+                <dialog id="complete-step-<%= step.fetch("key") %>" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+                  <div class="border-b border-slate-200 px-5 py-4"><p class="text-xs font-black uppercase tracking-wider text-emerald-600">Chiusura manuale</p><h5 class="mt-1 text-lg font-black text-slate-950"><%= step["title"] %></h5></div>
+                  <% complete_step_form = form_with url: complete_step_data_commitments_path, class: "space-y-4 p-5" do %>
+                    <%= hidden_field_tag :project_slug, project.fetch("slug") %>
+                    <%= hidden_field_tag :step_key, step.fetch("key") %>
+                    <div><%= label_tag :completion_note, "Cosa è stato concluso?", class: "text-xs font-bold text-slate-700" %><%= text_area_tag :completion_note, nil, rows: 4, required: true, placeholder: "Descrivi il risultato o il motivo della chiusura senza attività…", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+                    <% if missing_step_data.any? %><p class="rounded-lg bg-amber-50 p-3 text-xs text-amber-800"><strong>Potrai concludere comunque.</strong> Restano da integrare: <%= missing_step_data.join(", ") %>.</p><% end %>
+                    <div class="flex justify-end gap-2"><button type="button" command="close" commandfor="complete-step-<%= step.fetch("key") %>" class="pc-cta-secondary">Annulla</button><button type="submit" class="pc-cta-primary">Concludi anche senza attività</button></div>
+                  <% end %>
+                  <%= complete_step_form %>
+                </dialog>
+              <% end %>
+
               <% if step.fetch("tasks", []).any? %>
                 <ol class="space-y-4">
                   <% step["tasks"].each do |task| %>

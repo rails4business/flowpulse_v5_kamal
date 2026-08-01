@@ -1,0 +1,31 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+<% content_for :title, "#{@collaboration_guide.fetch('title')} — PosturaCorretta" %>
+<% content_for :description, @collaboration_guide.fetch("description") %>
+
+<main class="min-h-screen bg-white">
+  <section class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-6xl px-5 py-8">
+      <a href="<%= posturacorretta_collabora_professionisti_path %>" class="text-sm font-semibold text-blue-700 hover:text-blue-900">&larr; Collabora come professionista</a>
+    </div>
+  </section>
+
+  <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
+    <%= render "posturacorretta/shared/rich_text",
+               rendered_content: markdown(@collaboration_content),
+               class_name: "min-w-0" %>
+
+    <aside class="hidden lg:block lg:sticky lg:top-24">
+      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Altre possibilità</p>
+      <nav class="mt-4 space-y-1 border-l border-slate-200 pl-4" aria-label="Approfondimenti sulla collaborazione">
+        <% @collaboration_guides.each do |guide| %>
+          <a href="<%= posturacorretta_collabora_professionisti_guida_path(guide.fetch('slug')) %>" class="block py-1.5 text-sm <%= guide['slug'] == @collaboration_guide['slug'] ? 'font-semibold text-blue-700' : 'text-slate-600 hover:text-blue-700' %>"><%= guide.fetch("title") %></a>
+        <% end %>
+        <a href="<%= posturacorretta_accademia_path(anchor: 'collabora-accademia') %>" class="block py-1.5 text-sm text-slate-600 hover:text-blue-700">Collabora con l'Accademia</a>
+      </nav>
+    </aside>
+  </section>
+</main>
+
+<%= render "posturacorretta/footer" %>

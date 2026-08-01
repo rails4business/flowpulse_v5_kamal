@@ -20,6 +20,8 @@ class PosturacorrettaController < ApplicationController
 
     aside_data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/percorso/aside.yml"), permitted_classes: [], aliases: false) || {}
     @aside_items = aside_data.fetch("items", [])
+    professional_group = @aside_items.find { |item| item["type"] == "group" && item["title"] == "Professionisti" }
+    @professional_page_slugs = collect_aside_slugs(professional_group&.fetch("children", []) || [])
 
     requested_slug = params[:page].presence || "inizia"
     @current_item = find_aside_item(@aside_items, requested_slug) || find_aside_item(@aside_items, "inizia")
@@ -91,6 +93,24 @@ class PosturacorrettaController < ApplicationController
   end
   def collabora; end
   def collabora_professionisti; end
+  def collabora_professionisti_guida
+    if params[:slug] == "percorso-integrato"
+      return redirect_to posturacorretta_percorso_path(page: "professionisti-percorso-integrato")
+    end
+
+    root = Rails.root.join("config/data/posturacorretta/collabora/professionisti")
+    data = YAML.safe_load_file(root.join("guide.yml"), permitted_classes: [], aliases: false) || {}
+    @collaboration_guides = data.fetch("guides", [])
+    @collaboration_guide = @collaboration_guides.find { |guide| guide["slug"] == params[:slug] }
+    return redirect_to posturacorretta_collabora_professionisti_path, alert: "Approfondimento non trovato" unless @collaboration_guide
+
+    content_path = root.join(@collaboration_guide.fetch("source")).cleanpath
+    unless content_path.to_s.start_with?(root.to_s) && content_path.file?
+      return redirect_to posturacorretta_collabora_professionisti_path, alert: "Contenuto non disponibile"
+    end
+
+    @collaboration_content = content_path.read
+  end
   def collabora_digital
     load_projects
     @freelance_tasks = []
@@ -116,6 +136,12 @@ class PosturacorrettaController < ApplicationController
   end
 
   private
+
+  def collect_aside_slugs(items)
+    items.flat_map do |item|
+      [item["slug"], *collect_aside_slugs(item.fetch("children", []))].compact
+    end
+  end
 
   def find_aside_item(items, slug)
     items.each do |item|
