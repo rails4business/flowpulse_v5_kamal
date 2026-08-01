@@ -6,26 +6,23 @@ module Brands
       layout "landing"
 
   def index
-    @scoped_domain = if params[:brand_scope] == "posturacorretta"
-      Domain.find_for_host("posturacorretta.org")
-    elsif current_domain&.target_controller == "brands/posturacorretta" || current_domain&.target_action == "posturacorretta"
-      current_domain
-    end
     @domains = available_domains
 
-    @profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
+    # Area & View navigation
+    @active_area = %w[user professional places contacts].include?(params[:area]) ? params[:area] : "user"
+    @active_view = %w[agenda programs recurring value reports].include?(params[:view]) ? params[:view] : "agenda"
+    
+    # Domain / Brand filter
+    if params[:domain_id].present? && params[:domain_id] != "all"
+      @scoped_domain = @domains.find_by(id: params[:domain_id])
+    end
+
+    @profile = current_profile
     @commitments = @profile.data_commitments.includes(:domain).order(:starts_at)
     @commitments = @commitments.where(domain: @scoped_domain) if @scoped_domain
-    @past_commitments = @commitments.select do |commitment|
-      %w[completed cancelled].include?(commitment.status) || (!commitment.tracking? && commitment.ends_at.present? && commitment.ends_at < Time.current)
-    end
-    @upcoming_commitments = @commitments - @past_commitments
-    @commitment_tab = %w[upcoming past].include?(params[:tab]) ? params[:tab] : "upcoming"
-    @commitment_date = Date.iso8601(params[:date]) if params[:date].present?
-    @visible_commitments = @commitment_tab == "past" ? @past_commitments.reverse : @upcoming_commitments
-    @visible_commitments = @visible_commitments.select { |commitment| commitment.starts_at.to_date == @commitment_date } if @commitment_date
-  rescue Date::Error
-    redirect_to data_commitments_path(tab: @commitment_tab), alert: "La data indicata non è valida."
+    
+    # Raggruppa i commitment per giorno
+    @commitments_by_day = @commitments.group_by { |c| (c.actual_started_at || c.starts_at || Time.current).to_date }
   end
 
   def create
@@ -39,7 +36,7 @@ module Brands
     raise ActiveRecord::RecordNotFound, "Dominio PosturaCorretta non configurato" unless domain
 
     start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
-    if start_now && profile.data_commitments.where(status: "in_progress", actual_ended_at: nil).exists?
+    if start_now && active_timer_for_calendar?(profile, "profile:#{profile.id}")
       return redirect_to activity_return_path(project, step, task), alert: "Hai già un’attività in corso. Concludila prima di iniziarne un’altra."
     end
 
@@ -111,6 +108,9 @@ module Brands
     commitment = owned_commitment
     unless %w[draft planned confirmed].include?(commitment.status) && commitment.actual_started_at.blank?
       return redirect_to commitment_return_path(commitment), alert: "Questo impegno non può essere avviato."
+    end
+    if active_timer_for_calendar?(current_profile, commitment.calendar_key, excluding: commitment)
+      return redirect_to commitment_return_path(commitment), alert: "Questo calendario ha già un’attività in corso. Concludila prima di iniziarne un’altra."
     end
 
     commitment.update!(status: "in_progress", actual_started_at: Time.current, actual_ended_at: nil)
@@ -205,7 +205,7 @@ module Brands
       assign_calendar_identity(commitment)
       start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
       if start_now
-        if current_profile.data_commitments.where(status: "in_progress", actual_ended_at: nil).exists?
+        if active_timer_for_calendar?(current_profile, commitment.calendar_key)
           return redirect_to data_commitments_path(tab: "upcoming"), alert: "Hai già un’attività in corso. Concludila prima di registrarne un’altra."
         end
 
@@ -248,6 +248,16 @@ module Brands
         commitment.calendar_key = "person:#{Digest::SHA256.hexdigest("#{current_profile.id}:#{requested_label.downcase}")[0, 16]}"
         commitment.calendar_label = requested_label
       end
+    end
+
+    def active_timer_for_calendar?(profile, calendar_key, excluding: nil)
+      timers = profile.data_commitments.where(
+        calendar_key: calendar_key,
+        status: "in_progress",
+        actual_ended_at: nil
+      )
+      timers = timers.where.not(id: excluding.id) if excluding&.persisted?
+      timers.exists?
     end
 
     def commitment_return_path(commitment)

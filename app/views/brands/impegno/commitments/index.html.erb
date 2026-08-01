@@ -3,246 +3,256 @@
 <% calendar_url = ->(**params) { posturacorretta_domain ? posturacorretta_impegno_path(**params) : data_commitments_path(**params) } %>
 <% content_for :title, posturacorretta_domain ? "Calendario PosturaCorretta" : "Impegno" %>
 
-<header class="border-b border-slate-200 bg-white">
-  <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
-    <% home_link = link_to calendar_path, class: "flex items-center gap-2 text-lg font-black text-slate-950" do %>
-      <% if posturacorretta_domain %>
-        <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-8 w-auto">
-        <span class="hidden h-6 border-l border-slate-200 sm:block" aria-hidden="true"></span>
-        <span class="text-sm font-bold text-slate-500 sm:text-base">Calendario</span>
-      <% else %>
-        <span class="flex size-9 items-center justify-center rounded-xl bg-blue-600 text-sm text-white">1</span>
-        <span>Impegno</span>
-      <% end %>
-    <% end %>
-    <%= home_link %>
+<% kind_labels = { "personal" => "Personale", "appointment" => "Appuntamento", "event" => "Evento", "project" => "Progetto", "path" => "Percorso", "content" => "Contenuto", "academy" => "Accademia", "work" => "Lavoro", "service" => "Servizio", "purchase" => "Acquisto", "report" => "Report" } %>
+<% status_labels = { "draft" => "Bozza", "planned" => "Da iniziare", "confirmed" => "Confermato", "in_progress" => "In corso", "completed" => "Concluso", "cancelled" => "Annullato" } %>
+<% kind_classes = {
+  "event" => "bg-purple-100 text-purple-700",
+  "service" => "bg-blue-50 text-blue-600",
+  "report" => "bg-amber-100 text-amber-700",
+  "purchase" => "bg-red-100 text-red-700",
+  "appointment" => "bg-orange-50 text-orange-600",
+  "project" => "bg-slate-100 text-slate-600",
+  "personal" => "bg-slate-50 text-slate-500",
+  "path" => "bg-teal-50 text-teal-600",
+  "content" => "bg-fuchsia-50 text-fuchsia-600",
+  "academy" => "bg-indigo-50 text-indigo-600",
+  "work" => "bg-blue-50 text-blue-600"
+} %>
 
-    <div class="flex items-center gap-2">
-      <% if authenticated? %>
+<%= render "shared/active_commitment", commitment: active_data_commitment if active_data_commitment %>
+
+<main class="mx-auto w-full max-w-[920px] px-4 py-7 pb-20 sm:px-0">
+  <% unless authenticated? %>
+    <section class="mx-auto max-w-2xl py-12 text-center">
+      <span class="mx-auto flex size-14 items-center justify-center rounded-2xl bg-blue-100 text-xl font-black text-blue-700">1</span>
+      <h1 class="mt-6 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">I tuoi impegni, in un solo posto</h1>
+      <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-slate-600">Inizia con un elenco semplice: cosa devi fare, in quale dominio e quando.</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <%= link_to "Registrati", new_user_path(return_to: calendar_path), class: "rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition" %>
+        <%= link_to "Accedi", new_session_path(return_to: calendar_path), class: "rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition" %>
+      </div>
+    </section>
+  <% else %>
+    <header class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center text-xl font-black tracking-tighter text-slate-900">
+            <span class="mr-1 rounded-lg bg-blue-50 px-2 py-0.5 text-lg text-blue-600">1</span>impegno
+          </span>
+          
+          <%= form_with url: calendar_path, method: :get, data: { turbo_frame: "_top", turbo_action: "replace" }, class: "flex items-center gap-2 ml-1" do |f| %>
+            <%= f.hidden_field :view, value: @active_view %>
+            
+            <div class="relative">
+              <%= f.select :domain_id, 
+                    options_for_select([["Tutti i brand", "all"]] + @domains.map { |d| [d.display_hostname, d.id] }, params[:domain_id] || "all"), 
+                    {}, 
+                    { onchange: "this.form.requestSubmit()", class: "appearance-none rounded-lg border border-slate-200 bg-white py-1 pl-2.5 pr-7 text-[13px] font-bold text-slate-500 shadow-sm cursor-pointer hover:bg-slate-50 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition" } 
+              %>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                <svg class="h-3 w-3 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+              </div>
+            </div>
+            
+            <div class="relative">
+              <%= f.select :area, 
+                    options_for_select([["Spazio Utente", "user"], ["Spazio Professionista", "professional"], ["Luoghi", "places"], ["Contatti", "contacts"]], @active_area), 
+                    {}, 
+                    { onchange: "this.form.requestSubmit()", class: "appearance-none rounded-lg border border-slate-200 bg-white py-1 pl-2.5 pr-7 text-[13px] font-bold text-slate-900 shadow-sm cursor-pointer hover:bg-slate-50 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition" } 
+              %>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                <svg class="h-3 w-3 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="mt-0.5 hidden text-[13px] text-slate-500 sm:block">Il calendario che lascia traccia.</div>
+      </div>
+
+      <div class="flex items-center gap-3">
         <details class="group relative [&_summary::-webkit-details-marker]:hidden">
-          <summary class="profile-menu-toggle cursor-pointer list-none gap-2 rounded-full border border-slate-200 bg-white p-1.5 pr-3 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" aria-label="Apri menu profilo">
-            <span class="flex size-8 items-center justify-center rounded-full bg-blue-600 text-xs text-white"><%= (Current.user.profile&.display_name || Current.user.email_address).first.upcase %></span>
-            <svg aria-hidden="true" class="size-4 text-slate-400 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+          <summary class="cursor-pointer list-none rounded-full border border-slate-200 bg-white p-1 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" aria-label="Apri menu profilo">
+            <span class="flex size-8 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white"><%= (Current.user.profile&.display_name || Current.user.email_address).first.upcase %></span>
           </summary>
-          <div class="absolute right-0 z-20 mt-2 w-60 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+          <div class="absolute right-0 z-20 mt-2 w-60 rounded-xl border border-slate-200 bg-white p-2 text-left shadow-lg">
             <div class="px-3 py-2">
               <p class="truncate text-sm font-bold text-slate-950"><%= Current.user.profile&.display_name.presence || "Profilo" %></p>
               <p class="truncate text-xs text-slate-500"><%= Current.user.email_address %></p>
             </div>
             <div class="my-1 border-t border-slate-100"></div>
-            <%= link_to posturacorretta_domain ? "Calendario" : "I miei impegni", calendar_path, class: "block rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700" %>
             <%= link_to "Profilo", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
             <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
           </div>
         </details>
-      <% else %>
-        <%= link_to "Accedi", new_session_path(return_to: calendar_path), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100" %>
-        <%= link_to "Registrati", new_user_path(return_to: calendar_path), class: "rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
-      <% end %>
-    </div>
-  </div>
-</header>
-<%= render "shared/active_commitment", commitment: active_data_commitment if active_data_commitment %>
-
-<main class="min-h-[calc(100vh-4rem)] bg-slate-50">
-  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:py-14">
-    <% unless authenticated? %>
-      <section class="mx-auto max-w-2xl py-12 text-center">
-        <span class="mx-auto flex size-14 items-center justify-center rounded-2xl bg-blue-100 text-xl font-black text-blue-700">1</span>
-        <h1 class="mt-6 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">I tuoi impegni, in un solo posto</h1>
-        <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-slate-600">Inizia con un elenco semplice: cosa devi fare, in quale dominio e quando.</p>
-        <div class="mt-8 flex flex-wrap justify-center gap-3">
-          <%= link_to "Registrati", new_user_path(return_to: calendar_path), class: "rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700" %>
-          <%= link_to "Accedi", new_session_path(return_to: calendar_path), class: "rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
-        </div>
-      </section>
-    <% else %>
-      <% kind_labels = { "personal" => "Personale", "appointment" => "Appuntamento", "event" => "Evento", "project" => "Progetto", "path" => "Percorso", "content" => "Contenuto", "academy" => "Accademia", "work" => "Lavoro", "service" => "Servizio", "purchase" => "Acquisto", "report" => "Report" } %>
-      <% status_labels = { "draft" => "Bozza", "planned" => "Da iniziare", "confirmed" => "Confermato", "in_progress" => "In corso", "completed" => "Concluso", "cancelled" => "Annullato" } %>
-      <%
-        format_duration = lambda do |minutes|
-          next "—" unless minutes
-
-          hours, remaining = minutes.divmod(60)
-          [("#{hours}h" if hours.positive?), ("#{remaining}m" if remaining.positive?)].compact.join(" ")
-        end
-      %>
-      <% upcoming_tab = link_to calendar_url.call(**{ tab: "upcoming", date: @commitment_date&.iso8601 }.compact), aria: { current: ("page" if @commitment_tab == "upcoming") }, class: "commitment-period-tab rounded-md px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:text-slate-900" do %>
-        Prossimi <span class="ml-1 text-xs opacity-75">(<%= @upcoming_commitments.size %>)</span>
-      <% end %>
-      <% past_tab = link_to calendar_url.call(**{ tab: "past", date: @commitment_date&.iso8601 }.compact), aria: { current: ("page" if @commitment_tab == "past") }, class: "commitment-period-tab rounded-md px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:text-slate-900" do %>
-        Passati <span class="ml-1 text-xs opacity-75">(<%= @past_commitments.size %>)</span>
-      <% end %>
-
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4 mb-4">
-        <div class="flex flex-wrap items-center gap-4">
-          <div>
-            <h1 class="text-2xl font-black tracking-tight text-slate-950"><%= posturacorretta_domain ? "Calendario PosturaCorretta" : "I miei impegni" %></h1>
-            <% if posturacorretta_domain %><p class="mt-0.5 text-xs font-medium text-slate-500">Solo gli impegni collegati a PosturaCorretta.</p><% end %>
-          </div>
-          
-          <nav class="flex gap-1 rounded-lg bg-slate-100 p-1" aria-label="Periodo degli impegni">
-            <%= upcoming_tab %>
-            <%= past_tab %>
-          </nav>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-3">
-          <% date_filter = form_with url: calendar_path, method: :get, class: "flex items-center gap-2" do |form| %>
-            <%= hidden_field_tag :tab, @commitment_tab %>
-            <%= form.label :date, "Cerca per data", class: "sr-only" %>
-            <%= form.date_field :date, value: @commitment_date&.iso8601, class: "h-9 w-36 rounded-lg border border-slate-300 bg-white px-2.5 text-sm text-slate-700" %>
-            <%= form.submit "Cerca", class: "cursor-pointer h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
-            <% if @commitment_date %><%= link_to "Azzera", calendar_path, class: "text-xs font-bold text-slate-500 hover:text-slate-700" %><% end %>
-          <% end %>
-          <%= date_filter %>
-          <button type="button" command="show-modal" commandfor="record-commitment-dialog" class="h-9 rounded-lg border border-blue-200 bg-white px-3 text-sm font-bold text-blue-700 shadow-sm hover:bg-blue-50">● Registra</button>
-          <button type="button" command="show-modal" commandfor="new-commitment-dialog" class="h-9 rounded-lg bg-blue-600 px-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700">+ Nuovo</button>
-        </div>
+        
+        <button class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700" command="show-modal" commandfor="new-commitment-dialog">＋ Nuova voce</button>
       </div>
+    </header>
 
-      <dialog id="record-commitment-dialog" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
-        <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-          <div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Registrazione rapida</p><h2 class="mt-1 text-xl font-black text-slate-950">Cosa stai facendo?</h2><p class="mt-1 text-sm text-slate-500">Il timer partirà quando confermi.</p></div>
-          <button type="button" command="close" commandfor="record-commitment-dialog" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
-        </div>
-        <% record_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
-          <%= hidden_field_tag :start_now, "1" %>
-          <div><%= form.label :title, "Attività", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, autofocus: true, placeholder: "Es. Preparazione contenuti", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-          <div><%= form.label :description, "Cosa farai (facoltativo)", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 2, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-              <%= form.label :domain_id, "Dominio", class: "text-xs font-bold text-slate-700" %>
-              <% if posturacorretta_domain %>
-                <%= form.hidden_field :domain_id, value: @scoped_domain.id %>
-                <div class="mt-1 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-700"><span class="size-2 rounded-full bg-blue-600"></span> PosturaCorretta</div>
-              <% else %>
-                <%= form.select :domain_id, @domains.map { |domain| [domain.display_hostname, domain.id] }, { prompt: "Scegli il dominio" }, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
+    <nav class="mb-5 -mt-2 flex gap-1.5 overflow-x-auto [&::-webkit-scrollbar]:hidden" aria-label="Sezioni dell'area">
+      <% if @active_area == "user" %>
+        <%= link_to "Agenda", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "agenda"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'agenda' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
+        <%= link_to "Programmi", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "programs"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'programs' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
+        <%= link_to "Ricorrenze", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "recurring"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'recurring' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
+      <% elsif @active_area == "professional" %>
+        <%= link_to "Agenda", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "agenda"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'agenda' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
+        <%= link_to "Offerta", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "catalog"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'catalog' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
+        <%= link_to "Valore e scambi", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "value"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'value' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
+      <% end %>
+    </nav>
+
+    <% if @active_view == "agenda" %>
+      <!-- INIZIO AGENDA -->
+      <% if @commitments_by_day.any? %>
+        <% @commitments_by_day.each do |date, commitments_for_day| %>
+          <div class="col-span-full mb-8">
+            <div class="mb-3 flex items-baseline gap-2.5">
+              <h2 class="m-0 text-[15px] font-black uppercase tracking-wide text-slate-900"><%= l(date, format: "%A %d %B").titleize %></h2>
+              <% if date == Date.today %>
+                <span class="text-[11px] font-extrabold uppercase text-blue-600">Oggi</span>
+              <% elsif date == Date.tomorrow %>
+                <span class="text-[11px] font-extrabold uppercase text-slate-500">Domani</span>
               <% end %>
             </div>
-            <div><%= form.label :kind, "Tipo", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Personale", "personal"], ["Lavoro", "work"], ["Progetto", "project"], ["Percorso", "path"], ["Contenuto", "content"]], {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div>
-          </div>
-          <div><%= form.label :calendar_label, "Calendario di", class: "text-xs font-bold text-slate-700" %><%= form.text_field :calendar_label, value: @profile.display_name.presence || @profile.username, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-          <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="record-commitment-dialog" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Avvia registrazione", class: "cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700" %></div>
-        <% end %>
-        <%= record_form %>
-      </dialog>
 
-      <dialog id="new-commitment-dialog" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
-        <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-          <div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Impegno</p><h2 class="mt-1 text-xl font-black text-slate-950">Nuovo impegno</h2></div>
-          <button type="button" command="close" commandfor="new-commitment-dialog" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
-        </div>
-        <% commitment_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
-          <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-          <div><%= form.label :description, "Descrizione", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 2, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-              <%= form.label :domain_id, "Dominio", class: "text-xs font-bold text-slate-700" %>
-              <% if posturacorretta_domain %>
-                <%= form.hidden_field :domain_id, value: @scoped_domain.id %>
-                <div class="mt-1 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-700"><span class="size-2 rounded-full bg-blue-600"></span> PosturaCorretta</div>
-              <% else %>
-                <%= form.select :domain_id, @domains.map { |domain| [domain.display_hostname, domain.id] }, { prompt: "Scegli il dominio" }, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
-              <% end %>
-            </div>
-            <div><%= form.label :kind, "Di cosa si tratta", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Personale", "personal"], ["Appuntamento", "appointment"], ["Evento", "event"], ["Progetto", "project"], ["Percorso", "path"], ["Contenuto", "content"], ["Accademia", "academy"]], {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div>
-          </div>
-          <div><%= form.label :context_label, "Contesto (facoltativo)", class: "text-xs font-bold text-slate-700" %><%= form.text_field :context_label, placeholder: "Es. Igiene Posturale", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-          <div><%= form.label :calendar_label, "Calendario di", class: "text-xs font-bold text-slate-700" %><%= form.text_field :calendar_label, value: @profile.display_name.presence || @profile.username, required: true, placeholder: "Il tuo nome oppure il nome del paziente", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %><p class="mt-1 text-xs text-slate-400">Gli impegni della stessa persona non possono sovrapporsi.</p></div>
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div><%= form.label :starts_at, "Inizio", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-            <div><%= form.label :ends_at, "Fine", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-          </div>
-          <label class="flex items-center gap-2 text-sm text-slate-600"><%= form.check_box :all_day, class: "rounded border-slate-300 text-blue-600" %> Giornata intera</label>
-          <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="new-commitment-dialog" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Aggiungi", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div>
-        <% end %>
-        <%= commitment_form %>
-      </dialog>
-
-      <section>
-
-        <% if @commitment_date %><p class="mt-4 text-xs font-bold text-slate-500">Impegni del <%= l(@commitment_date, format: :long) %></p><% end %>
-        <div class="mt-3 space-y-2">
-          <% if @visible_commitments.any? %>
-            <% @visible_commitments.each do |commitment| %>
-              <%
-                displayed_start = commitment.actual_started_at || commitment.starts_at
-                displayed_end = commitment.actual_ended_at || commitment.ends_at
-                actual_times = commitment.actual_started_at.present?
-              %>
-              <article id="commitment-<%= commitment.id %>" class="grid gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-[8.5rem_minmax(0,1fr)_auto] sm:items-center">
-                <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                  <div class="bg-blue-600 px-3 py-1.5 text-center text-[10px] font-black uppercase tracking-widest text-white"><%= l(displayed_start, format: "%A") %></div>
-                  <div class="flex items-center justify-center gap-2 px-3 py-2">
-                    <span class="text-3xl font-black leading-none text-slate-950"><%= displayed_start.strftime("%d") %></span>
-                    <span class="text-xs font-black uppercase leading-4 text-slate-500"><%= l(displayed_start, format: "%B") %></span>
-                  </div>
-                  <div class="border-t border-slate-100 bg-slate-50 px-2 py-1.5 text-xs text-slate-600">
-                    <% if commitment.all_day? %>
-                      <p class="text-center font-bold">Tutto il giorno</p>
-                    <% else %>
-                      <div class="flex items-center justify-between gap-2"><span class="text-[9px] font-black uppercase tracking-wide text-slate-400">Inizio</span><strong class="text-slate-800"><%= displayed_start.strftime("%H:%M") %></strong></div>
-                      <div class="mt-0.5 flex items-center justify-between gap-2"><span class="text-[9px] font-black uppercase tracking-wide text-slate-400">Fine</span><strong class="text-slate-800"><%= displayed_end&.strftime("%H:%M") || "In corso" %></strong></div>
-                      <% if actual_times %><p class="mt-1 border-t border-slate-200 pt-1 text-center text-[9px] font-bold uppercase tracking-wide text-emerald-600">Tempo effettivo</p><% end %>
-                    <% end %>
-                  </div>
-                </div>
-                <div class="min-w-0">
-                  <div class="flex flex-wrap items-center gap-2"><h3 class="font-black text-slate-950"><%= commitment.title %></h3><span class="rounded-full px-2 py-0.5 text-[10px] font-black <%= commitment.tracking? ? "bg-amber-100 text-amber-700" : (commitment.status == "completed" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600") %>"><%= status_labels.fetch(commitment.status, commitment.status.humanize) %></span></div>
-                  <p class="mt-1 truncate text-xs text-slate-500"><%= commitment.metadata["context_label"].presence || commitment.description.presence || "Nessun dettaglio" %></p>
-                  <% if commitment.actual_started_at %>
-                    <p class="mt-1 text-xs font-medium text-slate-500">Reale: <%= commitment.actual_started_at.strftime("%d/%m/%Y %H:%M") %><%= "–#{commitment.actual_ended_at.strftime('%H:%M')}" if commitment.actual_ended_at %> · <strong class="text-slate-700"><%= format_duration.call(commitment.duration_minutes) %></strong></p>
-                  <% end %>
-                </div>
-                <div class="flex max-w-xs flex-wrap items-center gap-1.5 sm:justify-end">
-                  <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600"><%= commitment.domain.display_hostname %></span><span class="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span>
-                  <% if %w[draft planned confirmed].include?(commitment.status) && commitment.actual_started_at.blank? %>
-                    <%= button_to "Inizia", start_data_commitment_path(commitment), method: :patch, class: "rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700" %>
-                  <% elsif commitment.tracking? %>
-                    <button type="button" command="show-modal" commandfor="complete-commitment-<%= commitment.id %>" class="rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800">Concludi</button>
-                  <% end %>
-                  <button type="button" command="show-modal" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50">Modifica</button>
-                  <% if @commitment_tab == "past" %>
-                    <%= button_to "Elimina", data_commitment_path(commitment), method: :delete, form: { data: { turbo_confirm: "Eliminare definitivamente questo impegno? L’operazione non può essere annullata." } }, class: "rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" %>
-                  <% end %>
-                </div>
-              </article>
-
-              <dialog id="edit-commitment-<%= commitment.id %>" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
-                <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4"><div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Impegno</p><h2 class="mt-1 text-xl font-black text-slate-950">Modifica impegno</h2></div><button type="button" command="close" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button></div>
-                <% edit_form = form_with model: commitment, url: data_commitment_path(commitment), class: "space-y-4 p-5" do |form| %>
-                  <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-                  <div><%= form.label :description, "Descrizione", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 2, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-                  <div class="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <%= form.label :domain_id, "Dominio", class: "text-xs font-bold text-slate-700" %>
-                      <% if posturacorretta_domain %>
-                        <%= form.hidden_field :domain_id, value: @scoped_domain.id %>
-                        <div class="mt-1 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-700"><span class="size-2 rounded-full bg-blue-600"></span> PosturaCorretta</div>
-                      <% else %>
-                        <%= form.select :domain_id, @domains.map { |domain| [domain.display_hostname, domain.id] }, {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
+            <div class="col-span-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <% commitments_for_day.each_with_index do |commitment, index| %>
+                <%
+                  displayed_start = commitment.actual_started_at || commitment.starts_at
+                  displayed_end = commitment.actual_ended_at || commitment.ends_at
+                  border_top = index > 0 ? "border-t border-slate-200" : ""
+                  time_color = commitment.status == 'completed' ? 'bg-emerald-600' : (commitment.tracking? ? 'bg-red-600' : 'bg-slate-500')
+                %>
+                
+                <details class="group list-none [&_summary::-webkit-details-marker]:hidden" id="commitment-<%= commitment.id %>">
+                  <summary class="grid cursor-pointer grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 px-4 py-4 transition hover:bg-slate-50 sm:grid-cols-[60px_1fr_auto] sm:gap-x-4 sm:px-4.5 <%= border_top %> group-open:border-b group-open:border-slate-200">
+                    <div class="hidden flex-none flex-col overflow-hidden rounded-xl border border-slate-200 bg-white text-center shadow-sm sm:flex h-[50px] w-[54px]">
+                      <div class="py-0.5 text-[11px] font-extrabold tracking-wide text-white <%= time_color %>">
+                        <%= commitment.all_day? ? "TUTTO" : displayed_start.strftime("%H:%M") %>
+                      </div>
+                      <div class="my-auto leading-none text-[13px] font-black text-slate-900"><%= commitment.all_day? ? "GIOR" : (displayed_end&.strftime("%H:%M") || "--:--") %></div>
+                    </div>
+                    
+                    <div class="col-span-full sm:col-span-1">
+                      <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider <%= kind_classes[commitment.kind] || kind_classes['personal'] %>"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span>
+                        <strong class="text-[15px] text-slate-900"><%= commitment.title %></strong>
+                      </div>
+                      <p class="mt-1 text-[13px] leading-snug text-slate-500">
+                        <%= commitment.metadata["context_label"].presence || commitment.description.presence || "Nessun dettaglio aggiuntivo" %>
+                      </p>
+                      <% if commitment.actual_started_at.present? %>
+                         <div class="mt-1 text-[11px] font-bold text-emerald-600">✓ <%= commitment.status == 'completed' ? 'Completato' : 'In corso' %></div>
                       <% end %>
                     </div>
-                    <div><%= form.label :kind, "Di cosa si tratta", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Personale", "personal"], ["Appuntamento", "appointment"], ["Evento", "event"], ["Progetto", "project"], ["Percorso", "path"], ["Contenuto", "content"], ["Accademia", "academy"]], {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div>
+                    
+                    <div class="col-span-full text-right text-[13px] font-bold text-slate-500 sm:col-span-1">
+                       <span class="sm:hidden mr-2"><%= commitment.all_day? ? "Tutto il giorno" : "#{displayed_start.strftime("%H:%M")} - #{displayed_end&.strftime("%H:%M") || "--:--"}" %></span>
+                       <%= commitment.domain.display_hostname %>
+                    </div>
+                  </summary>
+                  
+                  <!-- BODY ESPANSO -->
+                  <div class="border-t border-slate-100 bg-white p-5 sm:p-6 text-sm leading-relaxed text-slate-900">
+                    <h4 class="mb-1.5 mt-0 text-[11px] font-extrabold uppercase tracking-wide text-slate-500">Dettagli Impegno</h4>
+                    <p class="mb-4">
+                      Stato attuale: <strong><%= status_labels.fetch(commitment.status, commitment.status.humanize) %></strong><br>
+                      Calendario: <strong><%= commitment.calendar_label %></strong>
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-2 sm:gap-3">
+                      <% if %w[draft planned confirmed].include?(commitment.status) && commitment.actual_started_at.blank? %>
+                        <%= button_to "Inizia ora", start_data_commitment_path(commitment), method: :patch, class: "rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-emerald-700" %>
+                      <% elsif commitment.tracking? %>
+                        <button type="button" command="show-modal" commandfor="complete-commitment-<%= commitment.id %>" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-slate-800">Concludi</button>
+                      <% end %>
+                      
+                      <button type="button" command="show-modal" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50">Modifica</button>
+                      
+                      <% if %w[completed cancelled].include?(commitment.status) || (!commitment.tracking? && commitment.ends_at.present? && commitment.ends_at < Time.current) %>
+                        <div class="ml-auto">
+                          <%= button_to "Elimina", data_commitment_path(commitment), method: :delete, form: { data: { turbo_confirm: "Sei sicuro di voler eliminare?" } }, class: "rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-100" %>
+                        </div>
+                      <% end %>
+                    </div>
                   </div>
-                  <div><%= form.label :context_label, "Contesto", class: "text-xs font-bold text-slate-700" %><%= form.text_field :context_label, value: commitment.metadata["context_label"], class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-                  <div><%= form.label :calendar_label, "Calendario di", class: "text-xs font-bold text-slate-700" %><%= form.text_field :calendar_label, value: commitment.calendar_label, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-                  <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :starts_at, "Inizio previsto", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, value: commitment.starts_at&.strftime("%Y-%m-%dT%H:%M"), required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div><div><%= form.label :ends_at, "Fine prevista", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, value: commitment.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div></div>
-                  <% if commitment.actual_started_at.present? %>
-                    <fieldset class="rounded-xl border border-slate-200 bg-slate-50 p-4"><legend class="px-1 text-xs font-black uppercase tracking-wider text-slate-500">Tempo reale</legend><div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :actual_started_at, "Inizio effettivo", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :actual_started_at, value: commitment.actual_started_at&.strftime("%Y-%m-%dT%H:%M"), required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div><div><%= form.label :actual_ended_at, "Fine effettiva", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :actual_ended_at, value: commitment.actual_ended_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div></div></fieldset>
+                </details>
+                
+                <!-- Modals per l'edit del singolo commitment -->
+                <dialog id="edit-commitment-<%= commitment.id %>" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+                  <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4"><div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Impegno</p><h2 class="mt-1 text-xl font-black text-slate-950">Modifica impegno</h2></div><button type="button" command="close" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button></div>
+                  <% edit_form = form_with model: commitment, url: data_commitment_path(commitment), class: "space-y-4 p-5" do |form| %>
+                    <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+                    <div><%= form.label :description, "Descrizione", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 2, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <%= form.label :domain_id, "Dominio", class: "text-xs font-bold text-slate-700" %>
+                        <% if posturacorretta_domain %>
+                          <%= form.hidden_field :domain_id, value: @scoped_domain.id %>
+                          <div class="mt-1 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-700"><span class="size-2 rounded-full bg-blue-600"></span> PosturaCorretta</div>
+                        <% else %>
+                          <%= form.select :domain_id, @domains.map { |domain| [domain.display_hostname, domain.id] }, {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %>
+                        <% end %>
+                      </div>
+                      <div><%= form.label :kind, "Di cosa si tratta", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Personale", "personal"], ["Appuntamento", "appointment"], ["Evento", "event"], ["Progetto", "project"], ["Percorso", "path"], ["Contenuto", "content"], ["Accademia", "academy"]], {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+                    </div>
+                    <div><%= form.label :context_label, "Contesto", class: "text-xs font-bold text-slate-700" %><%= form.text_field :context_label, value: commitment.metadata["context_label"], class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+                    <div><%= form.label :calendar_label, "Calendario di", class: "text-xs font-bold text-slate-700" %><%= form.text_field :calendar_label, value: commitment.calendar_label, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+                    <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :starts_at, "Inizio previsto", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, value: commitment.starts_at&.strftime("%Y-%m-%dT%H:%M"), required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div><div><%= form.label :ends_at, "Fine prevista", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, value: commitment.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div></div>
+                    <% if commitment.actual_started_at.present? %>
+                      <fieldset class="rounded-xl border border-slate-200 bg-slate-50 p-4"><legend class="px-1 text-xs font-black uppercase tracking-wider text-slate-500">Tempo reale</legend><div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :actual_started_at, "Inizio effettivo", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :actual_started_at, value: commitment.actual_started_at&.strftime("%Y-%m-%dT%H:%M"), required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div><div><%= form.label :actual_ended_at, "Fine effettiva", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :actual_ended_at, value: commitment.actual_ended_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div></div></fieldset>
+                    <% end %>
+                    <label class="flex items-center gap-2 text-sm text-slate-600"><%= form.check_box :all_day, class: "rounded border-slate-300 text-blue-600" %> Giornata intera</label>
+                    <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-4"><%= link_to "Elimina", data_commitment_path(commitment), data: { turbo_method: :delete, turbo_confirm: "Eliminare definitivamente questo impegno?" }, class: "rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50" %><div class="flex gap-2"><button type="button" command="close" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Salva modifiche", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div></div>
                   <% end %>
-                  <label class="flex items-center gap-2 text-sm text-slate-600"><%= form.check_box :all_day, class: "rounded border-slate-300 text-blue-600" %> Giornata intera</label>
-                  <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-4"><%= link_to "Elimina", data_commitment_path(commitment), data: { turbo_method: :delete, turbo_confirm: "Eliminare definitivamente questo impegno?" }, class: "rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50" %><div class="flex gap-2"><button type="button" command="close" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Salva modifiche", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div></div>
-                <% end %>
-                <%= edit_form %>
-              </dialog>
-            <% end %>
-          <% else %>
-            <p class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-8 text-center text-sm text-slate-400"><%= @commitment_date ? "Nessun impegno nella data selezionata." : "Nessun impegno." %></p>
-          <% end %>
-        </div>
-      </section>
+                </dialog>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center text-[15px] text-slate-500">
+          Nessun impegno pianificato.
+        </p>
+      <% end %>
+    <% else %>
+      <!-- ALTRE VISTE (Programmi, Ricorrenze, ecc.) -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center">
+        <h3 class="mb-2 text-lg font-bold text-slate-900">Sezione in costruzione</h3>
+        <p class="m-0 text-sm text-slate-500">La vista <strong><%= @active_view %></strong> per l'area <strong><%= @active_area %></strong> è attualmente in sviluppo (Fasi successive).</p>
+      </div>
     <% end %>
-  </div>
+
+    <!-- Modale "Nuovo Impegno" -->
+    <dialog id="new-commitment-dialog" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+      <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
+        <div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Impegno</p><h2 class="mt-1 text-xl font-black text-slate-950">Nuovo impegno</h2></div>
+        <button type="button" command="close" commandfor="new-commitment-dialog" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
+      </div>
+      <% commitment_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
+        <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+        <div><%= form.label :description, "Descrizione", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 2, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <%= form.label :domain_id, "Dominio", class: "text-xs font-bold text-slate-700" %>
+            <% if posturacorretta_domain %>
+              <%= form.hidden_field :domain_id, value: @scoped_domain.id %>
+              <div class="mt-1 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-700"><span class="size-2 rounded-full bg-blue-600"></span> PosturaCorretta</div>
+            <% else %>
+              <%= form.select :domain_id, @domains.map { |domain| [domain.display_hostname, domain.id] }, { prompt: "Scegli il dominio" }, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %>
+            <% end %>
+          </div>
+          <div><%= form.label :kind, "Di cosa si tratta", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Personale", "personal"], ["Appuntamento", "appointment"], ["Evento", "event"], ["Progetto", "project"], ["Percorso", "path"], ["Contenuto", "content"], ["Accademia", "academy"]], {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+        </div>
+        <div><%= form.label :context_label, "Contesto (facoltativo)", class: "text-xs font-bold text-slate-700" %><%= form.text_field :context_label, placeholder: "Es. Igiene Posturale", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+        <div><%= form.label :calendar_label, "Calendario di", class: "text-xs font-bold text-slate-700" %><%= form.text_field :calendar_label, value: @profile.display_name.presence || @profile.username, required: true, placeholder: "Il tuo nome oppure il nome del paziente", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %><p class="mt-1 text-xs text-slate-400">Gli impegni della stessa persona non possono sovrapporsi.</p></div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div><%= form.label :starts_at, "Inizio", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+          <div><%= form.label :ends_at, "Fine", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
+        </div>
+        <label class="flex items-center gap-2 text-sm text-slate-600"><%= form.check_box :all_day, class: "rounded border-slate-300 text-blue-600" %> Giornata intera</label>
+        <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="new-commitment-dialog" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Aggiungi", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div>
+      <% end %>
+    </dialog>
+  <% end %>
 </main>

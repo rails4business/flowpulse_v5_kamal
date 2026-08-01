@@ -244,6 +244,74 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "same calendar cannot start a second timer" do
+    first = DataCommitment.create!(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      title: "Prima attività",
+      kind: "personal",
+      status: "planned",
+      starts_at: 1.hour.from_now,
+      pricing_type: "none",
+      contribution_type: "unpaid"
+    )
+    second = DataCommitment.create!(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      title: "Seconda attività",
+      kind: "personal",
+      status: "planned",
+      starts_at: 2.hours.from_now,
+      pricing_type: "none",
+      contribution_type: "unpaid"
+    )
+
+    patch start_data_commitment_url(first)
+    assert first.reload.tracking?
+
+    patch start_data_commitment_url(second)
+    assert_redirected_to data_commitments_url(tab: "upcoming", anchor: "commitment-#{second.id}")
+    assert_equal "planned", second.reload.status
+    assert_includes flash[:alert], "già un’attività in corso"
+  end
+
+  test "different supervised calendars can track activities at the same time" do
+    first = DataCommitment.create!(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      calendar_key: "person:paziente-a",
+      calendar_label: "Paziente A",
+      title: "Supervisione A",
+      kind: "appointment",
+      status: "planned",
+      starts_at: 1.hour.from_now,
+      pricing_type: "none",
+      contribution_type: "unpaid"
+    )
+    second = DataCommitment.create!(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      calendar_key: "person:paziente-b",
+      calendar_label: "Paziente B",
+      title: "Supervisione B",
+      kind: "appointment",
+      status: "planned",
+      starts_at: 1.hour.from_now,
+      pricing_type: "none",
+      contribution_type: "unpaid"
+    )
+
+    patch start_data_commitment_url(first)
+    patch start_data_commitment_url(second)
+
+    assert first.reload.tracking?
+    assert second.reload.tracking?
+  end
+
   test "owner deletes a commitment with the destroy action" do
     commitment = DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Da eliminare", kind: "personal", status: "planned", starts_at: 1.day.from_now, pricing_type: "none", contribution_type: "unpaid")
 
