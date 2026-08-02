@@ -51,7 +51,7 @@
 
   <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if content_for?(:landing_nav) && (request.path.start_with?("/posturacorretta") || controller_name.in?(%w[domains landing])) %>">
     <%= yield :landing_nav if content_for?(:landing_nav) %>
-    <%= render "shared/active_commitment", commitment: active_data_commitment if content_for?(:landing_nav) && active_data_commitment %>
+    <%= render "shared/active_commitment", commitment: active_data_commitment if (content_for?(:landing_nav) || controller_path.start_with?("brands/impegno/")) && active_data_commitment %>
 
     <% revision_project_slug = posturacorretta_revision_project if respond_to?(:posturacorretta_revision_project) %>
     <% if revision_project_slug %>

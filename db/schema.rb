@@ -10,9 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_02_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "data_commitment_imports", force: :cascade do |t|
+    t.datetime "applied_at"
+    t.datetime "created_at", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.string "source_fingerprint"
+    t.string "source_name", null: false
+    t.string "source_type", default: "manual", null: false
+    t.string "status", default: "pending", null: false
+    t.jsonb "summary", default: {}, null: false
+    t.bigint "target_profile_id"
+    t.datetime "updated_at", null: false
+    t.bigint "uploaded_by_user_id", null: false
+    t.index ["source_fingerprint"], name: "index_data_commitment_imports_on_source_fingerprint", unique: true
+    t.index ["target_profile_id"], name: "index_data_commitment_imports_on_target_profile_id"
+    t.index ["uploaded_by_user_id"], name: "index_data_commitment_imports_on_uploaded_by_user_id"
+  end
 
   create_table "data_commitments", force: :cascade do |t|
     t.datetime "actual_ended_at"
@@ -42,6 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
     t.string "status", default: "completed", null: false
     t.bigint "subject_id"
     t.string "subject_type"
+    t.uuid "sync_key", default: -> { "gen_random_uuid()" }, null: false
     t.string "title", null: false
     t.decimal "total_price", precision: 12, scale: 2
     t.datetime "updated_at", null: false
@@ -58,6 +76,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
     t.index ["starts_at"], name: "index_data_commitments_on_starts_at"
     t.index ["status"], name: "index_data_commitments_on_status"
     t.index ["subject_type", "subject_id"], name: "index_data_commitments_on_subject"
+    t.index ["sync_key"], name: "index_data_commitments_on_sync_key", unique: true
   end
 
   create_table "domains", force: :cascade do |t|
@@ -76,6 +95,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
     t.index ["hostname"], name: "index_domains_on_hostname", unique: true
     t.index ["node_id"], name: "index_domains_on_node_id"
     t.index ["role_assignment_id"], name: "index_domains_on_role_assignment_id"
+  end
+
+  create_table "impegno_contacts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "kind", default: "person", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.string "phone"
+    t.bigint "profile_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_id", "name"], name: "index_impegno_contacts_on_profile_id_and_name"
+    t.index ["profile_id"], name: "index_impegno_contacts_on_profile_id"
+  end
+
+  create_table "impegno_places", force: :cascade do |t|
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.string "kind", default: "other", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.string "online_url"
+    t.bigint "profile_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_id", "name"], name: "index_impegno_places_on_profile_id_and_name"
+    t.index ["profile_id"], name: "index_impegno_places_on_profile_id"
   end
 
   create_table "node_contents", force: :cascade do |t|
@@ -127,6 +174,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
     t.index ["status"], name: "index_nodes_on_status"
     t.index ["view_type"], name: "index_nodes_on_view_type"
     t.index ["visibility"], name: "index_nodes_on_visibility"
+  end
+
+  create_table "password_reset_requests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "fulfilled_at"
+    t.datetime "requested_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "fulfilled_at"], name: "index_password_reset_requests_on_user_id_and_fulfilled_at"
+    t.index ["user_id"], name: "index_password_reset_requests_on_user_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -189,6 +246,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
     t.datetime "created_at", null: false
     t.bigint "current_role_assignment_id"
     t.string "email_address", null: false
+    t.datetime "email_change_authorized_at"
     t.string "password_digest", null: false
     t.integer "role", default: 0, null: false
     t.boolean "superadmin", default: false, null: false
@@ -197,6 +255,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
+  add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "domains"
   add_foreign_key "data_commitments", "profiles"
   add_foreign_key "data_commitments", "profiles", column: "assignee_profile_id"
@@ -204,10 +264,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_170000) do
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
   add_foreign_key "domains", "nodes"
   add_foreign_key "domains", "role_assignments"
+  add_foreign_key "impegno_contacts", "profiles"
+  add_foreign_key "impegno_places", "profiles"
   add_foreign_key "node_contents", "nodes"
   add_foreign_key "nodes", "nodes", column: "link_node_id"
   add_foreign_key "nodes", "nodes", column: "parent_id"
   add_foreign_key "nodes", "role_assignments"
+  add_foreign_key "password_reset_requests", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "role_assignments", "profiles"
   add_foreign_key "role_assignments", "role_assignments", column: "parent_id"

@@ -17,7 +17,12 @@ module Admin
 
     def set_override
       session[:override_domain_id] = params[:domain_id].presence
-      redirect_back fallback_location: admin_dashboard_path, notice: "Simulazione dominio aggiornata."
+      redirect_target = params[:redirect_to].to_s
+      if redirect_target.start_with?("/") && !redirect_target.start_with?("//")
+        redirect_to redirect_target, notice: "Sito selezionato."
+      else
+        redirect_back fallback_location: admin_dashboard_path, notice: "Simulazione dominio aggiornata."
+      end
     end
 
     def elenco_pagine

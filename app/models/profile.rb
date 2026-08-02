@@ -10,6 +10,9 @@ class Profile < ApplicationRecord
            dependent: :restrict_with_error
   has_many :assigned_data_commitments, class_name: "Brands::Impegno::Commitment", foreign_key: :assignee_profile_id, dependent: :nullify
   has_many :responsible_data_commitments, class_name: "Brands::Impegno::Commitment", foreign_key: :responsible_profile_id, dependent: :nullify
+  has_many :impegno_contacts, class_name: "Brands::Impegno::Contact", dependent: :destroy
+  has_many :impegno_places, class_name: "Brands::Impegno::Place", dependent: :destroy
+  has_many :data_commitment_imports, foreign_key: :target_profile_id, dependent: :nullify
 
   validates :user_id, uniqueness: true
   validates :username, presence: true,

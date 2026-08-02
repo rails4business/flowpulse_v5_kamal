@@ -23,6 +23,12 @@ class ApplicationController < ActionController::Base
 
   private
 
+    def current_profile
+      return unless Current.user
+
+      Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
+    end
+
     def active_data_commitment
       return unless Current.user&.profile
 

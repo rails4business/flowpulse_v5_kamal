@@ -19,8 +19,7 @@
   "work" => "bg-blue-50 text-blue-600"
 } %>
 
-<%= render "shared/active_commitment", commitment: active_data_commitment if active_data_commitment %>
-
+<% workspace_frame = turbo_frame_tag "impegno_workspace" do %>
 <main class="mx-auto w-full max-w-[920px] px-4 py-7 pb-20 sm:px-0">
   <% unless authenticated? %>
     <section class="mx-auto max-w-2xl py-12 text-center">
@@ -33,6 +32,16 @@
       </div>
     </section>
   <% else %>
+    <% unless params[:workspace] %>
+      <% if posturacorretta_domain %>
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <h1 class="text-2xl font-black text-slate-950">Calendario PosturaCorretta</h1>
+          <nav class="flex gap-2" aria-label="Periodo degli impegni">
+            <%= link_to "Prossimi", posturacorretta_impegno_path(tab: "upcoming"), class: "rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white" %>
+            <%= link_to "Passati", posturacorretta_impegno_path(tab: "past"), class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700" %>
+          </nav>
+        </div>
+      <% end %>
     <header class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <div class="flex items-center gap-2">
@@ -40,7 +49,7 @@
             <span class="mr-1 rounded-lg bg-blue-50 px-2 py-0.5 text-lg text-blue-600">1</span>impegno
           </span>
           
-          <%= form_with url: calendar_path, method: :get, data: { turbo_frame: "_top", turbo_action: "replace" }, class: "flex items-center gap-2 ml-1" do |f| %>
+          <% context_form = form_with url: calendar_path, method: :get, data: { turbo_frame: "_top", turbo_action: "replace" }, class: "flex items-center gap-2 ml-1" do |f| %>
             <%= f.hidden_field :view, value: @active_view %>
             
             <div class="relative">
@@ -65,6 +74,7 @@
               </div>
             </div>
           <% end %>
+          <%= context_form %>
         </div>
         <div class="mt-0.5 hidden text-[13px] text-slate-500 sm:block">Il calendario che lascia traccia.</div>
       </div>
@@ -92,7 +102,7 @@
     <nav class="mb-5 -mt-2 flex gap-1.5 overflow-x-auto [&::-webkit-scrollbar]:hidden" aria-label="Sezioni dell'area">
       <% if @active_area == "user" %>
         <%= link_to "Agenda", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "agenda"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'agenda' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
-        <%= link_to "Programmi", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "programs"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'programs' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
+        <%= link_to "Esperienze", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "practices"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'practices' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
         <%= link_to "Ricorrenze", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "recurring"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'recurring' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
       <% elsif @active_area == "professional" %>
         <%= link_to "Agenda", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "agenda"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'agenda' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
@@ -100,6 +110,7 @@
         <%= link_to "Valore e scambi", calendar_url.call(area: @active_area, domain_id: params[:domain_id], view: "value"), class: "flex-none rounded-xl border border-slate-200 bg-white/60 px-3 py-2 text-sm font-bold text-slate-500 transition hover:text-slate-900 #{@active_view == 'value' ? '!border-slate-900 !bg-slate-900 !text-white' : 'hover:bg-white'}" %>
       <% end %>
     </nav>
+    <% end %>
 
     <% if @active_view == "agenda" %>
       <!-- INIZIO AGENDA -->
@@ -115,68 +126,40 @@
               <% end %>
             </div>
 
-            <div class="col-span-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="col-span-full overflow-visible rounded-2xl border border-slate-200 bg-white shadow-sm">
               <% commitments_for_day.each_with_index do |commitment, index| %>
                 <%
                   displayed_start = commitment.actual_started_at || commitment.starts_at
                   displayed_end = commitment.actual_ended_at || commitment.ends_at
                   border_top = index > 0 ? "border-t border-slate-200" : ""
-                  time_color = commitment.status == 'completed' ? 'bg-emerald-600' : (commitment.tracking? ? 'bg-red-600' : 'bg-slate-500')
+                  context_label = commitment.metadata["context_label"].presence || commitment.description.presence
+                  place_label = commitment.location_name.presence || commitment.location_address.presence || commitment.online_url.presence
+                  value_label = commitment.total_price.present? ? number_to_currency(commitment.total_price, unit: "€", format: "%n %u") : nil
+                  status_label = commitment.tracking? ? "In corso" : status_labels.fetch(commitment.status, commitment.status.humanize)
+                  status_class = commitment.tracking? ? "bg-red-50 text-red-700" : commitment.status == "completed" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
                 %>
                 
-                <details class="group list-none [&_summary::-webkit-details-marker]:hidden" id="commitment-<%= commitment.id %>">
-                  <summary class="grid cursor-pointer grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 px-4 py-4 transition hover:bg-slate-50 sm:grid-cols-[60px_1fr_auto] sm:gap-x-4 sm:px-4.5 <%= border_top %> group-open:border-b group-open:border-slate-200">
-                    <div class="hidden flex-none flex-col overflow-hidden rounded-xl border border-slate-200 bg-white text-center shadow-sm sm:flex h-[50px] w-[54px]">
-                      <div class="py-0.5 text-[11px] font-extrabold tracking-wide text-white <%= time_color %>">
-                        <%= commitment.all_day? ? "TUTTO" : displayed_start.strftime("%H:%M") %>
-                      </div>
-                      <div class="my-auto leading-none text-[13px] font-black text-slate-900"><%= commitment.all_day? ? "GIOR" : (displayed_end&.strftime("%H:%M") || "--:--") %></div>
-                    </div>
-                    
-                    <div class="col-span-full sm:col-span-1">
-                      <div class="flex flex-wrap items-center gap-1.5">
-                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider <%= kind_classes[commitment.kind] || kind_classes['personal'] %>"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span>
-                        <strong class="text-[15px] text-slate-900"><%= commitment.title %></strong>
-                      </div>
-                      <p class="mt-1 text-[13px] leading-snug text-slate-500">
-                        <%= commitment.metadata["context_label"].presence || commitment.description.presence || "Nessun dettaglio aggiuntivo" %>
-                      </p>
-                      <% if commitment.actual_started_at.present? %>
-                         <div class="mt-1 text-[11px] font-bold text-emerald-600">✓ <%= commitment.status == 'completed' ? 'Completato' : 'In corso' %></div>
-                      <% end %>
-                    </div>
-                    
-                    <div class="col-span-full text-right text-[13px] font-bold text-slate-500 sm:col-span-1">
-                       <span class="sm:hidden mr-2"><%= commitment.all_day? ? "Tutto il giorno" : "#{displayed_start.strftime("%H:%M")} - #{displayed_end&.strftime("%H:%M") || "--:--"}" %></span>
-                       <%= commitment.domain.display_hostname %>
-                    </div>
-                  </summary>
-                  
-                  <!-- BODY ESPANSO -->
-                  <div class="border-t border-slate-100 bg-white p-5 sm:p-6 text-sm leading-relaxed text-slate-900">
-                    <h4 class="mb-1.5 mt-0 text-[11px] font-extrabold uppercase tracking-wide text-slate-500">Dettagli Impegno</h4>
-                    <p class="mb-4">
-                      Stato attuale: <strong><%= status_labels.fetch(commitment.status, commitment.status.humanize) %></strong><br>
-                      Calendario: <strong><%= commitment.calendar_label %></strong>
-                    </p>
-                    
-                    <div class="flex flex-wrap gap-2 sm:gap-3">
-                      <% if %w[draft planned confirmed].include?(commitment.status) && commitment.actual_started_at.blank? %>
-                        <%= button_to "Inizia ora", start_data_commitment_path(commitment), method: :patch, class: "rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-emerald-700" %>
-                      <% elsif commitment.tracking? %>
-                        <button type="button" command="show-modal" commandfor="complete-commitment-<%= commitment.id %>" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-slate-800">Concludi</button>
-                      <% end %>
-                      
-                      <button type="button" command="show-modal" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50">Modifica</button>
-                      
-                      <% if %w[completed cancelled].include?(commitment.status) || (!commitment.tracking? && commitment.ends_at.present? && commitment.ends_at < Time.current) %>
-                        <div class="ml-auto">
-                          <%= button_to "Elimina", data_commitment_path(commitment), method: :delete, form: { data: { turbo_confirm: "Sei sicuro di voler eliminare?" } }, class: "rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-100" %>
-                        </div>
-                      <% end %>
-                    </div>
+                <article id="commitment-<%= commitment.id %>" class="relative grid grid-cols-[112px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-3 transition hover:z-10 hover:bg-slate-50 lg:grid-cols-[112px_minmax(230px,1fr)_minmax(170px,.72fr)_auto] lg:gap-x-4 <%= border_top %>">
+                  <div class="inline-flex items-center gap-2 whitespace-nowrap text-xs text-slate-400" aria-label="Dalle <%= displayed_start.strftime('%H:%M') %> alle <%= displayed_end&.strftime('%H:%M') || 'ora da definire' %>">
+                    <strong class="text-sm font-semibold text-slate-900"><%= commitment.all_day? ? "Tutto il giorno" : displayed_start.strftime("%H:%M") %></strong><span aria-hidden="true">→</span><strong class="text-sm font-semibold text-slate-900"><%= commitment.all_day? ? "" : (displayed_end&.strftime("%H:%M") || "—") %></strong>
                   </div>
-                </details>
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider <%= kind_classes[commitment.kind] || kind_classes['personal'] %>"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span><strong class="min-w-0 truncate text-base text-slate-900"><%= commitment.title %></strong></div>
+                    <p class="mt-1 truncate text-[13px] text-slate-500"><%= [commitment.domain.display_hostname, context_label, place_label].compact.join(" · ") %></p>
+                  </div>
+                  <div class="hidden min-w-0 lg:grid lg:gap-1"><span class="truncate text-xs font-bold text-slate-600"><%= commitment.calendar_label %></span><span class="inline-flex w-fit rounded-full px-2 py-0.5 text-[10px] font-extrabold <%= status_class %>"><%= status_label %></span></div>
+                  <div class="col-span-3 flex items-center justify-end gap-2 border-t border-slate-100 pt-2 lg:col-span-1 lg:border-0 lg:pt-0">
+                    <span class="text-sm font-black <%= value_label.present? ? 'text-emerald-700' : 'text-slate-400' %>"><%= value_label || "—" %></span>
+                    <details class="relative z-30 [&_summary::-webkit-details-marker]:hidden">
+                      <summary class="cursor-pointer list-none rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-sm font-black text-slate-600 hover:bg-slate-50" aria-label="Azioni per <%= commitment.title %>">⋯</summary>
+                      <div class="absolute right-0 z-50 mt-2 flex w-44 flex-col gap-1 rounded-lg border border-slate-200 bg-white p-1.5 text-left shadow-lg">
+                        <% if %w[draft planned confirmed].include?(commitment.status) && commitment.actual_started_at.blank? %><%= button_to "Inizia ora", start_data_commitment_path(commitment), method: :patch, class: "rounded-md px-3 py-2 text-left text-sm font-bold text-emerald-700 hover:bg-emerald-50" %><% elsif commitment.tracking? %><button type="button" command="show-modal" commandfor="complete-commitment-<%= commitment.id %>" class="rounded-md px-3 py-2 text-left text-sm font-bold text-slate-800 hover:bg-slate-50">Concludi</button><% end %>
+                        <button type="button" data-controller="modal" data-modal-dialog-id-value="edit-commitment-<%= commitment.id %>" data-action="modal#open" class="rounded-md px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Modifica</button>
+                        <% if %w[completed cancelled].include?(commitment.status) || (!commitment.tracking? && commitment.ends_at.present? && commitment.ends_at < Time.current) %><%= button_to "Elimina", data_commitment_path(commitment), method: :delete, form: { data: { turbo_confirm: "Sei sicuro di voler eliminare?" } }, class: "w-full rounded-md px-3 py-2 text-left text-sm font-bold text-red-600 hover:bg-red-50" %><% end %>
+                      </div>
+                    </details>
+                  </div>
+                </article>
                 
                 <!-- Modals per l'edit del singolo commitment -->
                 <dialog id="edit-commitment-<%= commitment.id %>" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
@@ -205,6 +188,7 @@
                     <label class="flex items-center gap-2 text-sm text-slate-600"><%= form.check_box :all_day, class: "rounded border-slate-300 text-blue-600" %> Giornata intera</label>
                     <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-4"><%= link_to "Elimina", data_commitment_path(commitment), data: { turbo_method: :delete, turbo_confirm: "Eliminare definitivamente questo impegno?" }, class: "rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50" %><div class="flex gap-2"><button type="button" command="close" commandfor="edit-commitment-<%= commitment.id %>" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Salva modifiche", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div></div>
                   <% end %>
+                  <%= edit_form %>
                 </dialog>
               <% end %>
             </div>
@@ -212,11 +196,11 @@
         <% end %>
       <% else %>
         <p class="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center text-[15px] text-slate-500">
-          Nessun impegno pianificato.
+          <%= @agenda_date ? "Nessun dato registrato per il #{l(@agenda_date, format: '%d/%m/%Y')}." : "Nessun dato pianificato." %>
         </p>
       <% end %>
     <% else %>
-      <!-- ALTRE VISTE (Programmi, Ricorrenze, ecc.) -->
+      <!-- ALTRE VISTE (Pratiche, Ricorrenze, ecc.) -->
       <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center">
         <h3 class="mb-2 text-lg font-bold text-slate-900">Sezione in costruzione</h3>
         <p class="m-0 text-sm text-slate-500">La vista <strong><%= @active_view %></strong> per l'area <strong><%= @active_area %></strong> è attualmente in sviluppo (Fasi successive).</p>
@@ -227,9 +211,10 @@
     <dialog id="new-commitment-dialog" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
       <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
         <div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Impegno</p><h2 class="mt-1 text-xl font-black text-slate-950">Nuovo impegno</h2></div>
-        <button type="button" command="close" commandfor="new-commitment-dialog" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
+        <button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="modal#close" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
       </div>
       <% commitment_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
+        <%= hidden_field_tag :return_to, params[:return_to] %>
         <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
         <div><%= form.label :description, "Descrizione", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 2, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
         <div class="grid gap-4 sm:grid-cols-2">
@@ -251,8 +236,11 @@
           <div><%= form.label :ends_at, "Fine", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
         </div>
         <label class="flex items-center gap-2 text-sm text-slate-600"><%= form.check_box :all_day, class: "rounded border-slate-300 text-blue-600" %> Giornata intera</label>
-        <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="new-commitment-dialog" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Aggiungi", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div>
+        <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="modal#close" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Aggiungi", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div>
       <% end %>
+      <%= commitment_form %>
     </dialog>
   <% end %>
 </main>
+<% end %>
+<%= workspace_frame %>

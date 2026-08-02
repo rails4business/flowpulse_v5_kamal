@@ -45,6 +45,27 @@
             </select>
             <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
           </div>
+
+          <div class="relative w-full sm:w-auto" id="event-status-select-container">
+            <select id="event-status-select" onchange="switchEventStatus(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
+              <option value="all">Stato evento</option>
+              <option value="proposed">Proposti</option>
+              <option value="confirmed">Confermati</option>
+              <option value="cancelled">Annullati</option>
+            </select>
+            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
+          </div>
+
+          <div class="relative w-full sm:w-auto" id="participation-select-container">
+            <select id="participation-select" onchange="switchParticipation(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
+              <option value="all">Partecipazione</option>
+              <option value="open">Iscrizioni aperte</option>
+              <option value="free_access">Accesso libero</option>
+              <option value="full">Completi</option>
+              <option value="closed">Iscrizioni chiuse</option>
+            </select>
+            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
+          </div>
         </div>
 
         <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
@@ -137,6 +158,8 @@
 
   let currentMacroTab = "events"; // 'events', 'places', 'teachers'
   let currentTemporalTab = "future"; // 'future', 'past'
+  let currentEventStatus = "all";
+  let currentParticipation = "all";
   let selectedLocation = null; // { key, name }
   let selectedTeacher = null; // string
 
@@ -256,6 +279,19 @@
     const filteredEvents = events.filter(e => {
       // Temporal Tab Filter
       if (e.type !== currentTemporalTab) return false;
+
+      // Compatibilità: gli eventi YAML precedenti sono confermati e con iscrizioni aperte.
+      const eventStatus = e.event_status || e.status || "confirmed";
+      const registrationMode = e.registration_mode || "required";
+      const registrationStatus = e.registration_status || "open";
+      const isFull = registrationStatus === "full" || (Number.isFinite(Number(e.capacity)) && Number(e.participants_count || 0) >= Number(e.capacity));
+      if (currentTemporalTab === "future" && currentEventStatus !== "all" && eventStatus !== currentEventStatus) return false;
+      if (currentTemporalTab === "future" && currentParticipation !== "all") {
+        if (currentParticipation === "free_access" && registrationMode !== "none") return false;
+        if (currentParticipation === "open" && (registrationMode !== "required" || registrationStatus !== "open" || isFull)) return false;
+        if (currentParticipation === "full" && !isFull) return false;
+        if (currentParticipation === "closed" && (registrationMode !== "required" || registrationStatus !== "closed")) return false;
+      }
 
       // Date Picker Filter
       if (dateFilter) {
@@ -451,6 +487,8 @@
     }
 
     const temporalContainer = document.getElementById("temporal-select-container");
+    const eventStatusContainer = document.getElementById("event-status-select-container");
+    const participationContainer = document.getElementById("participation-select-container");
     const dateContainer = document.getElementById("date-filter-container");
     const searchInput = document.getElementById("event-search-input");
     
@@ -470,6 +508,9 @@
       }
     }
 
+    eventStatusContainer.classList.toggle("hidden", tab !== "events" || currentTemporalTab !== "future");
+    participationContainer.classList.toggle("hidden", tab !== "events" || currentTemporalTab !== "future");
+
     const grid = document.getElementById("events-grid");
     grid.style.opacity = 0;
     setTimeout(() => {
@@ -487,11 +528,15 @@
     }
 
     const dateLabel = document.getElementById("filter-date-label");
+    const eventStatusContainer = document.getElementById("event-status-select-container");
+    const participationContainer = document.getElementById("participation-select-container");
     if (tab === "future") {
       dateLabel.textContent = "Dal:";
     } else {
       dateLabel.textContent = "Fino al:";
     }
+    eventStatusContainer.classList.toggle("hidden", currentMacroTab !== "events" || tab !== "future");
+    participationContainer.classList.toggle("hidden", currentMacroTab !== "events" || tab !== "future");
 
     // Trigger render
     const grid = document.getElementById("events-grid");
@@ -500,6 +545,16 @@
       renderEvents();
       grid.style.opacity = 1;
     }, 150);
+  };
+
+  window.switchEventStatus = function(status) {
+    currentEventStatus = status;
+    renderEvents();
+  };
+
+  window.switchParticipation = function(participation) {
+    currentParticipation = participation;
+    renderEvents();
   };
 
   window.clearDateFilter = function() {

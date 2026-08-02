@@ -101,6 +101,15 @@ module Admin
       assert_includes response.body, "Nessuno (Standalone Fallback)"
     end
 
+    test "site switcher redirects to the selected site home on localhost" do
+      host! "localhost"
+      post session_path, params: { email_address: @superadmin.email_address, password: "password123" }
+
+      post admin_set_override_path, params: { domain_id: @domain.id, redirect_to: root_path }
+
+      assert_redirected_to root_path
+    end
+
     test "domain simulation override is ignored in production (non-localhost)" do
       # Set host to non-local (production scenario)
       host! "other-host.net"

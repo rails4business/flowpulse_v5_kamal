@@ -6,20 +6,44 @@ module Brands
       layout "landing"
 
   def index
+    if params[:workspace] != "1" && params[:brand_scope].blank?
+      destination = {
+        area: params[:area].presence || "user",
+        view: params[:view].presence || "agenda",
+        date: params[:date].presence
+      }.compact
+      return redirect_to impegno_path(destination)
+    end
+
     @domains = available_domains
 
     # Area & View navigation
     @active_area = %w[user professional places contacts].include?(params[:area]) ? params[:area] : "user"
-    @active_view = %w[agenda programs recurring value reports].include?(params[:view]) ? params[:view] : "agenda"
+    requested_view = params[:view] == "programs" ? "practices" : params[:view]
+    @active_view = %w[agenda practices recurring value reports].include?(requested_view) ? requested_view : "agenda"
     
     # Domain / Brand filter
-    if params[:domain_id].present? && params[:domain_id] != "all"
+    if params[:brand_scope] == "posturacorretta"
+      @scoped_domain = Domain.find_for_host("posturacorretta.org")
+    elsif current_domain&.target_controller == "brands/posturacorretta" || current_domain&.target_action == "posturacorretta"
+      @scoped_domain = current_domain
+    elsif params[:domain_id].present? && params[:domain_id] != "all"
       @scoped_domain = @domains.find_by(id: params[:domain_id])
     end
 
     @profile = current_profile
     @commitments = @profile.data_commitments.includes(:domain).order(:starts_at)
     @commitments = @commitments.where(domain: @scoped_domain) if @scoped_domain
+    @agenda_date = parse_agenda_date
+    if @agenda_date
+      @commitments = @commitments.select do |commitment|
+        (commitment.actual_started_at || commitment.starts_at)&.in_time_zone&.to_date == @agenda_date
+      end
+    elsif params[:period] == "upcoming"
+      @commitments = @commitments.select { |commitment| (commitment.actual_started_at || commitment.starts_at) >= Time.current }
+    elsif params[:period] == "past"
+      @commitments = @commitments.select { |commitment| (commitment.actual_started_at || commitment.starts_at) < Time.current }
+    end
     
     # Raggruppa i commitment per giorno
     @commitments_by_day = @commitments.group_by { |c| (c.actual_started_at || c.starts_at || Time.current).to_date }
@@ -194,6 +218,14 @@ module Brands
 
   private
 
+    def parse_agenda_date
+      return if params[:date].blank?
+
+      Date.iso8601(params[:date])
+    rescue Date::Error
+      nil
+    end
+
     def create_personal_commitment
       domain = available_domains.find_by(id: params.dig(:data_commitment, :domain_id))
       return redirect_to(data_commitments_path, alert: "Seleziona un dominio disponibile.") unless domain
@@ -206,7 +238,7 @@ module Brands
       start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
       if start_now
         if active_timer_for_calendar?(current_profile, commitment.calendar_key)
-          return redirect_to data_commitments_path(tab: "upcoming"), alert: "Hai già un’attività in corso. Concludila prima di registrarne un’altra."
+          return redirect_to personal_commitment_return_path, alert: "Hai già un’attività in corso. Concludila prima di registrarne un’altra."
         end
 
         commitment.starts_at = Time.current
@@ -221,14 +253,21 @@ module Brands
 
       if commitment.save
         notice = start_now ? "Registrazione avviata." : "Impegno aggiunto al tuo elenco."
-        redirect_to data_commitments_path(tab: "upcoming"), notice: notice
+        redirect_to personal_commitment_return_path, notice: notice
       else
-        redirect_to data_commitments_path, alert: commitment.errors.full_messages.to_sentence
+        redirect_to personal_commitment_return_path, alert: commitment.errors.full_messages.to_sentence
       end
     end
 
     def current_profile
       Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
+    end
+
+    def personal_commitment_return_path
+      candidate = params[:return_to].to_s
+      return candidate if candidate.start_with?("/") && !candidate.start_with?("//")
+
+      impegno_path(area: "user", view: "agenda")
     end
 
     def owned_commitment

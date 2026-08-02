@@ -1,0 +1,21 @@
+<% contacts_frame = turbo_frame_tag "impegno_workspace" do %>
+  <section class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+        <div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Rubrica condivisa</p><h1 class="mt-1 text-2xl font-black text-slate-950">Contatti</h1><p class="mt-2 text-sm leading-6 text-slate-500">Persone e organizzazioni riutilizzabili per agenda, percorsi, servizi ed eventi.</p></div>
+        <span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-black text-slate-600"><%= @contacts.size %></span>
+      </div>
+      <div class="mt-4 divide-y divide-slate-100">
+        <% @contacts.each do |contact| %>
+          <article class="flex items-start justify-between gap-4 py-4">
+            <div><p class="font-bold text-slate-900"><%= contact.name %></p><p class="mt-1 text-sm text-slate-500"><%= contact.kind == "organization" ? "Organizzazione" : "Persona" %><%= " · #{contact.email}" if contact.email.present? %><%= " · #{contact.phone}" if contact.phone.present? %></p><p class="mt-1 text-sm text-slate-500"><%= contact.notes %></p></div>
+            <div class="flex shrink-0 items-center gap-3"><%= link_to "Modifica", edit_impegno_contact_path(contact), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %><%= button_to "Elimina", impegno_contact_path(contact), method: :delete, form: { data: { turbo_confirm: "Eliminare questo contatto?" } }, class: "text-sm font-bold text-red-600 hover:text-red-800" %></div>
+          </article>
+        <% end %>
+        <% if @contacts.empty? %><p class="py-10 text-center text-sm text-slate-500">Non hai ancora salvato contatti.</p><% end %>
+      </div>
+    </div>
+    <aside class="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"><h2 class="text-lg font-black text-slate-950">Nuovo contatto</h2><div class="mt-5"><%= render "form", contact: @contact %></div></aside>
+  </section>
+<% end %>
+<%= contacts_frame %>

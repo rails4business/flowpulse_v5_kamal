@@ -1,11 +1,33 @@
 <div class="flex h-16 flex-none items-center justify-between border-b border-slate-200 px-5">
-  <%= verified_link_to dashboard_home_path, class: "flex items-center gap-3" do %>
-    <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white">FP</span>
-    <span>
-      <strong class="block font-bold leading-none text-slate-950">FlowPulse</strong>
-      <span class="mt-1 block text-xs text-slate-500">Dashboard</span>
-    </span>
-  <% end %>
+  <% active_site_name = current_domain&.site_title.presence || current_domain&.display_hostname.presence || "FlowPulse" %>
+  <details class="group relative">
+    <summary class="flex cursor-pointer list-none items-center gap-3 rounded-xl pr-2 outline-none hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500">
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white">FP</span>
+      <span class="min-w-0">
+        <strong class="block max-w-36 truncate font-bold leading-none text-slate-950"><%= active_site_name %></strong>
+        <span class="mt-1 flex items-center gap-1 text-xs text-slate-500">Cambia sito <span class="transition group-open:rotate-180">⌄</span></span>
+      </span>
+    </summary>
+
+    <div class="absolute left-0 top-12 z-50 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+      <p class="px-3 py-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">Siti disponibili</p>
+      <% Domain.active.order(:hostname).each do |domain| %>
+        <% site_name = domain.site_title.presence || domain.display_hostname %>
+        <% if local_request? %>
+          <%= button_to admin_set_override_path(domain_id: domain.id, redirect_to: root_path), method: :post, class: "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition #{current_domain&.id == domain.id ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}" do %>
+            <span class="truncate"><%= site_name %></span><span class="ml-3 shrink-0 text-xs font-medium text-slate-400"><%= domain.display_hostname %></span>
+          <% end %>
+        <% else %>
+          <%= link_to root_url(host: domain.canonical_host.presence || domain.hostname, protocol: request.protocol), class: "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition #{current_domain&.id == domain.id ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}" do %>
+            <span class="truncate"><%= site_name %></span><span class="ml-3 shrink-0 text-xs font-medium text-slate-400"><%= domain.display_hostname %></span>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% if local_request? && session[:override_domain_id].present? %>
+        <div class="mt-1 border-t border-slate-100 pt-1"><%= button_to "Apri FlowPulse", admin_set_override_path(domain_id: nil, redirect_to: root_path), method: :post, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-600 hover:bg-slate-50" %></div>
+      <% end %>
+    </div>
+  </details>
 
   <button
     id="closeSidebarButton"

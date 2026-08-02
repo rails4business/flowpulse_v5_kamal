@@ -25,6 +25,7 @@
                 <div class="my-1 border-t border-slate-100"></div>
                 <%= verified_link_to "Dashboard", dashboard_home_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
                 <%= verified_link_to "Profilo", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+                <% if Current.user.superadmin_user? %><%= link_to "Superadmin", admin_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
                 <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
               </div>
             </details>

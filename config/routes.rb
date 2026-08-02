@@ -25,8 +25,8 @@ Rails.application.routes.draw do
   get "posturacorretta/filosofia" => redirect("/posturacorretta/libro", status: 301), as: :posturacorretta_filosofia
   get "posturacorretta/progetti" => "brands/posturacorretta#progetti", as: :posturacorretta_progetti
   get "posturacorretta/progetti/:slug" => "brands/posturacorretta#progetto", as: :posturacorretta_progetto
-  get "posturacorretta/impegno" => "brands/impegno/commitments#index", defaults: { brand_scope: "posturacorretta" }, as: :posturacorretta_impegno
-  resources :data_commitments, controller: "brands/impegno/commitments", only: %i[index create update destroy], path: "impegni" do
+  get "posturacorretta/impegno" => "brands/impegno/home#index", defaults: { brand: "posturacorretta" }, as: :posturacorretta_impegno
+  resources :data_commitments, controller: "brands/impegno/commitments", only: %i[create update destroy], path: "impegni" do
     collection do
       post :complete_step
     end
@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       patch :complete
     end
   end
+  get "impegni" => redirect("/impegno?area=user&view=agenda"), as: :legacy_data_commitments
   get "posturacorretta/collabora" => "brands/posturacorretta#collabora", as: :posturacorretta_collabora
   get "posturacorretta/collabora/professionisti" => "brands/posturacorretta#collabora_professionisti", as: :posturacorretta_collabora_professionisti
   get "posturacorretta/collabora/professionisti/:slug" => "brands/posturacorretta#collabora_professionisti_guida", as: :posturacorretta_collabora_professionisti_guida
@@ -45,6 +46,9 @@ Rails.application.routes.draw do
   get "brands/svuotamente" => "brands/svuotamente#index", as: :svuotamente
   get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
   get "impegno" => "brands/impegno/home#index", as: :impegno
+  get "impegno/agenda" => "brands/impegno/commitments#index", as: :impegno_agenda
+  resources :impegno_contacts, path: "impegno/contacts", controller: "brands/impegno/contacts", as: :impegno_contacts, only: %i[index create edit update destroy]
+  resources :impegno_places, path: "impegno/places", controller: "brands/impegno/places", as: :impegno_places, only: %i[index create edit update destroy]
 
   # Dashboard utente loggato
   get "dashboard" => "home#dashboard", as: :dashboard
@@ -52,7 +56,15 @@ Rails.application.routes.draw do
   patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
   patch "dashboard_channel" => "home#dashboard_channel", as: :dashboard_channel
   resources :traveler_subscriptions, only: [:create, :destroy]
-  resource :profile, only: [:show]
+  resource :profile, only: %i[show update] do
+    patch :details
+  end
+  resources :profile_data_commitment_imports, only: [] do
+    member do
+      patch :accept
+      patch :reject
+    end
+  end
 
   namespace :creator_world do
     root "dashboard#show"
@@ -93,7 +105,23 @@ Rails.application.routes.draw do
         post :import
       end
     end
+    resources :password_reset_requests, only: :index do
+      member do
+        patch :complete
+      end
+    end
+    resources :data_commitment_imports, only: %i[index create] do
+      collection do
+        get :export
+        post :queue_export
+      end
+      member { patch :apply }
+    end
     resources :risorse, controller: "/resources", only: [:index, :show]
+  end
+
+  namespace :sync do
+    resources :data_commitment_imports, only: :create
   end
 
   # Area Demo / Prototipi

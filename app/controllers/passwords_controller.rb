@@ -10,10 +10,10 @@ class PasswordsController < ApplicationController
 
   def create
     if user = User.find_by(email_address: params[:email_address])
-      PasswordsMailer.reset(user).deliver_later
+      user.password_reset_requests.pending.first_or_create!(requested_at: Time.current)
     end
 
-    redirect_to new_session_path, notice: "Password reset instructions sent (if user with that email address exists)."
+    redirect_to(authenticated? ? profile_path : new_session_path, notice: "Se l’account esiste, la richiesta è stata inviata all’amministratore. Riceverai il link di reset manualmente.")
   end
 
   def edit
@@ -21,8 +21,9 @@ class PasswordsController < ApplicationController
 
   def update
     if @user.update(params.permit(:password, :password_confirmation))
+      @user.update_column(:email_change_authorized_at, Time.current)
       @user.sessions.destroy_all
-      redirect_to new_session_path, notice: "Password has been reset."
+      redirect_to new_session_path, notice: "Password aggiornata. Accedi di nuovo: potrai modificare anche l’email nei prossimi 30 minuti."
     else
       redirect_to edit_password_path(params[:token]), alert: "Passwords did not match."
     end

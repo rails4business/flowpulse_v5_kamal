@@ -9,14 +9,47 @@
   academy_summary = (@academy_curriculum || {}).fetch("summary", {})
   academy_lesson_count = academy_modules.sum { |academy_module| academy_module.fetch("lessons").size }
   active_area_slug = academy_areas.first&.fetch("slug", nil)
+  active_main_tab = params[:tab] == "guide" ? "guide" : "curriculum"
 %>
 
 
 
 <section id="academy-curriculum" aria-labelledby="academy-curriculum-title">
-  <section class="hero" id="top">
-    <div class="hero-inner">
-   <div class="pentagon-container" style="max-width: 400px; margin: 0 auto 32px;">
+  <section id="top" class="bg-white px-5 pb-12 pt-16 md:pt-24">
+    <div class="mx-auto w-full max-w-7xl lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Postura e fisiologia</p>
+        <h1 id="academy-curriculum-title" class="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight text-slate-950 md:text-5xl md:leading-[1.03]">
+          Conosci il tuo corpo e <br class="hidden sm:block">
+          riattiva i tuoi sistemi fisiologici.
+        </h1>
+        <p class="mt-6 text-lg leading-8 text-slate-600">
+          Scopri le basi delle principali metodiche utilizzate in ambito terapeutico,
+          comprendine possibilità e limiti e scegli con maggiore consapevolezza il tuo
+          percorso di salute.
+        </p>
+
+         <div class="mt-12 grid grid-cols-3 divide-x divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/50 shadow-sm">
+          <div class="px-3 py-4 text-center sm:px-6">
+            <strong class="block text-2xl font-bold text-slate-900"><%= academy_summary.fetch("participants", academy_modules.sum { |academy_module| academy_module.fetch("participants").to_i }) %></strong>
+            <span class="mt-1 block text-[10px] font-semibold uppercase tracking-widest text-slate-500">Partecipanti</span>
+          </div>
+          <div class="px-3 py-4 text-center sm:px-6">
+            <strong class="block text-2xl font-bold text-slate-900"><%= academy_summary.fetch("teachers", academy_teachers.size) %></strong>
+            <span class="mt-1 block text-[10px] font-semibold uppercase tracking-widest text-slate-500">Insegnanti</span>
+          </div>
+          <div class="px-3 py-4 text-center sm:px-6">
+            <strong class="block text-2xl font-bold text-slate-900"><%= academy_summary.fetch("centers", academy_locations.size) %></strong>
+            <span class="mt-1 block text-[10px] font-semibold uppercase tracking-widest text-slate-500">Centri</span>
+          </div>
+        </div>
+        <!-- I bottoni tab primari sono stati spostati sotto -->
+
+       
+      </div>
+
+      <div class="mt-16 lg:mt-0">
+        <div class="pentagon-container mx-auto max-w-md">
   <svg
     viewBox="0 0 300 300"
     xmlns="http://www.w3.org/2000/svg"
@@ -71,8 +104,8 @@
       }
 
       .water {
-        fill: #6d28d9;
-        stroke: #5b21b6;
+        fill: #faf5ff;
+        stroke: #7c3aed;
       }
 
       .fire {
@@ -99,6 +132,14 @@
         fill: #334155;
         stroke: #1e293b;
       }
+
+      /* Tinte Viola per Recupera */
+      .side a.active { color: #6d28d9 !important; }
+      .side a.active .side-num { background: #7c3aed !important; color: white !important; }
+      
+      #recupera .module.open { border-color: #c4b5fd !important; }
+      #recupera .module-index { color: #7c3aed !important; background: #f3e8ff !important; }
+      #recupera .module-tab.active { color: #7c3aed !important; border-bottom-color: #7c3aed !important; }
     </style>
 
     <!-- POSTURA: contenitore generale -->
@@ -124,38 +165,38 @@
     <line x1="150" y1="150" x2="85" y2="238" class="link" />
     <line x1="150" y1="150" x2="46" y2="115" class="link" />
 
-    <!-- Recupero -->
-    <circle cx="150" cy="40" r="32" class="node water" />
-    <text x="150" y="30" class="text" style="fill: white;">
-      <tspan x="150" dy="0">Recupera</tspan>
-      <tspan x="150" dy="10">con la terapia</tspan>
-      <tspan x="150" dy="10">manuale</tspan>
+    <!-- Ascolto (Rosso - Alto) -->
+    <circle cx="150" cy="40" r="32" class="node fire" />
+    <text x="150" y="30" class="text">
+      <tspan x="150" dy="0">Ascolta</tspan>
+      <tspan x="150" dy="10">gli aspetti</tspan>
+      <tspan x="150" dy="10">vitali</tspan>
     </text>
 
-    <!-- Ascolto -->
-    <circle cx="254" cy="115" r="32" class="node fire" />
-    <text x="254" y="105" class="text">
-      <tspan x="254" dy="0">Ascolta</tspan>
-      <tspan x="254" dy="10">gli aspetti</tspan>
-      <tspan x="254" dy="10">vitali</tspan>
+    <!-- Nutrimento (Giallo - Destra) -->
+    <circle cx="254" cy="115" r="32" class="node earth" />
+    <text x="254" y="110" class="text">
+      <tspan x="254" dy="0">Nutri</tspan>
+      <tspan x="254" dy="10">il corpo</tspan>
     </text>
 
-    <!-- Nutrimento -->
-    <circle cx="215" cy="238" r="32" class="node earth" />
-    <text x="215" y="233" class="text">
-      <tspan x="215" dy="0">Nutri</tspan>
-      <tspan x="215" dy="10">il corpo</tspan>
+    <!-- Regolazione (Blu - Basso Destra) -->
+    <circle cx="215" cy="238" r="32" class="node metal" />
+    <text x="215" y="228" class="text">
+      <tspan x="215" dy="0">Regola</tspan>
+      <tspan x="215" dy="10">con le piante</tspan>
+      <tspan x="215" dy="10">officinali</tspan>
     </text>
 
-    <!-- Regolazione -->
-    <circle cx="85" cy="238" r="32" class="node metal" />
+    <!-- Recupero (Viola - Basso Sinistra) -->
+    <circle cx="85" cy="238" r="32" class="node water" />
     <text x="85" y="228" class="text">
-      <tspan x="85" dy="0">Regola</tspan>
-      <tspan x="85" dy="10">con le piante</tspan>
-      <tspan x="85" dy="10">officinali</tspan>
+      <tspan x="85" dy="0">Recupera</tspan>
+      <tspan x="85" dy="10">con la terapia</tspan>
+      <tspan x="85" dy="10">manuale</tspan>
     </text>
 
-    <!-- Movimento -->
+    <!-- Movimento (Verde - Sinistra) -->
     <circle cx="46" cy="115" r="32" class="node wood" />
     <text x="46" y="110" class="text">
       <tspan x="46" dy="0">Muoviti</tspan>
@@ -179,38 +220,56 @@
       POSTURA
     </text>
   </svg>
-</div>
-      <div>
-        <p class="eyebrow">Postura e fisiologia</p>
-    <h1 id="academy-curriculum-title">
-  Conosci il tuo corpo e <br> riattiva i tuoi sistemi fisiologici. 
-</h1>
-
-<p class="hero-copy">
-  Scopri le basi delle principali metodiche utilizzate in ambito terapeutico,
-  comprendine possibilità e limiti e scegli con maggiore consapevolezza il tuo
-  percorso di salute.
-</p>
-        <div class="hero-actions">
-          <button class="button primary" onclick="showAcademyMethod()" type="button">Come funziona l'accademia? 📖</button>
         </div>
-      </div>
-      <div class="summary" aria-label="Riepilogo del corso">
-        <div><strong><%= academy_summary.fetch("participants", academy_modules.sum { |academy_module| academy_module.fetch("participants").to_i }) %></strong><span>Partecipanti</span></div>
-        <div><strong><%= academy_summary.fetch("teachers", academy_teachers.size) %></strong><span>Insegnanti</span></div>
-        <div><strong><%= academy_summary.fetch("centers", academy_locations.size) %></strong><span>Centri</span></div>
       </div>
     </div>
   </section>
 
-  <main class="workspace" data-initial-area="<%= active_area_slug %>">
-    <div class="content-grid">
-      <nav class="side" aria-label="Indice dell'Accademia">
-        <label class="search" style="margin-bottom: 16px; display: block;">
-          <span class="sr-only">Cerca modulo o lezione</span>
-          <input id="search" type="search" placeholder="Cerca modulo o lezione…" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px;">
-        </label>
+  <div class="bg-slate-50/50 pt-16 pb-8 border-t border-slate-200">
+    <div class="mx-auto max-w-7xl px-5 text-center">
+      <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+        <button type="button" onclick="switchAcademyTab('curriculum')" id="btn-tab-curriculum" class="rounded-lg <%= active_main_tab == 'curriculum' ? 'bg-slate-100 text-slate-900 shadow-sm ring-1 ring-slate-900/5' : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50' %> px-6 py-2.5 text-sm font-semibold transition-all">
+          🎓 Il Programma dell'Accademia
+        </button>
+        <button type="button" onclick="switchAcademyTab('guide')" id="btn-tab-guide" class="rounded-lg <%= active_main_tab == 'guide' ? 'bg-slate-100 text-slate-900 shadow-sm ring-1 ring-slate-900/5' : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50' %> px-6 py-2.5 text-sm font-medium transition-all">
+          📖 Come funziona?
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-slate-100 pb-20">
+    <div id="content-tab-curriculum" class="<%= 'hidden ' if active_main_tab == 'guide' %> pt-8">
       
+      <!-- Area linguette su sfondo grigio -->
+      <div class="mx-auto max-w-7xl px-2 sm:px-5">
+        <div class="relative z-10 flex overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <nav class="flex space-x-1 pl-4 lg:pl-8 items-end" aria-label="Aree Accademia">
+            <button type="button" id="btn-area-recupera" data-active-color="text-violet-700" onclick="switchAreaTab('recupera')" class="area-tab-btn relative z-10 rounded-t-xl border border-b-0 border-slate-200 bg-white px-6 py-3 pb-3.5 text-sm font-semibold text-violet-700 transition-colors">
+              Recupera con la terapia manuale
+            </button>
+            <button type="button" id="btn-area-muoviti" data-active-color="text-green-600" onclick="switchAreaTab('muoviti')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
+              Muoviti ed esplora
+            </button>
+            <button type="button" id="btn-area-ascolta" data-active-color="text-rose-600" onclick="switchAreaTab('ascolta')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
+              Ascolta gli aspetti vitali
+            </button>
+            <button type="button" id="btn-area-nutri" data-active-color="text-orange-500" onclick="switchAreaTab('nutri')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
+              Nutri il corpo
+            </button>
+            <button type="button" id="btn-area-regola" data-active-color="text-blue-600" onclick="switchAreaTab('regola')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
+              Regola con le piante officinali
+            </button>
+          </nav>
+        </div>
+      </div>
+      
+      <!-- Sfondo Bianco Principale: il border-t si infila di 1px sotto la tab attiva -->
+      <div class="relative z-0 -mt-px border-t border-slate-200 bg-white shadow-[0_-2px_6px_rgba(0,0,0,0.02)]">
+        <div class="mx-auto max-w-7xl px-2 sm:px-5">
+          <main class="py-12 lg:py-16" data-initial-area="<%= active_area_slug %>">
+    <div class="lg:grid lg:grid-cols-12 lg:gap-12">
+      <nav class="side hidden lg:block lg:col-span-3 lg:sticky lg:top-24 lg:self-start" aria-label="Indice dell'Accademia">
         <p class="side-label">Inizia</p>
         <a href="#top" id="nav-top">
           <span>La Mappa dell'Accademia</span>
@@ -226,13 +285,20 @@
         <% end %>
       </nav>
 
-      <section>
+      <section id="recupera" class="lg:col-span-9 scroll-mt-24 area-content">
         <div class="section-head" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
           <div>
-            <h2>Il programma</h2>
+            <h2>Recupera con i principi delle terapie manuali</h2>
             <p>Apri un modulo per vedere lezioni, partecipanti, insegnanti e centri.</p>
           </div>
           <div class="legend" style="display: flex; align-items: center; gap: 8px;">
+            <label class="relative flex items-center" style="margin: 0;">
+              <span class="sr-only">Cerca modulo o lezione</span>
+              <svg class="absolute left-3 h-4 w-4 text-slate-400 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+              </svg>
+              <input id="search" type="text" placeholder="Cerca modulo o lezione…" style="width: 250px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 12px 6px 34px; font-size: 13px; outline: none; transition: all 0.15s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 1px #3b82f6';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
+            </label>
             <button class="button-utility" id="academyOpenAll" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='white';">
               📂 <span>Apri tutti i moduli</span>
             </button>
@@ -248,6 +314,78 @@
                      locals: { academy_teachers: academy_teachers, academy_locations: academy_locations } %>
         </div>
         <div class="empty" id="empty">Nessun modulo corrisponde alla ricerca.</div>
+      </section>
+
+      <section id="muoviti" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+        <div class="rounded-2xl border border-green-200 bg-green-50/50 p-8 text-center mb-8">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-600 mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h2 class="text-2xl font-bold text-green-900">In arrivo</h2>
+          <p class="mt-2 text-green-700 max-w-lg mx-auto">Stiamo lavorando per integrare questi moduli nell'Accademia. Presto potrai esplorare i percorsi dedicati al movimento.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <% ["Rinforzo muscolare", "I cinque tibetani", "Gli 8 pezzi di brocato", "Una sequenza dello yoga", "Lo sviluppo del movimento dei bambini DNS", "Animal Flow", "Movimenti arcaici", "La capoeira", "Il tai chi"].each do |title| %>
+            <div class="rounded-xl border border-slate-200 bg-white p-4 opacity-75 grayscale flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-400">🔒</span>
+              <span class="font-medium text-slate-600"><%= title %></span>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section id="ascolta" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+        <div class="rounded-2xl border border-rose-200 bg-rose-50/50 p-8 text-center mb-8">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-rose-100 text-rose-600 mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h2 class="text-2xl font-bold text-rose-900">In arrivo</h2>
+          <p class="mt-2 text-rose-700 max-w-lg mx-auto">I percorsi dedicati all'ascolto degli aspetti emotivi e mentali sono in fase di sviluppo.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <% ["La morfopsicologia", "Human design", "Caisedo Sofrologia", "Corpo e coscienza", "Yoga nozioni avanzate", "Su wen medicina cinese fenomenologia", "Siamo fatti di parole", "Il potere delle storie", "Efficacia personale", "Il viaggio dell'eroe", "La medicina del Suono", "Il teatro", "Il giardino del corpo"].each do |title| %>
+            <div class="rounded-xl border border-slate-200 bg-white p-4 opacity-75 grayscale flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-400">🔒</span>
+              <span class="font-medium text-slate-600"><%= title %></span>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section id="nutri" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+        <div class="rounded-2xl border border-orange-200 bg-orange-50/50 p-8 text-center mb-8">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-100 text-orange-600 mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h2 class="text-2xl font-bold text-orange-900">In arrivo</h2>
+          <p class="mt-2 text-orange-700 max-w-lg mx-auto">Stiamo preparando i moduli per comprendere a fondo l'alimentazione e la nutrizione.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <% ["Cosa stiamo mangiando?", "Cos'è il cibo?", "Il cibo viene dalla terra", "Cibo e industrializzazione", "Cibo un mezzo per trasmettere energia"].each do |title| %>
+            <div class="rounded-xl border border-slate-200 bg-white p-4 opacity-75 grayscale flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-400">🔒</span>
+              <span class="font-medium text-slate-600"><%= title %></span>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section id="regola" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+        <div class="rounded-2xl border border-blue-200 bg-blue-50/50 p-8 text-center mb-8">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h2 class="text-2xl font-bold text-blue-900">In arrivo</h2>
+          <p class="mt-2 text-blue-700 max-w-lg mx-auto">I moduli dedicati all'uso delle piante officinali e dell'integrazione fisiologica sono in arrivo.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <% ["La medicina dei semplici Dr. Abbiati", "Medicina mediterranea", "Medicina cinese", "Ayurveda"].each do |title| %>
+            <div class="rounded-xl border border-slate-200 bg-white p-4 opacity-75 grayscale flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-400">🔒</span>
+              <span class="font-medium text-slate-600"><%= title %></span>
+            </div>
+          <% end %>
+        </div>
       </section>
     </div>
   </main>
@@ -702,5 +840,321 @@
     modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
     document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
   })();
+
+  function switchAcademyTab(tabId) {
+    const btnCurriculum = document.getElementById('btn-tab-curriculum');
+    const btnGuide = document.getElementById('btn-tab-guide');
+    const contentCurriculum = document.getElementById('content-tab-curriculum');
+    const contentGuide = document.getElementById('content-tab-guide');
+
+    const activeBtnClass = ['bg-slate-100', 'text-slate-900', 'shadow-sm', 'ring-1', 'ring-slate-900/5'];
+    const inactiveBtnClass = ['bg-transparent', 'text-slate-500', 'hover:text-slate-700', 'hover:bg-slate-50'];
+
+    if (tabId === 'curriculum') {
+      contentCurriculum.classList.remove('hidden');
+      contentGuide.classList.add('hidden');
+      
+      btnCurriculum.classList.add(...activeBtnClass);
+      btnCurriculum.classList.remove(...inactiveBtnClass);
+      
+      btnGuide.classList.remove(...activeBtnClass);
+      btnGuide.classList.add(...inactiveBtnClass);
+    } else {
+      contentCurriculum.classList.add('hidden');
+      contentGuide.classList.remove('hidden');
+      
+      btnGuide.classList.add(...activeBtnClass);
+      btnGuide.classList.remove(...inactiveBtnClass);
+      
+      btnCurriculum.classList.remove(...activeBtnClass);
+      btnCurriculum.classList.add(...inactiveBtnClass);
+    }
+    
+    const url = new URL(window.location);
+    url.searchParams.set('tab', tabId);
+    window.history.pushState({}, '', url);
+  }
+
+  function switchAreaTab(tabId) {
+    // Nascondi tutti i contenuti
+    document.querySelectorAll('.area-content').forEach(el => {
+      el.classList.add('hidden');
+    });
+    // Mostra il contenuto scelto
+    const target = document.getElementById(tabId);
+    if (target) {
+      target.classList.remove('hidden');
+    }
+
+    // Resetta stili dei bottoni
+    document.querySelectorAll('.area-tab-btn').forEach(btn => {
+      btn.className = "area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors";
+    });
+
+    // Applica stile al bottone attivo
+    const activeBtn = document.getElementById('btn-area-' + tabId);
+    if (activeBtn) {
+      const activeColor = activeBtn.dataset.activeColor || 'text-violet-700';
+      activeBtn.className = "area-tab-btn relative z-10 rounded-t-xl border border-b-0 border-slate-200 bg-white px-6 py-3 pb-3.5 text-sm font-semibold transition-colors " + activeColor;
+    }
+  }
   </script>
+        </main>
+        </div> <!-- chiusura contenitore mx-auto max-w-7xl interno -->
+      </div> <!-- chiusura sfondo bianco bg-white -->
+    </div> <!-- chiusura tab curriculum -->
+
+<div id="content-tab-guide" class="<%= 'hidden ' if active_main_tab == 'curriculum' %>">
+  <div class="bg-white pb-20 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] border-t border-slate-200">
+    <div class="mx-auto max-w-7xl px-5 py-12 lg:py-16">
+      <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)] items-start">
+        
+        <!-- ASIDE LATERALE -->
+        <aside class="hidden lg:block border-r border-slate-100 pr-6 sticky top-24 self-start">
+          <nav class="space-y-6 text-sm" aria-label="Indice della Guida">
+            <div class="space-y-1">
+              <p class="pt-2 pb-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Il Contesto</p>
+              <a href="#educazione" class="block py-1.5 text-slate-500 hover:text-blue-700">Educazione al corpo e alla salute</a>
+              <a href="#formazione-verticale" class="block py-1.5 text-slate-500 hover:text-blue-700">Formazione verticale</a>
+              <a href="#formazione-orizzontale" class="block py-1.5 text-slate-500 hover:text-blue-700">Formazione orizzontale</a>
+            </div>
+            <div class="space-y-1">
+              <p class="pt-4 pb-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-950">La Soluzione</p>
+              <a href="#risposta" class="block py-1.5 text-slate-500 hover:text-blue-700">La risposta di PosturaCorretta</a>
+              <a href="#ruoli" class="block py-1.5 text-slate-500 hover:text-blue-700">Ruoli complementari</a>
+              <a href="#funzione" class="block py-1.5 text-slate-500 hover:text-blue-700">Funzione educativa</a>
+              <a href="#percorsi" class="block py-1.5 text-slate-500 hover:text-blue-700">Percorsi personalizzati</a>
+            </div>
+            <div class="space-y-1">
+              <p class="pt-4 pb-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Adesione</p>
+              <a href="#collabora" class="block py-1.5 text-slate-500 hover:text-blue-700">Collabora con l'Accademia</a>
+            </div>
+            <div class="space-y-1">
+              <p class="pt-4 pb-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Le 3 Fasi</p>
+              <a href="#fasi" class="block py-1.5 text-slate-500 hover:text-blue-700">Informati, Pratica, Insegna</a>
+            </div>
+            <div class="space-y-1">
+              <p class="pt-4 pb-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Organizzazione</p>
+              <a href="#role-assignment" class="block py-1.5 font-semibold text-blue-700">Role Assignment</a>
+            </div>
+          </nav>
+        </aside>
+
+        <!-- CONTENUTO PRINCIPALE -->
+        <div class="min-w-0">
+          <div id="educazione" class="scroll-mt-24 max-w-3xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Educazione al corpo e alla salute</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">Chi aiuta le persone a conoscere il proprio corpo?</h2>
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              Conoscere il corpo, comprenderne i segnali e orientarsi tra prevenzione, benessere e cura dovrebbe far parte della formazione di ogni persona. Eppure questa educazione non ha ancora uno spazio stabile e facilmente riconoscibile.
+            </p>
+            <div class="mt-8">
+              <a href="#academy-curriculum" class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 keychainify-checked">
+                Inizia l'Accademia
+              </a>
+            </div>
+          </div>
+
+          <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              <article class="border-t border-slate-200 pt-4">
+                <h3 class="text-base font-semibold text-slate-950">Professionisti</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">Possiedono competenze fondamentali, ma il tempo degli incontri è spesso dedicato alla valutazione e all'intervento specifico.</p>
+              </article>
+              <article class="border-t border-slate-200 pt-4">
+                <h3 class="text-base font-semibold text-slate-950">Scuola</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">Potrebbe offrire basi importanti, ma programmi, risorse e continuità dedicate all'educazione corporea non sono uniformi.</p>
+              </article>
+              <article class="border-t border-slate-200 pt-4">
+                <h3 class="text-base font-semibold text-slate-950">Luoghi di lavoro</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">Potrebbero sostenere prevenzione e consapevolezza, ma l'attenzione varia molto tra aziende e organizzazioni.</p>
+              </article>
+              <article class="border-t border-slate-200 pt-4">
+                <h3 class="text-base font-semibold text-slate-950">Comuni e istituzioni</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">Promuovono iniziative utili, spesso però legate a progetti, fondi e periodi limitati.</p>
+              </article>
+              <article class="border-t border-slate-200 pt-4">
+                <h3 class="text-base font-semibold text-slate-950">Comunicazione sulla salute</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">È spesso concentrata su singoli prodotti, prestazioni o problemi, più che su una comprensione complessiva del corpo.</p>
+              </article>
+              <article class="border-t border-slate-200 pt-4">
+                <h3 class="text-base font-semibold text-slate-950">Scuole delle metodiche</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">Svolgono un'importante formazione verticale dei professionisti, mentre l'educazione di base rivolta alla popolazione richiede strumenti differenti.</p>
+              </article>
+          </div>
+
+          <div id="formazione-verticale" class="scroll-mt-24 mt-14 grid gap-8 rounded-2xl border border-blue-200 bg-blue-50/60 p-6 md:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">Formazione verticale</p>
+              <h3 class="mt-3 text-xl font-semibold text-slate-950">Approfondire una professione o una metodica</h3>
+              <p class="mt-3 text-sm leading-6 text-slate-700">
+                Forma professionisti capaci di applicare competenze specifiche. È indispensabile per valutare, trattare, insegnare una disciplina o intervenire nel proprio ambito.
+              </p>
+            </div>
+            <div id="formazione-orizzontale" class="scroll-mt-24">
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">Formazione orizzontale</p>
+              <h3 class="mt-3 text-xl font-semibold text-slate-950">Offrire alle persone una base comune</h3>
+              <p class="mt-3 text-sm leading-6 text-slate-700">
+                Collega postura, fisiologia, abitudini, professioni e metodiche con un linguaggio accessibile. Non forma specialisti: rende le persone più consapevoli e capaci di orientarsi.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-xl border border-blue-100 bg-blue-50/30 p-5 max-w-4xl">
+            <h4 class="text-sm font-semibold text-blue-900">L'analogia dell'antipasto e delle portate principali</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-700">
+              Gli insegnanti (formazione orizzontale) sono come coloro che preparano l'<strong class="font-semibold text-slate-900">antipasto</strong>: fanno assaggiare le metodiche posturali, le fanno conoscere e preparano il terreno. I professionisti (formazione verticale) sono quelli che cucinano le <strong class="font-semibold text-slate-900">portate principali</strong> (primo e secondo): costruiscono il percorso e il programma terapeutico vero e proprio.
+            </p>
+          </div>
+
+          <aside class="mt-6 max-w-4xl rounded-xl border-l-4 border-l-emerald-500 bg-emerald-50/50 px-5 py-5">
+            <h4 class="text-base font-semibold text-slate-950">L'ispirazione dal Giappone: l'educazione diffusa</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-700">
+              In Giappone esiste una forma di Shiatsu semplice che viene diffusa e tramandata tra le famiglie, nello sport e tra le categorie più deboli (malati e anziani). Il compito di diffondere questa educazione alla salute spetta a figure come gli insegnanti, mentre i professionisti giapponesi eseguono i trattamenti veri e propri da esperti. In Italia questa cultura manca: ecco perché il ruolo degli insegnanti dell'Accademia è portare le basi a tutti, lasciando ai professionisti formati nelle metodiche posturali il compito di curare e trattare.
+            </p>
+          </aside>
+
+          <div id="risposta" class="scroll-mt-24 mt-14 max-w-4xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">La risposta di PosturaCorretta</p>
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">Linee guida per orientarsi, Accademia per imparare</h3>
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              PosturaCorretta ha creato due strumenti complementari: le <strong class="font-semibold text-slate-900">linee guida</strong>, che aiutano persone e professionisti a organizzare un percorso, e l'<strong class="font-semibold text-slate-900">Accademia Postura e Fisiologia</strong>, che prepara insegnanti capaci di svolgere un lavoro educativo di base.
+            </p>
+            <p class="mt-4 text-base leading-7 text-slate-600">
+              Gli insegnanti partono dalle persone: rendono comprensibili concetti, pratiche e possibilità che professionisti e scuole hanno sviluppato in modo specialistico. Aiutano così il pubblico a fare domande migliori, riconoscere i propri limiti e rivolgersi con maggiore consapevolezza alle figure appropriate.
+            </p>
+          </div>
+
+          <aside class="mt-8 max-w-4xl rounded-xl border border-slate-200 bg-slate-50 px-5 py-5">
+            <h4 class="text-base font-semibold text-slate-950">Informatori per le metodiche posturali</h4>
+            <p class="mt-2 text-sm leading-6 text-slate-700">
+              Così come esistono i rappresentanti farmaceutici per le aziende sanitarie che aggiornano i dottori, perché non ci sono "informatori" per le metodiche posturali e i professionisti formati che le applicano? Gli insegnanti dell'Accademia svolgono proprio questo ruolo: sono informatori che, però, <strong class="font-semibold text-slate-900">non informano solo il medico, ma informano anche le persone</strong>, perché la consapevolezza deve essere alla portata di tutti!
+            </p>
+          </aside>
+
+          <div id="ruoli" class="mt-16 scroll-mt-24 border-t border-slate-200 pt-12">
+            <div class="max-w-3xl">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Ruoli complementari</p>
+              <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">Insegnanti e professionisti lavorano in momenti diversi del percorso</h3>
+              <p class="mt-4 text-base leading-7 text-slate-600">
+                L'Accademia sensibilizza alla conoscenza del corpo e della salute. Non sostituisce valutazioni, diagnosi o interventi professionali: prepara le persone a comprendere meglio il proprio corpo e a partecipare consapevolmente al percorso.
+              </p>
+            </div>
+
+            <div class="mt-8 grid gap-5 lg:grid-cols-2">
+              <article id="funzione" class="scroll-mt-24 rounded-2xl border border-blue-200 bg-blue-50/60 p-6 md:p-8">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">Funzione educativa</p>
+                <h4 class="mt-3 text-xl font-semibold text-slate-950">Gli insegnanti sensibilizzano ed educano</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-700">
+                  Accompagnano attività educative e pratiche di base, aiutando le persone a conoscere il corpo, osservare le proprie abitudini e sviluppare maggiore autonomia. Non curano e non sostituiscono i professionisti sanitari.
+                </p>
+              </article>
+
+              <article id="percorsi" class="scroll-mt-24 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-6 md:p-8">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">Percorsi personalizzati</p>
+                <h4 class="mt-3 text-xl font-semibold text-slate-950">I professionisti mantengono competenze e responsabilità</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-700">
+                  Valutano e intervengono secondo il proprio ruolo, contribuendo alla costruzione di percorsi personalizzati. Una persona più consapevole può comunicare meglio e partecipare con maggiore continuità alle attività concordate.
+                </p>
+              </article>
+            </div>
+
+            <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4">
+              <p class="text-sm leading-6 text-slate-700">
+                <strong class="font-semibold text-slate-950">Un professionista può essere anche insegnante.</strong>
+                I due ruoli restano distinti: quando insegna svolge una funzione educativa; quando opera come professionista applica le competenze proprie della sua professione.
+              </p>
+            </div>
+          </div>
+
+          <div id="collabora" class="mt-16 scroll-mt-24 border-t border-slate-200 pt-12">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Collabora con l'Accademia</p>
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">Come puoi collaborare</h3>
+            <p class="mt-3 max-w-3xl text-base leading-7 text-slate-600">
+              Puoi contribuire alla didattica, accompagnare gli allievi oppure aiutare a organizzare attività, sedi e gruppi. Ogni ruolo mantiene responsabilità e competenze riconoscibili.
+            </p>
+
+            <div class="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-bold border-blue-200 bg-blue-50/60 text-blue-700">01</span>
+                  <h4 class="mt-5 text-xl font-semibold text-slate-950">Diventa insegnante</h4>
+                  <p class="mt-3 text-sm leading-6 text-slate-600">Formati per condurre lezioni e attività educative dell'Accademia nel rispetto del programma e dei confini professionali.</p>
+                </article>
+                <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-bold border-emerald-200 bg-emerald-50/60 text-emerald-700">02</span>
+                  <h4 class="mt-5 text-xl font-semibold text-slate-950">Porta l'Accademia nel tuo centro</h4>
+                  <p class="mt-3 text-sm leading-6 text-slate-600">Ospita corsi, incontri e attività nel tuo centro o nella tua associazione e diventa un riferimento sul territorio.</p>
+                </article>
+                <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-bold border-amber-200 bg-amber-50/60 text-amber-700">03</span>
+                  <h4 class="mt-5 text-xl font-semibold text-slate-950">Diventa tutor</h4>
+                  <p class="mt-3 text-sm leading-6 text-slate-600">Accompagna allievi e nuovi insegnanti nella pratica, nella continuità del percorso e nella progressione didattica.</p>
+                </article>
+                <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-bold border-violet-200 bg-violet-50/60 text-violet-700">04</span>
+                  <h4 class="mt-5 text-xl font-semibold text-slate-950">Segreteria e team management</h4>
+                  <p class="mt-3 text-sm leading-6 text-slate-600">Collabora all'organizzazione di iscrizioni, calendari, gruppi, comunicazioni e rapporti tra sedi e insegnanti.</p>
+                </article>
+            </div>
+          </div>
+
+          <!-- NUOVA SEZIONE: LE 3 FASI -->
+          <div id="fasi" class="mt-16 scroll-mt-24 border-t border-slate-200 pt-12">
+            <div class="max-w-3xl">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Le 3 Fasi</p>
+              <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">Informati, Pratica, Insegna</h3>
+              <p class="mt-4 text-base leading-7 text-slate-600">
+                Il percorso su PosturaCorretta si sviluppa in tre momenti distinti, pensati per accompagnarti dalla semplice curiosità fino alla possibilità di trasmettere le tue conoscenze agli altri.
+              </p>
+            </div>
+
+            <div class="mt-8 grid gap-5 md:grid-cols-3">
+              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h4 class="text-lg font-semibold text-slate-950">Informati</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-600">
+                  <strong class="font-medium text-slate-900">In autonomia.</strong> Attraverso la Guida, gli articoli e le risorse gratuite, puoi conoscere il tuo corpo e orientarti tra le varie metodiche senza vincoli.
+                </p>
+              </article>
+              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h4 class="text-lg font-semibold text-slate-950">Pratica</h4>
+                <p class="mt-3 text-sm leading-6 text-slate-600">
+                  <strong class="font-medium text-slate-900">Con un professionista.</strong> Puoi sperimentare ciò che hai appreso attraverso lezioni di gruppo o percorsi individuali, affidandoti a chi ha competenze cliniche o tecniche avanzate.
+                </p>
+              </article>
+              <article class="rounded-2xl border border-blue-200 bg-blue-50/60 p-6 shadow-sm">
+                <h4 class="text-lg font-semibold text-blue-900">Insegna</h4>
+                <p class="mt-3 text-sm leading-6 text-blue-800">
+                  <strong class="font-medium text-blue-950">Nell'Accademia.</strong> Se vuoi fare il salto, formati per diventare un educatore. Sensibilizza le persone, diffondi le basi e collabora con la rete dei centri e dei professionisti.
+                </p>
+              </article>
+            </div>
+          </div>
+
+          <!-- NUOVA SEZIONE: ROLE ASSIGNMENT -->
+          <div id="role-assignment" class="mt-16 scroll-mt-24 border-t border-slate-200 pt-12">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Organizzazione Operativa</p>
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">Come funziona il Role Assignment</h3>
+            <p class="mt-3 max-w-3xl text-base leading-7 text-slate-600">
+              Ogni ruolo all'interno dell'Accademia (Insegnante, Centro ospitante, Tutor, Segreteria) è gestito in maniera trasparente tramite un sistema di assegnazione (Role Assignment).
+              Questo ci permette di definire in modo chiaro chi fa cosa, garantendo efficienza e rispetto dei confini professionali.
+            </p>
+
+            <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+               <h4 class="font-semibold text-slate-900">Bozza di funzionamento ruoli (da personalizzare):</h4>
+               <ul class="mt-4 space-y-3 text-sm text-slate-700 list-disc list-inside">
+                 <li><strong class="text-slate-900">Assegnazione:</strong> Come avviene il passaggio da allievo a ruolo attivo.</li>
+                 <li><strong class="text-slate-900">Permessi e strumenti:</strong> Quali strumenti digitali e fisici ha a disposizione ogni ruolo.</li>
+                 <li><strong class="text-slate-900">Supervisione:</strong> Il rapporto tra Insegnanti e Tutor, e la connessione con la Segreteria per l'organizzazione degli eventi.</li>
+                 <li><strong class="text-slate-900">Evoluzione:</strong> Come un Centro può ospitare più Insegnanti e scalare il proprio impatto territoriale.</li>
+               </ul>
+               <p class="mt-4 text-xs italic text-slate-500">Inserisci qui i dettagli specifici del sistema di Role Assignment o dell'architettura che avete disegnato.</p>
+            </div>
+          </div>
+
+        </div>
+      </div> <!-- chiusura grid -->
+    </div> <!-- chiusura mx-auto -->
+  </div> <!-- chiusura bg-white -->
+</div> <!-- chiusura content-tab-guide -->
+
+  </div> <!-- chiusura sfondo grigio pb-20 -->
 </section>

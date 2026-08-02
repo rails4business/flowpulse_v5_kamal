@@ -147,6 +147,17 @@ module FlowRoles
           badge: "SYS"
         ),
         MenuItem.build(
+          key: :password_reset_requests,
+          title: "Reset password",
+          subtitle: "Richieste e link temporanei",
+          path: :admin_password_reset_requests_path,
+          roles: %w[superadmin],
+          group: :admin,
+          badge: "SEC",
+          mutating: true
+        ),
+        MenuItem.build(key: :data_commitment_imports, title: "Importa impegni", subtitle: "Esporta, anteprima e conferma", path: :admin_data_commitment_imports_path, roles: %w[superadmin], group: :admin, badge: "SYNC", mutating: true),
+        MenuItem.build(
           key: :weekplan,
           title: "Weekplan",
           subtitle: "Planner settimanale HTML",
@@ -168,7 +179,7 @@ module FlowRoles
     end
 
     def admin_items
-      admin_keys = %i[dashboard domains resources pages role_map assigned_role_map weekplan]
+      admin_keys = %i[dashboard domains resources pages role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
       items.select { |item| admin_keys.include?(item.key) }
     end
 

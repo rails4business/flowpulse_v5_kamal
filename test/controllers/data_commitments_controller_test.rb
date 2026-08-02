@@ -199,14 +199,13 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Impegno PosturaCorretta", kind: "personal", status: "planned", starts_at: 1.day.from_now, pricing_type: "none", contribution_type: "unpaid")
     DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: other_domain, title: "Impegno Flowpulse", kind: "personal", status: "planned", starts_at: 1.day.from_now, pricing_type: "none", contribution_type: "unpaid")
 
-    get data_commitments_url
+    get impegno_agenda_url(workspace: "1")
     assert_response :success
-    assert_includes response.body, "Calendario PosturaCorretta"
     assert_includes response.body, "Impegno PosturaCorretta"
     assert_not_includes response.body, "Impegno Flowpulse"
 
     delete session_url
-    get data_commitments_url
+    get impegno_agenda_url(workspace: "1")
     assert_redirected_to new_session_url
   end
 
@@ -214,9 +213,31 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_impegno_url
 
     assert_response :success
-    assert_select "title", text: /Calendario PosturaCorretta/
-    assert_select "h1", text: "Calendario PosturaCorretta"
-    assert_select "a[href='#{posturacorretta_impegno_path(tab: 'past')}']", text: /Passati/
+    assert_select "select[name=brand] option[selected][value=posturacorretta]", text: "PosturaCorretta"
+    assert_select "turbo-frame#impegno_workspace[src*='brand_scope=posturacorretta']", count: 1
+  end
+
+  test "canonical Impegno Agenda path filters commitments by the selected day" do
+    selected_day = Date.new(2026, 8, 2)
+    commitment = DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Dato del giorno", kind: "personal", status: "planned", starts_at: selected_day.in_time_zone.change(hour: 9), pricing_type: "none", contribution_type: "unpaid", location_name: "Studio Calvisano", metadata: { "context_label" => "Percorso personale" })
+    DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Dato di un altro giorno", kind: "personal", status: "planned", starts_at: selected_day.next_day.in_time_zone.change(hour: 9), pricing_type: "none", contribution_type: "unpaid")
+
+    get impegno_agenda_url(workspace: "1", date: selected_day.iso8601)
+
+    assert_response :success
+    assert_select "turbo-frame#impegno_workspace", count: 1
+    assert_select "article#commitment-#{commitment.id}", text: /Dato del giorno/
+    assert_includes response.body, "Dato del giorno"
+    assert_includes response.body, "Percorso personale · Studio Calvisano"
+    assert_not_includes response.body, "Dato di un altro giorno"
+  end
+
+  test "legacy and direct Agenda page URLs return to the single Impegno shell" do
+    get legacy_data_commitments_url
+    assert_redirected_to impegno_url(area: "user", view: "agenda")
+
+    get impegno_agenda_url
+    assert_redirected_to impegno_url(area: "user", view: "agenda")
   end
 
   test "same logical calendar cannot contain overlapping commitments" do

@@ -1,0 +1,25 @@
+<% place_form = form_with model: place, url: place.persisted? ? impegno_place_path(place) : impegno_places_path, class: "grid gap-4 sm:grid-cols-2" do |form| %>
+  <% if place.errors.any? %>
+    <div class="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><%= place.errors.full_messages.to_sentence %></div>
+  <% end %>
+  <label class="grid gap-1.5 text-sm font-bold text-slate-700">Nome
+    <%= form.text_field :name, class: "rounded-lg border border-slate-300 px-3 py-2 text-slate-900", autofocus: true %>
+  </label>
+  <label class="grid gap-1.5 text-sm font-bold text-slate-700">Tipo
+    <%= form.select :kind, [["Casa", "home"], ["Studio", "studio"], ["Centro", "center"], ["Spazio evento", "event_space"], ["Natura", "outdoor"], ["Online", "online"], ["Altro", "other"]], {}, class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900" %>
+  </label>
+  <label class="grid gap-1.5 text-sm font-bold text-slate-700 sm:col-span-2">Indirizzo
+    <%= form.text_field :address, class: "rounded-lg border border-slate-300 px-3 py-2 text-slate-900" %>
+  </label>
+  <label class="grid gap-1.5 text-sm font-bold text-slate-700 sm:col-span-2">Link online o mappa
+    <%= form.url_field :online_url, class: "rounded-lg border border-slate-300 px-3 py-2 text-slate-900" %>
+  </label>
+  <label class="grid gap-1.5 text-sm font-bold text-slate-700 sm:col-span-2">Note
+    <%= form.text_area :notes, rows: 3, class: "rounded-lg border border-slate-300 px-3 py-2 text-slate-900" %>
+  </label>
+  <div class="flex items-center gap-3 sm:col-span-2">
+    <%= form.submit place.persisted? ? "Salva luogo" : "Aggiungi luogo", class: "rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700" %>
+    <% if place.persisted? %><%= link_to "Annulla", impegno_path(area: "places"), class: "text-sm font-bold text-slate-600 hover:text-slate-900" %><% end %>
+  </div>
+<% end %>
+<%= place_form %>

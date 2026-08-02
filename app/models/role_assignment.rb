@@ -2,11 +2,11 @@ class RoleAssignment < ApplicationRecord
   ROOT_ROLES = %w[creator_of_worlds demo].freeze
 
   enum :role, {
-    teacher: 0,
-    tutor: 1,
-    professional: 2,   
+    professional: 0, 
+    teacher: 1,
+    tutor: 2,
     segreteria_clienti: 3,
-    responsabile_centro: 4,
+    responsabile_location: 4,
     segreteria_amministrativa: 5,
     creator_of_worlds: 6,
     demo: 8

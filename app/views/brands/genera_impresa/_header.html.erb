@@ -8,6 +8,7 @@
     <nav class="flex items-center gap-1 text-sm font-bold text-slate-600" aria-label="GeneraImpresa">
       <%= link_to "Brand", "#{genera_impresa_path}#brand", class: "rounded-lg px-3 py-2 hover:bg-slate-100 hover:text-slate-950" %>
       <%= link_to "Progetti", "#{genera_impresa_path}#progetti", class: "rounded-lg px-3 py-2 hover:bg-slate-100 hover:text-slate-950" %>
+      <%= link_to "Superadmin", admin_dashboard_path, class: "rounded-lg px-3 py-2 text-blue-700 hover:bg-blue-50" if Current.user&.superadmin_user? %>
     </nav>
   </div>
 </header>

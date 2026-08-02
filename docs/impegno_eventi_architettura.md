@@ -50,7 +50,124 @@ Le pagine esistenti sono:
 - `/posturacorretta/impegno`, agenda filtrata sul dominio PosturaCorretta;
 - pagine progetto che registrano attività GeneraImpresa come commitment.
 
+### Shell applicativa Hotwire
+
+Dal 2 agosto 2026 `/impegno` funziona in due modalità:
+
+- per gli utenti non autenticati mantiene la landing pubblica;
+- per gli utenti autenticati presenta la shell operativa di Impegno.
+
+La shell conserva nell'URL `brand`, `area`, `view`, `tab` e `date`. L'Agenda utente reale viene caricata dal `Brands::Impegno::CommitmentsController` dentro il Turbo Frame `impegno_workspace`; non esiste quindi una copia della logica o dei form di `DataCommitment`. Le sezioni non ancora migrate hanno già URL e spazio di rendering, ma mostrano un placeholder esplicito.
+
+L'endpoint canonico di lettura dell'Agenda è `/impegno/agenda`. Il precedente `/impegni` resta disponibile per compatibilità con form, azioni CRUD e collegamenti esistenti. Il parametro `date=YYYY-MM-DD` filtra realmente i commitment del giorno selezionato nella shell.
+
+La direzione scelta è una shell unica con esperienza Hotwire e controller REST separati per le risorse. Il prototipo HTML resta un riferimento UX e non viene copiato come view monolitica.
+
+La navigazione dell'area Utente è:
+
+```text
+Agenda
+Esperienze
+├── Routine
+├── Percorsi
+├── Classi
+├── Corsi
+└── Eventi
+Ricorrenze
+```
+
+`Programma` non è una voce di menu. È un'entità interna a un Percorso: un percorso può contenere un solo programma oppure più programmi, ciascuno intestato al professionista responsabile. Nel prototipo ogni programma viene mostrato come accordion e contiene attività, stato e date collegate. Il futuro modello dovrà quindi rappresentare `Path has_many Programs`, mentre ogni `Program` appartiene a un professionista e raccoglie attività e commitment.
+
+La stessa struttura vale nell'area Professionista → Offerta → Percorsi: il professionista vede il percorso condiviso, il coordinatore e gli accordion dei singoli programmi. Prestazioni, materiali e valore economico appartengono al programma del relativo professionista; il totale del percorso può aggregare più programmi.
+
 ## Modello concettuale
+
+### Decisione: format, edizione e iscrizione
+
+Un evento ripetibile non viene rappresentato come un unico record che contiene contemporaneamente programma, data, luogo e partecipanti. Il dominio viene separato in quattro livelli:
+
+```text
+EventFormat
+"Introduzione all'Igiene Posturale"
+│
+├── EventProgramItem
+│   ├── Presentazione · 2 ore
+│   ├── Pausa · 30 minuti
+│   └── Pratica guidata · 2 ore
+│
+└── EventOccurrence
+    ├── 15 settembre · Brescia · 50 €
+    │   └── EventRegistration
+    └── 20 ottobre · Bergamo · 60 €
+        └── EventRegistration
+```
+
+#### `EventFormat` — il nucleo riutilizzabile
+
+Descrive che cosa viene proposto, indipendentemente da una data specifica. Contiene inizialmente:
+
+- titolo, slug, descrizione e immagine;
+- proprietario, dominio e brand;
+- organizzatore;
+- durata indicativa;
+- prezzo di riferimento;
+- modalità di partecipazione, per esempio gruppo o individuale;
+- regole generali di iscrizione.
+
+Nell'interfaccia viene chiamato **Format evento**. Il prezzo del format è un riferimento e può essere sostituito nell'edizione concreta.
+
+#### `EventProgramItem` — una parte del programma
+
+Appartiene a un format e contiene:
+
+- titolo;
+- descrizione facoltativa;
+- durata prevista in minuti;
+- posizione nell'ordinamento;
+- tipologia, per esempio presentazione, attività, pratica o pausa.
+
+Il programma conserva durate relative, non necessariamente orari assoluti. Gli orari possono essere calcolati partendo dall'inizio della singola edizione.
+
+#### `EventOccurrence` — la singola edizione
+
+Rappresenta quando e dove viene realizzato il format. Nell'interfaccia può essere presentata come **Edizione** oppure **Data e luogo**. Contiene:
+
+- data e ora iniziale e finale;
+- luogo oppure collegamento online;
+- prezzo effettivo;
+- capienza minima e massima facoltative;
+- termine delle iscrizioni;
+- stato: bozza, pubblicata, annullata o conclusa;
+- visibilità sul sito del brand;
+- eventuali modifiche rispetto alle impostazioni del format.
+
+La pagina pubblica del brand mostra soltanto le edizioni pubblicate, visibili e appartenenti al relativo dominio.
+
+#### `EventRegistration` — l'iscrizione della persona
+
+Collega una persona a una specifica edizione e contiene:
+
+- partecipante;
+- stato: richiesta, confermata o annullata;
+- prezzo concordato;
+- stato del pagamento;
+- data dell'iscrizione;
+- collegamento facoltativo a `DataCommitment`.
+
+Quando l'iscrizione viene confermata, può generare il commitment nel calendario personale. I posti occupati vengono calcolati dalle iscrizioni confermate.
+
+Questa separazione permette di gestire con lo stesso format sia un evento unico sia numerose edizioni in date, luoghi e condizioni economiche differenti.
+
+### Sequenza minima di implementazione
+
+1. `EventFormat` e relativi dati generali;
+2. `EventProgramItem` e ordinamento del programma;
+3. `EventOccurrence`, inizialmente gestita dal superadmin;
+4. pubblicazione delle edizioni visibili in `/posturacorretta/eventi`;
+5. `EventRegistration` e controllo della capienza;
+6. creazione del `DataCommitment` dopo la conferma dell'iscrizione.
+
+Le sezioni successive che usano i nomi generici `Event` ed `EventSlot` rappresentano la prima ipotesi progettuale. In fase d'implementazione prevale la distinzione aggiornata `EventFormat` / `EventOccurrence`; un eventuale slot resta utile soltanto per appuntamenti individuali prenotabili all'interno della stessa edizione.
 
 ```text
 Profile
@@ -310,9 +427,23 @@ Non è necessario creare subito due applicazioni o un'API HTTP interna: finché 
 
 Verifica conclusa senza migrazioni o modifiche distruttive. Sono coperti da test: alias e namespace, registrazione ordinaria e GeneraImpresa, inizio e conclusione del timer, modifica ed eliminazione, durata e valorizzazione, chiusura manuale degli step, filtro privato PosturaCorretta, orari, sovrapposizioni e calendari delegati. Il controllo dei timer è stato corretto affinché operi sul singolo `calendar_key`: due timer non possono convivere sullo stesso calendario, mentre calendari supervisionati distinti possono essere attivi contemporaneamente.
 
-### Fase 2 — Event minimo
+### Fase 2 — Rubrica e spazi minimi
 
-- migration e modello `Event`;
+**Stato: implementata il 2 agosto 2026.**
+
+- aree `Luoghi` e `Contatti` nella shell di Impegno;
+- modelli `Brands::Impegno::Contact` e `Brands::Impegno::Place`;
+- proprietà privata del profilo, con elenco, aggiunta, modifica ed eliminazione;
+- tipi iniziali per persone/organizzazioni e per luoghi fisici o online;
+- test di isolamento: un profilo non può leggere o modificare la rubrica di un altro.
+
+Per ora contatti e luoghi sono dati personali riutilizzabili sia nell'area Utente sia nell'area Professionista. La condivisione, il collegamento a brand/domini e le categorie contestuali arriveranno dopo il primo flusso Eventi.
+
+**Risultato:** esistono già organizzatori e luoghi selezionabili dai futuri eventi, senza duplicare dati testuali.
+
+### Fase 3 — Format evento minimo
+
+- migration e modello `EventFormat`;
 - UUID pubblico e slug;
 - proprietario, dominio, contatto e luogo;
 - stati bozza, pubblicato, annullato e concluso;
@@ -322,20 +453,20 @@ Verifica conclusa senza migrazioni o modifiche distruttive. Sono coperti da test
 - CRUD riservato inizialmente al superadmin;
 - test di modello, autorizzazione e dominio.
 
-**Risultato:** un evento può essere creato e pubblicato, ma non è ancora prenotabile.
+**Risultato:** un format con il suo programma può essere creato e pubblicato, ma non è ancora prenotabile.
 
-### Fase 3 — EventSlot
+### Fase 4 — Edizioni dell'evento
 
-- migration e modello `EventSlot`;
+- migration e modello `EventOccurrence`;
 - data, ora iniziale e finale;
 - capienza e stato;
 - luogo o URL specifici opzionali;
 - gestione di uno o più slot dalla pagina evento;
 - test su intervalli, capienza e cancellazione.
 
-**Risultato:** ogni evento dispone delle proprie date concrete.
+**Risultato:** ogni format dispone delle proprie edizioni concrete.
 
-### Fase 4 — Collegamento ai commitment
+### Fase 5 — Iscrizioni e collegamento ai commitment
 
 - collegare `DataCommitment` a evento e slot;
 - aggiungere ruolo e stato di prenotazione;
@@ -346,7 +477,7 @@ Verifica conclusa senza migrazioni o modifiche distruttive. Sono coperti da test
 
 **Risultato:** iscrizioni e appuntamenti compaiono nell'agenda personale.
 
-### Fase 5 — Pagina pubblica PosturaCorretta
+### Fase 6 — Pagina pubblica PosturaCorretta
 
 - alimentare `/posturacorretta/eventi` dai record pubblicati;
 - filtrare per dominio PosturaCorretta;
@@ -356,9 +487,8 @@ Verifica conclusa senza migrazioni o modifiche distruttive. Sono coperti da test
 
 **Risultato:** PosturaCorretta utilizza il motore eventi di Impegno senza duplicarlo.
 
-### Fase 6 — Contatti e luoghi
+### Fase 7 — Espandere contatti e luoghi
 
-- introdurre `Contact` e `Place`;
 - aggiungere contatto e luogo predefiniti del profilo;
 - implementare i collegamenti a brand, area e categoria;
 - migrare gradualmente i campi testuali dei commitment;
@@ -367,7 +497,7 @@ Verifica conclusa senza migrazioni o modifiche distruttive. Sono coperti da test
 
 **Risultato:** contatti e luoghi diventano riutilizzabili da eventi, percorsi e altri brand.
 
-### Fase 7 — Programmi
+### Fase 8 — Programmi
 
 - routine che generano commitment ricorrenti;
 - percorsi che generano tappe e appuntamenti;
@@ -377,7 +507,7 @@ Verifica conclusa senza migrazioni o modifiche distruttive. Sono coperti da test
 
 **Risultato:** la sezione Programmi del prototipo viene collegata al database.
 
-### Fase 8 — Pagamenti e automazioni
+### Fase 9 — Pagamenti e automazioni
 
 - scadenza iscrizioni;
 - eventuale soglia minima;

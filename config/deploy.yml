@@ -35,6 +35,7 @@ env:
   secret:
     - RAILS_MASTER_KEY
     - POSTGRES_PASSWORD
+    - DATA_COMMITMENT_SYNC_TOKEN
   clear:
     SOLID_QUEUE_IN_PUMA: false
     RUN_DB_PREPARE_ON_BOOT: true

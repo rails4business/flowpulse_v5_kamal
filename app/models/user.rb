@@ -4,6 +4,7 @@ class User < ApplicationRecord
 
   has_secure_password
   has_many :sessions, dependent: :destroy
+  has_many :password_reset_requests, dependent: :destroy
   belongs_to :current_role_assignment, class_name: "RoleAssignment", optional: true
   accepts_nested_attributes_for :profile
 

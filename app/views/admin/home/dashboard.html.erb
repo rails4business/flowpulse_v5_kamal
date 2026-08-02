@@ -30,6 +30,9 @@
       <%= link_to admin_dashboard_path(tab: "guide"), class: "tab-btn #{active_tab == 'guide' ? 'active' : ''}" do %>
         <span>📖 Mappa Ruoli</span>
       <% end %>
+      <%= link_to admin_password_reset_requests_path, class: "tab-btn" do %>
+        <span>🔐 Reset password</span>
+      <% end %>
     </nav>
 
     <% if active_tab == "dashboard" %>

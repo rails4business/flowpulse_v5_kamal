@@ -1,0 +1,49 @@
+<% content_for :title, "Richieste reset password" %>
+
+<div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-xs font-black uppercase tracking-wider text-blue-600">Superadmin</p>
+      <h1 class="mt-1 text-2xl font-black tracking-tight text-slate-950">Richieste di reset password</h1>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Copia il link temporaneo e invialo manualmente via WhatsApp o email. Nessuna email viene inviata automaticamente.</p>
+    </div>
+    <%= link_to "Dashboard", admin_dashboard_path, class: "rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
+  </div>
+
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <% if @password_reset_requests.any? %>
+      <div class="divide-y divide-slate-100">
+        <% @password_reset_requests.each do |reset_request| %>
+          <article class="p-5">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h2 class="font-bold text-slate-900"><%= reset_request.user.email_address %></h2>
+                <p class="mt-1 text-sm text-slate-500">Richiesta il <%= l(reset_request.requested_at, format: :long) %></p>
+              </div>
+              <% if reset_request.pending? %>
+                <span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 ring-1 ring-inset ring-amber-600/20">Da gestire</span>
+              <% else %>
+                <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Archiviata</span>
+              <% end %>
+            </div>
+
+            <% if reset_request.pending? %>
+              <label class="mt-4 grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">Link temporaneo di reset
+                <input type="text" readonly value="<%= @reset_links.fetch(reset_request.id) %>" onclick="this.select()" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm normal-case tracking-normal text-slate-700" aria-label="Link di reset per <%= reset_request.user.email_address %>">
+              </label>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button type="button" data-controller="clipboard" data-clipboard-text-value="<%= @reset_links.fetch(reset_request.id) %>" data-action="clipboard#copy" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">Copia il link</button>
+                <%= button_to "Archivia", complete_admin_password_reset_request_path(reset_request), method: :patch, class: "rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
+              </div>
+              <p class="mt-2 text-xs text-slate-500">Il link scade automaticamente: generane uno nuovo ricaricando la pagina, se necessario.</p>
+            <% else %>
+              <p class="mt-3 text-sm text-slate-500">Archiviata il <%= l(reset_request.fulfilled_at, format: :long) %>.</p>
+            <% end %>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="p-8 text-center text-sm text-slate-500">Non ci sono richieste di reset.</div>
+    <% end %>
+  </div>
+</div>

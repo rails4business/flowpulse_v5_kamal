@@ -8,7 +8,7 @@
       anchor: "task-#{context['step_key']}-#{context['task_key']}"
     )
   else
-    data_commitments_path(tab: "upcoming", anchor: "commitment-#{commitment.id}")
+    request.path.start_with?("/posturacorretta") ? posturacorretta_impegno_path(anchor: "commitment-#{commitment.id}") : impegno_path(area: "user", view: "agenda", anchor: "commitment-#{commitment.id}")
   end
 %>
 <aside class="border-b border-emerald-200 bg-emerald-50" aria-label="Attività in corso" data-controller="timer" data-timer-started-at-value="<%= commitment.actual_started_at.iso8601 %>">

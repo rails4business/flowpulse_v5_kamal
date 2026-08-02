@@ -1,35 +1,45 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Accedi</h1>
+<% content_for :title, "Accedi" %>
 
-  <%= form_with url: session_url, class: "contents" do |form| %>
-    <% if @subscription_domain.present? %>
-      <%= hidden_field_tag :subscription_domain_id, @subscription_domain.id %>
-      <div class="my-5 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-800">
-        Accedendo ti iscrivi gratuitamente a <%= @subscription_domain.display_hostname %>.
-      </div>
-    <% end %>
-
-    <div class="my-5">
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address], class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
+<section class="mx-auto w-full max-w-md px-4 py-10 sm:py-16">
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div class="border-b border-slate-100 bg-slate-50/70 px-6 py-6 sm:px-7">
+      <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600">Il tuo spazio</p>
+      <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950">Bentornato</h1>
+      <p class="mt-2 text-sm leading-6 text-slate-600">Accedi per ritrovare agenda, percorsi e le tue attività.</p>
     </div>
 
-    <div class="my-5">
-      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
-    </div>
+    <div class="px-6 py-7 sm:px-7">
+      <% if @subscription_domain.present? %>
+        <div class="mb-5 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-900">
+          Accedendo ti iscrivi gratuitamente a <strong><%= @subscription_domain.display_hostname %></strong>.
+        </div>
+      <% end %>
 
-    <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
-      <div class="inline">
-        <%= form.submit "Accedi", class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+      <%= form_with url: session_url, class: "space-y-5" do |form| %>
+        <% if @subscription_domain.present? %>
+          <%= hidden_field_tag :subscription_domain_id, @subscription_domain.id %>
+        <% end %>
+
+        <div>
+          <%= form.label :email_address, "Email", class: "block text-sm font-bold text-slate-800" %>
+          <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "nome@esempio.it", value: params[:email_address], class: "mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between gap-3">
+            <%= form.label :password, "Password", class: "block text-sm font-bold text-slate-800" %>
+            <%= verified_link_to "Password dimenticata?", new_password_path, class: "text-xs font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
+          </div>
+          <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Inserisci la password", maxlength: 72, class: "mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+        </div>
+
+        <%= form.submit "Accedi", class: "w-full cursor-pointer rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+      <% end %>
+
+      <div class="mt-6 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
+        Non hai ancora un account?
+        <%= verified_link_to "Crea un account", new_user_path(subscription_domain_id: @subscription_domain&.id), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
       </div>
-
-      <div class="mt-4 text-sm text-gray-500 sm:mt-0">
-        <%= verified_link_to "Password dimenticata?", new_password_path, class: "text-gray-700 underline hover:no-underline" %>
-      </div>
     </div>
-  <% end %>
-
-  <div class="mt-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-slate-700">
-    Non hai ancora un account?
-    <%= verified_link_to "Registrati", new_user_path(subscription_domain_id: @subscription_domain&.id), class: "font-semibold text-blue-700 hover:text-blue-600" %>
   </div>
-</div>
+</section>

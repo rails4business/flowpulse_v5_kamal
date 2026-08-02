@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Questo hook gira sulla macchina da cui lanci `kamal deploy`.
+# Invia soltanto i JSON già messi in storage/data_commitment_exports/pending.
+if [ -f .kamal/secrets ]; then
+  set -a
+  . .kamal/secrets
+  set +a
+fi
+
+export DATA_COMMITMENT_SYNC_URL="${DATA_COMMITMENT_SYNC_URL:-https://flowpulse.net/sync/data_commitment_imports}"
+
+if [ -n "$DATA_COMMITMENT_SYNC_TOKEN" ]; then
+  RAILS_ENV="${RAILS_ENV:-development}" bin/rails data_commitments:push_pending_imports
+else
+  echo "DataCommitment sync: non configurata (manca DATA_COMMITMENT_SYNC_TOKEN in .kamal/secrets)."
+fi

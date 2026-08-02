@@ -22,6 +22,20 @@
 
     <!-- Content -->
     <div class="px-6 py-8 sm:px-8">
+      <% if @pending_data_commitment_imports.any? %>
+        <section class="mb-8 rounded-xl border border-blue-200 bg-blue-50 p-4">
+          <p class="text-sm font-black text-blue-950">Impegni da importare</p>
+          <p class="mt-1 text-sm text-blue-800">Sono stati esportati da un tuo altro dispositivo. Controlla e scegli se aggiungerli al tuo calendario.</p>
+          <div class="mt-4 space-y-3">
+            <% @pending_data_commitment_imports.each do |import| %>
+              <div class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-100 bg-white p-3">
+                <p class="text-sm text-slate-700"><strong><%= import.summary["total"] %> impegni</strong> · esportati <%= l(import.created_at, format: :short) %></p>
+                <div class="flex gap-2"><%= button_to "Rifiuta", reject_profile_data_commitment_import_path(import), method: :patch, class: "rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" %><%= button_to "Importa", accept_profile_data_commitment_import_path(import), method: :patch, data: { turbo_confirm: "Importare questi impegni nel tuo calendario?" }, class: "rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
       <h2 class="text-base font-semibold leading-7 text-slate-900 mb-6">Informazioni Utente (Current.user)</h2>
       <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
         <div class="sm:col-span-1">
@@ -30,7 +44,11 @@
         </div>
         <div class="sm:col-span-1">
           <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500">Email Address</dt>
-          <dd class="mt-1 text-sm text-slate-900 font-medium"><%= @user.email_address %></dd>
+          <dd class="mt-1"><button type="button" command="show-modal" commandfor="edit-email-dialog" class="rounded-lg text-left text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-4 transition hover:text-blue-700 hover:decoration-blue-400"><%= @user.email_address %></button></dd>
+        </div>
+        <div class="sm:col-span-1">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500">Password</dt>
+          <dd class="mt-1"><%= link_to "Reimposta password", new_password_path(email_address: @user.email_address, user_id: @user.id, profile_id: @profile&.id, profile_name: @profile&.display_name, username: @profile&.username), class: "inline-flex rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-bold text-blue-700 transition hover:border-blue-300 hover:bg-blue-100" %></dd>
         </div>
         <div class="sm:col-span-1">
           <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500">Ruolo Attivo</dt>
@@ -50,7 +68,12 @@
 
       <div class="my-8 border-t border-slate-100"></div>
 
-      <h2 class="text-base font-semibold leading-7 text-slate-900 mb-6">Dettagli Profilo (Current.user.profile)</h2>
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-base font-semibold leading-7 text-slate-900">Dettagli Profilo</h2>
+        <% if @profile %>
+          <button type="button" command="show-modal" commandfor="edit-profile-dialog" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">Modifica profilo</button>
+        <% end %>
+      </div>
       <% if @profile %>
         <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
           <div class="sm:col-span-1">
@@ -60,6 +83,10 @@
           <div class="sm:col-span-1">
             <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500">Nome Display</dt>
             <dd class="mt-1 text-sm text-slate-900 font-medium"><%= @profile.display_name.presence || "Non impostato" %></dd>
+          </div>
+          <div class="sm:col-span-1">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500">Username</dt>
+            <dd class="mt-1 text-sm text-slate-900 font-medium">@<%= @profile.username %></dd>
           </div>
           <div class="sm:col-span-1">
             <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500">Nome</dt>
@@ -90,3 +117,52 @@
     </div>
   </div>
 </div>
+
+<dialog id="edit-email-dialog" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+  <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4"><div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Informazioni utente</p><h2 class="mt-1 text-xl font-black text-slate-950">Modifica email</h2></div><button type="button" command="close" commandfor="edit-email-dialog" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button></div>
+  <% if @email_change_authorized %>
+    <% email_form = form_with model: @user, url: profile_path, method: :patch, class: "grid gap-4 p-5" do |form| %>
+      <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm leading-6 text-emerald-800"><strong>Password aggiornata.</strong> Ora puoi confermare la nuova email.</div>
+      <label class="grid gap-1.5 text-sm font-bold text-slate-700">Nuova email
+        <%= form.email_field :email_address, value: @user.email_address, required: true, autocomplete: "email", class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900" %>
+      </label>
+      <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="edit-email-dialog" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Aggiorna email", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700" %></div>
+    <% end %>
+    <%= email_form %>
+  <% else %>
+    <div class="space-y-4 p-5">
+      <p class="text-sm leading-6 text-slate-600">Per sicurezza l’email si modifica solo subito dopo aver reimpostato la password.</p>
+      <ol class="space-y-3 text-sm text-slate-700">
+        <li class="flex gap-3"><span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">1</span><span>In <strong>Informazioni utente</strong>, premi <strong>Reimposta password</strong>, contatta PosturaCorretta su WhatsApp e invia la richiesta.</span></li>
+        <li class="flex gap-3"><span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">2</span><span>Ricevi dal superadmin il link temporaneo e scegli la nuova password.</span></li>
+        <li class="flex gap-3"><span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">3</span><span>Torna qui entro 30 minuti e modifica l’email.</span></li>
+      </ol>
+      <div class="flex justify-end border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="edit-email-dialog" class="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-slate-700">Ho capito</button></div>
+    </div>
+  <% end %>
+</dialog>
+
+<% if @profile %>
+  <dialog id="edit-profile-dialog" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+    <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4"><div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Il tuo profilo</p><h2 class="mt-1 text-xl font-black text-slate-950">Modifica i dettagli</h2></div><button type="button" command="close" commandfor="edit-profile-dialog" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button></div>
+    <% profile_form = form_with model: @profile, url: details_profile_path, method: :patch, class: "grid gap-4 p-5" do |form| %>
+      <p class="text-sm leading-6 text-slate-500">Queste informazioni identificano il tuo profilo. Ruoli e permessi sono gestiti separatamente.</p>
+      <label class="grid gap-1.5 text-sm font-bold text-slate-700">Nome visualizzato
+        <%= form.text_field :display_name, autocomplete: "name", class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900" %>
+      </label>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="grid gap-1.5 text-sm font-bold text-slate-700">Nome
+          <%= form.text_field :first_name, autocomplete: "given-name", class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900" %>
+        </label>
+        <label class="grid gap-1.5 text-sm font-bold text-slate-700">Cognome
+          <%= form.text_field :last_name, autocomplete: "family-name", class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900" %>
+        </label>
+      </div>
+      <label class="grid gap-1.5 text-sm font-bold text-slate-700">Username
+        <span class="relative"><span class="pointer-events-none absolute left-3 top-2 text-slate-400">@</span><%= form.text_field :username, required: true, autocomplete: "username", class: "w-full rounded-lg border border-slate-300 bg-white py-2 pl-7 pr-3 text-slate-900" %></span>
+      </label>
+      <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" command="close" commandfor="edit-profile-dialog" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Salva dettagli", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700" %></div>
+    <% end %>
+    <%= profile_form %>
+  </dialog>
+<% end %>
