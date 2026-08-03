@@ -51,11 +51,11 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "PosturaCorretta"
-    assert_select "title", text: "PosturaCorretta"
-    assert_select "meta[name='description'][content='Percorsi per conoscere e prendersi cura del corpo.']"
+    assert_select "title", text: "Cambiare punto di vista fa la differenza"
+    assert_select "meta[name='description'][content='Trova la giusta posizione da cui osservare il mondo']"
     assert_select "link[rel='icon'][href='https://cdn.example.com/posturacorretta-icon.png']"
-    assert_select "meta[property='og:title'][content='PosturaCorretta']"
-    assert_select "meta[property='og:description'][content='Percorsi per conoscere e prendersi cura del corpo.']"
+    assert_select "meta[property='og:title'][content='Cambiare punto di vista fa la differenza']"
+    assert_select "meta[property='og:description'][content='Trova la giusta posizione da cui osservare il mondo']"
     assert_select "meta[property='og:image'][content='https://cdn.example.com/posturacorretta-social.png']"
     assert_select "meta[name='twitter:image'][content='https://cdn.example.com/posturacorretta-social.png']"
   end

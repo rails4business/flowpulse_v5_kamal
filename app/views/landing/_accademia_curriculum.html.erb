@@ -245,53 +245,70 @@
       <div class="mx-auto max-w-7xl px-2 sm:px-5">
         <div class="relative z-10 flex overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <nav class="flex space-x-1 pl-4 lg:pl-8 items-end" aria-label="Aree Accademia">
-            <button type="button" id="btn-area-recupera" data-active-color="text-violet-700" onclick="switchAreaTab('recupera')" class="area-tab-btn relative z-10 rounded-t-xl border border-b-0 border-slate-200 bg-white px-6 py-3 pb-3.5 text-sm font-semibold text-violet-700 transition-colors">
-              Recupera con la terapia manuale
+            <button type="button" id="btn-area-recupera" data-active-color="text-violet-700" data-inactive-color="text-violet-600/70" onclick="switchAreaTab('recupera')" class="area-tab-btn relative z-10 rounded-t-xl border border-b-0 border-slate-200 bg-white px-6 py-3 pb-3.5 text-sm font-semibold text-violet-700 transition-colors">
+              Recupera <span class="hidden sm:inline">con la terapia manuale</span>
             </button>
-            <button type="button" id="btn-area-muoviti" data-active-color="text-green-600" onclick="switchAreaTab('muoviti')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
-              Muoviti ed esplora
+            <button type="button" id="btn-area-muoviti" data-active-color="text-green-600" data-inactive-color="text-green-600/70" onclick="switchAreaTab('muoviti')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-green-600/70 hover:bg-slate-200/50 hover:text-green-700 transition-colors">
+              Muoviti <span class="hidden sm:inline">ed esplora</span>
             </button>
-            <button type="button" id="btn-area-ascolta" data-active-color="text-rose-600" onclick="switchAreaTab('ascolta')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
-              Ascolta gli aspetti vitali
+            <button type="button" id="btn-area-ascolta" data-active-color="text-rose-600" data-inactive-color="text-rose-600/70" onclick="switchAreaTab('ascolta')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-rose-600/70 hover:bg-slate-200/50 hover:text-rose-700 transition-colors">
+              Ascolta <span class="hidden sm:inline">gli aspetti vitali</span>
             </button>
-            <button type="button" id="btn-area-nutri" data-active-color="text-orange-500" onclick="switchAreaTab('nutri')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
-              Nutri il corpo
+            <button type="button" id="btn-area-nutri" data-active-color="text-orange-500" data-inactive-color="text-orange-500/70" onclick="switchAreaTab('nutri')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-orange-500/70 hover:bg-slate-200/50 hover:text-orange-600 transition-colors">
+              Nutri <span class="hidden sm:inline">il corpo</span>
             </button>
-            <button type="button" id="btn-area-regola" data-active-color="text-blue-600" onclick="switchAreaTab('regola')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors">
-              Regola con le piante officinali
+            <button type="button" id="btn-area-regola" data-active-color="text-blue-600" data-inactive-color="text-blue-600/70" onclick="switchAreaTab('regola')" class="area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-blue-600/70 hover:bg-slate-200/50 hover:text-blue-700 transition-colors">
+              Regola <span class="hidden sm:inline">con le piante officinali</span>
             </button>
           </nav>
         </div>
       </div>
       
       <!-- Sfondo Bianco Principale: il border-t si infila di 1px sotto la tab attiva -->
-      <div class="relative z-0 -mt-px border-t border-slate-200 bg-white shadow-[0_-2px_6px_rgba(0,0,0,0.02)]">
+      <div class="relative -mt-px border-t border-slate-200 bg-white shadow-[0_-2px_6px_rgba(0,0,0,0.02)]">
         <div class="mx-auto max-w-7xl px-2 sm:px-5">
           <main class="py-12 lg:py-16" data-initial-area="<%= active_area_slug %>">
-    <div class="lg:grid lg:grid-cols-12 lg:gap-12">
-      <nav class="side hidden lg:block lg:col-span-3 lg:sticky lg:top-24 lg:self-start" aria-label="Indice dell'Accademia">
-        <p class="side-label">Inizia</p>
-        <a href="#top" id="nav-top">
-          <span>La Mappa dell'Accademia</span>
-        </a>
+    <section id="recupera" class="area-content scroll-mt-24">
+      <div class="lg:grid lg:grid-cols-12 lg:gap-12">
+        <%# -- BACKDROP SCURO (Mobile) -- %>
+        <div id="mobileAsideBackdrop" class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm lg:hidden transition-opacity opacity-0 duration-300"></div>
 
-        <p class="side-label" style="margin-top: 24px;">Percorsi</p>
-        <% academy_modules.each_with_index do |academy_module, index| %>
-          <a class="<%= "active" if index.zero? %>" href="#m<%= index %>" data-module-target="m<%= index %>">
-            <span class="side-num"><%= academy_module.fetch("number") %></span>
-            <span><%= academy_module.fetch("title") %></span>
-            <span class="side-count"><%= academy_module.fetch("lessons").size %></span>
+        <nav id="mobileAsidePanel" class="side fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:col-span-3 lg:sticky lg:top-24 lg:self-start lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none" aria-label="Indice dell'Accademia">
+          <!-- Mobile Close Button -->
+          <div class="mb-6 flex items-center justify-between lg:hidden">
+            <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Indice Moduli</span>
+            <button type="button" id="closeMobileAsideBtn" class="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <span class="sr-only">Chiudi menu</span>
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+
+          <p class="side-label">Inizia</p>
+          <a href="#top" id="nav-top">
+            <span>La Mappa dell'Accademia</span>
           </a>
-        <% end %>
-      </nav>
 
-      <section id="recupera" class="lg:col-span-9 scroll-mt-24 area-content">
+          <p class="side-label" style="margin-top: 24px;">Percorsi</p>
+          <% academy_modules.each_with_index do |academy_module, index| %>
+            <a class="<%= "active" if index.zero? %>" href="#m<%= index %>" data-module-target="m<%= index %>">
+              <span class="side-num"><%= academy_module.fetch("number") %></span>
+              <span><%= academy_module.fetch("title") %></span>
+              <span class="side-count"><%= academy_module.fetch("lessons").size %></span>
+            </a>
+          <% end %>
+        </nav>
+
+        <div class="lg:col-span-9">
         <div class="section-head" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
           <div>
             <h2>Recupera con i principi delle terapie manuali</h2>
             <p>Apri un modulo per vedere lezioni, partecipanti, insegnanti e centri.</p>
           </div>
           <div class="legend" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Mobile Toggle -->
+            <button class="button-utility inline-flex lg:hidden" id="openMobileAsideBtn" type="button" style="align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-size: 11px; font-weight: 700; cursor: pointer;">
+              ☰ <span>Indice</span>
+            </button>
             <label class="relative flex items-center" style="margin: 0;">
               <span class="sr-only">Cerca modulo o lezione</span>
               <svg class="absolute left-3 h-4 w-4 text-slate-400 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -300,10 +317,10 @@
               <input id="search" type="text" placeholder="Cerca modulo o lezione…" style="width: 250px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 12px 6px 34px; font-size: 13px; outline: none; transition: all 0.15s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 1px #3b82f6';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
             </label>
             <button class="button-utility" id="academyOpenAll" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='white';">
-              📂 <span>Apri tutti i moduli</span>
+              📂 <span class="hidden sm:inline">Apri tutti i moduli</span><span class="sm:hidden">Apri moduli</span>
             </button>
             <button class="button-utility" type="button" data-modal-template="academy-roster" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='white';">
-              👥 <span>Tutti gli insegnanti</span>
+              👥 <span class="hidden sm:inline">Tutti gli insegnanti</span><span class="sm:hidden">Insegnanti</span>
             </button>
           </div>
         </div>
@@ -314,9 +331,11 @@
                      locals: { academy_teachers: academy_teachers, academy_locations: academy_locations } %>
         </div>
         <div class="empty" id="empty">Nessun modulo corrisponde alla ricerca.</div>
+        </div> <!-- end col-span-9 -->
+      </div> <!-- end grid -->
       </section>
 
-      <section id="muoviti" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+      <section id="muoviti" class="scroll-mt-24 area-content hidden max-w-4xl mx-auto">
         <div class="rounded-2xl border border-green-200 bg-green-50/50 p-8 text-center mb-8">
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-600 mb-4">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -325,7 +344,7 @@
           <p class="mt-2 text-green-700 max-w-lg mx-auto">Stiamo lavorando per integrare questi moduli nell'Accademia. Presto potrai esplorare i percorsi dedicati al movimento.</p>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
-          <% ["Rinforzo muscolare", "I cinque tibetani", "Gli 8 pezzi di brocato", "Una sequenza dello yoga", "Lo sviluppo del movimento dei bambini DNS", "Animal Flow", "Movimenti arcaici", "La capoeira", "Il tai chi"].each do |title| %>
+          <% ["Rinforzo muscolare", "Una sequenza dalla kinesiologia", "I cinque tibetani", "Gli 8 pezzi di brocato", "Una sequenza dello yoga", "Lo sviluppo del movimento dei bambini DNS", "Animal Flow", "Movimenti arcaici", "La capoeira", "Il tai chi"].each do |title| %>
             <div class="rounded-xl border border-slate-200 bg-white p-4 opacity-75 grayscale flex items-center gap-3">
               <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-400">🔒</span>
               <span class="font-medium text-slate-600"><%= title %></span>
@@ -334,7 +353,7 @@
         </div>
       </section>
 
-      <section id="ascolta" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+      <section id="ascolta" class="scroll-mt-24 area-content hidden max-w-4xl mx-auto">
         <div class="rounded-2xl border border-rose-200 bg-rose-50/50 p-8 text-center mb-8">
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-rose-100 text-rose-600 mb-4">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -352,7 +371,7 @@
         </div>
       </section>
 
-      <section id="nutri" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+      <section id="nutri" class="scroll-mt-24 area-content hidden max-w-4xl mx-auto">
         <div class="rounded-2xl border border-orange-200 bg-orange-50/50 p-8 text-center mb-8">
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-100 text-orange-600 mb-4">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -370,7 +389,7 @@
         </div>
       </section>
 
-      <section id="regola" class="lg:col-span-9 scroll-mt-24 area-content hidden">
+      <section id="regola" class="scroll-mt-24 area-content hidden max-w-4xl mx-auto">
         <div class="rounded-2xl border border-blue-200 bg-blue-50/50 p-8 text-center mb-8">
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -390,7 +409,7 @@
     </div>
   </main>
 
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" style="display: none;">
     <div class="modal-card">
       <div class="modal-head"><h3 id="modalTitle">Insegnante</h3><button class="close" id="closeModal" aria-label="Chiudi">✕</button></div>
       <div class="modal-content" id="modalContent"></div>
@@ -888,7 +907,8 @@
 
     // Resetta stili dei bottoni
     document.querySelectorAll('.area-tab-btn').forEach(btn => {
-      btn.className = "area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium text-slate-500 hover:bg-slate-200/50 hover:text-slate-700 transition-colors";
+      const inactiveColor = btn.dataset.inactiveColor || 'text-slate-500';
+      btn.className = "area-tab-btn relative z-0 rounded-t-xl border border-transparent border-b-0 mb-px px-6 py-3 text-sm font-medium hover:bg-slate-200/50 transition-colors " + inactiveColor;
     });
 
     // Applica stile al bottone attivo
@@ -897,7 +917,14 @@
       const activeColor = activeBtn.dataset.activeColor || 'text-violet-700';
       activeBtn.className = "area-tab-btn relative z-10 rounded-t-xl border border-b-0 border-slate-200 bg-white px-6 py-3 pb-3.5 text-sm font-semibold transition-colors " + activeColor;
     }
+
+    // Scroll verso le tab per garantire che l'utente veda l'inizio del blocco
+    const tabsContainer = document.getElementById('content-tab-curriculum');
+    if (tabsContainer) {
+      tabsContainer.scrollIntoView({ behavior: 'smooth' });
+    }
   }
+
   </script>
         </main>
         </div> <!-- chiusura contenitore mx-auto max-w-7xl interno -->
@@ -907,10 +934,34 @@
 <div id="content-tab-guide" class="<%= 'hidden ' if active_main_tab == 'curriculum' %>">
   <div class="bg-white pb-20 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] border-t border-slate-200">
     <div class="mx-auto max-w-7xl px-5 py-12 lg:py-16">
+      <!-- Mobile Toggle Guide (NEW) -->
+      <div class="mb-6 flex items-center justify-between lg:hidden">
+        <h2 class="text-xl font-bold text-slate-900">Guida all'Accademia</h2>
+        <button type="button" id="openMobileGuideAsideBtn" class="inline-flex lg:hidden items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <svg class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <span>Indice</span>
+        </button>
+      </div>
+
       <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)] items-start">
         
+        <%# -- BACKDROP SCURO (Mobile) -- %>
+        <div id="mobileGuideAsideBackdrop" class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm lg:hidden transition-opacity opacity-0 duration-300"></div>
+
         <!-- ASIDE LATERALE -->
-        <aside class="hidden lg:block border-r border-slate-100 pr-6 sticky top-24 self-start">
+        <aside id="mobileGuideAsidePanel" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:border-r lg:border-slate-100 lg:pr-6 lg:sticky lg:top-24 lg:self-start">
+          
+          <!-- Mobile Close Button -->
+          <div class="mb-6 flex items-center justify-between lg:hidden">
+            <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Indice Guida</span>
+            <button type="button" id="closeMobileGuideAsideBtn" class="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <span class="sr-only">Chiudi menu</span>
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+
           <nav class="space-y-6 text-sm" aria-label="Indice della Guida">
             <div class="space-y-1">
               <p class="pt-2 pb-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Il Contesto</p>
@@ -1158,3 +1209,95 @@
 
   </div> <!-- chiusura sfondo grigio pb-20 -->
 </section>
+
+<script>
+  // --- Mobile Sidebar Toggle per Accademia e Guida ---
+  function initMobileAsides() {
+    const openBtn = document.getElementById("openMobileAsideBtn");
+    const closeBtn = document.getElementById("closeMobileAsideBtn");
+    const backdrop = document.getElementById("mobileAsideBackdrop");
+    const panel = document.getElementById("mobileAsidePanel");
+
+    // Rimuove eventuali listener vecchi se richiamato più volte (evitiamo binding multipli)
+    if (openBtn && panel && backdrop && !openBtn.dataset.bound) {
+      openBtn.dataset.bound = true;
+      function openMobileAside() {
+        backdrop.classList.remove("hidden");
+        void backdrop.offsetWidth;
+        backdrop.classList.remove("opacity-0");
+        backdrop.classList.add("opacity-100");
+        
+        panel.classList.remove("-translate-x-full");
+        panel.classList.add("translate-x-0");
+      }
+
+      function closeMobileAside() {
+        panel.classList.remove("translate-x-0");
+        panel.classList.add("-translate-x-full");
+        
+        backdrop.classList.remove("opacity-100");
+        backdrop.classList.add("opacity-0");
+        
+        setTimeout(() => {
+          backdrop.classList.add("hidden");
+        }, 300);
+      }
+
+      openBtn.addEventListener("click", openMobileAside);
+      if(closeBtn) closeBtn.addEventListener("click", closeMobileAside);
+      backdrop.addEventListener("click", closeMobileAside);
+      
+      const panelLinks = panel.querySelectorAll('a[data-module-target]');
+      panelLinks.forEach(link => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth < 1024) closeMobileAside();
+        });
+      });
+    }
+
+    const openGuideBtn = document.getElementById("openMobileGuideAsideBtn");
+    const closeGuideBtn = document.getElementById("closeMobileGuideAsideBtn");
+    const backdropGuide = document.getElementById("mobileGuideAsideBackdrop");
+    const panelGuide = document.getElementById("mobileGuideAsidePanel");
+
+    if (openGuideBtn && panelGuide && backdropGuide && !openGuideBtn.dataset.bound) {
+      openGuideBtn.dataset.bound = true;
+      function openMobileGuideAside() {
+        backdropGuide.classList.remove("hidden");
+        void backdropGuide.offsetWidth;
+        backdropGuide.classList.remove("opacity-0");
+        backdropGuide.classList.add("opacity-100");
+        
+        panelGuide.classList.remove("-translate-x-full");
+        panelGuide.classList.add("translate-x-0");
+      }
+
+      function closeMobileGuideAside() {
+        panelGuide.classList.remove("translate-x-0");
+        panelGuide.classList.add("-translate-x-full");
+        
+        backdropGuide.classList.remove("opacity-100");
+        backdropGuide.classList.add("opacity-0");
+        
+        setTimeout(() => {
+          backdropGuide.classList.add("hidden");
+        }, 300);
+      }
+
+      openGuideBtn.addEventListener("click", openMobileGuideAside);
+      if(closeGuideBtn) closeGuideBtn.addEventListener("click", closeMobileGuideAside);
+      backdropGuide.addEventListener("click", closeMobileGuideAside);
+      
+      const guideLinks = panelGuide.querySelectorAll('a');
+      guideLinks.forEach(link => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth < 1024) closeMobileGuideAside();
+        });
+      });
+    }
+  }
+
+  // Esegue l'inizializzazione per coprire tutti i casi (Turbo, load classico e partial reloading)
+  initMobileAsides();
+  document.addEventListener("turbo:load", initMobileAsides);
+</script>

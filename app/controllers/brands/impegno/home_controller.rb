@@ -4,16 +4,18 @@ module Brands
       layout "landing"
       allow_unauthenticated_access
 
-      AREAS = %w[user professional places contacts].freeze
+      AREAS = %w[agenda user professional places contacts].freeze
       VIEWS = {
-        "user" => %w[agenda practices recurring],
-        "professional" => %w[agenda offering exchange reports],
+        "agenda" => %w[agenda],
+        "user" => %w[practices recurring],
+        "professional" => %w[offering exchange reports],
         "places" => [],
         "contacts" => []
       }.freeze
       OFFERING_TABS = %w[services paths classes courses events].freeze
       EXPERIENCE_TABS = %w[habits paths classes courses events].freeze
       AGENDA_PERIODS = %w[upcoming past].freeze
+      PROFESSIONAL_AGENDA_FILTERS = %w[all events booking_slots].freeze
 
       def index
         return unless authenticated?
@@ -21,11 +23,13 @@ module Brands
         @impegno_brand = params[:brand].presence_in(%w[impegno posturacorretta generaimpresa personale]) || "impegno"
         @impegno_domains = available_impegno_domains
         @impegno_professional_access = Current.user.professional_user?
-        requested_area = params[:area].presence_in(AREAS) || "user"
+        requested_area = params[:area].presence_in(AREAS) || "agenda"
         @impegno_area = requested_area == "professional" && !@impegno_professional_access ? "user" : requested_area
         requested_view = params[:view] == "programs" ? "practices" : params[:view]
-        @impegno_view = requested_view.presence_in(VIEWS.fetch(@impegno_area)) || "agenda"
+        @impegno_area = "agenda" if %w[user professional].include?(@impegno_area) && requested_view == "agenda"
+        @impegno_view = requested_view.presence_in(VIEWS.fetch(@impegno_area)) || VIEWS.fetch(@impegno_area).first
         @impegno_period = @impegno_view == "agenda" ? params[:period].presence_in(AGENDA_PERIODS) : nil
+        @impegno_agenda_filter = @impegno_area == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(PROFESSIONAL_AGENDA_FILTERS) || "all" : nil
         @impegno_tab = if @impegno_area == "professional" && @impegno_view == "offering"
           params[:tab].presence_in(OFFERING_TABS) || "services"
         elsif @impegno_area == "user" && @impegno_view == "practices"
@@ -48,15 +52,17 @@ module Brands
         def workspace_src
           return impegno_contacts_path(workspace: "1") if @impegno_area == "contacts"
           return impegno_places_path(workspace: "1") if @impegno_area == "places"
-          return unless @impegno_area == "user" && @impegno_view == "agenda"
+          return unless @impegno_area == "agenda" && @impegno_view == "agenda"
 
           options = {
             workspace: "1",
             date: params[:date].presence,
             period: @impegno_period,
+            area: @impegno_area,
+            agenda_filter: @impegno_agenda_filter,
+            default_brand: @impegno_brand,
             return_to: request.fullpath
           }.compact
-          options[:brand_scope] = "posturacorretta" if @impegno_brand == "posturacorretta"
           impegno_agenda_path(options)
         end
 

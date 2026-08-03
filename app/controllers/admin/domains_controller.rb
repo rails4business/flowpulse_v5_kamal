@@ -74,7 +74,7 @@ module Admin
       end
 
       def domain_params
-        params.require(:domain).permit(:hostname, :canonical_host, :locale, :target_controller, :target_action, :primary, :active, :role_assignment_id, :node_id, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url)
+        params.require(:domain).permit(:hostname, :canonical_host, :locale, :target_controller, :target_action, :primary, :active, :role_assignment_id, :node_id, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url, :social_image_url)
       end
 
       def yaml_export_request?

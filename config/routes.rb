@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resource :session
+  resource :site_selection, only: :create
   resources :users, only: %i[new create]
   resources :passwords, param: :token
 

@@ -6,7 +6,7 @@ module Brands
       layout "landing"
 
   def index
-    if params[:workspace] != "1" && params[:brand_scope].blank?
+    if params[:workspace] != "1"
       destination = {
         area: params[:area].presence || "user",
         view: params[:view].presence || "agenda",
@@ -18,22 +18,16 @@ module Brands
     @domains = available_domains
 
     # Area & View navigation
-    @active_area = %w[user professional places contacts].include?(params[:area]) ? params[:area] : "user"
+    @active_area = %w[agenda user professional places contacts].include?(params[:area]) ? params[:area] : "agenda"
     requested_view = params[:view] == "programs" ? "practices" : params[:view]
     @active_view = %w[agenda practices recurring value reports].include?(requested_view) ? requested_view : "agenda"
+    @agenda_filter = @active_area == "agenda" && @active_view == "agenda" && Current.user.professional_user? ? params[:agenda_filter].presence_in(%w[all events booking_slots]) || "all" : nil
     
-    # Domain / Brand filter
-    if params[:brand_scope] == "posturacorretta"
-      @scoped_domain = Domain.find_for_host("posturacorretta.org")
-    elsif current_domain&.target_controller == "brands/posturacorretta" || current_domain&.target_action == "posturacorretta"
-      @scoped_domain = current_domain
-    elsif params[:domain_id].present? && params[:domain_id] != "all"
-      @scoped_domain = @domains.find_by(id: params[:domain_id])
-    end
+    # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
+    @default_domain = default_domain_for(params[:default_brand])
 
     @profile = current_profile
     @commitments = @profile.data_commitments.includes(:domain).order(:starts_at)
-    @commitments = @commitments.where(domain: @scoped_domain) if @scoped_domain
     @agenda_date = parse_agenda_date
     if @agenda_date
       @commitments = @commitments.select do |commitment|
@@ -43,6 +37,11 @@ module Brands
       @commitments = @commitments.select { |commitment| (commitment.actual_started_at || commitment.starts_at) >= Time.current }
     elsif params[:period] == "past"
       @commitments = @commitments.select { |commitment| (commitment.actual_started_at || commitment.starts_at) < Time.current }
+    end
+    if @agenda_filter == "events"
+      @commitments = @commitments.select { |commitment| commitment.kind == "event" }
+    elsif @agenda_filter == "booking_slots"
+      @commitments = @commitments.select { |commitment| ActiveModel::Type::Boolean.new.cast(commitment.metadata.to_h["booking_slot"]) }
     end
     
     # Raggruppa i commitment per giorno
@@ -328,6 +327,15 @@ module Brands
         .order(:hostname)
     end
 
+    def default_domain_for(brand)
+      hostname = {
+        "posturacorretta" => "posturacorretta.org",
+        "generaimpresa" => "generaimpresa.it",
+        "impegno" => "impegno.it"
+      }[brand]
+      @domains.find { |domain| domain.hostname == hostname } if hostname.present?
+    end
+
     def find_genera_impresa_context!
       data = PosturacorrettaProjectCatalog.load
       project = data.fetch("projects", []).find { |item| item["slug"] == params[:project_slug] }
@@ -372,8 +380,9 @@ module Brands
     def personal_commitment_params
       params.require(:data_commitment).permit(
         :title, :description, :kind, :starts_at, :ends_at, :all_day,
-        :actual_started_at, :actual_ended_at, :calendar_label
-      )
+        :actual_started_at, :actual_ended_at, :calendar_label, :domain_id,
+        :context_label
+      ).except(:domain_id, :context_label)
     end
 
     def project_path(project, step, task)

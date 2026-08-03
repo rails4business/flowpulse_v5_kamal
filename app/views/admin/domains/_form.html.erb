@@ -52,6 +52,10 @@
         <%= form.url_field :favicon_url, placeholder: "https://...", class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
       </div>
       <div>
+        <%= form.label :social_image_url, "Immagine condivisione URL", class: "text-sm font-bold text-slate-700" %>
+        <%= form.url_field :social_image_url, placeholder: "https://...", class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+      <div>
         <%= form.label :site_title, "Titolo del sito", class: "text-sm font-bold text-slate-700" %>
         <%= form.text_field :site_title, class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
       </div>

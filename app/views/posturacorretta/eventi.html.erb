@@ -49,7 +49,8 @@
           <div class="relative w-full sm:w-auto" id="event-status-select-container">
             <select id="event-status-select" onchange="switchEventStatus(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
               <option value="all">Stato evento</option>
-              <option value="proposed">Proposti</option>
+              <option value="organizing">In organizzazione</option>
+              <option value="proposed">Proposti al pubblico</option>
               <option value="confirmed">Confermati</option>
               <option value="cancelled">Annullati</option>
             </select>
@@ -276,9 +277,14 @@
     }
 
     // 3. EVENTS RENDERING
+    // La distinzione tra prossimi e passati deriva sempre dalla data reale:
+    // il campo `type` nel YAML resta solo compatibile con i contenuti già esistenti.
+    const now = new Date();
+    const todayKey = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
     const filteredEvents = events.filter(e => {
       // Temporal Tab Filter
-      if (e.type !== currentTemporalTab) return false;
+      const temporalTab = e.date >= todayKey ? "future" : "past";
+      if (temporalTab !== currentTemporalTab) return false;
 
       // Compatibilità: gli eventi YAML precedenti sono confermati e con iscrizioni aperte.
       const eventStatus = e.event_status || e.status || "confirmed";
@@ -327,28 +333,32 @@
       emptyState.classList.add("hidden");
       grid.classList.remove("hidden");
 
-      grid.innerHTML = filteredEvents.map(e => `
-        <button type="button" onclick="openEventModal(${e.id})" class="group relative aspect-[16/11] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-500 hover:shadow-xl hover:shadow-violet-900/10 sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-violet-500/30">
-          <img src="${e.image}" alt="${e.title}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition duration-500" loading="lazy">
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent"></div>
+      grid.innerHTML = filteredEvents.map(e => {
+        const eventStatus = e.event_status || e.status || "confirmed";
+        const statusLabel = { organizing: "In organizzazione", proposed: "Proposto al pubblico", confirmed: "Confermato", cancelled: "Annullato" }[eventStatus] || eventStatus;
+        return `
+        <button type="button" onclick="openEventModal(${e.id})" aria-label="Apri l'evento ${e.title}" class="group relative aspect-[16/11] w-full cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-[transform,border-color,box-shadow] duration-500 ease-out hover:-translate-y-1.5 hover:border-violet-500 hover:shadow-xl hover:shadow-violet-900/15 active:scale-[0.985] sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-violet-500/30">
+          <img src="${e.image}" alt="${e.title}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition-transform duration-700 ease-out group-hover:scale-110" loading="lazy">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent transition-colors duration-500 group-hover:from-slate-950/95 group-hover:via-slate-950/45"></div>
           
           <!-- Top date badge overlay -->
           <div class="absolute left-4 top-4 z-10 rounded-xl bg-white/90 px-3.5 py-2 text-xs font-bold text-slate-800 shadow-sm backdrop-blur-md">
             <span class="block">${e.formattedDate}</span>
             <span class="mt-0.5 block text-[11px] font-semibold text-violet-700">Ore ${e.time}</span>
           </div>
+          <span class="absolute left-4 top-[4.8rem] z-10 rounded-full bg-violet-700/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white backdrop-blur-sm">${statusLabel}</span>
 
           <!-- Top hover helper overlay -->
-          <div class="absolute right-4 top-4 z-10 rounded-xl bg-white/25 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100">
-            Leggi Programma 🔎
+          <div class="absolute right-4 top-4 z-10 flex translate-y-1 items-center gap-1.5 rounded-xl bg-white/25 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            Scopri <span class="text-sm leading-none transition-transform duration-300 group-hover:translate-x-0.5">→</span>
           </div>
 
           <!-- Bottom Text Overlay -->
-          <div class="absolute inset-x-0 bottom-0 z-10 flex flex-col p-5 md:p-6">
+          <div class="absolute inset-x-0 bottom-0 z-10 flex translate-y-1 flex-col p-5 transition-transform duration-500 ease-out group-hover:translate-y-0 md:p-6">
             <span onclick="event.stopPropagation(); filterByLocation('${e.locationKey}', '${e.location}')" class="text-[10px] font-black uppercase tracking-wider text-violet-300 hover:text-violet-200 cursor-pointer transition select-none self-start">
               📍 ${e.location}
             </span>
-            <h3 class="mt-1.5 text-lg font-black text-white leading-snug group-hover:text-violet-200 transition line-clamp-2">
+            <h3 class="mt-1.5 text-lg font-black leading-snug text-white transition-colors duration-300 group-hover:text-violet-200 line-clamp-2">
               ${e.title}
             </h3>
             <p class="mt-2 text-xs text-slate-300 line-clamp-3 leading-relaxed">
@@ -356,7 +366,8 @@
             </p>
           </div>
         </button>
-      `).join("");
+        `;
+      }).join("");
     }
   }
 

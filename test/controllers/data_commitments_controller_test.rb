@@ -187,7 +187,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Non ancora associate a un task"
   end
 
-  test "PosturaCorretta commitments are private and scoped to the current domain" do
+  test "commitments remain private to the profile and are visible across brand contexts" do
     other_domain = Domain.create!(
       hostname: "flowpulse.net",
       locale: "it",
@@ -202,7 +202,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     get impegno_agenda_url(workspace: "1")
     assert_response :success
     assert_includes response.body, "Impegno PosturaCorretta"
-    assert_not_includes response.body, "Impegno Flowpulse"
+    assert_includes response.body, "Impegno Flowpulse"
 
     delete session_url
     get impegno_agenda_url(workspace: "1")
@@ -214,7 +214,8 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "select[name=brand] option[selected][value=posturacorretta]", text: "PosturaCorretta"
-    assert_select "turbo-frame#impegno_workspace[src*='brand_scope=posturacorretta']", count: 1
+    assert_select "turbo-frame#impegno_workspace[src*='default_brand=posturacorretta']", count: 1
+    assert_select "turbo-frame#impegno_workspace[src*='brand_scope=posturacorretta']", count: 0
   end
 
   test "canonical Impegno Agenda path filters commitments by the selected day" do

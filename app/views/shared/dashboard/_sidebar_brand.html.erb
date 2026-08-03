@@ -14,7 +14,7 @@
       <% Domain.active.order(:hostname).each do |domain| %>
         <% site_name = domain.site_title.presence || domain.display_hostname %>
         <% if local_request? %>
-          <%= button_to admin_set_override_path(domain_id: domain.id, redirect_to: root_path), method: :post, class: "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition #{current_domain&.id == domain.id ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}" do %>
+          <%= button_to site_selection_path(domain_id: domain.id), method: :post, class: "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition #{current_domain&.id == domain.id ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}" do %>
             <span class="truncate"><%= site_name %></span><span class="ml-3 shrink-0 text-xs font-medium text-slate-400"><%= domain.display_hostname %></span>
           <% end %>
         <% else %>
@@ -24,7 +24,7 @@
         <% end %>
       <% end %>
       <% if local_request? && session[:override_domain_id].present? %>
-        <div class="mt-1 border-t border-slate-100 pt-1"><%= button_to "Apri FlowPulse", admin_set_override_path(domain_id: nil, redirect_to: root_path), method: :post, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-600 hover:bg-slate-50" %></div>
+        <div class="mt-1 border-t border-slate-100 pt-1"><%= button_to "Apri FlowPulse", site_selection_path(domain_id: Domain.active.find_by(hostname: "flowpulse.net")&.id), method: :post, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-600 hover:bg-slate-50" %></div>
       <% end %>
     </div>
   </details>

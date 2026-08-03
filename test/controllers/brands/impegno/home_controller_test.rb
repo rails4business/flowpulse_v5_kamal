@@ -22,15 +22,14 @@ module Brands
         user.create_profile!(display_name: "Workspace User", username: "workspace_user")
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
-        get impegno_url(brand: "impegno", area: "user", view: "agenda", date: "2026-08-02")
+        get impegno_url(brand: "impegno", area: "agenda", view: "agenda", date: "2026-08-02")
 
         assert_response :success
         assert_select "select[name=brand] option[selected][value=impegno]", text: "1impegno"
-        assert_select "select[name=area] option[selected][value=user]", text: "Utente"
+        assert_select "select[name=area] option[selected][value=agenda]", text: "Agenda"
         assert_select "select[name=area] option[value=professional]", count: 1
-        assert_select "a[aria-current=page]", text: "Agenda"
-        assert_select "a[href*='view=practices']", text: "Esperienze"
-        assert_select "a", text: "Ricorrenze"
+        assert_select "span", text: "Agenda"
+        assert_select "a[href*='view=practices']", count: 0
         assert_select "nav[aria-label='Navigazione 1impegno']", count: 1
         assert_select "button[data-modal-dialog-id-value='start-commitment-dialog'][data-action='modal#open']", text: /Registra/
         assert_select "button[data-modal-dialog-id-value='new-commitment-dialog'][data-action='modal#open']", text: /Nuovo impegno/
@@ -59,7 +58,8 @@ module Brands
         assert_response :success
         assert_select "select[name=brand] option[selected][value=posturacorretta]", text: "PosturaCorretta"
         assert_select "nav[aria-label='Navigazione principale PosturaCorretta']", count: 1
-        assert_select "turbo-frame#impegno_workspace[src*='brand_scope=posturacorretta']", count: 1
+        assert_select "turbo-frame#impegno_workspace[src*='default_brand=posturacorretta']", count: 1
+        assert_select "turbo-frame#impegno_workspace[src*='brand_scope=posturacorretta']", count: 0
       end
 
       test "shows the active timer bar in the Impegno shell" do
@@ -126,6 +126,25 @@ module Brands
         assert_select "h1", text: "Eventi"
       end
 
+      test "loads the professional agenda with event and booking-slot filters" do
+        user = User.create!(email_address: "impegno-professional-agenda@example.com", password: "password123", password_confirmation: "password123")
+        user.create_profile!(display_name: "Professional Agenda", username: "professional_agenda")
+        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :creator_of_worlds)
+        RoleAssignment.create!(profile: user.profile, role: :professional, parent: creator_assignment)
+        post session_url, params: { email_address: user.email_address, password: "password123" }
+
+        get impegno_url(area: "agenda", view: "agenda", agenda_filter: "events", date: "2026-08-02")
+
+        assert_response :success
+        assert_select "span", text: "Agenda"
+        assert_select "turbo-frame#impegno_workspace[src*='area=agenda'][src*='agenda_filter=events']", count: 1
+
+        get impegno_agenda_url(workspace: "1", area: "agenda", agenda_filter: "events")
+        assert_response :success
+        assert_select "nav[aria-label='Filtro agenda professionista'] a[aria-current=page]", text: "I miei eventi"
+        assert_select "nav[aria-label='Filtro agenda professionista'] a", text: "Slot prenotazione"
+      end
+
       test "does not expose the professional workspace without the professional role" do
         user = User.create!(
           email_address: "impegno-user-only@example.com",
@@ -140,7 +159,7 @@ module Brands
         assert_response :success
         assert_select "select[name=area] option[selected][value=user]", text: "Utente"
         assert_select "select[name=area] option[value=professional]", count: 0
-        assert_select "a[aria-current=page]", text: "Agenda"
+        assert_select "a[aria-current=page]", text: "Esperienze"
       end
 
       test "loads shared places and contacts as Impegno workspace areas" do

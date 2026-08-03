@@ -15,12 +15,14 @@
         view: @impegno_view,
         tab: @impegno_tab,
         date: params[:date].presence,
-        period: @impegno_period
+        period: @impegno_period,
+        agenda_filter: @impegno_agenda_filter
       }.merge(overrides).compact)
     end
     view_labels = {
-      "user" => { "agenda" => "Agenda", "practices" => "Esperienze", "recurring" => "Ricorrenze" },
-      "professional" => { "agenda" => "Agenda", "offering" => "Offerta", "exchange" => "Valore e scambi", "reports" => "Resoconti" },
+      "agenda" => {},
+      "user" => { "practices" => "Esperienze", "recurring" => "Ricorrenze" },
+      "professional" => { "offering" => "Offerta", "exchange" => "Valore e scambi", "reports" => "Resoconti" },
       "places" => {},
       "contacts" => {}
     }
@@ -29,31 +31,32 @@
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto grid min-h-16 max-w-7xl grid-cols-1 items-center gap-3 px-4 py-3 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-5">
       <% workspace_filter = form_with url: impegno_path, method: :get, class: "flex min-w-0 items-center gap-2" do |form| %>
+        <span class="hidden text-xs font-bold text-slate-500 sm:inline">Nuovo per</span>
         <%= form.select :brand,
                         [["1impegno", "impegno"], ["PosturaCorretta", "posturacorretta"], ["GeneraImpresa", "generaimpresa"], ["Personale", "personale"]],
                         { selected: @impegno_brand },
                         onchange: "this.form.requestSubmit()",
-                        class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700" %>
+                        class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700", title: "Contesto predefinito per un nuovo impegno" %>
         <%= form.select :area,
-                        [["Utente", "user"]] + (@impegno_professional_access ? [["Professionista", "professional"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
+                        [["Agenda", "agenda"], ["Utente", "user"]] + (@impegno_professional_access ? [["Professionista", "professional"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
                         { selected: @impegno_area },
-                        onchange: "this.form.requestSubmit()",
+                        onchange: "this.form.elements['view'].value = ''; this.form.requestSubmit()",
                         class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
-        <%= form.hidden_field :view, value: @impegno_view if %w[user professional].include?(@impegno_area) %>
+        <%= form.hidden_field :view, value: @impegno_view %>
       <% end %>
       <%= workspace_filter %>
 
-      <% if @impegno_area == "user" && @impegno_view == "agenda" %>
+      <% if @impegno_area == "agenda" && @impegno_view == "agenda" %>
         <div class="grid justify-center gap-2">
           <nav class="flex items-center justify-center gap-1.5" aria-label="Navigazione del calendario">
-            <%= link_to "‹", state_path.call(date: (@workspace_date << 1).iso8601, period: nil), class: "flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-bold text-slate-700 hover:bg-slate-50", aria: { label: "Mese precedente" } %>
+            <%= link_to "‹", state_path.call(date: (@workspace_date - 1.day).iso8601, period: nil), class: "flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-bold text-slate-700 hover:bg-slate-50", aria: { label: "Giorno precedente" } %>
             <%= link_to "Oggi", state_path.call(date: Date.current.iso8601, period: nil), class: "h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm font-bold leading-9 text-slate-700 hover:bg-slate-50" %>
             <% date_form = form_with url: impegno_path, method: :get, class: "contents" do |form| %>
               <%= form.hidden_field :brand, value: @impegno_brand %><%= form.hidden_field :area, value: @impegno_area %><%= form.hidden_field :view, value: @impegno_view %>
               <%= form.date_field :date, value: @workspace_date.iso8601, onchange: "this.form.requestSubmit()", class: "h-9 w-36 rounded-lg border border-slate-300 bg-white px-2 text-sm font-semibold text-slate-700" %>
             <% end %>
             <%= date_form %>
-            <%= link_to "›", state_path.call(date: (@workspace_date >> 1).iso8601, period: nil), class: "flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-bold text-slate-700 hover:bg-slate-50", aria: { label: "Mese successivo" } %>
+            <%= link_to "›", state_path.call(date: (@workspace_date + 1.day).iso8601, period: nil), class: "flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-bold text-slate-700 hover:bg-slate-50", aria: { label: "Giorno successivo" } %>
             <%= link_to "Reset data", state_path.call(date: nil, period: nil), class: "h-9 rounded-lg px-2 text-xs font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-900" %>
           </nav>
           <nav class="flex justify-center gap-1" aria-label="Periodo degli impegni">
@@ -90,7 +93,9 @@
   <main class="min-h-[calc(100vh-4rem)] bg-slate-50">
     <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6">
       <nav class="mb-5 flex gap-1 overflow-x-auto border-b border-slate-200" aria-label="Sezioni di Impegno">
-        <% if %w[places contacts].include?(@impegno_area) %>
+        <% if @impegno_area == "agenda" %>
+          <span class="whitespace-nowrap border-b-2 border-blue-600 px-4 py-2.5 text-sm font-bold text-blue-600">Agenda</span>
+        <% elsif %w[places contacts].include?(@impegno_area) %>
           <%= link_to "Luoghi", state_path.call(area: "places", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "places") }, class: "whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition #{@impegno_area == 'places' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
           <%= link_to "Contatti", state_path.call(area: "contacts", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "contacts") }, class: "whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition #{@impegno_area == 'contacts' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
         <% else %>
@@ -138,6 +143,8 @@
               { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.fetch(@impegno_tab)
             elsif @impegno_area == "user" && @impegno_view == "practices"
               { "habits" => "Routine", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.fetch(@impegno_tab)
+            elsif @impegno_area == "agenda"
+              "Agenda"
             else
               view_labels.fetch(@impegno_area).fetch(@impegno_view)
             end %>
