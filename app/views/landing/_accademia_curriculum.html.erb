@@ -16,7 +16,7 @@
 
 <section id="academy-curriculum" aria-labelledby="academy-curriculum-title">
   <section id="top" class="bg-white px-5 pb-12 pt-16 md:pt-24">
-    <div class="mx-auto w-full max-w-7xl lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
+    <div class="mx-auto w-full max-w-[1600px] lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Postura e fisiologia</p>
         <h1 id="academy-curriculum-title" class="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight text-slate-950 md:text-5xl md:leading-[1.03]">
@@ -226,7 +226,7 @@
   </section>
 
   <div class="bg-slate-50/50 pt-16 pb-8 border-t border-slate-200">
-    <div class="mx-auto max-w-7xl px-5 text-center">
+    <div class="mx-auto max-w-[1600px] px-5 text-center">
       <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
         <button type="button" onclick="switchAcademyTab('curriculum')" id="btn-tab-curriculum" class="rounded-lg <%= active_main_tab == 'curriculum' ? 'bg-slate-100 text-slate-900 shadow-sm ring-1 ring-slate-900/5' : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50' %> px-6 py-2.5 text-sm font-semibold transition-all">
           🎓 Il Programma dell'Accademia
@@ -242,7 +242,7 @@
     <div id="content-tab-curriculum" class="<%= 'hidden ' if active_main_tab == 'guide' %> pt-8">
       
       <!-- Area linguette su sfondo grigio -->
-      <div class="mx-auto max-w-7xl px-2 sm:px-5">
+      <div class="mx-auto max-w-[1600px] px-2 sm:px-5">
         <div class="relative z-10 flex overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <nav class="flex space-x-1 pl-4 lg:pl-8 items-end" aria-label="Aree Accademia">
             <button type="button" id="btn-area-recupera" data-active-color="text-violet-700" data-inactive-color="text-violet-600/70" onclick="switchAreaTab('recupera')" class="area-tab-btn relative z-10 rounded-t-xl border border-b-0 border-slate-200 bg-white px-6 py-3 pb-3.5 text-sm font-semibold text-violet-700 transition-colors">
@@ -266,14 +266,14 @@
       
       <!-- Sfondo Bianco Principale: il border-t si infila di 1px sotto la tab attiva -->
       <div class="relative -mt-px border-t border-slate-200 bg-white shadow-[0_-2px_6px_rgba(0,0,0,0.02)]">
-        <div class="mx-auto max-w-7xl px-2 sm:px-5">
+        <div class="mx-auto max-w-[1600px] px-2 sm:px-5">
           <main class="py-12 lg:py-16" data-initial-area="<%= active_area_slug %>">
     <section id="recupera" class="area-content scroll-mt-24">
       <div class="lg:grid lg:grid-cols-12 lg:gap-12">
         <%# -- BACKDROP SCURO (Mobile) -- %>
         <div id="mobileAsideBackdrop" class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm lg:hidden transition-opacity opacity-0 duration-300"></div>
 
-        <nav id="mobileAsidePanel" class="side fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:col-span-3 lg:sticky lg:top-24 lg:self-start lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none" aria-label="Indice dell'Accademia">
+        <nav id="mobileAsidePanel" class="side fixed inset-y-0 left-0 z-50 h-[100dvh] w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:col-span-3 lg:h-auto lg:sticky lg:top-24 lg:self-start lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none" aria-label="Indice dell'Accademia">
           <!-- Mobile Close Button -->
           <div class="mb-6 flex items-center justify-between lg:hidden">
             <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Indice Moduli</span>
@@ -927,13 +927,13 @@
 
   </script>
         </main>
-        </div> <!-- chiusura contenitore mx-auto max-w-7xl interno -->
+        </div> <!-- chiusura contenitore mx-auto max-w-[1600px] interno -->
       </div> <!-- chiusura sfondo bianco bg-white -->
     </div> <!-- chiusura tab curriculum -->
 
 <div id="content-tab-guide" class="<%= 'hidden ' if active_main_tab == 'curriculum' %>">
   <div class="bg-white pb-20 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] border-t border-slate-200">
-    <div class="mx-auto max-w-7xl px-5 py-12 lg:py-16">
+    <div class="mx-auto max-w-[1600px] px-5 py-12 lg:py-16">
       <!-- Mobile Toggle Guide (NEW) -->
       <div class="mb-6 flex items-center justify-between lg:hidden">
         <h2 class="text-xl font-bold text-slate-900">Guida all'Accademia</h2>
@@ -951,7 +951,7 @@
         <div id="mobileGuideAsideBackdrop" class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm lg:hidden transition-opacity opacity-0 duration-300"></div>
 
         <!-- ASIDE LATERALE -->
-        <aside id="mobileGuideAsidePanel" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:border-r lg:border-slate-100 lg:pr-6 lg:sticky lg:top-24 lg:self-start">
+          <aside id="mobileGuideAsidePanel" class="fixed inset-y-0 left-0 z-50 h-[100dvh] w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:h-auto lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:border-r lg:border-slate-100 lg:pr-6 lg:sticky lg:top-24 lg:self-start">
           
           <!-- Mobile Close Button -->
           <div class="mb-6 flex items-center justify-between lg:hidden">

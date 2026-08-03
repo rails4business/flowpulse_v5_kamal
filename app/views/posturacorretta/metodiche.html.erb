@@ -69,10 +69,25 @@
   </section>
   <% else %>
     <section class="bg-slate-50">
-      <div class="mx-auto max-w-7xl px-6 py-12 lg:py-16">
+      <div class="mx-auto max-w-7xl px-6 py-12 lg:py-16" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
+        <div class="mb-8 lg:hidden">
+          <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="metodiche-mobile-aside" aria-expanded="false">
+            <span aria-hidden="true">☰</span>
+            <span>Indice</span>
+          </button>
+        </div>
         <div class="lg:grid lg:grid-cols-12 lg:gap-12">
-          <aside class="mb-8 border-b border-slate-200 pb-8 lg:sticky lg:top-24 lg:col-span-3 lg:mb-0 lg:self-start lg:border-b-0 lg:border-r lg:pr-6">
-            <nav class="text-sm" aria-label="Indice Metodiche">
+          <div class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
+
+          <aside id="metodiche-mobile-aside" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:col-span-3 lg:mb-0 lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:sticky lg:top-24 lg:self-start lg:border-r lg:border-slate-200 lg:pr-6" data-mobile-aside-target="panel" aria-hidden="true">
+            <div class="mb-6 flex items-center justify-between lg:hidden">
+              <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Indice</span>
+              <button type="button" class="rounded-md p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" data-mobile-aside-target="close" data-action="mobile-aside#close">
+                <span class="sr-only">Chiudi indice</span>
+                <span aria-hidden="true">✕</span>
+              </button>
+            </div>
+            <nav class="text-sm" aria-label="Indice Metodiche" data-action="click->mobile-aside#closeFromNavigation">
               <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-900">Come funziona</p>
               <ul class="space-y-2">
                 <li><a href="#persone" class="block font-medium text-slate-600 transition hover:text-blue-600">Per le persone</a></li>

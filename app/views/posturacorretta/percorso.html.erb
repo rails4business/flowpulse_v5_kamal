@@ -19,11 +19,11 @@
 
   <main>
     <section class="px-5 py-12 md:py-20">
-      <div class="mx-auto w-full max-w-6xl">
+      <div class="mx-auto w-full max-w-6xl" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
         <!-- Mobile Sidebar Toggle -->
         <div class="lg:hidden mb-6 flex items-center justify-between">
           <h1 class="text-xl font-bold text-slate-900"><%= @current_item&.fetch("title", "Percorso") %></h1>
-          <button type="button" id="openMobileAsideBtn" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="percorso-mobile-aside" aria-expanded="false">
             <svg class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -34,20 +34,20 @@
         <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
 
           <%# -- BACKDROP SCURO (Mobile) -- %>
-          <div id="mobileAsideBackdrop" class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm lg:hidden transition-opacity opacity-0 duration-300"></div>
+          <div class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
 
           <%# -- DINAMIC ASIDE (2 Levels) -- %>
-          <aside id="mobileAsidePanel" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none">
+          <aside id="percorso-mobile-aside" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none" data-mobile-aside-target="panel" aria-hidden="true">
             
             <!-- Mobile Close Button -->
             <div class="mb-6 flex items-center justify-between lg:hidden">
               <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Menu Navigazione</span>
-              <button type="button" id="closeMobileAsideBtn" class="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <button type="button" class="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" data-mobile-aside-target="close" data-action="mobile-aside#close">
                 <span class="sr-only">Chiudi menu</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <nav class="sticky top-24 space-y-4 text-sm" aria-label="Indice della pagina">
+            <nav class="sticky top-24 space-y-4 text-sm" aria-label="Indice della pagina" data-action="click->mobile-aside#closeFromNavigation">
               <% @aside_items.each do |item| %>
                 <div class="space-y-1">
                   <% if item["type"] == "group" %>
@@ -163,52 +163,3 @@
 
   <%= render "posturacorretta/footer" %>
 </div>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const openBtn = document.getElementById("openMobileAsideBtn");
-    const closeBtn = document.getElementById("closeMobileAsideBtn");
-    const backdrop = document.getElementById("mobileAsideBackdrop");
-    const panel = document.getElementById("mobileAsidePanel");
-
-    if (!openBtn || !panel || !backdrop) return;
-
-    function openMobileAside() {
-      // Mostra backdrop
-      backdrop.classList.remove("hidden");
-      // Forza il ricalcolo prima di cambiare opacità per l'animazione
-      void backdrop.offsetWidth;
-      backdrop.classList.remove("opacity-0");
-      backdrop.classList.add("opacity-100");
-      
-      // Fa scivolare il pannello
-      panel.classList.remove("-translate-x-full");
-      panel.classList.add("translate-x-0");
-      
-      // Previene lo scroll del body
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeMobileAside() {
-      // Chiude il pannello
-      panel.classList.remove("translate-x-0");
-      panel.classList.add("-translate-x-full");
-      
-      // Nasconde backdrop con transizione
-      backdrop.classList.remove("opacity-100");
-      backdrop.classList.add("opacity-0");
-      
-      // Attende la fine della transizione prima di nasconderlo dal DOM
-      setTimeout(() => {
-        backdrop.classList.add("hidden");
-      }, 300);
-      
-      // Ripristina scroll
-      document.body.style.overflow = "";
-    }
-
-    openBtn.addEventListener("click", openMobileAside);
-    if(closeBtn) closeBtn.addEventListener("click", closeMobileAside);
-    backdrop.addEventListener("click", closeMobileAside);
-  });
-</script>

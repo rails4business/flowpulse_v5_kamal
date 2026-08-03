@@ -11,14 +11,30 @@
     </div>
   </section>
 
-  <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
+  <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
+    <div class="lg:hidden">
+      <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="collabora-mobile-aside" aria-expanded="false">
+        <span aria-hidden="true">☰</span>
+        <span>Indice</span>
+      </button>
+    </div>
+
+    <div class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
+
     <%= render "posturacorretta/shared/rich_text",
                rendered_content: markdown(@collaboration_content),
                class_name: "min-w-0" %>
 
-    <aside class="hidden lg:block lg:sticky lg:top-24">
+    <aside id="collabora-mobile-aside" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:sticky lg:top-24" data-mobile-aside-target="panel" aria-hidden="true">
+      <div class="mb-6 flex items-center justify-between lg:hidden">
+        <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Indice</span>
+        <button type="button" class="rounded-md p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" data-mobile-aside-target="close" data-action="mobile-aside#close">
+          <span class="sr-only">Chiudi indice</span>
+          <span aria-hidden="true">✕</span>
+        </button>
+      </div>
       <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Altre possibilità</p>
-      <nav class="mt-4 space-y-1 border-l border-slate-200 pl-4" aria-label="Approfondimenti sulla collaborazione">
+      <nav class="mt-4 space-y-1 border-l border-slate-200 pl-4" aria-label="Approfondimenti sulla collaborazione" data-action="click->mobile-aside#closeFromNavigation">
         <% @collaboration_guides.each do |guide| %>
           <a href="<%= posturacorretta_collabora_professionisti_guida_path(guide.fetch('slug')) %>" class="block py-1.5 text-sm <%= guide['slug'] == @collaboration_guide['slug'] ? 'font-semibold text-blue-700' : 'text-slate-600 hover:text-blue-700' %>"><%= guide.fetch("title") %></a>
         <% end %>
