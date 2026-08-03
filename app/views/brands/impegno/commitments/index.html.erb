@@ -212,15 +212,11 @@
       <% initial_start = Time.zone.local(selected_commitment_date.year, selected_commitment_date.month, selected_commitment_date.day, 9, 0) %>
       <% commitment_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
         <%= hidden_field_tag :return_to, params[:return_to] %>
+        <%= hidden_field_tag :context_brand, @default_brand %>
+        <%= form.hidden_field :domain_id, value: @default_domain&.id %>
         <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
         <div><%= form.label :description, "Descrizione", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 2, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <%= form.label :domain_id, "Dominio", class: "text-xs font-bold text-slate-700" %>
-            <%= form.select :domain_id, @domains.map { |domain| [domain.display_hostname, domain.id] }, { selected: @default_domain&.id, prompt: "Scegli il dominio" }, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %>
-          </div>
-          <div><%= form.label :kind, "Di cosa si tratta", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Personale", "personal"], ["Appuntamento", "appointment"], ["Evento", "event"], ["Progetto", "project"], ["Percorso", "path"], ["Contenuto", "content"], ["Accademia", "academy"]], {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
-        </div>
+        <div><%= form.label :kind, "Di cosa si tratta", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Personale", "personal"], ["Appuntamento", "appointment"], ["Evento", "event"], ["Progetto", "project"], ["Percorso", "path"], ["Contenuto", "content"], ["Accademia", "academy"]], {}, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
         <div><%= form.label :context_label, "Contesto (facoltativo)", class: "text-xs font-bold text-slate-700" %><%= form.text_field :context_label, placeholder: "Es. Igiene Posturale", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
         <div><%= form.label :calendar_label, "Calendario di", class: "text-xs font-bold text-slate-700" %><%= form.text_field :calendar_label, value: @profile.display_name.presence || @profile.username, required: true, placeholder: "Il tuo nome oppure il nome del paziente", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %><p class="mt-1 text-xs text-slate-400">Gli impegni della stessa persona non possono sovrapporsi.</p></div>
         <div data-controller="commitment-schedule" class="rounded-xl border border-slate-200 bg-slate-50 p-4">

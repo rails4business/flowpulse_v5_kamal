@@ -8,6 +8,13 @@ class PosturacorrettaController < ApplicationController
 
   def accademia; end
   def percorso
+    vision_anchor = {
+      "ambiti" => "ambiti-aree",
+      "aree" => "ambiti-aree",
+      "paradigmi" => "paradigmi"
+    }[params[:page]]
+    return redirect_to(posturacorretta_visione_path(anchor: vision_anchor)) if vision_anchor
+
     data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/percorso/percorso.yml"), permitted_classes: [], aliases: false) || {}
     @paths = data.fetch("paths", {})
     @color_classes = data.fetch("colorClasses", {})
@@ -70,7 +77,14 @@ class PosturacorrettaController < ApplicationController
     @places = data.fetch("places", [])
     @teachers = data.fetch("teachers", [])
   end
-  def libro; end
+  def libro
+    taxonomies = PosturacorrettaTaxonomies.load
+    @scopes = taxonomies.fetch("scopes", {})
+    @areas = taxonomies.fetch("areas", {})
+
+    paradigms_path = Rails.root.join("config/data/posturacorretta/percorso/contenuti/paradigmi.md")
+    @vision_paradigms = paradigms_path.read if paradigms_path.file?
+  end
   def progetti
     root = Rails.root.join("config/data/posturacorretta/progetti")
     @page_data = YAML.safe_load_file(root.join("page.yml"), permitted_classes: [], aliases: false) || {}

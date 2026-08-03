@@ -2,25 +2,22 @@
   <%= render "posturacorretta/header" %>
 <% end %>
 
+<% events_tab = params[:tab] == "how" ? "how" : "calendar" %>
+
 <div id="top" class="text-slate-900 antialiased bg-slate-50">
 
-  <!-- HERO SECTION -->
-  <section class="px-5 pt-16 pb-12 text-center">
-    <div class="mx-auto w-full max-w-3xl">
-      <p class="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
-        Eventi e Community
-      </p>
-      <h1 class="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl md:leading-[1.05]">
-        Eventi per vivere il percorso, non solo studiarlo.
-      </h1>
-      <p class="mt-4 text-base leading-relaxed text-slate-600 max-w-2xl mx-auto">
-        Clicca su un evento per visualizzare il programma dettagliato e prenotare il tuo posto.
-      </p>
+  <div class="border-b border-slate-200 bg-white pt-8">
+    <div class="mx-auto max-w-7xl px-5 text-center">
+      <nav class="-mb-px flex justify-center gap-1" aria-label="Sezioni Eventi">
+        <%= link_to "📅 Calendario Eventi", posturacorretta_eventi_path(tab: "calendar"), class: "border-b-2 px-4 py-3 text-sm font-semibold transition #{events_tab == 'calendar' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}", aria: { current: ("page" if events_tab == "calendar") } %>
+        <%= link_to "📖 Come funziona?", posturacorretta_eventi_path(tab: "how"), class: "border-b-2 px-4 py-3 text-sm font-semibold transition #{events_tab == 'how' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}", aria: { current: ("page" if events_tab == "how") } %>
+      </nav>
     </div>
-  </section>
+  </div>
 
-  <!-- EVENTI INTERACTIVE GRID SECTION -->
-  <section class="px-5 pb-20">
+  <div id="content-tab-calendario" class="<%= 'hidden ' if events_tab == 'how' %>bg-slate-50 pt-8">
+    <!-- EVENTI INTERACTIVE GRID SECTION -->
+    <section class="px-5 pb-20">
     <div class="mx-auto w-full max-w-5xl">
       
       <!-- Controls Row -->
@@ -106,18 +103,100 @@
         <p class="mt-2 text-sm text-slate-500">Prova a cambiare il filtro della data o passa alla scheda degli eventi passati.</p>
       </div>
 
-      <!-- General WhatsApp CTA -->
+      <!-- General CTA Buttons -->
       <div class="mt-16 text-center">
-        <p class="text-sm text-slate-500 mb-4">Vuoi proporre un evento o ricevere aggiornamenti diretti?</p>
-        <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20informazioni%20sui%20prossimi%20eventi%20PosturaCorretta."
-           target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center justify-center rounded-lg bg-violet-700 px-8 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-violet-800 active:scale-[0.98]">
-          Chiedi informazioni su WhatsApp →
-        </a>
+        <p class="text-sm text-slate-500 mb-6">Vuoi proporre un evento o capire come integrarlo nel tuo percorso?</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20saperne%20di%20pi%C3%B9%20sugli%20eventi%20PosturaCorretta%20o%20proporre%20un%27idea."
+             target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.98]">
+            Proponi un evento →
+          </a>
+          <%= link_to "Come funzionano gli eventi? →", posturacorretta_eventi_path(tab: "how"), class: "inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98]" %>
+        </div>
       </div>
 
     </div>
   </section>
+  </div> <!-- Fine content-tab-calendario -->
+
+  <!-- TAB FUNZIONAMENTO -->
+  <div id="content-tab-funzionamento" class="<%= 'hidden ' unless events_tab == 'how' %>bg-slate-50">
+    <section class="mx-auto max-w-7xl px-5 py-12 lg:py-16">
+      <div class="lg:grid lg:grid-cols-12 lg:gap-12">
+        
+        <!-- MOBILE BACKDROP -->
+        <div id="mobileAsideBackdropEventi" class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm lg:hidden transition-opacity opacity-0 duration-300"></div>
+        
+        <!-- ASIDE -->
+        <aside id="mobileAsidePanelEventi" class="side fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:col-span-3 lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:border-r lg:border-slate-200 lg:pr-6 lg:sticky lg:top-24 lg:self-start">
+          <div class="mb-6 flex items-center justify-between lg:hidden">
+            <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Indice</span>
+            <button type="button" id="closeMobileAsideBtnEventi" class="rounded-md p-2 text-slate-400 hover:bg-slate-100 focus:outline-none">
+              ✕
+            </button>
+          </div>
+          
+          <nav class="space-y-6 text-sm" aria-label="Indice Eventi">
+            <div>
+              <p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-900">Come funziona</p>
+              <ul class="space-y-2">
+                <li><a href="#partecipanti" data-events-aside-link class="block font-medium text-slate-600 transition hover:text-blue-600">Per chi partecipa</a></li>
+                <li><a href="#conduttori" data-events-aside-link class="block font-medium text-slate-600 transition hover:text-blue-600">Per conduttori e professionisti</a></li>
+                <li><a href="#location" data-events-aside-link class="block font-medium text-slate-600 transition hover:text-blue-600">Per location e associazioni</a></li>
+              </ul>
+            </div>
+          </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="lg:col-span-9">
+          
+          <!-- Mobile toggle button -->
+          <button class="button-utility inline-flex lg:hidden mb-8 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 shadow-sm transition hover:bg-slate-50" id="openMobileAsideBtnEventi" type="button">
+            ☰ <span>Indice argomenti</span>
+          </button>
+          
+          <div class="max-w-3xl space-y-12">
+            <section class="border-b border-slate-200 pb-10">
+              <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">Esperienze PosturaCorretta</p>
+              <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Esperienze per conoscere il corpo e incontrare il territorio.</h1>
+              <p class="mt-5 text-lg leading-8 text-slate-600">L'intento degli eventi è unire attività dedicate alla consapevolezza e alla conoscenza della fisiologia con esperienze che aiutano a scoprire di più sull'essere umano, sulla natura e sul territorio.</p>
+              <p class="mt-4 text-base leading-7 text-slate-600">Una pratica corporea può affiancarsi a una camminata, un incontro divulgativo, un laboratorio, un'attività espressiva o un'esperienza in un luogo significativo. Non esiste un formato unico: ogni proposta chiarisce cosa offre e a chi si rivolge.</p>
+              <p class="mt-5 text-base leading-7 text-slate-600"><%= link_to "Scopri la visione di PosturaCorretta", posturacorretta_visione_path, class: "font-semibold text-blue-700 underline decoration-blue-200 underline-offset-4 transition hover:text-blue-800 hover:decoration-blue-500" %>.</p>
+            </section>
+
+            <section id="partecipanti" class="scroll-mt-24 border-b border-slate-200 pb-12">
+              <h2 class="text-3xl font-semibold tracking-tight text-slate-950">Partecipa a un evento</h2>
+              <p class="mt-3 text-lg font-semibold leading-7 text-slate-800">Vivi un'esperienza, non una semplice lezione.</p>
+              <p class="mt-4 text-base leading-7 text-slate-600">Gli eventi sono aperti a chi desidera esplorare il movimento, la consapevolezza del corpo e la relazione con l'ambiente attraverso attività guidate e condivise.</p>
+              <p class="mt-4 text-base leading-7 text-slate-600">Ogni proposta indica con chiarezza programma, luogo, durata, modalità di partecipazione e informazioni utili per prepararsi.</p>
+            </section>
+
+            <section id="conduttori" class="scroll-mt-24 border-b border-slate-200 pb-12">
+              <h2 class="text-3xl font-semibold tracking-tight text-slate-950">Conduci o proponi un'attività</h2>
+              <p class="mt-3 text-lg font-semibold leading-7 text-slate-800">Metti la tua competenza al servizio di un'esperienza condivisa.</p>
+              <p class="mt-4 text-base leading-7 text-slate-600">Professionisti, insegnanti e conduttori possono proporre attività coerenti con il proprio ruolo: pratica corporea, approfondimento, laboratorio, incontro divulgativo o esperienza in natura.</p>
+              <p class="mt-4 text-base leading-7 text-slate-600">La proposta viene costruita chiarendo obiettivo, destinatari, confini professionali, luogo, tempi e ciò che serve per partecipare.</p>
+              <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20proporre%20o%20condurre%20un%27attivit%C3%A0%20in%20un%20evento%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Proponi un'attività <span aria-hidden="true" class="ml-2">→</span></a>
+            </section>
+
+            <section id="location" class="scroll-mt-24 pb-2">
+              <h2 class="text-3xl font-semibold tracking-tight text-slate-950">Ospita un evento nel tuo luogo</h2>
+              <p class="mt-3 text-lg font-semibold leading-7 text-slate-800">Centri, associazioni e location diventano parte dell'esperienza.</p>
+              <p class="mt-4 text-base leading-7 text-slate-600">Scegliamo con cura i luoghi in cui svolgere gli eventi. Prediligiamo ambienti che favoriscono la riconnessione con ritmi, spazio e relazioni.</p>
+              <ul class="mt-5 space-y-3 text-base leading-7 text-slate-600">
+                <li class="flex gap-3"><span aria-hidden="true" class="mt-2 size-2 shrink-0 rounded-full bg-blue-600"></span><span><strong class="font-semibold text-slate-900">Spazi ampi e luminosi:</strong> per permettere al corpo di muoversi liberamente.</span></li>
+                <li class="flex gap-3"><span aria-hidden="true" class="mt-2 size-2 shrink-0 rounded-full bg-blue-600"></span><span><strong class="font-semibold text-slate-900">Natura e territorio:</strong> parchi, agriturismi o luoghi che aggiungono valore all'esperienza.</span></li>
+                <li class="flex gap-3"><span aria-hidden="true" class="mt-2 size-2 shrink-0 rounded-full bg-blue-600"></span><span><strong class="font-semibold text-slate-900">Accoglienza:</strong> realtà disponibili a costruire un'attività utile per le persone e per il territorio.</span></li>
+              </ul>
+              <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20proporre%20la%20mia%20location%20per%20un%20evento%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center justify-center rounded-lg border border-blue-200 bg-white px-5 py-3 text-sm font-semibold text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Proponi una location <span aria-hidden="true" class="ml-2">→</span></a>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <!-- MODALE DETTAGLI EVENTO -->
   <div id="event-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -137,7 +216,7 @@
 
       <!-- Footer Buttons -->
       <div class="mt-6 border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
-        <a id="event-modal-register-btn" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex flex-1 items-center justify-center rounded-xl bg-violet-700 px-6 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-violet-800 active:scale-[0.98]">
+        <a id="event-modal-register-btn" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex flex-1 items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.98]">
           Iscriviti ora su WhatsApp →
         </a>
         <button type="button" onclick="closeEventModal()" class="rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
@@ -147,6 +226,8 @@
 
     </div>
   </div>
+
+
 
   <%= render "posturacorretta/footer" %>
 </div>
@@ -207,19 +288,19 @@
         grid.innerHTML = filteredPlaces.map(p => {
           const count = getEventCountForPlace(p.key);
           return `
-            <button type="button" onclick="filterByLocation('${p.key}', '${p.name}')" class="group relative aspect-[16/11] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-500 hover:shadow-xl hover:shadow-violet-900/10 sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-violet-500/30">
+            <button type="button" onclick="filterByLocation('${p.key}', '${p.name}')" class="group relative aspect-[16/11] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-900/10 sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-blue-500/30">
               <img src="${p.image}" alt="${p.name}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition duration-500" loading="lazy">
               <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent"></div>
               
               <!-- Event Count Badge -->
-              <div class="absolute left-4 top-4 z-10 rounded-xl bg-violet-700 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
+              <div class="absolute left-4 top-4 z-10 rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
                 ${count} ${count === 1 ? 'Evento' : 'Eventi'}
               </div>
 
               <!-- Bottom Text Overlay -->
               <div class="absolute inset-x-0 bottom-0 z-10 flex flex-col p-5 md:p-6">
-                <span class="text-[10px] font-black uppercase tracking-wider text-violet-300">📍 Località</span>
-                <h3 class="mt-1 text-lg font-black text-white leading-snug group-hover:text-violet-200 transition">
+                <span class="text-[10px] font-black uppercase tracking-wider text-blue-300">📍 Località</span>
+                <h3 class="mt-1 text-lg font-black text-white leading-snug group-hover:text-blue-200 transition">
                   ${p.name}
                 </h3>
                 <p class="mt-1.5 text-xs text-slate-300 line-clamp-2 leading-relaxed">
@@ -250,19 +331,19 @@
         grid.innerHTML = filteredTeachers.map(t => {
           const count = getEventCountForTeacher(t.name);
           return `
-            <button type="button" onclick="filterByTeacher('${t.name}')" class="group relative aspect-[16/11] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-500 hover:shadow-xl hover:shadow-violet-900/10 sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-violet-500/30">
+            <button type="button" onclick="filterByTeacher('${t.name}')" class="group relative aspect-[16/11] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-900/10 sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-blue-500/30">
               <img src="${t.image}" alt="${t.name}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition duration-500" loading="lazy">
               <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent"></div>
               
               <!-- Event Count Badge -->
-              <div class="absolute left-4 top-4 z-10 rounded-xl bg-violet-700 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
+              <div class="absolute left-4 top-4 z-10 rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
                 Presenza in ${count} ${count === 1 ? 'evento' : 'eventi'}
               </div>
 
               <!-- Bottom Text Overlay -->
               <div class="absolute inset-x-0 bottom-0 z-10 flex flex-col p-5 md:p-6">
-                <span class="text-[10px] font-black uppercase tracking-wider text-violet-300">${t.role}</span>
-                <h3 class="mt-1 text-lg font-black text-white leading-snug group-hover:text-violet-200 transition">
+                <span class="text-[10px] font-black uppercase tracking-wider text-blue-300">${t.role}</span>
+                <h3 class="mt-1 text-lg font-black text-white leading-snug group-hover:text-blue-200 transition">
                   ${t.name}
                 </h3>
                 <p class="mt-1.5 text-xs text-slate-300 line-clamp-2 leading-relaxed">
@@ -277,8 +358,6 @@
     }
 
     // 3. EVENTS RENDERING
-    // La distinzione tra prossimi e passati deriva sempre dalla data reale:
-    // il campo `type` nel YAML resta solo compatibile con i contenuti già esistenti.
     const now = new Date();
     const todayKey = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
     const filteredEvents = events.filter(e => {
@@ -286,7 +365,6 @@
       const temporalTab = e.date >= todayKey ? "future" : "past";
       if (temporalTab !== currentTemporalTab) return false;
 
-      // Compatibilità: gli eventi YAML precedenti sono confermati e con iscrizioni aperte.
       const eventStatus = e.event_status || e.status || "confirmed";
       const registrationMode = e.registration_mode || "required";
       const registrationStatus = e.registration_status || "open";
@@ -337,16 +415,16 @@
         const eventStatus = e.event_status || e.status || "confirmed";
         const statusLabel = { organizing: "In organizzazione", proposed: "Proposto al pubblico", confirmed: "Confermato", cancelled: "Annullato" }[eventStatus] || eventStatus;
         return `
-        <button type="button" onclick="openEventModal(${e.id})" aria-label="Apri l'evento ${e.title}" class="group relative aspect-[16/11] w-full cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-[transform,border-color,box-shadow] duration-500 ease-out hover:-translate-y-1.5 hover:border-violet-500 hover:shadow-xl hover:shadow-violet-900/15 active:scale-[0.985] sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-violet-500/30">
+        <button type="button" onclick="openEventModal(${e.id})" aria-label="Apri l'evento ${e.title}" class="group relative aspect-[16/11] w-full cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-left shadow-sm transition-[transform,border-color,box-shadow] duration-500 ease-out hover:-translate-y-1.5 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-900/15 active:scale-[0.985] sm:aspect-[5/4] lg:aspect-[4/5] focus:outline-none focus:ring-4 focus:ring-blue-500/30">
           <img src="${e.image}" alt="${e.title}" class="absolute inset-0 h-full w-full object-cover object-center opacity-100 transition-transform duration-700 ease-out group-hover:scale-110" loading="lazy">
           <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent transition-colors duration-500 group-hover:from-slate-950/95 group-hover:via-slate-950/45"></div>
           
           <!-- Top date badge overlay -->
           <div class="absolute left-4 top-4 z-10 rounded-xl bg-white/90 px-3.5 py-2 text-xs font-bold text-slate-800 shadow-sm backdrop-blur-md">
             <span class="block">${e.formattedDate}</span>
-            <span class="mt-0.5 block text-[11px] font-semibold text-violet-700">Ore ${e.time}</span>
+            <span class="mt-0.5 block text-[11px] font-semibold text-blue-700">Ore ${e.time}</span>
           </div>
-          <span class="absolute left-4 top-[4.8rem] z-10 rounded-full bg-violet-700/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white backdrop-blur-sm">${statusLabel}</span>
+          <span class="absolute left-4 top-[4.8rem] z-10 rounded-full bg-blue-600/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white backdrop-blur-sm">${statusLabel}</span>
 
           <!-- Top hover helper overlay -->
           <div class="absolute right-4 top-4 z-10 flex translate-y-1 items-center gap-1.5 rounded-xl bg-white/25 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
@@ -355,10 +433,10 @@
 
           <!-- Bottom Text Overlay -->
           <div class="absolute inset-x-0 bottom-0 z-10 flex translate-y-1 flex-col p-5 transition-transform duration-500 ease-out group-hover:translate-y-0 md:p-6">
-            <span onclick="event.stopPropagation(); filterByLocation('${e.locationKey}', '${e.location}')" class="text-[10px] font-black uppercase tracking-wider text-violet-300 hover:text-violet-200 cursor-pointer transition select-none self-start">
+            <span onclick="event.stopPropagation(); filterByLocation('${e.locationKey}', '${e.location}')" class="text-[10px] font-black uppercase tracking-wider text-blue-300 hover:text-blue-200 cursor-pointer transition select-none self-start">
               📍 ${e.location}
             </span>
-            <h3 class="mt-1.5 text-lg font-black leading-snug text-white transition-colors duration-300 group-hover:text-violet-200 line-clamp-2">
+            <h3 class="mt-1.5 text-lg font-black leading-snug text-white transition-colors duration-300 group-hover:text-blue-200 line-clamp-2">
               ${e.title}
             </h3>
             <p class="mt-2 text-xs text-slate-300 line-clamp-3 leading-relaxed">
@@ -387,7 +465,7 @@
           <img src="${event.image}" alt="${event.title}" class="h-full w-full object-cover hover:scale-[1.02] transition duration-300">
         </div>
         <div>
-          <button type="button" onclick="event.stopPropagation(); filterByLocation('${event.locationKey}', '${event.location}')" class="inline-flex rounded-full bg-violet-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-violet-700 transition hover:bg-violet-200" title="Filtra per questo luogo">
+          <button type="button" onclick="event.stopPropagation(); filterByLocation('${event.locationKey}', '${event.location}')" class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-blue-700 transition hover:bg-blue-200" title="Filtra per questo luogo">
             📍 ${event.location}
           </button>
           <h2 class="mt-2.5 text-2xl font-black leading-snug text-slate-950">${event.title}</h2>
@@ -425,14 +503,14 @@
             if (parts.length === 2) {
               return `
                 <li class="flex items-start gap-3 text-sm">
-                  <span class="font-bold text-violet-700 whitespace-nowrap bg-violet-50 rounded-lg px-2.5 py-1 text-xs mt-0.5 border border-violet-100/50">${parts[0]}</span>
+                  <span class="font-bold text-blue-700 whitespace-nowrap bg-blue-50 rounded-lg px-2.5 py-1 text-xs mt-0.5 border border-blue-100/50">${parts[0]}</span>
                   <span class="text-slate-600 mt-1 leading-normal">${parts[1]}</span>
                 </li>
               `;
             } else {
               return `
                 <li class="flex items-start gap-3 text-sm text-slate-600">
-                  <span class="text-violet-700 mt-1">•</span>
+                  <span class="text-blue-700 mt-1">•</span>
                   <span class="leading-normal">${step}</span>
                 </li>
               `;
@@ -442,10 +520,8 @@
       </div>
     `;
 
-    // Configure Register button URL
     registerBtn.href = `https://wa.me/393792891488?text=${encodeURIComponent(event.waText)}`;
 
-    // Show modal and run entrance animation
     modal.classList.remove("hidden");
     modal.classList.add("flex");
     document.body.style.overflow = "hidden";
@@ -468,6 +544,50 @@
       document.body.style.overflow = "";
     }, 300);
   };
+
+  function initMobileAsideEventi() {
+    const openBtn = document.getElementById("openMobileAsideBtnEventi");
+    const closeBtn = document.getElementById("closeMobileAsideBtnEventi");
+    const backdrop = document.getElementById("mobileAsideBackdropEventi");
+    const panel = document.getElementById("mobileAsidePanelEventi");
+
+    if (openBtn && panel && backdrop && !openBtn.dataset.bound) {
+      openBtn.dataset.bound = true;
+      
+      function openAside() {
+        backdrop.classList.remove("hidden");
+        void backdrop.offsetWidth;
+        backdrop.classList.remove("opacity-0");
+        backdrop.classList.add("opacity-100");
+        
+        panel.classList.remove("-translate-x-full");
+        panel.classList.add("translate-x-0");
+      }
+
+      function closeAside() {
+        panel.classList.remove("translate-x-0");
+        panel.classList.add("-translate-x-full");
+        
+        backdrop.classList.remove("opacity-100");
+        backdrop.classList.add("opacity-0");
+        
+        setTimeout(() => {
+          backdrop.classList.add("hidden");
+        }, 300);
+      }
+
+      openBtn.addEventListener("click", openAside);
+      if(closeBtn) closeBtn.addEventListener("click", closeAside);
+      backdrop.addEventListener("click", closeAside);
+      
+      const panelLinks = panel.querySelectorAll('a[data-events-aside-link]');
+      panelLinks.forEach(link => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth < 1024) closeAside();
+        });
+      });
+    }
+  }
 
   window.filterByLocation = function(key, name) {
     selectedLocation = { key, name };
@@ -592,6 +712,7 @@
       modal.dataset.eventsInitialized = "true";
     }
 
+    initMobileAsideEventi();
     renderEvents();
   }
 

@@ -115,7 +115,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   test "should get metodiche index" do
     get posturacorretta_metodiche_url
     assert_response :success
-    assert_includes response.body, "Archivio metodiche"
+    assert_includes response.body, "Scopri di più sulle metodiche"
     assert_includes response.body, "Biomeccanica Comportamentale GDS"
   end
 
@@ -140,15 +140,27 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Eventi e Community"
   end
 
-  test "should get libro" do
-    get posturacorretta_libro_url
+  test "eventi exposes the how tab through a parameter" do
+    get posturacorretta_eventi_url(tab: "how")
+
     assert_response :success
-    assert_includes response.body, "Libro e Visione"
+    assert_select "a[href=?][aria-current=page]", posturacorretta_eventi_path(tab: "how"), text: /Come funziona/
+    assert_includes response.body, "Per conduttori e professionisti"
+    assert_includes response.body, "Per location e associazioni"
   end
 
-  test "filosofia redirects to libro" do
+  test "should get visione" do
+    get posturacorretta_visione_url
+    assert_response :success
+    assert_includes response.body, "La visione"
+  end
+
+  test "legacy libro and filosofia redirect to visione" do
+    get posturacorretta_libro_url
+    assert_redirected_to posturacorretta_visione_url
+
     get posturacorretta_filosofia_url
-    assert_redirected_to posturacorretta_libro_url
+    assert_redirected_to posturacorretta_visione_url
   end
 
   test "should get collabora" do

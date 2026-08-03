@@ -24,7 +24,8 @@ module Brands
     @agenda_filter = @active_area == "agenda" && @active_view == "agenda" && Current.user.professional_user? ? params[:agenda_filter].presence_in(%w[all events booking_slots]) || "all" : nil
     
     # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
-    @default_domain = default_domain_for(params[:default_brand])
+    @default_brand = params[:default_brand].presence_in(%w[impegno posturacorretta generaimpresa personale]) || "impegno"
+    @default_domain = default_domain_for(@default_brand)
 
     @profile = current_profile
     @commitments = @profile.data_commitments.includes(:domain).order(:starts_at)
@@ -226,8 +227,15 @@ module Brands
     end
 
     def create_personal_commitment
-      domain = available_domains.find_by(id: params.dig(:data_commitment, :domain_id))
-      return redirect_to(data_commitments_path, alert: "Seleziona un dominio disponibile.") unless domain
+      context_brand = params[:context_brand].presence_in(%w[impegno posturacorretta generaimpresa personale])
+      domain = if context_brand
+        default_domain_for(context_brand)
+      else
+        # Compatibilità per richieste già esistenti: l'interfaccia corrente
+        # invia sempre context_brand e non consente di scegliere il tag.
+        available_domains.find_by(id: params.dig(:data_commitment, :domain_id))
+      end
+      return redirect_to(personal_commitment_return_path, alert: "Il dominio del contesto non è disponibile.") unless domain
 
       commitment = Commitment.new(personal_commitment_params)
       commitment.profile = current_profile
@@ -331,9 +339,11 @@ module Brands
       hostname = {
         "posturacorretta" => "posturacorretta.org",
         "generaimpresa" => "generaimpresa.it",
-        "impegno" => "impegno.it"
+        "impegno" => "impegno.it",
+        "personale" => "impegno.it"
       }[brand]
-      @domains.find { |domain| domain.hostname == hostname } if hostname.present?
+      domains = @domains || available_domains
+      domains.find { |domain| domain.hostname == hostname } if hostname.present?
     end
 
     def find_genera_impresa_context!

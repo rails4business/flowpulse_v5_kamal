@@ -22,6 +22,7 @@ module Brands
 
         @impegno_brand = params[:brand].presence_in(%w[impegno posturacorretta generaimpresa personale]) || "impegno"
         @impegno_domains = available_impegno_domains
+        @impegno_default_domain = default_domain_for(@impegno_brand)
         @impegno_professional_access = Current.user.professional_user?
         requested_area = params[:area].presence_in(AREAS) || "agenda"
         @impegno_area = requested_area == "professional" && !@impegno_professional_access ? "user" : requested_area
@@ -70,6 +71,16 @@ module Brands
           return Domain.active.where(primary: true).order(:hostname) if Current.user.superadmin_user?
 
           Current.user.profile.traveler_subscriptions.active.includes(:domain).map(&:domain).select(&:active?)
+        end
+
+        def default_domain_for(brand)
+          hostname = {
+            "posturacorretta" => "posturacorretta.org",
+            "generaimpresa" => "generaimpresa.it",
+            "impegno" => "impegno.it",
+            "personale" => "impegno.it"
+          }[brand]
+          @impegno_domains.find { |domain| domain.hostname == hostname } if hostname.present?
         end
     end
   end

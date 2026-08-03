@@ -31,12 +31,7 @@
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto grid min-h-16 max-w-7xl grid-cols-1 items-center gap-3 px-4 py-3 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-5">
       <% workspace_filter = form_with url: impegno_path, method: :get, class: "flex min-w-0 items-center gap-2" do |form| %>
-        <span class="hidden text-xs font-bold text-slate-500 sm:inline">Nuovo per</span>
-        <%= form.select :brand,
-                        [["1impegno", "impegno"], ["PosturaCorretta", "posturacorretta"], ["GeneraImpresa", "generaimpresa"], ["Personale", "personale"]],
-                        { selected: @impegno_brand },
-                        onchange: "this.form.requestSubmit()",
-                        class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700", title: "Contesto predefinito per un nuovo impegno" %>
+        <%= form.hidden_field :brand, value: @impegno_brand %>
         <%= form.select :area,
                         [["Agenda", "agenda"], ["Utente", "user"]] + (@impegno_professional_access ? [["Professionista", "professional"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
                         { selected: @impegno_area },
@@ -81,9 +76,11 @@
     <% start_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
       <%= hidden_field_tag :start_now, "1" %>
       <%= hidden_field_tag :return_to, request.fullpath %>
+      <%= hidden_field_tag :context_brand, @impegno_brand %>
+      <%= form.hidden_field :domain_id, value: @impegno_default_domain&.id %>
       <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Preparare il programma dell'evento", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
       <div><%= form.label :description, "Cosa fai in questo momento?", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 3, placeholder: "Descrivi brevemente l'attività.", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
-      <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :domain_id, "Brand", class: "text-xs font-bold text-slate-700" %><%= form.select :domain_id, @impegno_domains.map { |domain| [domain.display_hostname, domain.id] }, { prompt: "Scegli il brand" }, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div><div><%= form.label :kind, "Tipo", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Attività", "work"], ["Personale", "personal"], ["Contenuto", "content"], ["Progetto", "project"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div></div>
+      <div><%= form.label :kind, "Tipo", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Attività", "work"], ["Personale", "personal"], ["Contenuto", "content"], ["Progetto", "project"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div>
       <%= form.hidden_field :calendar_label, value: Current.user.profile.display_name.presence || Current.user.profile.username %>
       <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="modal#close" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "▶ Avvia attività", class: "cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700" %></div>
     <% end %>

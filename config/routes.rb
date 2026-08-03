@@ -22,8 +22,9 @@ Rails.application.routes.draw do
   get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo
   get "posturacorretta/eventi" => "brands/posturacorretta#eventi", as: :posturacorretta_eventi
-  get "posturacorretta/libro" => "brands/posturacorretta#libro", as: :posturacorretta_libro
-  get "posturacorretta/filosofia" => redirect("/posturacorretta/libro", status: 301), as: :posturacorretta_filosofia
+  get "posturacorretta/visione" => "brands/posturacorretta#libro", as: :posturacorretta_visione
+  get "posturacorretta/libro" => redirect("/posturacorretta/visione", status: 301), as: :posturacorretta_libro
+  get "posturacorretta/filosofia" => redirect("/posturacorretta/visione", status: 301), as: :posturacorretta_filosofia
   get "posturacorretta/progetti" => "brands/posturacorretta#progetti", as: :posturacorretta_progetti
   get "posturacorretta/progetti/:slug" => "brands/posturacorretta#progetto", as: :posturacorretta_progetto
   get "posturacorretta/impegno" => "brands/impegno/home#index", defaults: { brand: "posturacorretta" }, as: :posturacorretta_impegno

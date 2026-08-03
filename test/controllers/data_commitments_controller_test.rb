@@ -213,7 +213,8 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_impegno_url
 
     assert_response :success
-    assert_select "select[name=brand] option[selected][value=posturacorretta]", text: "PosturaCorretta"
+    assert_select "input[type=hidden][name=brand][value=posturacorretta]", minimum: 1
+    assert_select "select[name=brand]", count: 0
     assert_select "turbo-frame#impegno_workspace[src*='default_brand=posturacorretta']", count: 1
     assert_select "turbo-frame#impegno_workspace[src*='brand_scope=posturacorretta']", count: 0
   end

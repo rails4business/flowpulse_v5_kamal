@@ -25,7 +25,8 @@ module Brands
         get impegno_url(brand: "impegno", area: "agenda", view: "agenda", date: "2026-08-02")
 
         assert_response :success
-        assert_select "select[name=brand] option[selected][value=impegno]", text: "1impegno"
+        assert_select "input[type=hidden][name=brand][value=impegno]", minimum: 1
+        assert_select "select[name=brand]", count: 0
         assert_select "select[name=area] option[selected][value=agenda]", text: "Agenda"
         assert_select "select[name=area] option[value=professional]", count: 1
         assert_select "span", text: "Agenda"
@@ -56,7 +57,8 @@ module Brands
         get posturacorretta_impegno_url
 
         assert_response :success
-        assert_select "select[name=brand] option[selected][value=posturacorretta]", text: "PosturaCorretta"
+        assert_select "input[type=hidden][name=brand][value=posturacorretta]", minimum: 1
+        assert_select "select[name=brand]", count: 0
         assert_select "nav[aria-label='Navigazione principale PosturaCorretta']", count: 1
         assert_select "turbo-frame#impegno_workspace[src*='default_brand=posturacorretta']", count: 1
         assert_select "turbo-frame#impegno_workspace[src*='brand_scope=posturacorretta']", count: 0
