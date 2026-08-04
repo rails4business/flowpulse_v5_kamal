@@ -91,16 +91,23 @@ Il professionista mantiene identità, metodo, autonomia e responsabilità. Può:
 
 ---
 
-## 4. Accademia, insegnanti e professionisti
+## 4. I Ruoli nell'Ecosistema: Strumenti, Motore e Giocatori
 
-La distinzione va spiegata con semplicità fin dall'inizio.
+La distinzione va spiegata con una metafora semplice e immediata fin dall'inizio. Non stiamo vendendo un servizio, stiamo offrendo un **campo da gioco** con regole chiare.
 
-- **L'Accademia** sensibilizza, insegna a osservare, propone attività educative e pratica corporea nei limiti del proprio programma.
-- **Gli insegnanti** conducono attività formative e aiutano le persone a costruire continuità e consapevolezza.
-- **I professionisti** valutano, trattano e assumono le responsabilità previste dalla propria professione.
-- **Le metodiche** offrono strumenti, linguaggi e formazione verticale.
+**L'Infrastruttura (Gli Strumenti)**
+PosturaCorretta crea e mette a disposizione l'infrastruttura: le linee guida, la piattaforma, il metodo di lettura (Ambiti/Aree) e gli strumenti organizzativi per permettere a tutti di fare il "percorso integrato". 
 
-L'Accademia non sostituisce un professionista; il professionista non deve diventare necessariamente insegnante. Le linee guida servono proprio a collegare queste funzioni senza confonderle.
+**Il Motore Educativo (L'Accademia)**
+- **L'Accademia** (gestita direttamente da PosturaCorretta) sensibilizza, insegna a osservare e propone attività educative.
+- **Gli Insegnanti** sono i facilitatori di questa Accademia: conducono la pratica e aiutano le persone a mantenere la rotta.
+
+**I "Player" (Chi gioca in questo campo)**
+- **I Professionisti** (fisioterapisti, trainer, medici) usano i nostri strumenti per integrare il loro lavoro senza perdere la loro identità. Loro valutano e trattano.
+- **Le Metodiche** e le scuole offrono gli strumenti tecnici e la formazione verticale.
+- **Le Persone (Utenti)** sono i protagonisti che attraversano questo campo da gioco per migliorare la propria salute.
+
+L'Accademia non sostituisce un professionista; il professionista non deve diventare necessariamente insegnante. PosturaCorretta fornisce solo il "ponte" (gli strumenti) per farli comunicare.
 
 ### Proposta per futuri insegnanti
 

@@ -83,7 +83,10 @@ class PosturacorrettaController < ApplicationController
     @areas = taxonomies.fetch("areas", {})
 
     paradigms_path = Rails.root.join("config/data/posturacorretta/percorso/contenuti/paradigmi.md")
-    @vision_paradigms = paradigms_path.read if paradigms_path.file?
+    if paradigms_path.file?
+      paradigms_content = paradigms_path.read
+      @vision_paradigms, @vision_matrix = paradigms_content.split(/^# La Matrice\s*$/i, 2)
+    end
   end
   def progetti
     root = Rails.root.join("config/data/posturacorretta/progetti")
