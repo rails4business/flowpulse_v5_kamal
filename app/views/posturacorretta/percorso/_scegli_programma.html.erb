@@ -2,6 +2,24 @@
   <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Scegli un programma</p>
   <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">Parti dal bisogno che senti più vicino.</h1>
   <p class="mt-3 max-w-3xl text-base leading-7 text-slate-600">Un programma serve a mettere ordine: chiarisce l'obiettivo, le attività, le persone coinvolte e il prossimo passo. La scelta guidata verrà attivata progressivamente.</p>
+  <% patient_programs = [
+    ["stop-al-dolore", "Stop al dolore", "Quando un dolore o un problema persistente richiede prima di tutto orientamento e il professionista adatto."],
+    ["prevenzione", "Prevenzione", "Per organizzare abitudini, attività e attenzione al corpo prima che una difficoltà diventi più grande."],
+    ["performance", "Performance", "Per sostenere energia, movimento e capacità di affrontare studio, lavoro o sport con maggiore continuità."],
+    ["benessere-integrato", "Benessere integrato", "Per mettere in relazione corpo, abitudini e qualità della vita, un passo alla volta."],
+    ["postura-fisiologia", "Postura e fisiologia", "Per capire meglio come funzionano i sistemi del corpo e orientarsi tra conoscenze e metodiche."]
+  ] %>
+
+  <div class="mt-8 grid gap-4 sm:grid-cols-2">
+    <% patient_programs.each do |slug, title, description| %>
+      <a href="<%= posturacorretta_percorso_path(page: slug) %>" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-md">
+        <h2 class="text-lg font-bold text-slate-950 transition group-hover:text-blue-700"><%= title %></h2>
+        <p class="mt-2 text-sm leading-6 text-slate-600"><%= description %></p>
+        <span class="mt-4 inline-flex items-center text-sm font-semibold text-blue-700">Apri la guida <span aria-hidden="true" class="ml-2">→</span></span>
+      </a>
+    <% end %>
+  </div>
+
   <div class="mt-8 rounded-2xl border border-blue-200 bg-blue-50 p-6">
     <h2 class="text-xl font-bold text-slate-950">Non sai ancora quale programma scegliere?</h2>
     <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Racconta brevemente da dove vuoi partire: ti aiuteremo a capire quale orientamento approfondire, senza sostituire il parere di un professionista quando serve.</p>
