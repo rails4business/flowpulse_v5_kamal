@@ -129,6 +129,24 @@ module FlowRoles
           badge: "SYS"
         ),
         MenuItem.build(
+          key: :notes,
+          title: "Appunti",
+          subtitle: "Documentazione e piani Markdown",
+          path: :admin_notes_path,
+          roles: %w[superadmin],
+          group: :admin,
+          badge: "MD"
+        ),
+        MenuItem.build(
+          key: :content_taxonomy,
+          title: "Gestione contenuti",
+          subtitle: "Catalogo, tassonomia e filtri",
+          path: :admin_content_taxonomy_path,
+          roles: %w[superadmin],
+          group: :admin,
+          badge: "CNT"
+        ),
+        MenuItem.build(
           key: :role_map,
           title: "Role map",
           subtitle: "Audit link per ruolo",
@@ -179,7 +197,7 @@ module FlowRoles
     end
 
     def admin_items
-      admin_keys = %i[dashboard domains resources pages role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
+      admin_keys = %i[dashboard domains resources pages notes content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
       items.select { |item| admin_keys.include?(item.key) }
     end
 

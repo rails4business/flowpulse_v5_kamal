@@ -1,0 +1,34 @@
+<%
+  selected_keys = params[filter_name].to_s.split(",").reject(&:blank?)
+  selected_options = options.select { |key, _label| selected_keys.include?(key) }
+  search_first = local_assigns.fetch(:search_first, false)
+%>
+<section class="mt-5 border-t border-slate-100 pt-4" data-content-filter-group>
+  <p class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500"><%= title %></p>
+  <% if options.any? %>
+    <label class="relative mt-2 block">
+      <span class="sr-only">Cerca tra <%= title.downcase %></span>
+      <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"><circle cx="8.5" cy="8.5" r="4.5" stroke-width="1.7"/><path d="m12 12 4 4" stroke-linecap="round" stroke-width="1.7"/></svg>
+      <input type="search" placeholder="Cerca o seleziona" class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" oninput="filterContentOptions(this)">
+    </label>
+
+    <% if selected_options.any? %>
+      <div class="mt-2 flex flex-wrap gap-1.5" aria-label="<%= title %> selezionati">
+        <% selected_options.each do |key, label| %>
+          <%= link_to filter_path.call(filter_name, key), class: "inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-700 hover:bg-blue-100" do %><%= label %><span aria-hidden="true">×</span><% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mt-2 max-h-40 space-y-1 overflow-y-auto pr-1 <%= 'hidden' if search_first %>" data-content-filter-options data-search-first="<%= search_first %>">
+      <% options.each do |key, label| %>
+        <% active = selected_keys.include?(key) %>
+        <%= link_to filter_path.call(filter_name, key), data: { content_filter_option: label.downcase }, class: "flex items-center justify-between gap-2 rounded-lg px-3 py-1.5 text-xs font-medium #{active ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-700'}" do %>
+          <span><%= label %></span><span aria-hidden="true"><%= active ? "×" : "+" %></span>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="mt-2 text-xs leading-relaxed text-slate-400"><%= title == "Luoghi" ? "Le sedi collegate ai contenuti saranno pubblicate qui." : "In aggiornamento." %></p>
+  <% end %>
+</section>

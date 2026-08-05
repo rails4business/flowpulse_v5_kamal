@@ -1,0 +1,23 @@
+<%
+  filter_path = lambda do |filter_name, value|
+    values = params[filter_name].to_s.split(",").reject(&:blank?)
+    values.include?(value) ? values.delete(value) : values << value
+    query = params.permit(:ambito, :area, :paradigma, :professionista, :luogo, :tipologia).to_h
+    values.any? ? query[filter_name] = values.join(",") : query.delete(filter_name)
+    posturacorretta_metodiche_path(query.merge(tab: "catalog"))
+  end
+  groups = [
+    ["Ambito", "ambito", @methodology_filter_taxonomy.fetch("ambiti", {}).map { |key, value| [key, value.fetch("label")] }, true],
+    ["Aree della salute", "area", @methodology_filter_taxonomy.fetch("aree", {}).map { |key, value| [key, value] }, true],
+    ["Paradigmi", "paradigma", @methodology_filter_taxonomy.fetch("paradigmi", {}).map { |key, value| [key, value] }, true],
+    ["Professionisti", "professionista", @methodology_professionals.map { |person| [person.fetch("slug"), [person.fetch("first_name"), person.fetch("last_name")].join(" ")] }, true],
+    ["Luoghi", "luogo", @methodology_professionals.filter_map { |person| person["city"].presence }.uniq.sort.map { |city| [city.parameterize, city] }, true],
+    ["Tipologia", "tipologia", [["professione-sanitaria", "Professioni sanitarie"], ["specializzazione-sanitaria", "Specializzazioni sanitarie"], ["metodica-posturale", "Metodiche posturali"], ["terapia-manuale", "Terapie manuali"], ["tecnica-corporea-educativa", "Tecniche corporee ed educative"], ["disciplina-bionaturale", "Discipline bionaturali"], ["tecnica-olistica", "Tecniche olistiche"]], true]
+  ]
+%>
+<aside class="self-stretch border-r border-slate-200 pr-6" aria-label="Filtra metodiche">
+  <div class="py-1">
+    <div class="flex items-center justify-between gap-3"><div><p class="text-xs font-bold uppercase tracking-[.14em] text-blue-700">Ricerca</p><h2 class="mt-1 text-sm font-black text-slate-950">Filtra le metodiche</h2></div><%= link_to "Azzera", posturacorretta_metodiche_path(tab: "catalog"), class: "text-xs font-semibold text-blue-700" %></div>
+    <% groups.each do |title, name, options, search_first| %><%= render "posturacorretta/content_filter_multiselect", title: title, filter_name: name, options: options, filter_path: filter_path, search_first: search_first %><% end %>
+  </div>
+</aside>

@@ -77,6 +77,8 @@ module NavigationHelper
       return FlowRoles.can?(Current.user, :read, :role_map) if path.start_with?("/admin/role_map")
       return FlowRoles.can?(Current.user, :read, :assigned_role_map) if path.start_with?("/admin/assigned_role_map")
       return FlowRoles.can?(Current.user, :read, :superadmin) if path.start_with?("/admin/elenco_pagine")
+      return FlowRoles.can?(Current.user, :read, :superadmin) if path.start_with?("/admin/appunti")
+      return FlowRoles.can?(Current.user, :read, :superadmin) if path.start_with?("/admin/contenuti")
 
       return FlowRoles.can?(Current.user, :read, :admin)
     end
@@ -97,7 +99,7 @@ module NavigationHelper
   end
 
   def admin_dashboard_section?(current_section)
-    current_section.to_sym.in?(%i[dashboard domains resources pages role_map assigned_role_map password_reset_requests data_commitment_imports weekplan])
+    current_section.to_sym.in?(%i[dashboard domains resources pages notes content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan])
   end
 
   def resolve_dashboard_menu_path(path)

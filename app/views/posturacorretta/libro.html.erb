@@ -29,12 +29,13 @@
           <div class="space-y-1 text-sm">
             <a href="#visione" class="block rounded-lg px-3 py-2 font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700">La visione</a>
             <a href="#problemi" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">I tre problemi</a>
-            <a href="#progetto" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Verso il Giardino del Corpo</a>
             <a href="#matrice" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Matrice</a>
             <a href="#ambiti" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Ambiti</a>
             <a href="#aree" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Aree</a>
             <a href="#paradigmi" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Paradigmi</a>
             <a href="#attori" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Attori del progetto</a>
+            <a href="#ruoli" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Professionisti e insegnanti</a>
+            <a href="#progetto" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Dalla PosturaCorretta al Giardino</a>
             <a href="#libro" class="block rounded-lg px-3 py-2 font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Il libro</a>
           </div>
         </nav>
@@ -90,16 +91,8 @@
 
           </section>
 
-          <section id="progetto" class="scroll-mt-28 border-t border-slate-200 pt-12">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Verso il Giardino del Corpo</p>
-            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Dalla PosturaCorretta al Giardino del Corpo.</h2>
-            <div class="mt-5 space-y-4 text-base leading-7 text-slate-600">
-              <p>PosturaCorretta parte dalla salute, dalla postura e dalla fisiologia, ma non vuole fermarsi lì. Se vogliamo offrire alle persone un'esperienza più completa, serve anche la possibilità di incontrare altri luoghi, altre persone, altre attività e altri ritmi.</p>
-              <p>Il Giardino del Corpo è questa direzione: il possibile progetto di un agriturismo rigenerativo, un luogo immerso nella natura in cui vivere per alcuni giorni o settimane movimento, ascolto, formazione, relazioni e attività per lo sviluppo armonico della persona.</p>
-              <p>Oggi quel luogo non esiste ancora. Per questo iniziamo con ciò che possiamo già fare: portare la filosofia di PosturaCorretta attraverso contenuti, strumenti, linee guida, Accademia, metodiche, eventi e progetti. Ogni passo serve a raccogliere esperienza, relazioni e risorse per capire come costruire il resto con cura.</p>
-            </div>
-
-            <div class="mt-12 border-t border-slate-200 pt-12">
+          <section class="border-t border-slate-200 pt-12">
+            <div>
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">La mappa</p>
               <h3 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Matrice, ambiti, aree e paradigmi.</h3>
               <p class="mt-5 max-w-3xl text-base leading-7 text-slate-600">Questa mappa aiuta a non isolare il problema dal contesto, a scegliere un primo punto di lavoro e a capire con quali linguaggi e modelli di conoscenza si sta osservando un'attività.</p>
@@ -211,6 +204,50 @@
                 <p class="mt-2 text-sm leading-6 text-slate-600">Possono valutare progetti con obiettivi, risorse, stato di avanzamento, rischi e possibili restituzioni tracciabili.</p>
                 <span class="mt-4 inline-flex text-sm font-semibold text-blue-700">Esplora i progetti <span class="ml-1" aria-hidden="true">→</span></span>
               <% end %>
+            </div>
+          </section>
+
+          <section id="ruoli" class="scroll-mt-28 border-t border-slate-200 pt-12">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Due ruoli, un dialogo</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Professionisti per il percorso, insegnanti per l'educazione.</h2>
+            <p class="mt-5 max-w-3xl text-base leading-7 text-slate-600">La salute richiede competenze specifiche e responsabilità chiare. L'educazione alla salute richiede invece tempo, linguaggio e continuità per aiutare le persone a capire il proprio corpo e a partecipare con maggiore consapevolezza alle scelte che le riguardano.</p>
+
+            <div class="mt-8 grid gap-4 md:grid-cols-2">
+              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">Professionisti della salute e del benessere</p>
+                <h3 class="mt-3 text-xl font-semibold tracking-tight text-slate-950">Una competenza verticale</h3>
+                <p class="mt-3 text-sm leading-6 text-slate-600">Ogni professionista approfondisce una professione, una metodica o un ambito di intervento attraverso un percorso universitario o una scuola privata specifica. È responsabile del proprio lavoro, dei suoi confini e delle decisioni che gli competono.</p>
+                <%= link_to(posturacorretta_percorso_path(page: "professionisti-iniziare-percorso"), class: "mt-5 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800") do %>
+                  Scopri il Percorso per professionisti <span class="ml-1" aria-hidden="true">→</span>
+                <% end %>
+              </article>
+
+              <article class="rounded-2xl border border-blue-200 bg-blue-50 p-6">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">Insegnanti dell'Accademia</p>
+                <h3 class="mt-3 text-xl font-semibold tracking-tight text-slate-950">L'educazione come competenza specifica</h3>
+                <p class="mt-3 text-sm leading-6 text-slate-600">L'insegnante non sostituisce il professionista e non fa diagnosi. Si forma nell'Accademia PosturaCorretta per guidare l'educazione al corpo, con una visione orizzontale che collega postura, fisiologia, abitudini, lavoro, apprendimento, ambiente e relazioni.</p>
+                <%= link_to(posturacorretta_accademia_path(anchor: "collabora-accademia"), class: "mt-5 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800") do %>
+                  Scopri l'Accademia <span class="ml-1" aria-hidden="true">→</span>
+                <% end %>
+              </article>
+            </div>
+
+            <div class="mt-6 max-w-3xl space-y-4 text-base leading-7 text-slate-600">
+              <p>Non sono due ruoli in concorrenza. Un professionista può scegliere di diventare anche insegnante per rendere più accessibile la propria area di conoscenza; un insegnante può scegliere in seguito di formarsi in una professione o in una metodica. Le due strade restano però diverse, perché richiedono formazioni, responsabilità e confini differenti.</p>
+              <p>In questo senso l'insegnante è un informatore delle metodiche posturali: non rappresenta un farmaco, ma aiuta le persone a conoscere approcci, professionisti e possibilità di approfondimento, senza promuovere una soluzione unica.</p>
+              <p>L'educazione non si limita al problema di salute. Parte dalla postura e dal corpo, ma apre progressivamente allo studio dell'essere umano: come impariamo, lavoriamo, costruiamo relazioni, abitudini e rapporto con l'ambiente.</p>
+              <p>Questa è la continuità che porta dalla PosturaCorretta al Giardino del Corpo: il percorso della salute resta una base concreta; l'Accademia forma persone più consapevoli; eventi ed esperienze permettono di allargare gradualmente lo sguardo.</p>
+            </div>
+            <%= link_to("Come funzionano Accademia, insegnanti e professionisti", posturacorretta_accademia_path(tab: "guide", anchor: "ruoli"), class: "mt-6 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800") %>
+          </section>
+
+          <section id="progetto" class="scroll-mt-28 border-t border-slate-200 pt-12">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Il progetto nel tempo</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Dalla PosturaCorretta al Giardino del Corpo.</h2>
+            <div class="mt-5 space-y-4 text-base leading-7 text-slate-600">
+              <p>PosturaCorretta parte dalla salute, dalla postura e dalla fisiologia, ma non vuole fermarsi lì. Se vogliamo offrire alle persone un'esperienza più completa, serve anche la possibilità di incontrare altri luoghi, altre persone, altre attività e altri ritmi.</p>
+              <p>Il Giardino del Corpo è questa direzione: il possibile progetto di un agriturismo rigenerativo, un luogo immerso nella natura in cui vivere per alcuni giorni o settimane movimento, ascolto, formazione, relazioni e attività per lo sviluppo armonico della persona.</p>
+              <p>Oggi quel luogo non esiste ancora. Per questo iniziamo con ciò che possiamo già fare: portare la filosofia di PosturaCorretta attraverso contenuti, strumenti, linee guida, Accademia, metodiche, eventi e progetti. Ogni passo serve a raccogliere esperienza, relazioni e risorse per capire come costruire il resto con cura.</p>
             </div>
           </section>
 

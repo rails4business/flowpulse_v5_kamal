@@ -1,13 +1,20 @@
 class PosturacorrettaController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
-  before_action :load_academy_curriculum, only: :accademia
+  before_action :load_academy_curriculum, only: %i[accademia accademia_modulo accademia_recensioni]
   before_action :load_methodologies, only: %i[metodiche metodica]
   before_action :load_projects, only: %i[progetti progetto]
   before_action :load_catalog, only: %i[contenuti articolo]
 
   def accademia; end
+  def accademia_recensioni; end
+  def accademia_modulo
+    @module = @academy_modules.find { |m| m["slug"] == params[:slug] }
+    return redirect_to posturacorretta_accademia_path, alert: "Modulo non trovato" unless @module
+  end
   def percorso
+    return redirect_to(posturacorretta_percorsi_sul_territorio_path) if params[:page] == "territorio"
+
     vision_anchor = {
       "ambiti" => "ambiti-aree",
       "aree" => "ambiti-aree",
@@ -29,6 +36,8 @@ class PosturacorrettaController < ApplicationController
     @aside_items = aside_data.fetch("items", [])
     professional_group = @aside_items.find { |item| item["type"] == "group" && item["title"] == "Professionisti" }
     @professional_page_slugs = collect_aside_slugs(professional_group&.fetch("children", []) || [])
+    guidelines_item = find_aside_item(@aside_items, "programmi-ambiti")
+    @guideline_page_slugs = guidelines_item&.fetch("children", [])&.filter_map { |item| item["slug"] } || []
 
     requested_slug = params[:page].presence || "inizia"
     @current_item = find_aside_item(@aside_items, requested_slug) || find_aside_item(@aside_items, "inizia")
@@ -40,6 +49,23 @@ class PosturacorrettaController < ApplicationController
       else
         @page_partial = @current_item["source"]
       end
+    end
+  end
+  def percorsi_sul_territorio
+    @territory_tab = params[:tab].presence_in(%w[paths people places]) || "paths"
+    @territory_domain = Domain.active.find_by(hostname: "posturacorretta.org")
+
+    if @territory_domain
+      @territorial_paths = Brands::Posturacorretta::TerritorialPath
+        .where(domain: @territory_domain, status: "available")
+        .includes(:responsible_person, :place, :people)
+        .order(:title)
+      @territory_people = Brands::Posturacorretta::DirectoryPerson.where(domain: @territory_domain, visibility: "public").order(:name)
+      @territory_places = Brands::Posturacorretta::DirectoryPlace.where(domain: @territory_domain, visibility: "public").order(:city, :name)
+    else
+      @territorial_paths = []
+      @territory_people = []
+      @territory_places = []
     end
   end
   def professionisti
@@ -54,7 +80,13 @@ class PosturacorrettaController < ApplicationController
     @methodology = @methodologies_by_slug[params.fetch(:slug)]
     return redirect_to posturacorretta_metodiche_path, alert: "Metodica non trovata" unless @methodology
   end
-  def contenuti; end
+  def contenuti
+    taxonomy_path = Rails.root.join("config/data/posturacorretta/contenuti/tassonomia.yml")
+    @content_taxonomy = YAML.safe_load_file(taxonomy_path, permitted_classes: [], aliases: false) || {}
+    posturacorretta_domain = Domain.active.find_by(hostname: "posturacorretta.org")
+    @content_directory_people = posturacorretta_domain ? Brands::Posturacorretta::DirectoryPerson.where(domain: posturacorretta_domain, visibility: "public").order(:name) : []
+    @content_directory_places = posturacorretta_domain ? Brands::Posturacorretta::DirectoryPlace.where(domain: posturacorretta_domain, visibility: "public").order(:city, :name) : []
+  end
   def articolo
     @article = nil
     @category_key = nil
@@ -76,6 +108,7 @@ class PosturacorrettaController < ApplicationController
     @events = data.fetch("events", [])
     @places = data.fetch("places", [])
     @teachers = data.fetch("teachers", [])
+    @event_filter_taxonomy = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/contenuti/tassonomia.yml"), permitted_classes: [], aliases: false) || {}
   end
   def libro
     taxonomies = PosturacorrettaTaxonomies.load
@@ -111,10 +144,6 @@ class PosturacorrettaController < ApplicationController
   def collabora; end
   def collabora_professionisti; end
   def collabora_professionisti_guida
-    if params[:slug] == "percorso-integrato"
-      return redirect_to posturacorretta_percorso_path(page: "professionisti-percorso-integrato")
-    end
-
     root = Rails.root.join("config/data/posturacorretta/collabora/professionisti")
     data = YAML.safe_load_file(root.join("guide.yml"), permitted_classes: [], aliases: false) || {}
     @collaboration_guides = data.fetch("guides", [])
@@ -202,5 +231,6 @@ class PosturacorrettaController < ApplicationController
     @methodologies_by_slug = @methodologies_data.fetch("methodologies_by_slug")
     @methodology_professionals = @methodologies_data.fetch("professionals")
     @methodology_schools = @methodologies_data.fetch("schools")
+    @methodology_filter_taxonomy = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/contenuti/tassonomia.yml"), permitted_classes: [], aliases: false) || {}
   end
 end

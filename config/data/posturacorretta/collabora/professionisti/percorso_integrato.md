@@ -1,45 +1,21 @@
-# Collaborare in un percorso integrato
+# Linee guida e percorso integrato
 
-Un percorso integrato permette di valorizzare il lavoro di ogni professionista, coordinando obiettivi e passaggi senza confondere ruoli, competenze o responsabilità.
+Le Linee guida del Percorso aiutano a costruire un percorso della salute più leggibile: bisogni, obiettivi, professionisti, metodiche e passaggi possono dialogare senza perdere il ruolo specifico di ciascuno.
 
-Non è necessario lavorare nello stesso studio: ciò che conta è condividere le informazioni necessarie, sapere chi è responsabile di ogni intervento e aiutare la persona a comprendere il percorso complessivo.
+## Crea il tuo percorso integrato
 
-## Cosa puoi proporre
+Puoi usare le Linee guida per proporre servizi e programmi, chiarire gli obiettivi e costruire una collaborazione con altri professionisti anche quando non lavorate nello stesso studio. Il tuo intervento mantiene identità, competenza e responsabilità.
 
-### Servizi
+[Approfondisci le Linee guida del Percorso](/posturacorretta/percorso?page=professionisti-percorso-integrato)
 
-Presenta prestazioni e attività coerenti con la tua professione, indicando destinatari, obiettivi, modalità, luogo e condizioni di accesso.
+## Educazione al corpo per te e per le persone che accompagni
 
-### Programmi
+L’Accademia porta cultura di base della salute: conoscenza del corpo, fisiologia, abitudini e pratica consapevole. Può essere una risorsa per le persone che accompagni e per mantenere ascolto, energia e continuità nel tuo lavoro quotidiano.
 
-Raggruppa più attività attorno a un obiettivo comprensibile e verificabile. Un programma può avere un responsabile, una durata e momenti di verifica.
+[Scopri il ruolo dell’Accademia](/posturacorretta/accademia#ruoli-accademia)
 
-### Percorsi personalizzati
+## Prossimo passo
 
-Collega più programmi nel tempo partendo dai bisogni della persona. Il percorso mantiene una visione complessiva senza sostituire le responsabilità dei singoli professionisti.
+L’adesione alle Linee guida apre il confronto su come costruire il tuo percorso integrato e, in futuro, sulla possibilità di creare una cerchia di collaboratori con competenze complementari.
 
-## Collaborare con altri professionisti
-
-Quando servono competenze differenti puoi coinvolgere altre figure, mantenendo chiari compiti, informazioni necessarie e limiti di ogni ruolo.
-
-## Aderire oggi
-
-Per ora puoi chiedere di aderire alle Linee guida del Percorso tramite WhatsApp. L'adesione serve a conoscere l'impostazione condivisa, presentare la tua attività e iniziare a chiarire come potresti contribuire a servizi, programmi e percorsi.
-
-## La futura cerchia dei collaboratori
-
-Chi aderirà potrà costruire una propria cerchia di collaboratori: professionisti conosciuti e competenze di fiducia da coinvolgere quando un programma richiede interventi differenti.
-
-La cerchia potrà aiutarti a:
-
-1. mantenere ordinati i riferimenti dei professionisti con cui collabori;
-2. individuare le competenze mancanti per un percorso;
-3. invitare un collaboratore in uno specifico programma;
-4. distinguere responsabilità, attività e informazioni condivise;
-5. collaborare anche senza lavorare nello stesso studio.
-
-In futuro valuteremo strumenti per facilitare anche l'incontro con nuovi professionisti. Questa funzione non è ancora disponibile: la stiamo descrivendo ora per costruirla progressivamente insieme alla rete.
-
-## Stato della proposta
-
-Questa è una prima impostazione. Requisiti di adesione, strumenti per la cerchia, visibilità dei servizi e modalità economiche verranno definiti progressivamente.
+[Aderisci alle Linee guida del Percorso](https://wa.me/393792891488?text=Ciao%2C%20vorrei%20aderire%20alle%20Linee%20guida%20del%20Percorso%20PosturaCorretta%20e%20ricevere%20informazioni%20sul%20percorso%20integrato.)

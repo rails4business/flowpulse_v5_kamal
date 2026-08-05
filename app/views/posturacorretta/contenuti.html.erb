@@ -36,7 +36,7 @@
 
 <div id="top" class="bg-white text-slate-900 antialiased">
   <section class="border-t border-slate-200/70 px-4 py-10 md:px-6 md:py-16 min-h-[calc(100vh-4rem)]">
-    <div class="mx-auto max-w-5xl">
+    <div class="mx-auto max-w-6xl" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
       <div class="relative mb-8 flex min-h-[3rem] flex-col gap-4 sm:flex-row sm:items-center">
         <div id="header-controls" class="flex w-full min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
           <div class="inline-flex justify-self-start rounded-full bg-slate-100 p-1 shadow-inner shrink-0">
@@ -44,19 +44,7 @@
             <button type="button" onclick="switchMacroTab('corsi')" id="macro-tab-corsi" class="macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition">Corsi</button>
           </div>
 
-          <div class="relative w-full sm:w-[16rem]" id="category-select-container">
-            <select id="category-select" onchange="window.switchBlogCategory(this.value)" class="w-full appearance-none rounded-2xl border border-slate-400 bg-slate-100 py-3.5 pl-5 pr-10 text-sm font-bold text-slate-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
-              <% blog_category_order.each do |key| %>
-                <% category = @catalog.fetch(key.to_sym) %>
-                <option value="<%= key %>"><%= category[:label] %></option>
-              <% end %>
-            </select>
-            <div class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path></svg>
-            </div>
-          </div>
-
-          <label class="relative block w-full sm:w-48 sm:focus-within:w-64">
+          <label class="relative block w-full sm:w-56 sm:focus-within:w-72">
             <span class="sr-only">Cerca nei contenuti</span>
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="pointer-events-none absolute left-3 top-1/2 z-20 h-5 w-5 -translate-y-1/2 text-slate-400">
               <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
@@ -66,13 +54,22 @@
           </label>
         </div>
 
-        <div class="flex shrink-0 items-center sm:ml-auto">
+        <div class="flex shrink-0 items-center gap-2 sm:ml-auto">
+          <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 lg:hidden" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="contenuti-mobile-filtri" aria-expanded="false">
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" class="size-4"><path d="M3 5h14M5.5 10h9M8 15h4" stroke-linecap="round" stroke-width="1.8"/></svg>
+            Filtri
+          </button>
           <span id="content-visible-count" class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500 whitespace-nowrap" aria-live="polite">
             <%= @catalog.fetch(:tutti)[:articles].size %> video
           </span>
         </div>
       </div>
 
+      <div class="fixed inset-0 z-40 hidden bg-slate-900/20 opacity-0 backdrop-blur-sm transition-opacity duration-300 lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
+
+      <div class="grid gap-7 lg:grid-cols-[15rem_minmax(0,1fr)]">
+        <%= render "posturacorretta/content_filter_aside" %>
+        <div class="min-w-0">
       <% (blog_category_order + ["corsi"]).each_with_index do |key, category_index| %>
         <% category = @catalog.fetch(key.to_sym, nil) %>
         <% next unless category %>
@@ -87,7 +84,16 @@
               <% is_course = article[:item_type] == "course" %>
               <% external_article = article[:url].present? %>
               <% article_href = external_article ? article[:url] : posturacorretta_articolo_path(article[:slug]) %>
-              <a href="<%= article_href %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if external_article %> class="blog-article group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-subcategory="<%= article[:subcategory] %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format]].join(' ').downcase %>">
+              <% article_area = article[:area].presence || ({ "dolore" => "cura", "prevenzione" => "prevenzione", "performance" => "movimento", "attivita" => "movimento", "fisiologia" => "fisiologia", "benessere" => "benessere", "giardino" => "territorio" }[key] || key) %>
+              <% article_paradigm = article[:paradigm].presence || "fisiologico" %>
+              <% article_people = Array(article[:professionals].presence || article[:author]).join(" ") %>
+              <% article_places = Array(article[:places]).join(" ") %>
+              <% article_methodologies = Array(article[:methodologies]).join(" ") %>
+              <% article_channel = article[:channel].presence || "posturacorretta" %>
+              <% article_platform = article[:platform].presence || (is_video ? "youtube" : "sito") %>
+              <% article_zones = Array(article[:zones]).join(" ") %>
+              <% article_level = article[:level].presence || (is_course ? "intermediate" : (is_video ? "base" : "intermediate")) %>
+              <a href="<%= article_href %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if external_article %> class="blog-article group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-subcategory="<%= article[:subcategory] %>" data-ambito="<%= key %>" data-area="<%= article_area %>" data-paradigma="<%= article_paradigm %>" data-professionals="<%= article_people %>" data-places="<%= article_places %>" data-methodologies="<%= article_methodologies %>" data-channel="<%= article_channel %>" data-platform="<%= article_platform %>" data-zones="<%= article_zones %>" data-level="<%= article_level %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format]].join(' ').downcase %>">
                 <% if is_video %>
                   <div class="aspect-video w-full overflow-hidden bg-slate-100 relative">
                     <img src="https://img.youtube.com/vi/<%= article[:slug] %>/mqdefault.jpg" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
@@ -137,6 +143,17 @@
           </div>
         </section>
       <% end %>
+
+      <section class="mt-12 rounded-2xl border border-blue-200 bg-blue-50 p-6 md:flex md:items-center md:justify-between md:gap-8 md:p-8" aria-labelledby="professionals-content-title">
+        <div class="max-w-2xl">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Per professionisti e creator</p>
+          <h2 id="professionals-content-title" class="mt-2 text-2xl font-black tracking-tight text-slate-950">Porta le tue competenze nei contenuti</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Puoi proporre un approfondimento, un problema da spiegare, un'esperienza o materiali utili per le Linee guida e l'educazione alla salute.</p>
+        </div>
+        <a href="<%= posturacorretta_collabora_professionisti_guida_path('contenuti-video') %>" class="mt-5 inline-flex w-full shrink-0 items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto md:mt-0">
+          Diventa un creator <span aria-hidden="true" class="ml-2">&rarr;</span>
+        </a>
+      </section>
 
       <section class="mt-12 border-t border-slate-200 pt-10 md:mt-16 md:pt-12" aria-labelledby="creators-title">
         <div>
@@ -210,11 +227,14 @@
               </p>
               <code class="mt-3 block w-fit rounded-lg bg-blue-900/10 px-4 py-2 text-sm font-bold text-blue-900">rails youtube:sync</code>
               <p class="mt-3 text-xs text-blue-700">Per importare interi storici del canale o video privati, gestisci il file YAML manualmente o usa yt-dlp.</p>
+              <%= link_to "Gestisci tassonomia e filtri →", admin_content_taxonomy_path, class: "mt-4 inline-flex text-sm font-semibold text-blue-800 hover:text-blue-950" %>
             </div>
           </div>
         </section>
       <% end %>
 
+        </div>
+      </div>
     </div>
   </section>
 
@@ -232,11 +252,8 @@
     selectedSection.classList.remove("hidden");
     activeBlogCategory = key;
 
-    // Sync the category select and highlight Contenuti se è pubblica
+    // Evidenzia Contenuti se è pubblica
     if (key !== "corsi") {
-      const categorySelect = document.getElementById("category-select");
-      categorySelect.value = key;
-
       const btnContenuti = document.getElementById("macro-tab-contenuti");
       const btnCorsi = document.getElementById("macro-tab-corsi");
       if(btnContenuti && btnCorsi) {
@@ -254,17 +271,59 @@
     applyBlogFilters();
   };
 
+  window.filterContentOptions = function(input) {
+    const query = input.value.trim().toLowerCase();
+    const group = input.closest("[data-content-filter-group]");
+    if (!group) return;
+    const options = group.querySelector("[data-content-filter-options]");
+    if (options?.dataset.searchFirst === "true") options.classList.toggle("hidden", query.length === 0);
+    group.querySelectorAll("[data-content-filter-option]").forEach(option => {
+      option.classList.toggle("hidden", query.length > 0 && !option.dataset.contentFilterOption.includes(query));
+    });
+  };
+
   function applyBlogFilters() {
     const section = document.getElementById(`blog-section-${activeBlogCategory}`);
     if (!section) return;
 
     const query = document.getElementById("blog-search").value.trim().toLowerCase();
+    const params = new URLSearchParams(window.location.search);
+    const selectedAreas = (params.get("area") || "").split(",").filter(Boolean);
+    const selectedParadigms = (params.get("paradigma") || "").split(",").filter(Boolean);
+    const selectedProfessionals = (params.get("professionista") || "").split(",").filter(Boolean);
+    const selectedPlaces = (params.get("luogo") || "").split(",").filter(Boolean);
+    const selectedMethodologies = (params.get("metodica") || "").split(",").filter(Boolean);
+    const selectedChannels = (params.get("canale") || "").split(",").filter(Boolean);
+    const selectedPlatforms = (params.get("piattaforma") || "").split(",").filter(Boolean);
+    const selectedAmbiti = (params.get("ambito") || "").split(",").filter(Boolean);
+    const selectedZones = (params.get("zona") || "").split(",").filter(Boolean);
+    const selectedLevels = (params.get("livello") || "").split(",").filter(Boolean);
     let visible = 0;
 
-    section.querySelectorAll(".blog-article").forEach(article => {
+    const sections = selectedAmbiti.length && activeBlogCategory !== "corsi"
+      ? [...document.querySelectorAll(".blog-section")].filter(candidate => selectedAmbiti.includes(candidate.dataset.category))
+      : [section];
+    document.querySelectorAll(".blog-section").forEach(candidate => candidate.classList.toggle("hidden", !sections.includes(candidate)));
+
+    sections.forEach(currentSection => {
+    currentSection.querySelectorAll(".blog-article").forEach(article => {
       const matchesSearch = !query || article.dataset.search.includes(query);
-      article.classList.toggle("hidden", !matchesSearch);
-      if (matchesSearch) visible += 1;
+      const matchesArea = !selectedAreas.length || selectedAreas.includes(article.dataset.area);
+      const matchesParadigm = !selectedParadigms.length || selectedParadigms.includes(article.dataset.paradigma);
+      const matchesProfessional = !selectedProfessionals.length || selectedProfessionals.some(key => article.dataset.professionals.split(" ").includes(key));
+      const matchesPlace = !selectedPlaces.length || selectedPlaces.some(key => article.dataset.places.split(" ").includes(key));
+      const matchesMethodology = !selectedMethodologies.length || selectedMethodologies.some(key => article.dataset.methodologies.split(" ").includes(key));
+      const matchesChannel = !selectedChannels.length || selectedChannels.includes(article.dataset.channel);
+      const matchesPlatform = !selectedPlatforms.length || selectedPlatforms.includes(article.dataset.platform);
+      const matchesZone = !selectedZones.length || selectedZones.some(key => article.dataset.zones.split(" ").includes(key));
+      const matchesLevel = !selectedLevels.length || selectedLevels.includes(article.dataset.level);
+      const matches = matchesSearch && matchesArea && matchesParadigm && matchesProfessional && matchesPlace && matchesMethodology && matchesChannel && matchesPlatform && matchesZone && matchesLevel;
+      article.classList.toggle("hidden", !matches);
+      if (matches) visible += 1;
+    });
+
+    const emptyState = currentSection.querySelector(".blog-empty");
+    if (emptyState) emptyState.classList.toggle("hidden", currentSection.querySelectorAll(".blog-article:not(.hidden)").length > 0);
     });
 
     const countLabel = document.getElementById("content-visible-count");
@@ -272,8 +331,6 @@
       countLabel.textContent = `${visible} ${visible === 1 ? section.dataset.countSingular : section.dataset.countPlural}`;
     }
 
-    const emptyState = section.querySelector(".blog-empty");
-    if (emptyState) emptyState.classList.toggle("hidden", visible > 0);
   }
 
   window.switchMacroTab = function(tab) {
@@ -283,8 +340,8 @@
     if (tab === 'contenuti') {
       btnContenuti.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition";
       btnCorsi.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition";
-      const categorySelect = document.getElementById("category-select");
-      window.switchBlogCategory(categorySelect.value);
+      const category = new URLSearchParams(window.location.search).get("categoria") || "tutti";
+      window.switchBlogCategory(category === "corsi" ? "tutti" : category);
     } else {
       btnCorsi.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition";
       btnContenuti.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition";
@@ -292,8 +349,11 @@
     }
   };
 
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("blog-search").addEventListener("input", applyBlogFilters);
+  function initializeContentCatalog() {
+    const search = document.getElementById("blog-search");
+    if (!search || search.dataset.catalogReady === "true") return;
+    search.dataset.catalogReady = "true";
+    search.addEventListener("input", applyBlogFilters);
     const params = new URLSearchParams(window.location.search);
     const requestedCategory = params.get("categoria") || params.get("subtab") || "tutti";
 
@@ -303,5 +363,8 @@
       switchMacroTab("contenuti");
       window.switchBlogCategory(requestedCategory);
     }
-  });
+  }
+
+  document.addEventListener("DOMContentLoaded", initializeContentCatalog);
+  document.addEventListener("turbo:load", initializeContentCatalog);
 </script>

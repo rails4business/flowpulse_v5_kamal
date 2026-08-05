@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_03_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_05_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -186,6 +186,72 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_03_090000) do
     t.index ["user_id"], name: "index_password_reset_requests_on_user_id"
   end
 
+  create_table "posturacorretta_directory_people", force: :cascade do |t|
+    t.string "city"
+    t.datetime "created_at", null: false
+    t.bigint "domain_id", null: false
+    t.jsonb "listing_sections", default: [], null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "name", null: false
+    t.bigint "profile_id"
+    t.string "role"
+    t.string "slug", null: false
+    t.text "summary"
+    t.datetime "updated_at", null: false
+    t.string "visibility", default: "draft", null: false
+    t.index ["domain_id", "slug"], name: "index_posturacorretta_directory_people_on_domain_id_and_slug", unique: true
+    t.index ["domain_id"], name: "index_posturacorretta_directory_people_on_domain_id"
+    t.index ["profile_id"], name: "index_posturacorretta_directory_people_on_profile_id"
+  end
+
+  create_table "posturacorretta_directory_places", force: :cascade do |t|
+    t.string "address"
+    t.string "city"
+    t.datetime "created_at", null: false
+    t.bigint "domain_id", null: false
+    t.string "kind", default: "other", null: false
+    t.jsonb "listing_sections", default: [], null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "summary"
+    t.datetime "updated_at", null: false
+    t.string "visibility", default: "draft", null: false
+    t.index ["domain_id", "slug"], name: "index_posturacorretta_directory_places_on_domain_id_and_slug", unique: true
+    t.index ["domain_id"], name: "index_posturacorretta_directory_places_on_domain_id"
+  end
+
+  create_table "posturacorretta_territorial_path_participants", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "person_id", null: false
+    t.string "role", default: "professional", null: false
+    t.bigint "territorial_path_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_id"], name: "idx_on_person_id_e10196140e"
+    t.index ["territorial_path_id", "person_id"], name: "index_territorial_path_participants_on_path_and_person", unique: true
+    t.index ["territorial_path_id"], name: "idx_on_territorial_path_id_dc92e415cf"
+  end
+
+  create_table "posturacorretta_territorial_paths", force: :cascade do |t|
+    t.string "city"
+    t.datetime "created_at", null: false
+    t.bigint "domain_id", null: false
+    t.jsonb "listing_sections", default: ["percorso"], null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.bigint "place_id"
+    t.jsonb "programs", default: [], null: false
+    t.bigint "responsible_person_id", null: false
+    t.string "slug", null: false
+    t.string "status", default: "draft", null: false
+    t.text "summary"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain_id", "slug"], name: "index_posturacorretta_territorial_paths_on_domain_id_and_slug", unique: true
+    t.index ["domain_id"], name: "index_posturacorretta_territorial_paths_on_domain_id"
+    t.index ["place_id"], name: "index_posturacorretta_territorial_paths_on_place_id"
+    t.index ["responsible_person_id"], name: "idx_on_responsible_person_id_95be7d8dfb"
+  end
+
   create_table "profiles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "display_name"
@@ -271,6 +337,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_03_090000) do
   add_foreign_key "nodes", "nodes", column: "parent_id"
   add_foreign_key "nodes", "role_assignments"
   add_foreign_key "password_reset_requests", "users"
+  add_foreign_key "posturacorretta_directory_people", "domains"
+  add_foreign_key "posturacorretta_directory_people", "profiles"
+  add_foreign_key "posturacorretta_directory_places", "domains"
+  add_foreign_key "posturacorretta_territorial_path_participants", "posturacorretta_directory_people", column: "person_id"
+  add_foreign_key "posturacorretta_territorial_path_participants", "posturacorretta_territorial_paths", column: "territorial_path_id"
+  add_foreign_key "posturacorretta_territorial_paths", "domains"
+  add_foreign_key "posturacorretta_territorial_paths", "posturacorretta_directory_people", column: "responsible_person_id"
+  add_foreign_key "posturacorretta_territorial_paths", "posturacorretta_directory_places", column: "place_id"
   add_foreign_key "profiles", "users"
   add_foreign_key "role_assignments", "profiles"
   add_foreign_key "role_assignments", "role_assignments", column: "parent_id"

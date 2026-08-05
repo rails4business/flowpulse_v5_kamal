@@ -4,7 +4,7 @@
 
 <% events_tab = params[:tab] == "how" ? "how" : "calendar" %>
 
-<div id="top" class="text-slate-900 antialiased bg-slate-50">
+<div id="top" class="bg-white text-slate-900 antialiased">
 
   <div class="border-b border-slate-200 bg-white pt-8">
     <div class="mx-auto max-w-7xl px-5 text-center">
@@ -15,25 +15,25 @@
     </div>
   </div>
 
-  <div id="content-tab-calendario" class="<%= 'hidden ' if events_tab == 'how' %>bg-slate-50 pt-8">
+  <div id="content-tab-calendario" class="<%= 'hidden ' if events_tab == 'how' %>bg-white pt-8" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
     <!-- EVENTI INTERACTIVE GRID SECTION -->
     <section class="px-5 pb-20">
-    <div class="mx-auto w-full max-w-5xl">
+    <div class="mx-auto grid w-full max-w-7xl gap-7 lg:grid-cols-[15rem_minmax(0,1fr)]">
       
-      <!-- Controls Row -->
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-5 mb-6">
+      <!-- Filters aside -->
+      <div class="fixed inset-0 z-40 hidden bg-slate-900/20 opacity-0 backdrop-blur-sm transition-opacity duration-300 lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
+      <aside id="eventi-filtri-mobile-aside" class="fixed inset-y-0 left-0 z-50 w-80 max-w-[88vw] -translate-x-full overflow-y-auto border-r border-slate-200 bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:sticky lg:top-24 lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:self-start lg:overflow-visible lg:border-r lg:border-slate-200 lg:bg-transparent lg:p-0 lg:pr-6 lg:shadow-none" data-mobile-aside-target="panel" aria-label="Filtra eventi" aria-hidden="true">
+        <div class="mb-6 flex items-center justify-between lg:hidden">
+          <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Filtra eventi</span>
+          <button type="button" class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700" data-mobile-aside-target="close" data-action="mobile-aside#close" aria-label="Chiudi filtri">✕</button>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <div><p class="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Ricerca</p><h2 class="mt-1 text-sm font-black text-slate-950">Filtra gli eventi</h2></div>
+          <button type="button" onclick="resetEventFilters()" class="text-xs font-semibold text-blue-700 hover:text-blue-900">Azzera</button>
+        </div>
+      <div class="mt-5 flex flex-col gap-4 border-t border-slate-100 pt-4">
         
-        <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-          <!-- Macro Dropdown -->
-          <div class="relative w-full sm:w-auto">
-            <select id="macro-select" onchange="switchMacroTab(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
-              <option value="events">Tutti gli Eventi</option>
-              <option value="places">Luoghi</option>
-              <option value="teachers">Conduttori</option>
-            </select>
-            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
-          </div>
-
+        <div class="flex flex-col gap-3">
           <!-- Temporal Dropdown -->
           <div class="relative w-full sm:w-auto" id="temporal-select-container">
             <select id="temporal-select" onchange="switchTemporalTab(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
@@ -66,7 +66,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+        <div class="flex flex-col gap-3">
           <!-- Date Filter -->
           <div class="flex items-center gap-2 w-full sm:w-auto" id="date-filter-container">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap" id="filter-date-label">Dal:</span>
@@ -80,7 +80,54 @@
             <input type="text" id="event-search-input" oninput="renderEvents()" placeholder="Cerca eventi..." class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
           </div>
         </div>
+
+        <div class="border-t border-slate-100 pt-5">
+          <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Filtri completi</p>
+          <div class="mt-3 space-y-3">
+            <% { "ambito" => ["Ambito", "ambiti"], "area" => ["Aree della salute", "aree"], "paradigma" => ["Paradigmi", "paradigmi"] }.each do |filter_key, (label, taxonomy_key)| %>
+              <% options = @event_filter_taxonomy.fetch(taxonomy_key, {}) %>
+              <label class="block">
+                <span class="mb-1.5 block text-xs font-semibold text-slate-700"><%= label %></span>
+                <select id="event-<%= filter_key %>-select" onchange="switchEventClassification('<%= filter_key %>', this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+                  <option value="">Tutti</option>
+                  <% options.each do |key, value| %>
+                    <% option_label = value.is_a?(Hash) ? value["label"] : value %>
+                    <option value="<%= key %>"><%= option_label %></option>
+                  <% end %>
+                </select>
+              </label>
+            <% end %>
+
+            <label class="block">
+              <span class="mb-1.5 block text-xs font-semibold text-slate-700">Conduttori</span>
+              <select id="event-conductor-select" onchange="switchEventClassification('conductor', this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+                <option value="">Tutti</option>
+                <% @events.flat_map { |event| event.fetch("teachers", []) }.reject { |teacher| teacher == "?" }.uniq.sort.each do |teacher| %>
+                  <option value="<%= teacher %>"><%= teacher %></option>
+                <% end %>
+              </select>
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-xs font-semibold text-slate-700">Luoghi</span>
+              <select id="event-place-select" onchange="switchEventClassification('place', this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+                <option value="">Tutti</option>
+                <% @events.group_by { |event| event["locationKey"] }.each do |location_key, location_events| %>
+                  <% next if location_key.blank? %>
+                  <option value="<%= location_key %>"><%= location_events.first["location"] %></option>
+                <% end %>
+              </select>
+            </label>
+          </div>
+        </div>
       </div>
+      </aside>
+
+      <div class="min-w-0">
+
+      <button type="button" class="mb-6 inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 lg:hidden" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="eventi-filtri-mobile-aside" aria-expanded="false">
+        <span aria-hidden="true">☰</span> Filtri eventi
+      </button>
 
       <!-- Active Filters Bar -->
       <div id="active-filters-bar" class="hidden flex-wrap items-center gap-2 mb-6 -mt-2">
@@ -114,6 +161,8 @@
           </a>
           <%= link_to "Come funzionano gli eventi? →", posturacorretta_eventi_path(tab: "how"), class: "inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98]" %>
         </div>
+      </div>
+
       </div>
 
     </div>
@@ -244,6 +293,7 @@
   let currentParticipation = "all";
   let selectedLocation = null; // { key, name }
   let selectedTeacher = null; // string
+  const classificationFilters = { ambito: "", area: "", paradigma: "", conductor: "", place: "" };
 
   // Helper count logic
   const getEventCountForPlace = (key) => events.filter(e => e.locationKey === key).length;
@@ -391,6 +441,13 @@
 
       // Teacher filter
       if (selectedTeacher && !e.teachers.includes(selectedTeacher)) return false;
+
+      // Filtri di classificazione
+      if (classificationFilters.ambito && !(e.ambiti || []).includes(classificationFilters.ambito)) return false;
+      if (classificationFilters.area && !(e.aree || []).includes(classificationFilters.area)) return false;
+      if (classificationFilters.paradigma && !(e.paradigmi || []).includes(classificationFilters.paradigma)) return false;
+      if (classificationFilters.conductor && !(e.teachers || []).includes(classificationFilters.conductor)) return false;
+      if (classificationFilters.place && e.locationKey !== classificationFilters.place) return false;
 
       // Search Query filter
       if (query) {
@@ -563,6 +620,40 @@
     selectedLocation = null;
     selectedTeacher = null;
     renderEvents();
+  };
+
+  window.switchEventClassification = function(filter, value) {
+    classificationFilters[filter] = value;
+    renderEvents();
+  };
+
+  window.resetEventFilters = function() {
+    currentTemporalTab = "future";
+    currentEventStatus = "all";
+    currentParticipation = "all";
+    selectedLocation = null;
+    selectedTeacher = null;
+    Object.keys(classificationFilters).forEach((filter) => { classificationFilters[filter] = ""; });
+
+    [
+      ["temporal-select", "future"],
+      ["event-status-select", "all"],
+      ["participation-select", "all"],
+      ["event-ambito-select", ""],
+      ["event-area-select", ""],
+      ["event-paradigma-select", ""],
+      ["event-conductor-select", ""],
+      ["event-place-select", ""]
+    ].forEach(([id, value]) => {
+      const input = document.getElementById(id);
+      if (input) input.value = value;
+    });
+
+    const dateInput = document.getElementById("event-date-filter");
+    const searchInput = document.getElementById("event-search-input");
+    if (dateInput) dateInput.value = "";
+    if (searchInput) searchInput.value = "";
+    switchTemporalTab("future");
   };
 
   window.switchMacroTab = function(tab) {

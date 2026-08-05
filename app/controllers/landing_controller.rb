@@ -7,6 +7,9 @@ class LandingController < ApplicationController
   def flowpulse
   end
 
+  def rails4b
+  end
+
   def markpostura
   
   end

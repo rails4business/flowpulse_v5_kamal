@@ -10,12 +10,16 @@ Rails.application.routes.draw do
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
+  get "rails4b" => "landing#rails4b", as: :rails4b
   get "markpostura" => "landing#markpostura", as: :markpostura
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
   get "posturacorretta" => "brands/posturacorretta#home", as: :posturacorretta
   get "posturacorretta/accademia" => "brands/posturacorretta#accademia", as: :posturacorretta_accademia
+  get "posturacorretta/accademia/recensioni" => "brands/posturacorretta#accademia_recensioni", as: :posturacorretta_accademia_recensioni
+  get "posturacorretta/accademia/:slug" => "brands/posturacorretta#accademia_modulo", as: :posturacorretta_accademia_modulo
   get "posturacorretta/percorso" => "brands/posturacorretta#percorso", as: :posturacorretta_percorso
+  get "posturacorretta/percorsi-sul-territorio" => "brands/posturacorretta#percorsi_sul_territorio", as: :posturacorretta_percorsi_sul_territorio
   get "posturacorretta/metodiche" => "brands/posturacorretta#metodiche", as: :posturacorretta_metodiche
   get "posturacorretta/metodiche/:slug" => "brands/posturacorretta#metodica", as: :posturacorretta_metodica
   get "posturacorretta/professionisti" => "brands/posturacorretta#professionisti", as: :posturacorretta_professionisti
@@ -97,6 +101,9 @@ Rails.application.routes.draw do
     get "dashboard" => "home#dashboard", as: :dashboard
     post "set_override" => "home#set_override", as: :set_override
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
+    get "appunti" => "notes#index", as: :notes
+    get "appunti/:source/*path" => "notes#show", as: :note
+    get "contenuti" => "content_taxonomy#show", as: :content_taxonomy
     get "role_map" => "role_maps#show", as: :role_map
     get "assigned_role_map" => "assigned_role_maps#show", as: :assigned_role_map
     get "assigned_role_map/new" => "assigned_role_maps#new", as: :new_assigned_role_map

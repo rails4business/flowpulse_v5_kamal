@@ -21,9 +21,19 @@
 
     <div class="fixed inset-0 z-40 hidden bg-slate-900/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
 
-    <%= render "posturacorretta/shared/rich_text",
-               rendered_content: markdown(@collaboration_content),
-               class_name: "min-w-0" %>
+    <div class="min-w-0">
+      <%= render "posturacorretta/shared/rich_text",
+                 rendered_content: markdown(@collaboration_content),
+                 class_name: "min-w-0" %>
+
+      <% if Current.user&.superadmin_user? && @collaboration_guide["slug"] == "contenuti-video" %>
+        <aside class="mt-8 rounded-xl border border-dashed border-blue-300 bg-blue-50 p-5" aria-label="Appunti superadmin">
+          <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Appunti superadmin</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Piano operativo, regole editoriali e decisioni aperte sui contenuti collaborativi.</p>
+          <%= link_to "Apri il piano contenuti →", admin_note_path(source: "docs", path: "posturacorretta_piano_contenuti_collaborativi.md"), class: "mt-3 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-900" %>
+        </aside>
+      <% end %>
+    </div>
 
     <aside id="collabora-mobile-aside" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:sticky lg:top-24" data-mobile-aside-target="panel" aria-hidden="true">
       <div class="mb-6 flex items-center justify-between lg:hidden">

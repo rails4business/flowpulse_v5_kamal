@@ -31,6 +31,10 @@
           </button>
         </div>
 
+        <div class="mb-10">
+          <%= render "posturacorretta/percorso/access_switcher" %>
+        </div>
+
         <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
 
           <%# -- BACKDROP SCURO (Mobile) -- %>
@@ -76,7 +80,12 @@
                         <% if child["type"] == "group" %>
                           <p class="mt-4 border-t border-slate-200 pt-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-500"><%= child["title"] %></p>
                         <% else %>
-                          <a href="<%= posturacorretta_percorso_path(page: child['slug']) %>" class="block text-sm <%= child_classes %>">
+                          <% child_href = case child["slug"]
+                          when "territorio" then posturacorretta_percorsi_sul_territorio_path
+                          when "professionisti-contenuti" then posturacorretta_collabora_professionisti_guida_path("contenuti-video")
+                          else posturacorretta_percorso_path(page: child["slug"])
+                          end %>
+                          <a href="<%= child_href %>" class="block text-sm <%= child_classes %>">
                             <%= child["title"] %>
                           </a>
                         <% end %>
@@ -136,6 +145,10 @@
                 <%= render "posturacorretta/percorso/integrated_path_prompt" %>
               <% end %>
 
+              <% if @guideline_page_slugs.include?(current_page_slug) %>
+                <%= render "posturacorretta/percorso/guide_pagination" %>
+              <% end %>
+
               <% if adherence_page %>
                 <div class="mt-8 border-t border-slate-200 pt-5 text-right">
                   <a href="#adesione-linee-guida" class="pc-inline-cta">Torna all'adesione <span aria-hidden="true">&uarr;</span></a>
@@ -145,6 +158,9 @@
               <%= render @page_partial %>
               <% if professional_page && !adherence_page %>
                 <%= render "posturacorretta/percorso/integrated_path_prompt" %>
+              <% end %>
+              <% if @guideline_page_slugs.include?(current_page_slug) %>
+                <%= render "posturacorretta/percorso/guide_pagination" %>
               <% end %>
             <% else %>
               <div class="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-700">

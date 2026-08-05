@@ -1,0 +1,33 @@
+<%
+  current_index = @guideline_page_slugs.index(@current_item["slug"])
+  previous_slug = current_index&.positive? ? @guideline_page_slugs[current_index - 1] : nil
+  next_slug = current_index && current_index < @guideline_page_slugs.length - 1 ? @guideline_page_slugs[current_index + 1] : nil
+  previous_item = previous_slug && find_aside_item(@aside_items, previous_slug)
+  next_item = next_slug && find_aside_item(@aside_items, next_slug)
+%>
+
+<nav class="mt-10 grid gap-3 border-t border-slate-200 pt-6 sm:grid-cols-2" aria-label="Navigazione tra le linee guida">
+  <% if previous_item %>
+    <a href="<%= posturacorretta_percorso_path(page: previous_slug) %>" class="group rounded-lg border border-slate-200 bg-white px-4 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50">
+      <span class="block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 group-hover:text-blue-700">&larr; Indietro</span>
+      <span class="mt-1 block text-sm font-semibold text-slate-900 group-hover:text-blue-700"><%= previous_item["title"] %></span>
+    </a>
+  <% else %>
+    <a href="<%= posturacorretta_percorso_path(page: "linee-guida") %>" class="group rounded-lg border border-slate-200 bg-white px-4 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50">
+      <span class="block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 group-hover:text-blue-700">&larr; Indietro</span>
+      <span class="mt-1 block text-sm font-semibold text-slate-900 group-hover:text-blue-700">Tutte le linee guida</span>
+    </a>
+  <% end %>
+
+  <% if next_item %>
+    <a href="<%= posturacorretta_percorso_path(page: next_slug) %>" class="group rounded-lg border border-slate-200 bg-white px-4 py-3 text-right transition hover:border-blue-300 hover:bg-blue-50">
+      <span class="block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 group-hover:text-blue-700">Avanti &rarr;</span>
+      <span class="mt-1 block text-sm font-semibold text-slate-900 group-hover:text-blue-700"><%= next_item["title"] %></span>
+    </a>
+  <% else %>
+    <a href="<%= posturacorretta_percorso_path(page: "linee-guida") %>" class="group rounded-lg border border-slate-200 bg-white px-4 py-3 text-right transition hover:border-blue-300 hover:bg-blue-50">
+      <span class="block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 group-hover:text-blue-700">Avanti &rarr;</span>
+      <span class="mt-1 block text-sm font-semibold text-slate-900 group-hover:text-blue-700">Tutte le linee guida</span>
+    </a>
+  <% end %>
+</nav>

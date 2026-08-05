@@ -26,42 +26,33 @@
       <p><%= academy_module.fetch("description") %></p>
     </span>
     <span class="modes module-stats">
-      <button class="stat-pill participants" type="button" data-modal-template="module-participants-<%= academy_module.fetch("slug") %>">
+      <%= link_to posturacorretta_accademia_modulo_path(academy_module.fetch("slug"), tab: 'recensioni'), class: "stat-pill participants hover:bg-slate-100 transition-colors" do %>
         <strong><%= academy_module.fetch("participants") %></strong>
         <span>Partecipanti</span>
-      </button>
-      <button class="stat-pill teachers-count" type="button" data-modal-template="module-roster-<%= academy_module.fetch("slug") %>">
+      <% end %>
+      <%= link_to posturacorretta_accademia_modulo_path(academy_module.fetch("slug"), tab: 'insegnanti'), class: "stat-pill teachers-count hover:bg-slate-100 transition-colors" do %>
         <strong><%= module_teachers.size %></strong>
         <span>Insegnanti</span>
-      </button>
-      <button class="stat-pill centers-count" type="button" data-modal-template="module-locations-<%= academy_module.fetch("slug") %>">
+      <% end %>
+      <%= link_to posturacorretta_accademia_modulo_path(academy_module.fetch("slug"), tab: 'centri'), class: "stat-pill centers-count hover:bg-slate-100 transition-colors" do %>
         <strong><%= module_locations.size %></strong>
         <span>Centri</span>
-      </button>
+      <% end %>
     </span>
     <button class="chevron" aria-label="Apri <%= academy_module.fetch("title") %>" aria-expanded="<%= module_index == 1 %>">⌄</button>
   </div>
 
-  <div class="module-body">
-    <div class="module-tabs" role="tablist" aria-label="Sezioni di <%= academy_module.fetch("title") %>">
-      <% [["info", "Informati"], ["practice", "Pratica"], ["teach", "Insegna"]].each_with_index do |tab, index| %>
-        <button class="module-tab <%= "active" if index.zero? %>" type="button" role="tab" aria-selected="<%= index.zero? %>" data-module-tab="<%= tab.first %>"><%= tab.last %></button>
-      <% end %>
-    </div>
+  <div class="module-body px-5 sm:px-8 pt-4 pb-8">
+    <div class="lessons">
+      <%= render partial: "landing/academy/lesson",
+                 collection: academy_module.fetch("lessons"),
+                 as: :lesson,
+                 locals: { academy_module: academy_module } %>
 
-    <div class="tab-panel active" data-panel="info">
-      <p class="panel-intro">Tutte le informazioni e i contenuti per conoscere il modulo, seguirne le lezioni e approfondire gli argomenti.</p>
-      <div class="lessons">
-        <div class="body-title"><span><%= academy_module.fetch("lessons").size %> lezioni</span><span>Contenuti del modulo</span></div>
-        <%= render partial: "landing/academy/lesson",
-                   collection: academy_module.fetch("lessons"),
-                   as: :lesson,
-                   locals: { academy_module: academy_module } %>
+      <div class="pt-8 pb-4 text-center border-t-4 border-double border-slate-200 mt-6">
+        <%= link_to "Vai al programma →", posturacorretta_accademia_modulo_path(academy_module.fetch("slug")), class: "inline-block rounded-lg bg-blue-50 text-blue-700 px-6 py-3 text-sm font-bold hover:bg-blue-600 hover:text-white transition-colors" %>
       </div>
     </div>
-
-    <%= render "landing/academy/tab_practice" %>
-    <%= render "landing/academy/tab_teach" %>
   </div>
 </article>
 

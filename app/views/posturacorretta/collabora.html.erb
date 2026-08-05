@@ -2,6 +2,8 @@
   <%= render "posturacorretta/header" %>
 <% end %>
 
+<% collabora_tab = params[:tab] == "insegnanti" ? "insegnanti" : "collabora" %>
+
 <div class="bg-white text-slate-900 antialiased min-h-screen">
   <div class="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-24">
     <div class="mx-auto max-w-3xl text-center">
@@ -12,8 +14,14 @@
       </p>
     </div>
 
+    <nav class="mx-auto mt-10 flex w-fit gap-1 border-b border-slate-200" aria-label="Modalità di collaborazione">
+      <%= link_to "Collabora", posturacorretta_collabora_path, class: "border-b-2 px-4 py-2 text-sm font-semibold transition #{collabora_tab == 'collabora' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}" %>
+      <%= link_to "Diventa insegnante", posturacorretta_collabora_path(tab: "insegnanti"), class: "border-b-2 px-4 py-2 text-sm font-semibold transition #{collabora_tab == 'insegnanti' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}" %>
+    </nav>
+
+    <% if collabora_tab == "collabora" %>
     <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-auto lg:max-w-4xl lg:grid-cols-2 lg:gap-8">
-      
+
       <!-- Card Professionisti -->
       <a href="<%= posturacorretta_collabora_professionisti_path %>" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
         <div>
@@ -31,6 +39,20 @@
           Scopri le modalità d'ingresso
           <span aria-hidden="true">&rarr;</span>
         </div>
+      </a>
+
+      <!-- Card Insegnanti -->
+      <a href="<%= posturacorretta_collabora_path(tab: 'insegnanti') %>" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
+        <div>
+          <div class="flex items-center gap-x-4">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-100 group-hover:text-blue-700">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75c-1.3 0-2.4.84-2.82 2.01A3.75 3.75 0 0 0 5.25 12.5c0 2.07 1.68 3.75 3.75 3.75h6a3.75 3.75 0 0 0 .75-7.42A3.75 3.75 0 0 0 12 6.75ZM8.25 20.25h7.5" /></svg>
+            </div>
+            <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Accademia PosturaCorretta</p><h3 class="mt-1 text-xl font-semibold leading-8 text-gray-900">Porta l’educazione alla salute nella tua community</h3></div>
+          </div>
+          <p class="mt-6 text-base leading-7 text-gray-600">Accompagna persone, professionisti e metodiche attraverso l’educazione al corpo, alla fisiologia e allo stile di vita.</p>
+        </div>
+        <div class="mt-8 flex items-center gap-x-2 text-sm font-semibold leading-6 text-blue-600 group-hover:text-blue-700">Scopri il ruolo dell’insegnante <span aria-hidden="true">&rarr;</span></div>
       </a>
 
       <!-- Card Investitori (Progetti) -->
@@ -93,6 +115,19 @@
       </a>
 
     </div>
+    <% else %>
+      <section class="mx-auto mt-16 max-w-3xl rounded-3xl border border-slate-200 bg-white p-7 shadow-sm md:p-10">
+        <p class="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Accademia PosturaCorretta</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">Diventa insegnante dell’Accademia</h1>
+        <p class="mt-5 text-lg leading-8 text-slate-600">Porta cultura di base della salute nella community: corpo, fisiologia, abitudini, ambiente e relazioni.</p>
+        <div class="mt-8 space-y-6 border-t border-slate-100 pt-7 text-base leading-7 text-slate-600">
+          <div><h2 class="font-semibold text-slate-950">Una formazione orizzontale</h2><p class="mt-1">L’insegnante accompagna l’educazione al corpo e allo stile di vita, rendendo più accessibili conoscenza, pratica e orientamento.</p></div>
+          <div><h2 class="font-semibold text-slate-950">Un ponte tra persone, professionisti e metodiche</h2><p class="mt-1">Come un informatore farmaceutico porta al medico la conoscenza di un farmaco, l’insegnante PosturaCorretta, attraverso il proprio ruolo educativo, rende accessibili a persone e professionisti le metodiche posturali e la filosofia del progetto.</p></div>
+          <div><h2 class="font-semibold text-slate-950">Conoscere l’essere umano</h2><p class="mt-1">La filosofia PosturaCorretta mette al centro della salute la conoscenza dell’essere umano e dei contesti in cui vive.</p></div>
+        </div>
+        <%= link_to posturacorretta_accademia_path(anchor: "collabora-accademia"), class: "mt-9 inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2" do %>Scopri come funziona l’Accademia <span aria-hidden="true" class="ml-2">→</span><% end %>
+      </section>
+    <% end %>
   </div>
 </div>
 
