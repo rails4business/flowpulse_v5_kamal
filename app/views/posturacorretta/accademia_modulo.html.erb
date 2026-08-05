@@ -12,8 +12,8 @@
   teaching_modules = @academy_modules.sort_by { |academy_module| academy_module.fetch("number", "0").to_i }
   current_module_index = teaching_modules.index { |academy_module| academy_module["slug"] == @module["slug"] } || 0
   required_teaching_modules = teaching_modules.first(current_module_index + 1)
-  # Fetch global professionals for enrichment
-  professionals_data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/professionisti/professionisti.yml"), permitted_classes: [], aliases: false) || {}
+  # Anagrafica unica PosturaCorretta per l'eventuale arricchimento delle schede.
+  professionals_data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/posturacorretta_professionisti.yml"), permitted_classes: [], aliases: false) || {}
   global_professionals = professionals_data.fetch("professionals", [])
 %>
 

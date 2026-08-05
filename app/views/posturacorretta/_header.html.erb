@@ -29,7 +29,7 @@
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_home ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Home
       </a>
-      <a href="<%= posturacorretta_percorso_path(page: "inizia") %>"
+      <a href="<%= posturacorretta_percorso_path(page: "linee-guida-inizia") %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_percorso ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Percorso
       </a>
@@ -98,7 +98,7 @@
   <!-- Mobile Dropdown Menu Drawer (hidden on desktop) -->
   <div id="mobile-dropdown-menu" class="hidden space-y-1 border-t border-gray-200 bg-white px-4 py-3 shadow-sm xl:hidden">
     <a href="<%= posturacorretta_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_home ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "home" %><span>Home</span></a>
-    <a href="<%= posturacorretta_percorso_path(page: "inizia") %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_percorso ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "path" %><span>Percorso personalizzato</span></a>
+    <a href="<%= posturacorretta_percorso_path(page: "linee-guida-inizia") %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_percorso ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "path" %><span>Percorso personalizzato</span></a>
     <a href="<%= posturacorretta_accademia_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_accademia ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "academy" %><span>Accademia</span></a>
     <a href="<%= posturacorretta_metodiche_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "methods" %><span>Metodiche</span></a>
     <a href="<%= posturacorretta_contenuti_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_contenuti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "content" %><span>Contenuti</span></a>

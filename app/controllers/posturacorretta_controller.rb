@@ -15,6 +15,10 @@ class PosturacorrettaController < ApplicationController
   def percorso
     return redirect_to(posturacorretta_percorsi_sul_territorio_path) if params[:page] == "territorio"
 
+    legacy_page = { "inizia" => "linee-guida-inizia", "linee-guida" => "quale-percorso" }[params[:page]]
+    return redirect_to(posturacorretta_percorso_path(page: legacy_page), status: :moved_permanently) if legacy_page
+    return redirect_to(posturacorretta_percorso_path(page: "linee-guida-inizia"), status: :moved_permanently) if params[:page].blank?
+
     vision_anchor = {
       "ambiti" => "ambiti-aree",
       "aree" => "ambiti-aree",
@@ -39,7 +43,7 @@ class PosturacorrettaController < ApplicationController
     guidelines_item = find_aside_item(@aside_items, "programmi-ambiti")
     @guideline_page_slugs = guidelines_item&.fetch("children", [])&.filter_map { |item| item["slug"] } || []
 
-    requested_slug = params[:page].presence || "inizia"
+    requested_slug = params[:page].presence || "linee-guida-inizia"
     @current_item = find_aside_item(@aside_items, requested_slug) || find_aside_item(@aside_items, "inizia")
 
     if @current_item
@@ -67,12 +71,11 @@ class PosturacorrettaController < ApplicationController
       @territory_people = []
       @territory_places = []
     end
+    existing_slugs = @territory_people.map(&:slug)
+    @territory_catalog_people = posturacorretta_public_professionals.reject { |professional| existing_slugs.include?(professional.fetch("slug")) }
   end
   def professionisti
-    data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/professionisti/professionisti.yml"), permitted_classes: [], aliases: false) || {}
-    @professional_scopes = data.fetch("professional_scopes", {})
-    @professional_categories = data.fetch("professional_categories", {})
-    @professionals = data.fetch("professionals", [])
+    @professionals = posturacorretta_public_professionals
     redirect_to posturacorretta_percorso_path
   end
   def metodiche; end
@@ -86,6 +89,11 @@ class PosturacorrettaController < ApplicationController
     posturacorretta_domain = Domain.active.find_by(hostname: "posturacorretta.org")
     @content_directory_people = posturacorretta_domain ? Brands::Posturacorretta::DirectoryPerson.where(domain: posturacorretta_domain, visibility: "public").order(:name) : []
     @content_directory_places = posturacorretta_domain ? Brands::Posturacorretta::DirectoryPlace.where(domain: posturacorretta_domain, visibility: "public").order(:city, :name) : []
+    @content_people_filter_options = @content_directory_people.map { |person| [person.metadata.fetch("content_creator_key", person.slug), person.name] }
+    existing_keys = @content_people_filter_options.map(&:first)
+    @content_people_filter_options.concat(
+      posturacorretta_public_professionals.reject { |professional| existing_keys.include?(professional.fetch("slug")) }.map { |professional| [professional.fetch("slug"), professional.fetch("name")] }
+    )
   end
   def articolo
     @article = nil
@@ -203,6 +211,14 @@ class PosturacorrettaController < ApplicationController
   def load_catalog
     catalog_path = Rails.root.join("config/data/posturacorretta/contenuti/catalog.yml")
     @catalog = File.exist?(catalog_path) ? YAML.safe_load_file(catalog_path, permitted_classes: [], aliases: false, symbolize_names: true) || {} : {}
+  end
+
+  def posturacorretta_public_professionals
+    path = Rails.root.join("config/data/posturacorretta/posturacorretta_professionisti.yml")
+    return [] unless path.file?
+
+    data = YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
+    data.fetch("professionals", []).select { |professional| professional["public"] }
   end
 
   def load_projects

@@ -16,7 +16,7 @@
     ["Piattaforme", "piattaforma", @content_taxonomy.fetch("piattaforme", {}).map { |key, label| [key, label] }, true],
     ["Zone del corpo", "zona", @content_taxonomy.fetch("zone-corpo", {}).map { |key, label| [key, label] }, true],
     ["Livello di approfondimento", "livello", @content_taxonomy.fetch("livelli", {}).map { |key, label| [key, label] }, true],
-    ["Professionisti", "professionista", @content_directory_people.map { |person| [person.metadata.fetch("content_creator_key", person.slug), person.name] }, true],
+    ["Professionisti", "professionista", @content_people_filter_options, true],
     ["Luoghi", "luogo", @content_directory_places.map { |place| [place.slug, [place.name, place.city].compact.join(" · ")] }, true]
   ]
 %>

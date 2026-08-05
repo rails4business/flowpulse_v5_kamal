@@ -1,7 +1,7 @@
 <div class="-mb-px border-b border-slate-200" aria-label="Modalità di accesso al Percorso">
   <div class="flex gap-1" role="tablist">
     <% [
-      [posturacorretta_percorso_path(page: "linee-guida"), "Linee guida", controller.action_name == "percorso" && params[:page] == "linee-guida"],
+      [posturacorretta_percorso_path(page: "linee-guida-inizia"), "Linee guida", controller.action_name == "percorso"],
       [posturacorretta_percorsi_sul_territorio_path, "Sul territorio", controller.action_name == "percorsi_sul_territorio"]
     ].each do |href, label, selected| %>
       <a href="<%= href %>"

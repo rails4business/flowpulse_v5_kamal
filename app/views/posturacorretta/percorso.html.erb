@@ -57,7 +57,7 @@
                   <% if item["type"] == "group" %>
                     <p class="pt-2 pb-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-950"><%= item["title"] %></p>
                   <% else %>
-                    <a href="<%= posturacorretta_percorso_path(page: item['slug']) %>" class="block py-1.5 font-semibold <%= params[:page] == item['slug'] || (params[:page].blank? && item['slug'] == 'inizia') ? 'text-blue-700' : 'text-slate-900 hover:text-blue-700' %>">
+                    <a href="<%= posturacorretta_percorso_path(page: item['slug']) %>" class="block py-1.5 font-semibold <%= params[:page] == item['slug'] || (params[:page].blank? && item['slug'] == 'linee-guida-inizia') ? 'text-blue-700' : 'text-slate-900 hover:text-blue-700' %>">
                       <%= item["title"] %>
                     </a>
                   <% end %>
@@ -65,7 +65,7 @@
                   <% if item["children"].present? %>
                     <div class="-ml-1 mt-1 space-y-1 border-l border-slate-100 pl-3">
                       <% item["children"].each do |child| %>
-                        <% child_active = params[:page] == child["slug"] || (params[:page].blank? && child["slug"] == "inizia") %>
+                        <% child_active = params[:page] == child["slug"] || (params[:page].blank? && child["slug"] == "linee-guida-inizia") %>
                         <% adherence_link = child["slug"] == "professionisti-aderisci-linee-guida" %>
                         <% integrated_guide_link = child["slug"] == "professionisti-percorso-integrato" %>
                         <% child_classes = if adherence_link
@@ -167,7 +167,7 @@
                 <svg class="mx-auto h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                 <h3 class="font-bold text-lg mb-1">Contenuto non trovato</h3>
                 <p>La pagina richiesta non esiste o è stata rimossa.</p>
-                <a href="<%= posturacorretta_percorso_path(page: 'inizia') %>" class="mt-4 inline-block font-semibold underline">Torna all'inizio</a>
+                <a href="<%= posturacorretta_percorso_path(page: 'linee-guida-inizia') %>" class="mt-4 inline-block font-semibold underline">Torna all'inizio</a>
               </div>
             <% end %>
           </div>
