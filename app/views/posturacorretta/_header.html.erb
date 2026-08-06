@@ -33,10 +33,6 @@
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_percorso ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Percorso
       </a>
-      <a href="<%= posturacorretta_accademia_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_accademia ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
-        Accademia
-      </a>
       <a href="<%= posturacorretta_contenuti_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_contenuti ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Contenuti
@@ -45,18 +41,18 @@
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_metodiche ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Metodiche
       </a>
-      <a href="<%= posturacorretta_visione_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_visione ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
-        Visione
-      </a>
-      <a href="<%= posturacorretta_collabora_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_collabora ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
-        Collabora
-      </a>
       <a href="<%= posturacorretta_eventi_path %>"
          class="ml-1 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold shadow-sm transition <%= is_eventi ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:text-blue-700" %>">
         <%= render "posturacorretta/nav_icon", name: "events" %>
         Eventi
+      </a>
+      <a href="<%= posturacorretta_visione_path %>"
+         class="ml-3 border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_visione ? "border-blue-600 text-blue-700" : "border-transparent text-blue-600 hover:border-blue-500 hover:text-blue-800" %>">
+        Visione
+      </a>
+      <a href="<%= posturacorretta_accademia_path %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_accademia ? "border-blue-600 text-blue-700" : "border-transparent text-blue-600 hover:border-blue-500 hover:text-blue-800" %>">
+        Accademia
       </a>
     </nav>
 
@@ -99,12 +95,12 @@
   <div id="mobile-dropdown-menu" class="hidden space-y-1 border-t border-gray-200 bg-white px-4 py-3 shadow-sm xl:hidden">
     <a href="<%= posturacorretta_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_home ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "home" %><span>Home</span></a>
     <a href="<%= posturacorretta_percorso_path(page: "linee-guida-inizia") %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_percorso ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "path" %><span>Percorso personalizzato</span></a>
-    <a href="<%= posturacorretta_accademia_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_accademia ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "academy" %><span>Accademia</span></a>
-    <a href="<%= posturacorretta_metodiche_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "methods" %><span>Metodiche</span></a>
     <a href="<%= posturacorretta_contenuti_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_contenuti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "content" %><span>Contenuti</span></a>
-    <a href="<%= posturacorretta_visione_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_visione ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "book" %><span>Visione</span></a>
+    <a href="<%= posturacorretta_metodiche_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "methods" %><span>Metodiche</span></a>
     <a href="<%= posturacorretta_collabora_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_collabora ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "projects" %><span>Collabora</span></a>
-    <a href="<%= posturacorretta_eventi_path %>" class="mt-2 flex items-center gap-3 rounded-lg border px-4 py-2.5 text-sm font-bold transition <%= is_eventi ? "border-blue-600 bg-blue-600 text-white" : "border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100" %>"><%= render "posturacorretta/nav_icon", name: "events" %><span>Eventi e Community</span></a>
+    <a href="<%= posturacorretta_eventi_path %>" class="mt-2 flex items-center gap-3 rounded-lg border px-4 py-2.5 text-sm font-bold transition <%= is_eventi ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "events" %><span>Eventi e Community</span></a>
+    <a href="<%= posturacorretta_visione_path %>" class="mt-2 flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_visione ? "bg-blue-50 text-blue-700" : "text-blue-600 hover:bg-blue-50 hover:text-blue-800" %>"><%= render "posturacorretta/nav_icon", name: "book" %><span>Visione</span></a>
+    <a href="<%= posturacorretta_accademia_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_accademia ? "bg-blue-50 text-blue-700" : "text-blue-600 hover:bg-blue-50 hover:text-blue-800" %>"><%= render "posturacorretta/nav_icon", name: "academy" %><span>Accademia</span></a>
     <div class="my-2 border-t border-slate-200"></div>
     <% if authenticated? %>
       <%= link_to "Calendario", posturacorretta_impegno_path, class: "block rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>

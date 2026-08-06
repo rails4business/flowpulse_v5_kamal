@@ -223,6 +223,13 @@
                   <h3 class="text-lg font-bold text-slate-900"><%= teacher["name"] %></h3>
                   <p class="text-sm text-slate-500 mb-2"><%= teacher["city"] %> (<%= teacher["province"] %>)</p>
                   <p class="text-xs text-slate-600 line-clamp-2"><%= prof_desc %></p>
+                  <% if global_prof %>
+                    <div class="mt-3">
+                      <a href="<%= posturacorretta_professionista_path(global_prof['slug']) %>" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                        Vedi profilo completo &rarr;
+                      </a>
+                    </div>
+                  <% end %>
                 </div>
               </article>
             <% end %>

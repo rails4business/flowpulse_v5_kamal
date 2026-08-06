@@ -1,0 +1,299 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<%
+  # View model per i colori del ruolo
+  is_professional = @professional.fetch("roles", []).include?("professional")
+  is_educator = @professional.fetch("roles", []).include?("educator") || @professional.fetch("roles", []).include?("teacher")
+  
+  role_badge_class = if is_professional && is_educator
+                       "bg-slate-800 text-white"
+                     elsif is_professional
+                       "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                     elsif is_educator
+                       "bg-blue-100 text-blue-800 border border-blue-200"
+                     else
+                       "bg-slate-100 text-slate-800 border border-slate-200"
+                     end
+  
+  role_label = if is_professional && is_educator
+                 "Professionista Sanitario & Insegnante"
+               elsif is_professional
+                 "Professionista Sanitario"
+               elsif is_educator
+                 "Insegnante / Educatore"
+               else
+                 "Professionista"
+               end
+
+  # Logica Tabs
+  active_tab = params[:tab].presence_in(%w[info sedi servizi accademia contenuti metodiche eventi]) || "info"
+  
+  # Raggruppamento servizi per location
+  servizi_by_location = @percorsi.group_by { |p| p["location_slug"].presence || "generic" }
+%>
+
+<div class="bg-slate-50 min-h-screen pb-20 text-slate-900 antialiased">
+  <!-- Header Profilo -->
+  <header class="bg-white border-b border-slate-200 pt-16 pb-8">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8 flex flex-col md:flex-row items-center md:items-start gap-8">
+      <div class="shrink-0">
+        <% if @professional["image"].present? %>
+          <img src="<%= @professional["image"] %>" alt="<%= @professional["name"] %>" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-slate-100 shadow-sm" />
+        <% else %>
+          <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-slate-100 border-4 border-white shadow-sm flex items-center justify-center text-4xl font-bold text-slate-400">
+            <%= @professional["name"].to_s[0..1] %>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="text-center md:text-left flex-1">
+        <div class="inline-flex flex-wrap justify-center md:justify-start items-center gap-2 mb-3">
+          <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider <%= role_badge_class %>">
+            <%= role_label %>
+          </span>
+          <% if @professional["city"].present? %>
+            <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+              📍 <%= @professional["city"] %>
+            </span>
+          <% end %>
+        </div>
+        
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight"><%= @professional["name"] %></h1>
+        <p class="text-lg md:text-xl font-semibold text-blue-700 mb-4"><%= @professional["profession"] %></p>
+        
+        <% if @professional["website_url"].present? || @professional.fetch("social_links", {}).any? %>
+          <div class="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-3">
+            <% if @professional["website_url"].present? %>
+              <a href="<%= @professional["website_url"] %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-700 transition-colors shadow-sm">
+                🔗 Sito Web
+              </a>
+            <% end %>
+            <% @professional.fetch("social_links", {}).each do |network, url| %>
+              <a href="<%= url %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-700 transition-colors shadow-sm capitalize">
+                📱 <%= network %>
+              </a>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <!-- TAB NAVIGATION -->
+  <div class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8">
+      <nav class="flex space-x-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" aria-label="Tabs">
+        <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "info"), class: "relative py-4 px-3 text-sm font-bold border-b-2 whitespace-nowrap transition-colors #{active_tab == 'info' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'}" do %>
+          Info
+        <% end %>
+
+        <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "sedi"), class: "relative py-4 px-3 text-sm font-bold border-b-2 whitespace-nowrap transition-colors #{active_tab == 'sedi' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'}" do %>
+          Sedi
+        <% end %>
+
+        <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "servizi"), class: "relative py-4 px-3 text-sm font-bold border-b-2 whitespace-nowrap transition-colors #{active_tab == 'servizi' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'}" do %>
+          Servizi <span class="ml-1.5 rounded-full bg-slate-100 text-slate-600 px-2 py-0.5 text-[10px] font-black"><%= @percorsi.size %></span>
+        <% end %>
+
+        <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "contenuti"), class: "relative py-4 px-3 text-sm font-bold border-b-2 whitespace-nowrap transition-colors #{active_tab == 'contenuti' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'}" do %>
+          Contenuti <span class="ml-1.5 rounded-full bg-slate-100 text-slate-600 px-2 py-0.5 text-[10px] font-black"><%= @contenuti.size %></span>
+        <% end %>
+
+        <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "metodiche"), class: "relative py-4 px-3 text-sm font-bold border-b-2 whitespace-nowrap transition-colors #{active_tab == 'metodiche' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'}" do %>
+          Metodiche
+        <% end %>
+
+        <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "eventi"), class: "relative py-4 px-3 text-sm font-bold border-b-2 whitespace-nowrap transition-colors #{active_tab == 'eventi' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'}" do %>
+          Eventi
+        <% end %>
+
+        <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "accademia"), class: "relative py-4 px-4 text-sm font-black border-b-2 whitespace-nowrap transition-colors ml-2 #{active_tab == 'accademia' ? 'border-blue-600 text-blue-700 bg-blue-50/50' : 'border-transparent text-blue-600 hover:text-blue-800 hover:bg-blue-50'}" do %>
+          Accademia
+        <% end %>
+
+
+      </nav>
+    </div>
+  </div>
+
+  <!-- Contenuto Tabs -->
+  <main class="max-w-4xl mx-auto px-5 lg:px-8 mt-10">
+    
+    <%# --- TAB 1: INFO & SEDI --- %>
+    <div id="tab-info" <%= "hidden" unless active_tab == "info" %> class="space-y-10">
+      <section>
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Classificazione e Ambito</h2>
+        <div class="flex flex-wrap gap-4">
+          <% if @professional["paradigma"].present? %>
+            <div class="rounded-xl border border-blue-200 bg-blue-50 p-4 min-w-[200px]">
+              <p class="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-1">Paradigma</p>
+              <p class="font-bold text-blue-900"><%= @professional["paradigma"] %></p>
+            </div>
+          <% end %>
+          <% if @professional["area"].present? %>
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 min-w-[200px]">
+              <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Area</p>
+              <p class="font-bold text-emerald-900"><%= @professional["area"] %></p>
+            </div>
+          <% end %>
+          <% if @professional["ambito"].present? %>
+            <div class="rounded-xl border border-violet-200 bg-violet-50 p-4 min-w-[200px]">
+              <p class="text-[10px] font-black uppercase tracking-widest text-violet-500 mb-1">Ambito</p>
+              <p class="font-bold text-violet-900"><%= @professional["ambito"] %></p>
+            </div>
+          <% end %>
+          
+          <% if @professional["paradigma"].blank? && @professional["area"].blank? && @professional["ambito"].blank? %>
+            <p class="text-sm text-slate-500 italic bg-white p-4 rounded-xl border border-slate-200 w-full">I dati di classificazione (Area, Ambito, Paradigma) non sono ancora stati inseriti nell'anagrafica.</p>
+          <% end %>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Biografia</h2>
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm">
+          <% if @professional["description"].present? %>
+            <%= simple_format @professional["description"] %>
+          <% else %>
+            <p class="italic">Nessuna biografia disponibile.</p>
+          <% end %>
+        </div>
+      </section>
+
+    </div>
+
+    <%# --- TAB: SEDI --- %>
+    <div id="tab-sedi" <%= "hidden" unless active_tab == "sedi" %> class="space-y-10">
+      <section>
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Sedi in cui opera</h2>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <p class="text-sm text-slate-500 italic">Le sedi definitive (Locations) verranno elencate qui quando il database delle sedi sarà completato.</p>
+          <!-- Futuro: render list of locations where professional_slug == @professional["slug"] -->
+        </div>
+      </section>
+    </div>
+
+    <%# --- TAB 2: SERVIZI E PROGRAMMI --- %>
+    <div id="tab-servizi" <%= "hidden" unless active_tab == "servizi" %> class="space-y-10">
+      <% if @percorsi.empty? %>
+        <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+          <p class="text-slate-500 font-medium">Nessun servizio o programma associato a questo professionista.</p>
+        </div>
+      <% else %>
+        <% servizi_by_location.each do |loc_slug, servizi| %>
+          <section class="mb-10 last:mb-0">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-200 pb-2">
+              <span class="text-xl">📍</span> 
+              <%= loc_slug == "generic" ? "Servizi generali / Non associati a una sede specifica" : "Presso la sede: #{loc_slug.titleize}" %>
+            </h3>
+            
+            <div class="grid sm:grid-cols-2 gap-5">
+              <% servizi.each do |servizio| %>
+                <article class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col hover:border-blue-200 transition-colors group">
+                  <div class="mb-4">
+                    <span class="inline-block px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-wider mb-3">
+                      <%= servizio["duration_label"] || "Servizio" %>
+                    </span>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-700 transition-colors"><%= servizio["title"] %></h4>
+                    <p class="text-sm text-slate-600 leading-relaxed"><%= servizio["description"] %></p>
+                  </div>
+                  
+                  <% if servizio["programs"].present? %>
+                    <div class="mb-4">
+                      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Opzioni disponibili:</p>
+                      <div class="flex flex-wrap gap-2">
+                        <% servizio["programs"].each do |program| %>
+                          <span class="inline-flex items-center gap-1 rounded-full bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700">
+                            <%= program["title"] %>
+                            <% if program["visits"].present? %>
+                              <span class="text-[10px] text-slate-500 font-normal border-l border-slate-300 pl-1 ml-1"><%= program["visits"] %> visite</span>
+                            <% end %>
+                          </span>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <% if servizio["includes"].present? %>
+                    <div class="mt-auto pt-4 border-t border-slate-100">
+                      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Il programma include:</p>
+                      <ul class="space-y-2">
+                        <% servizio["includes"].each do |item| %>
+                          <li class="flex items-start gap-2 text-xs font-medium text-slate-700">
+                            <span class="text-emerald-500 mt-0.5">✓</span>
+                            <span><%= item %></span>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </div>
+                  <% end %>
+                </article>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# --- TAB 3: ACCADEMIA --- %>
+    <div id="tab-accademia" <%= "hidden" unless active_tab == "accademia" %> class="space-y-6">
+      <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+        <p class="text-slate-500 font-medium">L'integrazione con i moduli dell'Accademia (Abilitazioni) verrà mostrata qui.</p>
+        <p class="text-xs text-slate-400 mt-2">Dati in fase di collegamento.</p>
+      </div>
+    </div>
+
+    <%# --- TAB 4: CONTENUTI --- %>
+    <div id="tab-contenuti" <%= "hidden" unless active_tab == "contenuti" %> class="space-y-6">
+      <% if @contenuti.empty? %>
+        <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+          <p class="text-slate-500 font-medium">Nessun contenuto multimediale associato.</p>
+        </div>
+      <% else %>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <% @contenuti.each do |collegamento| %>
+            <% if collegamento["platform"] == "youtube" %>
+              <% collegamento.fetch("content_slugs", []).each do |video_id| %>
+                <a href="https://youtube.com/watch?v=<%= video_id %>" target="_blank" rel="noopener" class="group block bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:border-blue-300 hover:shadow-md transition-all duration-300">
+                  <div class="aspect-video bg-slate-100 relative">
+                    <img src="https://img.youtube.com/vi/<%= video_id %>/mqdefault.jpg" alt="Video" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div class="absolute inset-0 bg-slate-900/10 flex items-center justify-center group-hover:bg-slate-900/20 transition-colors">
+                      <div class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform">
+                        ▶
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-4">
+                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-wider mb-1"><%= collegamento["role"] %></p>
+                    <p class="text-sm font-bold text-slate-900">Guarda l'intervento su YouTube &rarr;</p>
+                  </div>
+                </a>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <%# --- TAB 5: METODICHE --- %>
+    <div id="tab-metodiche" <%= "hidden" unless active_tab == "metodiche" %> class="space-y-6">
+      <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+        <p class="text-slate-500 font-medium">Le metodiche studiate e quelle di cui è referente appariranno qui.</p>
+      </div>
+    </div>
+
+    <%# --- TAB 6: EVENTI --- %>
+    <div id="tab-eventi" <%= "hidden" unless active_tab == "eventi" %> class="space-y-6">
+      <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+        <p class="text-slate-500 font-medium">Il calendario degli eventi passati e futuri apparirà qui.</p>
+      </div>
+    </div>
+
+
+    
+  </main>
+</div>
+
+<%= render "posturacorretta/footer" %>

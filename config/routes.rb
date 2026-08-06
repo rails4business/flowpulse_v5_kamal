@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   get "posturacorretta/metodiche" => "brands/posturacorretta#metodiche", as: :posturacorretta_metodiche
   get "posturacorretta/metodiche/:slug" => "brands/posturacorretta#metodica", as: :posturacorretta_metodica
   get "posturacorretta/professionisti" => "brands/posturacorretta#professionisti", as: :posturacorretta_professionisti
+  get "posturacorretta/professionisti/:slug" => "brands/posturacorretta#professionista", as: :posturacorretta_professionista
   get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo
   get "posturacorretta/eventi" => "brands/posturacorretta#eventi", as: :posturacorretta_eventi

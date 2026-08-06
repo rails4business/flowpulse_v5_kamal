@@ -5,6 +5,7 @@ class PosturacorrettaController < ApplicationController
   before_action :load_methodologies, only: %i[metodiche metodica]
   before_action :load_projects, only: %i[progetti progetto]
   before_action :load_catalog, only: %i[contenuti articolo]
+  helper_method :posturacorretta_public_professionals
 
   def accademia; end
   def accademia_recensioni; end
@@ -56,18 +57,13 @@ class PosturacorrettaController < ApplicationController
     end
   end
   def percorsi_sul_territorio
-    @territory_tab = params[:tab].presence_in(%w[paths people places]) || "paths"
+    @territory_tab = params[:tab].presence_in(%w[people places]) || "people"
     @territory_domain = Domain.active.find_by(hostname: "posturacorretta.org")
 
     if @territory_domain
-      @territorial_paths = Brands::Posturacorretta::TerritorialPath
-        .where(domain: @territory_domain, status: "available")
-        .includes(:responsible_person, :place, :people)
-        .order(:title)
       @territory_people = Brands::Posturacorretta::DirectoryPerson.where(domain: @territory_domain, visibility: "public").order(:name)
       @territory_places = Brands::Posturacorretta::DirectoryPlace.where(domain: @territory_domain, visibility: "public").order(:city, :name)
     else
-      @territorial_paths = []
       @territory_people = []
       @territory_places = []
     end
@@ -78,6 +74,30 @@ class PosturacorrettaController < ApplicationController
     @professionals = posturacorretta_public_professionals
     redirect_to posturacorretta_percorso_path
   end
+  
+  def professionista
+    @professional = posturacorretta_public_professionals.find { |p| p["slug"] == params[:slug] }
+    return redirect_to posturacorretta_path, alert: "Professionista non trovato" unless @professional
+
+    # Carica percorsi
+    percorsi_path = Rails.root.join("config/data/posturacorretta/collegamenti/servizi.yml")
+    @percorsi = []
+    if percorsi_path.file?
+      percorsi_data = YAML.safe_load_file(percorsi_path, permitted_classes: [], aliases: false) || {}
+      @percorsi = percorsi_data.fetch("paths", []).select { |p| p["professional_slug"] == params[:slug] }
+    end
+
+    # Carica contenuti
+    contenuti_path = Rails.root.join("config/data/posturacorretta/collegamenti/contenuti.yml")
+    @contenuti = []
+    if contenuti_path.file?
+      contenuti_data = YAML.safe_load_file(contenuti_path, permitted_classes: [], aliases: false) || {}
+      @contenuti = contenuti_data.fetch("content_connections", []).select { |c| c["professional_slug"] == params[:slug] }
+    end
+    
+    # Carica accademia e altri quando ci saranno i file
+  end
+
   def metodiche; end
   def metodica
     @methodology = @methodologies_by_slug[params.fetch(:slug)]
