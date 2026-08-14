@@ -3,26 +3,46 @@
 <% end %>
 
 <div id="top" class="min-h-screen bg-white text-slate-900 antialiased">
-  <main class="px-5 py-12 md:py-20">
-    <div class="mx-auto w-full max-w-6xl">
+  <main class="pb-16">
+    <div class="mx-auto mt-8 max-w-[1200px] px-6">
+      <section id="territorio" class="mx-auto max-w-[800px] scroll-mt-24">
+        <div class="mb-8 border-b border-slate-200">
+          <nav class="flex gap-1 overflow-x-auto" aria-label="Accesso al percorso">
+            <%= link_to "Inizia", posturacorretta_percorso_path,
+                  class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-blue-300 hover:text-blue-700" %>
+            <%= link_to "Professionisti e servizi", posturacorretta_percorsi_sul_territorio_path(tab: "people", source: params[:source]),
+                  class: "shrink-0 border-b-2 border-blue-600 px-4 py-3 text-sm font-bold text-blue-700",
+                  aria: { current: "page" } %>
+            <%= link_to "Come funziona", posturacorretta_percorso_come_funziona_path,
+                  class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-blue-300 hover:text-blue-700" %>
+            <% if Current.user&.superadmin_user? || Current.user&.tutor_user? %>
+              <%= link_to "Linee guida", posturacorretta_path(sezione: "percorso"),
+                    class: "shrink-0 border-b-2 border-dashed border-amber-500 px-4 py-3 text-sm font-bold text-amber-700 transition hover:bg-amber-50" %>
+            <% end %>
+          </nav>
+        </div>
 
-
-      <section id="territorio" class="max-w-4xl scroll-mt-24">
-        <h1 class="text-3xl font-black tracking-tight text-slate-950 md:text-5xl">Percorsi sul territorio</h1>
+        <div class="max-w-2xl">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Il tuo percorso</p>
+          <h1 class="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl"><%= @territory_tab == "people" ? "Scopri i professionisti" : "Centri e luoghi" %></h1>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600"><%= @territory_tab == "people" ? "Puoi conoscere i professionisti della rete e, quando disponibile, partire direttamente dai servizi e dai programmi che propongono." : "Trova centri, studi, associazioni e luoghi naturali collegati alle attività di PosturaCorretta." %></p>
+        </div>
 
         <div class="mt-8 -mb-px border-b border-slate-200">
           <nav class="flex items-center gap-1" aria-label="Catalogo territoriale">
-            <a href="<%= posturacorretta_percorso_come_funziona_path %>" class="mr-4 flex items-center gap-1 px-2 py-2 text-sm font-semibold text-slate-500 hover:text-blue-700 transition-colors">
-              <span aria-hidden="true">&larr;</span> Torna alle Linee guida
-            </a>
-
-            <% [["people", "Professionisti"], ["places", "Luoghi"]].each do |tab, label| %>
-              <%= link_to label, posturacorretta_percorsi_sul_territorio_path(tab: tab), class: "border-b-2 px-4 py-2 text-sm font-bold transition-colors #{@territory_tab == tab ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-600 hover:text-slate-900'}" %>
+            <% [["people", "Professionisti"], ["places", "Centri e luoghi"]].each do |tab, label| %>
+              <%= link_to label, posturacorretta_percorsi_sul_territorio_path(tab: tab, source: params[:source]), class: "border-b-2 px-4 py-2 text-sm font-bold transition-colors #{@territory_tab == tab ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-600 hover:text-slate-900'}" %>
             <% end %>
           </nav>
         </div>
 
         <% if @territory_tab == "people" %>
+          <nav class="mt-5 flex gap-2 overflow-x-auto pb-1" aria-label="Filtra i professionisti">
+            <% [["all", "Tutti"], ["percorso", "Percorso"], ["accademia", "Accademia"], ["contenuti", "Contenuti"], ["eventi", "Eventi"], ["metodiche", "Metodiche"]].each do |area, label| %>
+              <%= link_to label, posturacorretta_percorsi_sul_territorio_path(tab: "people", area: area, source: params[:source]), class: "shrink-0 rounded-full border px-3 py-1.5 text-xs font-bold transition #{@professional_area == area ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700'}" %>
+            <% end %>
+          </nav>
+
           <div class="mt-8 grid gap-4 md:grid-cols-2">
             <% yaml_slugs = posturacorretta_public_professionals.map { |p| p["slug"] } %>
             <% @territory_people.each do |person| %>
@@ -35,8 +55,8 @@
                 
                 <% if yaml_slugs.include?(person.slug) %>
                   <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
-                    <a href="<%= posturacorretta_professionista_path(person.slug) %>" class="inline-flex items-center gap-1 text-sm font-bold text-blue-700 hover:text-blue-900 transition-colors">
-                      Vedi Profilo <span>→</span>
+                    <a href="<%= posturacorretta_professionista_path(person.slug, tab: params[:source] == 'path' ? 'servizi' : 'info') %>" class="inline-flex items-center gap-1 text-sm font-bold text-blue-700 hover:text-blue-900 transition-colors">
+                      <%= params[:source] == "path" ? "Vedi servizi" : "Vedi profilo" %> <span>→</span>
                     </a>
                   </div>
                 <% end %>
@@ -48,11 +68,15 @@
                 <h2 class="mt-2 text-xl font-black text-slate-950"><%= person["name"] %></h2>
                 <p class="mt-2 text-sm font-semibold text-slate-700"><%= person["profession"] %></p>
                 <p class="mt-3 text-sm leading-6 text-slate-600"><%= person["description"] %></p>
-                <div class="mt-4 flex flex-wrap gap-2"><% Array(person["roles"]).each do |role| %><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"><%= role.humanize %></span><% end %></div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <% (@professional_sections_by_slug.fetch(person["slug"], []) + Array(person["roles"])).uniq.each do |role| %>
+                    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"><%= role.humanize %></span>
+                  <% end %>
+                </div>
                 
                 <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
-                  <a href="<%= posturacorretta_professionista_path(person["slug"]) %>" class="inline-flex items-center gap-1 text-sm font-bold text-blue-700 hover:text-blue-900 transition-colors">
-                    Vedi Profilo <span>→</span>
+                  <a href="<%= posturacorretta_professionista_path(person["slug"], tab: params[:source] == 'path' ? 'servizi' : 'info') %>" class="inline-flex items-center gap-1 text-sm font-bold text-blue-700 hover:text-blue-900 transition-colors">
+                    <%= params[:source] == "path" ? "Vedi servizi" : "Vedi profilo" %> <span>→</span>
                   </a>
                   
                   <% if person["website_url"].present? || person.dig("social_links", "facebook").present? %>
@@ -70,10 +94,18 @@
             <% @territory_places.each do |place| %>
               <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= place.city.presence || "PosturaCorretta" %></p><h2 class="mt-2 text-xl font-black text-slate-950"><%= place.name %></h2><p class="mt-3 text-sm leading-6 text-slate-600"><%= place.summary %></p><p class="mt-4 text-sm font-medium text-slate-700"><%= place.address %></p></article>
             <% end %>
+            <% @territory_catalog_places.each do |place| %>
+              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= place["type"] == "Eventi" ? "Luogo ed esperienze" : "Centro e struttura" %></p>
+                <h2 class="mt-2 text-xl font-black text-slate-950"><%= place["name"] %></h2>
+                <p class="mt-3 text-sm font-semibold text-slate-700"><%= place["city"] %></p>
+                <p class="mt-2 text-sm leading-6 text-slate-600"><%= place["type"] %></p>
+              </article>
+            <% end %>
           </div>
         <% end %>
 
-        <% visible_entries = @territory_tab == "people" ? (@territory_people.to_a + @territory_catalog_people) : @territory_places %>
+        <% visible_entries = @territory_tab == "people" ? (@territory_people.to_a + @territory_catalog_people) : (@territory_places.to_a + @territory_catalog_places) %>
         <% if visible_entries.empty? %><p class="mt-8 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">Le informazioni saranno aggiunte progressivamente.</p><% end %>
       </section>
     </div>

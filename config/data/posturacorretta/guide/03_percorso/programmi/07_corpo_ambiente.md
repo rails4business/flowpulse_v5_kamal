@@ -1,6 +1,6 @@
-# Corpo e ambiente
+# Connessione
 
-Questo tipo di programma serve al professionista (insegnante, educatore, organizzatore) per strutturare percorsi che esplorino la profonda interazione fra il corpo del cliente e la natura, il territorio, le stagioni, la cultura locale e lo stile di vita.
+Questa linea guida aiuta il tutor a orientare le richieste legate alla relazione tra persona, altre persone, natura e territorio. Può coinvolgere insegnanti, educatori, organizzatori e professionisti per costruire percorsi che esplorino il rapporto fra corpo, ambiente, stagioni, cultura locale e stile di vita.
 
 ## 1. Osservazione e Mappatura
 

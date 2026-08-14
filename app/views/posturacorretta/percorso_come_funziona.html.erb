@@ -1,1 +1,58 @@
-<%= render template: "posturacorretta/percorso" %>
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<div class="min-h-screen bg-white text-slate-900 antialiased">
+  <main class="px-5 py-12 md:py-16">
+    <div class="mx-auto max-w-4xl">
+      <div class="border-b border-slate-200">
+        <nav class="flex gap-1 overflow-x-auto" aria-label="Accesso al percorso">
+          <%= link_to "Inizia", posturacorretta_percorso_path, class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-blue-300 hover:text-blue-700" %>
+          <%= link_to "Professionisti e servizi", posturacorretta_percorsi_sul_territorio_path(tab: "people", source: "path"), class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-blue-300 hover:text-blue-700" %>
+          <%= link_to "Come funziona", posturacorretta_percorso_come_funziona_path, class: "shrink-0 border-b-2 border-blue-600 px-4 py-3 text-sm font-bold text-blue-700", aria: { current: "page" } %>
+          <% if Current.user&.superadmin_user? || Current.user&.tutor_user? %>
+            <%= link_to "Linee guida", posturacorretta_path(sezione: "percorso"), class: "shrink-0 border-b-2 border-dashed border-amber-500 px-4 py-3 text-sm font-bold text-amber-700 transition hover:bg-amber-50" %>
+          <% end %>
+        </nav>
+      </div>
+
+      <article class="py-10 sm:py-14">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Il tuo percorso</p>
+        <h1 class="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">Dalla richiesta a una proposta concreta</h1>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Il percorso non viene scelto automaticamente da un questionario. Parte dall’ascolto della persona e viene costruito insieme, tenendo conto degli obiettivi, del luogo e delle competenze professionali disponibili.</p>
+
+        <ol class="mt-10 grid gap-4 sm:grid-cols-2">
+          <% [
+            ["1", "Invia la richiesta", "Descrivi brevemente il problema o l’obiettivo e chiedi di essere ricontattato."],
+            ["2", "Parla con il tutor", "Il tutor approfondisce situazione, durata, eventuali valutazioni già fatte, priorità e disponibilità nel tuo territorio."],
+            ["3", "Ricevi una proposta", "Viene preparata una prima bozza con programma, passaggi, professionisti o attività educative utili e relativo preventivo."],
+            ["4", "Conferma e inizia", "Solo dopo la tua conferma vengono attivati il percorso e gli strumenti necessari per seguirlo."]
+          ].each do |number, title, description| %>
+            <li class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <span class="flex size-8 items-center justify-center rounded-full bg-blue-50 text-sm font-black text-blue-700"><%= number %></span>
+              <h2 class="mt-4 text-lg font-bold text-slate-950"><%= title %></h2>
+              <p class="mt-2 text-sm leading-6 text-slate-600"><%= description %></p>
+            </li>
+          <% end %>
+        </ol>
+
+        <section class="mt-10 rounded-2xl bg-slate-50 p-6 sm:p-8">
+          <h2 class="text-xl font-bold text-slate-950">La proposta può prendere strade diverse</h2>
+          <div class="mt-5 grid gap-4 text-sm leading-6 text-slate-600 sm:grid-cols-2">
+            <p><strong class="text-slate-900">Programma tematico:</strong> partire da Stop al dolore, Prevenzione, Performance, Espressione, Consapevolezza o Connessione.</p>
+            <p><strong class="text-slate-900">Percorso educativo:</strong> conoscere meglio il corpo e comprendere con maggiore consapevolezza le scelte del percorso.</p>
+            <p><strong class="text-slate-900">Servizio disponibile:</strong> scegliere un programma già offerto da un professionista della rete.</p>
+            <p><strong class="text-slate-900">Professionista vicino a te:</strong> cercare una figura adatta nel tuo territorio e valutare se coinvolgerla nel percorso.</p>
+          </div>
+        </section>
+
+        <div class="mt-10 flex flex-wrap gap-3">
+          <%= link_to "Inizia il tuo percorso", posturacorretta_percorso_path, class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700" %>
+          <%= link_to "Scopri professionisti e servizi", posturacorretta_percorsi_sul_territorio_path(tab: "people", source: "path"), class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700" %>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <%= render "posturacorretta/footer" %>
+</div>

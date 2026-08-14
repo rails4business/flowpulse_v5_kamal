@@ -30,8 +30,15 @@ module Brands
     def load_home_index
       data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/guide/indice.yml"), permitted_classes: [], aliases: false) || {}
       @guide_editor = Current.user&.superadmin_user? || false
+      @guide_tutor = Current.user&.tutor_user? || false
       all_sections = data.fetch("sections", []).map { |section| decorate_guide_section(section) }
-      @home_sections = @guide_editor ? all_sections : published_sections(all_sections)
+      @home_sections = if @guide_editor
+        all_sections
+      elsif @guide_tutor
+        tutor_accessible_sections(all_sections)
+      else
+        published_sections(all_sections)
+      end
       @chapter_items = @home_sections.flat_map { |section| flatten_guide_items(section.fetch("items", [])) }
       @chapters = @chapter_items.map { |item| [item.fetch("slug"), item.fetch("title")] }
     end
@@ -58,6 +65,17 @@ module Brands
         next unless section["effective_status"] == "published"
 
         section.merge("items" => published_guide_items(section.fetch("items", [])))
+      end
+    end
+
+    def tutor_accessible_sections(sections)
+      sections.filter_map do |section|
+        public_items = section["effective_status"] == "published" ? published_guide_items(section.fetch("items", [])) : []
+        tutor_items = section.fetch("items", []).select { |item| item["visibility"] == "internal_tutor" }
+        visible_items = (public_items + tutor_items).uniq { |item| [item["type"], item["title"], item["slug"]] }
+        next if visible_items.empty?
+
+        section.merge("items" => visible_items)
       end
     end
 

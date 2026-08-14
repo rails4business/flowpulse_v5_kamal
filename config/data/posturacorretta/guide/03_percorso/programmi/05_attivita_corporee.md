@@ -1,6 +1,6 @@
-# Attività corporee
+# Espressione
 
-Questo tipo di programma è dedicato agli insegnanti e professionisti che utilizzano il movimento, l'espressione e la percezione per promuovere l'educazione e la conoscenza del corpo. Serve a strutturare proposte guidate progressive che rispondano in modo sicuro alle esigenze dei partecipanti.
+Questa linea guida aiuta il tutor a orientare le richieste nelle quali la persona desidera usare corpo, movimento, creatività o pratica espressiva per conoscersi e comunicare meglio. Può coinvolgere insegnanti e professionisti che utilizzano movimento, espressione e percezione, attraverso proposte progressive e coerenti con le esigenze della persona.
 
 ## 1. Mappatura e Progettazione
 

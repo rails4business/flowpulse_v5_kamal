@@ -31,11 +31,15 @@ class PosturacorrettaController < ApplicationController
   end
 
   def percorso_come_funziona
-    legacy_slug = params[:page].presence || "linee-guida-inizia"
-    redirect_to posturacorretta_path(sezione: "percorso", capitolo: legacy_slug), status: :moved_permanently
+    if params[:page].present?
+      return redirect_to posturacorretta_path(sezione: "percorso", capitolo: params[:page]), status: :moved_permanently
+    end
+
+    render "posturacorretta/percorso_come_funziona"
   end
   def percorsi_sul_territorio
     @territory_tab = params[:tab].presence_in(%w[people places]) || "people"
+    @professional_area = params[:area].presence_in(%w[all percorso accademia contenuti eventi metodiche]) || "all"
     @territory_domain = Domain.active.find_by(hostname: "posturacorretta.org")
 
     if @territory_domain
@@ -45,8 +49,20 @@ class PosturacorrettaController < ApplicationController
       @territory_people = []
       @territory_places = []
     end
+    @professional_sections_by_slug = posturacorretta_professional_sections
     existing_slugs = @territory_people.map(&:slug)
     @territory_catalog_people = posturacorretta_public_professionals.reject { |professional| existing_slugs.include?(professional.fetch("slug")) }
+
+    if @professional_area != "all"
+      @territory_people = @territory_people.select { |person| Array(person.listing_sections).include?(@professional_area) }
+      @territory_catalog_people = @territory_catalog_people.select do |professional|
+        @professional_sections_by_slug.fetch(professional.fetch("slug"), []).include?(@professional_area)
+      end
+    end
+
+    centers_path = Rails.root.join("config/data/posturacorretta/accademia/centers.yml")
+    centers_data = centers_path.file? ? YAML.safe_load_file(centers_path, permitted_classes: [], aliases: false) || {} : {}
+    @territory_catalog_places = centers_data.fetch("centers", {}).values.reject { |place| place["city"] == "Online" }
   end
   def professionisti
     @professionals = posturacorretta_public_professionals
@@ -216,6 +232,40 @@ class PosturacorrettaController < ApplicationController
   end
 
   private
+
+  def posturacorretta_professional_sections
+    sections = Hash.new { |hash, slug| hash[slug] = [] }
+    append_professional_section(sections, "config/data/posturacorretta/collegamenti/servizi.yml", "paths", "professional_slug", "percorso")
+    append_professional_section(sections, "config/data/posturacorretta/collegamenti/contenuti.yml", "content_connections", "professional_slug", "contenuti")
+
+    events_path = Rails.root.join("config/data/posturacorretta/eventi/eventi.yml")
+    if events_path.file?
+      events = YAML.safe_load_file(events_path, permitted_classes: [], aliases: false).to_h.fetch("events", [])
+      events.flat_map { |event| Array(event["professional_slugs"]) }.each { |slug| sections[slug] << "eventi" }
+    end
+
+    methodologies_path = Rails.root.join("config/data/posturacorretta/metodiche/professionisti.yml")
+    if methodologies_path.file?
+      professionals = YAML.safe_load_file(methodologies_path, permitted_classes: [], aliases: false).to_h.fetch("professionals", [])
+      professionals.each { |professional| sections[professional["slug"]] << "metodiche" }
+    end
+
+    teachers_path = Rails.root.join("config/data/posturacorretta/accademia/teachers.yml")
+    if teachers_path.file?
+      teachers = YAML.safe_load_file(teachers_path, permitted_classes: [], aliases: false).to_h.fetch("teachers", {})
+      teachers.each_key { |slug| sections[slug] << "accademia" }
+    end
+
+    sections.transform_values(&:uniq)
+  end
+
+  def append_professional_section(sections, relative_path, collection_key, slug_key, section)
+    path = Rails.root.join(relative_path)
+    return unless path.file?
+
+    entries = YAML.safe_load_file(path, permitted_classes: [], aliases: false).to_h.fetch(collection_key, [])
+    entries.each { |entry| sections[entry[slug_key]] << section if entry[slug_key].present? }
+  end
 
   def load_owned_books
     Dir.glob(Rails.root.join("config/data/books/*/book.yml")).sort.filter_map do |path|

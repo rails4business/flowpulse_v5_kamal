@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +14,7 @@
             --verde-light: #F0F7F2;
             --blu-visione: #1B3B6F;
             --blu-light: #EEF4FB;
-            
+
             /* Tonalità Naturali "Giardino" */
             --bg-terra: #FAF8F5;
             --bg-card: #FFFFFF;
@@ -22,12 +23,12 @@
             --bordo: #E2DDD5;
             --oro-accento: #C5A059;
             --oro-light: #FDFBF7;
-            
+
             --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-            --shadow-md: 0 6px 20px rgba(0,0,0,0.06);
-            --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
         }
 
         * {
@@ -80,7 +81,7 @@
             color: white;
             font-weight: bold;
             font-size: 18px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
 
         .brand-title {
@@ -151,8 +152,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* TYPOGRAPHY COMPONENTS */
@@ -175,14 +183,47 @@
             margin-bottom: 12px;
         }
 
-        .badge-rosso { background-color: var(--rosso-light); color: var(--rosso-patologia); }
-        .badge-verde { background-color: var(--verde-light); color: var(--verde-benessere); }
-        .badge-blu { background-color: var(--blu-light); color: var(--blu-visione); }
-        .badge-oro { background-color: var(--oro-light); color: var(--oro-accento); border: 1px solid var(--bordo); }
+        .badge-rosso {
+            background-color: var(--rosso-light);
+            color: var(--rosso-patologia);
+        }
 
-        h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 12px; color: #1E2421; }
-        h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 12px; }
-        p.lead { font-size: 16px; color: var(--testo-mutato); line-height: 1.6; }
+        .badge-verde {
+            background-color: var(--verde-light);
+            color: var(--verde-benessere);
+        }
+
+        .badge-blu {
+            background-color: var(--blu-light);
+            color: var(--blu-visione);
+        }
+
+        .badge-oro {
+            background-color: var(--oro-light);
+            color: var(--oro-accento);
+            border: 1px solid var(--bordo);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            margin-bottom: 12px;
+            color: #1E2421;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+
+        p.lead {
+            font-size: 16px;
+            color: var(--testo-mutato);
+            line-height: 1.6;
+        }
 
         /* TAB 1: HOME (3 HORIZONTAL ENTRANCES) */
         .entrance-grid {
@@ -250,12 +291,32 @@
             transition: var(--transition);
         }
 
-        .btn-rosso { background-color: var(--rosso-patologia); color: white; }
-        .btn-rosso:hover { background-color: #721f1f; }
-        .btn-verde { background-color: var(--verde-benessere); color: white; }
-        .btn-verde:hover { background-color: #21472e; }
-        .btn-blu { background-color: var(--blu-visione); color: white; }
-        .btn-blu:hover { background-color: #142d54; }
+        .btn-rosso {
+            background-color: var(--rosso-patologia);
+            color: white;
+        }
+
+        .btn-rosso:hover {
+            background-color: #721f1f;
+        }
+
+        .btn-verde {
+            background-color: var(--verde-benessere);
+            color: white;
+        }
+
+        .btn-verde:hover {
+            background-color: #21472e;
+        }
+
+        .btn-blu {
+            background-color: var(--blu-visione);
+            color: white;
+        }
+
+        .btn-blu:hover {
+            background-color: #142d54;
+        }
 
         /* SEZIONE FILOSOFIA COLORI */
         .philosophy-banner {
@@ -279,12 +340,30 @@
             border: 1px solid transparent;
         }
 
-        .color-box.red { background-color: var(--rosso-light); border-color: #F5D0D0; }
-        .color-box.green { background-color: var(--verde-light); border-color: #D2E7D8; }
-        .color-box.blue { background-color: var(--blu-light); border-color: #D3E2F4; }
+        .color-box.red {
+            background-color: var(--rosso-light);
+            border-color: #F5D0D0;
+        }
 
-        .color-box h4 { font-size: 15px; margin-bottom: 6px; }
-        .color-box p { font-size: 13px; color: var(--testo-mutato); }
+        .color-box.green {
+            background-color: var(--verde-light);
+            border-color: #D2E7D8;
+        }
+
+        .color-box.blue {
+            background-color: var(--blu-light);
+            border-color: #D3E2F4;
+        }
+
+        .color-box h4 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .color-box p {
+            font-size: 13px;
+            color: var(--testo-mutato);
+        }
 
         /* TAB 2: PERCORSO (ORIENTAMENTO ENGINE) */
         .orientamento-box {
@@ -369,7 +448,8 @@
             font-size: 12px;
         }
 
-        .matrix-table th, .matrix-table td {
+        .matrix-table th,
+        .matrix-table td {
             border: 1px solid var(--bordo);
             padding: 10px;
             text-align: center;
@@ -449,8 +529,16 @@
             overflow: hidden;
         }
 
-        .giardino-hero h1 { color: white; margin-bottom: 16px; }
-        .giardino-hero p { color: #C5D6F0; font-size: 18px; max-width: 650px; }
+        .giardino-hero h1 {
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .giardino-hero p {
+            color: #C5D6F0;
+            font-size: 18px;
+            max-width: 650px;
+        }
 
         .pilastri-grid {
             display: grid;
@@ -487,7 +575,9 @@
             align-items: flex-start;
         }
 
-        .step-item:last-child { margin-bottom: 0; }
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
 
         .step-badge {
             width: 36px;
@@ -514,9 +604,14 @@
 
         /* RESPONSIVE */
         @media (max-width: 900px) {
-            .entrance-grid, .color-legend, .pilastri-grid, .modules-grid {
+
+            .entrance-grid,
+            .color-legend,
+            .pilastri-grid,
+            .modules-grid {
                 grid-template-columns: 1fr;
             }
+
             .header-container {
                 flex-direction: column;
                 gap: 16px;
@@ -524,6 +619,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- HEADER & MAIN NAV -->
@@ -536,12 +632,13 @@
                     <span class="brand-subtitle">Ecosistema Integrato della Salute</span>
                 </div>
             </a>
-            
+
             <nav class="nav-tabs">
                 <button class="tab-btn active" onclick="switchTab('home', this)">Home</button>
                 <button class="tab-btn" onclick="switchTab('percorso', this)">Il Tuo Percorso</button>
                 <button class="tab-btn" onclick="switchTab('accademia', this)">Accademia</button>
-                <button class="tab-btn tab-insegnante" onclick="switchTab('insegnante', this)">🌳 Diventa Insegnante</button>
+                <button class="tab-btn tab-insegnante" onclick="switchTab('insegnante', this)">🌳 Diventa
+                    Insegnante</button>
             </nav>
         </div>
     </header>
@@ -553,7 +650,8 @@
             <div class="section-header">
                 <span class="badge-pill badge-oro">Ecosistema della Salute</span>
                 <h1>Guarda la tua salute da una nuova prospettiva</h1>
-                <p class="lead">Non un semplice sito sulla postura, ma un percorso d'integrazione tra medicina, metodiche corporee e stile di vita.</p>
+                <p class="lead">Non un semplice sito sulla postura, ma un percorso d'integrazione tra medicina,
+                    metodiche corporee e stile di vita.</p>
             </div>
 
             <!-- TRE INGRESSI ORIZZONTALI -->
@@ -565,9 +663,12 @@
                         <span class="badge-pill badge-rosso">Dal Seme</span>
                         <h3 class="card-title">Ho un problema da risolvere</h3>
                         <span class="card-target">Per Utenti & Professionisti Sanitari</span>
-                        <p class="card-desc">Dolore, patologia o limitazione funzionale. Un approccio scientifico e rigoroso per ritrovare l'equilibrio di base.</p>
+                        <p class="card-desc">Dolore, patologia o limitazione funzionale. Un approccio scientifico e
+                            rigoroso per ritrovare l'equilibrio di base.</p>
                     </div>
-                    <button class="btn-card btn-rosso" onclick="switchTab('percorso', document.querySelectorAll('.tab-btn')[1])">Inizia dal Sotto-sintomo</button>
+                    <button class="btn-card btn-rosso"
+                        onclick="switchTab('percorso', document.querySelectorAll('.tab-btn')[1])">Inizia dal
+                        Sotto-sintomo</button>
                 </div>
 
                 <!-- PIANTA -->
@@ -577,9 +678,12 @@
                         <span class="badge-pill badge-verde">Dalla Pianta</span>
                         <h3 class="card-title">Ho un metodo, voglio crescerlo</h3>
                         <span class="card-target">Per Professionisti & Appassionati</span>
-                        <p class="card-desc">Hai già una pratica (fisioterapia, yoga, nutrizione) e vuoi integrarla con altri paradigmi di benessere.</p>
+                        <p class="card-desc">Hai già una pratica (fisioterapia, yoga, nutrizione) e vuoi integrarla con
+                            altri paradigmi di benessere.</p>
                     </div>
-                    <button class="btn-card btn-verde" onclick="switchTab('accademia', document.querySelectorAll('.tab-btn')[2])">Esplora l'Accademia</button>
+                    <button class="btn-card btn-verde"
+                        onclick="switchTab('accademia', document.querySelectorAll('.tab-btn')[2])">Esplora
+                        l'Accademia</button>
                 </div>
 
                 <!-- ALBERO -->
@@ -589,29 +693,36 @@
                         <span class="badge-pill badge-blu">Dall'Albero</span>
                         <h3 class="card-title">Ho una visione da diffondere</h3>
                         <span class="card-target">Per Futuri Insegnanti</span>
-                        <p class="card-desc">Supera la logica della singola correzione fisica. Diventa un educatore e giardiniere del benessere naturale.</p>
+                        <p class="card-desc">Supera la logica della singola correzione fisica. Diventa un educatore e
+                            giardiniere del benessere naturale.</p>
                     </div>
-                    <button class="btn-card btn-blu" onclick="switchTab('insegnante', document.querySelectorAll('.tab-btn')[3])">Scopri il Giardino</button>
+                    <button class="btn-card btn-blu"
+                        onclick="switchTab('insegnante', document.querySelectorAll('.tab-btn')[3])">Scopri il
+                        Giardino</button>
                 </div>
             </div>
 
             <!-- FILOSOFIA DEI COLORI -->
             <div class="philosophy-banner">
                 <h3>I Tre Pilastri Cromatici della Salute</h3>
-                <p class="lead" style="font-size: 14px; margin-top: 4px;">Ogni colore rappresenta un livello d'intervento e di comprensione del corpo.</p>
-                
+                <p class="lead" style="font-size: 14px; margin-top: 4px;">Ogni colore rappresenta un livello
+                    d'intervento e di comprensione del corpo.</p>
+
                 <div class="color-legend">
                     <div class="color-box red">
                         <h4 style="color: var(--rosso-patologia);">🔴 Rosso — Patologia & Scienza</h4>
-                        <p>Specificità clinica, medicina generale, fisioterapia, diagnosi rigorosa per la risoluzione dei sintomi gravi.</p>
+                        <p>Specificità clinica, medicina generale, fisioterapia, diagnosi rigorosa per la risoluzione
+                            dei sintomi gravi.</p>
                     </div>
                     <div class="color-box green">
                         <h4 style="color: var(--verde-benessere);">🟢 Verde — Metodica & Benessere</h4>
-                        <p>Lavoro corporeo, prevenzione, alimentazione, movimento e pratiche per la crescita della persona.</p>
+                        <p>Lavoro corporeo, prevenzione, alimentazione, movimento e pratiche per la crescita della
+                            persona.</p>
                     </div>
                     <div class="color-box blue">
                         <h4 style="color: var(--blu-visione);">🔵 Blu — Visione & Modo di Vivere</h4>
-                        <p>Educazione sistemica, relazione con l'ambiente, stile di vita, lavoro su di sé e insegnamento.</p>
+                        <p>Educazione sistemica, relazione con l'ambiente, stile di vita, lavoro su di sé e
+                            insegnamento.</p>
                     </div>
                 </div>
             </div>
@@ -621,8 +732,9 @@
         <div id="tab-percorso" class="tab-content">
             <div class="section-header">
                 <span class="badge-pill badge-rosso">Motore di Orientamento</span>
-                <h1>Trova la tua strada verso l'equilibrio</h1>
-                <p class="lead">Rispondi a due brevi domande. La Matrice Posturale 3D selezionerà gli interventi più adatti alla tua esigenza attuale.</p>
+                <h1>Crea il tuo percorso integrato</h1>
+                <p class="lead">Rispondi a due brevi domande. La Matrice Posturale 3D selezionerà gli interventi più
+                    adatti alla tua esigenza attuale.</p>
             </div>
 
             <div class="orientamento-box">
@@ -630,7 +742,7 @@
                 <div id="quiz-step-1" class="quiz-step active">
                     <span class="badge-pill badge-oro">Passo 1 di 2</span>
                     <h3 style="margin-top: 8px;">Qual è la tua motivazione principale in questo momento?</h3>
-                    
+
                     <div class="quiz-options">
                         <button class="quiz-option-btn" onclick="nextQuizStep(2, 'Radice: Salute a rischio')">
                             <span>🚨 "Ho un dolore acuto o un problema di salute da risolvere"</span>
@@ -655,9 +767,10 @@
                 <div id="quiz-step-2" class="quiz-step">
                     <span class="badge-pill badge-verde">Passo 2 di 2</span>
                     <h3 style="margin-top: 8px;">Quale approccio risuona di più con te?</h3>
-                    
+
                     <div class="quiz-options">
-                        <button class="quiz-option-btn" onclick="showQuizResult('Terapia Manuale & Fisioterapia Integrata')">
+                        <button class="quiz-option-btn"
+                            onclick="showQuizResult('Terapia Manuale & Fisioterapia Integrata')">
                             <span>🤲 Trattamento diretto e terapia manuale (massaggio, manipolazione)</span>
                         </button>
                         <button class="quiz-option-btn" onclick="showQuizResult('Movimento Consapevole & Posturale')">
@@ -673,18 +786,22 @@
                 <div id="quiz-result" class="quiz-step" style="text-align: center;">
                     <span class="badge-pill badge-blu">Il Tuo Percorso Consigliato</span>
                     <h2 id="result-title" style="margin-top: 12px; color: var(--verde-benessere);">...</h2>
-                    <p class="lead" style="margin-bottom: 24px;">Abbinamento elaborato incrociando i 4 Paradigmi della Matrice Posturale 3D.</p>
-                    <button class="btn-card btn-verde" style="max-width: 250px; margin: 0 auto;" onclick="resetQuiz()">Ricomincia Orientamento</button>
+                    <p class="lead" style="margin-bottom: 24px;">Abbinamento elaborato incrociando i 4 Paradigmi della
+                        Matrice Posturale 3D.</p>
+                    <button class="btn-card btn-verde" style="max-width: 250px; margin: 0 auto;"
+                        onclick="resetQuiz()">Ricomincia Orientamento</button>
                 </div>
             </div>
 
             <!-- IL MOTORE NASCOSTO (LA MATRICE MOSTRABILE SU RICHIESTA) -->
-            <button class="toggle-matrix-btn" onclick="toggleMatrix()">🔍 [Vista Avanzata] Rivela la Matrice 3D Aiuole/Celle</button>
+            <button class="toggle-matrix-btn" onclick="toggleMatrix()">🔍 [Vista Avanzata] Rivela la Matrice 3D
+                Aiuole/Celle</button>
 
             <div id="matrix-container" class="matrix-preview-container">
                 <h4 style="margin-bottom: 8px;">Motore della Matrice (Assi X × Y × Paradigma Z)</h4>
-                <p style="font-size: 12px; color: var(--testo-mutato); margin-bottom: 16px;">La griglia sottostante è la struttura scientifica e concettuale che guida le raccomandazioni.</p>
-                
+                <p style="font-size: 12px; color: var(--testo-mutato); margin-bottom: 16px;">La griglia sottostante è la
+                    struttura scientifica e concettuale che guida le raccomandazioni.</p>
+
                 <table class="matrix-table">
                     <thead>
                         <tr>
@@ -731,7 +848,8 @@
             <div class="section-header">
                 <span class="badge-pill badge-verde">Formazione & Consapevolezza</span>
                 <h1>L'Accademia PosturaCorretta</h1>
-                <p class="lead">Il meta-livello formativo per comprendere la struttura della salute, dialogare tra paradigmi diversi e costruire percorsi integrati.</p>
+                <p class="lead">Il meta-livello formativo per comprendere la struttura della salute, dialogare tra
+                    paradigmi diversi e costruire percorsi integrati.</p>
             </div>
 
             <div class="modules-grid">
@@ -743,10 +861,13 @@
                             <span class="badge-pill badge-verde">Completato</span>
                         </div>
                         <h3>Il Corpo come Sistema</h3>
-                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Oltre la visione meccanicistica: anatomia esperienziale e fasciale.</p>
+                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Oltre la visione
+                            meccanicistica: anatomia esperienziale e fasciale.</p>
                     </div>
                     <div>
-                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 100%;"></div></div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: 100%;"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -758,10 +879,13 @@
                             <span class="badge-pill badge-oro">In Corso</span>
                         </div>
                         <h3>I Paradigmi della Salute</h3>
-                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Confronto tra modello istituzionale, integrato, tradizionale e percettivo.</p>
+                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Confronto tra modello
+                            istituzionale, integrato, tradizionale e percettivo.</p>
                     </div>
                     <div>
-                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%;"></div></div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: 60%;"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -773,10 +897,13 @@
                             <span class="badge-pill badge-blu">Prossimo</span>
                         </div>
                         <h3>La Matrice Posturale 3D</h3>
-                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Mappare metodiche, competenze e percorsi sulle 140 celle dell'ecosistema.</p>
+                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Mappare metodiche,
+                            competenze e percorsi sulle 140 celle dell'ecosistema.</p>
                     </div>
                     <div>
-                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%;"></div></div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: 0%;"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -788,10 +915,13 @@
                             <span class="badge-pill badge-blu">Bloccato</span>
                         </div>
                         <h3>Comunicare la Postura</h3>
-                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Linguaggio educativo, ascolto attivo e de-patologizzazione della persona.</p>
+                        <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 6px;">Linguaggio educativo,
+                            ascolto attivo e de-patologizzazione della persona.</p>
                     </div>
                     <div>
-                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%;"></div></div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: 0%;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -801,9 +931,11 @@
         <div id="tab-insegnante" class="tab-content">
             <!-- HERO VISIONARIO BLU -->
             <div class="giardino-hero">
-                <span class="badge-pill" style="background-color: rgba(255,255,255,0.15); color: white;">Il Giardino del Corpo</span>
+                <span class="badge-pill" style="background-color: rgba(255,255,255,0.15); color: white;">Il Giardino del
+                    Corpo</span>
                 <h1>Diventa Insegnante PosturaCorretta</h1>
-                <p>L'insegnante non corregge semplicemente le posizioni fisiche: educa la persona a trovare il proprio punto d'osservazione sulla salute. Abbraccia la visione integrata dell'essere umano.</p>
+                <p>L'insegnante non corregge semplicemente le posizioni fisiche: educa la persona a trovare il proprio
+                    punto d'osservazione sulla salute. Abbraccia la visione integrata dell'essere umano.</p>
             </div>
 
             <!-- I 4 PILASTRI DELLA VISIONE -->
@@ -812,34 +944,39 @@
                 <div class="pilastro-card">
                     <span class="pilastro-icon">🧭</span>
                     <h4 style="color: var(--blu-visione);">Orientare</h4>
-                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Aiutare l'utente a comprendere in quale punto della Matrice si trova.</p>
+                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Aiutare l'utente a
+                        comprendere in quale punto della Matrice si trova.</p>
                 </div>
                 <div class="pilastro-card">
                     <span class="pilastro-icon">🪴</span>
                     <h4 style="color: var(--blu-visione);">Innestare</h4>
-                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Creare ponti di collaborazione con professionisti di paradigmi diversi.</p>
+                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Creare ponti di
+                        collaborazione con professionisti di paradigmi diversi.</p>
                 </div>
                 <div class="pilastro-card">
                     <span class="pilastro-icon">🌾</span>
                     <h4 style="color: var(--blu-visione);">Seminare</h4>
-                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Diffondere la cultura del movimento, della postura e dello stile di vita.</p>
+                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Diffondere la cultura del
+                        movimento, della postura e dello stile di vita.</p>
                 </div>
                 <div class="pilastro-card">
                     <span class="pilastro-icon">🌳</span>
                     <h4 style="color: var(--blu-visione);">Coltivare</h4>
-                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Mantenere vivo l'ecosistema del benessere nel proprio territorio.</p>
+                    <p style="font-size: 13px; color: var(--testo-mutato); margin-top: 4px;">Mantenere vivo l'ecosistema
+                        del benessere nel proprio territorio.</p>
                 </div>
             </div>
 
             <!-- 5 STEP EVOLUTIVI -->
             <div class="steps-evolution">
                 <h3 style="margin-bottom: 20px;">Il Percorso Evolutivo dell'Insegnante</h3>
-                
+
                 <div class="step-item">
                     <div class="step-badge">1</div>
                     <div>
                         <h4>Esplora il Tuo Cubo</h4>
-                        <p style="font-size: 14px; color: var(--testo-mutato);">Sperimenta personalmente 3 percorsi su assi differenti della Matrice per ampliare la tua percezione.</p>
+                        <p style="font-size: 14px; color: var(--testo-mutato);">Sperimenta personalmente 3 percorsi su
+                            assi differenti della Matrice per ampliare la tua percezione.</p>
                     </div>
                 </div>
 
@@ -847,7 +984,8 @@
                     <div class="step-badge">2</div>
                     <div>
                         <h4>Completa l'Accademia</h4>
-                        <p style="font-size: 14px; color: var(--testo-mutato);">Supera i 6 moduli formativi per acquisire la grammatica comune dei 4 paradigmi.</p>
+                        <p style="font-size: 14px; color: var(--testo-mutato);">Supera i 6 moduli formativi per
+                            acquisire la grammatica comune dei 4 paradigmi.</p>
                     </div>
                 </div>
 
@@ -855,7 +993,8 @@
                     <div class="step-badge">3</div>
                     <div>
                         <h4>Pratica l'Innesto</h4>
-                        <p style="font-size: 14px; color: var(--testo-mutato);">Collabora attivamente a un caso studio reale con un professionista di un paradigma differente dal tuo.</p>
+                        <p style="font-size: 14px; color: var(--testo-mutato);">Collabora attivamente a un caso studio
+                            reale con un professionista di un paradigma differente dal tuo.</p>
                     </div>
                 </div>
 
@@ -863,7 +1002,8 @@
                     <div class="step-badge">4</div>
                     <div>
                         <h4>Semina la Visione</h4>
-                        <p style="font-size: 14px; color: var(--testo-mutato);">Guida il tuo primo gruppo o paziente nell'esplorazione autonoma del proprio stato di salute.</p>
+                        <p style="font-size: 14px; color: var(--testo-mutato);">Guida il tuo primo gruppo o paziente
+                            nell'esplorazione autonoma del proprio stato di salute.</p>
                     </div>
                 </div>
 
@@ -871,7 +1011,8 @@
                     <div class="step-badge">5</div>
                     <div>
                         <h4>Diventa Giardiniere</h4>
-                        <p style="font-size: 14px; color: var(--testo-mutato);">Ottieni il riconoscimento formale di Insegnante PosturaCorretta ed entra nella rete di riferimento.</p>
+                        <p style="font-size: 14px; color: var(--testo-mutato);">Ottieni il riconoscimento formale di
+                            Insegnante PosturaCorretta ed entra nella rete di riferimento.</p>
                     </div>
                 </div>
             </div>
@@ -911,7 +1052,7 @@
         function showQuizResult(approachText) {
             document.getElementById('quiz-step-2').classList.remove('active');
             document.getElementById('quiz-result').classList.add('active');
-            
+
             document.getElementById('result-title').innerText = approachText + " (" + selectedMotivation.split(':')[0] + ")";
         }
 
@@ -931,4 +1072,5 @@
         }
     </script>
 </body>
+
 </html>

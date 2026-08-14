@@ -1,6 +1,6 @@
-# Postura e fisiologia
+# Consapevolezza
 
-Questo tipo di programma funge da mappa concettuale e operativa per il professionista che vuole inquadrare articolazioni, muscoli, respiro, recupero, sistema nervoso e bioritmi del cliente all'interno di una visione organica. L'obiettivo è analizzare e spiegare al cliente come interagiscono i diversi sistemi corporei.
+Questa linea guida aiuta il tutor a orientare chi vuole conoscere meglio il proprio corpo, riconoscerne i segnali e partecipare con maggiore consapevolezza alle scelte che riguardano la salute. Postura e fisiologia costituiscono una mappa per collegare articolazioni, muscoli, respiro, recupero, sistema nervoso e bioritmi all'interno di una visione organica.
 
 ## 1. Analisi e Informazione
 

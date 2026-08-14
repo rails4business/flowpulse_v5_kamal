@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets = ["pathRequest", "pathPlace", "pathDuration", "pathDiagnosis", "pathMedicalVisits"]
+
   connect() {
     console.log("PosturacorrettastartController connected!")
     this.selectedMotivation = ""
@@ -82,5 +84,27 @@ export default class extends Controller {
     } else {
       matrix.classList.add('hidden')
     }
+  }
+
+  sendPathRequest(event) {
+    event.preventDefault()
+
+    const request = this.pathRequestTarget.value.trim()
+    if (!request) return
+
+    const message = [
+      "Ciao, vorrei iniziare un percorso con PosturaCorretta.",
+      "",
+      "Problema o obiettivo:",
+      request,
+      `Paese o città: ${this.pathPlaceTarget.value.trim()}`,
+      `Da quanto tempo: ${this.pathDurationTarget.value.trim()}`,
+      `Diagnosi: ${this.pathDiagnosisTarget.value}`,
+      `Medico o visite: ${this.pathMedicalVisitsTarget.value}`,
+      "",
+      "Vorrei essere ricontattato per capire come procedere."
+    ].join("\n")
+
+    window.open(`https://wa.me/393792891488?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer")
   }
 }

@@ -38,6 +38,13 @@ sections:
     status: draft
     intro: { type: markdown, source: guide/03_percorso/00_intro.md }
     items:
+      - title: Per il tutor
+        type: group
+        visibility: internal_tutor
+        children:
+          - { slug: tutor-valutare-richiesta, title: "Valutare una richiesta e preparare la proposta", type: markdown, source: guide/03_percorso/tutor/01_valutare_richiesta.md }
+          - { slug: tutor-scheda-chiamata, title: "Scheda della chiamata", type: markdown, source: guide/03_percorso/tutor/02_scheda_chiamata.md }
+          - { slug: tutor-proposta-percorso, title: "Modello della proposta", type: markdown, source: guide/03_percorso/tutor/03_modello_proposta.md }
       - title: Per le persone
         type: group
         children:
@@ -67,11 +74,9 @@ sections:
               - { slug: stop-al-dolore, title: "Stop al dolore", type: markdown, source: guide/03_percorso/programmi/01_stop_al_dolore.md }
               - { slug: prevenzione, title: "Prevenzione", type: markdown, source: guide/03_percorso/programmi/02_prevenzione.md }
               - { slug: performance, title: "Performance", type: markdown, source: guide/03_percorso/programmi/03_performance.md }
-              - { slug: benessere-integrato, title: "Benessere integrato", type: markdown, source: guide/03_percorso/programmi/04_benessere_integrato.md }
-              - { slug: attivita-corporee, title: "Attività corporee", type: markdown, source: guide/03_percorso/programmi/05_attivita_corporee.md }
-              - { slug: postura-fisiologia, title: "Postura e fisiologia", type: markdown, source: guide/03_percorso/programmi/06_postura_fisiologia.md }
-              - { slug: corpo-ambiente, title: "Corpo e ambiente", type: markdown, source: guide/03_percorso/programmi/07_corpo_ambiente.md }
-              - { slug: potenziale-umano, title: "Potenziale umano", type: markdown, source: guide/03_percorso/programmi/08_potenziale_umano.md }
+              - { slug: espressione, title: "Espressione", type: markdown, source: guide/03_percorso/programmi/05_attivita_corporee.md }
+              - { slug: consapevolezza, title: "Consapevolezza", type: markdown, source: guide/03_percorso/programmi/06_postura_fisiologia.md }
+              - { slug: connessione, title: "Connessione", type: markdown, source: guide/03_percorso/programmi/07_corpo_ambiente.md }
           - { slug: definire-proposta, legacy_slug: professionisti-definire-proposta, title: "Definire la proposta", type: markdown, source: guide/03_percorso/professionisti/04_definire_proposta.md }
           - { slug: invitare-professionista, legacy_slug: professionisti-invitare-professionista, title: "Invitare un professionista", type: markdown, source: guide/03_percorso/professionisti/05_invitare_professionista.md }
           - { slug: percorso-integrato, legacy_slug: professionisti-percorso-integrato, title: "Collaborare in un percorso integrato", type: markdown, source: guide/07_collabora/01_percorso_integrato.md }
