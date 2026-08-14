@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
 
   # Public Routes
+  constraints ->(request) { request.host == "posturacorretta.org" } do
+    get "/", to: "brands/posturacorretta#home", as: :posturacorretta_domain_root
+  end
   root "domains#show"
   resources :nodes, only: [:show]
   get "esperienze" => "public_events#index", as: :esperienze

@@ -79,8 +79,7 @@ class DomainsController < ApplicationController
       elsif target_controller == "brands/impegno/home" && target_action == "index"
         render "brands/impegno/home/index"
       elsif target_controller == "brands/posturacorretta" && target_action == "home"
-        prepare_landing_target("posturacorretta")
-        render "landing/posturacorretta"
+        redirect_to posturacorretta_path
       else
         render "#{target_controller}/#{target_action}"
       end
