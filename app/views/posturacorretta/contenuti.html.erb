@@ -16,14 +16,16 @@
     "rose" => { soft: "bg-rose-50", border: "border-rose-200", text: "text-rose-700", badge: "bg-rose-100 text-rose-800", hover: "group-hover:text-rose-700" },
     "emerald" => { soft: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", badge: "bg-emerald-100 text-emerald-800", hover: "group-hover:text-emerald-700" },
     "amber" => { soft: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", badge: "bg-amber-100 text-amber-800", hover: "group-hover:text-amber-700" },
+    "sky" => { soft: "bg-sky-50", border: "border-sky-200", text: "text-sky-700", badge: "bg-sky-100 text-sky-800", hover: "group-hover:text-sky-700" },
     "blue" => { soft: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", badge: "bg-blue-100 text-blue-800", hover: "group-hover:text-blue-700" },
     "green" => { soft: "bg-green-50", border: "border-green-200", text: "text-green-700", badge: "bg-green-100 text-green-800", hover: "group-hover:text-green-700" },
     "violet" => { soft: "bg-violet-50", border: "border-violet-200", text: "text-violet-700", badge: "bg-violet-100 text-violet-800", hover: "group-hover:text-violet-700" }
   }
 
-  blog_category_order = %w[tutti dolore prevenzione performance benessere attivita fisiologia giardino]
+  blog_category_order = %w[tutti consapevolezza dolore prevenzione performance benessere attivita fisiologia giardino]
   blog_tab_active_classes = {
     "tutti" => "bg-blue-600 text-white shadow-sm",
+    "consapevolezza" => "bg-sky-600 text-white shadow-sm",
     "dolore" => "bg-rose-600 text-white shadow-sm",
     "prevenzione" => "bg-orange-500 text-white shadow-sm",
     "performance" => "bg-amber-400 text-slate-950 shadow-sm",
@@ -32,9 +34,10 @@
     "fisiologia" => "bg-blue-600 text-white shadow-sm",
     "giardino" => "bg-violet-600 text-white shadow-sm"
   }
+  content_view = params[:view].presence_in(%w[list grid]) || "list"
 %>
 
-<div id="top" class="bg-white text-slate-900 antialiased">
+<div id="top" class="content-catalog content-view-<%= content_view %> bg-white text-slate-900 antialiased" data-content-view="<%= content_view %>">
   <section class="border-t border-slate-200/70 px-4 py-10 md:px-6 md:py-16 min-h-[calc(100vh-4rem)]">
     <div class="mx-auto max-w-6xl" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
       <div class="relative mb-8 flex min-h-[3rem] flex-col gap-4 sm:flex-row sm:items-center">
@@ -50,11 +53,19 @@
               <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
               <path d="m20 20-3.5-3.5" stroke-width="2" stroke-linecap="round"></path>
             </svg>
-            <input id="blog-search" type="search" placeholder="Cerca un video..." class="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
+            <input id="blog-search" type="search" value="<%= params[:q] %>" placeholder="Cerca un video..." class="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
           </label>
         </div>
 
         <div class="flex shrink-0 items-center gap-2 sm:ml-auto">
+          <div class="inline-flex overflow-hidden rounded-lg border border-slate-300 bg-white" aria-label="Visualizzazione contenuti">
+            <button type="button" class="content-view-button px-2.5 py-2 transition" data-content-view-button="list" onclick="switchContentView('list')" aria-label="Vista lista" aria-pressed="<%= content_view == 'list' %>">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path d="M3 4.5h2v2H3v-2Zm4 0h10v2H7v-2ZM3 9h2v2H3V9Zm4 0h10v2H7V9Zm-4 4.5h2v2H3v-2Zm4 0h10v2H7v-2Z"/></svg>
+            </button>
+            <button type="button" class="content-view-button border-l border-slate-300 px-2.5 py-2 transition" data-content-view-button="grid" onclick="switchContentView('grid')" aria-label="Vista griglia" aria-pressed="<%= content_view == 'grid' %>">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path d="M3 3h5.5v5.5H3V3Zm8.5 0H17v5.5h-5.5V3ZM3 11.5h5.5V17H3v-5.5Zm8.5 0H17V17h-5.5v-5.5Z"/></svg>
+            </button>
+          </div>
           <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 lg:hidden" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="contenuti-mobile-filtri" aria-expanded="false">
             <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" class="size-4"><path d="M3 5h14M5.5 10h9M8 15h4" stroke-linecap="round" stroke-width="1.8"/></svg>
             Filtri
@@ -75,7 +86,7 @@
         <% next unless category %>
         <% colors = blog_color_classes.fetch(category[:color] || "slate", blog_color_classes["blue"]) %>
         <section id="blog-section-<%= key %>" class="blog-section pt-6 md:pt-8 <%= 'hidden' unless category_index.zero? %>" data-category="<%= key %>" data-video-count="<%= category[:articles].size %>" data-count-singular="<%= key == 'corsi' ? 'corso' : 'video' %>" data-count-plural="<%= key == 'corsi' ? 'corsi' : 'video' %>">
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="article-list-<%= key %>">
+          <div class="content-article-list grid gap-4" id="article-list-<%= key %>">
             <% category[:articles].each do |article| %>
               <% creator = postura_creators.fetch(article[:author]) do
                    { name: article[:author].presence || "PosturaCorretta", initials: "PC", role: "Autore", color: "bg-slate-100 text-slate-700" }
@@ -93,9 +104,10 @@
               <% article_platform = article[:platform].presence || (is_video ? "youtube" : "sito") %>
               <% article_zones = Array(article[:zones]).join(" ") %>
               <% article_level = article[:level].presence || (is_course ? "intermediate" : (is_video ? "base" : "intermediate")) %>
-              <a href="<%= article_href %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if external_article %> class="blog-article group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-subcategory="<%= article[:subcategory] %>" data-ambito="<%= key %>" data-area="<%= article_area %>" data-paradigma="<%= article_paradigm %>" data-professionals="<%= article_people %>" data-places="<%= article_places %>" data-methodologies="<%= article_methodologies %>" data-channel="<%= article_channel %>" data-platform="<%= article_platform %>" data-zones="<%= article_zones %>" data-level="<%= article_level %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format]].join(' ').downcase %>">
+              <% article_date = article[:_publication_date] %>
+              <a href="<%= article_href %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if external_article %> class="blog-article <%= is_video ? 'has-media' : 'no-media' %> group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-subcategory="<%= article[:subcategory] %>" data-ambito="<%= key %>" data-area="<%= article_area %>" data-paradigma="<%= article_paradigm %>" data-professionals="<%= article_people %>" data-places="<%= article_places %>" data-methodologies="<%= article_methodologies %>" data-channel="<%= article_channel %>" data-platform="<%= article_platform %>" data-zones="<%= article_zones %>" data-level="<%= article_level %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format]].join(' ').downcase %>">
                 <% if is_video %>
-                  <div class="aspect-video w-full overflow-hidden bg-slate-100 relative">
+                  <div class="content-article-media relative aspect-video w-full overflow-hidden bg-slate-100">
                     <img src="https://img.youtube.com/vi/<%= article[:slug] %>/mqdefault.jpg" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
                     <div class="absolute inset-0 flex items-center justify-center bg-slate-900/10 opacity-0 transition-opacity group-hover:opacity-100">
                       <span class="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-red-600 shadow-sm backdrop-blur-sm">
@@ -104,7 +116,7 @@
                     </div>
                   </div>
                 <% end %>
-                <div class="flex flex-1 flex-col p-5 md:p-6">
+                <div class="content-article-body flex flex-1 flex-col p-5 md:p-6">
                   <div class="flex items-center justify-between gap-3">
                     <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider <%= is_course ? 'bg-blue-50 text-blue-700' : (is_video ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700') %>">
                       <% if is_course %>
@@ -118,17 +130,29 @@
                         Post
                       <% end %>
                     </span>
-                    <span class="truncate text-[10px] font-black uppercase tracking-wider <%= colors[:text] %>"><%= article[:subcategory] %></span>
+                    <span class="flex min-w-0 items-center gap-2">
+                      <% if article[:_scheduled] %><span class="shrink-0 rounded-full bg-amber-100 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-amber-800">Programmato</span><% end %>
+                      <span class="truncate text-[10px] font-black uppercase tracking-wider <%= colors[:text] %>"><%= article[:subcategory] %></span>
+                    </span>
                   </div>
                   <h3 class="mt-4 text-lg font-black leading-snug text-slate-900 transition <%= colors[:hover] %>"><%= article[:title] %></h3>
                   <p class="mt-2 text-sm leading-relaxed text-slate-500"><%= article[:excerpt] %></p>
+                  <% if Current.user&.superadmin_user? && is_video %>
+                    <div class="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-amber-950">
+                      <p class="text-[9px] font-black uppercase tracking-[0.14em] text-amber-700">Organizzazione video · Superadmin</p>
+                      <dl class="mt-2 grid grid-cols-2 gap-3 text-[11px]">
+                        <div><dt class="font-bold">Registrazione</dt><dd class="mt-0.5 text-amber-900"><%= article[:_video_recording_label] || "Da definire" %></dd></div>
+                        <div><dt class="font-bold">Pubblicazione</dt><dd class="mt-0.5 text-amber-900"><%= article[:_video_publication_label] || "Da definire" %></dd></div>
+                      </dl>
+                    </div>
+                  <% end %>
                 </div>
-                <div class="mt-auto flex items-center justify-between border-t border-slate-100 p-5 md:px-6 md:pb-6 md:pt-4">
+                <div class="content-article-footer mt-auto flex items-center justify-between border-t border-slate-100 p-5 md:px-6 md:pb-6 md:pt-4">
                   <div class="flex min-w-0 items-center gap-2.5">
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-black <%= creator[:color] %>"><%= creator[:initials] %></span>
                     <div class="min-w-0">
                       <p class="truncate text-xs font-bold text-slate-700"><%= creator[:name] %></p>
-                      <p class="text-[10px] text-slate-400"><%= article[:time] %><%= is_course ? "" : (is_video ? " di visione" : " di lettura") %></p>
+                      <p class="text-[10px] text-slate-400"><% if article_date %><span class="sr-only">Pubblicato il </span><time datetime="<%= article_date.iso8601 %>"><%= article[:_publication_label] %></time><span aria-hidden="true"> · </span><% end %><%= article[:time] %><%= is_course ? "" : (is_video ? " di visione" : " di lettura") %></p>
                     </div>
                   </div>
                   <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition group-hover:bg-slate-900 group-hover:text-white"><%= is_video ? '↗' : '→' %></span>
@@ -150,7 +174,7 @@
           <h2 id="professionals-content-title" class="mt-2 text-2xl font-black tracking-tight text-slate-950">Porta le tue competenze nei contenuti</h2>
           <p class="mt-2 text-sm leading-6 text-slate-600">Puoi proporre un approfondimento, un problema da spiegare, un'esperienza o materiali utili per le Linee guida e l'educazione alla salute.</p>
         </div>
-        <a href="<%= posturacorretta_collabora_professionisti_guida_path('contenuti-video') %>" class="mt-5 inline-flex w-full shrink-0 items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto md:mt-0">
+        <a href="<%= posturacorretta_path(sezione: 'collabora', capitolo: 'contenuti') %>" class="mt-5 inline-flex w-full shrink-0 items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto md:mt-0">
           Diventa un creator <span aria-hidden="true" class="ml-2">&rarr;</span>
         </a>
       </section>
@@ -243,6 +267,23 @@
 
 <script>
   let activeBlogCategory = "tutti";
+
+  window.switchContentView = function(view) {
+    const catalog = document.querySelector(".content-catalog");
+    if (!catalog || !["list", "grid"].includes(view)) return;
+
+    catalog.classList.toggle("content-view-list", view === "list");
+    catalog.classList.toggle("content-view-grid", view === "grid");
+    catalog.dataset.contentView = view;
+    document.querySelectorAll("[data-content-view-button]").forEach(button => {
+      const selected = button.dataset.contentViewButton === view;
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+
+    const url = new URL(window.location);
+    url.searchParams.set("view", view);
+    history.replaceState({}, "", url);
+  };
 
   window.switchBlogCategory = function(key) {
     const selectedSection = document.getElementById(`blog-section-${key}`);
@@ -362,6 +403,12 @@
     } else {
       switchMacroTab("contenuti");
       window.switchBlogCategory(requestedCategory);
+    }
+
+    const requestedQuery = params.get("q");
+    if (requestedQuery) {
+      search.value = requestedQuery;
+      applyBlogFilters();
     }
   }
 

@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get "posturacorrettastart", to: "posturacorrettastart#index"
+  get "posturacorrettastart/primo_mese", to: "posturacorrettastart#one_month", as: :posturacorrettastart_primo_mese
+  get "posturacorrettastart/primo_mese/:chapter", to: "posturacorrettastart#one_month", as: :posturacorrettastart_primo_mese_chapter
+  get "posturacorrettastart/1mese", to: redirect("/posturacorrettastart/primo_mese", status: 301)
   resource :session
   resource :site_selection, only: :create
   resources :users, only: %i[new create]
@@ -19,6 +23,7 @@ Rails.application.routes.draw do
   get "posturacorretta/accademia/recensioni" => "brands/posturacorretta#accademia_recensioni", as: :posturacorretta_accademia_recensioni
   get "posturacorretta/accademia/:slug" => "brands/posturacorretta#accademia_modulo", as: :posturacorretta_accademia_modulo
   get "posturacorretta/percorso" => "brands/posturacorretta#percorso", as: :posturacorretta_percorso
+  get "posturacorretta/percorso/come-funziona" => "brands/posturacorretta#percorso_come_funziona", as: :posturacorretta_percorso_come_funziona
   get "posturacorretta/percorsi-sul-territorio" => "brands/posturacorretta#percorsi_sul_territorio", as: :posturacorretta_percorsi_sul_territorio
   get "posturacorretta/metodiche" => "brands/posturacorretta#metodiche", as: :posturacorretta_metodiche
   get "posturacorretta/metodiche/:slug" => "brands/posturacorretta#metodica", as: :posturacorretta_metodica
@@ -27,7 +32,8 @@ Rails.application.routes.draw do
   get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo
   get "posturacorretta/eventi" => "brands/posturacorretta#eventi", as: :posturacorretta_eventi
-  get "posturacorretta/visione" => "brands/posturacorretta#libro", as: :posturacorretta_visione
+  get "posturacorretta/libri" => "brands/posturacorretta#libri", as: :posturacorretta_libri
+  get "posturacorretta/visione" => redirect("/posturacorretta?chapter=06-visione", status: 301), as: :posturacorretta_visione
   get "posturacorretta/libro" => redirect("/posturacorretta/visione", status: 301), as: :posturacorretta_libro
   get "posturacorretta/filosofia" => redirect("/posturacorretta/visione", status: 301), as: :posturacorretta_filosofia
   get "posturacorretta/progetti" => "brands/posturacorretta#progetti", as: :posturacorretta_progetti

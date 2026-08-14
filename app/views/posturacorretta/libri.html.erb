@@ -1,0 +1,213 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<main class="min-h-screen bg-white text-slate-900">
+  <% books_filter_params = {
+       tab: @books_tab,
+       q: @book_query.presence,
+       categories: @selected_book_categories.presence,
+       languages: @selected_book_languages.presence,
+       publishers: @selected_book_publishers.presence
+     }.compact %>
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col gap-4 border-b border-slate-200 pb-4 md:flex-row md:items-center md:justify-between">
+      <!-- Tabs accorciate -->
+      <nav class="flex items-center gap-2 overflow-x-auto" aria-label="Sezioni dei libri">
+        <a href="<%= posturacorretta_libri_path(tab: 'nostri', view: @books_view) %>" class="shrink-0 rounded-xl px-4 py-2 text-sm font-extrabold transition-all <%= @books_tab == 'nostri' ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900' %>">
+          Nostri <span class="ml-1 text-xs opacity-80">(<%= @owned_books.size %>)</span>
+        </a>
+        <a href="<%= posturacorretta_libri_path(tab: 'consigliati', view: @books_view) %>" class="shrink-0 rounded-xl px-4 py-2 text-sm font-extrabold transition-all <%= @books_tab == 'consigliati' ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900' %>">
+          Consigliati <span class="ml-1 text-xs opacity-80">(<%= @recommended_books_total %>)</span>
+        </a>
+      </nav>
+
+      <!-- Barra di ricerca e View Switcher in linea -->
+      <div class="flex flex-wrap items-center gap-3 flex-1 md:justify-end">
+        <% if @books_tab == "consigliati" %>
+          <form action="<%= posturacorretta_libri_path %>" method="get" class="flex flex-1 items-center gap-2 max-w-md">
+            <input type="hidden" name="tab" value="consigliati">
+            <input type="hidden" name="view" value="<%= @books_view %>">
+            <div class="relative w-full">
+              <input type="search" name="q" value="<%= @book_query %>" placeholder="Cerca titolo o autore..." class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-1.5 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100">
+            </div>
+            <button type="submit" class="shrink-0 rounded-xl bg-blue-600 px-4 py-1.5 text-sm font-bold text-white transition hover:bg-blue-700">Cerca</button>
+            <% if @book_query.present? || @selected_book_categories.any? || @selected_book_languages.any? || @selected_book_publishers.any? %>
+              <%= link_to "Azzera", posturacorretta_libri_path(tab: "consigliati", view: @books_view), class: "shrink-0 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50" %>
+            <% end %>
+          </form>
+        <% end %>
+
+        <!-- Card / Elenco Toggle -->
+        <div class="inline-flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1" aria-label="Visualizzazione libri">
+          <a href="<%= posturacorretta_libri_path(books_filter_params.merge(view: 'grid')) %>" aria-label="Visualizza come card" aria-current="<%= @books_view == 'grid' ? 'page' : 'false' %>" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-extrabold transition <%= @books_view == 'grid' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900' %>">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="size-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+            <span>Card</span>
+          </a>
+          <a href="<%= posturacorretta_libri_path(books_filter_params.merge(view: 'list')) %>" aria-label="Visualizza come elenco" aria-current="<%= @books_view == 'list' ? 'page' : 'false' %>" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-extrabold transition <%= @books_view == 'list' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900' %>">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="size-3.5"><path stroke-linecap="round" stroke-width="2" d="M9 6h11M9 12h11M9 18h11"/><circle cx="5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+            <span>Elenco</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <% if @books_tab == "nostri" %>
+      <section class="py-8 sm:py-12">
+        <% if @owned_books.any? %>
+          <div class="<%= @books_view == 'grid' ? 'grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-items-center' : 'divide-y divide-slate-200 border-y border-slate-200' %>">
+            <% @owned_books.each do |book| %>
+              <% if @books_view == "grid" %>
+                <div class="flex flex-col items-center justify-center p-2">
+                  <a href="<%= book_path(book.fetch('slug')) %>" aria-label="Leggi <%= book['title'] %>" class="group cursor-pointer p-4 transition-all duration-300 hover:scale-105 focus:outline-none focus:rounded-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-4">
+                    <div class="book-3d">
+                      <div class="book-3d__cover">
+                        <% if book["cover_url"].present? %>
+                          <img src="<%= book['cover_url'] %>" alt="Copertina di <%= book['title'] %>">
+                        <% else %>
+                          <div class="book-3d__fallback">
+                            <strong class="book-3d__fallback-title"><%= book.fetch("title") %></strong>
+                            <div class="book-3d__fallback-meta">
+                              <% if book["author"].present? %><span class="block font-bold"><%= book["author"] %></span><% end %>
+                              <% if book["publisher"].present? %><span class="mt-1 block"><%= book["publisher"] %></span><% end %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              <% else %>
+                <a href="<%= book_path(book.fetch('slug')) %>" class="group flex items-center gap-4 py-4 transition hover:bg-slate-50 px-3 rounded-xl">
+                  <div class="aspect-[3/4] w-16 shrink-0 overflow-hidden rounded-lg bg-slate-100 sm:w-20 shadow-sm transition group-hover:shadow">
+                    <% if book["cover_url"].present? %>
+                      <img src="<%= book['cover_url'] %>" alt="Copertina di <%= book['title'] %>" class="h-full w-full object-cover">
+                    <% else %>
+                      <div class="flex h-full items-center justify-center bg-slate-200 p-2 text-center text-[9px] font-black leading-tight text-slate-800"><%= book.fetch("title") %></div>
+                    <% end %>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                      <h2 class="text-base font-black tracking-tight text-slate-900 group-hover:text-blue-600 sm:text-lg transition"><%= book.fetch("title") %></h2>
+                      <% if book["status"] != "published" %>
+                        <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-800">Bozza</span>
+                      <% end %>
+                    </div>
+                    <% if book["subtitle"].present? %><p class="mt-1 text-xs text-slate-600 sm:text-sm line-clamp-2"><%= book["subtitle"] %></p><% end %>
+                  </div>
+                  <div class="flex items-center text-sm font-bold text-blue-600 shrink-0 group-hover:translate-x-1 transition-transform">
+                    <span class="hidden sm:inline">Leggi libro</span>
+                    <span aria-hidden="true" class="ml-1">→</span>
+                  </div>
+                </a>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="rounded-2xl border border-dashed border-slate-300 px-6 py-12 text-center">
+            <h2 class="text-lg font-black">I libri sono in preparazione</h2>
+            <p class="mt-2 text-sm text-slate-600">Saranno pubblicati qui appena pronti per la lettura.</p>
+          </div>
+        <% end %>
+      </section>
+    <% else %>
+      <section class="py-6">
+        <form action="<%= posturacorretta_libri_path %>" method="get" class="flex flex-wrap items-center gap-3">
+          <input type="hidden" name="tab" value="consigliati">
+          <input type="hidden" name="view" value="<%= @books_view %>">
+          <% if @book_query.present? %><input type="hidden" name="q" value="<%= @book_query %>"><% end %>
+
+          <% [["Categorie", "categories[]", @book_category_options, @selected_book_categories], ["Lingue", "languages[]", @book_language_options, @selected_book_languages], ["Case editrici", "publishers[]", @book_publisher_options, @selected_book_publishers]].each do |label, field, options, selected| %>
+            <details class="group relative [&_summary::-webkit-details-marker]:hidden">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100">
+                <span><%= label %><%= " (#{selected.size})" if selected.any? %></span><span class="text-[9px] transition group-open:rotate-180">▼</span>
+              </summary>
+              <div class="relative z-20 mt-1 max-h-60 w-56 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg lg:absolute lg:left-0">
+                <% options.each do |option| %>
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 hover:bg-blue-50">
+                    <input type="checkbox" name="<%= field %>" value="<%= option %>" <%= "checked" if selected.include?(option) %> class="size-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                    <span><%= option.to_s.tr("_", " ").capitalize %></span>
+                  </label>
+                <% end %>
+              </div>
+            </details>
+          <% end %>
+
+          <button type="submit" class="rounded-xl bg-slate-800 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-slate-900">Filtra</button>
+          <% if @selected_book_categories.any? || @selected_book_languages.any? || @selected_book_publishers.any? %>
+            <%= link_to "Azzera filtri", posturacorretta_libri_path(tab: "consigliati", view: @books_view, q: @book_query.presence), class: "text-xs font-bold text-slate-500 hover:text-slate-800 underline ml-1" %>
+          <% end %>
+        </form>
+
+        <div class="mt-6 flex items-center justify-between gap-4">
+          <p class="text-sm text-slate-600"><strong class="text-slate-950"><%= @recommended_books.size %></strong> libri trovati</p>
+          <% if @books_editor %><span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">Le bozze sono visibili solo al superadmin</span><% end %>
+        </div>
+
+        <% if @recommended_books.any? %>
+          <div class="mt-4 <%= @books_view == 'grid' ? 'grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-items-center' : 'divide-y divide-slate-200 border-y border-slate-200' %>">
+            <% @recommended_books.each_with_index do |book, index| %>
+              <% dialog_id = "recommended-book-#{index}-#{book.fetch('title').parameterize.first(40)}" %>
+              <% if @books_view == "grid" %>
+                <div class="flex flex-col items-center justify-center p-2">
+                  <button type="button" onclick="document.getElementById('<%= dialog_id %>').showModal()" aria-label="Scopri <%= book['title'] %>" class="group cursor-pointer p-4 transition-all duration-300 hover:scale-105 focus:outline-none focus:rounded-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-4">
+                    <div class="book-3d">
+                      <div class="book-3d__cover">
+                        <% if book["cover_url"].present? %>
+                          <img src="<%= book['cover_url'] %>" alt="Copertina di <%= book['title'] %>">
+                        <% else %>
+                          <div class="book-3d__fallback">
+                            <strong class="book-3d__fallback-title"><%= book.fetch("title") %></strong>
+                            <div class="book-3d__fallback-meta">
+                              <% if book["author"].present? %><span class="block font-bold"><%= book["author"] %></span><% end %>
+                              <% if book["publisher"].present? %><span class="mt-1 block"><%= book["publisher"] %></span><% end %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+                <%= render "posturacorretta/book_modal", book: book, dialog_id: dialog_id, owned: false %>
+              <% else %>
+                <div onclick="document.getElementById('<%= dialog_id %>').showModal()" class="group flex cursor-pointer items-center justify-between gap-4 py-4 transition hover:bg-slate-50 px-3 rounded-xl">
+                  <div class="flex items-center gap-4 min-w-0">
+                    <div class="aspect-[3/4] w-16 shrink-0 overflow-hidden rounded-lg bg-slate-100 sm:w-20 shadow-sm transition group-hover:shadow">
+                      <% if book["cover_url"].present? %>
+                        <img src="<%= book['cover_url'] %>" alt="Copertina di <%= book['title'] %>" class="h-full w-full object-cover">
+                      <% else %>
+                        <div class="flex h-full items-center justify-center bg-slate-200 p-2 text-center text-[9px] font-black leading-tight text-slate-800"><%= book.fetch("title") %></div>
+                      <% end %>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <h2 class="text-base font-black tracking-tight text-slate-900 group-hover:text-blue-600 sm:text-lg transition"><%= book.fetch("title") %></h2>
+                        <% if book.fetch("status", "draft") != "published" %>
+                          <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-800">Bozza</span>
+                        <% end %>
+                      </div>
+                      <% if book["author"].present? %><p class="mt-0.5 text-xs font-semibold text-slate-600 sm:text-sm"><%= book["author"] %></p><% end %>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-600 shrink-0">
+                    <% if book["category"].present? %><span class="rounded-full bg-slate-100 px-2.5 py-1 hidden md:inline"><%= book["category"].to_s.tr("_", " ").capitalize %></span><% end %>
+                    <% if book["publisher"].present? %><span class="rounded-full bg-blue-50 px-2.5 py-1 text-blue-700 hidden sm:inline"><%= book["publisher"] %></span><% end %>
+                    <span class="text-blue-600 font-bold ml-2 group-hover:translate-x-1 transition-transform inline-block">Scopri / Edizioni →</span>
+                  </div>
+                </div>
+                <%= render "posturacorretta/book_modal", book: book, dialog_id: dialog_id, owned: false %>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-6 rounded-2xl border border-dashed border-slate-300 px-6 py-12 text-center">
+            <h2 class="text-lg font-black">Nessun libro trovato</h2>
+            <p class="mt-2 text-sm text-slate-600"><%= @books_editor ? "Prova a modificare i filtri di ricerca." : "La bibliografia è in preparazione." %></p>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+
+  <%= render "posturacorretta/footer" %>
+</main>

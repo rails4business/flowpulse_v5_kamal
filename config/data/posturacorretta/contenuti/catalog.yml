@@ -1,4 +1,30 @@
 ---
+# Dati pubblici di ogni articolo:
+# author: markpostura
+# data_pubblicazione_articolo: "2026-08-14"
+# Una data futura rende l'articolo visibile soltanto al superadmin; senza data resta pubblico e viene ordinato in fondo.
+# Dati organizzativi del video, visibili soltanto al superadmin:
+# data_registrazione_video: "2026-08-10"
+# data_pubblicazione_video: "2026-08-16"
+# Queste due date non determinano la pubblicazione dell'articolo.
+consapevolezza:
+  label: Consapevolezza
+  eyebrow: Osserva il corpo
+  icon: "\U0001F440"
+  color: sky
+  description: "Ascolto, percezione e coscienza corporea per comprendere il corpo e orientarsi tra le metodiche."
+  subcategories:
+  - Ascolto
+  - Percezione
+  - Coscienza corporea
+  articles:
+  - title: La percezione del corpo
+    excerpt: "Come osservare il corpo con maggiore attenzione, come si impara a suonare uno strumento."
+    slug: insegnamenti-fisioterapia
+    subcategory: Percezione
+    time: 8 min
+    format: post
+    author: markpostura
 dolore:
   label: Stop al dolore
   eyebrow: Parti dal sintomo

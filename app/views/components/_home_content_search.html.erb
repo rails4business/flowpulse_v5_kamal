@@ -1,0 +1,17 @@
+<form action="<%= posturacorretta_contenuti_path %>" method="get" class="relative mt-8 z-30 w-full max-w-2xl">
+  <label for="home-content-search" class="sr-only">Cerca nei contenuti</label>
+  <div class="relative">
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400">
+      <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
+      <path d="m20 20-3.5-3.5" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <input id="home-content-search" name="q" type="search" list="home-content-suggestions" placeholder="Cerca un problema, una parte del corpo o un argomento" autocomplete="off" aria-autocomplete="list" class="w-full rounded-xl border border-slate-300 bg-white py-3 pl-12 pr-32 text-sm font-medium text-slate-900 shadow-sm outline-none transition placeholder:font-normal placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+    <button type="submit" class="absolute inset-y-1.5 right-1.5 rounded-lg bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700">Cerca</button>
+  </div>
+
+  <datalist id="home-content-suggestions">
+    <% Array(@home_search_items).uniq { |result| result.fetch(:title) }.each do |result| %>
+      <option value="<%= result.fetch(:title) %>"><%= result.fetch(:meta) %></option>
+    <% end %>
+  </datalist>
+</form>

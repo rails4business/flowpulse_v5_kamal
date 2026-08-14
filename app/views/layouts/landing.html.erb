@@ -49,7 +49,8 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if content_for?(:landing_nav) && (request.path.start_with?("/posturacorretta") || controller_name.in?(%w[domains landing])) %>">
+  <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if (content_for?(:landing_header) || content_for?(:landing_nav)) && (request.path.start_with?("/posturacorretta") || controller_name.in?(%w[domains landing])) %>">
+    <%= yield :landing_header if content_for?(:landing_header) %>
     <%= yield :landing_nav if content_for?(:landing_nav) %>
     <%= render "shared/active_commitment", commitment: active_data_commitment if (content_for?(:landing_nav) || controller_path.start_with?("brands/impegno/")) && active_data_commitment %>
 

@@ -10,7 +10,7 @@
       <h2 class="text-base font-semibold leading-7 text-blue-600 uppercase tracking-widest">PosturaCorretta</h2>
       <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Collabora con noi</p>
       <p class="mt-6 text-lg leading-8 text-gray-600">
-        Unisciti alla nostra rete per migliorare la vita delle persone. Che tu sia un professionista della salute, un investitore o un esperto digitale, abbiamo uno spazio per te.
+        Unisciti alla nostra rete per migliorare la vita delle persone. Che tu sia un professionista della salute, un futuro insegnante o un esperto digitale, abbiamo uno spazio per te.
       </p>
     </div>
 
@@ -55,7 +55,8 @@
         <div class="mt-8 flex items-center gap-x-2 text-sm font-semibold leading-6 text-blue-600 group-hover:text-blue-700">Scopri il ruolo dell’insegnante <span aria-hidden="true">&rarr;</span></div>
       </a>
 
-      <!-- Card Investitori (Progetti) -->
+      <% if Current.user&.superadmin_user? %>
+      <!-- Card Investitori (bozza riservata al superadmin) -->
       <a href="<%= posturacorretta_progetti_path %>" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">
         <div>
           <div class="flex items-center gap-x-4">
@@ -64,7 +65,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.315 48.315 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
               </svg>
             </div>
-            <h3 class="text-xl font-semibold leading-8 text-gray-900">Investitori</h3>
+            <div>
+              <span class="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">Bozza · Superadmin</span>
+              <h3 class="mt-1 text-xl font-semibold leading-8 text-gray-900">Investitori</h3>
+            </div>
           </div>
           <p class="mt-6 text-base leading-7 text-gray-600">Esplora i nostri progetti di ricerca e sviluppo. Sostieni economicamente la crescita della piattaforma e dei prototipi.</p>
         </div>
@@ -73,6 +77,7 @@
           <span aria-hidden="true">&rarr;</span>
         </div>
       </a>
+      <% end %>
 
       <!-- Card Digital -->
       <a href="<%= posturacorretta_collabora_digital_path %>" class="group flex flex-col justify-between rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/10 transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-10">

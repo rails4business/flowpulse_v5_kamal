@@ -1,0 +1,64 @@
+components:
+  - type: section
+    classes: "bg-white"
+    children:
+      - type: row
+        classes: "mx-auto grid max-w-screen-xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-2 lg:items-center lg:gap-12 lg:px-14 lg:py-16 xl:px-28"
+        children:
+          - type: column
+            classes: "flex flex-col gap-5 sm:gap-6"
+            children:
+              - type: title
+                data:
+                  align: left
+                  kicker: "Una giusta posizione da cui osservare il mondo!" 
+                  title: "E tu hai trovato la tua?"
+                  subtitle: "La tua postura ha un impatto sulla tua salute e determina il modo in cui vivi, lavori e impari. Salute perfetta con posturacorretta!"
+              - type: home_content_search
+          - type: column
+            classes: "min-h-48 sm:min-h-56"
+            children:
+              - type: image
+                data:
+                  url: "https://ik.imagekit.io/posturacorretta/giusta_posizione.png?tr=w-1100,q-85"
+                  alt: "PosturaCorretta: partire dal corpo per ampliare lo sguardo sulla salute e sulla persona"
+                  classes: "min-h-48 sm:min-h-56"
+      - type: row
+        classes: "mx-auto grid max-w-screen-xl grid-cols-1 gap-4 px-4 pb-8 sm:px-6 sm:pb-10 md:grid-cols-3 lg:gap-6 lg:px-14 xl:px-28"
+        children:
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  compact: true
+                  content_classes: "px-5 py-4 lg:px-6"
+                  eyebrow: "🌿 PosturaCorretta in un mese"
+                  title: "Inizia il programma"
+                  description: "4 settimane per trovare la tua postura corretta, non solo allineare la schiena, ma una porta sul mondo della postura."
+                  cta: "Apri il programma"
+                  route: "guide:index:primo_mese"
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  compact: true
+                  content_classes: "px-5 py-4 lg:px-6"
+                  eyebrow: "🧭 Percorso integrato"
+                  title: "Crea il tuo Percorso"
+                  description: "Professionisti della salute e del benessere che lavorano per te con un unico obiettivo la tua salute come essere umano."
+                  cta: "Vai al percorso"
+                  route: "/posturacorretta/percorso"
+          - type: column
+            classes: "col-span-1"
+            children:
+              - type: card
+                item:
+                  compact: true
+                  content_classes: "px-5 py-4 lg:px-6"
+                  eyebrow: "📅 Eventi"
+                  title: "Vivi la nostra filosofia"
+                  description: "L'educazione al corpo, alla postura, per noi inizia da esperienze che uniscono attività, per la salute, ad attività ludiche e di formazione, sul territorio e natura: **dalla PosturaCorretta al giardino del corpo**. Per ritornare ad essere umani."
+                  cta: "Scopri gli eventi"
+                  route: "/posturacorretta/eventi"

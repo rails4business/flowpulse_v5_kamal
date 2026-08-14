@@ -1,143 +1,93 @@
 <%
-  is_home = current_page?(posturacorretta_path) || current_page?("/posturacorretta")
+  is_home = request.path == posturacorretta_path && params[:sezione].blank? && params[:capitolo].blank?
   is_accademia = current_page?(posturacorretta_accademia_path) rescue false
   is_percorso = [posturacorretta_percorso_path, posturacorretta_percorsi_sul_territorio_path].include?(request.path) rescue false
    is_eventi = current_page?(posturacorretta_eventi_path) rescue false
    is_contenuti = current_page?(posturacorretta_contenuti_path) rescue false
   is_metodiche = request.path.start_with?(posturacorretta_metodiche_path) rescue false
- is_visione = current_page?(posturacorretta_visione_path) rescue false
- 
   is_collabora = request.path.start_with?(posturacorretta_collabora_path) rescue false
+  is_libri = request.path == posturacorretta_libri_path rescue false
   
 %>
 
 <header class="sticky top-0 z-50 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur">
-  <div class="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
-    <!-- Logo -->
-    <a href="<%= posturacorretta_path %>" class="flex items-center gap-3 shrink-0 animate-fade-in" aria-label="PosturaCorretta home">
-      <img
-        src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
-        alt="PosturaCorretta"
-        class="h-8 w-auto"
-        onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');">
-      <span class="hidden text-lg font-extrabold tracking-tight text-blue-700">PosturaCorretta</span>
-    </a>
+  <div class="mx-auto flex <%= is_home ? 'h-12' : 'h-16' %> max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <% unless is_home %>
+      <a href="<%= posturacorretta_path %>" class="flex shrink-0 animate-fade-in items-center gap-3" aria-label="PosturaCorretta home">
+        <img
+          src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
+          alt="PosturaCorretta"
+          class="hidden h-8 w-auto sm:block"
+          onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');">
+        <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="" class="size-9 rounded-full bg-blue-600 object-cover sm:hidden">
+        <span class="hidden text-lg font-extrabold tracking-tight text-blue-700">PosturaCorretta</span>
+      </a>
+    <% end %>
 
     <!-- Desktop Inline Nav Links (Shortened, hidden on mobile) -->
-    <nav class="hidden items-center gap-3 xl:flex xl:gap-5" aria-label="Navigazione principale PosturaCorretta">
+    <nav class="<%= is_home ? 'hidden' : 'hidden items-center gap-3 xl:flex xl:gap-5' %>" aria-label="Navigazione principale PosturaCorretta">
       <a href="<%= posturacorretta_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_home ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Home
       </a>
-      <a href="<%= posturacorretta_percorso_path(page: "linee-guida-inizia") %>"
+      <a href="<%= posturacorretta_path(sezione: 'primo_mese') %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= params[:sezione] == 'primo_mese' ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
+        Guida
+      </a>
+      <a href="<%= posturacorretta_percorso_path %>"
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_percorso ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
-        Percorso
-      </a>
-      <a href="<%= posturacorretta_contenuti_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_contenuti ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
-        Contenuti
-      </a>
-      <a href="<%= posturacorretta_metodiche_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_metodiche ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
-        Metodiche
+        Percorso personalizzato
       </a>
       <a href="<%= posturacorretta_eventi_path %>"
-         class="ml-1 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold shadow-sm transition <%= is_eventi ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:text-blue-700" %>">
-        <%= render "posturacorretta/nav_icon", name: "events" %>
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_eventi ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Eventi
       </a>
-      <a href="<%= posturacorretta_visione_path %>"
-         class="ml-3 border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_visione ? "border-blue-600 text-blue-700" : "border-transparent text-blue-600 hover:border-blue-500 hover:text-blue-800" %>">
-        Visione
-      </a>
-      <a href="<%= posturacorretta_accademia_path %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_accademia ? "border-blue-600 text-blue-700" : "border-transparent text-blue-600 hover:border-blue-500 hover:text-blue-800" %>">
-        Accademia
-      </a>
+      <details class="group relative [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center gap-1 border-b-2 border-transparent px-0.5 py-1 text-sm font-semibold text-gray-600 transition hover:border-blue-500 hover:text-gray-950 group-open:border-blue-600 group-open:text-gray-950">
+          Esplora
+          <span class="text-[10px] transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <div class="absolute right-0 z-50 mt-3 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+          <a href="<%= posturacorretta_contenuti_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_contenuti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Contenuti</a>
+          <a href="<%= posturacorretta_percorsi_sul_territorio_path %>" class="block px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-700">Professionisti e luoghi</a>
+          <a href="<%= posturacorretta_accademia_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_accademia ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Accademia</a>
+          <a href="<%= posturacorretta_metodiche_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Metodiche</a>
+          <% if Current.user&.superadmin_user? %><a href="<%= posturacorretta_path(sezione: 'progetto') %>" class="block bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-800 hover:bg-amber-100">Visione e progetto · Bozza</a><% end %>
+          <div class="my-1 border-t border-slate-100"></div>
+          <a href="<%= posturacorretta_libri_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_libri ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Libri</a>
+          <a href="<%= posturacorretta_collabora_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_collabora ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Collabora</a>
+        </div>
+      </details>
     </nav>
 
-    <div class="hidden items-center xl:flex">
-      <% if authenticated? %>
-        <details class="group relative [&_summary::-webkit-details-marker]:hidden">
-          <summary class="profile-menu-toggle cursor-pointer list-none gap-2 rounded-full border border-slate-200 bg-white p-1 pr-3 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" aria-label="Apri menu profilo">
-            <span class="flex size-8 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white"><%= (Current.user.profile&.display_name || Current.user.email_address).first.upcase %></span>
-            <svg aria-hidden="true" class="size-4 text-slate-400 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-          </summary>
-          <div class="absolute right-0 z-50 mt-2 w-60 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
-            <div class="px-3 py-2"><p class="truncate text-sm font-bold text-slate-950"><%= Current.user.profile&.display_name.presence || "Profilo" %></p><p class="truncate text-xs text-slate-500"><%= Current.user.email_address %></p></div>
-            <div class="my-1 border-t border-slate-100"></div>
-            <%= link_to "Calendario", posturacorretta_impegno_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
-            <%= link_to "Profilo", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
-            <% if Current.user.superadmin_user? %><%= link_to "Superadmin", admin_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
-            <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
-          </div>
-        </details>
-      <% else %>
-        <div class="flex items-center gap-1">
-          <%= link_to "Accedi", new_session_path, class: "rounded-lg px-2.5 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" %>
-          <%= link_to "Registrati", new_user_path, class: "rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
-        </div>
-      <% end %>
+    <div class="<%= is_home ? 'ml-auto flex items-center' : 'hidden items-center xl:flex' %>">
+      <%= render "posturacorretta/account_nav" %>
     </div>
 
-    <!-- Mobile Hamburger Toggle Button (hidden on desktop) -->
-    <button id="mobile-menu-toggle" type="button" class="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 xl:hidden" aria-label="Apri menu">
-      <svg class="h-6 w-6 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="hamburger-icon">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-      <svg class="h-6 w-6 hidden transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="close-icon">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
+    <nav class="<%= is_home ? 'hidden' : 'flex items-center gap-1 xl:hidden' %>" aria-label="Navigazione mobile PosturaCorretta">
+      <a href="<%= posturacorretta_path(sezione: 'primo_mese') %>" class="rounded-lg px-2 py-2 text-xs font-bold <%= params[:sezione] == 'primo_mese' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>">Guida</a>
+      <a href="<%= posturacorretta_percorso_path %>" class="rounded-lg p-2 <%= is_percorso ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>" aria-label="Percorso personalizzato"><%= render "posturacorretta/nav_icon", name: "path", classes: "size-5" %></a>
+      <a href="<%= posturacorretta_eventi_path %>" class="rounded-lg p-2 <%= is_eventi ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>" aria-label="Eventi"><%= render "posturacorretta/nav_icon", name: "events", classes: "size-5" %></a>
+      <details class="group relative [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-bold text-slate-700 shadow-sm" aria-label="Apri Esplora">Esplora <span class="text-[9px] transition group-open:rotate-180">▼</span></summary>
+        <div class="absolute right-0 z-[80] mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
+          <%= link_to "Contenuti", posturacorretta_contenuti_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
+          <%= link_to "Professionisti e luoghi", posturacorretta_percorsi_sul_territorio_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
+          <%= link_to "Accademia", posturacorretta_accademia_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
+          <%= link_to "Metodiche", posturacorretta_metodiche_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
+          <% if Current.user&.superadmin_user? %><%= link_to "Visione e progetto · Bozza", posturacorretta_path(sezione: "progetto"), class: "block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100" %><% end %>
+          <%= link_to "Libri", posturacorretta_libri_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold #{is_libri ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'}" %>
+          <%= link_to "Collabora", posturacorretta_collabora_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
+          <div class="my-1 border-t border-slate-100"></div>
+          <% if authenticated? %>
+            <%= link_to "Calendario", posturacorretta_impegno_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
+            <%= link_to "Profilo", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+          <% else %>
+            <div class="grid grid-cols-2 gap-2 p-1"><%= link_to "Accedi", new_session_path, class: "rounded-lg border border-slate-200 px-3 py-2 text-center text-sm font-bold text-slate-700" %><%= link_to "Registrati", new_user_path, class: "rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-bold text-white" %></div>
+          <% end %>
+        </div>
+      </details>
+    </nav>
   </div>
 
-  <!-- Mobile Dropdown Menu Drawer (hidden on desktop) -->
-  <div id="mobile-dropdown-menu" class="hidden space-y-1 border-t border-gray-200 bg-white px-4 py-3 shadow-sm xl:hidden">
-    <a href="<%= posturacorretta_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_home ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "home" %><span>Home</span></a>
-    <a href="<%= posturacorretta_percorso_path(page: "linee-guida-inizia") %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_percorso ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "path" %><span>Percorso personalizzato</span></a>
-    <a href="<%= posturacorretta_contenuti_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_contenuti ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "content" %><span>Contenuti</span></a>
-    <a href="<%= posturacorretta_metodiche_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "methods" %><span>Metodiche</span></a>
-    <a href="<%= posturacorretta_collabora_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_collabora ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "projects" %><span>Collabora</span></a>
-    <a href="<%= posturacorretta_eventi_path %>" class="mt-2 flex items-center gap-3 rounded-lg border px-4 py-2.5 text-sm font-bold transition <%= is_eventi ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-700" %>"><%= render "posturacorretta/nav_icon", name: "events" %><span>Eventi e Community</span></a>
-    <a href="<%= posturacorretta_visione_path %>" class="mt-2 flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_visione ? "bg-blue-50 text-blue-700" : "text-blue-600 hover:bg-blue-50 hover:text-blue-800" %>"><%= render "posturacorretta/nav_icon", name: "book" %><span>Visione</span></a>
-    <a href="<%= posturacorretta_accademia_path %>" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition <%= is_accademia ? "bg-blue-50 text-blue-700" : "text-blue-600 hover:bg-blue-50 hover:text-blue-800" %>"><%= render "posturacorretta/nav_icon", name: "academy" %><span>Accademia</span></a>
-    <div class="my-2 border-t border-slate-200"></div>
-    <% if authenticated? %>
-      <%= link_to "Calendario", posturacorretta_impegno_path, class: "block rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
-      <%= link_to "Profilo", profile_path, class: "block rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
-      <% if Current.user.superadmin_user? %><%= link_to "Superadmin", admin_dashboard_path, class: "block rounded-lg px-4 py-2.5 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
-      <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-4 py-2.5 text-left text-sm font-bold text-red-600 hover:bg-red-50" %>
-    <% else %>
-      <div class="grid grid-cols-2 gap-2">
-        <%= link_to "Accedi", new_session_path, class: "rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-bold text-slate-700" %>
-        <%= link_to "Registrati", new_user_path, class: "rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-bold text-white" %>
-      </div>
-    <% end %>
-  </div>
 </header>
-
-<script>
-  (() => {
-    const toggleBtn = document.getElementById("mobile-menu-toggle");
-    const menu = document.getElementById("mobile-dropdown-menu");
-    const hamburgerIcon = document.getElementById("hamburger-icon");
-    const closeIcon = document.getElementById("close-icon");
-
-    if (toggleBtn && menu) {
-      toggleBtn.addEventListener("click", () => {
-        const isHidden = menu.classList.contains("hidden");
-        if (isHidden) {
-          menu.classList.remove("hidden");
-          hamburgerIcon.classList.add("hidden");
-          closeIcon.classList.remove("hidden");
-          toggleBtn.setAttribute("aria-label", "Chiudi menu");
-        } else {
-          menu.classList.add("hidden");
-          hamburgerIcon.classList.remove("hidden");
-          closeIcon.classList.add("hidden");
-          toggleBtn.setAttribute("aria-label", "Apri menu");
-        }
-      });
-    }
-  })();
-</script>

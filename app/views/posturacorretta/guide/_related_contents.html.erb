@@ -1,0 +1,32 @@
+<section class="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-contents-title">
+  <div>
+    <p class="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Continua ad approfondire</p>
+    <h2 id="related-contents-title" class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Contenuti collegati</h2>
+  </div>
+
+  <div class="mt-5 grid gap-4 sm:grid-cols-2">
+    <% contents.each do |content| %>
+      <% is_video = content[:format] == "video" %>
+      <a href="<%= content.fetch(:_href) %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if content[:url].present? %> class="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md">
+        <% if is_video %>
+          <div class="aspect-video overflow-hidden bg-slate-100">
+            <img src="https://img.youtube.com/vi/<%= content[:slug] %>/mqdefault.jpg" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+          </div>
+        <% end %>
+        <div class="p-5">
+          <div class="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-wider">
+            <span class="text-blue-700"><%= content[:_category_label] %></span>
+            <span class="text-slate-300" aria-hidden="true">•</span>
+            <span class="text-slate-500"><%= is_video ? "Video" : "Articolo" %></span>
+          </div>
+          <h3 class="mt-3 font-semibold leading-6 text-slate-950 group-hover:text-blue-700"><%= content[:title] %></h3>
+          <% if content[:excerpt].present? %><p class="mt-2 text-sm leading-6 text-slate-600"><%= content[:excerpt] %></p><% end %>
+          <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+            <span>@<%= content[:author] %></span>
+            <% if content[:_publication_label].present? %><time datetime="<%= content[:_publication_date].iso8601 %>"><%= content[:_publication_label] %></time><% end %>
+          </div>
+        </div>
+      </a>
+    <% end %>
+  </div>
+</section>

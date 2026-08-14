@@ -1,0 +1,129 @@
+# Per collegare le card del catalogo a un capitolo:
+# related_contents:
+#   - slug-del-contenuto
+# Se uno slug compare in più categorie si può specificare anche la categoria:
+#   - slug: slug-del-contenuto
+#     category: prevenzione
+sections:
+  - id: primo_mese
+    directory: 01_primo_mese
+    title: PosturaCorretta in un mese
+    status: published
+    intro: { type: markdown, source: guide/01_primo_mese/00_intro.md }
+    items:
+      - { slug: 00-da-dove-iniziare, legacy_slug: 03-da-dove-iniziare, title: "Da dove iniziare: tre possibilità", type: markdown, source: guide/01_primo_mese/00_da_dove_iniziare.md }
+      - { slug: 00-trovare-il-giusto-punto-di-vista, legacy_slug: 00-ultima-sconfitta, title: "Trovare il giusto punto di vista", type: markdown, source: guide/01_primo_mese/00_trovare_il_giusto_punto_di_vista.md }
+      - { slug: 01-errori, title: "I 3 errori che tutti fanno quando iniziano un percorso posturale", type: markdown, source: guide/01_primo_mese/01_errori.md }
+      - { slug: 02-benefici, title: "I benefici di una postura corretta", type: markdown, source: guide/01_primo_mese/02_benefici.md }
+      - { slug: 04-disallineamento, title: "Sei disallineato? La postura come strumento per leggere il corpo", type: markdown, source: guide/01_primo_mese/04_disallineamento.md }
+      - { slug: 05-metodiche, title: "Mettere in pratica gli insegnamenti delle metodiche posturali", type: markdown, source: guide/01_primo_mese/05_metodiche.md }
+      - { slug: 06-visione, title: "Un nuovo punto di vista sulla salute: il corpo e l'educazione", type: markdown, source: guide/01_primo_mese/06_un_nuovo_punto_di_vista_salute_corpo_educazione.md }
+
+  - id: progetto
+    directory: 02_progetto
+    title: Conoscere il progetto
+    status: draft
+    intro: { type: markdown, source: guide/02_progetto/00_intro.md }
+    items:
+      - { slug: visione, title: "La visione di PosturaCorretta", type: markdown, source: guide/02_progetto/01_visione.md }
+      - { slug: 01-mappa, legacy_slug: 07-mappa, title: "Una matrice come mappa: ambiti, aree e paradigmi", type: vision, section: map }
+      - { slug: 02-attori, legacy_slug: 08-attori, title: "Strumenti e attori del progetto", type: vision, section: actors }
+      - { slug: 03-ruoli, legacy_slug: 09-ruoli, title: "Professionisti e insegnanti: due competenze", type: vision, section: roles }
+      - { slug: 04-giardino, legacy_slug: 10-giardino, title: "Dalla PosturaCorretta al Giardino del Corpo", type: vision, section: garden }
+      - { slug: 05-libro, legacy_slug: 11-libro, title: "Il libro: Il corpo, un mondo da scoprire", type: vision, section: book }
+
+  - id: percorso
+    directory: 03_percorso
+    title: Come funziona il Percorso Integrato
+    status: draft
+    intro: { type: markdown, source: guide/03_percorso/00_intro.md }
+    items:
+      - title: Per le persone
+        type: group
+        children:
+          - { slug: inizia, legacy_slug: linee-guida-inizia, title: "Inizia il percorso", type: partial, source: posturacorretta/guide/sections/03_percorso/inizia }
+          - { slug: scegli-programma, legacy_slug: scegli-un-programma, title: "Scegli un programma", type: partial, source: posturacorretta/guide/sections/03_percorso/scegli_programma }
+          - { slug: quale-percorso, title: "Quale percorso scegliere?", type: partial, source: posturacorretta/guide/sections/03_percorso/linee_guida }
+          - { slug: orientamento, title: "Orientati tra insegnanti, professionisti e metodiche", type: partial, source: posturacorretta/guide/sections/03_percorso/orientamento }
+          - { slug: prossimo-passo, title: "Prossimo passo", type: partial, source: posturacorretta/guide/sections/03_percorso/prossimo_passo }
+          - title: Domande frequenti
+            type: group
+            children:
+              - { slug: domanda-da-dove-comincio, legacy_slug: domande-da-dove-comincio, title: "Da dove comincio?", type: markdown, source: guide/03_percorso/pazienti/01_da_dove_comincio.md }
+              - { slug: domanda-senza-diagnosi, legacy_slug: domande-senza-diagnosi, title: "Posso iniziare senza una diagnosi?", type: markdown, source: guide/03_percorso/pazienti/02_senza_diagnosi.md }
+              - { slug: domanda-insegnante-professionista, legacy_slug: domande-insegnante-professionista, title: "Che differenza c'è tra insegnante e professionista?", type: markdown, source: guide/03_percorso/pazienti/03_insegnante_professionista.md }
+              - { slug: domanda-coinvolgere-professionista, legacy_slug: domande-coinvolgere-professionista, title: "Posso coinvolgere il mio professionista?", type: markdown, source: guide/03_percorso/pazienti/04_coinvolgere_professionista.md }
+              - { slug: domanda-durata-programma, legacy_slug: domande-durata-programma, title: "Quanto dura un programma?", type: markdown, source: guide/03_percorso/pazienti/05_durata_programma.md }
+      - title: Per i professionisti
+        type: group
+        children:
+          - { slug: professionisti-inizia, legacy_slug: professionisti-iniziare-percorso, title: "Inizia da qui", type: markdown, source: guide/03_percorso/professionisti/01_iniziare_percorso.md }
+          - { slug: ruoli-professionali, legacy_slug: professionisti, title: "Ruoli professionali", type: partial, source: posturacorretta/guide/sections/03_percorso/professionisti }
+          - { slug: responsabile-percorso, legacy_slug: professionisti-responsabile-percorso, title: "Responsabile del percorso", type: markdown, source: guide/03_percorso/professionisti/02_responsabile_percorso.md }
+          - { slug: aprire-programma, legacy_slug: professionisti-aprire-programma, title: "Aprire un programma", type: markdown, source: guide/03_percorso/professionisti/03_aprire_programma.md }
+          - title: Programmi e ambiti
+            type: group
+            children:
+              - { slug: stop-al-dolore, title: "Stop al dolore", type: markdown, source: guide/03_percorso/programmi/01_stop_al_dolore.md }
+              - { slug: prevenzione, title: "Prevenzione", type: markdown, source: guide/03_percorso/programmi/02_prevenzione.md }
+              - { slug: performance, title: "Performance", type: markdown, source: guide/03_percorso/programmi/03_performance.md }
+              - { slug: benessere-integrato, title: "Benessere integrato", type: markdown, source: guide/03_percorso/programmi/04_benessere_integrato.md }
+              - { slug: attivita-corporee, title: "Attività corporee", type: markdown, source: guide/03_percorso/programmi/05_attivita_corporee.md }
+              - { slug: postura-fisiologia, title: "Postura e fisiologia", type: markdown, source: guide/03_percorso/programmi/06_postura_fisiologia.md }
+              - { slug: corpo-ambiente, title: "Corpo e ambiente", type: markdown, source: guide/03_percorso/programmi/07_corpo_ambiente.md }
+              - { slug: potenziale-umano, title: "Potenziale umano", type: markdown, source: guide/03_percorso/programmi/08_potenziale_umano.md }
+          - { slug: definire-proposta, legacy_slug: professionisti-definire-proposta, title: "Definire la proposta", type: markdown, source: guide/03_percorso/professionisti/04_definire_proposta.md }
+          - { slug: invitare-professionista, legacy_slug: professionisti-invitare-professionista, title: "Invitare un professionista", type: markdown, source: guide/03_percorso/professionisti/05_invitare_professionista.md }
+          - { slug: percorso-integrato, legacy_slug: professionisti-percorso-integrato, title: "Collaborare in un percorso integrato", type: markdown, source: guide/07_collabora/01_percorso_integrato.md }
+          - { slug: usare-diario, legacy_slug: professionisti-usare-diario, title: "Usare il diario", type: markdown, source: guide/03_percorso/professionisti/06_usare_diario.md }
+          - { slug: ragionamento-fisiologico, legacy_slug: professionisti-ragionamento-fisiologico, title: "Spiegare il ragionamento fisiologico", type: markdown, source: guide/03_percorso/professionisti/07_ragionamento_fisiologico.md }
+          - { slug: misurare-risultati, legacy_slug: professionisti-misurare-risultati, title: "Misurare i risultati", type: markdown, source: guide/03_percorso/professionisti/08_misurare_risultati.md }
+          - { slug: chiudere-programma, legacy_slug: professionisti-chiudere-programma, title: "Chiudere un programma", type: markdown, source: guide/03_percorso/professionisti/09_chiudere_programma.md }
+          - { slug: chiudere-percorso, legacy_slug: professionisti-chiudere-percorso, title: "Chiudere il percorso", type: markdown, source: guide/03_percorso/professionisti/10_chiudere_percorso.md }
+          - { slug: aderisci-linee-guida, legacy_slug: professionisti-aderisci-linee-guida, title: "Aderisci alle Linee guida", type: markdown, source: guide/03_percorso/professionisti/11_aderire_linee_guida.md }
+
+  - id: accademia
+    directory: 04_accademia
+    title: Come funziona l'Accademia
+    status: draft
+    intro: { type: markdown, source: guide/04_accademia/00_intro.md }
+    items:
+      - { slug: educazione, title: "Educazione al corpo e alla salute", type: partial, source: posturacorretta/guide/sections/04_accademia/educazione }
+      - { slug: ruoli, title: "Professionisti e insegnanti", type: vision, section: roles }
+      - { slug: fasi, title: "Informati, Pratica, Insegna", type: partial, source: posturacorretta/guide/sections/04_accademia/fasi }
+      - { slug: ambiti, title: "Operare nei tre ambiti", type: partial, source: posturacorretta/guide/sections/04_accademia/ambiti }
+
+  - id: eventi
+    directory: 05_eventi
+    title: Come funzionano gli Eventi
+    status: draft
+    intro: { type: markdown, source: guide/05_eventi/00_intro.md }
+    items:
+      - { slug: introduzione, title: "Esperienze PosturaCorretta", type: partial, source: posturacorretta/guide/sections/05_eventi/introduzione }
+      - { slug: partecipanti, title: "Per chi partecipa", type: partial, source: posturacorretta/guide/sections/05_eventi/partecipanti }
+      - { slug: conduttori, title: "Per conduttori e professionisti", type: partial, source: posturacorretta/guide/sections/05_eventi/conduttori }
+      - { slug: location, title: "Per location e associazioni", type: partial, source: posturacorretta/guide/sections/05_eventi/location }
+
+  - id: metodiche
+    directory: 06_metodiche
+    title: Come funzionano le Metodiche
+    status: draft
+    intro: { type: markdown, source: guide/06_metodiche/00_intro.md }
+    items:
+      - { slug: introduzione, title: "Orientarsi tra le metodiche", type: partial, source: posturacorretta/guide/sections/06_metodiche/introduzione }
+      - { slug: persone, title: "Per le persone", type: partial, source: posturacorretta/guide/sections/06_metodiche/persone }
+      - { slug: professionisti, title: "Per i professionisti", type: partial, source: posturacorretta/guide/sections/06_metodiche/professionisti }
+      - { slug: scuole, title: "Per scuole e metodiche", type: partial, source: posturacorretta/guide/sections/06_metodiche/scuole }
+
+  - id: collabora
+    directory: 07_collabora
+    title: Collaborare
+    status: draft
+    intro: { type: markdown, source: guide/07_collabora/00_intro.md }
+    items:
+      - { slug: insegnanti, title: "Diventa insegnante", type: partial, source: posturacorretta/guide/sections/07_collabora/insegnanti }
+      - { slug: percorso-integrato, title: "Linee guida e percorso integrato", type: markdown, source: guide/07_collabora/01_percorso_integrato.md }
+      - { slug: contenuti, title: "Collabora alla creazione di contenuti", type: markdown, source: guide/07_collabora/02_contenuti_video.md }
+      - { slug: metodica-professione, title: "Presenta una metodica o una professione", type: markdown, source: guide/07_collabora/03_promuovi_metodica_professione.md }
+      - { slug: eventi, title: "Organizza o partecipa a un evento", type: markdown, source: guide/07_collabora/04_eventi.md }
+      - { slug: digitale, title: "Digital e tecnologia", type: partial, source: posturacorretta/guide/sections/07_collabora/digitale }

@@ -1,5 +1,7 @@
-<a href="<%= item['route'] %>" class="pc-component pc-card group relative block h-full rounded-lg bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
-  <div class="flex h-full flex-col justify-between rounded-lg border border-gray-200 p-6 shadow-sm transition group-hover:border-blue-300 group-hover:bg-blue-50/40 sm:p-8">
+<% compact = item["compact"] == true %>
+<% content_classes = item["content_classes"].presence || (compact ? "p-4" : "p-6 sm:p-8") %>
+<a href="<%= posturacorretta_builder_route(item['route']) %>" class="pc-component pc-card group relative block h-full rounded-lg bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+  <div class="flex h-full flex-col justify-between rounded-lg border border-gray-200 <%= content_classes %> shadow-sm transition group-hover:border-blue-300 group-hover:bg-blue-50/40">
     <div>
       <% if item['eyebrow'].present? %>
         <p class="text-xs font-bold uppercase tracking-widest text-blue-700">
@@ -7,19 +9,25 @@
         </p>
       <% end %>
       
-      <h3 class="mt-4 text-xl font-bold text-gray-900 sm:text-2xl">
+      <h3 class="<%= compact ? 'mt-3 text-base sm:text-lg' : 'mt-4 text-xl sm:text-2xl' %> font-bold text-gray-900">
         <%= inline_markdown(item['title']) %>
       </h3>
       
+      <% if item['subtitle'].present? %>
+        <p class="<%= compact ? 'mt-1.5 text-xs font-medium' : 'mt-2 text-sm font-semibold' %> text-slate-600">
+          <%= inline_markdown(item['subtitle']) %>
+        </p>
+      <% end %>
+
       <% if item['description'].present? %>
-        <p class="mt-4 text-sm text-gray-600 leading-relaxed">
+        <p class="<%= compact ? 'mt-3 text-xs leading-5' : 'mt-4 text-sm leading-relaxed' %> text-gray-600">
           <%= inline_markdown(item['description']) %>
         </p>
       <% end %>
     </div>
 
     <% if item['cta'].present? %>
-      <div class="mt-8 flex items-center justify-between border-t border-gray-100 pt-6">
+      <div class="<%= compact ? 'mt-4 pt-4' : 'mt-8 pt-6' %> flex items-center justify-between border-t border-gray-100">
         <span class="text-sm font-semibold text-blue-700 group-hover:underline">
           <%= inline_markdown(item['cta']) %>
         </span>

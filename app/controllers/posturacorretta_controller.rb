@@ -7,7 +7,11 @@ class PosturacorrettaController < ApplicationController
   before_action :load_catalog, only: %i[contenuti articolo]
   helper_method :posturacorretta_public_professionals
 
-  def accademia; end
+  def accademia
+    return unless params[:tab] == "guide"
+
+    redirect_to posturacorretta_path(sezione: "accademia", capitolo: "educazione"), status: :moved_permanently
+  end
   def accademia_recensioni; end
   def accademia_modulo
     @module = @academy_modules.find { |m| m["slug"] == params[:slug] }
@@ -16,45 +20,19 @@ class PosturacorrettaController < ApplicationController
   def percorso
     return redirect_to(posturacorretta_percorsi_sul_territorio_path) if params[:page] == "territorio"
 
-    legacy_page = { "inizia" => "linee-guida-inizia", "linee-guida" => "quale-percorso" }[params[:page]]
-    return redirect_to(posturacorretta_percorso_path(page: legacy_page), status: :moved_permanently) if legacy_page
-    return redirect_to(posturacorretta_percorso_path(page: "linee-guida-inizia"), status: :moved_permanently) if params[:page].blank?
-
-    vision_anchor = {
-      "ambiti" => "ambiti-aree",
-      "aree" => "ambiti-aree",
-      "paradigmi" => "paradigmi"
-    }[params[:page]]
-    return redirect_to(posturacorretta_visione_path(anchor: vision_anchor)) if vision_anchor
-
-    data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/percorso/percorso.yml"), permitted_classes: [], aliases: false) || {}
-    @paths = data.fetch("paths", {})
-    @color_classes = data.fetch("colorClasses", {})
-    @path_teams = data.fetch("pathTeams", {})
-    @path_professionals = data.fetch("pathProfessionals", {})
-
-    taxonomies = PosturacorrettaTaxonomies.load
-    @scopes = taxonomies.fetch("scopes", {})
-    @areas = taxonomies.fetch("areas", {})
-
-    aside_data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/percorso/aside.yml"), permitted_classes: [], aliases: false) || {}
-    @aside_items = aside_data.fetch("items", [])
-    professional_group = @aside_items.find { |item| item["type"] == "group" && item["title"] == "Professionisti" }
-    @professional_page_slugs = collect_aside_slugs(professional_group&.fetch("children", []) || [])
-    guidelines_item = find_aside_item(@aside_items, "programmi-ambiti")
-    @guideline_page_slugs = guidelines_item&.fetch("children", [])&.filter_map { |item| item["slug"] } || []
-
-    requested_slug = params[:page].presence || "linee-guida-inizia"
-    @current_item = find_aside_item(@aside_items, requested_slug) || find_aside_item(@aside_items, "inizia")
-
-    if @current_item
-      if @current_item["type"] == "markdown"
-        md_path = Rails.root.join("config/data", @current_item["source"])
-        @page_content = File.exist?(md_path) ? File.read(md_path) : "Contenuto non trovato."
-      else
-        @page_partial = @current_item["source"]
-      end
+    if params[:page].present?
+      chapter = { "inizia" => "inizia", "linee-guida" => "quale-percorso" }.fetch(params[:page], params[:page])
+      return redirect_to(posturacorretta_path(sezione: "percorso", capitolo: chapter), status: :moved_permanently)
     end
+
+    @selected_tab = "percorso"
+    @standalone_percorso = true
+    render "posturacorrettastart/index"
+  end
+
+  def percorso_come_funziona
+    legacy_slug = params[:page].presence || "linee-guida-inizia"
+    redirect_to posturacorretta_path(sezione: "percorso", capitolo: legacy_slug), status: :moved_permanently
   end
   def percorsi_sul_territorio
     @territory_tab = params[:tab].presence_in(%w[people places]) || "people"
@@ -98,7 +76,11 @@ class PosturacorrettaController < ApplicationController
     # Carica accademia e altri quando ci saranno i file
   end
 
-  def metodiche; end
+  def metodiche
+    return unless params[:tab] == "how"
+
+    redirect_to posturacorretta_path(sezione: "metodiche", capitolo: "introduzione"), status: :moved_permanently
+  end
   def metodica
     @methodology = @methodologies_by_slug[params.fetch(:slug)]
     return redirect_to posturacorretta_metodiche_path, alert: "Metodica non trovata" unless @methodology
@@ -132,6 +114,10 @@ class PosturacorrettaController < ApplicationController
     @content = File.exist?(markdown_file) ? File.read(markdown_file) : nil
   end
   def eventi
+    if params[:tab] == "how"
+      return redirect_to(posturacorretta_path(sezione: "eventi", capitolo: "introduzione"), status: :moved_permanently)
+    end
+
     data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/eventi/eventi.yml"), permitted_classes: [], aliases: false) || {}
     @events = data.fetch("events", [])
     @places = data.fetch("places", [])
@@ -143,11 +129,34 @@ class PosturacorrettaController < ApplicationController
     @scopes = taxonomies.fetch("scopes", {})
     @areas = taxonomies.fetch("areas", {})
 
-    paradigms_path = Rails.root.join("config/data/posturacorretta/percorso/contenuti/paradigmi.md")
+    paradigms_path = Rails.root.join("config/data/posturacorretta/guide/02_progetto/01_paradigmi_e_matrice.md")
     if paradigms_path.file?
       paradigms_content = paradigms_path.read
       @vision_paradigms, @vision_matrix = paradigms_content.split(/^# La Matrice\s*$/i, 2)
     end
+  end
+  def libri
+    @books_tab = params[:tab].presence_in(%w[nostri consigliati]) || "nostri"
+    @books_view = params[:view].presence_in(%w[grid list]) || "grid"
+    @books_editor = Current.user&.superadmin_user? || false
+    @owned_books = load_owned_books.sort_by { |b| b.fetch("status", "draft") == "published" ? 0 : 1 }
+
+    library_path = Rails.root.join("config/data/posturacorretta/libri_pubblicati/biblioteca_postura.yml")
+    library = library_path.file? ? YAML.safe_load_file(library_path, permitted_classes: [], aliases: false) || {} : {}
+    raw_recommended = visible_library_entries(library.fetch("books", []))
+    @library_publishers = visible_library_entries(library.fetch("publishers", []))
+
+    @book_query = params[:q].to_s.strip
+    @selected_book_categories = Array(params[:categories]).compact_blank
+    @selected_book_languages = Array(params[:languages]).compact_blank
+    @selected_book_publishers = Array(params[:publishers]).compact_blank
+
+    @book_category_options = raw_recommended.filter_map { |book| book["category"].presence }.uniq.sort
+    @book_language_options = raw_recommended.flat_map { |book| book["language"].to_s.split(%r{\s*/\s*}) }.compact_blank.uniq.sort
+    @book_publisher_options = (@library_publishers.filter_map { |publisher| publisher["name"].presence } + raw_recommended.filter_map { |book| book["publisher"].presence }).uniq.sort
+
+    @recommended_books = filter_recommended_books(raw_recommended).sort_by { |b| b.fetch("status", "draft") == "published" ? 0 : 1 }
+    @recommended_books_total = @recommended_books.size
   end
   def progetti
     root = Rails.root.join("config/data/posturacorretta/progetti")
@@ -172,18 +181,15 @@ class PosturacorrettaController < ApplicationController
   def collabora; end
   def collabora_professionisti; end
   def collabora_professionisti_guida
-    root = Rails.root.join("config/data/posturacorretta/collabora/professionisti")
-    data = YAML.safe_load_file(root.join("guide.yml"), permitted_classes: [], aliases: false) || {}
-    @collaboration_guides = data.fetch("guides", [])
-    @collaboration_guide = @collaboration_guides.find { |guide| guide["slug"] == params[:slug] }
-    return redirect_to posturacorretta_collabora_professionisti_path, alert: "Approfondimento non trovato" unless @collaboration_guide
+    chapter = {
+      "percorso-integrato" => "percorso-integrato",
+      "contenuti-video" => "contenuti",
+      "promuovi-metodica-professione" => "metodica-professione",
+      "eventi" => "eventi"
+    }[params[:slug]]
+    return redirect_to(posturacorretta_collabora_professionisti_path, alert: "Approfondimento non trovato") unless chapter
 
-    content_path = root.join(@collaboration_guide.fetch("source")).cleanpath
-    unless content_path.to_s.start_with?(root.to_s) && content_path.file?
-      return redirect_to posturacorretta_collabora_professionisti_path, alert: "Contenuto non disponibile"
-    end
-
-    @collaboration_content = content_path.read
+    redirect_to posturacorretta_path(sezione: "collabora", capitolo: chapter), status: :moved_permanently
   end
   def collabora_digital
     load_projects
@@ -211,6 +217,37 @@ class PosturacorrettaController < ApplicationController
 
   private
 
+  def load_owned_books
+    Dir.glob(Rails.root.join("config/data/books/*/book.yml")).sort.filter_map do |path|
+      metadata_path = Pathname(path)
+      metadata = YAML.safe_load_file(metadata_path, permitted_classes: [], aliases: false) || {}
+      slug = metadata_path.dirname.basename.to_s
+      status = metadata.fetch("status", "draft")
+      next unless @books_editor || status == "published"
+      next if slug.start_with?("old-") || slug.start_with?("test-")
+
+      metadata.merge("slug" => slug, "status" => status)
+    rescue StandardError
+      nil
+    end
+  end
+
+  def visible_library_entries(entries)
+    entries.select { |entry| @books_editor || entry.fetch("status", "draft") == "published" }
+  end
+
+  def filter_recommended_books(books)
+    books.select do |book|
+      searchable = [book["title"], book["author"], book["publisher"], book["category"], book["language"]].compact.join(" ")
+      languages = book["language"].to_s.split(%r{\s*/\s*})
+      query_match = @book_query.blank? || searchable.downcase.include?(@book_query.downcase)
+      category_match = @selected_book_categories.empty? || @selected_book_categories.include?(book["category"])
+      language_match = @selected_book_languages.empty? || (@selected_book_languages & languages).any?
+      publisher_match = @selected_book_publishers.empty? || @selected_book_publishers.include?(book["publisher"])
+      query_match && category_match && language_match && publisher_match
+    end
+  end
+
   def collect_aside_slugs(items)
     items.flat_map do |item|
       [item["slug"], *collect_aside_slugs(item.fetch("children", []))].compact
@@ -230,7 +267,53 @@ class PosturacorrettaController < ApplicationController
 
   def load_catalog
     catalog_path = Rails.root.join("config/data/posturacorretta/contenuti/catalog.yml")
-    @catalog = File.exist?(catalog_path) ? YAML.safe_load_file(catalog_path, permitted_classes: [], aliases: false, symbolize_names: true) || {} : {}
+    raw_catalog = File.exist?(catalog_path) ? YAML.safe_load_file(catalog_path, permitted_classes: [], aliases: false, symbolize_names: true) || {} : {}
+    catalog_editor = Current.user&.superadmin_user? || false
+
+    @catalog = raw_catalog.transform_values do |category|
+      indexed_articles = category.fetch(:articles, []).each_with_index.filter_map do |article, index|
+        publication_date = catalog_publication_date(article)
+        video_recording_date = catalog_date(article, :data_registrazione_video)
+        video_publication_date = catalog_date(article, :data_pubblicazione_video)
+        scheduled = publication_date.present? && publication_date > Date.current
+        next if scheduled && !catalog_editor
+
+        decorated = article.merge(
+          _publication_date: publication_date,
+          _publication_label: publication_date&.strftime("%d/%m/%Y"),
+          _video_recording_date: video_recording_date,
+          _video_recording_label: video_recording_date&.strftime("%d/%m/%Y"),
+          _video_publication_date: video_publication_date,
+          _video_publication_label: video_publication_date&.strftime("%d/%m/%Y"),
+          _scheduled: scheduled
+        )
+        [decorated, index]
+      end
+
+      sorted_articles = indexed_articles.sort_by do |article, original_index|
+        publication_date = article[:_publication_date]
+        if article[:_scheduled]
+          [0, publication_date.jd, original_index]
+        elsif publication_date
+          [1, -publication_date.jd, original_index]
+        else
+          [2, 0, original_index]
+        end
+      end.map(&:first)
+
+      category.merge(articles: sorted_articles)
+    end
+  end
+
+  def catalog_publication_date(article)
+    catalog_date(article, :data_pubblicazione_articolo)
+  end
+
+  def catalog_date(article, key)
+    value = article[key].presence
+    Date.iso8601(value.to_s) if value.present?
+  rescue ArgumentError
+    nil
   end
 
   def posturacorretta_public_professionals

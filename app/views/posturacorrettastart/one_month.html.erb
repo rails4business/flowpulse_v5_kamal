@@ -1,0 +1,109 @@
+<% content_for :landing_nav do %>
+  <% if @show_home_intro %>
+    <%= render "posturacorretta/home_nav" %>
+  <% else %>
+    <%= render "posturacorretta/header" %>
+  <% end %>
+<% end %>
+
+<% content_for :title, (@current_chapter ? "#{@current_chapter.fetch('title')} | PosturaCorretta" : "#{@current_section.fetch('title')} | PosturaCorretta") %>
+
+<% if @show_home_intro %>
+  <div aria-label="Introduzione PosturaCorretta">
+    <% @home_intro_components.each do |component| %>
+      <%= render "components/builder", component: component, context: {} %>
+    <% end %>
+  </div>
+<% end %>
+
+<main class="min-h-screen bg-white text-slate-900">
+  <section class="px-4 py-10 sm:px-5 md:py-16 lg:px-4">
+    <div class="mx-auto max-w-6xl" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
+      <div class="mb-6 flex justify-end lg:hidden">
+        <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="primo-mese-aside" aria-expanded="false">☰ Indice</button>
+      </div>
+      <div class="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
+      <div class="fixed inset-0 z-[60] hidden bg-slate-900/20 backdrop-blur-sm lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
+      <aside id="primo-mese-aside" class="fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] -translate-x-full overflow-y-auto bg-white p-6 shadow-2xl transition-transform duration-300 lg:sticky lg:top-24 lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:border-r lg:border-slate-200 lg:bg-transparent lg:p-0 lg:pr-6 lg:shadow-none" data-mobile-aside-target="panel" aria-hidden="true">
+        <div class="mb-6 flex items-center justify-between lg:hidden"><span class="text-xs font-bold uppercase tracking-[0.16em]">Indice</span><button type="button" class="rounded-md p-2 text-slate-400 hover:bg-slate-100" data-mobile-aside-target="close" data-action="mobile-aside#close" aria-label="Chiudi indice">✕</button></div>
+        <p class="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Indice</p>
+
+        <nav class="mt-3 space-y-1" aria-label="Indice PosturaCorretta">
+          <% @home_sections.each do |section| %>
+            <% if section["items"].present? %>
+              <% section_open = @current_section&.fetch("id") == section.fetch("id") %>
+              <details name="home-index-section" class="group [&_summary::-webkit-details-marker]:hidden" <%= "open" if section_open %>>
+                  <summary class="cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm font-bold text-slate-900 transition hover:bg-blue-50 hover:text-blue-700" style="display: flex;">
+                  <%= link_to posturacorretta_path(sezione: section.fetch("id")), class: "flex min-w-0 flex-1 items-center gap-2", data: { action: "click->mobile-aside#close" } do %>
+                    <span class="min-w-0 flex-1"><%= section.fetch("title") %></span>
+                    <% if section["effective_status"] == "draft" %><span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">Bozza</span><% end %>
+                  <% end %>
+                  <svg aria-hidden="true" class="size-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+                </summary>
+                <div class="ml-3 border-l border-slate-200 py-1 pl-2">
+                  <%= render "posturacorretta/guide/index_items", items: section.fetch("items", []), section: section %>
+                </div>
+              </details>
+            <% end %>
+          <% end %>
+        </nav>
+      </aside>
+
+      <article class="min-w-0 lg:pl-2">
+        <header class="mb-7 border-b border-slate-200 pb-5">
+          <% if @selected_chapter %>
+            <div class="flex flex-wrap items-center gap-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700"><%= @current_section.fetch("title") %></p>
+              <% if @current_chapter["effective_status"] == "draft" %><span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">Bozza · visibile solo al superadmin</span><% end %>
+            </div>
+            <% unless @chapter_has_own_title %>
+              <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl"><%= @current_chapter.fetch("title") %></h1>
+            <% end %>
+          <% else %>
+            <div class="flex flex-wrap items-center gap-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Indice</p>
+              <% if @current_section["effective_status"] == "draft" %><span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">Sezione in bozza</span><% end %>
+            </div>
+            <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl"><%= @current_section.fetch("title") %></h1>
+          <% end %>
+        </header>
+
+        <% unless @selected_chapter %>
+          <section aria-label="Indice della sezione">
+            <% if @section_intro.present? %>
+              <%= render "posturacorretta/shared/rich_text", rendered_content: markdown(@section_intro), class_name: "pc-section-intro min-w-0" %>
+            <% end %>
+            <nav class="mt-8 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" aria-label="Capitoli di <%= @current_section.fetch('title') %>">
+              <%= render "posturacorretta/guide/section_index_items", items: @current_section.fetch("items"), section: @current_section, counter: { value: 0 } %>
+            </nav>
+          </section>
+        <% else %>
+          <div class="pc-guide-content <%= 'pc-guide-content--own-title' if @chapter_has_own_title %>">
+          <% if @current_chapter["type"] == "vision" %>
+            <%= render "posturacorretta/guide/sections/02_progetto/visione", embedded: true, vision_section: @vision_section %>
+          <% elsif @current_chapter["type"] == "partial" %>
+            <%= render @chapter_partial %>
+          <% else %>
+            <%= render "posturacorretta/shared/rich_text", rendered_content: markdown(@chapter_content), class_name: "min-w-0" %>
+          <% end %>
+          </div>
+          <%= render "posturacorretta/guide/related_contents", contents: @related_contents if @related_contents.present? %>
+        <nav class="mt-12 flex items-center justify-between gap-3 border-t border-slate-200 pt-6 text-sm font-semibold" aria-label="Navigazione capitoli">
+          <% section_chapters = @section_chapters.map { |item| [item.fetch("slug"), item.fetch("title")] } %>
+          <% index = section_chapters.index { |slug, _| slug == @selected_chapter } %>
+          <% previous_chapter = index && index.positive? ? section_chapters[index - 1] : nil %>
+          <% next_chapter = index && index < section_chapters.length - 1 ? section_chapters[index + 1] : nil %>
+          <% previous_href = posturacorretta_path(sezione: @current_section.fetch("id"), capitolo: previous_chapter[0]) if previous_chapter %>
+          <% next_href = posturacorretta_path(sezione: @current_section.fetch("id"), capitolo: next_chapter[0]) if next_chapter %>
+          <%= link_to "← Precedente", previous_href, class: "text-blue-700 hover:text-blue-900" if previous_chapter %>
+          <%= link_to "Indice", posturacorretta_path(sezione: @current_section.fetch("id")), class: "rounded-lg border border-slate-200 px-3 py-2 text-slate-600 hover:border-blue-300 hover:text-blue-700" %>
+          <%= link_to "Successivo →", next_href, class: "text-right text-blue-700 hover:text-blue-900" if next_chapter %>
+        </nav>
+        <% end %>
+      </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%= render "posturacorretta/footer" %>

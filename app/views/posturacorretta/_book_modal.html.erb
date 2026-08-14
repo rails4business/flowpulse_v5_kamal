@@ -1,0 +1,102 @@
+<%
+  description = book["description"].presence || book["subtitle"].presence
+  italian_edition = book["italian_edition"].is_a?(Hash) ? book["italian_edition"] : {}
+  english_edition = book["english_edition"].is_a?(Hash) ? book["english_edition"] : {}
+  default_url = book["book_url"].presence || book["url"].presence
+%>
+<dialog id="<%= dialog_id %>" onclick="if (event.target === this) this.close()" class="book-dialog backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm m-auto w-[calc(100%-2rem)] max-w-3xl overflow-hidden rounded-3xl border-0 bg-white p-0 text-left shadow-2xl transition-all">
+  <div class="grid max-h-[90dvh] overflow-y-auto md:grid-cols-[240px_minmax(0,1fr)]">
+    <div class="flex min-h-72 items-center justify-center bg-slate-900/5 p-8 border-b md:border-b-0 md:border-r border-slate-100">
+      <div class="book-3d">
+        <div class="book-3d__cover">
+          <% if book["cover_url"].present? %>
+            <img src="<%= book['cover_url'] %>" alt="Copertina di <%= book['title'] %>">
+          <% else %>
+            <div class="book-3d__fallback">
+              <strong class="book-3d__fallback-title"><%= book.fetch("title") %></strong>
+              <div class="book-3d__fallback-meta">
+                <% if book["author"].present? %><span class="block font-bold"><%= book["author"] %></span><% end %>
+                <% if book["publisher"].present? %><span class="mt-1 block"><%= book["publisher"] %></span><% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative flex flex-col justify-between p-6 sm:p-8">
+      <form method="dialog" class="absolute right-4 top-4">
+        <button type="submit" aria-label="Chiudi" class="flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition">✕</button>
+      </form>
+
+      <div>
+        <div class="pr-10">
+          <div class="flex flex-wrap items-center gap-2">
+            <% if book.fetch("status", "draft") != "published" %><span class="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-amber-800">Bozza</span><% end %>
+            <% if book["category"].present? %><span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 uppercase tracking-wider"><%= book["category"].to_s.tr("_", " ").capitalize %></span><% end %>
+            <% if book["language"].present? %><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"><%= book["language"] %></span><% end %>
+          </div>
+          <h2 class="mt-3 text-2xl sm:text-3xl font-black leading-tight tracking-tight text-slate-900"><%= book.fetch("title") %></h2>
+          <% if book["author"].present? %><p class="mt-1.5 text-base font-bold text-slate-700"><%= book["author"] %></p><% end %>
+        </div>
+
+        <% if description.present? %><p class="mt-4 text-sm leading-relaxed text-slate-600"><%= description %></p><% end %>
+
+        <dl class="mt-6 grid grid-cols-2 gap-x-5 gap-y-4 border-t border-slate-100 pt-5 text-sm">
+          <% if book["publisher"].present? %>
+            <div>
+              <dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Casa editrice</dt>
+              <dd class="mt-1 font-bold text-slate-800"><%= book["publisher"] %></dd>
+            </div>
+          <% end %>
+          <% if book["year"].present? %>
+            <div>
+              <dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Anno</dt>
+              <dd class="mt-1 font-bold text-slate-800"><%= book["year"] %></dd>
+            </div>
+          <% end %>
+        </dl>
+
+        <% if italian_edition["book_link"].present? || english_edition["book_link"].present? %>
+          <div class="mt-6 border-t border-slate-100 pt-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Disponibile nelle edizioni:</h3>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <% if italian_edition["book_link"].present? %>
+                <a href="<%= italian_edition['book_link'] %>" target="_blank" rel="noopener noreferrer" class="flex-1 inline-flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50/50 p-3.5 hover:bg-blue-600 hover:text-white group transition-all">
+                  <div>
+                    <span class="block text-xs font-bold uppercase tracking-wider text-blue-600 group-hover:text-blue-100">Edizione Italiana 🇮🇹</span>
+                    <strong class="block text-sm font-bold text-slate-900 group-hover:text-white"><%= italian_edition["title"].presence || book["title"] %></strong>
+                  </div>
+                  <span class="text-lg font-bold text-blue-600 group-hover:text-white transition-transform group-hover:translate-x-0.5">↗</span>
+                </a>
+              <% end %>
+              <% if english_edition["book_link"].present? %>
+                <a href="<%= english_edition['book_link'] %>" target="_blank" rel="noopener noreferrer" class="flex-1 inline-flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 hover:bg-slate-900 hover:text-white group transition-all">
+                  <div>
+                    <span class="block text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-slate-300">English Edition 🇬🇧</span>
+                    <strong class="block text-sm font-bold text-slate-900 group-hover:text-white"><%= english_edition["title"].presence || book["title"] %></strong>
+                  </div>
+                  <span class="text-lg font-bold text-slate-500 group-hover:text-white transition-transform group-hover:translate-x-0.5">↗</span>
+                </a>
+              <% end %>
+            </div>
+          </div>
+        <% elsif default_url.present? %>
+          <div class="mt-6 border-t border-slate-100 pt-5">
+            <a href="<%= default_url %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-bold text-white shadow-md hover:bg-blue-700 transition active:scale-95">
+              <span>Acquista / Scopri libro</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-8 flex justify-end border-t border-slate-100 pt-4">
+        <form method="dialog">
+          <button type="submit" class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition">Chiudi</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</dialog>
+

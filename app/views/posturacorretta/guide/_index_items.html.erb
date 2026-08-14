@@ -1,0 +1,18 @@
+<% items.each do |item| %>
+  <% if item["type"] == "group" %>
+    <div class="mt-2 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 py-1.5">
+        <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-500"><%= item.fetch("title") %></p>
+        <% if item["effective_status"] == "draft" %><span class="rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-amber-800">Bozza</span><% end %>
+      </div>
+      <%= render "posturacorretta/guide/index_items", items: item.fetch("children", []), section: section %>
+    </div>
+  <% else %>
+    <% active = @current_section&.fetch("id") == section.fetch("id") && @selected_chapter == item.fetch("slug") %>
+    <a href="<%= posturacorretta_path(sezione: section.fetch('id'), capitolo: item.fetch('slug')) %>"
+       class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm <%= active ? 'bg-blue-50 font-bold text-blue-800' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-700' %>">
+      <span class="min-w-0 flex-1"><%= item.fetch("title") %></span>
+      <% if item["effective_status"] == "draft" %><span class="rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-amber-800">Bozza</span><% end %>
+    </a>
+  <% end %>
+<% end %>

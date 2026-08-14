@@ -10,7 +10,7 @@
     <div class="mx-auto max-w-7xl px-5 text-center">
       <nav class="-mb-px flex justify-center gap-1" aria-label="Sezioni Eventi">
         <%= link_to "📅 Calendario Eventi", posturacorretta_eventi_path(tab: "calendar"), class: "border-b-2 px-4 py-3 text-sm font-semibold transition #{events_tab == 'calendar' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}", aria: { current: ("page" if events_tab == "calendar") } %>
-        <%= link_to "📖 Come funziona?", posturacorretta_eventi_path(tab: "how"), class: "border-b-2 px-4 py-3 text-sm font-semibold transition #{events_tab == 'how' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}", aria: { current: ("page" if events_tab == "how") } %>
+        <%= link_to "📖 Come funziona?", posturacorretta_path(sezione: "eventi", capitolo: "introduzione"), class: "border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-slate-600 transition hover:text-slate-800" %>
       </nav>
     </div>
   </div>
@@ -27,100 +27,110 @@
           <span class="text-xs font-bold uppercase tracking-[0.16em] text-slate-950">Filtra eventi</span>
           <button type="button" class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700" data-mobile-aside-target="close" data-action="mobile-aside#close" aria-label="Chiudi filtri">✕</button>
         </div>
+
         <div class="flex items-center justify-between gap-3">
           <div><p class="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Ricerca</p><h2 class="mt-1 text-sm font-black text-slate-950">Filtra gli eventi</h2></div>
-          <button type="button" onclick="resetEventFilters()" class="text-xs font-semibold text-blue-700 hover:text-blue-900">Azzera</button>
+          <button type="button" onclick="resetEventFilters()" class="text-xs font-semibold text-blue-700 hover:text-blue-900 transition-colors" id="reset-filters-btn">Azzera</button>
         </div>
-      <div class="mt-5 flex flex-col gap-4 border-t border-slate-100 pt-4">
         
-        <div class="flex flex-col gap-3">
-          <!-- Temporal Dropdown -->
-          <div class="relative w-full sm:w-auto" id="temporal-select-container">
-            <select id="temporal-select" onchange="switchTemporalTab(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
-              <option value="future">Prossimi</option>
-              <option value="past">Passati</option>
-            </select>
-            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
-          </div>
+        <div class="mt-5 flex flex-col gap-5 border-t border-slate-100 pt-5">
 
-          <div class="relative w-full sm:w-auto" id="event-status-select-container">
-            <select id="event-status-select" onchange="switchEventStatus(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
-              <option value="all">Stato evento</option>
-              <option value="organizing">In organizzazione</option>
-              <option value="proposed">Proposti al pubblico</option>
-              <option value="confirmed">Confermati</option>
-              <option value="cancelled">Annullati</option>
-            </select>
-            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
-          </div>
-
-          <div class="relative w-full sm:w-auto" id="participation-select-container">
-            <select id="participation-select" onchange="switchParticipation(this.value)" class="w-full sm:w-auto appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
-              <option value="all">Partecipazione</option>
-              <option value="open">Iscrizioni aperte</option>
-              <option value="free_access">Accesso libero</option>
-              <option value="full">Completi</option>
-              <option value="closed">Iscrizioni chiuse</option>
-            </select>
-            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3">
-          <!-- Date Filter -->
-          <div class="flex items-center gap-2 w-full sm:w-auto" id="date-filter-container">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap" id="filter-date-label">Dal:</span>
-            <input type="date" id="event-date-filter" class="w-full sm:w-auto rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-            <button type="button" onclick="clearDateFilter()" class="text-xs font-bold text-slate-400 hover:text-slate-600" title="Azzera data">✕</button>
-          </div>
-
-          <!-- Search Bar -->
-          <div class="relative w-full sm:w-64">
+          <!-- 1. Search Bar (Top priority) -->
+          <div class="relative w-full">
             <span class="absolute inset-y-0 left-3.5 flex items-center text-slate-400 select-none pointer-events-none text-sm">🔍</span>
-            <input type="text" id="event-search-input" oninput="renderEvents()" placeholder="Cerca eventi..." class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+            <input type="text" id="event-search-input" oninput="renderEvents()" placeholder="Cerca eventi..." class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm font-medium text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 placeholder:text-slate-400">
           </div>
-        </div>
 
-        <div class="border-t border-slate-100 pt-5">
-          <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Filtri completi</p>
-          <div class="mt-3 space-y-3">
-            <% { "ambito" => ["Ambito", "ambiti"], "area" => ["Aree della salute", "aree"], "paradigma" => ["Paradigmi", "paradigmi"] }.each do |filter_key, (label, taxonomy_key)| %>
-              <% options = @event_filter_taxonomy.fetch(taxonomy_key, {}) %>
-              <label class="block">
-                <span class="mb-1.5 block text-xs font-semibold text-slate-700"><%= label %></span>
-                <select id="event-<%= filter_key %>-select" onchange="switchEventClassification('<%= filter_key %>', this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-                  <option value="">Tutti</option>
-                  <% options.each do |key, value| %>
-                    <% option_label = value.is_a?(Hash) ? value["label"] : value %>
-                    <option value="<%= key %>"><%= option_label %></option>
-                  <% end %>
+          <!-- 2. Segmented Control for Temporal -->
+          <div class="flex rounded-xl bg-slate-100 p-1" id="temporal-select-container">
+            <button type="button" onclick="switchTemporalTab('future')" id="btn-temporal-future" class="flex-1 rounded-lg bg-white px-3 py-2 text-xs font-bold text-slate-800 shadow-sm transition-all">Prossimi</button>
+            <button type="button" onclick="switchTemporalTab('past')" id="btn-temporal-past" class="flex-1 rounded-lg px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-all">Passati</button>
+          </div>
+          <input type="hidden" id="temporal-select" value="future">
+
+          <!-- 3. Date Filter -->
+          <div class="flex items-center justify-between gap-2 w-full" id="date-filter-container">
+            <label for="event-date-filter" class="text-xs font-bold text-slate-600 whitespace-nowrap" id="filter-date-label">Dal:</label>
+            <div class="relative flex-1">
+              <input type="date" id="event-date-filter" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+            </div>
+            <button type="button" onclick="clearDateFilter()" class="text-xs font-bold text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-lg" title="Azzera data">✕</button>
+          </div>
+
+          <div class="border-t border-slate-100 pt-5 mt-1 space-y-4">
+            <!-- Event Status -->
+            <label class="block" id="event-status-select-container">
+              <span class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">Stato della proposta</span>
+              <div class="relative w-full">
+                <select id="event-status-select" onchange="switchEventStatus(this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-8 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
+                  <option value="all">Qualsiasi stato</option>
+                  <option value="organizing">In organizzazione</option>
+                  <option value="proposed" selected>Proposti al pubblico</option>
+                  <option value="confirmed">Confermati</option>
+                  <option value="cancelled">Annullati</option>
                 </select>
-              </label>
-            <% end %>
-
-            <label class="block">
-              <span class="mb-1.5 block text-xs font-semibold text-slate-700">Conduttori</span>
-              <select id="event-conductor-select" onchange="switchEventClassification('conductor', this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-                <option value="">Tutti</option>
-                <% @events.flat_map { |event| event.fetch("teachers", []) }.reject { |teacher| teacher == "?" }.uniq.sort.each do |teacher| %>
-                  <option value="<%= teacher %>"><%= teacher %></option>
-                <% end %>
-              </select>
+                <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
+              </div>
             </label>
 
-            <label class="block">
-              <span class="mb-1.5 block text-xs font-semibold text-slate-700">Luoghi</span>
-              <select id="event-place-select" onchange="switchEventClassification('place', this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-                <option value="">Tutti</option>
-                <% @events.group_by { |event| event["locationKey"] }.each do |location_key, location_events| %>
-                  <% next if location_key.blank? %>
-                  <option value="<%= location_key %>"><%= location_events.first["location"] %></option>
-                <% end %>
-              </select>
+            <!-- Participation -->
+            <label class="block" id="participation-select-container">
+              <span class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">Partecipazione</span>
+              <div class="relative w-full">
+                <select id="participation-select" onchange="switchParticipation(this.value)" class="w-full appearance-none rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-8 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 cursor-pointer">
+                  <option value="all">Qualsiasi accesso</option>
+                  <option value="open">Iscrizioni aperte</option>
+                  <option value="free_access">Accesso libero</option>
+                  <option value="full">Posti esauriti</option>
+                  <option value="closed">Iscrizioni chiuse</option>
+                </select>
+                <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
+              </div>
             </label>
           </div>
+
+          <!-- 4. Filtri Avanzati Accordion -->
+          <details class="group mt-1 rounded-xl border border-slate-200 bg-white shadow-sm [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between px-4 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors focus:outline-none rounded-xl">
+              <span>Filtri Avanzati</span>
+              <span class="transition duration-300 group-open:-rotate-180 text-slate-400 text-xs">▼</span>
+            </summary>
+            <div class="border-t border-slate-100 px-4 py-4 space-y-4 bg-slate-50/50 rounded-b-xl">
+              <% { "ambito" => ["Ambito", "ambiti"], "paradigma" => ["Paradigma", "paradigmi"] }.each do |filter_key, (label, taxonomy_key)| %>
+                <% options = @event_filter_taxonomy.fetch(taxonomy_key, {}) %>
+                <label class="block">
+                  <span class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500"><%= label %></span>
+                  <div class="relative w-full">
+                    <select id="event-<%= filter_key %>-select" onchange="switchEventClassification('<%= filter_key %>', this.value)" class="w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100">
+                      <option value="">Qualsiasi</option>
+                      <% options.each do |key, value| %>
+                        <% option_label = value.is_a?(Hash) ? value["label"] : value %>
+                        <option value="<%= key %>"><%= option_label %></option>
+                      <% end %>
+                    </select>
+                    <span class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none text-slate-400 text-[10px]">▼</span>
+                  </div>
+                </label>
+              <% end %>
+
+              <% conductors = @events.flat_map { |event| event.fetch("teachers", []) }.reject { |teacher| teacher == "?" }.uniq.sort %>
+              <div>
+                <label for="event-conductor-search" class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500">Conduttore</label>
+                <input id="event-conductor-search" list="event-conductor-options" type="search" autocomplete="off" oninput="matchEventAutocomplete('conductor', this.value)" placeholder="Cerca un conduttore" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition placeholder:font-normal placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100">
+                <datalist id="event-conductor-options"><% conductors.each do |conductor| %><option value="<%= conductor %>"><% end %></datalist>
+                <div id="event-conductor-tag" class="mt-2 hidden items-center justify-between gap-2 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-2 text-xs font-semibold text-blue-800"><span id="event-conductor-tag-label"></span><button type="button" onclick="clearEventAutocomplete('conductor')" class="text-blue-600 hover:text-blue-900" aria-label="Rimuovi conduttore">✕</button></div>
+              </div>
+
+              <% places = @events.group_by { |event| event["locationKey"] }.reject { |location_key, _| location_key.blank? } %>
+              <div>
+                <label for="event-place-search" class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500">Luogo</label>
+                <input id="event-place-search" list="event-place-options" type="search" autocomplete="off" oninput="matchEventAutocomplete('place', this.value)" placeholder="Cerca un luogo" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition placeholder:font-normal placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100">
+                <datalist id="event-place-options"><% places.each do |location_key, location_events| %><option value="<%= location_events.first["location"] %>" data-filter-value="<%= location_key %>"><% end %></datalist>
+                <div id="event-place-tag" class="mt-2 hidden items-center justify-between gap-2 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-2 text-xs font-semibold text-blue-800"><span id="event-place-tag-label"></span><button type="button" onclick="clearEventAutocomplete('place')" class="text-blue-600 hover:text-blue-900" aria-label="Rimuovi luogo">✕</button></div>
+              </div>
+            </div>
+          </details>
         </div>
-      </div>
       </aside>
 
       <div class="min-w-0">
@@ -159,7 +169,7 @@
              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.98]">
             Proponi un evento →
           </a>
-          <%= link_to "Come funzionano gli eventi? →", posturacorretta_eventi_path(tab: "how"), class: "inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98]" %>
+          <%= link_to "Come funzionano gli eventi? →", posturacorretta_path(sezione: "eventi", capitolo: "introduzione"), class: "inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98]" %>
         </div>
       </div>
 
@@ -289,11 +299,11 @@
 
   let currentMacroTab = "events"; // 'events', 'places', 'teachers'
   let currentTemporalTab = "future"; // 'future', 'past'
-  let currentEventStatus = "all";
+  let currentEventStatus = "proposed";
   let currentParticipation = "all";
   let selectedLocation = null; // { key, name }
   let selectedTeacher = null; // string
-  const classificationFilters = { ambito: "", area: "", paradigma: "", conductor: "", place: "" };
+  const classificationFilters = { ambito: "", paradigma: "", conductor: "", place: "" };
 
   // Helper count logic
   const getEventCountForPlace = (key) => events.filter(e => e.locationKey === key).length;
@@ -444,7 +454,6 @@
 
       // Filtri di classificazione
       if (classificationFilters.ambito && !(e.ambiti || []).includes(classificationFilters.ambito)) return false;
-      if (classificationFilters.area && !(e.aree || []).includes(classificationFilters.area)) return false;
       if (classificationFilters.paradigma && !(e.paradigmi || []).includes(classificationFilters.paradigma)) return false;
       if (classificationFilters.conductor && !(e.teachers || []).includes(classificationFilters.conductor)) return false;
       if (classificationFilters.place && e.locationKey !== classificationFilters.place) return false;
@@ -627,9 +636,47 @@
     renderEvents();
   };
 
+  window.matchEventAutocomplete = function(type, value) {
+    const options = Array.from(document.querySelectorAll(`#event-${type}-options option`));
+    const option = options.find((candidate) => candidate.value === value);
+
+    if (!option) {
+      if (!value) clearEventAutocomplete(type);
+      return;
+    }
+
+    classificationFilters[type] = option.dataset.filterValue || option.value;
+
+    const input = document.getElementById(`event-${type}-search`);
+    const tag = document.getElementById(`event-${type}-tag`);
+    const label = document.getElementById(`event-${type}-tag-label`);
+    if (input) input.value = "";
+    if (label) label.textContent = option.value;
+    if (tag) {
+      tag.classList.remove("hidden");
+      tag.classList.add("flex");
+    }
+
+    renderEvents();
+  };
+
+  window.clearEventAutocomplete = function(type) {
+    classificationFilters[type] = "";
+
+    const input = document.getElementById(`event-${type}-search`);
+    const tag = document.getElementById(`event-${type}-tag`);
+    if (input) input.value = "";
+    if (tag) {
+      tag.classList.add("hidden");
+      tag.classList.remove("flex");
+    }
+
+    renderEvents();
+  };
+
   window.resetEventFilters = function() {
     currentTemporalTab = "future";
-    currentEventStatus = "all";
+    currentEventStatus = "proposed";
     currentParticipation = "all";
     selectedLocation = null;
     selectedTeacher = null;
@@ -637,16 +684,23 @@
 
     [
       ["temporal-select", "future"],
-      ["event-status-select", "all"],
+      ["event-status-select", "proposed"],
       ["participation-select", "all"],
       ["event-ambito-select", ""],
-      ["event-area-select", ""],
-      ["event-paradigma-select", ""],
-      ["event-conductor-select", ""],
-      ["event-place-select", ""]
+      ["event-paradigma-select", ""]
     ].forEach(([id, value]) => {
       const input = document.getElementById(id);
       if (input) input.value = value;
+    });
+
+    ["conductor", "place"].forEach((type) => {
+      const input = document.getElementById(`event-${type}-search`);
+      const tag = document.getElementById(`event-${type}-tag`);
+      if (input) input.value = "";
+      if (tag) {
+        tag.classList.add("hidden");
+        tag.classList.remove("flex");
+      }
     });
 
     const dateInput = document.getElementById("event-date-filter");
@@ -703,6 +757,18 @@
     const select = document.getElementById("temporal-select");
     if (select && select.value !== tab) {
       select.value = tab;
+    }
+
+    const btnFuture = document.getElementById("btn-temporal-future");
+    const btnPast = document.getElementById("btn-temporal-past");
+    if (btnFuture && btnPast) {
+      if (tab === "future") {
+        btnFuture.className = "flex-1 rounded-lg bg-white px-3 py-2 text-xs font-bold text-slate-800 shadow-sm transition-all";
+        btnPast.className = "flex-1 rounded-lg px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-all";
+      } else {
+        btnPast.className = "flex-1 rounded-lg bg-white px-3 py-2 text-xs font-bold text-slate-800 shadow-sm transition-all";
+        btnFuture.className = "flex-1 rounded-lg px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-all";
+      }
     }
 
     const dateLabel = document.getElementById("filter-date-label");

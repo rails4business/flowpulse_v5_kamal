@@ -25,6 +25,9 @@
     <% end %>
   </div>
 
+<% elsif component['type'] == 'brand' %>
+  <%= render "components/brand", data: component['data'] %>
+
 <% else %>
   <%# Se non è un elemento di layout, è un componente reale (hero, accordion, card, ecc.) %>
   <%

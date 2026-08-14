@@ -1,0 +1,402 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<div data-controller="posturacorrettastart">
+  <% unless @standalone_percorso %>
+  <div class="bg-slate-100 border-b border-slate-200 py-3">
+    <div class="max-w-[1200px] mx-auto px-6 flex justify-center">
+      <nav class="flex gap-2 bg-slate-200/80 p-1.5 rounded-xl shadow-inner" aria-label="Sezioni PosturaCorretta">
+        <% { "home" => "Home", "accademia" => "PosturaCorretta in 1 mese", "percorso" => "Il Tuo Percorso", "filosofia" => "🌳 La nostra filosofia" }.each do |tab, label| %>
+          <% active = @selected_tab == tab %>
+          <% tab_path = case tab
+             when "percorso" then posturacorretta_percorso_path
+             when "accademia" then posturacorretta_path
+             when "filosofia" then posturacorretta_eventi_path
+             else posturacorretta_path
+             end %>
+          <a href="<%= tab_path %>" 
+             class="tab-btn px-5 py-2 text-sm font-bold rounded-lg cursor-pointer transition-all duration-200 no-underline <%= active ? "bg-white text-blue-700 shadow-sm" : "text-slate-600 hover:text-slate-900 hover:bg-white/50" %>" 
+             data-action="click->posturacorrettastart#switchTab" 
+             data-posturacorrettastart-tab-param="<%= tab %>" 
+             <%= "aria-current=page" if active %>><%= label %></a>
+        <% end %>
+      </nav>
+    </div>
+  </div>
+  <% end %>
+
+<div class="max-w-[1200px] mx-auto mt-8 px-6">
+
+    <!-- TAB 1: HOME -->
+    <div id="tab-home" class="tab-content <%= !@standalone_percorso && @selected_tab == "home" ? "block animate-[fadeIn_0.3s_ease-in-out]" : "hidden" %>">
+        <div class="mb-8 text-center max-w-[760px] mx-auto">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-amber-50 text-amber-600 border border-slate-200">Ecosistema della Salute</span>
+            <h1 class="text-[32px] font-extrabold tracking-tight mb-3 text-[#1E2421]">Guarda la tua salute da una nuova prospettiva</h1>
+            <p class="text-base text-slate-500 leading-relaxed">Non un semplice sito sulla postura, ma un percorso d'integrazione tra medicina, metodiche corporee e stile di vita.</p>
+        </div>
+
+        <!-- TRE INGRESSI ORIZZONTALI -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <!-- PROGRAMMA 1 MESE -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 transition-all duration-300 relative flex flex-col justify-between hover:-translate-y-1 hover:shadow-md hover:border-[#CFC9BE]">
+                <div>
+                    <span class="text-4xl mb-4 inline-block">🌿</span>
+                    <br>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-indigo-50 text-indigo-800">Inizia il programma</span>
+                    <h3 class="text-xl font-bold mb-2">Programma 1 Mese</h3>
+                    <p class="text-sm text-slate-500 mb-6 flex-grow">Un programma introduttivo semplice per conoscere meglio il corpo e mettere in pratica i principi delle metodiche posturali.</p>
+                </div>
+                <button class="block w-full py-3 text-center rounded-lg text-sm font-semibold border-none cursor-pointer transition-colors duration-300 bg-indigo-800 text-white hover:bg-indigo-900" data-action="click->posturacorrettastart#switchTab" data-posturacorrettastart-tab-param="accademia">Apri il programma</button>
+            </div>
+
+            <!-- PERCORSO INTEGRATO -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 transition-all duration-300 relative flex flex-col justify-between hover:-translate-y-1 hover:shadow-md hover:border-[#CFC9BE]">
+                <div>
+                    <span class="text-4xl mb-4 inline-block">🧭</span>
+                    <br>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-red-50 text-red-800">Percorso integrato</span>
+                    <h3 class="text-xl font-bold mb-2">Crea il tuo Percorso</h3>
+                    <p class="text-sm text-slate-500 mb-6 flex-grow">Personalizzato sui tuoi bisogni, costruito insieme ai professionisti e aperto alle competenze e alle metodiche utili alla tua situazione.</p>
+                </div>
+                <button class="block w-full py-3 text-center rounded-lg text-sm font-semibold border-none cursor-pointer transition-colors duration-300 bg-red-800 text-white hover:bg-[#721f1f]" data-action="click->posturacorrettastart#switchTab" data-posturacorrettastart-tab-param="percorso">Vai al percorso</button>
+            </div>
+
+            <!-- EVENTI -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 transition-all duration-300 relative flex flex-col justify-between hover:-translate-y-1 hover:shadow-md hover:border-[#CFC9BE]">
+                <div>
+                    <span class="text-4xl mb-4 inline-block">📅</span>
+                    <br>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-violet-50 text-violet-800">Eventi</span>
+                    <h3 class="text-xl font-bold mb-2">Partecipa e scopri la nostra filosofia</h3>
+                    <p class="text-sm text-slate-500 mb-6 flex-grow">Vivi esperienze che uniscono corpo, salute, formazione, territorio e natura: scopri la nostra filosofia dalla PosturaCorretta al giardino del corpo.</p>
+                </div>
+                <button class="block w-full py-3 text-center rounded-lg text-sm font-semibold border-none cursor-pointer transition-colors duration-300 bg-violet-800 text-white hover:bg-violet-900" data-action="click->posturacorrettastart#switchTab" data-posturacorrettastart-tab-param="filosofia">Scopri gli eventi</button>
+            </div>
+        </div>
+
+        <!-- FILOSOFIA DEI COLORI -->
+        <!--div class="mt-12 bg-white border border-slate-200 rounded-2xl p-8">
+            <h3 class="text-xl font-bold">Cura della salute e Cura della patologia sono complementari.</h3>
+            <p class="text-sm text-slate-500 mt-1 leading-relaxed">Creare un percorso integarto con i professionisti da cui sei seguito non è più impossibile!</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+                <div class="p-4 rounded-xl bg-red-50 border border-[#F5D0D0]">
+                    <h4 class="text-[15px] mb-1.5 font-bold text-red-800">🔴 Rosso — Patologia & Scienza</h4>
+                    <p class="text-[13px] text-slate-500">Specificità clinica, medicina generale, fisioterapia, diagnosi rigorosa per la risoluzione dei sintomi gravi.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-teal-50 border border-[#D2E7D8]">
+                    <h4 class="text-[15px] mb-1.5 font-bold text-teal-800">🟢 Verde — Metodica & Benessere</h4>
+                    <p class="text-[13px] text-slate-500">Lavoro corporeo, prevenzione, alimentazione, movimento e pratiche per la crescita della persona.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-sky-50 border border-[#D3E2F4]">
+                    <h4 class="text-[15px] mb-1.5 font-bold text-sky-900">🔵 Blu — Visione & Modo di Vivere</h4>
+                    <p class="text-[13px] text-slate-500">Educazione sistemica, relazione con l'ambiente, stile di vita, lavoro su di sé e insegnamento.</p>
+                </div>
+            </div>
+        </div-->
+    </div>
+
+    <!-- TAB 2: PERCORSO (ORIENTAMENTO ENGINE + MATRICE NASCOSTA) -->
+    <div id="tab-percorso" class="tab-content <%= @selected_tab == "percorso" ? "block animate-[fadeIn_0.3s_ease-in-out]" : "hidden" %>">
+        <div class="mb-8 text-center max-w-[760px] mx-auto">
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-red-50 text-red-800">Motore di Orientamento</span>
+          <h1 class="text-[32px] font-extrabold tracking-tight mb-3 text-[#1E2421]">Trova la tua strada verso l'equilibrio</h1>
+          <p class="text-base text-slate-500 leading-relaxed">Rispondi a due brevi domande. La Matrice Posturale 3D selezionerà gli interventi più adatti alla tua esigenza attuale.</p>
+        </div>
+
+        <form action="<%= posturacorretta_contenuti_path %>" method="get" class="mx-auto mb-8 max-w-2xl">
+          <label for="path-content-search" class="sr-only">Cerca nei contenuti</label>
+          <div class="relative">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400">
+              <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
+              <path d="m20 20-3.5-3.5" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+            <input id="path-content-search" name="q" type="search" placeholder="Cerca un problema, una zona del corpo o un argomento" class="w-full rounded-xl border border-slate-300 bg-white py-3 pl-12 pr-28 text-sm font-medium text-slate-900 shadow-sm outline-none transition placeholder:font-normal placeholder:text-slate-400 focus:border-red-500 focus:ring-4 focus:ring-red-100">
+            <button type="submit" class="absolute inset-y-1.5 right-1.5 rounded-lg bg-red-800 px-4 text-sm font-bold text-white transition hover:bg-red-900">Cerca</button>
+          </div>
+        </form>
+
+        <div class="mx-auto mb-8 flex max-w-2xl justify-center">
+          <%= link_to "Scopri come funziona il Percorso Integrato", posturacorretta_percorso_come_funziona_path, class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700" %>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-9 max-w-[800px] mx-auto shadow-sm">
+            <!-- STEP 1: ASSE Y (MOTIVAZIONE) -->
+            <div id="quiz-step-1" class="quiz-step block">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-amber-50 text-amber-600 border border-slate-200">Passo 1 di 2</span>
+                <h3 class="text-xl font-bold mt-2">Qual è la tua motivazione principale in questo momento?</h3>
+                
+                <div class="flex flex-col gap-3 my-6">
+                    <button class="bg-[#FAF8F5] border border-slate-200 p-4 rounded-xl text-left text-[15px] font-medium text-slate-900 cursor-pointer transition-all duration-300 flex justify-between items-center hover:border-teal-800 hover:bg-teal-50 hover:translate-x-1" data-action="click->posturacorrettastart#nextQuizStep" data-posturacorrettastart-motivation-param="Radice: Salute a rischio">
+                        <span>🚨 "Ho un dolore acuto o un problema di salute da risolvere"</span>
+                        <small class="text-slate-500">Radice</small>
+                    </button>
+                    <button class="bg-[#FAF8F5] border border-slate-200 p-4 rounded-xl text-left text-[15px] font-medium text-slate-900 cursor-pointer transition-all duration-300 flex justify-between items-center hover:border-teal-800 hover:bg-teal-50 hover:translate-x-1" data-action="click->posturacorrettastart#nextQuizStep" data-posturacorrettastart-motivation-param="Sacro: Prevenzione">
+                        <span>🛡️ "Voglio prevenire recidive e proteggere le mie articolazioni"</span>
+                        <small class="text-slate-500">Sacro</small>
+                    </button>
+                    <button class="bg-[#FAF8F5] border border-slate-200 p-4 rounded-xl text-left text-[15px] font-medium text-slate-900 cursor-pointer transition-all duration-300 flex justify-between items-center hover:border-teal-800 hover:bg-teal-50 hover:translate-x-1" data-action="click->posturacorrettastart#nextQuizStep" data-posturacorrettastart-motivation-param="Plesso: Prestazione">
+                        <span>⚡ "Voglio migliorare le mie prestazioni fisiche o lavorative"</span>
+                        <small class="text-slate-500">Plesso</small>
+                    </button>
+                    <button class="bg-[#FAF8F5] border border-slate-200 p-4 rounded-xl text-left text-[15px] font-medium text-slate-900 cursor-pointer transition-all duration-300 flex justify-between items-center hover:border-teal-800 hover:bg-teal-50 hover:translate-x-1" data-action="click->posturacorrettastart#nextQuizStep" data-posturacorrettastart-motivation-param="Gola: Consapevolezza">
+                        <span>🔍 "Voglio capire come funziona il mio corpo ed esplorarlo"</span>
+                        <small class="text-slate-500">Gola / Terzo Occhio</small>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: ASSE X (AREA DI INTERVENTO) -->
+            <div id="quiz-step-2" class="quiz-step hidden">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-teal-50 text-teal-800">Passo 2 di 2</span>
+                <h3 class="text-xl font-bold mt-2">Quale approccio risuona di più con te?</h3>
+                
+                <div class="flex flex-col gap-3 my-6">
+                    <button class="bg-[#FAF8F5] border border-slate-200 p-4 rounded-xl text-left text-[15px] font-medium text-slate-900 cursor-pointer transition-all duration-300 flex justify-between items-center hover:border-teal-800 hover:bg-teal-50 hover:translate-x-1" data-action="click->posturacorrettastart#showQuizResult" data-posturacorrettastart-approach-param="Terapia Manuale & Fisioterapia Integrata">
+                        <span>🤲 Trattamento diretto e terapia manuale (massaggio, manipolazione)</span>
+                    </button>
+                    <button class="bg-[#FAF8F5] border border-slate-200 p-4 rounded-xl text-left text-[15px] font-medium text-slate-900 cursor-pointer transition-all duration-300 flex justify-between items-center hover:border-teal-800 hover:bg-teal-50 hover:translate-x-1" data-action="click->posturacorrettastart#showQuizResult" data-posturacorrettastart-approach-param="Movimento Consapevole & Posturale">
+                        <span>🧘 Esercizio attivo, movimento e postura guidata</span>
+                    </button>
+                    <button class="bg-[#FAF8F5] border border-slate-200 p-4 rounded-xl text-left text-[15px] font-medium text-slate-900 cursor-pointer transition-all duration-300 flex justify-between items-center hover:border-teal-800 hover:bg-teal-50 hover:translate-x-1" data-action="click->posturacorrettastart#showQuizResult" data-posturacorrettastart-approach-param="Nutrizione & Stile di Vita">
+                        <span>🥗 Nutrizione, igiene del sonno e gestione dello stress</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RISULTATO -->
+            <div id="quiz-result" class="quiz-step hidden text-center">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-sky-50 text-sky-900">Il Tuo Percorso Consigliato</span>
+                <h2 id="result-title" class="text-2xl font-bold mt-3 text-teal-800">...</h2>
+                <p class="text-base text-slate-500 leading-relaxed mb-6">Abbinamento elaborato incrociando i 4 Paradigmi della Matrice Posturale 3D.</p>
+                <button class="block w-full max-w-[250px] mx-auto py-3 text-center rounded-lg text-sm font-semibold border-none cursor-pointer transition-colors duration-300 bg-teal-800 text-white hover:bg-[#21472e]" data-action="click->posturacorrettastart#resetQuiz">Ricomincia Orientamento</button>
+            </div>
+        </div>
+
+        <!-- IL MOTORE NASCOSTO (LA MATRICE MOSTRABILE SU RICHIESTA) -->
+        <button class="block mx-auto mt-8 bg-transparent border border-dashed border-slate-400 text-slate-500 py-2.5 px-5 rounded-full text-[13px] font-semibold cursor-pointer hover:text-slate-900 hover:border-slate-900" data-action="click->posturacorrettastart#toggleMatrix">🔍 [Vista Avanzata] Rivela la Matrice 3D Aiuole/Celle</button>
+
+        <div id="matrix-container" class="hidden mt-8 bg-white border border-slate-200 rounded-2xl p-6 overflow-x-auto">
+            <h4 class="mb-2 font-bold">Motore della Matrice (Assi X × Y × Paradigma Z)</h4>
+            <p class="text-xs text-slate-500 mb-4">La griglia sottostante è la struttura scientifica e concettuale che guida le raccomandazioni.</p>
+            
+            <table class="w-full border-collapse text-xs">
+                <thead>
+                    <tr>
+                        <th class="border border-slate-200 p-2.5 text-center bg-[#F2EFE9] font-bold">Motivazione (Y)</th>
+                        <th class="border border-slate-200 p-2.5 text-center bg-[#F2EFE9] font-bold">Ascolta (X1)</th>
+                        <th class="border border-slate-200 p-2.5 text-center bg-[#F2EFE9] font-bold">Nutri (X2)</th>
+                        <th class="border border-slate-200 p-2.5 text-center bg-[#F2EFE9] font-bold">Regola (X3)</th>
+                        <th class="border border-slate-200 p-2.5 text-center bg-[#F2EFE9] font-bold">Recupera (X4)</th>
+                        <th class="border border-slate-200 p-2.5 text-center bg-[#F2EFE9] font-bold">Muoviti (X5)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-slate-200 p-2.5 text-center"><strong>1. Radice (Rischio)</strong></td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-teal-50 text-teal-800 font-semibold">Medicina/Diagnostica</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia (Non esplorata)</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-teal-50 text-teal-800 font-semibold">Fisioterapia Clinica</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-slate-200 p-2.5 text-center"><strong>2. Sacro (Prevenzione)</strong></td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-teal-50 text-teal-800 font-semibold">Nutrizione Clinica</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-teal-50 text-teal-800 font-semibold">Osteopatia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-teal-50 text-teal-800 font-semibold">Rieducazione Posturale</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-slate-200 p-2.5 text-center"><strong>3. Plesso (Risultato)</strong></td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-teal-50 text-teal-800 font-semibold">Fitoterapia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-[#F5F3EF] text-[#A39E93] italic">Nebbia</td>
+                        <td class="border border-slate-200 p-2.5 text-center bg-teal-50 text-teal-800 font-semibold">Performance & Pilates</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 3: ACCADEMIA -->
+    <div id="tab-accademia" class="tab-content <%= !@standalone_percorso && @selected_tab == "accademia" ? "block animate-[fadeIn_0.3s_ease-in-out]" : "hidden" %>">
+        <div class="mb-8 text-center max-w-[760px] mx-auto">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-indigo-50 text-indigo-800">Solo 5 minuti al giorno</span>
+            <h1 class="text-[32px] font-extrabold tracking-tight mb-3 text-[#1E2421]">PosturaCorretta in un mese</h1>
+            <p class="text-base text-slate-500 leading-relaxed">Un programma semplice da iniziare, da affiancare a un percorso di salute e da proporre nei centri.</p>
+        </div>
+
+        <section class="mx-auto max-w-3xl rounded-2xl border border-indigo-100 bg-white p-6 shadow-sm sm:p-8">
+            <p class="text-sm font-bold uppercase tracking-[0.14em] text-indigo-700">Prima di iniziare</p>
+            <h2 class="mt-2 text-2xl font-bold text-slate-950">Scegli il punto di partenza più adatto</h2>
+            <p class="mt-3 text-sm leading-relaxed text-slate-600">Le schede quotidiane possono aiutarti a costruire continuità. Se hai dolore importante, una diagnosi, limitazioni o sei già seguito da più professionisti, è meglio partire direttamente dal percorso integrato.</p>
+
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <a href="#programma-un-mese" class="rounded-xl border border-indigo-200 bg-indigo-50 p-5 no-underline transition hover:border-indigo-400 hover:bg-indigo-100">
+                    <span class="text-sm font-bold text-indigo-800">Inizio dalle schede</span>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-700">Ho bisogno di una pratica breve per iniziare o sostenere con più costanza il lavoro già avviato.</p>
+                    <span class="mt-4 inline-block text-sm font-bold text-indigo-800">Inizia il programma →</span>
+                </a>
+                <a href="<%= posturacorretta_percorso_come_funziona_path %>" class="rounded-xl border border-red-200 bg-red-50 p-5 no-underline transition hover:border-red-400 hover:bg-red-100">
+                    <span class="text-sm font-bold text-red-800">Parto dal percorso integrato</span>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-700">Ho una situazione complessa, dolore o bisogno di orientarmi prima tra professionisti e metodiche.</p>
+                    <span class="mt-4 inline-block text-sm font-bold text-red-800">Crea il percorso →</span>
+                </a>
+            </div>
+        </section>
+
+        <section id="programma-un-mese" class="mx-auto mt-6 max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <h2 class="text-xl font-bold text-slate-950">Il programma sarà composto da schede brevi e progressive</h2>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">Qui inseriremo le pratiche dei quattro settimane, le indicazioni per chi le svolge e le regole per chi le propone in un centro.</p>
+        </section>
+
+        <div class="hidden grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+            <!-- MODULO 1 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-extrabold text-amber-600 uppercase">Modulo 1</span>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] bg-teal-50 text-teal-800">Completato</span>
+                    </div>
+                    <h3 class="text-lg font-bold">Il Corpo come Sistema</h3>
+                    <p class="text-[13px] text-slate-500 mt-1.5">Oltre la visione meccanicistica: anatomia esperienziale e fasciale.</p>
+                </div>
+                <div>
+                    <div class="h-1.5 bg-[#EFECE6] rounded-full mt-4 overflow-hidden"><div class="h-full bg-teal-800 rounded-full w-full"></div></div>
+                </div>
+            </div>
+
+            <!-- MODULO 2 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-extrabold text-amber-600 uppercase">Modulo 2</span>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] bg-amber-50 text-amber-600 border border-slate-200">In Corso</span>
+                    </div>
+                    <h3 class="text-lg font-bold">I Paradigmi della Salute</h3>
+                    <p class="text-[13px] text-slate-500 mt-1.5">Confronto tra modello istituzionale, integrato, tradizionale e percettivo.</p>
+                </div>
+                <div>
+                    <div class="h-1.5 bg-[#EFECE6] rounded-full mt-4 overflow-hidden"><div class="h-full bg-teal-800 rounded-full w-[60%]"></div></div>
+                </div>
+            </div>
+
+            <!-- MODULO 3 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-extrabold text-amber-600 uppercase">Modulo 3</span>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] bg-sky-50 text-sky-900">Prossimo</span>
+                    </div>
+                    <h3 class="text-lg font-bold">La Matrice Posturale 3D</h3>
+                    <p class="text-[13px] text-slate-500 mt-1.5">Mappare metodiche, competenze e percorsi sulle 140 celle dell'ecosistema.</p>
+                </div>
+                <div>
+                    <div class="h-1.5 bg-[#EFECE6] rounded-full mt-4 overflow-hidden"><div class="h-full bg-teal-800 rounded-full w-0"></div></div>
+                </div>
+            </div>
+
+            <!-- MODULO 4 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-extrabold text-amber-600 uppercase">Modulo 4</span>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] bg-sky-50 text-sky-900">Bloccato</span>
+                    </div>
+                    <h3 class="text-lg font-bold">Comunicare la Postura</h3>
+                    <p class="text-[13px] text-slate-500 mt-1.5">Linguaggio educativo, ascolto attivo e de-patologizzazione della persona.</p>
+                </div>
+                <div>
+                    <div class="h-1.5 bg-[#EFECE6] rounded-full mt-4 overflow-hidden"><div class="h-full bg-teal-800 rounded-full w-0"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: IL GIARDINO DEL CORPO (FILOSOFIA) -->
+    <div id="tab-filosofia" class="tab-content <%= @selected_tab == "filosofia" ? "block animate-[fadeIn_0.3s_ease-in-out]" : "hidden" %>">
+        <!-- HERO VISIONARIO BLU -->
+        <div class="bg-gradient-to-br from-[#1B3B6F] to-[#0F2347] text-white rounded-[20px] p-12 mb-8 relative overflow-hidden">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-white/15 text-white">Il Giardino del Corpo</span>
+            <h1 class="text-[32px] font-extrabold tracking-tight mb-4 text-white">La Filosofia PosturaCorretta</h1>
+            <p class="text-[#C5D6F0] text-lg max-w-[650px] leading-relaxed">Non correggiamo semplicemente le posizioni fisiche: educhiamo la persona a trovare il proprio punto d'osservazione sulla salute. Abbracciamo la visione integrata dell'essere umano. Che tu sia utente o professionista, puoi diventare portavoce di questa filosofia.</p>
+        </div>
+
+        <!-- I 4 PILASTRI DELLA VISIONE -->
+        <h3 class="text-xl font-bold mb-4">I Quattro Atti del Giardiniere</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+            <div class="bg-white border border-slate-200 p-5 rounded-xl text-center">
+                <span class="text-[28px] mb-2 block">🧭</span>
+                <h4 class="text-base font-bold text-sky-900">Orientare</h4>
+                <p class="text-[13px] text-slate-500 mt-1">Aiutare l'utente a comprendere in quale punto della Matrice si trova.</p>
+            </div>
+            <div class="bg-white border border-slate-200 p-5 rounded-xl text-center">
+                <span class="text-[28px] mb-2 block">🪴</span>
+                <h4 class="text-base font-bold text-sky-900">Innestare</h4>
+                <p class="text-[13px] text-slate-500 mt-1">Creare ponti di collaborazione con professionisti di paradigmi diversi.</p>
+            </div>
+            <div class="bg-white border border-slate-200 p-5 rounded-xl text-center">
+                <span class="text-[28px] mb-2 block">🌾</span>
+                <h4 class="text-base font-bold text-sky-900">Seminare</h4>
+                <p class="text-[13px] text-slate-500 mt-1">Diffondere la cultura del movimento, della postura e dello stile di vita.</p>
+            </div>
+            <div class="bg-white border border-slate-200 p-5 rounded-xl text-center">
+                <span class="text-[28px] mb-2 block">🌳</span>
+                <h4 class="text-base font-bold text-sky-900">Coltivare</h4>
+                <p class="text-[13px] text-slate-500 mt-1">Mantenere vivo l'ecosistema del benessere nel proprio territorio.</p>
+            </div>
+        </div>
+
+        <!-- 5 STEP EVOLUTIVI -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-8">
+            <h3 class="text-xl font-bold mb-5">Il Percorso Evolutivo dell'Insegnante</h3>
+            
+            <div class="flex gap-5 mb-6 items-start">
+                <div class="w-9 h-9 rounded-full bg-sky-50 text-sky-900 font-bold flex items-center justify-center shrink-0">1</div>
+                <div>
+                    <h4 class="font-bold">Esplora il Tuo Cubo</h4>
+                    <p class="text-sm text-slate-500 mt-1">Sperimenta personalmente 3 percorsi su assi differenti della Matrice per ampliare la tua percezione.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-5 mb-6 items-start">
+                <div class="w-9 h-9 rounded-full bg-sky-50 text-sky-900 font-bold flex items-center justify-center shrink-0">2</div>
+                <div>
+                    <h4 class="font-bold">Completa l'Accademia</h4>
+                    <p class="text-sm text-slate-500 mt-1">Supera i 6 moduli formativi per acquisire la grammatica comune dei 4 paradigmi.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-5 mb-6 items-start">
+                <div class="w-9 h-9 rounded-full bg-sky-50 text-sky-900 font-bold flex items-center justify-center shrink-0">3</div>
+                <div>
+                    <h4 class="font-bold">Pratica l'Innesto</h4>
+                    <p class="text-sm text-slate-500 mt-1">Collabora attivamente a un caso studio reale con un professionista di un paradigma differente dal tuo.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-5 mb-6 items-start">
+                <div class="w-9 h-9 rounded-full bg-sky-50 text-sky-900 font-bold flex items-center justify-center shrink-0">4</div>
+                <div>
+                    <h4 class="font-bold">Semina la Visione</h4>
+                    <p class="text-sm text-slate-500 mt-1">Guida il tuo primo gruppo o paziente nell'esplorazione autonoma del proprio stato di salute.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-5 items-start">
+                <div class="w-9 h-9 rounded-full bg-sky-50 text-sky-900 font-bold flex items-center justify-center shrink-0">5</div>
+                <div>
+                    <h4 class="font-bold">Diventa Giardiniere</h4>
+                    <p class="text-sm text-slate-500 mt-1">Ottieni il riconoscimento formale di Insegnante PosturaCorretta ed entra nella rete di riferimento.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%= render "posturacorretta/footer" %>
+
+</div>
