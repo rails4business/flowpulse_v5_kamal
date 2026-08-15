@@ -1,10 +1,10 @@
-# Da dove iniziare: tre possibilità
+# Scegli il prossimo passo: tre possibilità
 
-Prima di iniziare è utile ricordare che esistono ambiti e aree della salute diverse. Un percorso può essere complementare, ma non sostituisce gli altri percorsi e, in presenza di patologia, forte dolore, fase acuta o rischio per la salute, è necessario il coinvolgimento del professionista che prende in carico la persona.
+Arrivato fin qui, è utile ricordare che esistono ambiti e aree della salute differenti. Un percorso può essere complementare, ma non sostituisce gli altri percorsi e, in presenza di patologia, forte dolore, fase acuta o rischio per la salute, è necessario il coinvolgimento del professionista che prende in carico la persona.
 
-Non esiste un unico punto di partenza. PosturaCorretta propone tre possibilità, che svolgono funzioni diverse e possono sostenersi a vicenda.
+Non esiste un unico passo successivo. PosturaCorretta propone tre possibilità, che svolgono funzioni diverse e possono sostenersi a vicenda.
 
-## 1. PosturaCorretta in un mese
+## 1. Continua con la pratica e l’educazione
 
 È il primo livello educativo e pratico. Pochi minuti al giorno aiutano a osservare il corpo, conoscere alcuni principi delle metodiche posturali e comprendere meglio le indicazioni ricevute.
 
@@ -28,12 +28,12 @@ Sono la porta d'ingresso per chi vuole conoscere le persone coinvolte, speriment
 
 Le tre possibilità non si escludono:
 
-- puoi iniziare dal programma di un mese per acquisire una prima base;
+- puoi continuare con il programma di un mese per consolidare pratica e conoscenze;
 - puoi coinvolgere subito i professionisti e costruire un Percorso Integrato;
 - puoi partecipare a un evento per vivere un'esperienza, incontrare il progetto e scoprirne la filosofia.
 
 La matrice di PosturaCorretta aiuta inoltre a orientarsi tra ambiti, aree e paradigmi e a capire quale punto di partenza sia più adatto.
 
-- [Continua con il programma di un mese →](/posturacorretta?sezione=primo_mese&capitolo=00-trovare-il-giusto-punto-di-vista)
+- [Vai all’indice di PosturaCorretta in un mese →](/posturacorretta?sezione=primo_mese)
 - [Inizia il Percorso Integrato →](/posturacorretta?sezione=percorso&capitolo=inizia)
 - [Partecipa agli eventi e scopri la nostra filosofia →](/posturacorretta/eventi)

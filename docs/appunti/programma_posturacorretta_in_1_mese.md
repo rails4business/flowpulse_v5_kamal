@@ -35,13 +35,19 @@ Le tre destinazioni non si escludono e non costituiscono necessariamente una seq
 
 ## Struttura del libro-programma
 
-### 1. Trova il giusto punto di vista
+### 1. Stai seguendo un percorso o stai sommando interventi?
+
+Partire da una situazione comune: la persona riceve indicazioni da professionisti e pratiche differenti, ma manca un modello condiviso che le trasformi in un vero Percorso Integrato.
+
+**Obiettivo:** far riconoscere il problema prima di presentare la storia personale e la risposta di PosturaCorretta.
+
+### 2. Trova il giusto punto di vista
 
 La storia personale introduce il problema: due professionisti possono osservare la stessa situazione da punti di vista differenti.
 
 **Obiettivo:** far comprendere perché servono conoscenza, collaborazione e una visione più ampia.
 
-### 2. I tre errori più frequenti
+### 3. I tre errori più frequenti
 
 Presentare i tre problemi ai quali PosturaCorretta prova a rispondere:
 
@@ -49,13 +55,13 @@ Presentare i tre problemi ai quali PosturaCorretta prova a rispondere:
 2. sommare interventi senza costruire un Percorso Integrato;
 3. delegare completamente la salute senza sviluppare educazione e consapevolezza.
 
-### 3. I benefici di una PosturaCorretta
+### 4. I benefici di una PosturaCorretta
 
 Spiegare che la postura non significa soltanto “stare dritti”, ma imparare ad ascoltare, coordinare e utilizzare meglio il corpo.
 
 Questo capitolo deve far nascere il desiderio di provare il programma.
 
-### 4. Come funziona il metodo
+### 5. Come funziona il metodo
 
 Presentare in modo semplice:
 
@@ -68,7 +74,7 @@ Presentare in modo semplice:
 
 Non è necessario raccontare subito tutta l'Accademia: è più utile mostrare concretamente il suo modo di educare.
 
-### 5. Il programma pratico di un mese
+### 6. Il programma pratico di un mese
 
 Questa è la parte pratica ed educativa proveniente dall'Accademia.
 
@@ -88,13 +94,13 @@ Quando confrontarsi con un professionista
 
 Non inventare nuove pratiche soltanto per completare la struttura. Selezionare le schede e le lezioni già presenti nell'Accademia che risultano adatte a un'introduzione.
 
-### 6. Sei disallineato?
+### 7. Sei disallineato?
 
 Presentare la postura come strumento per leggere e osservare il corpo, non come etichetta o diagnosi.
 
 Ciò che la persona osserva durante la pratica deve aiutarla a formulare domande migliori, non a sostituirsi ai professionisti.
 
-### 7. Mettere in pratica gli insegnamenti delle metodiche
+### 8. Mettere in pratica gli insegnamenti delle metodiche
 
 Presentare le metodiche come fonti dalle quali PosturaCorretta raccoglie principi, esperienze e interpretazioni.
 
@@ -104,7 +110,7 @@ Distinguere progressivamente tra:
 - esperienza professionale;
 - ipotesi interpretative.
 
-### 8. Quando la pratica autonoma non basta
+### 9. Quando la pratica autonoma non basta
 
 Introdurre il **Percorso personalizzato e integrato**:
 
@@ -114,7 +120,7 @@ Introdurre il **Percorso personalizzato e integrato**:
 - mantenere ruoli e responsabilità chiari;
 - costruire un percorso leggibile.
 
-### 9. Un nuovo punto di vista sulla salute
+### 10. Un nuovo punto di vista sulla salute
 
 Inserire una versione sintetica e narrativa di **Conoscere il progetto**:
 
@@ -124,7 +130,7 @@ Inserire una versione sintetica e narrativa di **Conoscere il progetto**:
 - corpo come giardino;
 - dalla PosturaCorretta al Giardino del Corpo.
 
-### 10. Scegli il prossimo passo
+### 11. Scegli il prossimo passo
 
 La conclusione deve proporre tre continuazioni coerenti.
 

@@ -1,5 +1,17 @@
 # Mettere in pratica gli insegnamenti delle metodiche posturali
 
+Questo capitolo raccoglierà progressivamente, per ogni metodica, **un principio da comprendere e un esercizio da sperimentare**. L'obiettivo non è sovrapporre le discipline, ma riconoscere che cosa può insegnare ciascuna e come tradurlo nella pratica quotidiana.
+
+## Traccia delle pratiche
+
+1. **Igiene Posturale** — 4 principi e relative pratiche.
+2. **Principi di Fisioterapia** — 6 principi e relative pratiche.
+3. **Introduzione alla biomeccanica comportamentale (GDS)** — 7 principi e relative pratiche.
+4. **Principi di Osteopatia** — 6 principi e relative pratiche.
+5. **Introduzione al metodo Corpo e Coscienza** — 7 principi e relative pratiche.
+6. **Altre metodiche posturali** — principi ed esercizi da sviluppare.
+
+Per ogni voce verranno indicati il principio osservato, l'esercizio, ciò a cui prestare attenzione e il modo in cui quell'esperienza può collegarsi alle altre.
 
 Iniziamo a scoprire la fisiologica con la fisioterapia:
 
