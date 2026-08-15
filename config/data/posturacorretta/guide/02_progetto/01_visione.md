@@ -46,6 +46,8 @@ Gli **insegnanti dell'Accademia PosturaCorretta** sviluppano una formazione educ
 
 L'insegnante accompagna l'educazione al corpo; il professionista mette a disposizione la propria competenza specifica quando è necessaria. La collaborazione tra queste funzioni può rendere la persona più preparata a comprendere e seguire il proprio percorso.
 
+
+
 ## Il corpo come un giardino
 
 Il **Giardino del Corpo** non è un'altra metodica. È la metafora che raccoglie la visione del progetto: l'essere umano è un sistema complesso da conoscere, coltivare e curare.
@@ -59,3 +61,14 @@ Il progetto parte dalla postura e dalla salute, ma il suo orizzonte non si ferma
 In attesa di un luogo fisico immerso nella natura nel quale vivere per alcuni giorni o settimane movimento, ascolto, formazione e relazioni, PosturaCorretta porta questa filosofia attraverso il programma di un mese, il Percorso Integrato, l'Accademia, i contenuti e gli eventi.
 
 È il cammino che conduce **dalla PosturaCorretta al Giardino del Corpo**.
+
+
+## Tecnologia al servizio delle persone e dei percorsi
+
+Le nuove tecnologie stanno già cambiando il modo di lavorare, di comunicare e di prendersi cura della salute. Per questo PosturaCorretta comprende anche una componente digitale: programmazione, contenuti e strumenti pensati per rendere la filosofia più accessibile e per sostenere il lavoro di persone, insegnanti e professionisti.
+
+Nel tempo questi strumenti potranno aiutare a documentare obiettivi, passaggi, osservazioni e risultati dei Percorsi Integrati. L'intento è rendere più leggibile ciò che accade nella pratica, individuare che cosa può essere migliorato e permettere ai professionisti di confrontare percorsi simili senza sostituirsi alla ricerca scientifica o alle responsabilità cliniche.
+
+Anche chi non ha accesso alle grandi strutture della ricerca può raccogliere in modo ordinato informazioni sulla propria esperienza professionale. Quando un programma nato dalla pratica mostra risultati promettenti, documentarlo con criteri chiari può aiutare a studiarlo meglio, a verificarne limiti e condizioni di applicazione e, se opportuno, a renderlo più ripetibile e condivisibile.
+
+L'obiettivo non è curare soltanto la patologia, ma costruire strumenti che aiutino a conoscere e migliorare la salute della persona nel suo insieme.

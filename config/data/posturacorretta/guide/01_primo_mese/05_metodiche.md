@@ -13,19 +13,15 @@ Questo capitolo raccoglierà progressivamente, per ogni metodica, **un principio
 
 Per ogni voce verranno indicati il principio osservato, l'esercizio, ciò a cui prestare attenzione e il modo in cui quell'esperienza può collegarsi alle altre.
 
-Iniziamo a scoprire la fisiologica con la fisioterapia:
+## Prime pratiche da sviluppare
 
-- Igiene posturale esercizi base
-- Sistema Cardio circoloatorio - fermare la testa e staccare -  Osteopatia
-- Sistema respiratorio - Fisioterapia 
-- Sistema Nervoso - Sbadiglio e stiramento - Corpo e coscienza 
-- Sistema Muscolo scheletrico e movimento - attivare i muscoli - Metodo gds 
-- 
+- **Igiene Posturale:** esercizi di base e osservazione delle abitudini.
+- **Sistema cardiocircolatorio e recupero:** fermarsi, alleggerire il carico mentale e osservare il rapporto tra attività e pausa.
+- **Sistema respiratorio:** conoscere e osservare il respiro attraverso i Principi di Fisioterapia.
+- **Sistema nervoso:** sperimentare sbadiglio e stiramento attraverso gli insegnamenti di Corpo e Coscienza.
+- **Sistema muscolo-scheletrico e movimento:** osservare l'attivazione muscolare attraverso la biomeccanica comportamentale GDS.
 
-Cosa serve: sedia o tappetino
-
-
-
+Per iniziare serviranno soltanto una sedia o un tappetino. Le istruzioni complete e le possibili varianti verranno inserite nelle singole schede.
 
 
 Le metodiche posturali offrono strumenti diversi per osservare il corpo. In questo programma vengono presentati alcuni sistemi e pratiche, senza confondere l'educazione con la diagnosi o con il lavoro riservato ai professionisti.

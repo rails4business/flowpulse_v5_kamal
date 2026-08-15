@@ -6,4 +6,6 @@ Il lavoro sulla postura richiede la conoscenza di molti sistemi. Per questo il p
 
 L'obiettivo è imparare a leggere il punto di partenza e capire quando è necessario coinvolgere un professionista.
 
-Per approfondire: [Postura e fisiologia](/posturacorretta/percorso?page=postura-fisiologia)
+La valutazione iniziale del programma verrà inserita in questo capitolo e permetterà di annotare percezioni, abitudini e obiettivi da confrontare con la verifica finale del mese.
+
+Per approfondire: [Postura e fisiologia](/posturacorretta?sezione=percorso&capitolo=postura-fisiologia)
