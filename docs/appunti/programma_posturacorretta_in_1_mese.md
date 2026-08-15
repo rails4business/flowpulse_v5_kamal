@@ -43,11 +43,15 @@ Le tre destinazioni non si escludono e non costituiscono necessariamente una seq
 
 Raccontare l'incontro con yoga, Tai Chi, fisioterapia e metodiche posturali. Introdurre le prime domande: che cosa significa creare spazio, da dove nascono le tensioni e perché scuole differenti osservano il corpo attraverso linguaggi diversi?
 
+
+Perché dopo una pratica di yoga alcune persone si sentono meglio? Perché alcune riescono a entrare nella meditazione e altre incontrano maggiore difficoltà? Che rapporto esiste tra tensioni, respiro, attenzione e stato del sistema nervoso?
+
 **Obiettivo:** creare curiosità e mostrare l'origine della ricerca di PosturaCorretta.
 
 ### 2. I benefici di una PosturaCorretta
 
 Spiegare che la postura non significa soltanto stare dritti, ma imparare ad ascoltare, coordinare e utilizzare meglio il corpo.
+
 
 **Obiettivo:** far comprendere perché vale la pena provare il programma.
 
@@ -56,6 +60,8 @@ Spiegare che la postura non significa soltanto stare dritti, ma imparare ad asco
 Inserire la valutazione educativa iniziale. Non deve produrre diagnosi o etichette, ma aiutare la persona a osservare il proprio punto di partenza.
 
 Raccogliere almeno:
+
+Esperienza pratica da inserire nella valutazione: osservare come il lavoro sulle spalle può modificare il baricentro e la percezione del carico sulle ginocchia; ripetere poi l'osservazione lavorando sul respiro. L'espansione toracica modifica i volumi e le pressioni del torace e produce movimenti della gabbia toracica. Cambiando l'organizzazione del tronco può cambiare anche lo spostamento del peso e il modo in cui il carico viene percepito e distribuito sugli arti inferiori. La persona sperimenta direttamente la relazione e annota che cosa cambia nel proprio corpo.
 
 - percezione di tensioni e rigidità;
 - respiro, recupero, energia e sonno;
@@ -82,15 +88,19 @@ Gli esercizi devono aiutare a percepire l'essere umano come un sistema complesso
 
 Presentare i tre problemi ai quali PosturaCorretta prova a rispondere:
 
-1. ridurre la postura a muscoli, articolazioni e allineamento;
-2. confondere la globalità con la somma di molti interventi;
-3. delegare completamente la propria salute senza sviluppare educazione e consapevolezza.
+1. **Ridurre la postura alla meccanica e delegare completamente la salute.** Considerare il corpo soltanto come muscoli, articolazioni e allineamento porta a vedere la salute come qualcosa di verticale, da affidare interamente allo specialista, al professionista o alla singola metodica, senza sviluppare educazione, consapevolezza e partecipazione personale.
+2. **Confondere la globalità con la somma di molti interventi.** Fare movimento, trattamenti, alimentazione, meditazione e terapie differenti non crea automaticamente un percorso globale. Se gli interventi restano scollegati e manca un modello comune, rischiano di diventare una semplice somma di attività.
+3. **Ridurre la salute all'assenza di una malattia e al solo corpo biologico.** La salute è anche una ricerca interiore che parte dalla conoscenza del corpo e arriva a domandarsi che cosa significhi essere umani e quale vita vogliamo costruire. Non riguarda soltanto il funzionamento dei sistemi, ma anche ambiente, relazioni, espressione, consapevolezza, scopo e ciò che nutre interiormente la persona.
 
 ### 6. La postura come punto d'incontro
 
-Usare la postura come porta d'ingresso educativa e come primo collegamento tra movimento, respiro, percezione, abitudini e fisiologia.
+Usare la postura come porta d'ingresso educativa per conoscere la fisiologia e condividere un modello esperienziale e delle linee guida della salute e come visione filosofica.
+
 
 Chiarire che la postura, da sola, non basta: offre un punto dal quale iniziare a osservare il corpo, ma non sostituisce le competenze specifiche e gli interventi eventualmente necessari.
+
+D'altro canto senza postura  il problema è che senza parte educativa e senza principi convdivisi il percorso integrato non si può fare ognuno può avere visioni diverse ma deve essere aperto al dialogo.
+
 
 ### 7. Stai seguendo un percorso o stai sommando interventi?
 
@@ -104,6 +114,8 @@ La storia personale dei due medici mostra che una stessa situazione può essere 
 
 **Obiettivo:** far comprendere perché servono conoscenza, responsabilità, collaborazione e una visione più ampia.
 
+Educazione <--> percorso integrato <--> Visione filosofica (significato e valori)
+
 ### 9. Un nuovo punto di vista sulla salute: il corpo e l'educazione
 
 Passare dalla postura al modello fisiologico come tratto di unione tra educazione e lavoro professionale:
@@ -112,6 +124,15 @@ Passare dalla postura al modello fisiologico come tratto di unione tra educazion
 - dalla fisiologia a un linguaggio comune;
 - dal linguaggio comune al dialogo tra professionisti;
 - dal dialogo al Percorso Integrato.
+- Accennare alla lateralizzazione delle funzioni cerebrali senza dividere rigidamente le persone in “cervello destro” e “cervello sinistro”. I due emisferi lavorano insieme attraverso reti distribuite e la globalità dell'essere umano nasce dall'integrazione delle loro funzioni. L'educazione proposta da PosturaCorretta mette quindi in relazione ragionamento, linguaggio, percezione, movimento, creatività ed esperienza.
+- Un esempio pratico è offerto dagli esercizi proposti da Betty Edwards in *Disegnare con la parte destra del cervello*. Disegnare osservando contorni, proporzioni e spazi negativi, oppure copiare un'immagine capovolta, aiuta a sospendere temporaneamente i simboli con cui interpretiamo ciò che vediamo e a prestare maggiore attenzione alle relazioni reali tra le forme. Il titolo richiama la teoria della lateralizzazione emisferica, ma l'interesse educativo dell'esperienza non dipende dall'attivazione esclusiva di un emisfero: mostra concretamente che, cambiando il modo di osservare e integrare percezione, attenzione e movimento, può cambiare anche il risultato dell'azione. È un esempio coerente con PosturaCorretta: non basta guardare il corpo, bisogna imparare da quale punto di vista osservarlo.
+- La tecnologia ha ampliato enormemente le possibilità della medicina, della ricerca e della comunicazione. Tuttavia, conoscere sempre meglio la malattia e sviluppare strumenti più potenti non esaurisce il problema della salute dell'essere umano.
+- La *paideia* greca può offrire uno spunto storico. Musica e ginnastica non erano considerate soltanto attività accessorie, ma parti dell'educazione della persona e del suo rapporto con la comunità. Il loro equilibrio contribuiva a una formazione che coinvolgeva corpo, sensibilità, pensiero e carattere. Nella *Repubblica*, Platone le presenta come componenti da armonizzare nell'educazione.
+- PosturaCorretta non propone di tornare al passato o di sostituire scienza e tecnologia. Propone di recuperare quella domanda sull'essere umano e di integrare strumenti moderni, filosofia, educazione al corpo, cultura, ambiente, società e territorio. Ritornare dalla tecnologia alla filosofia significa collegare nuovamente i mezzi ai loro scopi: non soltanto chiederci che cosa possiamo misurare o correggere, ma quale salute, quale educazione e quale rapporto con l'ambiente vogliamo coltivare.
+- Ritorno all'ambiente
+- Ambiente interno sviluppo di armonia espressione consapevolezza connessione
+- Ambiente esterno natura e il corpo come strumento macrocosmo e microcosmo essere umani
+- Il giardino del corpo
 
 La parte educativa è messa a disposizione da PosturaCorretta e potrà essere insegnata da chi completa il percorso formativo. Può affiancare e arricchire programmi di insegnanti di yoga e discipline corporee, oppure il lavoro dei professionisti, mantenendo distinti ruoli e responsabilità.
 
