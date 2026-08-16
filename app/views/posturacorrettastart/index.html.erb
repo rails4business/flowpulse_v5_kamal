@@ -3,28 +3,6 @@
 <% end %>
 
 <div data-controller="posturacorrettastart">
-  <% unless @standalone_percorso %>
-  <div class="bg-slate-100 border-b border-slate-200 py-3">
-    <div class="max-w-[1200px] mx-auto px-6 flex justify-center">
-      <nav class="flex gap-2 bg-slate-200/80 p-1.5 rounded-xl shadow-inner" aria-label="Sezioni PosturaCorretta">
-        <% { "home" => "Home", "accademia" => "PosturaCorretta in 1 mese", "percorso" => "Il Tuo Percorso", "filosofia" => "🌳 La nostra filosofia" }.each do |tab, label| %>
-          <% active = @selected_tab == tab %>
-          <% tab_path = case tab
-             when "percorso" then posturacorretta_percorso_path
-             when "accademia" then posturacorretta_path
-             when "filosofia" then posturacorretta_eventi_path
-             else posturacorretta_path
-             end %>
-          <a href="<%= tab_path %>" 
-             class="tab-btn px-5 py-2 text-sm font-bold rounded-lg cursor-pointer transition-all duration-200 no-underline <%= active ? "bg-white text-blue-700 shadow-sm" : "text-slate-600 hover:text-slate-900 hover:bg-white/50" %>" 
-             data-action="click->posturacorrettastart#switchTab" 
-             data-posturacorrettastart-tab-param="<%= tab %>" 
-             <%= "aria-current=page" if active %>><%= label %></a>
-        <% end %>
-      </nav>
-    </div>
-  </div>
-  <% end %>
 
 <div class="max-w-[1200px] mx-auto mt-8 px-6">
 
@@ -51,7 +29,7 @@
             </div>
 
             <!-- PERCORSO INTEGRATO -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-8 transition-all duration-300 relative flex flex-col justify-between hover:-translate-y-1 hover:shadow-md hover:border-[#CFC9BE]">
+            <div class="bg-[#FAF8F5] border border-slate-200 rounded-2xl p-8 transition-all duration-300 relative flex flex-col justify-between hover:-translate-y-1 hover:shadow-md hover:border-[#CFC9BE]">
                 <div>
                     <span class="text-4xl mb-4 inline-block">🧭</span>
                     <br>
@@ -68,7 +46,7 @@
                     <span class="text-4xl mb-4 inline-block">📅</span>
                     <br>
                     <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[1px] mb-3 bg-violet-50 text-violet-800">Eventi</span>
-                    <h3 class="text-xl font-bold mb-2">Partecipa e scopri la nostra filosofia</h3>
+                    <h3 class="text-xl font-bold mb-2">Partecipa agli eventi</h3>
                     <p class="text-sm text-slate-500 mb-6 flex-grow">Vivi esperienze che uniscono corpo, salute, formazione, territorio e natura: scopri la nostra filosofia dalla PosturaCorretta al giardino del corpo.</p>
                 </div>
                 <button class="block w-full py-3 text-center rounded-lg text-sm font-semibold border-none cursor-pointer transition-colors duration-300 bg-violet-800 text-white hover:bg-violet-900" data-action="click->posturacorrettastart#switchTab" data-posturacorrettastart-tab-param="filosofia">Scopri gli eventi</button>

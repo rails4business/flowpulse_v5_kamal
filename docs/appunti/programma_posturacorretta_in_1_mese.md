@@ -231,6 +231,49 @@ Definire successivamente indicatori semplici, modalità di consenso e criteri un
 - [ ] Preparare il manuale dell'insegnante dopo aver validato il programma con un primo gruppo.
 - [ ] Collegare la conclusione al Percorso Integrato, all'educazione successiva e agli eventi.
 
+## Verifica del funnel e dello storytelling
+
+Affrontare i punti seguenti uno alla volta. Ogni modifica deve conservare i contenuti già validati e rendere più chiaro il passaggio dalle abitudini attuali all'uso del metodo, alla costruzione del Percorso Integrato e all'eventuale prosecuzione nell'Accademia.
+
+### Struttura generale
+
+- [x] Definire in una frase la trasformazione promessa dal programma: **Scopri la tua postura, conosci la tua fisiologia e costruisci le basi del tuo Percorso Integrato.**
+- [] Mantenere il lettore come protagonista e utilizzare la storia di Marco come esperienza della guida, collegandola sempre alle domande del lettore.  
+- [ ] Rendere riconoscibile un conflitto centrale unico: non mancano necessariamente interventi e professionisti, ma spesso mancano educazione e un modello comune con cui collegarli.
+- [ ] Rendere osservabile la promessa senza trasformarla in una promessa di cura.
+- [ ] Costruire una progressione di piccole prove pratiche prima del caso personale più ampio.
+- [ ] Completare il mese reale: quattro settimane, esercizi, progressione, valutazione, diario e verifica finale.
+
+### Quattro funzioni della comunicazione
+
+Verificare in ogni capitolo la presenza di:
+
+- [ ] **Sento:** esperienza, problema o domanda nella quale la persona possa riconoscersi.
+- [ ] **Capisco:** principio, spiegazione o modello che dia significato all'esperienza.
+- [ ] **Immagino:** cambiamento o possibilità concreta che la persona riesca a visualizzare.
+- [ ] **Agisco:** esercizio, osservazione, annotazione o scelta da compiere.
+- [ ] **Passaggio:** domanda o collegamento che conduca naturalmente al capitolo successivo.
+
+### Verifica capitolo per capitolo
+
+- [ ] **L'incontro con la salute e con le metodiche posturali:** coinvolgere subito il lettore oltre al racconto dell'esperienza personale.
+- [ ] **I benefici di una PosturaCorretta:** descrivere una trasformazione concreta e realistica da immaginare dopo un mese.
+- [ ] **Sei disallineato?:** inserire una valutazione iniziale realmente eseguibile.
+- [ ] **Mettere in pratica gli insegnamenti:** inserire calendario, esercizi e schede operative.
+- [ ] **I tre errori:** aggiornare il capitolo pubblico con i tre errori definiti in questo documento e presentarli come ostacoli riconoscibili.
+- [ ] **La postura come punto d'incontro:** spiegare il modello fisiologico, la parte educativa, gli strumenti e le Linee guida messi a disposizione da PosturaCorretta.
+- [ ] **Stai seguendo un percorso o sommando interventi?:** aggiungere un'osservazione con cui il lettore possa verificare il proprio percorso.
+- [ ] **Trovare il giusto punto di vista:** riportare il lettore al centro dopo la storia personale.
+- [ ] **Un nuovo punto di vista sulla salute:** far immaginare educazione, Percorso Integrato, eventi e Giardino del Corpo.
+- [ ] **Scegli il prossimo passo:** rendere chiara la prosecuzione verso educazione e Accademia, Percorso Integrato oppure eventi.
+
+### Continuità dell'indice
+
+- [ ] Correggere il collegamento finale di **L'incontro con la salute e con le metodiche posturali**, che oggi salta benefici e valutazione.
+- [ ] Correggere il collegamento di **I tre errori**, che oggi rimanda indietro ai benefici.
+- [ ] Correggere il finale di **La postura come punto d'incontro**, che oggi rimanda indietro ai tre errori.
+- [ ] Correggere il finale di **Trovare il giusto punto di vista**, che oggi annuncia nuovamente i tre errori.
+
 ## Funzione di “Conoscere il progetto”
 
 La sezione non deve essere eliminata, ma assume una funzione differente:
@@ -244,7 +287,7 @@ Il programma non deve limitarsi a dire chi siamo. Prima aiuta a comprendere il p
 
 ### PosturaCorretta in un mese
 
-**Conoscere il corpo, iniziare a praticare e scegliere il proprio percorso.**
+**Scopri la tua postura, conosci la tua fisiologia e costruisci le basi del tuo Percorso Integrato.**
 
 ## Principi da mantenere durante la scrittura
 

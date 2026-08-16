@@ -6,7 +6,14 @@
   <% end %>
 <% end %>
 
-<% content_for :title, (@current_chapter ? "#{@current_chapter.fetch('title')} | PosturaCorretta" : "#{@current_section.fetch('title')} | PosturaCorretta") %>
+<% page_title = if @show_home_intro
+  "PosturaCorretta — Un nuovo punto di vista sulla salute"
+elsif @current_chapter
+  "#{@current_chapter.fetch('title')} | PosturaCorretta"
+else
+  "#{@current_section.fetch('title')} | PosturaCorretta"
+end %>
+<% content_for :title, page_title %>
 
 <% if @show_home_intro %>
   <div aria-label="Introduzione PosturaCorretta">

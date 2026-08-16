@@ -22,6 +22,9 @@ application.register("filter", FilterController)
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import HomeCarouselController from "./home_carousel_controller"
+application.register("home-carousel", HomeCarouselController)
+
 import MarkdownEditorController from "./markdown_editor_controller"
 application.register("markdown-editor", MarkdownEditorController)
 

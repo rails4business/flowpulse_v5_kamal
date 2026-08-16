@@ -1,0 +1,83 @@
+<%
+  slides = Array(data&.fetch("slides", []))
+  initial_slide = params[:home].presence_in(slides.map { |slide| slide.fetch("id") }) || slides.first&.fetch("id")
+  carousel_tabs = [
+    ["Inizia", "home", "◉"],
+    ["1 mese", "postura", "🧍"],
+    ["Percorso Integrato", "percorso", "🧭"],
+    ["Eventi", "eventi", "📅"]
+  ]
+  initial_index = slides.index { |slide| slide.fetch("id") == initial_slide } || 0
+  previous_slide = slides[(initial_index - 1) % slides.length].fetch("id")
+  next_slide = slides[(initial_index + 1) % slides.length].fetch("id")
+%>
+
+<section
+  class="overflow-hidden bg-white"
+  aria-roledescription="carosello"
+  aria-label="Come iniziare con PosturaCorretta"
+  data-controller="home-carousel"
+  data-home-carousel-interval-value="<%= data.fetch('interval', 8000) %>"
+  data-home-carousel-initial-value="<%= initial_slide %>"
+  data-action="touchstart->home-carousel#touchStart touchend->home-carousel#touchEnd visibilitychange@document->home-carousel#visibilityChange"
+>
+  <div class="mx-auto max-w-screen-xl px-4 py-7 sm:px-6 sm:py-10 lg:px-14 lg:py-12 xl:px-28">
+    <div class="relative">
+      <div class="grid lg:translate-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.9fr)] lg:gap-12">
+        <div class="grid grid-cols-[2.25rem_minmax(0,1fr)_2.25rem] items-end gap-2 border-b border-slate-200">
+          <%= link_to "←", posturacorretta_path(home: previous_slide), class: "mb-1 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-xl text-slate-600 transition hover:bg-blue-50 hover:text-blue-700", data: { action: "click->home-carousel#previous" }, aria: { label: "Slide precedente" } %>
+
+          <nav class="min-w-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Scegli come iniziare">
+            <div class="mx-auto -mb-px flex w-max max-w-full justify-center gap-1" role="tablist">
+              <% carousel_tabs.each do |label, slide_id, icon| %>
+                <% tab_index = slides.index { |item| item.fetch("id") == slide_id } %>
+                <a href="<%= posturacorretta_path(home: slide_id) %>"
+                   role="tab"
+                   aria-label="<%= label %>"
+                   aria-selected="<%= slide_id == initial_slide %>"
+                   aria-controls="home-slide-<%= slide_id %>"
+                   class="inline-flex min-w-11 items-center justify-center gap-2 rounded-t-lg border border-b-0 px-2 py-3 text-sm font-bold transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 sm:px-3 <%= slide_id == initial_slide ? 'border-blue-600 bg-white text-blue-700' : 'border-transparent bg-slate-50 text-slate-600' %>"
+                   data-home-carousel-target="tab"
+                   data-slide-id="<%= slide_id %>"
+                   data-action="click->home-carousel#select"
+                   data-home-carousel-index-param="<%= tab_index %>">
+                  <span aria-hidden="true" class="text-base md:hidden"><%= icon %></span>
+                  <span class="hidden whitespace-nowrap md:inline"><%= label %></span>
+                </a>
+              <% end %>
+            </div>
+          </nav>
+
+          <%= link_to "→", posturacorretta_path(home: next_slide), class: "mb-1 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-xl text-slate-600 transition hover:bg-blue-50 hover:text-blue-700", data: { action: "click->home-carousel#next" }, aria: { label: "Slide successiva" } %>
+        </div>
+      </div>
+
+      <% slides.each_with_index do |slide, index| %>
+        <article id="home-slide-<%= slide.fetch('id') %>" class="<%= 'hidden' unless slide.fetch('id') == initial_slide %>" data-home-carousel-target="slide" data-slide-id="<%= slide.fetch('id') %>" aria-roledescription="slide" aria-label="<%= index + 1 %> di <%= slides.length %>">
+          <div class="grid min-h-[44rem] items-start gap-8 pt-5 sm:min-h-[46rem] lg:min-h-[29rem] lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.9fr)] lg:gap-12 lg:pt-12">
+            <div class="min-w-0">
+              <% if index.zero? %>
+                <div class="mb-6 [&>form]:mt-0"><%= render "components/home_content_search" %></div>
+              <% end %>
+              <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-5xl"><%= slide.fetch("title") %></h1>
+              <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg"><%= slide.fetch("description") %></p>
+
+              <% if index.zero? %>
+                <%= link_to "Inizia PosturaCorretta in un mese",
+                            posturacorretta_guide_path("primo_mese", destination: :index),
+                            class: "mt-4 inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2" %>
+              <% elsif slide["cta"].present? %>
+                <% href = posturacorretta_builder_route(slide.fetch("route")) %>
+                <%= link_to slide.fetch("cta"), href, class: "mt-6 inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2" %>
+              <% end %>
+            </div>
+
+            <% unframed_image = index.zero? || %w[postura percorso eventi].include?(slide.fetch("id")) %>
+            <img src="<%= slide.fetch('image') %>" alt="<%= slide.fetch('image_alt') %>" class="w-full lg:-mt-6 lg:self-center <%= unframed_image ? 'h-auto max-h-[25rem] object-contain' : 'h-64 rounded-2xl object-cover shadow-sm sm:h-72 lg:h-80' %>" loading="<%= index.zero? ? 'eager' : 'lazy' %>">
+          </div>
+        </article>
+      <% end %>
+
+    </div>
+  </div>
+</section>
