@@ -44,5 +44,5 @@ Con l'**Accademia PosturaCorretta** puoi approfondire le conoscenze e la pratica
 
 ## Continua a esplorare
 
-- [Scopri la mappa e conosci il progetto →](/posturacorretta?sezione=progetto&capitolo=01-mappa)
+- [Scopri la mappa e conosci il progetto →](/posturacorretta/guida?sezione=progetto&capitolo=01-mappa)
 - [Inizia il Percorso Integrato →](/posturacorretta/percorso)

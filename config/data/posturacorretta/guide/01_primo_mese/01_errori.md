@@ -26,7 +26,7 @@ Conoscere un esercizio o ricevere una spiegazione non basta sempre a cambiare un
 
 Gli insegnanti svolgono una funzione educativa orizzontale: aiutano a conoscere il corpo e la fisiologia, mettere in pratica ciò che si apprende e orientarsi tra professionisti e metodiche. I professionisti mantengono invece la propria competenza verticale, specifica e specialistica.
 
-[Continua con i benefici di una PosturaCorretta →](/posturacorretta?sezione=primo_mese&capitolo=02-benefici)
+[Continua con i benefici di una PosturaCorretta →](/posturacorretta/guida?sezione=primo_mese&capitolo=02-benefici)
 
 ## 2. Confondere la globalità con la somma di molti trattamenti
 
@@ -64,4 +64,4 @@ Una volta affinata la sensibilità attraverso il corpo, servono spazi e tempi ne
 
 Gli insegnanti di PosturaCorretta iniziano dall’educazione al corpo e alla salute e accompagnano progressivamente questa visione più ampia. Il **Percorso Integrato**, il programma **PosturaCorretta in un mese** e l’**Accademia** svolgono funzioni differenti, ma possono sostenersi a vicenda.
 
-[Scopri gli ambiti del Percorso →](/posturacorretta?sezione=percorso&capitolo=quale-percorso)
+[Scopri gli ambiti del Percorso →](/posturacorretta/guida?sezione=percorso&capitolo=quale-percorso)

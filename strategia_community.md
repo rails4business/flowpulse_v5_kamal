@@ -37,7 +37,7 @@ La salute è la base da cui partire, ma la visione del Giardino del Corpo si svi
 | Pilastro | Domanda guida | Esempi di sviluppo |
 | --- | --- | --- |
 | **Salute** | Come posso conoscere, prevenire e prendermi cura del corpo? | Percorso integrato, metodiche, professionisti, Accademia, eventi. |
-| **Lavoro e ricchezza** | Come posso costruire risorse, autonomia e collaborazioni sostenibili? | Ruoli, progetti, scambio di competenze, attività sul territorio. |
+| **Risorse** | Come posso costruire risorse, autonomia e collaborazioni sostenibili? | Ruoli, progetti, scambio di competenze, attività sul territorio. |
 | **Formazione e apprendimento** | Come posso imparare, fare esperienza e trasmettere ciò che apprendo? | Insegnanti, tutor, classi, contenuti, pratica condivisa. |
 
 Questi pilastri non sono tre percorsi obbligatori. Sono l'ossatura con cui, nel tempo, la community può crescere oltre il singolo problema di salute senza perderne la concretezza.

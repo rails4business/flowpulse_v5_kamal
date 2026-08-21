@@ -8,7 +8,7 @@
 
     <div class="flex min-w-0 flex-1 items-center gap-4 overflow-x-auto px-1 sm:gap-5 lg:absolute lg:left-1/2 lg:w-max lg:max-w-[calc(100%_-_24rem)] lg:-translate-x-1/2 lg:justify-center lg:overflow-visible">
       <%= link_to "Home", posturacorretta_path, class: "shrink-0 border-b-2 pb-1 #{home_active ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950'}" %>
-      <%= link_to "Guida", posturacorretta_path(sezione: "primo_mese"), class: "shrink-0 border-b-2 pb-1 border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950" %>
+      <%= link_to "Guida", posturacorretta_guida_path(sezione: "primo_mese"), class: "shrink-0 border-b-2 pb-1 border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950" %>
       <%= link_to "Il tuo percorso", posturacorretta_percorso_path, class: "shrink-0 border-b-2 pb-1 border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950" %>
       <%= link_to "Eventi", posturacorretta_eventi_path, class: "shrink-0 border-b-2 pb-1 border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950" %>
       <details class="group relative shrink-0 [&_summary::-webkit-details-marker]:hidden">
@@ -19,7 +19,7 @@
         <%= link_to "Centri e luoghi", posturacorretta_percorsi_sul_territorio_path(tab: "places"), class: "block px-4 py-2.5 hover:bg-blue-50 hover:text-blue-700" %>
         <%= link_to "Accademia", posturacorretta_accademia_path, class: "block px-4 py-2.5 hover:bg-blue-50 hover:text-blue-700" %>
         <%= link_to "Metodiche", posturacorretta_metodiche_path, class: "block px-4 py-2.5 hover:bg-blue-50 hover:text-blue-700" %>
-        <% if Current.user&.superadmin_user? %><%= link_to "Visione e progetto · Bozza", posturacorretta_path(sezione: "progetto"), class: "block bg-amber-50 px-4 py-2.5 text-amber-800 hover:bg-amber-100" %><% end %>
+        <% if Current.user&.superadmin_user? %><%= link_to "Visione e progetto · Bozza", posturacorretta_guida_path(sezione: "progetto"), class: "block bg-amber-50 px-4 py-2.5 text-amber-800 hover:bg-amber-100" %><% end %>
         <div class="my-1 border-t border-slate-100"></div>
         <%= link_to "Libri", posturacorretta_libri_path, class: "block px-4 py-2.5 hover:bg-blue-50 hover:text-blue-700" %>
         <%= link_to "Collabora", posturacorretta_collabora_path, class: "block px-4 py-2.5 hover:bg-blue-50 hover:text-blue-700" %>

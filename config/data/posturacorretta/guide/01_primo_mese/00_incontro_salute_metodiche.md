@@ -16,4 +16,4 @@ PosturaCorretta nasce anche da questa domanda: **possiamo raccogliere ciò che l
 
 Nel prossimo capitolo inizieremo a farlo attraverso un principio e una pratica per ogni gruppo di insegnamenti.
 
-[Metti in pratica gli insegnamenti delle metodiche posturali →](/posturacorretta?sezione=primo_mese&capitolo=05-metodiche)
+[Metti in pratica gli insegnamenti delle metodiche posturali →](/posturacorretta/guida?sezione=primo_mese&capitolo=05-metodiche)

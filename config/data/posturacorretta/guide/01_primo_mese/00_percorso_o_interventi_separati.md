@@ -40,4 +40,4 @@ PosturaCorretta prova a mettere a disposizione entrambi: un percorso educativo c
 
 Nel prossimo capitolo racconto una situazione concreta nella quale due medici hanno osservato lo stesso problema da punti di vista differenti e nella quale le conoscenze costruite negli anni mi hanno aiutato a partecipare alle scelte.
 
-[Continua con “Trovare il giusto punto di vista” →](/posturacorretta?sezione=primo_mese&capitolo=00-trovare-il-giusto-punto-di-vista)
+[Continua con “Trovare il giusto punto di vista” →](/posturacorretta/guida?sezione=primo_mese&capitolo=00-trovare-il-giusto-punto-di-vista)

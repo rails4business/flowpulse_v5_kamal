@@ -16,7 +16,7 @@
             <%= link_to "Come funziona", posturacorretta_percorso_come_funziona_path,
                   class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-blue-300 hover:text-blue-700" %>
             <% if Current.user&.superadmin_user? || Current.user&.tutor_user? %>
-              <%= link_to "Linee guida", posturacorretta_path(sezione: "percorso"),
+              <%= link_to "Linee guida", posturacorretta_guida_path(sezione: "percorso"),
                     class: "shrink-0 border-b-2 border-dashed border-amber-500 px-4 py-3 text-sm font-bold text-amber-700 transition hover:bg-amber-50" %>
             <% end %>
           </nav>

@@ -2,8 +2,8 @@
   slides = Array(data&.fetch("slides", []))
   initial_slide = params[:home].presence_in(slides.map { |slide| slide.fetch("id") }) || slides.first&.fetch("id")
   carousel_tabs = [
-    ["Inizia", "home", "◉"],
     ["1 mese", "postura", "🧍"],
+    ["Accademia", "accademia", "🎓"],
     ["Percorso Integrato", "percorso", "🧭"],
     ["Eventi", "eventi", "📅"]
   ]
@@ -64,7 +64,7 @@
 
               <% if index.zero? %>
                 <%= link_to "Inizia PosturaCorretta in un mese",
-                            posturacorretta_guide_path("primo_mese", destination: :index),
+                            posturacorretta_primo_mese_path,
                             class: "mt-4 inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2" %>
               <% elsif slide["cta"].present? %>
                 <% href = posturacorretta_builder_route(slide.fetch("route")) %>

@@ -1,11 +1,19 @@
 module Brands
   class PosturacorrettaController < ::PosturacorrettaController
     def home
+      if params[:sezione].present? || params[:capitolo].present? || params[:chapter].present?
+        section = params[:sezione].presence || section_for_legacy_chapter(params[:chapter])
+        chapter = params[:capitolo].presence || params[:chapter]
+        return redirect_to posturacorretta_guida_path(sezione: section, capitolo: chapter), status: :moved_permanently
+      end
+
+      load_home_intro
+      @home_slides = @home_intro_components.find { |component| component["type"] == "home_carousel" }&.dig("data", "slides") || []
+      render "posturacorrettastart/home"
+    end
+
+    def guide
       load_home_index
-      guide_params_absent = params[:sezione].blank? && params[:capitolo].blank? && params[:chapter].blank?
-      home_query_only = request.query_parameters.except("home").empty?
-      @show_home_intro = guide_params_absent && home_query_only
-      load_home_intro if @show_home_intro
       requested_section = params[:sezione].presence || section_for_legacy_chapter(params[:chapter])
       requested_chapter = params[:capitolo].presence || params[:chapter]
       @current_section = @home_sections.find { |section| section.fetch("id") == requested_section }

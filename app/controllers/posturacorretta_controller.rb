@@ -92,6 +92,19 @@ class PosturacorrettaController < ApplicationController
     # Carica accademia e altri quando ci saranno i file
   end
 
+  def dash
+  end
+
+  def primo_mese
+    guide_data = YAML.safe_load_file(
+      Rails.root.join("config/data/posturacorretta/guide/indice.yml"),
+      permitted_classes: [],
+      aliases: false
+    ) || {}
+    first_month = guide_data.fetch("sections", []).find { |section| section["id"] == "primo_mese" }
+    @first_month_chapters = first_month&.fetch("items", []) || []
+  end
+
   def metodiche
     return unless params[:tab] == "how"
 

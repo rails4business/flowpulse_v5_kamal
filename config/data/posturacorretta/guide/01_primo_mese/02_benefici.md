@@ -12,4 +12,4 @@ Con l'Accademia PosturaCorretta e gli insegnanti puoi conoscere meglio i sistemi
 
 Una PosturaCorretta è soprattutto un **nuovo punto di vista sulla salute**: permette di conoscere meglio il corpo, orientarsi tra professioni e metodiche e partecipare con maggiore consapevolezza alle scelte che riguardano il proprio percorso.
 
-Per approfondire: [Postura e fisiologia](/posturacorretta?sezione=percorso&capitolo=postura-fisiologia)
+Per approfondire: [Postura e fisiologia](/posturacorretta/guida?sezione=percorso&capitolo=postura-fisiologia)

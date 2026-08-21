@@ -8,4 +8,4 @@ L'obiettivo è imparare a leggere il punto di partenza e capire quando è necess
 
 La valutazione iniziale del programma verrà inserita in questo capitolo e permetterà di annotare percezioni, abitudini e obiettivi da confrontare con la verifica finale del mese.
 
-Per approfondire: [Postura e fisiologia](/posturacorretta?sezione=percorso&capitolo=postura-fisiologia)
+Per approfondire: [Postura e fisiologia](/posturacorretta/guida?sezione=percorso&capitolo=postura-fisiologia)

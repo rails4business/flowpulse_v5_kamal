@@ -1,0 +1,138 @@
+<% content_for :title, "Canta che ti passa — Musica, canto e territorio" %>
+<% content_for :description, "Fisarmonica, chitarra, canto, ritmo e canti popolari come strumenti di educazione, espressione, memoria e relazione." %>
+<% content_for :landing_nav do %>
+  <header class="sticky top-0 z-50 border-b border-amber-200 bg-white/95 backdrop-blur">
+    <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8" aria-label="Navigazione Canta che ti passa">
+      <%= link_to cantachetipassa_path, class: "flex items-center gap-2 font-black tracking-tight text-slate-950" do %>
+        <span class="flex size-9 items-center justify-center rounded-full bg-red-600 text-lg text-white" aria-hidden="true">♫</span>
+        <span>Canta che ti passa</span>
+      <% end %>
+      <div class="flex items-center gap-2">
+        <a href="#attivita" class="hidden rounded-lg px-3 py-2 text-sm font-bold text-slate-600 hover:bg-amber-50 hover:text-red-700 sm:inline-flex">Attività</a>
+        <a href="#partecipa" class="rounded-lg bg-red-600 px-3.5 py-2 text-sm font-bold text-white hover:bg-red-700">Partecipa</a>
+      </div>
+    </nav>
+  </header>
+<% end %>
+
+<div class="bg-[#fffdf8] text-slate-950">
+  <header class="overflow-hidden border-b border-amber-200 bg-[radial-gradient(circle_at_top_left,_#fef3c7,_#fffdf8_48%)]">
+    <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8 lg:py-24">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.2em] text-red-700">Musica · educazione · comunità</p>
+        <h1 class="mt-4 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.05em] sm:text-7xl">Canta che ti passa</h1>
+        <p class="mt-6 max-w-2xl text-xl font-bold leading-8 text-slate-800">Musica, canto e ritmo per conoscere, esprimere e incontrare.</p>
+        <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Parti da fisarmonica, chitarra o canto. Sviluppa ascolto e ritmo, riscopri i canti popolari e porta la musica fuori dalla lezione, dentro le relazioni e il territorio.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#inizia" class="rounded-xl bg-red-600 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-red-900/10 transition hover:-translate-y-0.5 hover:bg-red-700">Scegli da dove iniziare</a>
+          <a href="#visione" class="rounded-xl border border-amber-300 bg-white px-5 py-3.5 text-sm font-black text-slate-700 transition hover:border-red-300 hover:text-red-700">Scopri la visione</a>
+        </div>
+      </div>
+      <div class="relative mx-auto flex aspect-square w-full max-w-sm items-center justify-center rounded-full border border-amber-200 bg-white shadow-xl shadow-amber-900/10" aria-hidden="true">
+        <span class="absolute left-[18%] top-[19%] text-5xl">♪</span>
+        <span class="text-8xl text-red-600">♫</span>
+        <span class="absolute bottom-[17%] right-[18%] text-4xl text-amber-600">♬</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="visione" class="mx-auto max-w-5xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div class="grid gap-8 md:grid-cols-[14rem_minmax(0,1fr)]">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">La visione</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight">Dalla lezione all’esperienza</h2>
+        </div>
+        <div class="space-y-5 text-base leading-7 text-slate-600 sm:text-lg">
+          <p>Imparare uno strumento è la porta d’ingresso. La musica può sviluppare ascolto, coordinazione, memoria, espressione e capacità di stare con gli altri.</p>
+          <p>La <strong class="text-slate-900">Paideia</strong> offre la direzione educativa: musica e pratica corporea partecipano alla formazione della persona e al suo rapporto con la comunità.</p>
+          <p>Canta che ti passa porta quindi la pratica individuale verso il suonare e cantare insieme, la memoria popolare, gli incontri e le iniziative sul territorio.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="inizia" class="border-y border-amber-200 bg-white">
+      <div class="mx-auto max-w-7xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Da dove puoi iniziare</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Scegli la tua porta d’ingresso</h2>
+        <div class="mt-9 grid gap-5 md:grid-cols-3">
+          <% [
+            ["Fisarmonica", "🪗", "Melodia, accompagnamento e repertorio popolare."],
+            ["Chitarra", "🎸", "Accordi, ritmo e accompagnamento della voce."],
+            ["Canto", "🎤", "Voce, ascolto e piacere di cantare insieme."]
+          ].each do |title, icon, description| %>
+            <article class="rounded-2xl border border-amber-200 bg-[#fffdf8] p-6 transition hover:-translate-y-1 hover:border-red-300 hover:shadow-md">
+              <span class="text-4xl" aria-hidden="true"><%= icon %></span>
+              <h3 class="mt-5 text-2xl font-black"><%= title %></h3>
+              <p class="mt-3 leading-6 text-slate-600"><%= description %></p>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section id="attivita" class="mx-auto max-w-7xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Il percorso</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">La musica prende vita quando viene condivisa</h2>
+          <p class="mt-5 text-base leading-7 text-slate-600">Il percorso può partire dalla lezione e aprirsi progressivamente alla voce, al corpo, alle altre persone e al territorio.</p>
+        </div>
+        <ol class="divide-y divide-amber-200 border-y border-amber-200">
+          <% [
+            ["01", "Ascolto e ritmo", "Percepire il tempo, coordinarsi e costruire una base comune."],
+            ["02", "Voce e respirazione", "Esplorare la voce e la relazione tra respiro, corpo e suono."],
+            ["03", "Pratica individuale", "Imparare brani, accompagnamenti e strumenti utili per diventare più autonomi."],
+            ["04", "Suonare e cantare insieme", "Passare dall’esecuzione individuale all’ascolto reciproco."],
+            ["05", "Canti popolari", "Raccogliere repertori, dialetti, racconti e memoria del territorio."],
+            ["06", "Cori e iniziative", "Creare occasioni aperte, intergenerazionali e spontanee."]
+          ].each do |number, title, description| %>
+            <li class="grid gap-3 py-5 sm:grid-cols-[3rem_12rem_minmax(0,1fr)] sm:items-start">
+              <span class="font-black text-red-600"><%= number %></span>
+              <strong class="text-slate-950"><%= title %></strong>
+              <span class="text-sm leading-6 text-slate-600"><%= description %></span>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+    </section>
+
+    <section class="bg-red-700 text-white">
+      <div class="mx-auto grid max-w-7xl gap-8 px-5 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-amber-200">Canti popolari e territorio</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight">Una memoria che torna a essere esperienza</h2>
+        </div>
+        <p class="text-base leading-7 text-red-50 sm:text-lg">Canzoni, dialetti e racconti possono tornare a circolare attraverso incontri, cori spontanei, feste e collaborazioni con persone, associazioni ed eventi del Giardino del Corpo.</p>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-5xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div class="rounded-3xl border border-blue-200 bg-blue-50 p-7 sm:p-10">
+        <p class="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Musica, corpo e benessere</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight">Educazione musicale e relazione</h2>
+        <p class="mt-5 max-w-3xl leading-7 text-slate-700">Le attività attuali usano la musica come esperienza educativa, espressiva e comunitaria. Percorsi di musicoterapia potranno essere proposti come attività distinte, attraverso collaborazioni con professionisti specificamente formati.</p>
+      </div>
+    </section>
+
+    <section id="partecipa" class="border-t border-amber-200 bg-white">
+      <div class="mx-auto max-w-4xl px-5 py-16 text-center sm:px-6 lg:px-8 lg:py-24">
+        <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Partecipa</p>
+        <h2 class="mt-3 text-4xl font-black tracking-tight">Porta una canzone, una storia o la voglia di imparare</h2>
+        <p class="mx-auto mt-5 max-w-2xl text-lg leading-7 text-slate-600">Puoi iniziare una lezione, partecipare a un incontro, proporre un canto popolare oppure ospitare un’iniziativa.</p>
+        <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20ricevere%20informazioni%20su%20Canta%20che%20ti%20passa%2C%20le%20lezioni%20e%20le%20prossime%20iniziative." target="_blank" rel="noopener noreferrer" class="mt-8 inline-flex rounded-xl bg-red-600 px-6 py-4 font-black text-white transition hover:bg-red-700">Chiedi informazioni su WhatsApp</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-slate-950 text-slate-300">
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 text-sm sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+      <p><strong class="text-white">Canta che ti passa</strong> · Musica, educazione e territorio.</p>
+      <div class="flex flex-wrap gap-4">
+        <%= link_to "Flowpulse", flowpulse_path, class: "hover:text-white" %>
+        <%= link_to "PosturaCorretta", posturacorretta_path, class: "hover:text-white" %>
+        <%= link_to "Eventi", posturacorretta_eventi_path, class: "hover:text-white" %>
+      </div>
+    </div>
+  </footer>
+</div>

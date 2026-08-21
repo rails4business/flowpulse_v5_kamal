@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quadrangolazione Instagram - Flowpulse Ecosystem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      --accent-mark: #f59e0b;
+      --accent-postura: #10b981;
+      --accent-gdc: #8b5cf6;
+      --accent-rails: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f59e0b, #8b5cf6, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+    }
+
+    .card-mark::before { background-color: var(--accent-mark); }
+    .card-postura::before { background-color: var(--accent-postura); }
+    .card-gdc::before { background-color: var(--accent-gdc); }
+    .card-rails::before { background-color: var(--accent-rails); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .tag-mark { background: rgba(245, 158, 11, 0.15); color: var(--accent-mark); }
+    .tag-postura { background: rgba(16, 185, 129, 0.15); color: var(--accent-postura); }
+    .tag-gdc { background: rgba(139, 92, 246, 0.15); color: var(--accent-gdc); }
+    .tag-rails { background: rgba(59, 130, 246, 0.15); color: var(--accent-rails); }
+
+    .card-body h4 {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-body ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .card-body li {
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+      position: relative;
+      padding-left: 1.2rem;
+    }
+
+    .card-body li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
+    .flow-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .flow-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .quad-diagram {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .quad-diagram {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quad-step {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+      border-left: 4px solid var(--border-color);
+    }
+
+    .quad-step.step-mark { border-color: var(--accent-mark); }
+    .quad-step.step-postura { border-color: var(--accent-postura); }
+    .quad-step.step-gdc { border-color: var(--accent-gdc); }
+    .quad-step.step-rails { border-color: var(--accent-rails); }
+
+    .quad-step h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .campaign-example {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px dashed var(--accent-gdc);
+      border-radius: 1rem;
+      padding: 2rem;
+    }
+
+    .campaign-example h2 {
+      color: var(--accent-gdc);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .campaign-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .c-step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .c-num {
+      background: var(--border-color);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Quadrangolazione Instagram</h1>
+      <p>Ecosistema Strategico Flowpulse: Salute, Filosofia, Comunità Locale &amp; Dash</p>
+    </header>
+
+    <div class="grid">
+      <!-- markpostura -->
+      <div class="card card-mark">
+        <div class="card-header">
+          <div class="card-title">@markpostura</div>
+          <span class="tag tag-mark">La Guida</span>
+        </div>
+        <div class="card-body">
+          <p><strong>Ruolo:</strong> Founder &amp; Filosofia</p>
+          <h4>Focus</h4>
+          <ul>
+            <li>Viaggio personale e visione</li>
+            <li>Diario di bordo del progetto</li>
+            <li>Perché usare Dash e fare comunità</li>
+          </ul>
+          <h4>CTA principale</h4>
+          <p><i>"Leggi la storia sul blog"</i></p>
+        </div>
+      </div>
+
+      <!-- posturacorretta -->
+      <div class="card card-postura">
+        <div class="card-header">
+          <div class="card-title">@posturacorretta</div>
+          <span class="tag tag-postura">La Salute</span>
+        </div>
+        <div class="card-body">
+          <p><strong>Ruolo:</strong> Benessere del Corpo</p>
+          <h4>Focus</h4>
+          <ul>
+            <li>Esercizi e pillole posturali</li>
+            <li>Percorsi e Accademia</li>
+            <li>Salute integrata</li>
+          </ul>
+          <h4>CTA principale</h4>
+          <p><i>"Scopri i percorsi sul sito"</i></p>
+        </div>
+      </div>
+
+      <!-- gdc -->
+      <div class="card card-gdc">
+        <div class="card-header">
+          <div class="card-title">@gdc</div>
+          <span class="tag tag-gdc">La Comunità</span>
+        </div>
+        <div class="card-body">
+          <p><strong>Ruolo:</strong> Giardino del Corpo</p>
+          <h4>Focus</h4>
+          <ul>
+            <li>Eventi dal vivo e workshop</li>
+            <li>Scambio prodotti/servizi locali</li>
+            <li>Utilizzo pratico di <strong>Dash</strong></li>
+          </ul>
+          <h4>CTA principale</h4>
+          <p><i>"Partecipa ai prossimi eventi"</i></p>
+        </div>
+      </div>
+
+      <!-- rails4b -->
+      <div class="card card-rails">
+        <div class="card-header">
+          <div class="card-title">@rails4b</div>
+          <span class="tag tag-rails">Tech &amp; Biz</span>
+        </div>
+        <div class="card-body">
+          <p><strong>Ruolo:</strong> Infrastruttura Software</p>
+          <h4>Focus</h4>
+          <ul>
+            <li>Sviluppo piattaforma Flowpulse</li>
+            <li>Integrazione crypto / Dash</li>
+            <li>Strumenti per creatori e business</li>
+          </ul>
+          <h4>CTA principale</h4>
+          <p><i>"Crea il tuo sistema con noi"</i></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quadrangolazione Flow -->
+    <div class="flow-section">
+      <h2>Come Comunicano tra Loro (Il Flusso)</h2>
+      <div class="quad-diagram">
+        <div class="quad-step step-mark">
+          <h3>1. @markpostura (Filosofia)</h3>
+          <p>Crea la connessione emotiva, ispira e indirizza il pubblico verso la salute fisica (<code>@posturacorretta</code>) o verso gli incontri locali (<code>@gdc</code>).</p>
+        </div>
+        <div class="quad-step step-postura">
+          <h3>2. @posturacorretta (Pratica)</h3>
+          <p>Dà valore educativo quotidiano e porta le persone ad iscriversi agli eventi pratici nel territorio (<code>@gdc</code>).</p>
+        </div>
+        <div class="quad-step step-gdc">
+          <h3>3. @gdc (Comunità &amp; Economia)</h3>
+          <p>È il punto di incontro reale dove si usano i servizi e si scambia valore con Dash. Genera la necessità di strumenti tecnologici forniti da (<code>@rails4b</code>).</p>
+        </div>
+        <div class="quad-step step-rails">
+          <h3>4. @rails4b (Infrastruttura)</h3>
+          <p>Mostra come la tecnologia renda possibile la comunità e l'autonomia economica. Alimenta i retroscena narrativi di (<code>@markpostura</code>).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Campagna Esempio -->
+    <div class="campaign-example">
+      <h2>Esempio Pratico: Lancio Evento con Dash</h2>
+      <div class="campaign-steps">
+        <div class="c-step">
+          <div class="c-num">1</div>
+          <div><strong>@markpostura:</strong> Video sul perché fare rete locale e riprendere il controllo del proprio valore economico e di salute.</div>
+        </div>
+        <div class="c-step">
+          <div class="c-num">2</div>
+          <div><strong>@posturacorretta:</strong> Pillola su 3 esercizi posturali che verranno provati insieme durante l'evento dal vivo.</div>
+        </div>
+        <div class="c-step">
+          <div class="c-num">3</div>
+          <div><strong>@gdc:</strong> Locandina dell'evento, dettagli per partecipare e come pagare o scambiare prodotti/servizi usando Dash.</div>
+        </div>
+        <div class="c-step">
+          <div class="c-num">4</div>
+          <div><strong>@rails4b:</strong> Post sul dietro le quinte: come abbiamo configurato l'accettazione di Dash su Flowpulse.</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Flowpulse Ecosystem Strategy — Generato per la documentazione di progetto</p>
+    </footer>
+  </div>
+
+</body>
+</html>

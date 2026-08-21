@@ -1,5 +1,6 @@
 <%
   is_home = request.path == posturacorretta_path && params[:sezione].blank? && params[:capitolo].blank?
+  is_guida = request.path == posturacorretta_guida_path
   is_accademia = current_page?(posturacorretta_accademia_path) rescue false
   is_percorso = [posturacorretta_percorso_path, posturacorretta_percorsi_sul_territorio_path].include?(request.path) rescue false
    is_eventi = current_page?(posturacorretta_eventi_path) rescue false
@@ -27,8 +28,8 @@
          class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_home ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Home
       </a>
-      <a href="<%= posturacorretta_path(sezione: 'primo_mese') %>"
-         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= params[:sezione] == 'primo_mese' ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
+      <a href="<%= posturacorretta_guida_path(sezione: 'primo_mese') %>"
+         class="border-b-2 px-0.5 py-1 text-sm font-semibold transition <%= is_guida ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950" %>">
         Guida
       </a>
       <a href="<%= posturacorretta_percorso_path %>"
@@ -50,7 +51,7 @@
           <a href="<%= posturacorretta_percorsi_sul_territorio_path(tab: 'places') %>" class="block px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-700">Centri e luoghi</a>
           <a href="<%= posturacorretta_accademia_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_accademia ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Accademia</a>
           <a href="<%= posturacorretta_metodiche_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_metodiche ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Metodiche</a>
-          <% if Current.user&.superadmin_user? %><a href="<%= posturacorretta_path(sezione: 'progetto') %>" class="block bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-800 hover:bg-amber-100">Visione e progetto · Bozza</a><% end %>
+          <% if Current.user&.superadmin_user? %><a href="<%= posturacorretta_guida_path(sezione: 'progetto') %>" class="block bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-800 hover:bg-amber-100">Visione e progetto · Bozza</a><% end %>
           <div class="my-1 border-t border-slate-100"></div>
           <a href="<%= posturacorretta_libri_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_libri ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Libri</a>
           <a href="<%= posturacorretta_collabora_path %>" class="block px-4 py-2.5 text-sm font-semibold <%= is_collabora ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50 hover:text-blue-700" %>">Collabora</a>
@@ -63,7 +64,7 @@
     </div>
 
     <nav class="flex items-center gap-1 xl:hidden" aria-label="Navigazione mobile PosturaCorretta">
-      <a href="<%= posturacorretta_path(sezione: 'primo_mese') %>" class="rounded-lg px-2 py-2 text-xs font-bold <%= params[:sezione] == 'primo_mese' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>">Guida</a>
+      <a href="<%= posturacorretta_guida_path(sezione: 'primo_mese') %>" class="rounded-lg px-2 py-2 text-xs font-bold <%= is_guida ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>">Guida</a>
       <a href="<%= posturacorretta_percorso_path %>" class="rounded-lg p-2 <%= is_percorso ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>" aria-label="Il tuo percorso"><%= render "posturacorretta/nav_icon", name: "path", classes: "size-5" %></a>
       <a href="<%= posturacorretta_eventi_path %>" class="rounded-lg p-2 <%= is_eventi ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>" aria-label="Eventi"><%= render "posturacorretta/nav_icon", name: "events", classes: "size-5" %></a>
       <details class="group relative [&_summary::-webkit-details-marker]:hidden">
@@ -74,7 +75,7 @@
           <%= link_to "Centri e luoghi", posturacorretta_percorsi_sul_territorio_path(tab: "places"), class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
           <%= link_to "Accademia", posturacorretta_accademia_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
           <%= link_to "Metodiche", posturacorretta_metodiche_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
-          <% if Current.user&.superadmin_user? %><%= link_to "Visione e progetto · Bozza", posturacorretta_path(sezione: "progetto"), class: "block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100" %><% end %>
+          <% if Current.user&.superadmin_user? %><%= link_to "Visione e progetto · Bozza", posturacorretta_guida_path(sezione: "progetto"), class: "block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100" %><% end %>
           <%= link_to "Libri", posturacorretta_libri_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold #{is_libri ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'}" %>
           <%= link_to "Collabora", posturacorretta_collabora_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
           <div class="my-1 border-t border-slate-100"></div>

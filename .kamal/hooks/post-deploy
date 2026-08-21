@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Mantiene il routing dei domini di produzione allineato a config/domains.yml.
+bin/kamal app exec "bin/rails domains:import"
+
 # Questo hook gira sulla macchina da cui lanci `kamal deploy`.
 # Invia soltanto i JSON già messi in storage/data_commitment_exports/pending.
 if [ -f .kamal/secrets ]; then

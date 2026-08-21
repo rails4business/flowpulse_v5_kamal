@@ -9,7 +9,7 @@
     <div class="mx-auto max-w-7xl px-6">
       <nav class="-mb-px flex gap-1" aria-label="Sezioni Metodiche">
         <%= link_to "Metodiche", posturacorretta_metodiche_path(tab: "catalog"), class: "border-b-2 px-4 py-3 text-sm font-semibold transition #{methodologies_tab == 'catalog' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}", aria: { current: ("page" if methodologies_tab == "catalog") } %>
-        <%= link_to "Come funziona", posturacorretta_path(sezione: "metodiche", capitolo: "introduzione"), class: "border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-slate-600 transition hover:text-slate-800" %>
+        <%= link_to "Come funziona", posturacorretta_guida_path(sezione: "metodiche", capitolo: "introduzione"), class: "border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-slate-600 transition hover:text-slate-800" %>
       </nav>
     </div>
   </section>

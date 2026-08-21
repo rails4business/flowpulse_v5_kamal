@@ -4,6 +4,8 @@ default: &default
     target_controller: landing
     target_action: flowpulse
     primary: true
+    site_title: "Flowpulse — Dall'idea a un sistema che funziona"
+    site_description: "Un ecosistema per organizzare il lavoro, verificare le idee e trasformarle in progetti digitali utilizzabili."
 
   www.flowpulse.net:
     canonical_host: flowpulse.net
@@ -41,11 +43,33 @@ default: &default
     target_controller: brands/genera_impresa
     target_action: index
     primary: true
-    site_title: "GeneraImpresa — Dai progetti ai risultati"
-    site_description: "Brand, progetti, persone e risorse: GeneraImpresa rende visibile il percorso che trasforma un’idea in un progetto realizzato."
+    site_title: "GeneraImpresa — Dall'idea a un progetto possibile"
+    site_description: "Dai una prima forma all'idea, verificane fattibilità e valore e validala prima di passare alla realizzazione."
 
   www.generaimpresa.it:
     canonical_host: generaimpresa.it
+
+  rails4b.com:
+    locale: it
+    target_controller: landing
+    target_action: rails4b
+    primary: true
+    site_title: "Rails4Business — Dalla validazione alla realizzazione"
+    site_description: "Programmazione Rails, implementazione, grafica, strumenti digitali, contenuti social e infrastruttura tecnica per trasformare un progetto validato in un prodotto utilizzabile."
+
+  www.rails4b.com:
+    canonical_host: rails4b.com
+
+  cantachetipassa.it:
+    locale: it
+    target_controller: landing
+    target_action: cantachetipassa
+    primary: true
+    site_title: "Canta che ti passa — Musica, canto e territorio"
+    site_description: "Fisarmonica, chitarra, canto, ritmo e canti popolari come strumenti di educazione, espressione, memoria e relazione."
+
+  www.cantachetipassa.it:
+    canonical_host: cantachetipassa.it
 
   svuotamente.it:
     locale: it
@@ -58,16 +82,22 @@ default: &default
   www.svuotamente.it:
     canonical_host: svuotamente.it
 
-  impegno.it:
+  1impegno.it:
     locale: it
     target_controller: brands/impegno/home
     target_action: index
     primary: true
-    site_title: "Impegno — Il tuo tempo, in un solo posto"
-    site_description: "Calendario personale per appuntamenti, attività e tempo lavorato, filtrabile per brand."
+    site_title: "1Impegno — Il tuo tempo, in un solo posto"
+    site_description: "Calendario personale per organizzare appuntamenti, attività, lavori e tempo impiegato nei diversi progetti."
+
+  www.1impegno.it:
+    canonical_host: 1impegno.it
+
+  impegno.it:
+    canonical_host: 1impegno.it
 
   www.impegno.it:
-    canonical_host: impegno.it
+    canonical_host: 1impegno.it
 
   igieneposturale.it:
     locale: it

@@ -17,11 +17,17 @@ Rails.application.routes.draw do
   get "esperienze" => "public_events#index", as: :esperienze
   get "esperienze/:id" => "public_events#show", as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
+  get "flowpulse/contenuti/:slug" => "landing#flowpulse_content", as: :flowpulse_content
   get "rails4b" => "landing#rails4b", as: :rails4b
+  get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "markpostura" => "landing#markpostura", as: :markpostura
+  get "markpostura/contenuti" => "landing#markpostura_contents", as: :markpostura_contents
+  get "markpostura/contenuti/:slug" => "landing#markpostura_content", as: :markpostura_content
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
   get "posturacorretta" => "brands/posturacorretta#home", as: :posturacorretta
+  get "posturacorretta/primo-mese" => "brands/posturacorretta#primo_mese", as: :posturacorretta_primo_mese
+  get "posturacorretta/guida" => "brands/posturacorretta#guide", as: :posturacorretta_guida
   get "posturacorretta/accademia" => "brands/posturacorretta#accademia", as: :posturacorretta_accademia
   get "posturacorretta/accademia/recensioni" => "brands/posturacorretta#accademia_recensioni", as: :posturacorretta_accademia_recensioni
   get "posturacorretta/accademia/:slug" => "brands/posturacorretta#accademia_modulo", as: :posturacorretta_accademia_modulo
@@ -35,8 +41,9 @@ Rails.application.routes.draw do
   get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo
   get "posturacorretta/eventi" => "brands/posturacorretta#eventi", as: :posturacorretta_eventi
+  get "posturacorretta/dash" => "brands/posturacorretta#dash", as: :posturacorretta_dash
   get "posturacorretta/libri" => "brands/posturacorretta#libri", as: :posturacorretta_libri
-  get "posturacorretta/visione" => redirect("/posturacorretta?chapter=06-visione", status: 301), as: :posturacorretta_visione
+  get "posturacorretta/visione" => redirect("/posturacorretta/guida?sezione=progetto&capitolo=visione", status: 301), as: :posturacorretta_visione
   get "posturacorretta/libro" => redirect("/posturacorretta/visione", status: 301), as: :posturacorretta_libro
   get "posturacorretta/filosofia" => redirect("/posturacorretta/visione", status: 301), as: :posturacorretta_filosofia
   get "posturacorretta/progetti" => "brands/posturacorretta#progetti", as: :posturacorretta_progetti

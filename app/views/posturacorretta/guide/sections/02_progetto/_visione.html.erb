@@ -64,7 +64,7 @@
 
             <% if embedded %>
               <div class="mt-8 grid gap-3 sm:grid-cols-2">
-                <%= link_to(posturacorretta_path(sezione: "progetto", capitolo: "01-mappa"), class: "group rounded-xl border border-blue-200 bg-blue-50 p-5 transition hover:border-blue-400 hover:bg-blue-100") do %>
+                <%= link_to(posturacorretta_guida_path(sezione: "progetto", capitolo: "01-mappa"), class: "group rounded-xl border border-blue-200 bg-blue-50 p-5 transition hover:border-blue-400 hover:bg-blue-100") do %>
                   <span class="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Approfondisci</span>
                   <span class="mt-2 block font-bold text-slate-950">Continua con Conoscere il progetto</span>
                   <span class="mt-3 inline-flex text-sm font-semibold text-blue-700">Scopri la mappa <span class="ml-1 transition group-hover:translate-x-1" aria-hidden="true">→</span></span>
@@ -196,7 +196,7 @@
                 <p class="mt-2 text-sm leading-6 text-slate-600">Conducono attività educative, accompagnano gli allievi e rendono possibile l'organizzazione dell'Accademia.</p>
                 <span class="mt-4 inline-flex text-sm font-semibold text-blue-700">Collabora con l'Accademia <span class="ml-1" aria-hidden="true">→</span></span>
               <% end %>
-              <%= link_to(posturacorretta_path(sezione: "metodiche", capitolo: "scuole"), class: "group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md") do %>
+              <%= link_to(posturacorretta_guida_path(sezione: "metodiche", capitolo: "scuole"), class: "group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md") do %>
                 <h3 class="font-semibold text-slate-900 group-hover:text-blue-700">Scuole e metodiche</h3>
                 <p class="mt-2 text-sm leading-6 text-slate-600">Rendono riconoscibili storia, strumenti, formazione e contesto dei diversi approcci.</p>
                 <span class="mt-4 inline-flex text-sm font-semibold text-blue-700">Scopri come funziona <span class="ml-1" aria-hidden="true">→</span></span>
@@ -231,7 +231,7 @@
                 <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">Professionisti della salute e del benessere</p>
                 <h3 class="mt-3 text-xl font-semibold tracking-tight text-slate-950">Una competenza verticale</h3>
                 <p class="mt-3 text-sm leading-6 text-slate-600">Ogni professionista sviluppa una competenza verticale, specifica e specializzata. Si forma attraverso percorsi accademici, abilitanti o riconosciuti quando previsti, oppure scuole e percorsi privati dedicati a una professione o a una metodica. È responsabile del proprio lavoro e delle decisioni che gli competono.</p>
-                <%= link_to(posturacorretta_path(sezione: "percorso", capitolo: "professionisti-inizia"), class: "mt-5 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800") do %>
+                <%= link_to(posturacorretta_guida_path(sezione: "percorso", capitolo: "professionisti-inizia"), class: "mt-5 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800") do %>
                   Scopri il Percorso per professionisti <span class="ml-1" aria-hidden="true">→</span>
                 <% end %>
               </article>
@@ -252,7 +252,7 @@
               <p>L'educazione non si limita al problema di salute. Parte dalla postura e dal corpo, ma apre progressivamente allo studio dell'essere umano: come impariamo, lavoriamo, costruiamo relazioni, abitudini e rapporto con l'ambiente.</p>
               <p>Questa è la continuità che porta dalla PosturaCorretta al Giardino del Corpo: il percorso della salute resta una base concreta; l'Accademia forma persone più consapevoli; eventi ed esperienze permettono di allargare gradualmente lo sguardo.</p>
             </div>
-            <%= link_to("Come funzionano Accademia, insegnanti e professionisti", posturacorretta_path(sezione: "accademia", capitolo: "ruoli"), class: "mt-6 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800") %>
+            <%= link_to("Come funzionano Accademia, insegnanti e professionisti", posturacorretta_guida_path(sezione: "accademia", capitolo: "ruoli"), class: "mt-6 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800") %>
           </section>
           <% end %>
 

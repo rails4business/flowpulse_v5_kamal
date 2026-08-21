@@ -6,6 +6,13 @@
       <p class="text-sm leading-6 text-slate-500">
         Educazione posturale, salute del corpo e percorsi di consapevolezza.
       </p>
+      <a href="<%= posturacorretta_dash_path %>" class="group inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:border-[#008de4]/40 hover:bg-[#008de4]/5" aria-label="Scopri i pagamenti in DASH">
+        <img src="https://media.dash.org/wp-content/uploads/dash-d-circle.svg" alt="" class="size-9 shrink-0" loading="lazy">
+        <span>
+          <span class="block text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">Pagamenti opzionali</span>
+          <span class="block text-sm font-black tracking-wide text-[#0074bc] group-hover:text-[#005f9b]">DASH</span>
+        </span>
+      </a>
     </div>
 
     <div>
@@ -32,6 +39,14 @@
         <li><a class="hover:text-blue-700" href="https://youtube.com/@posturacorretta" target="_blank" rel="noopener noreferrer">YouTube</a></li>
         <li><a class="hover:text-blue-700" href="https://instagram.com/posturacorretta" target="_blank" rel="noopener noreferrer">Instagram</a></li>
         <li><a class="hover:text-blue-700" href="/contatti">Contatti</a></li>
+        <% if Current.user&.superadmin_user? %>
+          <li class="pt-2 border-t border-slate-100">
+            <a class="font-semibold text-amber-600 hover:text-amber-700 inline-flex items-center gap-1.5" href="/quadrangolazione_instagram.html" title="Strategia Instagram Ecosistema Flowpulse">
+              <span>⚡ Strategy @markpostura</span>
+              <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-mono uppercase">Superadmin</span>
+            </a>
+          </li>
+        <% end %>
       </ul>
     </div>
   </div>

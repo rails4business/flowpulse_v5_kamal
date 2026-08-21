@@ -1,0 +1,147 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<% content_for :title, "PosturaCorretta in un mese" %>
+<% content_for :description, "Il metodo PosturaCorretta spiegato in modo semplice, con una prima applicazione pratica e le possibilità da approfondire." %>
+
+<main class="bg-white text-slate-950">
+  <header class="border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,_#dbeafe,_#ffffff_52%)]">
+    <div class="mx-auto grid max-w-screen-xl items-center gap-10 px-5 py-14 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)] lg:px-8 lg:py-24">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Programma educativo introduttivo</p>
+        <h1 class="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-6xl">PosturaCorretta in un mese</h1>
+        <p class="mt-5 max-w-2xl text-xl font-semibold leading-8 text-slate-800">Inizia a lavorare sulla tua postura e sperimenta una prima applicazione del metodo.</p>
+        <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Attraverso una valutazione iniziale, i capitoli della guida e una prima scheda impari ad ascoltare il corpo e a osservare come la postura può diventare una base educativa per costruire la tua salute.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <%= link_to "Leggi gratuitamente il programma", posturacorretta_guide_section_path("primo_mese"), class: "inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2" %>
+          <a href="#modalita" class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700">Scegli come seguirlo</a>
+        </div>
+      </div>
+      <img src="https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777" alt="PosturaCorretta in un mese" class="max-h-[27rem] w-full object-contain" loading="eager">
+    </div>
+  </header>
+
+  <section class="mx-auto max-w-6xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20" aria-labelledby="contenuto-programma">
+    <div class="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Il programma</p>
+        <h2 id="contenuto-programma" class="mt-3 text-3xl font-semibold tracking-tight">Un mese per conoscere il metodo e iniziare dalla pratica</h2>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <% [
+          ["Osserva", "Inizia a riconoscere postura, abitudini e percezioni da cui stai partendo."],
+          ["Comprendi", "Conosci alcuni principi della fisiologia e delle metodiche posturali."],
+          ["Sperimenta", "Metti in pratica una prima scheda attraverso un impegno quotidiano sostenibile."],
+          ["Orientati", "Comprendi come continuare lo stesso percorso educativo con l’Accademia avanzata oppure affiancarlo al Percorso Integrato e agli eventi."]
+        ].each_with_index do |(title, description), index| %>
+          <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <span class="text-xs font-black text-blue-600"><%= format("%02d", index + 1) %></span>
+            <h3 class="mt-3 text-xl font-bold"><%= title %></h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600"><%= description %></p>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-slate-200 bg-slate-50" aria-labelledby="capitoli-primo-mese">
+    <div class="mx-auto max-w-6xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <div class="max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">La guida</p>
+        <h2 id="capitoli-primo-mese" class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">I capitoli sono già disponibili online</h2>
+        <p class="mt-4 leading-7 text-slate-600">Puoi seguire il programma in ordine. La presentazione e la guida utilizzano lo stesso indice: quando un capitolo viene aggiornato, compare qui automaticamente.</p>
+      </div>
+
+      <ol class="mt-9 max-w-4xl divide-y divide-slate-200 border-y border-slate-200">
+        <% @first_month_chapters.each_with_index do |chapter, index| %>
+          <li>
+            <%= link_to posturacorretta_guida_path(sezione: "primo_mese", capitolo: chapter.fetch("slug")), class: "group flex items-center gap-4 px-1 py-4 transition hover:bg-white sm:px-3" do %>
+              <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-black text-blue-700"><%= format("%02d", index + 1) %></span>
+              <span class="min-w-0 flex-1 text-sm font-bold leading-5 text-slate-800 group-hover:text-blue-700 sm:text-base"><%= chapter.fetch("title") %></span>
+              <span aria-hidden="true" class="shrink-0 text-slate-400 transition group-hover:translate-x-1 group-hover:text-blue-600">→</span>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  </section>
+
+  <section id="modalita" class="bg-white">
+    <div class="mx-auto max-w-6xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <div class="max-w-2xl">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Come accedere</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Tre modi per seguire lo stesso programma</h2>
+        <p class="mt-4 leading-7 text-slate-600">Scegli il supporto che preferisci: online in autonomia, con una consulenza introduttiva oppure attraverso il libro.</p>
+      </div>
+
+      <div class="mt-9 grid gap-5 lg:grid-cols-3">
+        <article class="flex flex-col rounded-2xl border-2 border-blue-300 bg-white p-6 shadow-sm">
+          <span class="w-fit rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">Disponibile</span>
+          <p class="mt-5 text-sm font-bold uppercase tracking-[0.14em] text-blue-700">Gratis</p>
+          <h3 class="mt-2 text-2xl font-bold">Programma online</h3>
+          <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">Consulta i capitoli, segui il filo del programma e procedi in autonomia secondo i tuoi tempi.</p>
+          <%= link_to "Apri il programma →", posturacorretta_guide_section_path("primo_mese"), class: "mt-6 text-sm font-bold text-blue-700 hover:text-blue-900" %>
+        </article>
+
+        <article class="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="w-fit rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">In definizione</span>
+          <p class="mt-5 text-sm font-bold uppercase tracking-[0.14em] text-slate-500">Prezzo da definire</p>
+          <h3 class="mt-2 text-2xl font-bold">Professionista + programma online</h3>
+          <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">Una consulenza introduttiva con un professionista, l’accesso al programma online e la scheda pratica in PDF da utilizzare durante il primo mese.</p>
+          <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20ricevere%20informazioni%20sulla%20consulenza%20introduttiva%20con%20accesso%20online%20a%20PosturaCorretta%20in%20un%20mese." target="_blank" rel="noopener noreferrer" class="mt-6 text-sm font-bold text-blue-700 hover:text-blue-900">Chiedi informazioni →</a>
+        </article>
+
+        <article class="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <span class="w-fit rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">In preparazione</span>
+          <p class="mt-5 text-sm font-bold uppercase tracking-[0.14em] text-slate-500">Prezzo da definire</p>
+          <h3 class="mt-2 text-2xl font-bold">Libro</h3>
+          <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">La versione cartacea del programma, con la scheda pratica già stampata e i collegamenti ai contenuti online per approfondire.</p>
+          <%= link_to "Scopri i libri →", posturacorretta_libri_path, class: "mt-6 text-sm font-bold text-blue-700 hover:text-blue-900" %>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20" aria-labelledby="dopo-primo-mese">
+    <div class="max-w-2xl">
+      <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Dopo il primo mese</p>
+      <h2 id="dopo-primo-mese" class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Scegli come continuare</h2>
+      <p class="mt-4 leading-7 text-slate-600">Il programma ti offre una valutazione e una prima scheda. Al termine puoi scegliere la direzione più adatta ai tuoi interessi e bisogni.</p>
+    </div>
+
+    <div class="mt-9 grid gap-5 md:grid-cols-3">
+      <%= link_to posturacorretta_accademia_path, class: "group rounded-2xl border border-indigo-200 bg-white p-6 transition hover:-translate-y-1 hover:border-indigo-400 hover:shadow-md" do %>
+        <p class="text-xs font-bold uppercase tracking-[0.15em] text-indigo-700">Percorso educativo</p>
+        <h3 class="mt-3 text-xl font-bold">Dai gruppi posturali all’Accademia</h3>
+        <p class="mt-3 text-sm leading-6 text-slate-600">Inizia dal livello base nei gruppi; se sei appassionato puoi approfondire, continua con l’Accademia avanzata per i futuri insegnanti aperta anche ai professionisti.</p>
+        <span class="mt-5 inline-flex text-sm font-bold text-indigo-700">Scopri il percorso educativo →</span>
+      <% end %>
+
+      <%= link_to posturacorretta_percorso_path, class: "group rounded-2xl border border-emerald-200 bg-white p-6 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" do %>
+        <p class="text-xs font-bold uppercase tracking-[0.15em] text-emerald-700">Orientamento</p>
+        <h3 class="mt-3 text-xl font-bold">Costruisci un Percorso Integrato</h3>
+        <p class="mt-3 text-sm leading-6 text-slate-600">Parti dai tuoi bisogni per collegare programmi, professionisti, metodiche e attività educative.</p>
+        <span class="mt-5 inline-flex text-sm font-bold text-emerald-700">Scopri il Percorso →</span>
+      <% end %>
+
+      <%= link_to posturacorretta_eventi_path, class: "group rounded-2xl border border-violet-200 bg-white p-6 transition hover:-translate-y-1 hover:border-violet-400 hover:shadow-md" do %>
+        <p class="text-xs font-bold uppercase tracking-[0.15em] text-violet-700">Esperienze</p>
+        <h3 class="mt-3 text-xl font-bold">Partecipa agli eventi</h3>
+        <p class="mt-3 text-sm leading-6 text-slate-600">Incontra persone e attività sul territorio e scopri la filosofia del Giardino del Corpo.</p>
+        <span class="mt-5 inline-flex text-sm font-bold text-violet-700">Vai agli eventi →</span>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="border-t border-slate-200 bg-blue-700 text-white">
+    <div class="mx-auto max-w-4xl px-5 py-14 text-center sm:px-6 lg:px-8 lg:py-20">
+      <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-200">Il primo passo è già disponibile</p>
+      <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Inizia leggendo il programma</h2>
+      <p class="mx-auto mt-4 max-w-2xl leading-7 text-blue-100">Puoi consultarlo gratuitamente e decidere in seguito se utilizzare il libro, chiedere un incontro o continuare con uno degli altri percorsi.</p>
+      <%= link_to "Inizia gratuitamente", posturacorretta_guide_section_path("primo_mese"), class: "mt-7 inline-flex rounded-lg bg-white px-5 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50" %>
+    </div>
+  </section>
+</main>
+
+<%= render "posturacorretta/footer" %>

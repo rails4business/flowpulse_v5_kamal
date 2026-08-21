@@ -14,7 +14,7 @@ Alla base del progetto c'è l'educazione della persona: imparare a conoscere il 
 
 **PosturaCorretta in un mese** offre un primo percorso educativo e pratico, gratuito e accessibile. Chi desidera continuare può approfondire il funzionamento dell'essere umano e i principi delle metodiche posturali attraverso l'**Accademia PosturaCorretta** e, successivamente, conoscere il percorso formativo degli insegnanti.
 
-- [Inizia PosturaCorretta in un mese →](/posturacorretta?sezione=primo_mese)
+- [Inizia PosturaCorretta in un mese →](/posturacorretta/guida?sezione=primo_mese)
 - [Scopri l'Accademia PosturaCorretta →](/posturacorretta/accademia)
 
 ### 2. Orientamento e integrazione — scelgo e mi faccio accompagnare
@@ -23,7 +23,7 @@ Quando emerge un bisogno concreto, dall'educazione si passa all'orientamento e a
 
 Le **Linee guida del Percorso Integrato** offrono una struttura con cui organizzare bisogni, obiettivi, responsabilità e interventi differenti. Ogni professionista mantiene la propria autonomia e le proprie competenze, rendendo più leggibile il contributo che porta al percorso complessivo.
 
-- [Scopri come funziona il Percorso Integrato →](/posturacorretta?sezione=percorso)
+- [Scopri come funziona il Percorso Integrato →](/posturacorretta/guida?sezione=percorso)
 - [Conosci professionisti e strutture sul territorio →](/posturacorretta/percorsi-sul-territorio)
 
 ### 3. Incontro e approfondimento — conosco persone e metodiche

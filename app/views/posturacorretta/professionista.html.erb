@@ -84,7 +84,7 @@
   <!-- TAB NAVIGATION -->
   <div class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-4xl mx-auto px-5 lg:px-8">
-      <nav class="flex space-x-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" aria-label="Tabs">
+      <nav class="flex gap-x-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:justify-center md:overflow-visible" aria-label="Sezioni del professionista">
         <%= link_to posturacorretta_professionista_path(@professional["slug"], tab: "info"), class: "relative py-4 px-3 text-sm font-bold border-b-2 whitespace-nowrap transition-colors #{active_tab == 'info' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'}" do %>
           Panoramica
         <% end %>

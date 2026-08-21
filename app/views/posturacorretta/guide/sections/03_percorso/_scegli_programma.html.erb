@@ -12,7 +12,7 @@
 
   <div class="mt-8 grid gap-4 sm:grid-cols-2">
     <% patient_programs.each do |slug, title, description| %>
-      <a href="<%= posturacorretta_path(sezione: 'percorso', capitolo: slug) %>" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-md">
+      <a href="<%= posturacorretta_guida_path(sezione: 'percorso', capitolo: slug) %>" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-md">
         <h2 class="text-lg font-bold text-slate-950 transition group-hover:text-blue-700"><%= title %></h2>
         <p class="mt-2 text-sm leading-6 text-slate-600"><%= description %></p>
         <span class="mt-4 inline-flex items-center text-sm font-semibold text-blue-700">Apri la guida <span aria-hidden="true" class="ml-2">→</span></span>

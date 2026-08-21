@@ -90,4 +90,4 @@ La medicina resta uno strumento fondamentale. PosturaCorretta vuole tenere apert
 
 Da qui iniziano i tre errori più comuni che possono ostacolare un percorso posturale e di salute.
 
-[Continua con i 3 errori →](/posturacorretta?sezione=primo_mese&capitolo=01-errori)
+[Continua con i 3 errori →](/posturacorretta/guida?sezione=primo_mese&capitolo=01-errori)

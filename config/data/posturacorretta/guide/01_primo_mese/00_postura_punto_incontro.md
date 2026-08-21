@@ -12,4 +12,4 @@ Il problema non era aggiungere un'altra tecnica. Era capire come integrare educa
 
 Da qui nasce una nuova domanda: quali sono gli errori che rendono difficile iniziare e portare avanti un vero percorso posturale?
 
-[Continua con i tre errori →](/posturacorretta?sezione=primo_mese&capitolo=01-errori)
+[Continua con i tre errori →](/posturacorretta/guida?sezione=primo_mese&capitolo=01-errori)

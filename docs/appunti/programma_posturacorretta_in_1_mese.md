@@ -31,11 +31,26 @@ Comprendo educazione e Percorso Integrato
 Conosco la visione di PosturaCorretta
         ↓
 Scelgo come continuare
-   ┌────────────┼─────────────┐
-Accademia   Percorso Integrato   Eventi
+   ┌────────────────────┼────────────────────┐
+Percorso educativo  Percorso Integrato   Filosofia
+gruppi → Accademia                       → Giardino del Corpo
 ```
 
-Le tre destinazioni non si escludono e non costituiscono necessariamente una sequenza obbligatoria.
+Le tre destinazioni non si escludono e non costituiscono necessariamente una sequenza obbligatoria:
+
+- nel **percorso educativo** la persona inizia dalla postura in gruppo, con moduli semplificati e una scheda bonus mensile; se vuole approfondire, continua con l’Accademia avanzata, aperta ad appassionati e professionisti e necessaria per formarsi come insegnante;
+- nel **Percorso Integrato** viene accompagnata da un tutor e dai professionisti attraverso una proposta personalizzata;
+- nella **filosofia**, aperta a tutti, passa dalla PosturaCorretta al Giardino del Corpo e incontra altre attività dedicate allo sviluppo armonico dell’essere umano, alle risorse e all’apprendimento.
+
+## Insegnanti e professionisti
+
+I due ruoli collaborano, ma hanno funzioni differenti:
+
+- l’**insegnante PosturaCorretta** ha una preparazione orizzontale e conduce l’educazione; si forma attraverso l’Accademia avanzata;
+- il **professionista** ha una preparazione verticale in una professione o metodica e interviene con le proprie competenze specifiche nel Percorso Integrato;
+- un professionista può frequentare l’Accademia e diventare anche insegnante, ma i due ruoli e le relative responsabilità rimangono distinti.
+
+La progressione ideale è: **PosturaCorretta in un mese → postura in gruppo → Accademia avanzata**, oppure **Percorso Integrato con i professionisti**, oppure **filosofia e Giardino del Corpo**.
 
 ## Struttura del libro-programma
 

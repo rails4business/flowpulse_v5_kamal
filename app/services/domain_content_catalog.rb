@@ -1,0 +1,124 @@
+class DomainContentCatalog
+  CONTENT_ROOT = Rails.root.join("config/data").freeze
+
+  DOMAIN_SETTINGS = {
+    "flowpulse" => {
+      "name" => "Flowpulse",
+      "host" => "flowpulse.net",
+      "article_path" => "/flowpulse/contenuti/%{slug}"
+    },
+    "posturacorretta" => {
+      "name" => "PosturaCorretta",
+      "host" => "posturacorretta.org",
+      "article_path" => "/posturacorretta/contenuti/%{slug}"
+    },
+    "markpostura" => {
+      "name" => "Mark Postura",
+      "host" => "markpostura.it",
+      "article_path" => "/markpostura/contenuti/%{slug}"
+    }
+  }.freeze
+
+  class << self
+    def for_domain(domain_key, include_scheduled: false)
+      all(include_scheduled: include_scheduled).select { |article| article.fetch("domain_key") == domain_key.to_s }
+    end
+
+    def for_author(username, include_scheduled: false)
+      normalized_username = username.to_s.delete_prefix("@").downcase
+      all(include_scheduled: include_scheduled).select do |article|
+        article.fetch("author", "").to_s.delete_prefix("@").downcase == normalized_username
+      end
+    end
+
+    def find(domain_key, slug, include_scheduled: false)
+      for_domain(domain_key, include_scheduled:).find { |article| article.fetch("slug") == slug.to_s }
+    end
+
+    def all(include_scheduled: false)
+      catalog_paths.flat_map { |path| load_catalog(path, include_scheduled:) }
+                   .uniq { |article| [article.fetch("domain_key"), article.fetch("slug")] }
+                   .sort_by { |article| article_sort_key(article) }
+    end
+
+    private
+
+      def catalog_paths
+        Dir.glob(CONTENT_ROOT.join("*/contenuti/catalog.yml")).sort
+      end
+
+      def load_catalog(path, include_scheduled:)
+        domain_key = Pathname(path).relative_path_from(CONTENT_ROOT).each_filename.first
+        raw = YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
+
+        catalog_articles(raw).filter_map do |article, category_key, category|
+          decorate_article(article, domain_key, category_key, category, include_scheduled:)
+        end
+      rescue Psych::SyntaxError => error
+        Rails.logger.error("Catalogo contenuti non valido #{path}: #{error.message}")
+        []
+      end
+
+      def catalog_articles(raw)
+        if raw["articles"].is_a?(Array)
+          raw.fetch("articles").map { |article| [article, nil, {}] }
+        else
+          raw.flat_map do |category_key, category|
+            next [] unless category.is_a?(Hash) && category["articles"].is_a?(Array)
+
+            category.fetch("articles").map { |article| [article, category_key, category] }
+          end
+        end
+      end
+
+      def decorate_article(article, domain_key, category_key, category, include_scheduled:)
+        return unless article.is_a?(Hash) && article["slug"].present?
+
+        publication_date = parse_date(article["data_pubblicazione_articolo"])
+        scheduled = publication_date.present? && publication_date > Date.current
+        return if scheduled && !include_scheduled
+
+        settings = DOMAIN_SETTINGS.fetch(domain_key, default_domain_settings(domain_key))
+        article_path = format(settings.fetch("article_path"), slug: article.fetch("slug"))
+        article_url = article["url"].presence || "https://#{settings.fetch('host')}#{article_path}"
+        source = article["source"].presence || "articoli/#{article.fetch('slug')}.md"
+        content_path = CONTENT_ROOT.join(domain_key, "contenuti", source).cleanpath
+        content_root = CONTENT_ROOT.join(domain_key, "contenuti").cleanpath
+        content_path = nil unless content_path.to_s.start_with?("#{content_root}/")
+
+        article.merge(
+          "author" => article["author"].to_s.delete_prefix("@").downcase,
+          "domain_key" => domain_key,
+          "domain_name" => settings.fetch("name"),
+          "domain_host" => settings.fetch("host"),
+          "category_key" => category_key,
+          "category_name" => category["label"] || category_key.to_s.humanize.presence,
+          "publication_date" => publication_date,
+          "publication_label" => publication_date&.strftime("%d/%m/%Y"),
+          "scheduled" => scheduled,
+          "content_path" => content_path&.to_s,
+          "path" => article_path,
+          "url" => article_url
+        )
+      end
+
+      def default_domain_settings(domain_key)
+        {
+          "name" => domain_key.to_s.humanize,
+          "host" => domain_key.to_s,
+          "article_path" => "/contenuti/%{slug}"
+        }
+      end
+
+      def parse_date(value)
+        Date.iso8601(value.to_s) if value.present?
+      rescue ArgumentError
+        nil
+      end
+
+      def article_sort_key(article)
+        publication_date = article["publication_date"]
+        publication_date ? [0, -publication_date.jd, article.fetch("title", "")] : [1, 0, article.fetch("title", "")]
+      end
+  end
+end

@@ -16,22 +16,22 @@ module PosturacorrettaHelper
     REVISION_PROJECTS[action_name]
   end
 
-  def posturacorretta_guide_path(section_id, destination: :index)
+  def posturacorretta_guide_section_path(section_id, destination: :index)
     section = posturacorretta_guide_sections.find { |candidate| candidate["id"] == section_id.to_s }
-    return posturacorretta_path unless section
-    return posturacorretta_path(sezione: section.fetch("id")) unless destination.to_sym == :first
+    return posturacorretta_guida_path unless section
+    return posturacorretta_guida_path(sezione: section.fetch("id")) unless destination.to_sym == :first
 
     first_chapter = first_published_guide_item(section.fetch("items", []), section.fetch("status", "draft"))
-    return posturacorretta_path(sezione: section.fetch("id")) unless first_chapter
+    return posturacorretta_guida_path(sezione: section.fetch("id")) unless first_chapter
 
-    posturacorretta_path(sezione: section.fetch("id"), capitolo: first_chapter.fetch("slug"))
+    posturacorretta_guida_path(sezione: section.fetch("id"), capitolo: first_chapter.fetch("slug"))
   end
 
   def posturacorretta_builder_route(route)
     match = route.to_s.match(/\Aguide:(index|first):([a-z0-9_-]+)\z/)
     return route unless match
 
-    posturacorretta_guide_path(match[2], destination: match[1])
+    posturacorretta_guide_section_path(match[2], destination: match[1])
   end
 
   private

@@ -77,7 +77,7 @@ class DomainsController < ApplicationController
       elsif target_controller == "brands/svuotamente" && target_action == "index"
         render "brands/svuotamente/index", layout: false
       elsif target_controller == "brands/impegno/home" && target_action == "index"
-        render "brands/impegno/home/index"
+        redirect_to impegno_path
       elsif target_controller == "brands/posturacorretta" && target_action == "home"
         redirect_to posturacorretta_path
       else

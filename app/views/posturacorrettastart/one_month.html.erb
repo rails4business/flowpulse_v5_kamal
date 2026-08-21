@@ -1,27 +1,13 @@
 <% content_for :landing_nav do %>
-  <% if @show_home_intro %>
-    <%= render "posturacorretta/home_nav" %>
-  <% else %>
-    <%= render "posturacorretta/header" %>
-  <% end %>
+  <%= render "posturacorretta/header" %>
 <% end %>
 
-<% page_title = if @show_home_intro
-  "PosturaCorretta — Un nuovo punto di vista sulla salute"
-elsif @current_chapter
+<% page_title = if @current_chapter
   "#{@current_chapter.fetch('title')} | PosturaCorretta"
 else
   "#{@current_section.fetch('title')} | PosturaCorretta"
 end %>
 <% content_for :title, page_title %>
-
-<% if @show_home_intro %>
-  <div aria-label="Introduzione PosturaCorretta">
-    <% @home_intro_components.each do |component| %>
-      <%= render "components/builder", component: component, context: {} %>
-    <% end %>
-  </div>
-<% end %>
 
 <main class="min-h-screen bg-white text-slate-900">
   <section class="px-4 py-10 sm:px-5 md:py-16 lg:px-4">
@@ -41,7 +27,7 @@ end %>
               <% section_open = @current_section&.fetch("id") == section.fetch("id") %>
               <details name="home-index-section" class="group [&_summary::-webkit-details-marker]:hidden" <%= "open" if section_open %>>
                   <summary class="cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm font-bold text-slate-900 transition hover:bg-blue-50 hover:text-blue-700" style="display: flex;">
-                  <%= link_to posturacorretta_path(sezione: section.fetch("id")), class: "flex min-w-0 flex-1 items-center gap-2", data: { action: "click->mobile-aside#close" } do %>
+                  <%= link_to posturacorretta_guida_path(sezione: section.fetch("id")), class: "flex min-w-0 flex-1 items-center gap-2", data: { action: "click->mobile-aside#close" } do %>
                     <span class="min-w-0 flex-1"><%= section.fetch("title") %></span>
                     <% if section["effective_status"] == "draft" %><span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">Bozza</span><% end %>
                   <% end %>
@@ -100,10 +86,10 @@ end %>
           <% index = section_chapters.index { |slug, _| slug == @selected_chapter } %>
           <% previous_chapter = index && index.positive? ? section_chapters[index - 1] : nil %>
           <% next_chapter = index && index < section_chapters.length - 1 ? section_chapters[index + 1] : nil %>
-          <% previous_href = posturacorretta_path(sezione: @current_section.fetch("id"), capitolo: previous_chapter[0]) if previous_chapter %>
-          <% next_href = posturacorretta_path(sezione: @current_section.fetch("id"), capitolo: next_chapter[0]) if next_chapter %>
+          <% previous_href = posturacorretta_guida_path(sezione: @current_section.fetch("id"), capitolo: previous_chapter[0]) if previous_chapter %>
+          <% next_href = posturacorretta_guida_path(sezione: @current_section.fetch("id"), capitolo: next_chapter[0]) if next_chapter %>
           <%= link_to "← Precedente", previous_href, class: "text-blue-700 hover:text-blue-900" if previous_chapter %>
-          <%= link_to "Indice", posturacorretta_path(sezione: @current_section.fetch("id")), class: "rounded-lg border border-slate-200 px-3 py-2 text-slate-600 hover:border-blue-300 hover:text-blue-700" %>
+          <%= link_to "Indice", posturacorretta_guida_path(sezione: @current_section.fetch("id")), class: "rounded-lg border border-slate-200 px-3 py-2 text-slate-600 hover:border-blue-300 hover:text-blue-700" %>
           <%= link_to "Successivo →", next_href, class: "text-right text-blue-700 hover:text-blue-900" if next_chapter %>
         </nav>
         <% end %>

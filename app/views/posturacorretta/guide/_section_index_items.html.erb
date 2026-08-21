@@ -8,7 +8,7 @@
     </section>
   <% else %>
     <% counter[:value] += 1 %>
-    <%= link_to posturacorretta_path(sezione: section.fetch("id"), capitolo: item.fetch("slug")), class: "group flex items-center gap-4 rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700" do %>
+    <%= link_to posturacorretta_guida_path(sezione: section.fetch("id"), capitolo: item.fetch("slug")), class: "group flex items-center gap-4 rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700" do %>
       <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-700 group-hover:bg-white"><%= counter[:value] %></span>
       <span class="min-w-0 flex-1"><%= item.fetch("title") %></span>
       <% if item["effective_status"] == "draft" %><span class="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold uppercase text-amber-800">Bozza</span><% end %>
