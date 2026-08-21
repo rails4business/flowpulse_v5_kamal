@@ -74,14 +74,14 @@ class DomainContentCatalog
       def decorate_article(article, domain_key, category_key, category, include_scheduled:)
         return unless article.is_a?(Hash) && article["slug"].present?
 
-        publication_date = parse_date(article["data_pubblicazione_articolo"])
+        source = article["source"].presence || discover_dated_source(domain_key, article.fetch("slug")) || "articoli/#{article.fetch('slug')}.md"
+        publication_date = publication_date_from_source(source)
         scheduled = publication_date.present? && publication_date > Date.current
         return if scheduled && !include_scheduled
 
         settings = DOMAIN_SETTINGS.fetch(domain_key, default_domain_settings(domain_key))
         article_path = format(settings.fetch("article_path"), slug: article.fetch("slug"))
         article_url = article["url"].presence || "https://#{settings.fetch('host')}#{article_path}"
-        source = article["source"].presence || "articoli/#{article.fetch('slug')}.md"
         content_path = CONTENT_ROOT.join(domain_key, "contenuti", source).cleanpath
         content_root = CONTENT_ROOT.join(domain_key, "contenuti").cleanpath
         content_path = nil unless content_path.to_s.start_with?("#{content_root}/")
@@ -114,6 +114,19 @@ class DomainContentCatalog
         Date.iso8601(value.to_s) if value.present?
       rescue ArgumentError
         nil
+      end
+
+      def publication_date_from_source(source)
+        match = File.basename(source.to_s).match(/\A(\d{4}-\d{2}-\d{2})-/)
+        parse_date(match&.[](1))
+      end
+
+      def discover_dated_source(domain_key, slug)
+        pattern = CONTENT_ROOT.join(domain_key, "contenuti", "articoli", "*", "????-??-??-#{slug}.md")
+        path = Dir.glob(pattern).sort.last
+        return unless path
+
+        Pathname(path).relative_path_from(CONTENT_ROOT.join(domain_key, "contenuti")).to_s
       end
 
       def article_sort_key(article)

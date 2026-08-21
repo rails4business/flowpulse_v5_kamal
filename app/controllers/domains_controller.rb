@@ -39,6 +39,7 @@ class DomainsController < ApplicationController
       elsif Current.domain&.role_assignment.present? && (creator_node = Current.domain.role_assignment.nodes.roots.published_free.order(:position, :title).find { |node| public_node_visible?(node) }) && render_public_node(creator_node)
         # successfully rendered creator's home/first root node
       else
+        prepare_flowpulse_landing
         render "landing/flowpulse"
       end
     end
@@ -86,6 +87,10 @@ class DomainsController < ApplicationController
     end
 
     def prepare_landing_target(target_action)
+      if target_action == "flowpulse"
+        prepare_flowpulse_landing
+        return
+      end
       return unless target_action == "posturacorretta"
 
       @home_data = YAML.safe_load_file(
@@ -99,5 +104,12 @@ class DomainsController < ApplicationController
         aliases: false
       ) || {}
       @posturacorretta_taxonomies = PosturacorrettaTaxonomies.load
+    end
+
+    def prepare_flowpulse_landing
+      @flowpulse_articles = DomainContentCatalog.for_domain(
+        "flowpulse",
+        include_scheduled: Current.user&.superadmin_user? || false
+      ).first(3)
     end
 end

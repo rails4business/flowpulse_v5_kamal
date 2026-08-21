@@ -16,6 +16,10 @@ class PagesController < ApplicationController
   end 
 
   def flowpulse
+    @flowpulse_articles = DomainContentCatalog.for_domain(
+      "flowpulse",
+      include_scheduled: Current.user&.superadmin_user? || false
+    ).first(3)
   end
 
   def mari

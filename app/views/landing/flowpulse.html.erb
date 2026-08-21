@@ -24,12 +24,15 @@
             </p>
 
             <div class="flex flex-wrap justify-center gap-3">
-              <%= verified_link_to "Trova eventi", esperienze_path, class: "rounded-xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-blue-700" %>
-              <%= verified_link_to "Organizza un’esperienza", "#", class: "rounded-xl border border-slate-200 bg-white px-6 py-4 font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700" %>
+              <%= verified_link_to "Trova eventi", eventi_path, class: "rounded-xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-blue-700" %>
+              <%= verified_link_to "Leggi i contenuti", flowpulse_contents_path, class: "rounded-xl border border-violet-200 bg-white px-6 py-4 font-bold text-violet-700 shadow-sm transition hover:border-violet-400 hover:text-violet-900" %>
+              <%= verified_link_to "Organizza un evento", eventi_path, class: "rounded-xl border border-slate-200 bg-white px-6 py-4 font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700" %>
               <%= verified_link_to "Crea il tuo brand", "#", class: "rounded-xl bg-gradient-to-r from-blue-600 to-emerald-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition hover:-translate-y-0.5 hover:brightness-110" %>
             </div>
           </div>
         </header>
+
+        <%= render "landing/flowpulse_content_preview", articles: @flowpulse_articles %>
 
         <!-- SEZIONE MANIFESTO -->
     <!-- I 3 PILASTRI -->

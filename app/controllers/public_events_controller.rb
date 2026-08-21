@@ -19,7 +19,7 @@ class PublicEventsController < ApplicationController
 
   def show
     @event = mock_public_event(params[:id])
-    redirect_to esperienze_path unless @event
+    redirect_to eventi_path unless @event
   end
 
   private

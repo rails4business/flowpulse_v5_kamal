@@ -14,13 +14,17 @@ Rails.application.routes.draw do
   end
   root "domains#show"
   resources :nodes, only: [:show]
-  get "esperienze" => "public_events#index", as: :esperienze
-  get "esperienze/:id" => "public_events#show", as: :esperienza
+  get "eventi" => "public_events#index", as: :eventi
+  get "eventi/:id" => "public_events#show", as: :evento
+  get "esperienze" => redirect("/eventi", status: 301), as: :esperienze
+  get "esperienze/:id" => redirect("/eventi/%{id}", status: 301), as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
+  get "flowpulse/contenuti" => "landing#flowpulse_contents", as: :flowpulse_contents
   get "flowpulse/contenuti/:slug" => "landing#flowpulse_content", as: :flowpulse_content
   get "rails4b" => "landing#rails4b", as: :rails4b
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "markpostura" => "landing#markpostura", as: :markpostura
+  get "markpostura/eventi" => "landing#markpostura_events", as: :markpostura_events
   get "markpostura/contenuti" => "landing#markpostura_contents", as: :markpostura_contents
   get "markpostura/contenuti/:slug" => "landing#markpostura_content", as: :markpostura_content
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold

@@ -11,7 +11,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_includes response.body, esperienze_path
+    assert_includes response.body, eventi_path
     assert_includes response.body, root_path
     assert_not_includes response.body, 'data-layout="dashboard"'
     assert_not_includes response.body, "data-dashboard-sidebar"
@@ -107,12 +107,12 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "Disponibile quando sbloccato dal superadmin"
   end
 
-  test "should get esperienze page" do
-    get esperienze_url
+  test "should get eventi page" do
+    get eventi_url
     assert_response :success
     assert_includes response.body, "Cosa vuoi fare oggi?"
-    assert_includes response.body, ">Esperienze<"
-    assert_includes response.body, esperienza_path(1)
+    assert_includes response.body, ">Eventi<"
+    assert_includes response.body, evento_path(1)
   end
 
   test "should get elenco pagine" do

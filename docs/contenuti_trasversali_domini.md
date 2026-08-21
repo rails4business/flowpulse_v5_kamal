@@ -4,7 +4,7 @@ Ogni dominio conserva il proprio catalogo e i propri file Markdown:
 
 ```text
 config/data/<dominio>/contenuti/catalog.yml
-config/data/<dominio>/contenuti/articoli/<slug>.md
+config/data/<dominio>/contenuti/articoli/<anno>/<AAAA-MM-GG-slug>.md
 ```
 
 Il dominio determina chi pubblica e possiede il contenuto. Il campo `author` contiene invece lo `username` univoco del `Profile` che lo ha realizzato.
@@ -15,9 +15,12 @@ articles:
     title: Titolo del contenuto
     excerpt: Breve presentazione
     author: markpostura
-    data_pubblicazione_articolo: "2026-08-21"
-    source: articoli/esempio.md
+    source: articoli/2026/2026-08-21-esempio.md
 ```
+
+La data di pubblicazione ha una sola fonte di verità: il prefisso del file Markdown. Il catalogo la ricava automaticamente per ordinamento, programmazione e visualizzazione. Il titolo pubblico e lo slug restano indipendenti dalla data, quindi URL e collegamenti non cambiano quando il contenuto viene spostato nell'archivio annuale.
+
+I contenuti storici ancora privi di un file datato continuano a funzionare e vengono mostrati dopo quelli con data. Le date interne di lavorazione video (`data_registrazione_video` e `data_pubblicazione_video`) restano nel catalogo perché descrivono attività differenti dalla pubblicazione dell'articolo.
 
 `DomainContentCatalog` legge i cataloghi presenti in `config/data/*/contenuti/catalog.yml` e permette due viste:
 

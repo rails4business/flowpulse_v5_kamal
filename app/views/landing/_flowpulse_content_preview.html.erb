@@ -1,0 +1,27 @@
+<% articles = Array(local_assigns[:articles]) %>
+<% if articles.any? %>
+  <section class="rounded-3xl border border-slate-200 bg-white px-5 py-8 shadow-sm sm:px-8" aria-labelledby="flowpulse-latest-contents">
+    <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 pb-5">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-violet-700">Idee · analisi · strumenti</p>
+        <h2 id="flowpulse-latest-contents" class="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Ultimi contenuti</h2>
+      </div>
+      <%= link_to "Vedi tutti", flowpulse_contents_path, class: "text-sm font-bold text-violet-700 transition hover:text-violet-900" %>
+    </div>
+
+    <ol class="divide-y divide-slate-200">
+      <% articles.each do |article| %>
+        <li>
+          <%= link_to article.fetch("path"), class: "group grid gap-2 py-5 sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-center sm:gap-5" do %>
+            <time datetime="<%= article["publication_date"]&.iso8601 %>" class="text-sm font-semibold text-slate-500"><%= article["publication_label"] || "Data da definire" %></time>
+            <span>
+              <span class="block text-lg font-bold text-slate-950 transition group-hover:text-violet-700"><%= article.fetch("title") %></span>
+              <span class="mt-1 block text-xs font-semibold text-slate-500">@<%= article.fetch("author") %></span>
+            </span>
+            <span aria-hidden="true" class="hidden text-slate-400 transition group-hover:translate-x-1 group-hover:text-violet-700 sm:block">→</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </section>
+<% end %>

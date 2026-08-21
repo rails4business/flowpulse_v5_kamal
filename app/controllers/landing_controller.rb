@@ -5,6 +5,14 @@ class LandingController < ApplicationController
 
 
   def flowpulse
+    @flowpulse_articles = visible_flowpulse_articles
+  end
+
+  def flowpulse_contents
+    @domain_articles = DomainContentCatalog.for_domain(
+      "flowpulse",
+      include_scheduled: Current.user&.superadmin_user? || false
+    )
   end
 
   def flowpulse_content
@@ -13,7 +21,7 @@ class LandingController < ApplicationController
       params[:slug],
       include_scheduled: Current.user&.superadmin_user? || false
     )
-    return redirect_to(flowpulse_path, alert: "Contenuto non trovato") unless @article
+    return redirect_to(flowpulse_contents_path, alert: "Contenuto non trovato") unless @article
 
     content_path = @article["content_path"]
     @content = File.read(content_path) if content_path.present? && File.file?(content_path)
@@ -26,7 +34,11 @@ class LandingController < ApplicationController
   end
 
   def markpostura
-  
+    @markpostura_events = visible_markpostura_events.first(3)
+  end
+
+  def markpostura_events
+    @markpostura_events = visible_markpostura_events
   end
 
   def markpostura_contents
@@ -73,6 +85,21 @@ class LandingController < ApplicationController
   end
 
   private
+
+  def visible_flowpulse_articles
+    DomainContentCatalog.for_domain(
+      "flowpulse",
+      include_scheduled: Current.user&.superadmin_user? || false
+    ).first(3)
+  end
+
+  def visible_markpostura_events
+    DomainEventCatalog.for_organizer(
+      "markpostura",
+      include_drafts: Current.user&.superadmin_user? || false
+    ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
+     .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
+  end
 
   def load_posturacorretta_taxonomies
     @posturacorretta_taxonomies = PosturacorrettaTaxonomies.load

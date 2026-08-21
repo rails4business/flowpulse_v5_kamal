@@ -139,7 +139,7 @@ class PosturacorrettaController < ApplicationController
     end
     return redirect_to posturacorretta_contenuti_path, alert: "Articolo non trovato" unless @article
 
-    markdown_file = Rails.root.join("config/data/posturacorretta/contenuti/articoli", "#{params[:slug]}.md")
+    markdown_file = posturacorretta_article_file(@article)
     @content = File.exist?(markdown_file) ? File.read(markdown_file) : nil
   end
   def eventi
@@ -148,7 +148,10 @@ class PosturacorrettaController < ApplicationController
     end
 
     data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/eventi/eventi.yml"), permitted_classes: [], aliases: false) || {}
-    @events = data.fetch("events", [])
+    @events = DomainEventCatalog.for_domain(
+      "posturacorretta",
+      include_drafts: Current.user&.superadmin_user? || false
+    )
     @places = data.fetch("places", [])
     @teachers = data.fetch("teachers", [])
     @event_filter_taxonomy = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/contenuti/tassonomia.yml"), permitted_classes: [], aliases: false) || {}
@@ -369,7 +372,22 @@ class PosturacorrettaController < ApplicationController
   end
 
   def catalog_publication_date(article)
-    catalog_date(article, :data_pubblicazione_articolo)
+    source = article[:source].presence || posturacorretta_article_source(article[:slug])
+    match = File.basename(source.to_s).match(/\A(\d{4}-\d{2}-\d{2})-/)
+    Date.iso8601(match[1]) if match
+  rescue ArgumentError
+    nil
+  end
+
+  def posturacorretta_article_file(article)
+    source = article[:source].presence || posturacorretta_article_source(article[:slug]) || "articoli/#{article[:slug]}.md"
+    Rails.root.join("config/data/posturacorretta/contenuti", source)
+  end
+
+  def posturacorretta_article_source(slug)
+    root = Rails.root.join("config/data/posturacorretta/contenuti")
+    path = Dir.glob(root.join("articoli", "*", "????-??-??-#{slug}.md")).sort.last
+    Pathname(path).relative_path_from(root).to_s if path
   end
 
   def catalog_date(article, key)
