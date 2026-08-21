@@ -27,7 +27,7 @@
     <% end %>
 
     <% if @content.present? %>
-      <article class="prose prose-slate prose-lg mt-10 max-w-none prose-headings:font-semibold prose-a:text-sky-700">
+      <article class="editorial-rich-text editorial-rich-text--sky mt-10">
         <%= raw markdown(@content) %>
       </article>
     <% elsif @article["excerpt"].present? %>

@@ -5,6 +5,7 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     get flowpulse_path
 
     assert_response :success
+    assert_select "img[src='https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png']", count: 1
     assert_select "a[href='#{eventi_path}']", text: "Organizza un evento", count: 1
     assert_select "a[href='/flowpulse/contenuti/costruire-un-sistema-economico-nuovo']", count: 1
     assert_select "a[href='/flowpulse/contenuti/dalla-moneta-alla-comunita-economia-circolare-dash']", count: 1
@@ -25,6 +26,7 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "È possibile costruire un sistema economico nuovo senza diventare fuorilegge?", count: 1
+    assert_select "article.editorial-rich-text.editorial-rich-text--violet", count: 1
     assert_match "Come possiamo costruire un'alternativa", response.body
     assert_match "@markpostura", response.body
   end
@@ -52,6 +54,7 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_articolo_path("metodiche-posturali-e-fisiologia")
 
     assert_response :success
+    assert_select "article.editorial-rich-text.editorial-rich-text--blue", count: 1
     assert_match "L'importanza dell'ascolto", response.body
   end
 end

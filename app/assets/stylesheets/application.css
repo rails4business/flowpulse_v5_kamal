@@ -15,6 +15,204 @@ body {
   font-family: Arial, sans-serif;
 }
 
+/* Tipografia editoriale condivisa dai contenuti Markdown dei diversi domini. */
+.editorial-rich-text {
+  --editorial-accent: #4f46e5;
+  --editorial-accent-soft: #eef2ff;
+  color: #475569;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  max-width: none;
+  overflow-wrap: anywhere;
+}
+
+.editorial-rich-text--violet {
+  --editorial-accent: #6d28d9;
+  --editorial-accent-soft: #f5f3ff;
+}
+
+.editorial-rich-text--sky {
+  --editorial-accent: #0369a1;
+  --editorial-accent-soft: #f0f9ff;
+}
+
+.editorial-rich-text--blue {
+  --editorial-accent: #1d4ed8;
+  --editorial-accent-soft: #eff6ff;
+}
+
+.editorial-rich-text > * {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.editorial-rich-text > * + * {
+  margin-top: 1.25rem;
+}
+
+/* Il titolo editoriale è già mostrato nella testata dell'articolo. */
+.editorial-rich-text > h1:first-child {
+  display: none;
+}
+
+.editorial-rich-text h1,
+.editorial-rich-text h2,
+.editorial-rich-text h3,
+.editorial-rich-text h4 {
+  color: #0f172a;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.2;
+  scroll-margin-top: 6rem;
+}
+
+.editorial-rich-text h1 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  margin-top: 3.5rem;
+}
+
+.editorial-rich-text h2 {
+  font-size: clamp(1.55rem, 3vw, 1.9rem);
+  margin-top: 3.25rem;
+}
+
+.editorial-rich-text h3 {
+  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+  margin-top: 2.5rem;
+}
+
+.editorial-rich-text h4 {
+  font-size: 1.125rem;
+  margin-top: 2rem;
+}
+
+.editorial-rich-text h1 + *,
+.editorial-rich-text h2 + *,
+.editorial-rich-text h3 + *,
+.editorial-rich-text h4 + * {
+  margin-top: .85rem;
+}
+
+.editorial-rich-text p,
+.editorial-rich-text li {
+  color: #475569;
+}
+
+.editorial-rich-text ul,
+.editorial-rich-text ol {
+  display: grid;
+  gap: .55rem;
+  padding-left: 1.6rem;
+}
+
+.editorial-rich-text ul { list-style: disc; }
+.editorial-rich-text ol { list-style: decimal; }
+
+.editorial-rich-text li::marker {
+  color: var(--editorial-accent);
+  font-weight: 700;
+}
+
+.editorial-rich-text strong {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.editorial-rich-text em { color: #64748b; }
+
+.editorial-rich-text a {
+  color: var(--editorial-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--editorial-accent) 40%, transparent);
+  text-underline-offset: 3px;
+}
+
+.editorial-rich-text blockquote {
+  background: var(--editorial-accent-soft);
+  border-left: 4px solid var(--editorial-accent);
+  border-radius: 0 .75rem .75rem 0;
+  color: #334155;
+  font-style: normal;
+  margin-block: 2rem;
+  padding: 1rem 1.25rem;
+}
+
+.editorial-rich-text blockquote > * + * { margin-top: .75rem; }
+
+.editorial-rich-text hr {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin-block: 3rem;
+}
+
+.editorial-rich-text img,
+.editorial-rich-text iframe {
+  border-radius: .75rem;
+  display: block;
+  height: auto;
+  margin-block: 2rem;
+  max-width: 100%;
+}
+
+.editorial-rich-text code {
+  background: #f1f5f9;
+  border-radius: .3rem;
+  color: #be123c;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .88em;
+  padding: .15rem .35rem;
+}
+
+.editorial-rich-text pre {
+  background: #0f172a;
+  border-radius: .75rem;
+  color: #e2e8f0;
+  margin-block: 2rem;
+  overflow-x: auto;
+  padding: 1rem 1.25rem;
+}
+
+.editorial-rich-text pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.editorial-rich-text table {
+  border-collapse: collapse;
+  display: block;
+  margin-block: 2rem;
+  max-width: 100%;
+  overflow-x: auto;
+  width: max-content;
+}
+
+.editorial-rich-text th,
+.editorial-rich-text td {
+  border: 1px solid #e2e8f0;
+  padding: .7rem .85rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.editorial-rich-text th {
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .editorial-rich-text {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .editorial-rich-text h2 { margin-top: 2.5rem; }
+}
+
 body[data-layout="dashboard"] {
   margin: 0;
   min-height: 100vh;
