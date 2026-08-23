@@ -1,37 +1,36 @@
 components:
-  - type: home_carousel
+  - type: ecosystem_home
     data:
-      interval: 7000
-      slides:
-        - id: postura
-          kicker: "PosturaCorretta in un mese"
-          title: "Non è solo stare ben dritti con la schiena"
-          description: "Inizia a lavorare sulla tua postura. Scoprirai che può diventare una base per costruire la tua salute e per imparare ad ascoltare e riattivare il tuo corpo."
-          cta: "Vai al programma"
+      eyebrow: "La persona al centro"
+      title: "Tre modi per conoscere, curare e coltivare l’essere umano"
+      description: "Educazione, accompagnamento professionale ed esperienze sono tre possibilità differenti e complementari. Puoi iniziare da quella che risponde meglio al tuo bisogno."
+      center_title: "La persona"
+      center_description: "Corpo · fisiologia · ambiente interno · ambiente esterno"
+      projects:
+        - id: education
+          color: blue
+          brand: "PosturaCorretta"
+          kicker: "Educazione al corpo e alla salute"
+          title: "Conosci e impara"
+          description: "Inizia dal programma di un mese, continua con la pratica e, se vuoi approfondire, entra nell’Accademia o formati come insegnante."
+          cta: "Inizia PosturaCorretta in un mese"
           route: "/posturacorretta/primo-mese"
-          image: "https://ik.imagekit.io/posturacorretta/posturacorretta_visione.png"
-          image_alt: "La visione generale del metodo PosturaCorretta"
-        - id: accademia
-          kicker: "Percorso educativo"
-          title: "Prosegui il lavoro sulla postura e, se vuoi approfondisci con l’Accademia"
-          description: "Un percorso educativo che può affiancare il Percorso Integrato, offrendo un modello fisiologico di educazione alla salute per conoscere il funzionamento del corpo, favorirne la consapevolezza e avvicinarsi alle diverse metodiche posturali. Puoi iniziare dal livello base nei gruppi posturali, con moduli semplificati e una scheda mensile, oppure scegliere lezioni private con un insegnante. Se sei appassionato e vuoi approfondire, puoi proseguire con l’Accademia avanzata, aperta anche ai professionisti, fino alla possibilità di formarti come insegnante PosturaCorretta."
-          cta: "Scopri l’Accademia"
-          route: "/posturacorretta/accademia"          
-          image: "https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777"
-          image_alt: "Educazione al corpo e alla salute con l’Accademia PosturaCorretta"
-        - id: percorso
-          kicker: "Percorso Integrato personalizzato"
-          title: "Crea  un percorso su misura."
-          description: "Con il tutor capisci qual è il programma e quali i professionisti di cui hai bisogno. Metti in relazione bisogni, obiettivi, professionisti, metodiche ed educazione attraverso un percorso costruito per te e la tua salute."
-          cta: "Crea il tuo percorso"
+          icon: "🧍"
+        - id: integrated
+          color: emerald
+          brand: "Percorso Integrato"
+          kicker: "Tutor e professionisti"
+          title: "Orientati e fatti accompagnare"
+          description: "Parti da un bisogno concreto e costruisci con un tutor programmi, passaggi e collaborazioni tra professionisti con competenze differenti."
+          cta: "Scopri il Percorso Integrato"
           route: "/posturacorretta/percorso"
-          image: "https://ik.imagekit.io/posturacorretta/percorso%20integrato.png"
-          image_alt: "Il Percorso Integrato PosturaCorretta"
-        - id: eventi
-          kicker: "Eventi e filosofia"
-          title: "Vivi la filosofia attraverso gli eventi"
-          description: "Incontra persone e attività sul territorio e nella natura. Scopri la visione che conduce dalla PosturaCorretta al Giardino del Corpo."
-          cta: "Scopri gli eventi"
-          route: "/posturacorretta/eventi"
-          image: "https://ik.imagekit.io/posturacorretta/giusta_posizione.png?tr=w-1100,q-85"
-          image_alt: "Eventi PosturaCorretta sul territorio e nella natura"
+          icon: "🧭"
+        - id: garden
+          color: violet
+          brand: "Il Giardino del Corpo"
+          kicker: "Filosofia ed eventi"
+          title: "Incontra, sperimenta e coltiva"
+          description: "Vivi esperienze che collegano corpo, natura, cultura, espressione, territorio e relazioni."
+          cta: "Scopri Il Giardino del Corpo"
+          route: "/giardino-del-corpo"
+          icon: "🌳"

@@ -1,0 +1,66 @@
+<% content_for :title, "Percorso Formazione Insegnanti" %>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  document.addEventListener("turbo:load", function() {
+    if (window.mermaid) {
+      mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+      mermaid.contentLoaded();
+    }
+  });
+  document.addEventListener("DOMContentLoaded", function() {
+    if (window.mermaid) {
+      mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    }
+  });
+</script>
+
+<div class="mx-auto max-w-5xl px-4 py-8">
+  <div class="mb-8 border-b border-slate-200 pb-5">
+    <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Accademia PosturaCorretta</p>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">Flusso Formazione &amp; Crescita Insegnanti</h1>
+    <p class="mt-2 text-sm text-slate-600">Mappa concettuale del percorso dello studente, dall'apprendimento di base alla possibile formazione come Maestro.</p>
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="mermaid flex justify-center">
+flowchart TD
+    A[Studente] --> B[Lezione Base]
+    B --> C[Lezione Avanzata]
+
+    C --> D{Vuole diventare insegnante?}
+
+    D -->|No| E[Continua come studente]
+    D -->|Sì| F[Formazione Insegnante Base]
+
+    F --> G{Maestro approva?}
+    G -->|Sì| H[Insegnante Base]
+    G -->|No| F
+
+    H --> I{Vuole insegnare Avanzato?}
+    I -->|No| H
+    I -->|Sì| L[Formazione Insegnante Avanzato]
+
+    L --> M{Maestro approva?}
+    M -->|Sì| N[Insegnante Avanzato]
+    M -->|No| L
+
+    N --> O[Possibile futuro Maestro]
+    </div>
+  </div>
+
+  <div class="mt-8 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-xl border border-blue-100 bg-blue-50/50 p-4">
+      <h3 class="font-semibold text-blue-900 text-sm">1. Fase Studente</h3>
+      <p class="mt-1 text-xs text-blue-700">Frequenza delle lezioni base e avanzate per maturare la consapevolezza del corpo e delle metodiche.</p>
+    </div>
+    <div class="rounded-xl border border-violet-100 bg-violet-50/50 p-4">
+      <h3 class="font-semibold text-violet-900 text-sm">2. Abilitazione Insegnante</h3>
+      <p class="mt-1 text-xs text-violet-700">Percorso formativo dedicato con verifica e approvazione diretta da parte del Maestro.</p>
+    </div>
+    <div class="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
+      <h3 class="font-semibold text-emerald-900 text-sm">3. Livelli di Insegnamento</h3>
+      <p class="mt-1 text-xs text-emerald-700">Passaggio graduale da Insegnante Base ad Avanzato, fino all'aspirazione a Maestro.</p>
+    </div>
+  </div>
+</div>

@@ -55,7 +55,7 @@ module Admin
     end
 
     def document_title(path)
-      heading = path.foreach.lazy.map(&:strip).find { |line| line.start_with?("# ") }
+      heading = File.foreach(path).lazy.map(&:strip).find { |line| line.start_with?("# ") }
       heading&.delete_prefix("# ")&.presence || path.basename(".md").to_s.tr("-_", " ").titleize
     end
   end

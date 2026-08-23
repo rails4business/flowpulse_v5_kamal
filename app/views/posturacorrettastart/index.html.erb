@@ -439,6 +439,10 @@
         </div>
     </div>
 
+<% if @standalone_percorso %>
+  <%= render "shared/ecosystem/three_projects_connection", current_project: :percorso_integrato %>
+<% end %>
+
 <%= render "posturacorretta/footer" %>
 
 </div>

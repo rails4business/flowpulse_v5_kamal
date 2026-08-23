@@ -1,0 +1,156 @@
+<% content_for :title, "Il Giardino del Corpo" %>
+<% content_for :description, "Esperienze tra corpo, apprendimento, espressione, territorio e natura." %>
+
+<div class="min-h-screen bg-[#fbfcf8] text-slate-900">
+  <header class="sticky top-0 z-50 border-b border-emerald-100 bg-[#fbfcf8]/95 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <%= link_to giardino_del_corpo_path, class: "flex items-center gap-2 font-black tracking-tight text-emerald-950" do %>
+        <span aria-hidden="true" class="grid size-9 place-items-center rounded-full bg-emerald-100 text-lg">🌱</span>
+        <span>Il Giardino del Corpo</span>
+      <% end %>
+      <nav class="hidden items-center gap-5 md:flex" aria-label="Navigazione Giardino del Corpo">
+        <a href="#visione" class="text-sm font-semibold text-slate-600 hover:text-emerald-800">Visione</a>
+        <a href="#esperienze" class="text-sm font-semibold text-slate-600 hover:text-emerald-800">Esperienze</a>
+        <a href="#eventi" class="text-sm font-semibold text-slate-600 hover:text-emerald-800">Eventi</a>
+        <%= link_to "PosturaCorretta", posturacorretta_path, class: "text-sm font-semibold text-slate-600 hover:text-blue-700" %>
+      </nav>
+      <a href="#eventi" class="rounded-lg bg-emerald-700 px-3.5 py-2 text-sm font-bold text-white transition hover:bg-emerald-800">Partecipa</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="relative overflow-hidden border-b border-emerald-100">
+      <div class="absolute -left-24 top-10 size-72 rounded-full bg-amber-200/30 blur-3xl"></div>
+      <div class="absolute -right-24 bottom-0 size-80 rounded-full bg-violet-200/35 blur-3xl"></div>
+      <div class="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:px-8">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">Dalla PosturaCorretta al Giardino del Corpo</p>
+          <h1 class="mt-5 max-w-3xl text-5xl font-black leading-[.98] tracking-[-.045em] text-emerald-950 sm:text-6xl lg:text-7xl">Coltiva il corpo, le capacità e le relazioni.</h1>
+          <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">Il corpo è il primo ambiente che abitiamo. Conoscerlo può diventare il punto di partenza per prenderci cura della salute, sviluppare ciò che sappiamo fare e costruire un rapporto più consapevole con gli altri, il territorio e la natura.</p>
+          <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+            <a href="#eventi" class="inline-flex justify-center rounded-xl bg-emerald-700 px-6 py-3.5 font-bold text-white shadow-lg shadow-emerald-900/10 transition hover:-translate-y-0.5 hover:bg-emerald-800">Scopri gli eventi</a>
+            <a href="#visione" class="inline-flex justify-center rounded-xl border border-emerald-200 bg-white px-6 py-3.5 font-bold text-emerald-900 transition hover:border-emerald-400">Conosci la visione</a>
+          </div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-3xl bg-emerald-900 p-7 text-white sm:col-span-2">
+            <span class="text-4xl" aria-hidden="true">🌳</span>
+            <p class="mt-8 text-2xl font-black">Un giardino non si aggiusta una volta sola.</p>
+            <p class="mt-3 leading-7 text-emerald-100">Si osserva, si coltiva, si lascia riposare e si trasforma nel tempo.</p>
+          </div>
+          <div class="rounded-3xl border border-amber-200 bg-amber-50 p-6">
+            <span class="text-3xl" aria-hidden="true">☀️</span>
+            <p class="mt-5 font-black text-amber-950">Ambiente esterno</p>
+            <p class="mt-2 text-sm leading-6 text-amber-900/70">Natura, territorio, relazioni e comunità.</p>
+          </div>
+          <div class="rounded-3xl border border-violet-200 bg-violet-50 p-6">
+            <span class="text-3xl" aria-hidden="true">🌀</span>
+            <p class="mt-5 font-black text-violet-950">Ambiente interno</p>
+            <p class="mt-2 text-sm leading-6 text-violet-900/70">Corpo, percezione, pensieri, emozioni ed energia.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="visione" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="max-w-3xl">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">La visione</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">Dalla cura del corpo allo sviluppo armonico della persona.</h2>
+          <p class="mt-6 text-lg leading-8 text-slate-600">Il Giardino del Corpo amplia il viaggio iniziato con PosturaCorretta. La salute rimane la base, ma l’essere umano vive anche di apprendimento, lavoro, creatività, relazioni, luoghi e significati.</p>
+        </div>
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          <article class="rounded-3xl border border-rose-100 bg-white p-7 shadow-sm">
+            <span class="text-3xl" aria-hidden="true">❤️</span>
+            <h3 class="mt-5 text-xl font-black">Corpo e salute</h3>
+            <p class="mt-3 leading-7 text-slate-600">Ascolto, movimento, fisiologia, pratiche corporee e cura dello stile di vita.</p>
+          </article>
+          <article class="rounded-3xl border border-violet-100 bg-white p-7 shadow-sm">
+            <span class="text-3xl" aria-hidden="true">🎭</span>
+            <h3 class="mt-5 text-xl font-black">Apprendimento ed espressione</h3>
+            <p class="mt-3 leading-7 text-slate-600">Musica, voce, teatro, comunicazione e attività per scoprire e allenare le proprie capacità.</p>
+          </article>
+          <article class="rounded-3xl border border-emerald-100 bg-white p-7 shadow-sm">
+            <span class="text-3xl" aria-hidden="true">🌿</span>
+            <h3 class="mt-5 text-xl font-black">Territorio e natura</h3>
+            <p class="mt-3 leading-7 text-slate-600">Esperienze nei luoghi, relazioni reali, stagioni e conoscenza dell’ambiente che ci ospita.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="esperienze" class="scroll-mt-24 border-y border-emerald-100 bg-white px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <div class="max-w-3xl">
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-violet-700">Vivere la filosofia</p>
+            <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">Esperienze da incontrare e combinare.</h2>
+          </div>
+          <p class="max-w-md text-sm leading-7 text-slate-600">Un’esperienza descrive ciò che facciamo. Può essere proposta da sola oppure entrare nel programma di eventi diversi.</p>
+        </div>
+        <div class="mt-12 grid gap-px overflow-hidden rounded-3xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-3">
+          <% [["Movimento e corporeità", "🤸"], ["Musica e canto", "🎶"], ["Teatro e comunicazione", "🎭"], ["Natura e territorio", "🥾"], ["Contemplazione", "🕯️"], ["Conoscenze e mestieri", "🛠️"]].each do |title, icon| %>
+            <article class="bg-[#fbfcf8] p-7">
+              <span class="text-3xl" aria-hidden="true"><%= icon %></span>
+              <h3 class="mt-5 text-lg font-black text-slate-950"><%= title %></h3>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section id="eventi" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="max-w-3xl">
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Il primo passo concreto</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">Partecipa agli eventi.</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-600">Gli eventi uniscono una pratica per la consapevolezza del corpo ad attività dedicate alla natura, alla cultura, all’espressione o alla conoscenza del territorio.</p>
+        </div>
+
+        <% if @garden_events.present? %>
+          <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <% @garden_events.first(6).each do |event| %>
+              <a href="<%= event.fetch("url") %>" class="group overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg">
+                <% if event["image"].present? %>
+                  <div class="aspect-[4/3] overflow-hidden bg-emerald-50">
+                    <img src="<%= event["image"] %>" alt="" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                  </div>
+                <% end %>
+                <div class="p-6">
+                  <p class="text-xs font-black uppercase tracking-[0.14em] text-emerald-700"><%= event["formattedDate"] || event["date"] || "Data da definire" %></p>
+                  <h3 class="mt-3 text-xl font-black text-slate-950 group-hover:text-emerald-800"><%= event.fetch("title") %></h3>
+                  <p class="mt-3 text-sm leading-6 text-slate-600"><%= event["description"] %></p>
+                  <p class="mt-4 text-sm font-bold text-slate-500"><%= event["location"] %></p>
+                </div>
+              </a>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-10 rounded-3xl border border-dashed border-emerald-300 bg-emerald-50 p-8">
+            <p class="font-black text-emerald-950">I prossimi eventi sono in preparazione.</p>
+            <p class="mt-2 text-sm leading-6 text-emerald-900/70">Torna qui per conoscere date, luoghi ed esperienze disponibili.</p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="border-y border-emerald-100 bg-emerald-950 px-5 py-20 text-white sm:px-6 lg:px-8">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2 lg:items-center">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">Il progetto futuro</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Un luogo immerso nella natura.</h2>
+        </div>
+        <p class="text-lg leading-8 text-emerald-100">Oggi la filosofia prende vita attraverso eventi e collaborazioni. In futuro potrà trovare casa in un agriturismo rigenerativo dove vivere per alcuni giorni movimento, ascolto, formazione, relazioni e attività per lo sviluppo armonico della persona.</p>
+      </div>
+    </section>
+
+    <%= render "shared/ecosystem/three_projects_connection", current_project: :giardino_del_corpo %>
+  </main>
+
+  <footer class="border-t border-emerald-100 bg-white px-5 py-8 sm:px-6 lg:px-8">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p class="font-bold text-emerald-950">Il Giardino del Corpo</p>
+      <p>Un progetto dell’ecosistema Flowpulse collegato a PosturaCorretta.</p>
+    </div>
+  </footer>
+</div>

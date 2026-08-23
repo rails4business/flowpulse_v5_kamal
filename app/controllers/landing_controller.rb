@@ -33,6 +33,10 @@ class LandingController < ApplicationController
   def cantachetipassa
   end
 
+  def giardino_del_corpo
+    @garden_events = visible_garden_events
+  end
+
   def markpostura
     @markpostura_events = visible_markpostura_events.first(3)
   end
@@ -91,6 +95,14 @@ class LandingController < ApplicationController
       "flowpulse",
       include_scheduled: Current.user&.superadmin_user? || false
     ).first(3)
+  end
+
+  def visible_garden_events
+    DomainEventCatalog.for_project(
+      "giardino-del-corpo",
+      include_drafts: Current.user&.superadmin_user? || false
+    ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
+     .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
   end
 
   def visible_markpostura_events

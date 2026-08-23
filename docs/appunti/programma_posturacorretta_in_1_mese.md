@@ -15,6 +15,8 @@ Il programma non deve contenere tutta la documentazione di **Conoscere il proget
 
 ## Il funnel
 
+> Architettura di riferimento: `docs/ecosistema_persona_tre_progetti.md`. PosturaCorretta è il progetto educativo; Percorso Integrato e Il Giardino del Corpo sono progetti complementari intorno alla persona, non sezioni subordinate a PosturaCorretta.
+
 ```text
 Incontro con la salute e le metodiche
         ↓
@@ -26,21 +28,21 @@ Riconosco errori e limiti degli interventi separati
         ↓
 Passo dalla postura al modello fisiologico
         ↓
-Comprendo educazione e Percorso Integrato
+Comprendo il ruolo educativo di PosturaCorretta
         ↓
 Conosco la visione di PosturaCorretta
         ↓
-Scelgo come continuare
+Scelgo quale progetto può aiutarmi
    ┌────────────────────┼────────────────────┐
 Percorso educativo  Percorso Integrato   Filosofia
 gruppi → Accademia                       → Giardino del Corpo
 ```
 
-Le tre destinazioni non si escludono e non costituiscono necessariamente una sequenza obbligatoria:
+I tre progetti non si escludono e non costituiscono una sequenza obbligatoria:
 
 - nel **percorso educativo** la persona inizia dalla postura in gruppo, con moduli semplificati e una scheda bonus mensile; se vuole approfondire, continua con l’Accademia avanzata, aperta ad appassionati e professionisti e necessaria per formarsi come insegnante;
 - nel **Percorso Integrato** viene accompagnata da un tutor e dai professionisti attraverso una proposta personalizzata;
-- nella **filosofia**, aperta a tutti, passa dalla PosturaCorretta al Giardino del Corpo e incontra altre attività dedicate allo sviluppo armonico dell’essere umano, alle risorse e all’apprendimento.
+- con **Il Giardino del Corpo**, aperto a tutti, incontra attraverso eventi ed esperienze una filosofia dedicata allo sviluppo armonico dell’essere umano, alle risorse e all’apprendimento.
 
 ## Insegnanti e professionisti
 
@@ -50,7 +52,7 @@ I due ruoli collaborano, ma hanno funzioni differenti:
 - il **professionista** ha una preparazione verticale in una professione o metodica e interviene con le proprie competenze specifiche nel Percorso Integrato;
 - un professionista può frequentare l’Accademia e diventare anche insegnante, ma i due ruoli e le relative responsabilità rimangono distinti.
 
-La progressione ideale è: **PosturaCorretta in un mese → postura in gruppo → Accademia avanzata**, oppure **Percorso Integrato con i professionisti**, oppure **filosofia e Giardino del Corpo**.
+All’interno di PosturaCorretta la progressione educativa è: **PosturaCorretta in un mese → postura in gruppo → Accademia avanzata**. In base al proprio bisogno, la persona può anche entrare nel **Percorso Integrato** o incontrare la filosofia attraverso gli eventi del **Giardino del Corpo**.
 
 ## Struttura del libro-programma
 

@@ -2,51 +2,118 @@
   <%= render "posturacorretta/header" %>
 <% end %>
 
-<% content_for :title, "PosturaCorretta — Un nuovo punto di vista sulla salute" %>
+<% content_for :title, "PosturaCorretta — La persona al centro" %>
+
+<% projects = Array(@home_ecosystem["projects"]) %>
+<% project_by_id = projects.index_by { |project| project.fetch("id") } %>
+<% color_classes = {
+     "blue" => { border: "border-blue-200", soft: "bg-blue-50", text: "text-blue-700", button: "bg-blue-600 hover:bg-blue-700" },
+     "emerald" => { border: "border-emerald-200", soft: "bg-emerald-50", text: "text-emerald-700", button: "bg-emerald-600 hover:bg-emerald-700" },
+     "violet" => { border: "border-violet-200", soft: "bg-violet-50", text: "text-violet-700", button: "bg-violet-600 hover:bg-violet-700" }
+   } %>
 
 <main class="bg-white text-slate-900">
-  <% introduction = @home_slides.first || {} %>
   <section class="border-b border-slate-200 bg-white">
-    <div class="mx-auto grid max-w-screen-xl items-center gap-10 px-5 py-12 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.9fr)] lg:px-14 lg:py-20 xl:px-20">
-      <div class="min-w-0">
-        <div class="mb-7 max-w-2xl [&>form]:mt-0"><%= render "components/home_content_search" %></div>
-        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700"><%= introduction["kicker"] %></p>
-        <h1 class="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><%= introduction["title"] %></h1>
-        <p class="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg"><%= introduction["description"] %></p>
-        <%= link_to introduction.fetch("cta"), posturacorretta_primo_mese_path, class: "mt-7 inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2" %>
+    <div class="mx-auto max-w-screen-xl px-5 py-12 sm:px-6 sm:py-16 lg:px-14 lg:py-20 xl:px-20">
+      <div class="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.7fr)]">
+        <div class="max-w-3xl">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700"><%= @home_ecosystem["eyebrow"] %></p>
+          <h1 class="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl"><%= @home_ecosystem["title"] %></h1>
+          <p class="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg"><%= @home_ecosystem["description"] %></p>
+        </div>
+        <div class="[&>form]:mt-0"><%= render "components/home_content_search" %></div>
       </div>
-      <% if introduction["image"].present? %>
-        <img src="<%= introduction["image"] %>" alt="<%= introduction["image_alt"] %>" class="max-h-[28rem] w-full object-contain" loading="eager">
-      <% end %>
     </div>
   </section>
 
-  <section class="bg-slate-50" aria-labelledby="home-directions-title">
+  <section class="bg-slate-50" aria-labelledby="ecosystem-map-title">
     <div class="mx-auto max-w-screen-xl px-5 py-14 sm:px-6 lg:px-14 lg:py-20 xl:px-20">
-      <div class="max-w-2xl">
-        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Dopo il primo mese</p>
-        <h2 id="home-directions-title" class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Scegli come continuare</h2>
-        <p class="mt-4 text-base leading-7 text-slate-600">Dopo la valutazione e la prima scheda puoi continuare il percorso educativo — prima nei gruppi posturali e poi, se vuoi approfondire, nell’Accademia — costruire un Percorso Integrato personalizzato oppure partecipare agli eventi.</p>
+      <h2 id="ecosystem-map-title" class="sr-only">I tre progetti intorno alla persona</h2>
+
+      <div class="grid gap-6 lg:grid-cols-3 lg:grid-rows-[auto_auto] lg:items-stretch">
+        <% integrated = project_by_id["integrated"] %>
+        <% if integrated %>
+          <% colors = color_classes.fetch(integrated.fetch("color")) %>
+          <article class="order-2 <%= colors[:border] %> rounded-3xl border bg-white p-7 shadow-sm lg:order-none lg:col-start-2 lg:row-start-1">
+            <div class="flex items-center justify-between gap-4">
+              <span class="<%= colors[:soft] %> grid size-12 place-items-center rounded-2xl text-2xl"><%= integrated["icon"] %></span>
+              <span class="<%= colors[:text] %> text-xs font-black uppercase tracking-[0.15em]"><%= integrated["brand"] %></span>
+            </div>
+            <p class="<%= colors[:text] %> mt-6 text-xs font-bold uppercase tracking-[0.14em]"><%= integrated["kicker"] %></p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950"><%= integrated["title"] %></h3>
+            <p class="mt-3 text-sm leading-6 text-slate-600"><%= integrated["description"] %></p>
+            <%= link_to integrated["cta"], posturacorretta_builder_route(integrated["route"]), class: "#{colors[:button]} mt-6 inline-flex rounded-lg px-4 py-2.5 text-sm font-bold text-white" %>
+          </article>
+        <% end %>
+
+        <% education = project_by_id["education"] %>
+        <% if education %>
+          <% colors = color_classes.fetch(education.fetch("color")) %>
+          <article class="order-1 <%= colors[:border] %> rounded-3xl border bg-white p-7 shadow-sm lg:order-none lg:col-start-1 lg:row-start-2">
+            <div class="flex items-center justify-between gap-4">
+              <span class="<%= colors[:soft] %> grid size-12 place-items-center rounded-2xl text-2xl"><%= education["icon"] %></span>
+              <span class="<%= colors[:text] %> text-xs font-black uppercase tracking-[0.15em]"><%= education["brand"] %></span>
+            </div>
+            <p class="<%= colors[:text] %> mt-6 text-xs font-bold uppercase tracking-[0.14em]"><%= education["kicker"] %></p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950"><%= education["title"] %></h3>
+            <p class="mt-3 text-sm leading-6 text-slate-600"><%= education["description"] %></p>
+            <%= link_to education["cta"], posturacorretta_builder_route(education["route"]), class: "#{colors[:button]} mt-6 inline-flex rounded-lg px-4 py-2.5 text-sm font-bold text-white" %>
+          </article>
+        <% end %>
+
+        <div class="order-first flex items-center justify-center lg:order-none lg:col-start-2 lg:row-start-2">
+          <div class="grid aspect-square w-full max-w-[17rem] place-items-center rounded-full border-4 border-white bg-slate-900 p-8 text-center text-white shadow-xl ring-1 ring-slate-200">
+            <div>
+              <span class="text-4xl" aria-hidden="true">◉</span>
+              <p class="mt-3 text-2xl font-black"><%= @home_ecosystem["center_title"] %></p>
+              <p class="mt-2 text-xs font-semibold leading-5 text-slate-300"><%= @home_ecosystem["center_description"] %></p>
+            </div>
+          </div>
+        </div>
+
+        <% garden = project_by_id["garden"] %>
+        <% if garden %>
+          <% colors = color_classes.fetch(garden.fetch("color")) %>
+          <article class="order-3 <%= colors[:border] %> rounded-3xl border bg-white p-7 shadow-sm lg:order-none lg:col-start-3 lg:row-start-2">
+            <div class="flex items-center justify-between gap-4">
+              <span class="<%= colors[:soft] %> grid size-12 place-items-center rounded-2xl text-2xl"><%= garden["icon"] %></span>
+              <span class="<%= colors[:text] %> text-xs font-black uppercase tracking-[0.15em]"><%= garden["brand"] %></span>
+            </div>
+            <p class="<%= colors[:text] %> mt-6 text-xs font-bold uppercase tracking-[0.14em]"><%= garden["kicker"] %></p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950"><%= garden["title"] %></h3>
+            <p class="mt-3 text-sm leading-6 text-slate-600"><%= garden["description"] %></p>
+            <%= link_to garden["cta"], posturacorretta_builder_route(garden["route"]), class: "#{colors[:button]} mt-6 inline-flex rounded-lg px-4 py-2.5 text-sm font-bold text-white" %>
+          </article>
+        <% end %>
       </div>
 
-      <div class="mt-10 space-y-6">
-        <% @home_slides.drop(1).each_with_index do |slide, index| %>
-          <% href = posturacorretta_builder_route(slide.fetch("route")) %>
-          <article class="grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:grid-cols-[minmax(0,1fr)_19rem] lg:grid-cols-[minmax(0,1fr)_24rem]">
-            <div class="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-              <p class="text-xs font-bold uppercase tracking-[0.16em] <%= %w[text-blue-700 text-emerald-700 text-violet-700][index] %>"><%= slide["kicker"] %></p>
-              <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl"><%= slide.fetch("title") %></h2>
-              <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600"><%= slide.fetch("description") %></p>
-              <%= link_to slide.fetch("cta"), href, class: "mt-6 inline-flex w-fit items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900" %>
-            </div>
-            <div class="flex min-h-56 items-center justify-center bg-white p-5 sm:p-7">
-              <img src="<%= slide.fetch("image") %>" alt="<%= slide.fetch("image_alt") %>" class="max-h-64 w-full object-contain" loading="lazy">
-            </div>
-          </article>
+      <p class="mx-auto mt-10 max-w-3xl text-center text-sm leading-6 text-slate-600">Puoi iniziare dall’educazione, chiedere subito un accompagnamento professionale oppure incontrare la filosofia attraverso un evento. I tre progetti possono sostenersi a vicenda, ma nessuno è un passaggio obbligatorio.</p>
+    </div>
+  </section>
+
+  <section class="border-t border-slate-200 bg-white">
+    <div class="mx-auto grid max-w-screen-xl gap-10 px-5 py-14 sm:px-6 lg:grid-cols-[minmax(0,.75fr)_minmax(0,1.25fr)] lg:px-14 lg:py-20 xl:px-20">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Il progetto educativo</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Il ruolo di PosturaCorretta</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">PosturaCorretta parte dal corpo per costruire educazione alla salute. Offre un primo programma accessibile e un percorso di approfondimento attraverso pratica, gruppi e Accademia.</p>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <%= link_to posturacorretta_primo_mese_path, class: "rounded-2xl border border-blue-200 bg-blue-50 p-6 transition hover:border-blue-400" do %>
+          <p class="text-xs font-black uppercase tracking-[0.14em] text-blue-700">Primo passo</p>
+          <h3 class="mt-3 text-xl font-semibold text-slate-950">PosturaCorretta in un mese</h3>
+          <p class="mt-3 text-sm leading-6 text-slate-600">Conosci il metodo, osserva il corpo e sperimenta una prima pratica.</p>
+        <% end %>
+        <%= link_to posturacorretta_accademia_path, class: "rounded-2xl border border-indigo-200 bg-indigo-50 p-6 transition hover:border-indigo-400" do %>
+          <p class="text-xs font-black uppercase tracking-[0.14em] text-indigo-700">Approfondimento</p>
+          <h3 class="mt-3 text-xl font-semibold text-slate-950">Pratica e Accademia</h3>
+          <p class="mt-3 text-sm leading-6 text-slate-600">Continua nei gruppi o approfondisci fino alla formazione degli insegnanti.</p>
         <% end %>
       </div>
     </div>
   </section>
+
+  <%= render "shared/ecosystem/three_projects_connection", current_project: :posturacorretta %>
 </main>
 
 <%= render "posturacorretta/footer" %>

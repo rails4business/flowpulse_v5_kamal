@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeneraImpresa — Progetto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <div class="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-10">
+    <header class="mb-8">
+      <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-500"><span>GeneraImpresa</span><span class="text-slate-300">/</span><span>Projects</span><span class="text-slate-300">/</span><span id="projectCrumb" class="text-slate-700"></span></div>
+      <div class="mt-2 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 id="projectTitle" class="text-3xl font-semibold tracking-tight md:text-4xl"></h1>
+          <p id="projectSubtitle" class="mt-2 max-w-3xl text-slate-600"></p>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <span id="projectStatus" class="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium"></span>
+          <span id="updatedAt" class="text-slate-400"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- navigazione principale -->
+    <nav class="mb-4 overflow-x-auto border-b border-slate-200" aria-label="Navigazione progetto">
+      <div class="flex min-w-max gap-6" id="mainTabs">
+        <button data-tab="project" class="main-tab border-b-2 px-1 pb-3 text-sm font-medium">Project</button>
+        <button data-tab="genera" class="main-tab border-b-2 px-1 pb-3 text-sm font-medium">GeneraImpresa</button>
+        <button data-tab="rails4b" class="main-tab border-b-2 px-1 pb-3 text-sm font-medium">Rails4B</button>
+        <button data-tab="impegno" class="main-tab border-b-2 px-1 pb-3 text-sm font-medium">1Impegno</button>
+        <button data-tab="dash" class="main-tab border-b-2 px-1 pb-3 text-sm font-medium">DASH</button>
+      </div>
+    </nav>
+
+    <div id="breadcrumb" class="mb-6 text-sm text-slate-400"></div>
+
+    <!-- PROJECT: lettura generale del singolo progetto -->
+    <section id="tab-project" class="tab-panel space-y-6">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Lettura generale</div>
+        <h2 class="mt-2 text-2xl font-semibold tracking-tight">Dal progetto alla realizzazione</h2>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Le quattro aree rispondono a quattro domande diverse. Apri un'area solo quando vuoi entrare nel dettaglio.</p>
+      </div>
+
+      <div class="space-y-3">
+        <button data-tab="genera" class="flow-card rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">1 · GeneraImpresa</div>
+          <div class="mt-2 text-xl font-semibold">COSA?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Cosa vale la pena realizzare? Quanto costa? Quanto può produrre? Chi serve? Qual è il risultato?</p>
+          <div class="mt-5 text-sm font-medium">Apri GeneraImpresa →</div>
+        </button>
+        <button data-tab="rails4b" class="flow-card rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">2 · Rails4B</div>
+          <div class="mt-2 text-xl font-semibold">COME?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Come costruiamo concretamente il prodotto o il software? Quale lavoro serve e cosa dobbiamo testare?</p>
+          <div class="mt-5 text-sm font-medium">Apri Rails4B →</div>
+        </button>
+        <button data-tab="impegno" class="flow-card rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">3 · 1Impegno</div>
+          <div class="mt-2 text-xl font-semibold">CHI E QUANDO?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Chi si prende l'impegno? Cosa deve fare? Entro quando? Quante ore e quali risorse mette?</p>
+          <div class="mt-5 text-sm font-medium">Apri 1Impegno →</div>
+        </button>
+        <button data-tab="dash" class="flow-card rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">4 · DASH</div>
+          <div class="mt-2 text-xl font-semibold">GARANZIA?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Quanto è promesso, verificato e realmente vincolato? Come gestiamo volatilità e pagamenti in DASH?</p>
+          <div class="mt-5 text-sm font-medium">Apri DASH →</div>
+        </button>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5">
+        <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-700">
+          <span>GeneraImpresa</span><span class="text-slate-300">→</span>
+          <span>Rails4B</span><span class="text-slate-300">→</span>
+          <span>1Impegno</span><span class="text-slate-300">→</span>
+          <span>DASH</span><span class="text-slate-300">→</span>
+          <span>Realizzazione · Test · Risultato</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- GENERAIMPRESA -->
+    <section id="tab-genera" class="tab-panel space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="genera">
+        <button data-sub="visione" class="sub-tab rounded-full px-3 py-1.5 text-sm">Idea e risultato</button>
+        <button data-sub="previsioni" class="sub-tab rounded-full px-3 py-1.5 text-sm">Previsioni</button>
+        <button data-sub="piano" class="sub-tab rounded-full px-3 py-1.5 text-sm">Piano</button>
+        <button data-sub="validazione" class="sub-tab rounded-full px-3 py-1.5 text-sm">Tester e vendite</button>
+      </div>
+
+      <div data-subpanel="genera-visione" class="sub-panel grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Idea</div>
+          <h2 class="mt-2 text-xl font-semibold">Cosa vale la pena realizzare?</h2>
+          <p id="ideaText" class="mt-3 leading-7 text-slate-600"></p>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Risultato atteso</div>
+          <h2 class="mt-2 text-xl font-semibold">Quando diciamo “ha funzionato”?</h2>
+          <p id="resultText" class="mt-3 leading-7 text-slate-600"></p>
+        </article>
+      </div>
+
+      <div data-subpanel="genera-previsioni" class="sub-panel hidden space-y-4">
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" id="forecastCards"></div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <div class="text-sm font-medium">Previsione economica</div>
+              <p class="mt-1 text-sm text-slate-500">Minimo, base e massimo per capire se vale la pena procedere.</p>
+            </div>
+          </div>
+          <div id="forecastTable" class="mt-5 overflow-x-auto"></div>
+        </div>
+      </div>
+
+      <div data-subpanel="genera-piano" class="sub-panel hidden space-y-4">
+        <div class="grid gap-4 md:grid-cols-2">
+          <article class="rounded-2xl border border-slate-200 bg-white p-5">
+            <h2 class="text-lg font-semibold">Budget + milestone + tempi + persone</h2>
+            <div id="milestones" class="mt-4 space-y-3"></div>
+          </article>
+          <article class="rounded-2xl border border-slate-200 bg-white p-5">
+            <h2 class="text-lg font-semibold">Stato del progetto</h2>
+            <div id="projectPulse" class="mt-4 space-y-4"></div>
+          </article>
+        </div>
+      </div>
+
+      <div data-subpanel="genera-validazione" class="sub-panel hidden grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Tester e primi acquirenti</h2>
+          <div id="salesList" class="mt-4 space-y-3"></div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Apprendimento</h2>
+          <div id="learningList" class="mt-4 space-y-3"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- RAILS4B -->
+    <section id="tab-rails4b" class="tab-panel hidden space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="rails4b">
+        <button data-sub="costruire" class="sub-tab rounded-full px-3 py-1.5 text-sm">Cosa costruire</button>
+        <button data-sub="lavoro" class="sub-tab rounded-full px-3 py-1.5 text-sm">Lavoro</button>
+        <button data-sub="test" class="sub-tab rounded-full px-3 py-1.5 text-sm">Test</button>
+      </div>
+
+      <div data-subpanel="rails4b-costruire" class="sub-panel grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">MVP</div>
+          <h2 class="mt-2 text-xl font-semibold">Cosa deve esistere?</h2>
+          <div id="buildFeatures" class="mt-4 space-y-3"></div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Avanzamento</div>
+          <h2 class="mt-2 text-xl font-semibold">Quanto è costruito?</h2>
+          <div id="buildProgress" class="mt-4"></div>
+        </article>
+      </div>
+
+      <div data-subpanel="rails4b-lavoro" class="sub-panel hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Lavoro tecnico</h2>
+          <div id="railsWork" class="mt-4 space-y-3"></div>
+        </article>
+      </div>
+
+      <div data-subpanel="rails4b-test" class="sub-panel hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Cosa stiamo testando?</h2>
+          <div id="testList" class="mt-4 space-y-3"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 1IMPEGNO -->
+    <section id="tab-impegno" class="tab-panel hidden space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="impegno">
+        <button data-sub="persone" class="sub-tab rounded-full px-3 py-1.5 text-sm">Persone e ruoli</button>
+        <button data-sub="tempo" class="sub-tab rounded-full px-3 py-1.5 text-sm">Tempo</button>
+        <button data-sub="abilita" class="sub-tab rounded-full px-3 py-1.5 text-sm">Abilità</button>
+      </div>
+
+      <div data-subpanel="impegno-persone" class="sub-panel">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Chi fa cosa?</h2>
+          <div id="peopleList" class="mt-4 space-y-3"></div>
+        </article>
+      </div>
+
+      <div data-subpanel="impegno-tempo" class="sub-panel hidden grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Tempo del progetto</h2>
+          <div id="timeSummary" class="mt-4"></div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Ore per persona</h2>
+          <div id="hoursByPerson" class="mt-4 space-y-3"></div>
+        </article>
+      </div>
+
+      <div data-subpanel="impegno-abilita" class="sub-panel hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Abilità necessarie</h2>
+          <div id="skillsList" class="mt-4 space-y-3"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- DASH -->
+    <section id="tab-dash" class="tab-panel hidden space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="dash">
+        <button data-sub="impegni" class="sub-tab rounded-full px-3 py-1.5 text-sm">Impegni</button>
+        <button data-sub="vincolo" class="sub-tab rounded-full px-3 py-1.5 text-sm">Vincolo</button>
+        <button data-sub="volatilita" class="sub-tab rounded-full px-3 py-1.5 text-sm">Volatilità</button>
+        <button data-sub="pagamenti" class="sub-tab rounded-full px-3 py-1.5 text-sm">Pagamenti</button>
+      </div>
+
+      <div data-subpanel="dash-impegni" class="sub-panel space-y-4">
+        <div class="grid gap-3 sm:grid-cols-3" id="dashSummary"></div>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Chi impegna DASH</h2>
+          <div id="dashCommitments" class="mt-4 space-y-3"></div>
+        </article>
+      </div>
+
+      <div data-subpanel="dash-vincolo" class="sub-panel hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Vincolo crittografico</div>
+          <h2 class="mt-2 text-xl font-semibold">Promesso ≠ garantito</h2>
+          <div class="mt-5 grid gap-3 md:grid-cols-3">
+            <div class="rounded-xl bg-slate-50 p-4"><div class="font-semibold">Promesso</div><p class="mt-1 text-sm text-slate-500">La persona dichiara l'impegno. Può ancora spendere i DASH.</p></div>
+            <div class="rounded-xl bg-slate-50 p-4"><div class="font-semibold">Verificato</div><p class="mt-1 text-sm text-slate-500">I DASH esistono on-chain, ma sono ancora disponibili.</p></div>
+            <div class="rounded-xl bg-slate-900 p-4 text-white"><div class="font-semibold">Vincolato 🔒</div><p class="mt-1 text-sm text-slate-300">Solo questo importo conta come garanzia reale del progetto.</p></div>
+          </div>
+        </article>
+      </div>
+
+      <div data-subpanel="dash-volatilita" class="sub-panel hidden space-y-4">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">DASH in euro</div>
+          <h2 class="mt-2 text-lg font-semibold">Valori da tenere sotto controllo</h2>
+          <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500">Ogni valore indica quanti euro vale 1 DASH. Confrontiamo massimo e minimo annuo, valore assegnato dalla persona, mercato attuale e soglia minima accettabile per il progetto.</p>
+          <div id="dashVolatility" class="mt-5 space-y-2"></div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Soglia di sicurezza del progetto</h2>
+          <p id="dashRiskRule" class="mt-3 leading-7 text-slate-600"></p>
+        </article>
+      </div>
+
+      <div data-subpanel="dash-pagamenti" class="sub-panel hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Vendita del prodotto in DASH</h2>
+          <div id="dashPayments" class="mt-4"></div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+<script>
+const DATA = {
+  project: {
+    title: "Servizio digitale di Igiene Posturale",
+    subtitle: "Validare la domanda, costruire un MVP semplice, assegnare persone e risorse e capire se il progetto merita di crescere.",
+    status: "In validazione",
+    updated_at: "22 agosto 2026",
+    idea: "Un servizio digitale semplice che accompagni una persona per un mese e permetta di testare interesse, utilità e disponibilità a pagare.",
+    result: "MVP funzionante, almeno 20 tester, 5 clienti paganti e dati sufficienti per decidere se continuare, modificare o fermare il progetto.",
+    attention: 72,
+    energy: 68,
+    hours_planned: 160,
+    hours_worked: 61,
+    economics: {
+      build_cost_eur: 6500,
+      operating_cost_eur: 1800,
+      revenue_min_eur: 6000,
+      revenue_base_eur: 12000,
+      revenue_max_eur: 22000
+    },
+    dash: {
+      price_year_max_eur: 41,
+      price_person_value_eur: 32,
+      price_market_eur: 26,
+      price_year_min_eur: 18,
+      price_project_safety_eur: 21,
+      service_price_dash: 4.5,
+      service_price_eur_reference: 120
+    }
+  },
+  milestones: [
+    { name: "Definire specifiche", progress: 100, due: "Settimana 1" },
+    { name: "Costruire MVP", progress: 45, due: "Settimana 3" },
+    { name: "20 tester", progress: 55, due: "Settimana 4" },
+    { name: "5 clienti paganti", progress: 60, due: "Settimana 5" }
+  ],
+  sales: [
+    { label: "Tester interessati", value: 20, current: 11 },
+    { label: "Preordini", value: 5, current: 3 },
+    { label: "Clienti paganti", value: 5, current: 2 }
+  ],
+  learning: [
+    "Le persone capiscono meglio il progetto quando vedono un risultato concreto.",
+    "Il prezzo va testato prima di completare tutte le funzioni.",
+    "Serve una UI molto più semplice della dashboard iniziale."
+  ],
+  build_features: [
+    { name: "Pagina progetto", done: true },
+    { name: "Livelli e avanzamento", done: true },
+    { name: "Ore e persone", done: false },
+    { name: "Impegni DASH", done: false },
+    { name: "Vendite e test", done: false }
+  ],
+  rails_work: [
+    { task: "Struttura progetto", owner: "Marco", status: "Fatto" },
+    { task: "UI Tailwind", owner: "Rails4B", status: "In corso" },
+    { task: "Persistenza dati", owner: "Rails4B", status: "Da fare" },
+    { task: "Collegamento DASH", owner: "Rails4B", status: "Da validare" }
+  ],
+  tests: [
+    "Capire se un utente comprende il progetto in meno di 30 secondi.",
+    "Capire se una persona è disposta a impegnare tempo o DASH.",
+    "Capire se il risultato offerto viene acquistato davvero."
+  ],
+  people: [
+    { name: "Marco", role: "Responsabile progetto", commitment: "Specifiche, test, coordinamento", due: "Continuo", planned: 60, worked: 29 },
+    { name: "Luca", role: "Rails4B", commitment: "Costruzione MVP", due: "Settimana 3", planned: 70, worked: 24 },
+    { name: "Sara", role: "Segreteria / tester", commitment: "Tester e feedback", due: "Settimana 4", planned: 30, worked: 8 }
+  ],
+  skills: [
+    { skill: "Ruby on Rails", status: "Coperta" },
+    { skill: "UX semplice", status: "Parziale" },
+    { skill: "Vendita / validazione", status: "Parziale" },
+    { skill: "Contabilità progetto", status: "Da coprire" },
+    { skill: "DASH multisig", status: "Da validare" }
+  ],
+  dash_commitments: [
+    { person: "Marco", promised: 10, verified: 10, locked: 5 },
+    { person: "Luca", promised: 8, verified: 8, locked: 4 },
+    { person: "Sara", promised: 6, verified: 4, locked: 0 }
+  ]
+};
+
+let activeTab = "project";
+const activeSub = { genera: "visione", rails4b: "costruire", impegno: "persone", dash: "impegni" };
+const euro = n => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+
+function progressBar(value) {
+  return `<div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-slate-900" style="width:${Math.min(value,100)}%"></div></div>`;
+}
+
+function card(label, value, note="") {
+  return `<div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">${label}</div><div class="mt-2 text-2xl font-semibold">${value}</div>${note ? `<div class="mt-1 text-sm text-slate-500">${note}</div>` : ''}</div>`;
+}
+
+function render() {
+  const p = DATA.project;
+  projectTitle.textContent = p.title;
+  projectCrumb.textContent = p.title;
+  projectSubtitle.textContent = p.subtitle;
+  projectStatus.textContent = p.status;
+  updatedAt.textContent = p.updated_at;
+  ideaText.textContent = p.idea;
+  resultText.textContent = p.result;
+
+  forecastCards.innerHTML = [
+    card('Costi realizzazione', euro(p.economics.build_cost_eur)),
+    card('Costi operativi', euro(p.economics.operating_cost_eur)),
+    card('Ricavi base', euro(p.economics.revenue_base_eur)),
+    card('Margine base', euro(p.economics.revenue_base_eur - p.economics.build_cost_eur - p.economics.operating_cost_eur))
+  ].join('');
+
+  forecastTable.innerHTML = `<table class="w-full min-w-[520px] text-sm"><thead><tr class="border-b border-slate-200 text-left text-slate-400"><th class="py-2 font-medium">Scenario</th><th class="py-2 font-medium">Ricavi</th><th class="py-2 font-medium">Costi</th><th class="py-2 font-medium">Risultato</th></tr></thead><tbody>${[
+    ['Minimo', p.economics.revenue_min_eur], ['Base', p.economics.revenue_base_eur], ['Massimo', p.economics.revenue_max_eur]
+  ].map(([name, rev]) => `<tr class="border-b border-slate-100"><td class="py-3 font-medium">${name}</td><td class="py-3">${euro(rev)}</td><td class="py-3">${euro(p.economics.build_cost_eur + p.economics.operating_cost_eur)}</td><td class="py-3">${euro(rev - p.economics.build_cost_eur - p.economics.operating_cost_eur)}</td></tr>`).join('')}</tbody></table>`;
+
+  milestones.innerHTML = DATA.milestones.map(m => `<div><div class="mb-2 flex items-center justify-between gap-3 text-sm"><span class="font-medium">${m.name}</span><span class="text-slate-400">${m.progress}% · ${m.due}</span></div>${progressBar(m.progress)}</div>`).join('');
+
+  projectPulse.innerHTML = `
+    <div><div class="mb-2 flex justify-between text-sm"><span>Attenzione</span><span>${p.attention}%</span></div>${progressBar(p.attention)}</div>
+    <div><div class="mb-2 flex justify-between text-sm"><span>Energia</span><span>${p.energy}%</span></div>${progressBar(p.energy)}</div>
+    <div><div class="mb-2 flex justify-between text-sm"><span>Tempo lavorato</span><span>${p.hours_worked}/${p.hours_planned} h</span></div>${progressBar(p.hours_worked / p.hours_planned * 100)}</div>`;
+
+  salesList.innerHTML = DATA.sales.map(s => `<div><div class="mb-2 flex justify-between text-sm"><span class="font-medium">${s.label}</span><span class="text-slate-400">${s.current}/${s.value}</span></div>${progressBar(s.current/s.value*100)}</div>`).join('');
+  learningList.innerHTML = DATA.learning.map(x => `<div class="rounded-xl bg-slate-50 p-3 text-sm leading-6 text-slate-600">${x}</div>`).join('');
+
+  buildFeatures.innerHTML = DATA.build_features.map(x => `<div class="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-sm"><span>${x.name}</span><span class="font-medium ${x.done ? 'text-slate-900' : 'text-slate-400'}">${x.done ? 'Fatto' : 'Da fare'}</span></div>`).join('');
+  const done = DATA.build_features.filter(x => x.done).length;
+  const buildPct = Math.round(done / DATA.build_features.length * 100);
+  buildProgress.innerHTML = `<div class="text-4xl font-semibold">${buildPct}%</div><div class="mt-4">${progressBar(buildPct)}</div><p class="mt-3 text-sm text-slate-500">${done} di ${DATA.build_features.length} elementi essenziali completati.</p>`;
+  railsWork.innerHTML = DATA.rails_work.map(x => `<div class="grid gap-1 rounded-xl bg-slate-50 p-3 text-sm sm:grid-cols-[1fr_auto_auto] sm:items-center"><span class="font-medium">${x.task}</span><span class="text-slate-500">${x.owner}</span><span class="text-slate-400">${x.status}</span></div>`).join('');
+  testList.innerHTML = DATA.tests.map(x => `<div class="rounded-xl bg-slate-50 p-3 text-sm leading-6 text-slate-600">${x}</div>`).join('');
+
+  peopleList.innerHTML = DATA.people.map(x => `<div class="grid gap-2 rounded-xl bg-slate-50 p-4 text-sm md:grid-cols-[1.2fr_1fr_2fr_auto]"><div><div class="font-semibold">${x.name}</div><div class="text-slate-500">${x.role}</div></div><div><div class="text-slate-400">Entro</div><div>${x.due}</div></div><div><div class="text-slate-400">Impegno</div><div>${x.commitment}</div></div><div class="font-medium">${x.worked}/${x.planned} h</div></div>`).join('');
+
+  timeSummary.innerHTML = `<div class="text-4xl font-semibold">${p.hours_worked} h</div><div class="mt-1 text-sm text-slate-500">su ${p.hours_planned} h previste</div><div class="mt-4">${progressBar(p.hours_worked/p.hours_planned*100)}</div>`;
+  hoursByPerson.innerHTML = DATA.people.map(x => `<div><div class="mb-2 flex justify-between text-sm"><span>${x.name}</span><span class="text-slate-400">${x.worked}/${x.planned} h</span></div>${progressBar(x.worked/x.planned*100)}</div>`).join('');
+  skillsList.innerHTML = DATA.skills.map(x => `<div class="flex items-center justify-between rounded-xl bg-slate-50 p-3 text-sm"><span class="font-medium">${x.skill}</span><span class="text-slate-500">${x.status}</span></div>`).join('');
+
+  const promised = DATA.dash_commitments.reduce((a,x)=>a+x.promised,0);
+  const verified = DATA.dash_commitments.reduce((a,x)=>a+x.verified,0);
+  const locked = DATA.dash_commitments.reduce((a,x)=>a+x.locked,0);
+  dashSummary.innerHTML = card('Promessi', `${promised} DASH`) + card('Verificati', `${verified} DASH`) + card('Vincolati 🔒', `${locked} DASH`, 'garanzia reale');
+  dashCommitments.innerHTML = DATA.dash_commitments.map(x => `<div class="grid gap-2 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-[1fr_repeat(3,auto)] sm:items-center"><span class="font-semibold">${x.person}</span><span>${x.promised} promessi</span><span>${x.verified} verificati</span><span class="font-medium">${x.locked} vincolati</span></div>`).join('');
+
+  dashVolatility.innerHTML = [
+    ['Massimo annuo — valore di 1 DASH in €', p.dash.price_year_max_eur, 'EUR/DASH'],
+    ['Valore assegnato dalla persona — 1 DASH in €', p.dash.price_person_value_eur, 'EUR/DASH'],
+    ['Mercato attuale — valore di 1 DASH in €', p.dash.price_market_eur, 'EUR/DASH'],
+    ['Minimo annuo — valore di 1 DASH in €', p.dash.price_year_min_eur, 'EUR/DASH'],
+    ['Minimo di sicurezza progetto — 1 DASH in €', p.dash.price_project_safety_eur, 'EUR/DASH']
+  ].map(([l,v,n]) => `<div class="grid gap-1 rounded-xl bg-slate-50 p-3 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-4"><span class="text-sm">${l}</span><span class="text-xs uppercase tracking-wide text-slate-400">${n}</span><span class="font-semibold">${euro(v)}</span></div>`).join('');
+  const safety = p.dash.price_project_safety_eur;
+  const market = p.dash.price_market_eur;
+  dashRiskRule.innerHTML = market >= safety
+    ? `Mercato attuale <strong>${euro(market)}</strong> / DASH: sopra la soglia minima di sicurezza di <strong>${euro(safety)}</strong>. Il progetto resta nel margine previsto.`
+    : `Mercato attuale <strong>${euro(market)}</strong> / DASH: sotto la soglia minima di sicurezza di <strong>${euro(safety)}</strong>. Va ridotto il rischio, aumentata la riserva o ricalcolato il budget.`;
+  dashPayments.innerHTML = `<div class="grid gap-3 sm:grid-cols-2"><div class="rounded-xl bg-slate-50 p-4"><div class="text-sm text-slate-500">Prezzo servizio in DASH</div><div class="mt-1 text-2xl font-semibold">${p.dash.service_price_dash} DASH</div></div><div class="rounded-xl bg-slate-50 p-4"><div class="text-sm text-slate-500">Riferimento in euro</div><div class="mt-1 text-2xl font-semibold">${euro(p.dash.service_price_eur_reference)}</div></div></div>`;
+}
+
+function selectTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-panel').forEach(x => x.classList.add('hidden'));
+  document.getElementById(`tab-${tab}`).classList.remove('hidden');
+  document.querySelectorAll('.main-tab').forEach(btn => {
+    const on = btn.dataset.tab === tab;
+    btn.classList.toggle('border-slate-900', on);
+    btn.classList.toggle('text-slate-900', on);
+    btn.classList.toggle('border-transparent', !on);
+    btn.classList.toggle('text-slate-400', !on);
+  });
+
+  if (tab === 'project') {
+    breadcrumb.textContent = 'Project / Lettura generale';
+    return;
+  }
+
+  selectSub(tab, activeSub[tab]);
+}
+
+function selectSub(tab, sub) {
+  activeSub[tab] = sub;
+  document.querySelectorAll(`[data-subpanel^="${tab}-"]`).forEach(x => x.classList.add('hidden'));
+  const panel = document.querySelector(`[data-subpanel="${tab}-${sub}"]`);
+  if (panel) panel.classList.remove('hidden');
+  document.querySelectorAll(`[data-subtabs="${tab}"] .sub-tab`).forEach(btn => {
+    const on = btn.dataset.sub === sub;
+    btn.classList.toggle('bg-slate-900', on);
+    btn.classList.toggle('text-white', on);
+    btn.classList.toggle('bg-white', !on);
+    btn.classList.toggle('text-slate-500', !on);
+    btn.classList.toggle('border', !on);
+    btn.classList.toggle('border-slate-200', !on);
+  });
+  const tabNames = { genera: 'GeneraImpresa — COSA?', rails4b: 'Rails4B — COME?', impegno: '1Impegno — CHI E QUANDO?', dash: 'DASH — GARANZIA' };
+  const labels = {
+    'genera-visione':'Idea e risultato','genera-previsioni':'Previsioni','genera-piano':'Piano','genera-validazione':'Tester e vendite',
+    'rails4b-costruire':'Cosa costruire','rails4b-lavoro':'Lavoro','rails4b-test':'Test',
+    'impegno-persone':'Persone e ruoli','impegno-tempo':'Tempo','impegno-abilita':'Abilità',
+    'dash-impegni':'Impegni','dash-vincolo':'Vincolo','dash-volatilita':'Volatilità','dash-pagamenti':'Pagamenti'
+  };
+  breadcrumb.textContent = `${tabNames[tab]}  /  ${labels[`${tab}-${sub}`]}`;
+}
+
+document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => selectTab(btn.dataset.tab)));
+document.querySelectorAll('.sub-tab').forEach(btn => btn.addEventListener('click', () => {
+  const tab = btn.closest('[data-subtabs]').dataset.subtabs;
+  selectSub(tab, btn.dataset.sub);
+}));
+
+render();
+selectTab('project');
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+version: 1
+title: "Percorso educativo PosturaCorretta"
+description: "Indice unico delle lezioni: dal primo mese ai moduli avanzati dell’Accademia."
+
+summary:
+  stages: 2
+  modules: 8
+  lessons: 47
+
+participation_modes:
+  - slug: autonomy
+    title: "Autonomia"
+  - slug: base_group
+    title: "Gruppi Postura Base"
+  - slug: individual
+    title: "Lezioni individuali"
+  - slug: advanced_group
+    title: "Gruppi Postura Avanzata e formazione insegnanti"
+
+stages:
+  - number: "01"
+    slug: primo-mese
+    title: "Primo mese con PosturaCorretta"
+    level: base
+    description: "Introduzione al metodo, prima osservazione del corpo e prima applicazione pratica."
+    source_index: "guide/indice.yml#primo_mese"
+    available_modes: [autonomy, base_group, individual]
+    lessons:
+      - number: "01"
+        slug: 00-incontro-salute-metodiche
+        title: "L'incontro con la salute e con le metodiche posturali"
+        content_path: "guide/01_primo_mese/00_incontro_salute_metodiche.md"
+      - number: "02"
+        slug: 02-benefici
+        title: "I benefici di una postura corretta"
+        content_path: "guide/01_primo_mese/02_benefici.md"
+      - number: "03"
+        slug: 04-disallineamento
+        title: "Sei disallineato? La postura come strumento per leggere il corpo"
+        content_path: "guide/01_primo_mese/04_disallineamento.md"
+      - number: "04"
+        slug: 05-metodiche
+        title: "Mettere in pratica gli insegnamenti delle metodiche posturali"
+        content_path: "guide/01_primo_mese/05_metodiche.md"
+      - number: "05"
+        slug: 01-errori
+        title: "I 3 errori che tutti fanno quando iniziano un percorso posturale"
+        content_path: "guide/01_primo_mese/01_errori.md"
+      - number: "06"
+        slug: 00-postura-punto-incontro
+        title: "La postura come punto d'incontro"
+        content_path: "guide/01_primo_mese/00_postura_punto_incontro.md"
+      - number: "07"
+        slug: 00-percorso-o-interventi-separati
+        title: "Stai seguendo un percorso o stai sommando interventi?"
+        content_path: "guide/01_primo_mese/00_percorso_o_interventi_separati.md"
+      - number: "08"
+        slug: rosso-verde-blu
+        title: "Rosso, verde, blu"
+        content_path: "accademia/introduzione/rosso-verde-blu.md"
+      - number: "09"
+        slug: 00-trovare-il-giusto-punto-di-vista
+        title: "Trovare il giusto punto di vista"
+        content_path: "guide/01_primo_mese/00_trovare_il_giusto_punto_di_vista.md"
+      - number: "10"
+        slug: 06-visione
+        title: "Un nuovo punto di vista sulla salute: il corpo e l'educazione"
+        content_path: "guide/01_primo_mese/06_un_nuovo_punto_di_vista_salute_corpo_educazione.md"
+      - number: "11"
+        slug: 00-da-dove-iniziare
+        title: "Scegli il prossimo passo: tre possibilità"
+        content_path: "guide/01_primo_mese/00_da_dove_iniziare.md"
+
+  - number: "02"
+    slug: accademia
+    title: "Accademia PosturaCorretta"
+    level: advanced
+    description: "Approfondimento del percorso educativo, aperto anche a chi vuole formarsi come insegnante."
+    source_index: "accademia/academy.yml"
+    available_modes: [autonomy, individual, advanced_group]
+    modules:
+      - number: "00"
+        slug: introduzione
+        title: "Intro: basi e fondamenti"
+        lessons:
+          - { number: "01", slug: informati-pratica-insegna, title: "Informati, pratica, insegna", content_path: "accademia/introduzione/informati-pratica-insegna.md" }
+          - { number: "02", slug: massaggio-presenza-e-autotrattamento, title: "Massaggio, presenza e autotrattamento", content_path: "accademia/introduzione/massaggio-presenza-e-autotrattamento.md" }
+
+      - number: "01"
+        slug: igiene-posturale
+        title: "Igiene Posturale"
+        lessons:
+          - { number: "01", slug: mobilita-articolare, title: "Mobilità articolare", content_path: "accademia/igiene-posturale/mobilita-articolare.md" }
+          - { number: "02", slug: punti-di-tensione, title: "Punti di tensione", content_path: "accademia/igiene-posturale/punti-di-tensione.md" }
+          - { number: "03", slug: vie-di-discesa, title: "Vie di discesa", content_path: "accademia/igiene-posturale/vie-di-discesa.md" }
+          - { number: "04", slug: recettori-sensoriali, title: "Recettori sensoriali", content_path: "accademia/igiene-posturale/recettori-sensoriali.md" }
+
+      - number: "02"
+        slug: principi-di-fisioterapia
+        title: "Principi di Fisioterapia"
+        lessons:
+          - { number: "01", slug: sistema-respiratorio, title: "Sistema respiratorio", content_path: "accademia/principi-di-fisioterapia/sistema-respiratorio.md" }
+          - { number: "02", slug: sistema-nervoso-e-urogenitale, title: "Sistema nervoso e urogenitale", content_path: "accademia/principi-di-fisioterapia/sistema-nervoso-e-urogenitale.md" }
+          - { number: "03", slug: sistema-muscolo-scheletrico, title: "Sistema muscolo-scheletrico", content_path: "accademia/principi-di-fisioterapia/sistema-muscolo-scheletrico.md" }
+          - { number: "04", slug: sistema-cardiocircolatorio, title: "Sistema cardiocircolatorio", content_path: "accademia/principi-di-fisioterapia/sistema-cardiocircolatorio.md" }
+          - { number: "05", slug: sistema-linfatico-e-digerente, title: "Sistema linfatico e digerente", content_path: "accademia/principi-di-fisioterapia/sistema-linfatico-e-digerente.md" }
+          - { number: "06", slug: approfondisci-principi-fisioterapia, title: "Scopri di più sulla metodica", link: "/posturacorretta/metodiche" }
+
+      - number: "03"
+        slug: biomeccanica-comportamentale-gds
+        title: "Introduzione alla biomeccanica comportamentale (GDS)"
+        lessons:
+          - { number: "01", slug: le-5-direzioni-di-movimento, title: "Le 5 direzioni di movimento", content_path: "accademia/biomeccanica-comportamentale-gds/le-5-direzioni-di-movimento.md" }
+          - { number: "02", slug: catena-am, title: "Catena AM", content_path: "accademia/biomeccanica-comportamentale-gds/catena-am.md" }
+          - { number: "03", slug: catena-al, title: "Catena AL", content_path: "accademia/biomeccanica-comportamentale-gds/catena-al.md" }
+          - { number: "04", slug: catena-pm, title: "Catena PM", content_path: "accademia/biomeccanica-comportamentale-gds/catena-pm.md" }
+          - { number: "05", slug: catena-pl, title: "Catena PL", content_path: "accademia/biomeccanica-comportamentale-gds/catena-pl.md" }
+          - { number: "06", slug: catene-pa-ap, title: "Catene PA/AP", content_path: "accademia/biomeccanica-comportamentale-gds/catene-pa-ap.md" }
+          - { number: "07", slug: approfondisci-gds, title: "Scopri di più sulla metodica", methodology: gds }
+
+      - number: "04"
+        slug: principi-di-osteopatia
+        title: "Principi di Osteopatia"
+        lessons:
+          - { number: "01", slug: eliminare-le-disfunzioni, title: "Eliminare le disfunzioni", content_path: "accademia/principi-di-osteopatia/eliminare-le-disfunzioni.md" }
+          - { number: "02", slug: il-sistema-fasciale, title: "Il sistema fasciale", content_path: "accademia/principi-di-osteopatia/il-sistema-fasciale.md" }
+          - { number: "03", slug: il-sistema-viscerale, title: "Il sistema viscerale", content_path: "accademia/principi-di-osteopatia/il-sistema-viscerale.md" }
+          - { number: "04", slug: il-sistema-cranio-sacrale, title: "Il sistema cranio-sacrale", content_path: "accademia/principi-di-osteopatia/il-sistema-cranio-sacrale.md" }
+          - { number: "05", slug: il-sistema-neurovegetativo, title: "Il sistema neurovegetativo", content_path: "accademia/principi-di-osteopatia/il-sistema-neurovegetativo.md" }
+          - { number: "06", slug: approfondisci-osteopatia, title: "Scopri di più sulla metodica", methodology: osteopatia }
+
+      - number: "05"
+        slug: introduzione-al-metodo-corpo-e-coscienza
+        title: "Introduzione al metodo Corpo e Coscienza"
+        lessons:
+          - { number: "01", slug: le-2-circolazioni, title: "Le 2 circolazioni", content_path: "accademia/bioritmi-corpo-e-coscienza/le-2-circolazioni.md" }
+          - { number: "02", slug: i-3-centri-di-gravita, title: "I 3 centri di gravità", content_path: "accademia/bioritmi-corpo-e-coscienza/i-3-centri-di-gravita.md" }
+          - { number: "03", slug: i-4-tipi-di-movimento, title: "I 4 tipi di movimento", content_path: "accademia/bioritmi-corpo-e-coscienza/i-4-tipi-di-movimento.md" }
+          - { number: "04", slug: i-5-elementi, title: "I 5 elementi", content_path: "accademia/bioritmi-corpo-e-coscienza/i-5-elementi.md" }
+          - { number: "05", slug: le-6-coppie-di-meridiani, title: "Le 6 coppie di meridiani", content_path: "accademia/bioritmi-corpo-e-coscienza/le-6-coppie-di-meridiani.md" }
+          - { number: "06", slug: i-7-centri-neurolinfatici, title: "I 7 centri neurolinfatici", content_path: "accademia/bioritmi-corpo-e-coscienza/i-7-centri-neurolinfatici.md" }
+          - { number: "07", slug: approfondisci-corpo-coscienza, title: "Scopri di più sulla metodica", methodology: bioritmi-corpo-coscienza }
+
+      - number: "06"
+        slug: altre-metodiche-posturali
+        title: "Altre metodiche posturali"
+        lessons:
+          - { number: "01", slug: sequenza-di-kinesiologia-applicata, title: "Sequenza di Kinesiologia Applicata", content_path: "accademia/kinesiologia-applicata/sequenza-di-kinesiologia-applicata.md" }
+          - { number: "02", slug: feldenkrais, title: "Feldenkrais", content_path: "accademia/altre-metodiche-posturali/feldenkrais.md" }
+          - { number: "03", slug: alexander-e-consapevolezza, title: "Alexander e consapevolezza", content_path: "accademia/altre-metodiche-posturali/alexander-e-consapevolezza.md" }
+          - { number: "04", slug: sintesi-del-percorso, title: "Sintesi del percorso", content_path: "accademia/altre-metodiche-posturali/sintesi-del-percorso.md" }

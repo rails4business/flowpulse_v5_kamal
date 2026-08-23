@@ -4,11 +4,11 @@ PosturaCorretta propone un nuovo punto di vista da cui osservare la salute: part
 
 Il progetto analizza, confronta e fa conoscere i principali metodi posturali, rileggendone principi e modelli attraverso le conoscenze della fisiologia, della biomeccanica e delle neuroscienze. L'obiettivo è distinguere progressivamente ciò che è sostenuto dalle evidenze, ciò che nasce dall'esperienza professionale e ciò che rimane un'ipotesi interpretativa.
 
-## Tre modi per entrare in PosturaCorretta
+## Tre progetti intorno alla persona
 
-Le persone possono incontrare PosturaCorretta attraverso tre porte. Non sono tappe obbligatorie né alternative che si escludono: rispondono a bisogni differenti e possono sostenersi a vicenda.
+Al centro non c’è un marchio, ma la persona nel rapporto tra corpo, fisiologia, ambiente interno e ambiente esterno. PosturaCorretta, Percorso Integrato e Il Giardino del Corpo sono tre progetti distinti e complementari. Non sono tappe obbligatorie né alternative che si escludono: rispondono a bisogni differenti e possono sostenersi a vicenda.
 
-### 1. Educazione — conosco e imparo
+### 1. PosturaCorretta — conosco e imparo
 
 Alla base del progetto c'è l'educazione della persona: imparare a conoscere il proprio corpo, comprenderne i principali sistemi fisiologici e acquisire strumenti per prendersene cura.
 
@@ -17,22 +17,22 @@ Alla base del progetto c'è l'educazione della persona: imparare a conoscere il 
 - [Inizia PosturaCorretta in un mese →](/posturacorretta/guida?sezione=primo_mese)
 - [Scopri l'Accademia PosturaCorretta →](/posturacorretta/accademia)
 
-### 2. Orientamento e integrazione — scelgo e mi faccio accompagnare
+### 2. Percorso Integrato — scelgo e mi faccio accompagnare
 
-Quando emerge un bisogno concreto, dall'educazione si passa all'orientamento e all'integrazione professionale. PosturaCorretta aiuta la persona a comprendere da dove iniziare e a individuare metodiche, professionisti e centri coerenti con le proprie esigenze.
+Quando emerge un bisogno concreto, la persona può chiedere orientamento e integrazione professionale. Un tutor aiuta a comprendere da dove iniziare e a individuare programmi, metodiche, professionisti e centri coerenti con le sue esigenze.
 
 Le **Linee guida del Percorso Integrato** offrono una struttura con cui organizzare bisogni, obiettivi, responsabilità e interventi differenti. Ogni professionista mantiene la propria autonomia e le proprie competenze, rendendo più leggibile il contributo che porta al percorso complessivo.
 
 - [Scopri come funziona il Percorso Integrato →](/posturacorretta/guida?sezione=percorso)
 - [Conosci professionisti e strutture sul territorio →](/posturacorretta/percorsi-sul-territorio)
 
-### 3. Incontro e approfondimento — conosco persone e metodiche
+### 3. Il Giardino del Corpo — vivo la filosofia attraverso gli eventi
 
-Eventi, contenuti e incontri permettono di conoscere persone, professionisti, scuole e metodiche attraverso esperienze dirette e approfondimenti. Questa è anche la dimensione che crea comunità e offre alle diverse competenze occasioni per incontrarsi e confrontarsi.
+Eventi e incontri permettono di vivere la filosofia attraverso esperienze dedicate al corpo, alla natura, alla cultura, all’espressione e al territorio. Questa è anche la dimensione che crea comunità e offre a persone e competenze differenti occasioni per incontrarsi.
 
 Gli eventi uniscono educazione al corpo e alla salute con attività dedicate alla formazione, al territorio e alla natura. I contenuti rendono accessibili domande, esperienze e punti di vista; le pagine dedicate alle metodiche aiutano a comprenderne principi, scuole e ambiti di applicazione.
 
-- [Partecipa agli eventi →](/posturacorretta/eventi)
+- [Scopri Il Giardino del Corpo →](/giardino-del-corpo)
 - [Esplora i contenuti →](/posturacorretta/contenuti)
 - [Conosci le metodiche →](/posturacorretta/metodiche)
 

@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   constraints ->(request) { request.host == "posturacorretta.org" } do
     get "/", to: "brands/posturacorretta#home", as: :posturacorretta_domain_root
   end
+  constraints ->(request) { %w[ilgiardinodelcorpo.it www.ilgiardinodelcorpo.it].include?(request.host) } do
+    get "/", to: "landing#giardino_del_corpo", as: :giardino_del_corpo_domain_root
+  end
   root "domains#show"
   resources :nodes, only: [:show]
   get "eventi" => "public_events#index", as: :eventi
@@ -23,6 +26,7 @@ Rails.application.routes.draw do
   get "flowpulse/contenuti/:slug" => "landing#flowpulse_content", as: :flowpulse_content
   get "rails4b" => "landing#rails4b", as: :rails4b
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
+  get "giardino-del-corpo" => "landing#giardino_del_corpo", as: :giardino_del_corpo
   get "markpostura" => "landing#markpostura", as: :markpostura
   get "markpostura/eventi" => "landing#markpostura_events", as: :markpostura_events
   get "markpostura/contenuti" => "landing#markpostura_contents", as: :markpostura_contents
@@ -30,6 +34,10 @@ Rails.application.routes.draw do
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
   get "posturacorretta" => "brands/posturacorretta#home", as: :posturacorretta
+  get "posturacorretta/seme" => "posturacorretta_seme#show", as: :posturacorretta_seme
+  get "posturacorretta/seme/percorso" => "posturacorretta_seme#percorso", as: :posturacorretta_seme_percorso
+  get "posturacorretta/seme/dashboard/studente" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_seme_student_dashboard
+  get "posturacorretta/seme/dashboard/insegnante" => "posturacorretta_seme#dashboard_teacher", as: :posturacorretta_seme_teacher_dashboard
   get "posturacorretta/primo-mese" => "brands/posturacorretta#primo_mese", as: :posturacorretta_primo_mese
   get "posturacorretta/guida" => "brands/posturacorretta#guide", as: :posturacorretta_guida
   get "posturacorretta/accademia" => "brands/posturacorretta#accademia", as: :posturacorretta_accademia
@@ -122,6 +130,7 @@ Rails.application.routes.draw do
     get "dashboard" => "home#dashboard", as: :dashboard
     post "set_override" => "home#set_override", as: :set_override
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
+    get "percorso_insegnanti" => "home#percorso_insegnanti", as: :percorso_insegnanti
     get "appunti" => "notes#index", as: :notes
     get "appunti/:source/*path" => "notes#show", as: :note
     get "contenuti" => "content_taxonomy#show", as: :content_taxonomy

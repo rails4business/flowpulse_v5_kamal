@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PosturaCorretta · Frontend MVP</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+</script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      boxShadow: {soft:'0 18px 50px rgba(15,23,42,.08)'}
+    }
+  }
+}
+</script>
+</head>
+<body class="bg-[#F6F7F4] text-slate-800 antialiased">
+<div class="min-h-screen">
+
+<header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-[1600px] items-center gap-5 px-4 lg:px-6">
+    <div class="flex items-center gap-3">
+      <div class="grid h-9 w-9 place-items-center rounded-xl bg-slate-900 text-sm font-bold text-white">PC</div>
+      <div>
+        <div class="text-sm font-semibold leading-none">PosturaCorretta</div>
+        <div class="mt-1 text-[11px] text-slate-500">Percorso educativo</div>
+      </div>
+    </div>
+
+    <nav class="ml-4 hidden gap-1 md:flex">
+      <button data-view="percorso" class="nav-tab rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-900">Percorso</button>
+      <button data-view="appuntamenti" class="nav-tab rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">Appuntamenti</button>
+      <button data-view="abilitazioni" class="nav-tab rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">Abilitazioni</button>
+      <button data-view="admin" class="nav-tab rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100">Admin</button>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2">
+      <span class="hidden text-xs text-slate-400 lg:block">Visualizza come</span>
+      <select id="roleSwitcher" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
+        <option value="student_base">Studente Base</option>
+        <option value="student_advanced">Studente Avanzato</option>
+        <option value="teacher_base">Insegnante Base</option>
+        <option value="teacher_advanced">Insegnante Avanzato</option>
+        <option value="master_teacher">Maestro Insegnante</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<!-- PERCORSO -->
+<section id="view-percorso" class="app-view">
+  <div class="mx-auto grid max-w-[1600px] grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)]">
+
+    <aside class="border-r border-slate-200 bg-white lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
+      <div class="p-5">
+        <div class="mb-5">
+          <div class="text-xs font-semibold uppercase tracking-[.14em] text-indigo-600">I tuoi corsi</div>
+          <button class="mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-left">
+            <div class="text-sm font-semibold">PosturaCorretta in un mese</div>
+            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full w-[64%] bg-indigo-500"></div></div>
+            <div class="mt-1.5 text-[11px] text-slate-500">64% completato</div>
+          </button>
+          <button class="mt-2 w-full rounded-xl border-2 border-indigo-200 bg-indigo-50 p-3 text-left">
+            <div class="text-sm font-semibold text-indigo-900">Postura e recupero</div>
+            <div class="mt-1 text-[11px] text-indigo-600">Corso aperto</div>
+          </button>
+        </div>
+
+        <div class="mb-4 border-t border-slate-100 pt-4">
+          <div class="mb-3 text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Indice</div>
+          
+      <section class="mb-4">
+        <button class="module-toggle flex w-full items-center justify-between gap-2 py-1 text-left">
+          <span class="text-sm font-semibold text-slate-900">Intro: basi e fondamenti</span>
+          <span class="text-xs text-slate-400">⌄</span>
+        </button>
+        <div class="module-lessons mt-1 space-y-0.5 hidden">
+          
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Informati, pratica, insegna</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Massaggio, presenza e autotrattamento</span>
+              </button>
+        </div>
+      </section>
+      <section class="mb-4">
+        <button class="module-toggle flex w-full items-center justify-between gap-2 py-1 text-left">
+          <span class="text-sm font-semibold text-slate-900">Igiene Posturale</span>
+          <span class="text-xs text-slate-400">⌄</span>
+        </button>
+        <div class="module-lessons mt-1 space-y-0.5 ">
+          
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg bg-indigo-50 px-2.5 py-2 text-left">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-indigo-500 ring-4 ring-indigo-100"></span>
+                <span class="text-sm font-semibold leading-5 text-indigo-900">Mobilità articolare</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Punti di tensione</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Vie di discesa</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Recettori sensoriali</span>
+              </button>
+        </div>
+      </section>
+      <section class="mb-4">
+        <button class="module-toggle flex w-full items-center justify-between gap-2 py-1 text-left">
+          <span class="text-sm font-semibold text-slate-900">Principi di Fisioterapia</span>
+          <span class="text-xs text-slate-400">⌄</span>
+        </button>
+        <div class="module-lessons mt-1 space-y-0.5 hidden">
+          
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Sistema respiratorio</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Sistema nervoso e urogenitale</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Sistema muscolo-scheletrico</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Sistema cardiocircolatorio</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Sistema linfatico e digerente</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Scopri di più sulla metodica</span>
+              </button>
+        </div>
+      </section>
+      <section class="mb-4">
+        <button class="module-toggle flex w-full items-center justify-between gap-2 py-1 text-left">
+          <span class="text-sm font-semibold text-slate-900">Introduzione alla biomeccanica comportamentale (GDS)</span>
+          <span class="text-xs text-slate-400">⌄</span>
+        </button>
+        <div class="module-lessons mt-1 space-y-0.5 hidden">
+          
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Le 5 direzioni di movimento</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Catena AM</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Catena AL</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Catena PM</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Catena PL</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Catene PA/AP</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Scopri di più sulla metodica</span>
+              </button>
+        </div>
+      </section>
+      <section class="mb-4">
+        <button class="module-toggle flex w-full items-center justify-between gap-2 py-1 text-left">
+          <span class="text-sm font-semibold text-slate-900">Principi di Osteopatia</span>
+          <span class="text-xs text-slate-400">⌄</span>
+        </button>
+        <div class="module-lessons mt-1 space-y-0.5 hidden">
+          
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Eliminare le disfunzioni</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Il sistema fasciale</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Il sistema viscerale</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Il sistema cranio-sacrale</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Il sistema neurovegetativo</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Scopri di più sulla metodica</span>
+              </button>
+        </div>
+      </section>
+      <section class="mb-4">
+        <button class="module-toggle flex w-full items-center justify-between gap-2 py-1 text-left">
+          <span class="text-sm font-semibold text-slate-900">Introduzione al metodo Corpo e Coscienza</span>
+          <span class="text-xs text-slate-400">⌄</span>
+        </button>
+        <div class="module-lessons mt-1 space-y-0.5 hidden">
+          
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Le 2 circolazioni</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">I 3 centri di gravità</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">I 4 tipi di movimento</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">I 5 elementi</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Le 6 coppie di meridiani</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">I 7 centri neurolinfatici</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Scopri di più sulla metodica</span>
+              </button>
+        </div>
+      </section>
+      <section class="mb-4">
+        <button class="module-toggle flex w-full items-center justify-between gap-2 py-1 text-left">
+          <span class="text-sm font-semibold text-slate-900">Altre metodiche posturali</span>
+          <span class="text-xs text-slate-400">⌄</span>
+        </button>
+        <div class="module-lessons mt-1 space-y-0.5 hidden">
+          
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Sequenza di Kinesiologia Applicata</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Feldenkrais</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Alexander e consapevolezza</span>
+              </button>
+              <button class="lesson-link flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-slate-50">
+                <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border border-slate-300 bg-white"></span>
+                <span class="text-sm leading-5 text-slate-700">Sintesi del percorso</span>
+              </button>
+        </div>
+      </section>
+        </div>
+      </div>
+    </aside>
+
+    <main class="min-w-0">
+      <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+        <div class="mb-6 text-sm text-slate-500">
+          Postura e recupero <span class="mx-2">/</span> Igiene Posturale
+        </div>
+
+        <article class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-soft">
+          <div class="border-b border-slate-100 px-6 py-7 sm:px-10 sm:py-9">
+            <div class="mb-4 flex flex-wrap gap-2">
+              <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">Igiene Posturale</span>
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Lezione 1 di 4</span>
+            </div>
+
+            <h1 class="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Mobilità articolare</h1>
+
+            <div class="mt-6 flex flex-wrap items-center gap-4">
+              <!-- ticket -->
+              <div class="relative w-full max-w-[305px] overflow-hidden rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50">
+                <div class="absolute left-[-11px] top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white"></div>
+                <div class="absolute right-[-11px] top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white"></div>
+                <div class="grid grid-cols-[1fr_auto]">
+                  <div class="p-4">
+                    <div class="text-[10px] font-semibold uppercase tracking-[.16em] text-emerald-700">Esperienza completata</div>
+                    <div class="mt-1 text-lg font-semibold text-emerald-950">Autonomia · Base</div>
+                    <div class="mt-1 text-xs text-emerald-700">22 agosto 2026</div>
+                  </div>
+                  <div class="flex items-center border-l border-dashed border-emerald-300 px-4">
+                    <div class="grid h-9 w-9 place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">✓</div>
+                  </div>
+                </div>
+              </div>
+
+              <button id="openBooking" class="relative flex min-h-[94px] w-full max-w-[190px] items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white px-5 text-slate-500 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700">
+                <div class="text-center">
+                  <div class="mx-auto grid h-9 w-9 place-items-center rounded-full border border-slate-300 bg-white text-lg">+</div>
+                  <div class="mt-2 text-sm font-semibold">Aggiungi esperienza</div>
+                </div>
+              </button>
+            </div>
+
+            <div id="bookingHint" class="mt-4 hidden rounded-2xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-800">
+              In futuro qui si aprirà la prenotazione: <strong>Gruppo</strong> o <strong>Individuale</strong>, Base o Avanzata, in base al ruolo dell'utente e all'abilitazione dell'insegnante.
+            </div>
+          </div>
+
+          <div class="px-6 py-8 sm:px-10 sm:py-10">
+            <div class="mb-6 flex gap-2 border-b border-slate-100 pb-4">
+              <button data-level="base" class="level-tab rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Base</button>
+              <button data-level="advanced" class="level-tab rounded-xl px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100">Avanzata</button>
+            </div>
+
+            <div id="level-base" class="level-panel">
+              <div class="mb-8 aspect-video overflow-hidden rounded-3xl bg-slate-900">
+                <div class="grid h-full place-items-center text-white"><div class="grid h-16 w-16 place-items-center rounded-full bg-white/15 text-xl">▶</div></div>
+              </div>
+              <div class="max-w-3xl">
+                <div class="text-xs font-semibold uppercase tracking-[.14em] text-indigo-600">Base</div>
+                <h2 class="mt-2 text-xl font-semibold">Conosci e pratica</h2>
+                <p class="mt-3 leading-7 text-slate-600">Materiale essenziale della lezione: spiegazione, video e pratica. Può essere seguito in autonomia oppure ripreso in gruppo o individualmente.</p>
+              </div>
+            </div>
+
+            <div id="level-advanced" class="level-panel hidden">
+              <div class="rounded-3xl border border-amber-200 bg-amber-50 p-6">
+                <div class="text-xs font-semibold uppercase tracking-[.14em] text-amber-700">Avanzata</div>
+                <h2 class="mt-2 text-xl font-semibold text-amber-950">Approfondisci e impara ad applicare</h2>
+                <p class="mt-3 max-w-3xl leading-7 text-amber-900/70">Approfondimento della stessa lezione: ragionamento, applicazione, varianti e aspetti utili a chi vuole proseguire verso l'insegnamento.</p>
+              </div>
+            </div>
+
+            <div class="mt-10 flex justify-between border-t border-slate-100 pt-8">
+              <button class="rounded-xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-600">← Precedente</button>
+              <button class="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white">Punti di tensione →</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- APPUNTAMENTI -->
+<section id="view-appuntamenti" class="app-view hidden">
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <div class="mb-7">
+      <div class="text-xs font-semibold uppercase tracking-[.14em] text-indigo-600">Calendario operativo</div>
+      <h1 class="mt-2 text-3xl font-semibold tracking-tight">Lezioni e appuntamenti</h1>
+      <p class="mt-2 max-w-2xl text-slate-500">Un appuntamento è semplicemente una lezione Base o Avanzata, svolta in gruppo o individualmente. Il tirocinio entra come ruolo aggiuntivo dentro lo stesso appuntamento.</p>
+    </div>
+
+    <div class="mb-5 flex flex-wrap gap-2">
+      <button class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Tutti</button>
+      <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600">Gruppi</button>
+      <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600">Individuali</button>
+      <button class="teacher-only hidden rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600">Con tirocinante</button>
+    </div>
+
+    <div class="space-y-3">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center">
+          <div class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-indigo-50 text-center">
+            <div><div class="text-lg font-bold text-indigo-900">03</div><div class="text-[10px] uppercase text-indigo-600">set</div></div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap gap-2">
+              <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold">BASE</span>
+              <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">GRUPPO</span>
+            </div>
+            <h2 class="mt-2 font-semibold">Mobilità articolare</h2>
+            <div class="mt-1 text-sm text-slate-500">18:30 · 7/10 studenti · Maestro: Marco</div>
+          </div>
+          <button class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold">Apri</button>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center">
+          <div class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-amber-50 text-center">
+            <div><div class="text-lg font-bold text-amber-900">05</div><div class="text-[10px] uppercase text-amber-600">set</div></div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap gap-2">
+              <span class="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">AVANZATA</span>
+              <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold">INDIVIDUALE</span>
+              <span class="teacher-only hidden rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-semibold text-violet-700">TIROCINANTE ASSISTENTE</span>
+            </div>
+            <h2 class="mt-2 font-semibold">Mobilità articolare</h2>
+            <div class="mt-1 text-sm text-slate-500">10:00 · 1 studente · Maestro: Marco <span class="teacher-only hidden">· Tirocinante: Luca</span></div>
+          </div>
+          <button class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold">Apri</button>
+        </div>
+      </div>
+
+      <div class="teacher-only hidden rounded-2xl border border-violet-200 bg-violet-50/40 p-5 shadow-sm">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center">
+          <div class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white text-center">
+            <div><div class="text-lg font-bold text-violet-900">08</div><div class="text-[10px] uppercase text-violet-600">set</div></div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap gap-2">
+              <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold">BASE</span>
+              <span class="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold">INDIVIDUALE</span>
+              <span class="rounded-full bg-violet-100 px-2.5 py-1 text-[11px] font-semibold text-violet-700">CONDUZIONE SUPERVISIONATA</span>
+            </div>
+            <h2 class="mt-2 font-semibold">Punti di tensione</h2>
+            <div class="mt-1 text-sm text-slate-500">15:30 · Studente reale · Maestro supervisiona · Luca conduce</div>
+          </div>
+          <button class="rounded-xl border border-violet-200 bg-white px-4 py-2 text-sm font-semibold text-violet-800">Apri tirocinio</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="teacher-only hidden mt-6 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white">+ Nuovo appuntamento</button>
+  </div>
+</section>
+
+<!-- ABILITAZIONI -->
+<section id="view-abilitazioni" class="app-view hidden">
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <div class="mb-7">
+      <div class="text-xs font-semibold uppercase tracking-[.14em] text-indigo-600">Ruoli</div>
+      <h1 class="mt-2 text-3xl font-semibold tracking-tight">Percorso e abilitazioni</h1>
+      <p class="mt-2 max-w-3xl text-slate-500">La formazione insegnanti non è un corso separato: sono esperienze di compartecipazione dentro lezioni Base o Avanzate. Il Maestro valida quando la persona è pronta.</p>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-6 flex flex-wrap items-center gap-3">
+          <div class="grid h-12 w-12 place-items-center rounded-2xl bg-violet-100 font-semibold text-violet-800">LU</div>
+          <div>
+            <h2 class="font-semibold">Luca · percorso insegnante</h2>
+            <div class="text-sm text-slate-500">Igiene Posturale</div>
+          </div>
+          <span class="ml-auto rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">TIROCINIO BASE</span>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 rounded-xl bg-emerald-50 p-3">
+            <span class="grid h-6 w-6 place-items-center rounded-full bg-emerald-600 text-xs text-white">✓</span>
+            <div><div class="text-sm font-semibold">Compresenza gruppo base · assistente</div><div class="text-xs text-slate-500">Completata</div></div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl bg-emerald-50 p-3">
+            <span class="grid h-6 w-6 place-items-center rounded-full bg-emerald-600 text-xs text-white">✓</span>
+            <div><div class="text-sm font-semibold">Compresenza gruppo base · conduttore</div><div class="text-xs text-slate-500">Completata</div></div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl bg-emerald-50 p-3">
+            <span class="grid h-6 w-6 place-items-center rounded-full bg-emerald-600 text-xs text-white">✓</span>
+            <div><div class="text-sm font-semibold">Conduzione sul Maestro · base</div><div class="text-xs text-slate-500">Completata</div></div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-violet-200 bg-violet-50 p-3">
+            <span class="h-3 w-3 rounded-full bg-violet-500"></span>
+            <div><div class="text-sm font-semibold">Compresenza individuale su studente · base</div><div class="text-xs text-violet-600">In corso</div></div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-slate-200 p-3">
+            <span class="h-3 w-3 rounded-full border border-slate-300"></span>
+            <div><div class="text-sm font-semibold">Conduzione supervisionata su studente · base</div><div class="text-xs text-slate-400">Da fare</div></div>
+          </div>
+        </div>
+
+        <div class="master-only hidden mt-6 flex flex-wrap gap-2 border-t border-slate-100 pt-5">
+          <button class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold">Richiedi altra esperienza</button>
+          <button class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">Abilita come Insegnante Base</button>
+        </div>
+      </div>
+
+      <aside class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Gerarchia semplice</div>
+        <div class="mt-5 space-y-3">
+          <div class="rounded-xl bg-slate-50 p-3"><div class="font-semibold">Studente Base</div><div class="text-xs text-slate-500">Segue Base</div></div>
+          <div class="text-center text-slate-300">↓</div>
+          <div class="rounded-xl bg-amber-50 p-3"><div class="font-semibold text-amber-950">Studente Avanzato</div><div class="text-xs text-amber-700">Segue Base + Avanzato</div></div>
+          <div class="text-center text-slate-300">↓</div>
+          <div class="rounded-xl bg-indigo-50 p-3"><div class="font-semibold text-indigo-950">Insegnante Base</div><div class="text-xs text-indigo-700">Conduce Base</div></div>
+          <div class="text-center text-slate-300">↓</div>
+          <div class="rounded-xl bg-violet-50 p-3"><div class="font-semibold text-violet-950">Insegnante Avanzato</div><div class="text-xs text-violet-700">Conduce Base + Avanzato</div></div>
+          <div class="text-center text-slate-300">↓</div>
+          <div class="rounded-xl bg-emerald-50 p-3"><div class="font-semibold text-emerald-950">Maestro Insegnante</div><div class="text-xs text-emerald-700">Supervisiona e abilita</div></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+
+<!-- ADMIN -->
+<section id="view-admin" class="app-view hidden">
+  <div class="mx-auto max-w-[1500px] px-4 py-10 sm:px-6">
+    <div class="mb-8 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[.14em] text-indigo-600">Dashboard amministrazione</div>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight">Struttura del sistema</h1>
+        <p class="mt-2 max-w-3xl text-slate-500">
+          Materiale online, appuntamenti, ruoli, tirocinio e abilitazioni in un unico modello.
+        </p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">JSON incorporato · nessun backend</div>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-2">
+      <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-4"><div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Schema 1</div><h2 class="mt-1 text-xl font-semibold">Percorso dello studente</h2></div>
+        <div class="mermaid overflow-auto">
+flowchart TD
+    A[Studente Base] --> B[Lezioni Base]
+    B --> C[Studente Avanzato]
+    C --> D[Lezioni Avanzate]
+    D --> E{Vuole insegnare?}
+    E -->|No| F[Continua come studente avanzato]
+    E -->|Sì| G[Tirocinio Insegnante Base]
+    G --> H{Valutazione Maestro}
+    H -->|Idoneo| I[Insegnante Base]
+    H -->|Da approfondire| G
+    I --> J[Tirocinio Avanzato]
+    J --> K{Valutazione Maestro}
+    K -->|Idoneo| L[Insegnante Avanzato]
+    K -->|Da approfondire| J
+    L --> M[Possibile nomina a Maestro]
+        </div>
+      </article>
+
+      <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-4"><div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Schema 2</div><h2 class="mt-1 text-xl font-semibold">Gerarchia ruoli</h2></div>
+        <div class="mermaid overflow-auto">
+flowchart LR
+    S[Studente Base] --> SA[Studente Avanzato]
+    SA --> IB[Insegnante Base]
+    IB --> IA[Insegnante Avanzato]
+    IA --> M[Maestro Insegnante]
+    IB --> B1[Conduce Base]
+    IA --> B2[Conduce Base + Avanzato]
+    M --> B3[Conduce + Supervisiona + Abilita]
+        </div>
+      </article>
+
+      <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-4"><div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Schema 3</div><h2 class="mt-1 text-xl font-semibold">Struttura di una lezione</h2></div>
+        <div class="mermaid overflow-auto">
+flowchart TD
+    L[Lezione] --> B[Base]
+    L --> A[Avanzata]
+    B --> BA[Autonomia]
+    B --> BG[Gruppo]
+    B --> BI[Individuale]
+    A --> AA[Autonomia]
+    A --> AG[Gruppo]
+    A --> AI[Individuale]
+    BG --> T1[Tirocinante assistente / conduttore]
+    BI --> T2[Tirocinante assistente / conduttore supervisionato]
+    AG --> T3[Tirocinante assistente / conduttore]
+    AI --> T4[Tirocinante assistente / conduttore supervisionato]
+        </div>
+      </article>
+
+      <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-4"><div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Schema 4</div><h2 class="mt-1 text-xl font-semibold">Tirocinio e abilitazione</h2></div>
+        <div class="mermaid overflow-auto">
+flowchart TD
+    A[Completa Avanzato] --> B[Richiede percorso insegnante]
+    B --> C[Conduzione sul Maestro]
+    C --> D[Compresenza gruppo · assistente]
+    D --> E[Compresenza gruppo · conduttore]
+    E --> F[Compresenza individuale su studente]
+    F --> G[Conduzione supervisionata su studente]
+    G --> H{Valutazione Maestro}
+    H -->|Idoneo| I[Abilitazione al modulo]
+    H -->|Non ancora| J[Altra esperienza supervisionata]
+    J --> H
+        </div>
+      </article>
+
+      <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2">
+        <div class="mb-4"><div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Schema 5</div><h2 class="mt-1 text-xl font-semibold">Oggetti minimi del futuro backend</h2></div>
+        <div class="mermaid overflow-auto">
+flowchart LR
+    C[Course] --> M[Module]
+    M --> L[Lesson]
+    L --> LL[LessonLevel\nbase / advanced]
+    LL --> S[Session\ngroup / individual]
+    S --> P[Participation]
+    P --> U[User]
+    U --> R[Role / Authorization]
+    P --> T[Ticket / Experience]
+    R --> A[Authorization per modulo]
+        </div>
+      </article>
+    </div>
+
+    <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_420px]">
+      <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Dati incorporati</div>
+        <h2 class="mt-1 text-xl font-semibold">JSON della webapp</h2>
+        <p class="mt-2 text-sm text-slate-500">Il JSON è già dentro questo file HTML e viene letto dal JavaScript della pagina.</p>
+        <pre id="jsonPreview" class="mt-5 max-h-[560px] overflow-auto rounded-2xl bg-slate-950 p-5 text-xs leading-5 text-slate-100"></pre>
+      </article>
+
+      <aside class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Principio MVP</div>
+        <h2 class="mt-1 text-xl font-semibold">Una struttura, poche viste</h2>
+        <div class="mt-5 space-y-4 text-sm leading-6 text-slate-600">
+          <div class="rounded-2xl bg-slate-50 p-4"><strong class="text-slate-900">Materiale online</strong><br>Corsi → moduli → lezioni → Base / Avanzata.</div>
+          <div class="rounded-2xl bg-slate-50 p-4"><strong class="text-slate-900">Attività reale</strong><br>Le stesse lezioni diventano appuntamenti di gruppo o individuali.</div>
+          <div class="rounded-2xl bg-slate-50 p-4"><strong class="text-slate-900">Formazione insegnanti</strong><br>Compartecipazione alle sessioni reali, non corso separato.</div>
+          <div class="rounded-2xl bg-slate-50 p-4"><strong class="text-slate-900">Abilitazione</strong><br>Il Maestro valuta e abilita per singolo modulo.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+const views = document.querySelectorAll('.app-view');
+const navTabs = document.querySelectorAll('.nav-tab');
+navTabs.forEach(btn => btn.addEventListener('click', () => {
+  const target = btn.dataset.view;
+  views.forEach(v => v.classList.add('hidden'));
+  document.getElementById('view-' + target).classList.remove('hidden');
+  navTabs.forEach(b => {
+    b.classList.remove('bg-slate-100','font-semibold','text-slate-900');
+    b.classList.add('text-slate-600');
+  });
+  btn.classList.add('bg-slate-100','font-semibold','text-slate-900');
+  btn.classList.remove('text-slate-600');
+}));
+
+document.querySelectorAll('.module-toggle').forEach(btn => btn.addEventListener('click', () => {
+  btn.nextElementSibling.classList.toggle('hidden');
+}));
+
+document.querySelectorAll('.level-tab').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.level-panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById('level-' + btn.dataset.level).classList.remove('hidden');
+  document.querySelectorAll('.level-tab').forEach(b => {
+    b.classList.remove('bg-slate-900','text-white');
+    b.classList.add('text-slate-500');
+  });
+  btn.classList.add('bg-slate-900','text-white');
+  btn.classList.remove('text-slate-500');
+}));
+
+document.getElementById('openBooking').addEventListener('click', () => {
+  document.getElementById('bookingHint').classList.toggle('hidden');
+});
+
+function applyRole(role) {
+  const isTeacher = ['teacher_base','teacher_advanced','master_teacher'].includes(role);
+  const isMaster = role === 'master_teacher';
+  document.querySelectorAll('.teacher-only').forEach(el => el.classList.toggle('hidden', !isTeacher));
+  document.querySelectorAll('.master-only').forEach(el => el.classList.toggle('hidden', !isMaster));
+}
+document.getElementById('roleSwitcher').addEventListener('change', e => applyRole(e.target.value));
+applyRole('student_base');
+</script>
+
+<script id="app-data" type="application/json">
+{
+  "app": {
+    "name": "PosturaCorretta",
+    "area": "Percorso educativo",
+    "version": "frontend-mvp-1"
+  },
+  "roles": [
+    {
+      "id": "student_base",
+      "label": "Studente Base",
+      "kind": "student"
+    },
+    {
+      "id": "student_advanced",
+      "label": "Studente Avanzato",
+      "kind": "student"
+    },
+    {
+      "id": "teacher_base",
+      "label": "Insegnante Base",
+      "kind": "teacher"
+    },
+    {
+      "id": "teacher_advanced",
+      "label": "Insegnante Avanzato",
+      "kind": "teacher"
+    },
+    {
+      "id": "master_teacher",
+      "label": "Maestro Insegnante",
+      "kind": "teacher"
+    }
+  ],
+  "courses": [
+    {
+      "id": "posturacorretta-un-mese",
+      "title": "PosturaCorretta in un mese",
+      "status": "in_progress",
+      "progress": 64,
+      "lessons": [
+        {
+          "title": "L'incontro con la salute e con le metodiche posturali"
+        },
+        {
+          "title": "I benefici di una postura corretta"
+        },
+        {
+          "title": "Sei disallineato? La postura come strumento per leggere il corpo"
+        },
+        {
+          "title": "Mettere in pratica gli insegnamenti delle metodiche posturali"
+        },
+        {
+          "title": "I 3 errori che tutti fanno quando iniziano un percorso posturale"
+        },
+        {
+          "title": "La postura come punto d'incontro"
+        },
+        {
+          "title": "Stai seguendo un percorso o stai sommando interventi?"
+        },
+        {
+          "title": "Rosso, verde, blu"
+        },
+        {
+          "title": "Trovare il giusto punto di vista"
+        },
+        {
+          "title": "Un nuovo punto di vista sulla salute: il corpo e l'educazione"
+        },
+        {
+          "title": "Scegli il prossimo passo: tre possibilità"
+        }
+      ]
+    },
+    {
+      "id": "postura-recupero",
+      "title": "Postura e recupero",
+      "status": "available",
+      "progress": 18,
+      "modules": [
+        {
+          "id": "intro-basi-e-fondamenti",
+          "title": "Intro: basi e fondamenti",
+          "lessons": [
+            {
+              "id": "intro-basi-e-fondamenti-informati,-pratica,-insegna",
+              "title": "Informati, pratica, insegna",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "intro-basi-e-fondamenti-massaggio,-presenza-e-autotrattamento",
+              "title": "Massaggio, presenza e autotrattamento",
+              "base": true,
+              "advanced": true
+            }
+          ]
+        },
+        {
+          "id": "igiene-posturale",
+          "title": "Igiene Posturale",
+          "lessons": [
+            {
+              "id": "igiene-posturale-mobilità-articolare",
+              "title": "Mobilità articolare",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "igiene-posturale-punti-di-tensione",
+              "title": "Punti di tensione",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "igiene-posturale-vie-di-discesa",
+              "title": "Vie di discesa",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "igiene-posturale-recettori-sensoriali",
+              "title": "Recettori sensoriali",
+              "base": true,
+              "advanced": true
+            }
+          ]
+        },
+        {
+          "id": "principi-di-fisioterapia",
+          "title": "Principi di Fisioterapia",
+          "lessons": [
+            {
+              "id": "principi-di-fisioterapia-sistema-respiratorio",
+              "title": "Sistema respiratorio",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-fisioterapia-sistema-nervoso-e-urogenitale",
+              "title": "Sistema nervoso e urogenitale",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-fisioterapia-sistema-muscolo-scheletrico",
+              "title": "Sistema muscolo-scheletrico",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-fisioterapia-sistema-cardiocircolatorio",
+              "title": "Sistema cardiocircolatorio",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-fisioterapia-sistema-linfatico-e-digerente",
+              "title": "Sistema linfatico e digerente",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-fisioterapia-scopri-di-più-sulla-metodica",
+              "title": "Scopri di più sulla metodica",
+              "base": true,
+              "advanced": true
+            }
+          ]
+        },
+        {
+          "id": "introduzione-alla-biomeccanica-comportamentale-(gds)",
+          "title": "Introduzione alla biomeccanica comportamentale (GDS)",
+          "lessons": [
+            {
+              "id": "introduzione-alla-biomeccanica-comportamentale-(gds)-le-5-direzioni-di-movimento",
+              "title": "Le 5 direzioni di movimento",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-alla-biomeccanica-comportamentale-(gds)-catena-am",
+              "title": "Catena AM",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-alla-biomeccanica-comportamentale-(gds)-catena-al",
+              "title": "Catena AL",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-alla-biomeccanica-comportamentale-(gds)-catena-pm",
+              "title": "Catena PM",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-alla-biomeccanica-comportamentale-(gds)-catena-pl",
+              "title": "Catena PL",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-alla-biomeccanica-comportamentale-(gds)-catene-pa-ap",
+              "title": "Catene PA/AP",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-alla-biomeccanica-comportamentale-(gds)-scopri-di-più-sulla-metodica",
+              "title": "Scopri di più sulla metodica",
+              "base": true,
+              "advanced": true
+            }
+          ]
+        },
+        {
+          "id": "principi-di-osteopatia",
+          "title": "Principi di Osteopatia",
+          "lessons": [
+            {
+              "id": "principi-di-osteopatia-eliminare-le-disfunzioni",
+              "title": "Eliminare le disfunzioni",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-osteopatia-il-sistema-fasciale",
+              "title": "Il sistema fasciale",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-osteopatia-il-sistema-viscerale",
+              "title": "Il sistema viscerale",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-osteopatia-il-sistema-cranio-sacrale",
+              "title": "Il sistema cranio-sacrale",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-osteopatia-il-sistema-neurovegetativo",
+              "title": "Il sistema neurovegetativo",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "principi-di-osteopatia-scopri-di-più-sulla-metodica",
+              "title": "Scopri di più sulla metodica",
+              "base": true,
+              "advanced": true
+            }
+          ]
+        },
+        {
+          "id": "introduzione-al-metodo-corpo-e-coscienza",
+          "title": "Introduzione al metodo Corpo e Coscienza",
+          "lessons": [
+            {
+              "id": "introduzione-al-metodo-corpo-e-coscienza-le-2-circolazioni",
+              "title": "Le 2 circolazioni",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-al-metodo-corpo-e-coscienza-i-3-centri-di-gravità",
+              "title": "I 3 centri di gravità",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-al-metodo-corpo-e-coscienza-i-4-tipi-di-movimento",
+              "title": "I 4 tipi di movimento",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-al-metodo-corpo-e-coscienza-i-5-elementi",
+              "title": "I 5 elementi",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-al-metodo-corpo-e-coscienza-le-6-coppie-di-meridiani",
+              "title": "Le 6 coppie di meridiani",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-al-metodo-corpo-e-coscienza-i-7-centri-neurolinfatici",
+              "title": "I 7 centri neurolinfatici",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "introduzione-al-metodo-corpo-e-coscienza-scopri-di-più-sulla-metodica",
+              "title": "Scopri di più sulla metodica",
+              "base": true,
+              "advanced": true
+            }
+          ]
+        },
+        {
+          "id": "altre-metodiche-posturali",
+          "title": "Altre metodiche posturali",
+          "lessons": [
+            {
+              "id": "altre-metodiche-posturali-sequenza-di-kinesiologia-applicata",
+              "title": "Sequenza di Kinesiologia Applicata",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "altre-metodiche-posturali-feldenkrais",
+              "title": "Feldenkrais",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "altre-metodiche-posturali-alexander-e-consapevolezza",
+              "title": "Alexander e consapevolezza",
+              "base": true,
+              "advanced": true
+            },
+            {
+              "id": "altre-metodiche-posturali-sintesi-del-percorso",
+              "title": "Sintesi del percorso",
+              "base": true,
+              "advanced": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "current_lesson": {
+    "course_id": "postura-recupero",
+    "module": "Igiene Posturale",
+    "title": "Mobilità articolare",
+    "base": {
+      "online": true,
+      "content": [
+        "Video",
+        "Testo",
+        "Pratica"
+      ],
+      "ticket": {
+        "type": "autonomy",
+        "label": "Autonomia",
+        "completed_at": "2026-08-22"
+      }
+    },
+    "advanced": {
+      "online": true,
+      "locked_for": [
+        "student_base"
+      ],
+      "content": [
+        "Approfondimento",
+        "Applicazione",
+        "Didattica"
+      ]
+    }
+  },
+  "sessions": [
+    {
+      "id": "sess-001",
+      "lesson": "Mobilità articolare",
+      "level": "base",
+      "format": "group",
+      "date": "2026-09-03",
+      "time": "18:30",
+      "teacher": "Marco",
+      "teacher_role": "master_teacher",
+      "capacity": 10,
+      "participants": 7,
+      "trainee": null
+    },
+    {
+      "id": "sess-002",
+      "lesson": "Mobilità articolare",
+      "level": "advanced",
+      "format": "individual",
+      "date": "2026-09-05",
+      "time": "10:00",
+      "teacher": "Marco",
+      "teacher_role": "master_teacher",
+      "capacity": 1,
+      "participants": 1,
+      "trainee": {
+        "name": "Luca",
+        "role": "teacher_base",
+        "training_role": "assistant"
+      }
+    },
+    {
+      "id": "sess-003",
+      "lesson": "Punti di tensione",
+      "level": "base",
+      "format": "individual",
+      "date": "2026-09-08",
+      "time": "15:30",
+      "teacher": "Marco",
+      "teacher_role": "master_teacher",
+      "capacity": 1,
+      "participants": 1,
+      "trainee": {
+        "name": "Luca",
+        "role": "teacher_base",
+        "training_role": "supervised_conductor"
+      }
+    }
+  ],
+  "authorizations": {
+    "teacher_base": {
+      "can_teach": [
+        "base"
+      ],
+      "can_supervise": [],
+      "can_authorize": []
+    },
+    "teacher_advanced": {
+      "can_teach": [
+        "base",
+        "advanced"
+      ],
+      "can_supervise": [],
+      "can_authorize": []
+    },
+    "master_teacher": {
+      "can_teach": [
+        "base",
+        "advanced"
+      ],
+      "can_supervise": [
+        "teacher_base",
+        "teacher_advanced"
+      ],
+      "can_authorize": [
+        "teacher_base",
+        "teacher_advanced"
+      ]
+    }
+  },
+  "teacher_training": {
+    "base": [
+      "Compresenza in gruppo base — assistente",
+      "Compresenza in gruppo base — conduttore",
+      "Conduzione sul Maestro — base",
+      "Compresenza individuale su studente — base",
+      "Conduzione supervisionata su studente — base"
+    ],
+    "advanced": [
+      "Compresenza in gruppo avanzato — assistente",
+      "Compresenza in gruppo avanzato — conduttore",
+      "Conduzione sul Maestro — avanzata",
+      "Compresenza individuale su studente — avanzata",
+      "Conduzione supervisionata su studente — avanzata"
+    ]
+  }
+}
+</script>
+
+<script>
+const APP_DATA = JSON.parse(document.getElementById("app-data").textContent);
+const jsonPreview = document.getElementById("jsonPreview");
+if (jsonPreview) jsonPreview.textContent = JSON.stringify(APP_DATA, null, 2);
+</script>
+</body>
+</html>

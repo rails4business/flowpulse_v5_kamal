@@ -1,32 +1,437 @@
 <% content_for :title, "#{@project['title']} — GeneraImpresa" %>
 <% content_for :description, @project["summary"] %>
 <% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
-<% steps = @project.fetch("steps", []) %>
-<% completed = steps.count { |step| step["status"] == "completed" } %>
 
-<main class="min-h-screen bg-white">
-  <section class="border-b border-slate-200">
-    <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <%= link_to "← #{@brand&.fetch('name', 'Progetti')}", @brand ? genera_impresa_brand_path(@brand.fetch("slug")) : genera_impresa_path, class: "text-sm font-bold text-slate-500 hover:text-slate-900" %>
-      <p class="mt-8 text-xs font-black uppercase tracking-wider text-red-600"><%= @project["category"] %></p>
-      <h1 class="mt-3 text-4xl font-black tracking-tight sm:text-5xl"><%= @project["title"] %></h1>
-      <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600"><%= @project["summary"] %></p>
-      <dl class="mt-8 grid gap-4 sm:grid-cols-3">
-        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Responsabile</dt><dd class="mt-1 font-black"><%= @project["owner"].presence || "Da definire" %></dd></div>
-        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Stato</dt><dd class="mt-1 font-black"><%= @project["status_label"].presence || @project["status"].to_s.humanize %></dd></div>
-        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-bold uppercase text-slate-400">Avanzamento</dt><dd class="mt-1 font-black"><%= completed %>/<%= steps.size %> step</dd></div>
-      </dl>
-    </div>
-  </section>
-  <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-black">Step del progetto</h2>
-    <ol class="mt-6 divide-y divide-slate-200 border-y border-slate-200">
-      <% steps.each_with_index do |step, index| %><li class="flex gap-4 py-5"><span class="flex size-8 shrink-0 items-center justify-center rounded-full <%= step['status'] == 'completed' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500' %> text-xs font-black"><%= step['status'] == 'completed' ? '✓' : index + 1 %></span><div><h3 class="font-black"><%= step["title"] %></h3><p class="mt-1 text-sm leading-6 text-slate-600"><%= step["description"] %></p></div></li><% end %>
-    </ol>
-    <% if @project["public_path"].present? %>
-      <%= link_to "Apri la webapp →", @project["public_path"], class: "mt-8 inline-flex rounded-lg bg-red-600 px-4 py-2.5 text-sm font-black text-white hover:bg-red-700" %>
-    <% elsif @project["source"] == "posturacorretta" && @project["generaimpresa_origin"] == "generaimpresa" %>
-      <%= link_to "Apri la scheda operativa su PosturaCorretta →", posturacorretta_progetto_path(@project.fetch("slug")), class: "mt-8 inline-flex rounded-lg bg-red-600 px-4 py-2.5 text-sm font-black text-white hover:bg-red-700" %>
-    <% end %>
-  </section>
-</main>
+<%
+  steps = @project.fetch("steps", [])
+  completed_steps = steps.count { |step| step["status"] == "completed" || step["status"] == "done" }
+  
+  # Dati di fallback o configurati per l'architettura GeneraImpresa v2
+  economics = @project.fetch("economics", {
+    "build_cost_eur" => 6500,
+    "operating_cost_eur" => 1800,
+    "revenue_min_eur" => 6000,
+    "revenue_base_eur" => 12000,
+    "revenue_max_eur" => 22000
+  })
+
+  dash_config = @project.fetch("dash", {
+    "price_year_max_eur" => 41,
+    "price_person_value_eur" => 32,
+    "price_market_eur" => 26,
+    "price_year_min_eur" => 18,
+    "price_project_safety_eur" => 21,
+    "service_price_dash" => 4.5,
+    "service_price_eur_reference" => 120
+  })
+
+  people = @project.fetch("people", [
+    { "name" => @project["owner"].presence || "@markpostura", "role" => "Responsabile progetto", "commitment" => "Specifiche, test, coordinamento", "due" => "Continuo", "planned" => 60, "worked" => 29 },
+    { "name" => "Rails4B", "role" => "Sviluppo software", "commitment" => "Costruzione MVP", "due" => "In corso", "planned" => 70, "worked" => 24 }
+  ])
+
+  dash_commitments = @project.fetch("dash_commitments", [
+    { "person" => @project["owner"].presence || "Founder", "promised" => 10, "verified" => 10, "locked" => 5 },
+    { "person" => "Rails4B", "promised" => 8, "verified" => 8, "locked" => 4 }
+  ])
+%>
+
+<div class="bg-slate-50 text-slate-900 min-h-screen font-sans" data-controller="generaimpresa-project">
+  <div class="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-10">
+    <header class="mb-8">
+      <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-500">
+        <%= link_to "GeneraImpresa", genera_impresa_path, class: "hover:text-slate-700" %>
+        <span class="text-slate-300">/</span>
+        <%= link_to "Projects", genera_impresa_path, class: "hover:text-slate-700" %>
+        <span class="text-slate-300">/</span>
+        <span class="text-slate-700"><%= @project["title"] %></span>
+      </div>
+      <div class="mt-2 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight md:text-4xl"><%= @project["title"] %></h1>
+          <p class="mt-2 max-w-3xl text-slate-600"><%= @project["summary"] %></p>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <% if @project["public_path"].present? %>
+            <%= link_to "Apri la webapp →", @project["public_path"], class: "rounded-full bg-red-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-red-700" %>
+          <% elsif @project["source"] == "posturacorretta" && @project["generaimpresa_origin"] == "generaimpresa" %>
+            <%= link_to "Apri la scheda operativa su PosturaCorretta →", posturacorretta_progetto_path(@project.fetch("slug")), class: "rounded-full bg-red-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-red-700" %>
+          <% end %>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium"><%= @project["status_label"].presence || @project["status"].to_s.humanize %></span>
+          <span class="text-slate-400">Aggiornato <%= Time.current.strftime("%d %b %Y") %></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigazione principale -->
+    <nav class="mb-4 overflow-x-auto border-b border-slate-200" aria-label="Navigazione progetto">
+      <div class="flex min-w-max gap-6">
+        <button data-tab="project" data-generaimpresa-project-target="tab" data-action="click->generaimpresa-project#changeTab" class="border-b-2 px-1 pb-3 text-sm font-medium">Project</button>
+        <button data-tab="genera" data-generaimpresa-project-target="tab" data-action="click->generaimpresa-project#changeTab" class="border-b-2 px-1 pb-3 text-sm font-medium">GeneraImpresa</button>
+        <button data-tab="rails4b" data-generaimpresa-project-target="tab" data-action="click->generaimpresa-project#changeTab" class="border-b-2 px-1 pb-3 text-sm font-medium">Rails4B</button>
+        <button data-tab="impegno" data-generaimpresa-project-target="tab" data-action="click->generaimpresa-project#changeTab" class="border-b-2 px-1 pb-3 text-sm font-medium">1Impegno</button>
+        <button data-tab="dash" data-generaimpresa-project-target="tab" data-action="click->generaimpresa-project#changeTab" class="border-b-2 px-1 pb-3 text-sm font-medium">DASH</button>
+      </div>
+    </nav>
+
+    <div data-generaimpresa-project-target="breadcrumb" class="mb-6 text-sm text-slate-400">Project / Lettura generale</div>
+
+    <!-- PROJECT: Lettura generale -->
+    <section id="tab-project" data-generaimpresa-project-target="panel" class="space-y-6">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Lettura generale</div>
+        <h2 class="mt-2 text-2xl font-semibold tracking-tight">Dal progetto alla realizzazione</h2>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Le quattro aree rispondono a quattro domande diverse. Apri un'area solo quando vuoi entrare nel dettaglio.</p>
+      </div>
+
+      <div class="space-y-3">
+        <button data-tab="genera" data-action="click->generaimpresa-project#changeTab" class="w-full rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">1 · GeneraImpresa</div>
+          <div class="mt-2 text-xl font-semibold">COSA?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Cosa vale la pena realizzare? Quanto costa? Quanto può produrre? Chi serve? Qual è il risultato?</p>
+          <div class="mt-5 text-sm font-medium text-slate-900">Apri GeneraImpresa →</div>
+        </button>
+
+        <button data-tab="rails4b" data-action="click->generaimpresa-project#changeTab" class="w-full rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">2 · Rails4B</div>
+          <div class="mt-2 text-xl font-semibold">COME?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Come costruiamo concretamente il prodotto o il software? Quale lavoro serve e cosa dobbiamo testare?</p>
+          <div class="mt-5 text-sm font-medium text-slate-900">Apri Rails4B →</div>
+        </button>
+
+        <button data-tab="impegno" data-action="click->generaimpresa-project#changeTab" class="w-full rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">3 · 1Impegno</div>
+          <div class="mt-2 text-xl font-semibold">CHI E QUANDO?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Chi si prende l'impegno? Cosa deve fare? Entro quando? Quante ore e quali risorse mette?</p>
+          <div class="mt-5 text-sm font-medium text-slate-900">Apri 1Impegno →</div>
+        </button>
+
+        <button data-tab="dash" data-action="click->generaimpresa-project#changeTab" class="w-full rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">4 · DASH</div>
+          <div class="mt-2 text-xl font-semibold">GARANZIA?</div>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Quanto è promesso, verificato e realmente vincolato? Come gestiamo volatilità e pagamenti in DASH?</p>
+          <div class="mt-5 text-sm font-medium text-slate-900">Apri DASH →</div>
+        </button>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5">
+        <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-700">
+          <span>GeneraImpresa</span><span class="text-slate-300">→</span>
+          <span>Rails4B</span><span class="text-slate-300">→</span>
+          <span>1Impegno</span><span class="text-slate-300">→</span>
+          <span>DASH</span><span class="text-slate-300">→</span>
+          <span>Realizzazione · Test · Risultato</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- GENERAIMPRESA -->
+    <section id="tab-genera" data-generaimpresa-project-target="panel" class="hidden space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="genera">
+        <button data-sub="visione" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Idea e risultato</button>
+        <button data-sub="previsioni" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Previsioni</button>
+        <button data-sub="piano" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Piano</button>
+        <button data-sub="validazione" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Tester e vendite</button>
+      </div>
+
+      <div data-subpanel="genera-visione" class="grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Idea</div>
+          <h2 class="mt-2 text-xl font-semibold">Cosa vale la pena realizzare?</h2>
+          <p class="mt-3 leading-7 text-slate-600"><%= @project["summary"] %></p>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Risultato atteso</div>
+          <h2 class="mt-2 text-xl font-semibold">Quando diciamo “ha funzionato”?</h2>
+          <p class="mt-3 leading-7 text-slate-600">MVP funzionante, passaggi validati sul campo e dati sufficienti per decidere se proseguire o adattare l'offerta.</p>
+        </article>
+      </div>
+
+      <div data-subpanel="genera-previsioni" class="hidden space-y-4">
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">Costi realizzazione</div><div class="mt-2 text-2xl font-semibold"><%= number_to_currency(economics["build_cost_eur"], unit: "€", precision: 0) %></div></div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">Costi operativi</div><div class="mt-2 text-2xl font-semibold"><%= number_to_currency(economics["operating_cost_eur"], unit: "€", precision: 0) %></div></div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">Ricavi base</div><div class="mt-2 text-2xl font-semibold"><%= number_to_currency(economics["revenue_base_eur"], unit: "€", precision: 0) %></div></div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">Margine base</div><div class="mt-2 text-2xl font-semibold"><%= number_to_currency(economics["revenue_base_eur"] - economics["build_cost_eur"] - economics["operating_cost_eur"], unit: "€", precision: 0) %></div></div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <div class="text-sm font-medium">Previsione economica</div>
+              <p class="mt-1 text-sm text-slate-500">Scenari per comprendere la sostenibilità dell'iniziativa.</p>
+            </div>
+          </div>
+          <div class="mt-5 overflow-x-auto">
+            <table class="w-full min-w-[520px] text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 text-left text-slate-400">
+                  <th class="py-2 font-medium">Scenario</th>
+                  <th class="py-2 font-medium">Ricavi</th>
+                  <th class="py-2 font-medium">Costi</th>
+                  <th class="py-2 font-medium">Risultato</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% [["Minimo", economics["revenue_min_eur"]], ["Base", economics["revenue_base_eur"]], ["Massimo", economics["revenue_max_eur"]]].each do |name, rev| %>
+                  <% total_cost = economics["build_cost_eur"] + economics["operating_cost_eur"] %>
+                  <tr class="border-b border-slate-100">
+                    <td class="py-3 font-medium"><%= name %></td>
+                    <td class="py-3"><%= number_to_currency(rev, unit: "€", precision: 0) %></td>
+                    <td class="py-3"><%= number_to_currency(total_cost, unit: "€", precision: 0) %></td>
+                    <td class="py-3 font-semibold"><%= number_to_currency(rev - total_cost, unit: "€", precision: 0) %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div data-subpanel="genera-piano" class="hidden space-y-4">
+        <div class="grid gap-4 md:grid-cols-2">
+          <article class="rounded-2xl border border-slate-200 bg-white p-5">
+            <h2 class="text-lg font-semibold">Step del progetto</h2>
+            <div class="mt-4 space-y-4">
+              <% steps.each_with_index do |step, i| %>
+                <div>
+                  <div class="mb-1 flex items-center justify-between text-sm">
+                    <span class="font-medium"><%= step["title"] %></span>
+                    <span class="text-slate-400"><%= step["status"] == "completed" ? "Completato" : "In corso" %></span>
+                  </div>
+                  <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div class="h-full rounded-full bg-slate-900" style="width: <%= step['status'] == 'completed' ? '100%' : '50%' %>"></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </article>
+          <article class="rounded-2xl border border-slate-200 bg-white p-5">
+            <h2 class="text-lg font-semibold">Stato del progetto</h2>
+            <div class="mt-4 space-y-4">
+              <div>
+                <div class="mb-2 flex justify-between text-sm"><span>Avanzamento Globale</span><span><%= completed_steps %>/<%= steps.size %> Step</span></div>
+                <div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-slate-900" style="width: <%= steps.size > 0 ? (completed_steps.to_f / steps.size * 100).round : 0 %>%"></div></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div data-subpanel="genera-validazione" class="hidden grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Tester e primi acquirenti</h2>
+          <div class="mt-4 space-y-3">
+            <div class="rounded-xl bg-slate-50 p-3 text-sm flex justify-between"><span>Tester interessati</span><span class="font-bold">11 / 20</span></div>
+            <div class="rounded-xl bg-slate-50 p-3 text-sm flex justify-between"><span>Clienti paganti</span><span class="font-bold">2 / 5</span></div>
+          </div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Apprendimento sul campo</h2>
+          <div class="mt-4 space-y-3">
+            <div class="rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Le persone comprendono l'iniziativa con maggiore efficacia quando vedono una prima dimostrazione pratica.</div>
+            <div class="rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Mantenere l'interfaccia semplice senza sovraccaricare di opzioni iniziali.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- RAILS4B -->
+    <section id="tab-rails4b" data-generaimpresa-project-target="panel" class="hidden space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="rails4b">
+        <button data-sub="costruire" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Cosa costruire</button>
+        <button data-sub="lavoro" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Lavoro</button>
+        <button data-sub="test" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Test</button>
+      </div>
+
+      <div data-subpanel="rails4b-costruire" class="grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">MVP</div>
+          <h2 class="mt-2 text-xl font-semibold">Cosa deve esistere?</h2>
+          <div class="mt-4 space-y-3">
+            <% steps.each do |step| %>
+              <div class="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-sm">
+                <span><%= step["title"] %></span>
+                <span class="font-medium <%= step["status"] == "completed" ? "text-slate-900" : "text-slate-400" %>"><%= step["status"] == "completed" ? "Fatto" : "In corso" %></span>
+              </div>
+            <% end %>
+          </div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Avanzamento Tecnico</div>
+          <h2 class="mt-2 text-xl font-semibold">Stato dell'MVP</h2>
+          <div class="mt-4">
+            <div class="text-4xl font-semibold"><%= steps.size > 0 ? (completed_steps.to_f / steps.size * 100).round : 0 %>%</div>
+            <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div class="h-full rounded-full bg-slate-900" style="width: <%= steps.size > 0 ? (completed_steps.to_f / steps.size * 100).round : 0 %>%"></div>
+            </div>
+            <p class="mt-3 text-sm text-slate-500"><%= completed_steps %> di <%= steps.size %> elementi essenziali completati.</p>
+          </div>
+        </article>
+      </div>
+
+      <div data-subpanel="rails4b-lavoro" class="hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Lavoro tecnico</h2>
+          <div class="mt-4 space-y-3">
+            <div class="grid gap-1 rounded-xl bg-slate-50 p-3 text-sm sm:grid-cols-[1fr_auto_auto] sm:items-center">
+              <span class="font-medium">Struttura &amp; Routing</span>
+              <span class="text-slate-500">Rails4B</span>
+              <span class="text-slate-900 font-semibold">Completato</span>
+            </div>
+            <div class="grid gap-1 rounded-xl bg-slate-50 p-3 text-sm sm:grid-cols-[1fr_auto_auto] sm:items-center">
+              <span class="font-medium">Layout UI Tailwind</span>
+              <span class="text-slate-500">Rails4B</span>
+              <span class="text-slate-500">In corso</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div data-subpanel="rails4b-test" class="hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Cosa stiamo testando?</h2>
+          <div class="mt-4 space-y-3">
+            <div class="rounded-xl bg-slate-50 p-3 text-sm leading-6 text-slate-600">Verifica della chiarezza della proposta per l'utente in meno di 30 secondi.</div>
+            <div class="rounded-xl bg-slate-50 p-3 text-sm leading-6 text-slate-600">Test della disponibilità delle persone a prendersi impegni on-chain o tramite risorse dedicate.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 1IMPEGNO -->
+    <section id="tab-impegno" data-generaimpresa-project-target="panel" class="hidden space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="impegno">
+        <button data-sub="persone" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Persone e ruoli</button>
+        <button data-sub="tempo" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Tempo</button>
+        <button data-sub="abilita" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Abilità</button>
+      </div>
+
+      <div data-subpanel="impegno-persone">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Chi fa cosa?</h2>
+          <div class="mt-4 space-y-3">
+            <% people.each do |p| %>
+              <div class="grid gap-2 rounded-xl bg-slate-50 p-4 text-sm md:grid-cols-[1.2fr_1fr_2fr_auto]">
+                <div><div class="font-semibold"><%= p["name"] %></div><div class="text-slate-500"><%= p["role"] %></div></div>
+                <div><div class="text-slate-400">Scadenza</div><div><%= p["due"] %></div></div>
+                <div><div class="text-slate-400">Impegno</div><div><%= p["commitment"] %></div></div>
+                <div class="font-medium"><%= p["worked"] %>/<%= p["planned"] %> h</div>
+              </div>
+            <% end %>
+          </div>
+        </article>
+      </div>
+
+      <div data-subpanel="impegno-tempo" class="hidden grid gap-4 md:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Tempo del progetto</h2>
+          <div class="mt-4">
+            <div class="text-4xl font-semibold">53 h</div>
+            <div class="mt-1 text-sm text-slate-500">su 130 h previste</div>
+            <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-slate-900" style="width: 40%"></div></div>
+          </div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Ore per persona</h2>
+          <div class="mt-4 space-y-3">
+            <% people.each do |p| %>
+              <div>
+                <div class="mb-2 flex justify-between text-sm"><span><%= p["name"] %></span><span class="text-slate-400"><%= p["worked"] %>/<%= p["planned"] %> h</span></div>
+                <div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-slate-900" style="width: <%= (p['worked'].to_f / p['planned'] * 100).round %>%"></div></div>
+              </div>
+            <% end %>
+          </div>
+        </article>
+      </div>
+
+      <div data-subpanel="impegno-abilita" class="hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Abilità necessarie</h2>
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between rounded-xl bg-slate-50 p-3 text-sm"><span class="font-medium">Ruby on Rails</span><span class="text-slate-900 font-semibold">Coperta</span></div>
+            <div class="flex items-center justify-between rounded-xl bg-slate-50 p-3 text-sm"><span class="font-medium">UX &amp; UI Design</span><span class="text-slate-500">In corso</span></div>
+            <div class="flex items-center justify-between rounded-xl bg-slate-50 p-3 text-sm"><span class="font-medium">Validazione sul mercato</span><span class="text-slate-500">In corso</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- DASH -->
+    <section id="tab-dash" data-generaimpresa-project-target="panel" class="hidden space-y-6">
+      <div class="flex flex-wrap gap-2" data-subtabs="dash">
+        <button data-sub="impegni" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Impegni</button>
+        <button data-sub="vincolo" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Vincolo</button>
+        <button data-sub="volatilita" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Volatilità</button>
+        <button data-sub="pagamenti" data-action="click->generaimpresa-project#changeSubTab" class="sub-tab rounded-full px-3 py-1.5 text-sm font-medium">Pagamenti</button>
+      </div>
+
+      <div data-subpanel="dash-impegni" class="space-y-4">
+        <div class="grid gap-3 sm:grid-cols-3">
+          <% promised = dash_commitments.sum { |x| x["promised"] } %>
+          <% verified = dash_commitments.sum { |x| x["verified"] } %>
+          <% locked = dash_commitments.sum { |x| x["locked"] } %>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">Promessi</div><div class="mt-2 text-2xl font-semibold"><%= promised %> DASH</div></div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">Verificati</div><div class="mt-2 text-2xl font-semibold"><%= verified %> DASH</div></div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs font-medium uppercase tracking-wider text-slate-400">Vincolati 🔒</div><div class="mt-2 text-2xl font-semibold"><%= locked %> DASH</div><div class="mt-1 text-sm text-slate-500">garanzia reale</div></div>
+        </div>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Chi impegna DASH</h2>
+          <div class="mt-4 space-y-3">
+            <% dash_commitments.each do |c| %>
+              <div class="grid gap-2 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-[1fr_repeat(3,auto)] sm:items-center">
+                <span class="font-semibold"><%= c["person"] %></span>
+                <span><%= c["promised"] %> promessi</span>
+                <span><%= c["verified"] %> verificati</span>
+                <span class="font-medium"><%= c["locked"] %> vincolati</span>
+              </div>
+            <% end %>
+          </div>
+        </article>
+      </div>
+
+      <div data-subpanel="dash-vincolo" class="hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Vincolo crittografico</div>
+          <h2 class="mt-2 text-xl font-semibold">Promesso ≠ garantito</h2>
+          <div class="mt-5 grid gap-3 md:grid-cols-3">
+            <div class="rounded-xl bg-slate-50 p-4"><div class="font-semibold">Promesso</div><p class="mt-1 text-sm text-slate-500">La persona dichiara l'impegno. Può ancora spendere i DASH.</p></div>
+            <div class="rounded-xl bg-slate-50 p-4"><div class="font-semibold">Verificato</div><p class="mt-1 text-sm text-slate-500">I DASH esistono on-chain, ma sono ancora disponibili nel wallet.</p></div>
+            <div class="rounded-xl bg-slate-900 p-4 text-white"><div class="font-semibold">Vincolato 🔒</div><p class="mt-1 text-sm text-slate-300">Solo questo importo conta come garanzia reale del progetto.</p></div>
+          </div>
+        </article>
+      </div>
+
+      <div data-subpanel="dash-volatilita" class="hidden space-y-4">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">DASH in euro</div>
+          <h2 class="mt-2 text-lg font-semibold">Valori da tenere sotto controllo</h2>
+          <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500">Ogni valore indica quanti euro vale 1 DASH. Confrontiamo massimo e minimo annuo, valore assegnato dalla persona, mercato attuale e soglia minima accettabile per il progetto.</p>
+          <div class="mt-5 space-y-2">
+            <div class="grid gap-1 rounded-xl bg-slate-50 p-3 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-4"><span class="text-sm">Massimo annuo — valore di 1 DASH in €</span><span class="text-xs uppercase tracking-wide text-slate-400">EUR/DASH</span><span class="font-semibold"><%= number_to_currency(dash_config["price_year_max_eur"], unit: "€", precision: 0) %></span></div>
+            <div class="grid gap-1 rounded-xl bg-slate-50 p-3 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-4"><span class="text-sm">Valore assegnato dalla persona — 1 DASH in €</span><span class="text-xs uppercase tracking-wide text-slate-400">EUR/DASH</span><span class="font-semibold"><%= number_to_currency(dash_config["price_person_value_eur"], unit: "€", precision: 0) %></span></div>
+            <div class="grid gap-1 rounded-xl bg-slate-50 p-3 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-4"><span class="text-sm">Mercato attuale — valore di 1 DASH in €</span><span class="text-xs uppercase tracking-wide text-slate-400">EUR/DASH</span><span class="font-semibold"><%= number_to_currency(dash_config["price_market_eur"], unit: "€", precision: 0) %></span></div>
+            <div class="grid gap-1 rounded-xl bg-slate-50 p-3 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-4"><span class="text-sm">Minimo annuo — valore di 1 DASH in €</span><span class="text-xs uppercase tracking-wide text-slate-400">EUR/DASH</span><span class="font-semibold"><%= number_to_currency(dash_config["price_year_min_eur"], unit: "€", precision: 0) %></span></div>
+            <div class="grid gap-1 rounded-xl bg-slate-50 p-3 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-4"><span class="text-sm">Minimo di sicurezza progetto — 1 DASH in €</span><span class="text-xs uppercase tracking-wide text-slate-400">EUR/DASH</span><span class="font-semibold"><%= number_to_currency(dash_config["price_project_safety_eur"], unit: "€", precision: 0) %></span></div>
+          </div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Soglia di sicurezza del progetto</h2>
+          <p class="mt-3 leading-7 text-slate-600">
+            Mercato attuale <strong><%= number_to_currency(dash_config["price_market_eur"], unit: "€", precision: 0) %></strong> / DASH: sopra la soglia minima di sicurezza di <strong><%= number_to_currency(dash_config["price_project_safety_eur"], unit: "€", precision: 0) %></strong>. Il progetto resta nel margine previsto.
+          </p>
+        </article>
+      </div>
+
+      <div data-subpanel="dash-pagamenti" class="hidden">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="text-lg font-semibold">Vendita del servizio in DASH</h2>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            <div class="rounded-xl bg-slate-50 p-4"><div class="text-sm text-slate-500">Prezzo servizio in DASH</div><div class="mt-1 text-2xl font-semibold"><%= dash_config["service_price_dash"] %> DASH</div></div>
+            <div class="rounded-xl bg-slate-50 p-4"><div class="text-sm text-slate-500">Riferimento in euro</div><div class="mt-1 text-2xl font-semibold"><%= number_to_currency(dash_config["service_price_eur_reference"], unit: "€", precision: 0) %></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</div>

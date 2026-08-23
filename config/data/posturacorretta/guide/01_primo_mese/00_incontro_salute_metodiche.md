@@ -17,3 +17,21 @@ PosturaCorretta nasce anche da questa domanda: **possiamo raccogliere ciò che l
 Nel prossimo capitolo inizieremo a farlo attraverso un principio e una pratica per ogni gruppo di insegnamenti.
 
 [Metti in pratica gli insegnamenti delle metodiche posturali →](/posturacorretta/guida?sezione=primo_mese&capitolo=05-metodiche)
+
+<!-- advanced -->
+
+## Preparare e condurre la lezione
+
+L'approfondimento avanzato collega l'esperienza personale al ruolo educativo dell'insegnante. Chi conduce questa lezione deve saper presentare le metodiche senza confonderne origini, principi e ambiti di applicazione, distinguendo ciò che deriva dalla ricerca, dall'esperienza professionale e dai modelli interpretativi.
+
+### Obiettivi per chi si prepara a insegnare
+
+- aiutare la persona a raccontare le esperienze corporee già incontrate;
+- riconoscere principi comuni senza ridurre metodiche differenti a un'unica spiegazione;
+- usare un linguaggio comprensibile e coerente con i confini del ruolo educativo;
+- collegare la lezione alla pratica senza trasformarla in valutazione clinica o trattamento;
+- indicare quando una domanda deve essere affidata al professionista competente.
+
+### Verifica
+
+Prepara una breve introduzione alla lezione e descrivi come presenteresti due metodiche differenti, chiarendo un elemento comune e una differenza significativa.

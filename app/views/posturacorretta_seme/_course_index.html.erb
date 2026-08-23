@@ -1,0 +1,32 @@
+<main class="bg-white">
+  <section class="border-b border-slate-200 bg-[#F6F7F4]">
+    <div class="mx-auto max-w-[1100px] px-4 py-12 sm:px-6 lg:py-16">
+      <p class="text-xs font-semibold uppercase tracking-[.18em] text-indigo-600">Indice del corso</p>
+      <h1 class="mt-3 text-4xl font-semibold tracking-[-.03em] text-slate-950 sm:text-5xl"><%= @selected_course.fetch("title") %></h1>
+      <% if @selected_course["description"].present? %><p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600"><%= @selected_course.fetch("description") %></p><% end %>
+      <p class="mt-5 text-sm text-slate-500"><%= @course_lessons.size %> lezioni</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1100px] px-4 py-12 sm:px-6 lg:py-16">
+    <div>
+      <% @course_lessons.each_with_index do |lesson, index| %>
+        <% href = posturacorretta_seme_path(stage: @selected_stage.fetch("slug"), module: (@selected_stage.fetch("slug") == "accademia" ? @selected_course.fetch("slug") : nil), lesson: lesson.fetch("slug")) %>
+        <article class="relative grid gap-4 md:grid-cols-[72px_minmax(0,1fr)_auto] md:items-start">
+          <div class="relative">
+            <span class="grid size-11 place-items-center rounded-full <%= index.zero? ? "bg-slate-900 text-white" : "border-2 border-slate-300 bg-white text-slate-500" %> text-xs font-semibold"><%= format("%02d", index + 1) %></span>
+            <% unless index == @course_lessons.size - 1 %><span class="absolute left-[21px] top-11 h-[calc(100%+2rem)] w-px bg-slate-200"></span><% end %>
+          </div>
+          <div class="pb-8">
+            <h2 class="text-lg font-semibold leading-6 tracking-tight text-slate-950"><%= lesson.fetch("title") %></h2>
+            <p class="mt-2 text-sm text-slate-500">Lezione <%= index + 1 %> di <%= @course_lessons.size %></p>
+          </div>
+          <div class="pb-8 md:pt-0.5"><%= link_to(index.zero? ? "Inizia" : "Apri", href, class: "inline-flex rounded-xl #{index.zero? ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-700"} px-4 py-2 text-sm font-semibold hover:shadow-sm") %></div>
+        </article>
+      <% end %>
+    </div>
+    <%= link_to "← Torna al percorso", posturacorretta_seme_percorso_path, class: "mt-4 inline-flex text-sm font-semibold text-indigo-700" %>
+  </section>
+</main>
+
+<%= render "posturacorretta/footer" %>

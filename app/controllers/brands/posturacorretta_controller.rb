@@ -8,7 +8,7 @@ module Brands
       end
 
       load_home_intro
-      @home_slides = @home_intro_components.find { |component| component["type"] == "home_carousel" }&.dig("data", "slides") || []
+      @home_ecosystem = @home_intro_components.find { |component| component["type"] == "ecosystem_home" }&.fetch("data", {}) || {}
       render "posturacorrettastart/home"
     end
 

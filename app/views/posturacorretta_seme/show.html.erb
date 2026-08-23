@@ -1,0 +1,21 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta_seme/header" %>
+<% end %>
+<% content_for :title, @lesson ? "#{@lesson.fetch("title")} · PosturaCorretta Seme" : (@dashboard_kind ? "Dashboard #{@dashboard_kind == 'teacher' ? 'insegnante' : 'studente'} · PosturaCorretta" : (@direct_courses ? "Percorso · PosturaCorretta Seme" : "PosturaCorretta Seme")) %>
+<% content_for :description, "Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati." %>
+
+<div class="min-h-screen bg-[#F6F7F4] text-slate-800">
+  <% if @dashboard_kind == "student" %>
+    <%= render "posturacorretta_seme/student_dashboard" %>
+  <% elsif @dashboard_kind == "teacher" %>
+    <%= render "posturacorretta_seme/teacher_dashboard" %>
+  <% elsif @lesson %>
+    <%= render "posturacorretta_seme/lesson" %>
+  <% elsif @selected_course %>
+    <%= render "posturacorretta_seme/course_index" %>
+  <% elsif @direct_courses %>
+    <%= render "posturacorretta_seme/percorso" %>
+  <% else %>
+    <%= render "posturacorretta_seme/home" %>
+  <% end %>
+</div>

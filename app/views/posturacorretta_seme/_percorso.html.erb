@@ -1,0 +1,81 @@
+<main class="bg-white">
+  <section class="border-b border-slate-200 bg-[#F6F7F4]">
+    <div class="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:py-18">
+      <p class="text-xs font-semibold uppercase tracking-[.18em] text-indigo-600">Percorso educativo</p>
+      <h1 class="mt-3 max-w-3xl text-4xl font-semibold tracking-[-.03em] text-slate-950 sm:text-5xl">Parti dalle basi e approfondisci un corso alla volta</h1>
+      <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Il percorso raccoglie corsi autonomi e moduli tematici. Ogni corso contiene le proprie lezioni; ogni lezione può avere una parte base e un approfondimento avanzato.</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:py-18">
+    <div class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-[.16em] text-indigo-600">Da dove iniziare</p>
+      <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Corsi principali</h2>
+    </div>
+
+    <div class="grid gap-5 md:grid-cols-2">
+      <% @direct_courses.each_with_index do |course, index| %>
+        <% available = course.fetch("lessons").any? %>
+        <article class="group relative flex min-h-64 flex-col rounded-3xl border <%= available ? "border-slate-200 bg-white transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-xl hover:shadow-slate-900/5" : "border-dashed border-slate-300 bg-slate-50" %> p-6 sm:p-7">
+          <% if available %><%= link_to "", posturacorretta_seme_path(stage: course.fetch("stage")), class: "absolute inset-0 z-10 rounded-3xl", aria: { label: "Apri il corso #{course.fetch("title")}" } %><% end %>
+          <div class="flex items-start justify-between gap-4">
+            <span class="grid size-11 place-items-center rounded-full <%= index.zero? ? "bg-slate-900 text-white" : "bg-white text-slate-500 ring-1 ring-slate-200" %> text-sm font-semibold"><%= course.fetch("number") %></span>
+            <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold <%= available ? "bg-indigo-50 text-indigo-700" : "bg-slate-200 text-slate-600" %>"><%= available ? "INIZIA QUI" : "IN PREPARAZIONE" %></span>
+          </div>
+          <h3 class="mt-6 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-indigo-700"><%= course.fetch("title") %></h3>
+          <p class="mt-3 text-sm leading-6 text-slate-600"><%= course.fetch("description") %></p>
+          <div class="mt-auto pt-7">
+            <% if available %>
+              <div class="mb-4">
+                <div class="mb-2 flex items-center justify-between text-xs text-slate-500"><span>Avanzamento</span><span>0 / <%= course.fetch("lessons").size %></span></div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="Avanzamento <%= course.fetch("title") %>" aria-valuemin="0" aria-valuemax="<%= course.fetch("lessons").size %>" aria-valuenow="0"><span class="block h-full w-0 rounded-full bg-indigo-600"></span></div>
+              </div>
+            <% end %>
+            <div class="flex items-end justify-between gap-4">
+              <span class="text-xs text-slate-500"><%= available ? "#{course.fetch("lessons").size} lezioni" : "Lezioni da completare" %></span>
+            <% if available %>
+              <span class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Apri il corso</span>
+            <% end %>
+            </div>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="border-t border-slate-200 bg-[#F6F7F4]">
+    <div class="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:py-18">
+      <div class="mb-9 max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-[.16em] text-indigo-600">Modulo</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Postura e Recupero</h2>
+        <p class="mt-3 leading-7 text-slate-600">Una raccolta di corsi per approfondire recupero, fisiologia e principi delle metodiche posturali. Le modalità di partecipazione saranno definite nel dettaglio del corso.</p>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <% @recovery_courses.each_with_index do |course, index| %>
+          <article class="group relative flex min-h-64 flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-xl hover:shadow-slate-900/5">
+            <%= link_to "", posturacorretta_seme_path(stage: "accademia", module: course.fetch("slug")), class: "absolute inset-0 z-10 rounded-2xl", aria: { label: "Apri il corso #{course.fetch("title")}" } %>
+            <div class="flex items-start justify-between gap-4">
+              <span class="text-xs font-semibold text-indigo-600"><%= format("%02d", index + 1) %></span>
+              <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">BASE + AVANZATO</span>
+            </div>
+            <h3 class="mt-6 text-xl font-semibold leading-7 tracking-tight text-slate-950 group-hover:text-indigo-700"><%= course.fetch("title") %></h3>
+            <% if course["description"].present? %><p class="mt-3 text-sm leading-6 text-slate-600"><%= course["description"] %></p><% end %>
+            <div class="mt-auto pt-7">
+              <div class="mb-4">
+                <div class="mb-2 flex items-center justify-between text-xs text-slate-500"><span>Avanzamento</span><span>0 / <%= course.fetch("lessons").size %></span></div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="Avanzamento <%= course.fetch("title") %>" aria-valuemin="0" aria-valuemax="<%= course.fetch("lessons").size %>" aria-valuenow="0"><span class="block h-full w-0 rounded-full bg-indigo-600"></span></div>
+              </div>
+              <div class="flex items-end justify-between gap-4">
+                <span class="text-xs text-slate-500"><%= course.fetch("lessons").size %> lezioni</span>
+                <span class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 group-hover:border-indigo-200 group-hover:text-indigo-700">Apri</span>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%= render "posturacorretta/footer" %>

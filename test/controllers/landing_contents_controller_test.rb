@@ -1,6 +1,18 @@
 require "test_helper"
 
 class LandingContentsControllerTest < ActionDispatch::IntegrationTest
+  test "shows the Giardino del Corpo landing with shared project events" do
+    get giardino_del_corpo_path
+
+    assert_response :success
+    assert_select "h1", text: "Coltiva il corpo, le capacità e le relazioni."
+    assert_select "#esperienze"
+    assert_select "#eventi"
+    assert_select "h3", text: "Incontro al Lago d'Idro", minimum: 1
+    assert_select "a[href='#{posturacorretta_path}']", minimum: 1
+    assert_select "a[href='#{flowpulse_path}']", minimum: 1
+  end
+
   test "shows Flowpulse contents and a working events action on the landing page" do
     get flowpulse_path
 

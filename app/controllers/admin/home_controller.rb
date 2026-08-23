@@ -1,9 +1,12 @@
 module Admin
   class HomeController < BaseController
     dashboard_section :dashboard, only: :dashboard
-    dashboard_section :pages, only: :elenco_pagine
+    dashboard_section :pages, only: [:elenco_pagine, :percorso_insegnanti]
 
-    before_action :require_superadmin!, only: [:elenco_pagine, :set_override]
+    before_action :require_superadmin!, only: [:elenco_pagine, :percorso_insegnanti, :set_override]
+
+    def percorso_insegnanti
+    end
 
     def dashboard
       @creator_worlds = RoleAssignment.creator_of_worlds.order(:id)

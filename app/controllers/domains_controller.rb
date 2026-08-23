@@ -91,6 +91,10 @@ class DomainsController < ApplicationController
         prepare_flowpulse_landing
         return
       end
+      if target_action == "giardino_del_corpo"
+        prepare_garden_landing
+        return
+      end
       return unless target_action == "posturacorretta"
 
       @home_data = YAML.safe_load_file(
@@ -111,5 +115,13 @@ class DomainsController < ApplicationController
         "flowpulse",
         include_scheduled: Current.user&.superadmin_user? || false
       ).first(3)
+    end
+
+    def prepare_garden_landing
+      @garden_events = DomainEventCatalog.for_project(
+        "giardino-del-corpo",
+        include_drafts: Current.user&.superadmin_user? || false
+      ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
+       .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
     end
 end
