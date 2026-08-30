@@ -1,0 +1,75 @@
+slug: pratica-guidata-primo-mese
+title: Lezione pratica PosturaCorretta in un mese
+type: lesson
+description: Attività pratica prevista dal programma, ripetibile secondo le modalità specificate nel ticket.
+modules:
+  - course_slug: postura-corretta-in-un-mese
+    module_slug: insegnamenti-metodiche-posturali
+    required: true
+delivery:
+  responsible: markpostura
+  role: teacher_master
+  formats:
+    group:
+      label: Gruppo
+      enabled: true
+      minimum_participants: 2
+      maximum_participants:
+    individual:
+      label: Individuale
+      enabled: true
+participation:
+  default_role: student
+  roles:
+    student:
+      label: Studente
+      enabled: true
+    teacher_trainee:
+      label: Tirocinante insegnante
+      enabled: true
+      internship:
+        supervisor_required: true
+        supervisor_qualification: teacher_master
+        default_mode: shadowing
+        modes:
+          shadowing:
+            label: In affiancamento
+            description: Osserva e supporta la lezione condotta dall'insegnante maestro.
+          supervised_teaching:
+            label: Conduzione supervisionata
+            description: Conduce una parte o tutta la lezione sotto la responsabilità dell'insegnante maestro.
+        assessment:
+          enabled: true
+          status: da_definire
+          note: Le regole di accesso, avanzamento e valutazione saranno definite nel Programma di tirocinio.
+levels:
+  base:
+    label: Base
+    teaching:
+      minimum_qualification: teacher
+      internship_enabled: true
+    lesson_plan:
+      title: Programma base della lezione
+      duration_minutes: 45
+      status: da_preparare
+      objectives:
+        - Sperimentare la prima pratica guidata del programma.
+        - Comprendere come utilizzare la scheda tra una lezione e la successiva.
+    worksheet:
+      title: Scheda pratica base PosturaCorretta in un mese
+      status: da_preparare
+  advanced:
+    label: Avanzata
+    teaching:
+      minimum_qualification: teacher_master
+      internship_enabled: true
+    lesson_plan:
+      title: Programma avanzato della lezione
+      duration_minutes: 90
+      status: da_preparare
+      objectives:
+        - Approfondire principi, osservazioni e adattamenti della pratica.
+        - Collegare l'esperienza pratica ai contenuti avanzati del corso.
+    worksheet:
+      title: Scheda pratica avanzata PosturaCorretta in un mese
+      status: da_preparare

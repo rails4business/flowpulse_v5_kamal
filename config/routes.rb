@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   # Public Routes
   constraints ->(request) { request.host == "posturacorretta.org" } do
-    get "/", to: "brands/posturacorretta#home", as: :posturacorretta_domain_root
+    get "/", to: "posturacorretta_seme#index", as: :posturacorretta_domain_root
   end
   constraints ->(request) { %w[ilgiardinodelcorpo.it www.ilgiardinodelcorpo.it].include?(request.host) } do
     get "/", to: "landing#giardino_del_corpo", as: :giardino_del_corpo_domain_root
@@ -27,15 +27,25 @@ Rails.application.routes.draw do
   get "rails4b" => "landing#rails4b", as: :rails4b
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "giardino-del-corpo" => "landing#giardino_del_corpo", as: :giardino_del_corpo
+  get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
   get "markpostura" => "landing#markpostura", as: :markpostura
   get "markpostura/eventi" => "landing#markpostura_events", as: :markpostura_events
   get "markpostura/contenuti" => "landing#markpostura_contents", as: :markpostura_contents
   get "markpostura/contenuti/:slug" => "landing#markpostura_content", as: :markpostura_content
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
-  get "posturacorretta" => "brands/posturacorretta#home", as: :posturacorretta
+  get "posturacorretta" => "posturacorretta_seme#index", as: :posturacorretta
+  get "posturacorretta/corsi/:corso" => "posturacorretta_seme#course", as: :posturacorretta_course
+  get "posturacorretta/corsi/:corso/lezioni" => "posturacorretta_seme#programma", as: :posturacorretta_course_lessons
+  get "posturacorretta/corsi/:corso/lezioni/:attivita" => "posturacorretta_seme#programma", as: :posturacorretta_course_lesson
+  get "posturacorretta/corsi/:corso/capitoli" => "posturacorretta_seme#percorso_educativo", as: :posturacorretta_course_chapters
+  get "posturacorretta/corsi/:corso/capitoli/:capitolo" => "posturacorretta_seme#percorso_educativo", as: :posturacorretta_course_chapter
+  get "posturacorretta/programma" => "posturacorretta_seme#legacy_programma", as: :posturacorretta_programma
+  get "posturacorretta/percorso-educativo" => "posturacorretta_seme#legacy_percorso_educativo", as: :posturacorretta_percorso_educativo
+  get "posturacorretta/tre-progetti" => "brands/posturacorretta#three_projects", as: :posturacorretta_three_projects
   get "posturacorretta/seme" => "posturacorretta_seme#show", as: :posturacorretta_seme
   get "posturacorretta/seme/percorso" => "posturacorretta_seme#percorso", as: :posturacorretta_seme_percorso
+  get "posturacorretta/seme/percorsi-integrati" => "posturacorretta_seme#integrated_paths", as: :posturacorretta_seme_integrated_paths
   get "posturacorretta/seme/dashboard/studente" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_seme_student_dashboard
   get "posturacorretta/seme/dashboard/insegnante" => "posturacorretta_seme#dashboard_teacher", as: :posturacorretta_seme_teacher_dashboard
   get "posturacorretta/primo-mese" => "brands/posturacorretta#primo_mese", as: :posturacorretta_primo_mese
@@ -43,7 +53,7 @@ Rails.application.routes.draw do
   get "posturacorretta/accademia" => "brands/posturacorretta#accademia", as: :posturacorretta_accademia
   get "posturacorretta/accademia/recensioni" => "brands/posturacorretta#accademia_recensioni", as: :posturacorretta_accademia_recensioni
   get "posturacorretta/accademia/:slug" => "brands/posturacorretta#accademia_modulo", as: :posturacorretta_accademia_modulo
-  get "posturacorretta/percorso" => "brands/posturacorretta#percorso", as: :posturacorretta_percorso
+  get "posturacorretta/percorso" => redirect("/percorso-integrato", status: 301), as: :posturacorretta_percorso
   get "posturacorretta/percorso/come-funziona" => "brands/posturacorretta#percorso_come_funziona", as: :posturacorretta_percorso_come_funziona
   get "posturacorretta/percorsi-sul-territorio" => "brands/posturacorretta#percorsi_sul_territorio", as: :posturacorretta_percorsi_sul_territorio
   get "posturacorretta/metodiche" => "brands/posturacorretta#metodiche", as: :posturacorretta_metodiche
@@ -51,6 +61,7 @@ Rails.application.routes.draw do
   get "posturacorretta/professionisti" => "brands/posturacorretta#professionisti", as: :posturacorretta_professionisti
   get "posturacorretta/professionisti/:slug" => "brands/posturacorretta#professionista", as: :posturacorretta_professionista
   get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
+  get "posturacorretta/corsi" => "brands/posturacorretta#corsi", as: :posturacorretta_corsi
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo
   get "posturacorretta/eventi" => "brands/posturacorretta#eventi", as: :posturacorretta_eventi
   get "posturacorretta/dash" => "brands/posturacorretta#dash", as: :posturacorretta_dash
@@ -131,6 +142,7 @@ Rails.application.routes.draw do
     post "set_override" => "home#set_override", as: :set_override
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
     get "percorso_insegnanti" => "home#percorso_insegnanti", as: :percorso_insegnanti
+    get "percorso_insegnanti/fonti/*path" => "didactic_sources#show", as: :didactic_source, format: false
     get "appunti" => "notes#index", as: :notes
     get "appunti/:source/*path" => "notes#show", as: :note
     get "contenuti" => "content_taxonomy#show", as: :content_taxonomy

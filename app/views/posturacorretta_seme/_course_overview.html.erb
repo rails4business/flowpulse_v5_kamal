@@ -1,0 +1,150 @@
+<% course_position = @all_didactic_courses.index { |course| course.fetch("slug") == @reader_course_slug } %>
+<% course_code = format("%02d", (course_position || 0) + 1) %>
+<% cover_styles = ["from-blue-950 via-blue-700 to-cyan-400", "from-emerald-950 via-emerald-700 to-lime-400", "from-violet-950 via-violet-700 to-fuchsia-400", "from-slate-950 via-indigo-700 to-blue-400"] %>
+<% cover_style = cover_styles[(course_position || 0) % cover_styles.size] %>
+<% first_program_step = @course_program_steps.first %>
+<% first_chapter = @course_lessons.first %>
+<% course_start_path = if first_chapter
+     posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: first_chapter.fetch("slug"))
+   elsif first_program_step
+     posturacorretta_course_lesson_path(corso: @reader_course_slug, attivita: first_program_step.fetch("slug"))
+   end %>
+
+<main class="min-h-screen bg-slate-50" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
+  <div class="border-b border-slate-200 bg-white p-4 lg:hidden">
+    <button type="button" class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold" data-mobile-aside-target="toggle" data-action="mobile-aside#open" aria-controls="course-overview-aside" aria-expanded="false">
+      <span>Indice dei corsi</span><span aria-hidden="true">☰</span>
+    </button>
+  </div>
+  <div class="fixed inset-0 z-40 hidden bg-slate-950/30 opacity-0 lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
+
+  <div class="mx-auto max-w-screen-xl px-4 py-6 sm:px-6 lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-8 lg:px-8 lg:py-8">
+    <aside id="course-overview-aside" class="fixed inset-y-0 left-0 z-50 w-80 max-w-[88vw] -translate-x-full overflow-y-auto border-r border-slate-200 bg-white p-5 shadow-2xl transition-transform lg:sticky lg:top-24 lg:z-auto lg:h-auto lg:max-h-[calc(100vh-7rem)] lg:w-auto lg:max-w-none lg:translate-x-0 lg:overscroll-contain lg:rounded-xl lg:border lg:border-slate-200 lg:shadow-sm" data-mobile-aside-target="panel" aria-hidden="true">
+      <div class="mb-5 flex items-center justify-between lg:hidden">
+        <p class="text-sm font-bold text-slate-900">Indice dei corsi</p>
+        <button type="button" class="rounded-lg p-2 text-slate-500" data-mobile-aside-target="close" data-action="mobile-aside#close" aria-label="Chiudi indice">✕</button>
+      </div>
+      <div data-action="click->mobile-aside#closeFromNavigation">
+        <%= render "posturacorretta_seme/catalog_aside", course: @selected_course %>
+      </div>
+    </aside>
+
+    <div class="min-w-0">
+      <header class="mb-6">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="grid min-h-52 sm:grid-cols-[14rem_minmax(0,1fr)]">
+            <div class="relative min-h-44 overflow-hidden bg-gradient-to-br <%= cover_style %>">
+              <% if @selected_course["image"].present? %>
+                <%= image_tag @selected_course.fetch("image"), alt: "", class: "absolute inset-0 size-full object-cover" %>
+                <span class="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-transparent"></span>
+              <% else %>
+                <span class="absolute -right-8 -top-10 size-36 rounded-full border border-white/25"></span>
+                <span class="absolute -bottom-16 -left-12 size-48 rounded-full border-[28px] border-white/10"></span>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="absolute right-5 top-5 size-10 text-white/75">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z" />
+                </svg>
+              <% end %>
+              <span class="absolute bottom-4 left-4 rounded-full bg-white/95 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[.13em] text-slate-900 shadow-sm">Corso <%= course_code %></span>
+            </div>
+
+            <div class="flex min-w-0 flex-col justify-center p-5 sm:p-7">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[11px] font-bold uppercase tracking-[.13em] text-blue-700">Corso <%= course_code %></span>
+                <% if @selected_course["status"] == "draft" %><span class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">In preparazione</span><% end %>
+              </div>
+              <h1 class="mt-3 text-3xl font-semibold tracking-[-.03em] text-slate-950 sm:text-4xl"><%= @selected_course.fetch("title") %></h1>
+              <% if @selected_course["description"].present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= @selected_course.fetch("description") %></p><% end %>
+              <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
+                <p class="text-xs font-semibold text-slate-500"><%= @course_program_steps.size %> attività guidate · <%= @course_lessons.size %> capitoli</p>
+                <% if course_start_path %>
+                  <%= link_to "Inizia", course_start_path, class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700" %>
+                <% else %>
+                  <span class="inline-flex rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold text-slate-500">In preparazione</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div>
+      <div class="border-b border-slate-200 px-1 sm:px-3">
+        <nav aria-label="Contenuti del corso" role="tablist" class="-mb-px flex items-end gap-1 overflow-x-auto">
+          <%= link_to posturacorretta_course_path(corso: @reader_course_slug, vista: "capitoli"), role: "tab", aria: { selected: @course_overview_tab == "capitoli", current: ("page" if @course_overview_tab == "capitoli") }, class: "whitespace-nowrap rounded-t-xl border px-4 py-3 text-sm font-bold transition sm:px-5 #{@course_overview_tab == "capitoli" ? "border-slate-200 !border-b-white !bg-white text-indigo-800 shadow-[0_-2px_8px_rgba(15,23,42,0.04)]" : "border-transparent bg-slate-100/70 text-slate-500 hover:border-slate-200 hover:bg-white hover:text-slate-800"}" do %>
+            Corso online <span class="ml-1 text-xs font-semibold opacity-70"><%= @course_lessons.size %></span>
+          <% end %>
+          <%= link_to posturacorretta_course_path(corso: @reader_course_slug, vista: "incontri"), role: "tab", aria: { selected: @course_overview_tab == "incontri", current: ("page" if @course_overview_tab == "incontri") }, class: "whitespace-nowrap rounded-t-xl border px-4 py-3 text-sm font-bold transition sm:px-5 #{@course_overview_tab == "incontri" ? "border-slate-200 !border-b-white !bg-white text-amber-800 shadow-[0_-2px_8px_rgba(15,23,42,0.04)]" : "border-transparent bg-slate-100/70 text-slate-500 hover:border-slate-200 hover:bg-white hover:text-slate-800"}" do %>
+            Percorso guidato <span class="ml-1 text-xs font-semibold opacity-70"><%= @course_program_steps.size %></span>
+          <% end %>
+        </nav>
+      </div>
+
+      <% if @course_overview_tab == "incontri" %>
+        <section id="incontri-lezioni" class="rounded-b-2xl border-x border-b border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 lg:px-12">
+          <p class="text-xs font-extrabold uppercase tracking-[.15em] text-amber-700">Appuntamenti</p>
+          <h2 class="mt-1 text-2xl font-semibold text-slate-950">Incontri e lezioni</h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Segui le attività nell’ordine indicato. Apri la prossima disponibile per consultare programma, scheda e modalità di prenotazione.</p>
+          <% if @course_program_steps.present? %>
+            <div class="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <ol class="divide-y divide-slate-200" aria-label="Attività del percorso guidato">
+                <% @course_program_steps.each_with_index do |activity, index| %>
+                  <% state = activity.fetch("progress_state") %>
+                  <% delivery = activity.fetch("delivery", {}) %>
+                  <% plans = [activity["lesson_plan"], *activity.fetch("levels", {}).values.filter_map { |level| level["lesson_plan"] }].compact %>
+                  <% durations = plans.filter_map { |plan| plan["duration_minutes"] }.uniq %>
+                  <% kind = activity["type"] == "tutor_meeting" ? "Incontro con tutor" : "Lezione con insegnante" %>
+                  <% activity_path = posturacorretta_course_lesson_path(corso: @reader_course_slug, attivita: activity.fetch("slug")) %>
+                  <% activity_access_path = authenticated? ? activity_path : new_session_path(return_to: activity_path) %>
+                  <li class="grid gap-4 px-5 py-5 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-center sm:px-7">
+                    <span class="grid size-10 place-items-center rounded-full border-2 text-xs font-bold <%= state == "completed" ? "border-emerald-500 bg-emerald-500 text-white" : state == "available" ? "border-amber-400 bg-white text-amber-800" : "border-slate-200 bg-slate-50 text-slate-400" %>"><%= state == "completed" ? "✓" : format("%02d", index + 1) %></span>
+                    <div class="min-w-0">
+                      <h3 class="font-bold text-slate-950"><%= activity.fetch("title") %></h3>
+                      <p class="mt-1 text-xs leading-5 text-slate-500"><%= kind %><% if durations.present? %> · <%= durations.join("–") %> minuti<% end %><% if delivery["responsible"].present? %> · @<%= delivery.fetch("responsible") %><% end %></p>
+                      <p class="mt-2 text-xs font-semibold <%= state == "completed" ? "text-emerald-700" : state == "available" ? "text-amber-800" : "text-slate-400" %>"><%= state == "completed" ? "Completata" : state == "available" ? "Da programmare" : "Disponibile dopo il passaggio precedente" %></p>
+                    </div>
+                    <div class="sm:text-right">
+                      <% if state == "locked" %>
+                        <span class="inline-flex rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold text-slate-400" aria-disabled="true">Da sbloccare</span>
+                      <% else %>
+                        <%= link_to(state == "completed" ? "Apri scheda" : (authenticated? ? "Apri e prenota" : "Accedi per prenotare"), activity_access_path, class: "inline-flex rounded-lg #{state == "completed" ? "border border-slate-200 bg-white text-slate-700" : "bg-blue-700 text-white hover:bg-blue-800"} px-4 py-2 text-xs font-bold transition") %>
+                      <% end %>
+                    </div>
+                  </li>
+                <% end %>
+              </ol>
+              <div class="border-t border-slate-200 bg-slate-50/70 px-5 py-4 sm:px-7">
+                <%= link_to "Vedi tutti i corsi nella dashboard →", authenticated? ? posturacorretta_seme_student_dashboard_path : new_session_path(return_to: posturacorretta_seme_student_dashboard_path), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
+              </div>
+            </div>
+          <% else %>
+            <p class="mt-6 rounded-xl border border-dashed border-amber-200 bg-amber-50/40 p-5 text-sm text-amber-900">Gli incontri e le lezioni di questo corso sono in preparazione.</p>
+          <% end %>
+        </section>
+      <% else %>
+        <section id="capitoli" class="rounded-b-2xl border-x border-b border-slate-200 bg-white px-5 py-9 shadow-sm sm:px-8 lg:px-12">
+          <p class="text-xs font-extrabold uppercase tracking-[.15em] text-indigo-700">Studio in autonomia</p>
+          <h2 class="mt-1 text-2xl font-semibold text-slate-950">Corso online</h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Testi e approfondimenti da consultare in autonomia, prima o dopo gli appuntamenti.</p>
+          <% if @course_lessons.present? %>
+            <ol class="mt-6 divide-y divide-slate-200 border-y border-slate-200">
+              <% @course_lessons.each_with_index do |chapter, index| %>
+                <li>
+                  <%= link_to posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: chapter.fetch("slug")), class: "group grid gap-3 px-1 py-5 transition hover:bg-slate-50 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3" do %>
+                    <span class="text-[11px] font-extrabold uppercase tracking-[.12em] text-indigo-600">Capitolo <%= format("%02d", index + 1) %></span>
+                    <span class="min-w-0 text-base font-bold leading-6 text-slate-900 group-hover:text-indigo-800"><%= chapter.fetch("title") %></span>
+                    <span aria-hidden="true" class="hidden text-lg text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-indigo-700 sm:block">→</span>
+                  <% end %>
+                </li>
+              <% end %>
+            </ol>
+          <% else %>
+            <p class="mt-6 rounded-xl border border-dashed border-indigo-200 bg-indigo-50/40 p-5 text-sm text-indigo-900">I capitoli di questo corso sono in preparazione.</p>
+          <% end %>
+        </section>
+      <% end %>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%= render "posturacorretta/footer" %>

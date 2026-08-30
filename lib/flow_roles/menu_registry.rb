@@ -138,6 +138,15 @@ module FlowRoles
           badge: "MD"
         ),
         MenuItem.build(
+          key: :didactic_path,
+          title: "Percorso didattico",
+          subtitle: "Schema, regole e fonti YAML",
+          path: :admin_percorso_insegnanti_path,
+          roles: %w[superadmin],
+          group: :admin,
+          badge: "EDU"
+        ),
+        MenuItem.build(
           key: :content_taxonomy,
           title: "Gestione contenuti",
           subtitle: "Catalogo, tassonomia e filtri",
@@ -197,7 +206,7 @@ module FlowRoles
     end
 
     def admin_items
-      admin_keys = %i[dashboard domains resources pages notes content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
+      admin_keys = %i[dashboard domains resources pages notes didactic_path content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
       items.select { |item| admin_keys.include?(item.key) }
     end
 

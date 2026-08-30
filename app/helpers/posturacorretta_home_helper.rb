@@ -30,7 +30,7 @@ module PosturacorrettaHomeHelper
   def posturacorretta_home_link_path(route_key)
     case route_key
     when "accademia" then posturacorretta_accademia_path
-    when "percorso" then posturacorretta_percorso_path
+    when "percorso" then percorso_integrato_path
     when "eventi" then posturacorretta_eventi_path
     when "libro", "visione" then posturacorretta_visione_path
     when "progetti" then posturacorretta_progetti_path

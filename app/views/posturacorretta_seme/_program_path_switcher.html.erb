@@ -1,0 +1,10 @@
+<% course_slug = local_assigns[:course_slug] %>
+<nav class="grid grid-cols-2 rounded-xl bg-slate-200/60 p-1 shadow-inner" aria-label="Percorso guidato e corso online">
+  <%= link_to "Corso online", posturacorretta_course_path(corso: course_slug, vista: "capitoli"),
+              class: "flex items-center justify-center rounded-lg py-2.5 px-3 text-center text-xs font-extrabold tracking-wide transition-all #{active == :path ? 'bg-white text-indigo-900 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-600 hover:text-indigo-800 hover:bg-slate-100/50'}",
+              aria: (active == :path ? { current: "page" } : {}) %>
+
+  <%= link_to "Percorso guidato", posturacorretta_course_path(corso: course_slug, vista: "incontri"),
+              class: "flex items-center justify-center rounded-lg py-2.5 px-3 text-center text-xs font-extrabold tracking-wide transition-all #{active == :program ? 'bg-white text-amber-900 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-600 hover:text-amber-800 hover:bg-slate-100/50'}",
+              aria: (active == :program ? { current: "page" } : {}) %>
+</nav>

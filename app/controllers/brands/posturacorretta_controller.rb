@@ -1,15 +1,7 @@
 module Brands
   class PosturacorrettaController < ::PosturacorrettaController
-    def home
-      if params[:sezione].present? || params[:capitolo].present? || params[:chapter].present?
-        section = params[:sezione].presence || section_for_legacy_chapter(params[:chapter])
-        chapter = params[:capitolo].presence || params[:chapter]
-        return redirect_to posturacorretta_guida_path(sezione: section, capitolo: chapter), status: :moved_permanently
-      end
-
-      load_home_intro
-      @home_ecosystem = @home_intro_components.find { |component| component["type"] == "ecosystem_home" }&.fetch("data", {}) || {}
-      render "posturacorrettastart/home"
+    def three_projects
+      render "brands/posturacorretta/three_projects"
     end
 
     def guide

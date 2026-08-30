@@ -81,6 +81,13 @@ class DomainsController < ApplicationController
         redirect_to impegno_path
       elsif target_controller == "brands/posturacorretta" && target_action == "home"
         redirect_to posturacorretta_path
+      elsif target_controller == "brands/percorso_integrato" && target_action == "index"
+        data = PercorsoIntegratoCatalog.load
+        @site = data.fetch("site")
+        @principles = data.fetch("principles", [])
+        @roles = data.fetch("roles", [])
+        @steps = data.fetch("steps", [])
+        render "brands/percorso_integrato/index"
       else
         render "#{target_controller}/#{target_action}"
       end
@@ -93,6 +100,10 @@ class DomainsController < ApplicationController
       end
       if target_action == "giardino_del_corpo"
         prepare_garden_landing
+        return
+      end
+      if target_action == "markpostura"
+        prepare_markpostura_landing
         return
       end
       return unless target_action == "posturacorretta"
@@ -123,5 +134,14 @@ class DomainsController < ApplicationController
         include_drafts: Current.user&.superadmin_user? || false
       ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
        .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
+    end
+
+    def prepare_markpostura_landing
+      @markpostura_events = DomainEventCatalog.for_organizer(
+        "markpostura",
+        include_drafts: Current.user&.superadmin_user? || false
+      ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
+       .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
+       .first(3)
     end
 end

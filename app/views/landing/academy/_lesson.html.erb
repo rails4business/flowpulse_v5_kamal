@@ -5,29 +5,40 @@
              else
                lesson["link_url"]
              end
+  is_tutor_session = lesson["tutor"].present? || lesson["type"] == "tutor" || lesson["title"].to_s.downcase.include?("tutor")
 %>
 
 <% if link_url %>
-  <a class="lesson" href="<%= link_url %>">
-    <span class="lesson-num"><%= lesson.fetch("number") %></span>
+  <a class="lesson <%= 'border-l-4 border-l-purple-500 bg-purple-50/30' if is_tutor_session %>" href="<%= link_url %>">
+    <span class="lesson-num <%= 'bg-purple-600 text-white' if is_tutor_session %>"><%= lesson.fetch("number") %></span>
     <span>
-      <strong><%= lesson.fetch("title") %></strong>
+      <strong class="flex items-center gap-2">
+        <%= lesson.fetch("title") %>
+        <% if is_tutor_session %>
+          <span class="rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 uppercase">🤝 Incontro Tutor</span>
+        <% end %>
+      </strong>
       <small><%= lesson.fetch("description") %></small>
     </span>
-    <span class="lesson-status" style="color: var(--blue);">→ scopri di più</span>
+    <span class="lesson-status" style="color: <%= is_tutor_session ? '#7c3aed' : 'var(--blue)' %>;"><%= is_tutor_session ? '🤝 Prenota' : '→ scopri di più' %></span>
   </a>
 <% else %>
   <button
     type="button"
-    class="lesson"
+    class="lesson <%= 'border-l-4 border-l-purple-500 bg-purple-50/30' if is_tutor_session %>"
     data-lesson-template="lesson-<%= academy_module.fetch("slug") %>-<%= lesson.fetch("slug") %>"
   >
-    <span class="lesson-num"><%= lesson.fetch("number") %></span>
+    <span class="lesson-num <%= 'bg-purple-600 text-white' if is_tutor_session %>"><%= lesson.fetch("number") %></span>
     <span>
-      <strong><%= lesson.fetch("title") %></strong>
+      <strong class="flex items-center gap-2">
+        <%= lesson.fetch("title") %>
+        <% if is_tutor_session %>
+          <span class="rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 uppercase">🤝 Incontro Tutor</span>
+        <% end %>
+      </strong>
       <small><%= lesson.fetch("description") %></small>
     </span>
-    <span class="lesson-status">✓ disponibile</span>
+    <span class="lesson-status" style="<%= 'color: #7c3aed;' if is_tutor_session %>"><%= is_tutor_session ? '🤝 Sessione Tutor' : '✓ disponibile' %></span>
   </button>
 
   <template id="lesson-<%= academy_module.fetch("slug") %>-<%= lesson.fetch("slug") %>">

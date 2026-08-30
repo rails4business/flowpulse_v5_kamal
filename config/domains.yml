@@ -38,6 +38,17 @@ default: &default
   www.posturacorretta.org:
     canonical_host: posturacorretta.org
 
+  percorsointegrato.it:
+    locale: it
+    target_controller: brands/percorso_integrato
+    target_action: index
+    primary: true
+    site_title: "Percorso Integrato — Programmi, professionisti e verifiche"
+    site_description: "Costruisci un percorso personale e coordinato collegando bisogni, programmi, professionisti e verifiche."
+
+  www.percorsointegrato.it:
+    canonical_host: percorsointegrato.it
+
   generaimpresa.it:
     locale: it
     target_controller: brands/genera_impresa

@@ -5,7 +5,7 @@ class PosturacorrettastartController < ApplicationController
 
   def index
     destination = case params[:tab]
-    when "percorso" then posturacorretta_percorso_path
+    when "percorso" then percorso_integrato_path
     when "accademia" then posturacorretta_path
     when "filosofia" then posturacorretta_eventi_path
     else posturacorretta_path

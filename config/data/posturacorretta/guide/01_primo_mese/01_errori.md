@@ -46,7 +46,7 @@ Non significa che le spiegazioni siano automaticamente equivalenti. Significa ch
 
 PosturaCorretta propone sette ambiti per collegare il problema concreto alla persona nel suo insieme. I primi riguardano più direttamente salute, prevenzione e attività; gli altri ampliano progressivamente lo sguardo verso relazioni, espressione, apprendimento e consapevolezza.
 
-[Inizia il tuo Percorso Integrato →](/posturacorretta/percorso)
+[Inizia il tuo Percorso Integrato →](/percorso-integrato)
 
 ## 3. Delegare completamente la propria salute al professionista
 

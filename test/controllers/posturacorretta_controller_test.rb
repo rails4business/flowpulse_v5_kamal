@@ -132,6 +132,26 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_contenuti_url
     assert_response :success
     assert_includes response.body, "Contenuti"
+    assert_select ".macro-tab", count: 0
+    assert_select ".blog-section[data-category='tutti']", count: 1
+    assert_select ".blog-section[data-category='corsi']", count: 0
+  end
+
+  test "should get corsi as a separate catalog" do
+    get posturacorretta_corsi_url
+
+    assert_response :success
+    assert_select ".macro-tab", count: 0
+    assert_select "input[placeholder='Cerca un corso...']", count: 1
+    assert_select ".blog-section[data-category='corsi']", count: 1
+    assert_select ".blog-section[data-category='tutti']", count: 0
+  end
+
+  test "redirects the former course category to the courses page" do
+    get posturacorretta_contenuti_url(categoria: "corsi")
+
+    assert_redirected_to posturacorretta_corsi_url
+    assert_response :moved_permanently
   end
 
   test "should get eventi" do

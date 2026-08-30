@@ -1,0 +1,35 @@
+<% active_course = local_assigns.fetch(:course) %>
+<% direct_course_slugs = @didactic_courses.map { |course| course.fetch("slug") } %>
+<% groups = [{ "title" => "Inizia da qui", "courses" => @all_didactic_courses.select { |course| direct_course_slugs.include?(course.fetch("slug")) } }] %>
+<% @didactic_sections.each do |section| %>
+  <% courses = @all_didactic_courses.select { |course| course["section_slug"] == section.fetch("slug") } %>
+  <% groups << { "title" => section.fetch("title"), "courses" => courses } if courses.present? %>
+<% end %>
+<% course_number = 0 %>
+
+<div class="border-b border-slate-200 pb-5">
+  <%= link_to posturacorretta_path, class: "group flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 hover:text-blue-700" do %>
+    <span aria-hidden="true" class="transition group-hover:-translate-x-0.5">←</span>
+    <span>Tutti i corsi</span>
+  <% end %>
+</div>
+
+<nav aria-label="Indice generale dei corsi" class="mt-5 space-y-6" data-controller="scroll-selected">
+  <% groups.each do |group| %>
+    <section>
+      <h2 class="mb-2 px-2 text-[10px] font-extrabold uppercase tracking-[.14em] text-slate-400"><%= group.fetch("title") %></h2>
+      <ol class="space-y-1">
+        <% group.fetch("courses").each do |course| %>
+          <% course_number += 1 %>
+          <% selected = course.fetch("slug") == active_course.fetch("slug") %>
+          <li>
+            <%= link_to posturacorretta_course_path(corso: course.fetch("slug"), vista: "capitoli"), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "flex items-start gap-3 rounded-lg border px-2.5 py-2.5 text-sm leading-5 transition #{selected ? "border-blue-300 bg-blue-50 font-bold text-blue-900 shadow-sm" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"}" do %>
+              <span class="grid size-6 shrink-0 place-items-center rounded-full text-[9px] font-bold <%= selected ? "bg-blue-700 text-white" : "border border-slate-300 bg-white text-slate-500" %>"><%= format("%02d", course_number) %></span>
+              <span><%= course.fetch("title") %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    </section>
+  <% end %>
+</nav>

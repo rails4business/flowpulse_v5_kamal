@@ -8,6 +8,63 @@ projects:
     summary: "Progettare e realizzare la webapp che accompagna persone e organizzazioni nel vendere, donare e destinare gli oggetti entro una scadenza."
     owner: "@markpostura"
     public_path: "/brands/svuotamente"
+    economics:
+      build_cost_eur: 6500
+      operating_cost_eur: 1800
+      revenue_min_eur: 6000
+      revenue_base_eur: 12000
+      revenue_max_eur: 22000
+    dash:
+      price_year_max_eur: 41
+      price_person_value_eur: 32
+      price_market_eur: 26
+      price_year_min_eur: 18
+      price_project_safety_eur: 21
+      service_price_dash: 4.5
+      service_price_eur_reference: 120
+    people:
+      - name: "Marco"
+        role: "Responsabile progetto"
+        commitment: "Specifiche, test, coordinamento"
+        due: "Continuo"
+        planned: 60
+        worked: 29
+      - name: "Luca"
+        role: "Rails4B"
+        commitment: "Costruire MVP"
+        due: "Settimana 3"
+        planned: 70
+        worked: 24
+      - name: "Sara"
+        role: "Segreteria / tester"
+        commitment: "Tester e feedback"
+        due: "Settimana 4"
+        planned: 30
+        worked: 8
+    skills:
+      - skill: "Ruby on Rails"
+        status: "Coperta"
+      - skill: "UX semplice"
+        status: "Parziale"
+      - skill: "Vendita / validazione"
+        status: "Parziale"
+      - skill: "Contabilità progetto"
+        status: "Da coprire"
+      - skill: "DASH multisig"
+        status: "Da validare"
+    dash_commitments:
+      - person: "Marco"
+        promised: 10
+        verified: 10
+        locked: 5
+      - person: "Luca"
+        promised: 8
+        verified: 8
+        locked: 4
+      - person: "Sara"
+        promised: 6
+        verified: 4
+        locked: 0
     steps:
       - key: "validare-proposta"
         title: "Validare la proposta e il flusso"

@@ -4,7 +4,7 @@ class PosturacorrettaController < ApplicationController
   before_action :load_academy_curriculum, only: %i[accademia accademia_modulo accademia_recensioni]
   before_action :load_methodologies, only: %i[metodiche metodica]
   before_action :load_projects, only: %i[progetti progetto]
-  before_action :load_catalog, only: %i[contenuti articolo]
+  before_action :load_catalog, only: %i[contenuti corsi articolo]
   helper_method :posturacorretta_public_professionals
 
   def accademia
@@ -66,7 +66,7 @@ class PosturacorrettaController < ApplicationController
   end
   def professionisti
     @professionals = posturacorretta_public_professionals
-    redirect_to posturacorretta_percorso_path
+    redirect_to percorso_integrato_path
   end
   
   def professionista
@@ -115,6 +115,21 @@ class PosturacorrettaController < ApplicationController
     return redirect_to posturacorretta_metodiche_path, alert: "Metodica non trovata" unless @methodology
   end
   def contenuti
+    if params[:categoria] == "corsi"
+      return redirect_to posturacorretta_corsi_path(request.query_parameters.except("categoria")), status: :moved_permanently
+    end
+
+    @content_catalog_mode = "contents"
+    prepare_content_catalog
+  end
+
+  def corsi
+    @content_catalog_mode = "courses"
+    prepare_content_catalog
+    render :contenuti
+  end
+
+  def prepare_content_catalog
     taxonomy_path = Rails.root.join("config/data/posturacorretta/contenuti/tassonomia.yml")
     @content_taxonomy = YAML.safe_load_file(taxonomy_path, permitted_classes: [], aliases: false) || {}
     posturacorretta_domain = Domain.active.find_by(hostname: "posturacorretta.org")

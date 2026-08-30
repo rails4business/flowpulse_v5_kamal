@@ -1,0 +1,147 @@
+<% content_for :landing_nav do %>
+  <%= render "posturacorretta/header" %>
+<% end %>
+
+<% content_for :title, "I Tre Progetti Interconnessi — PosturaCorretta, Percorso Integrato e Il Giardino del Corpo" %>
+
+<main class="bg-slate-50 text-slate-900 antialiased min-h-screen">
+
+  <!-- Header Presentazione -->
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-screen-xl px-5 py-12 sm:px-6 sm:py-16 lg:px-14 lg:py-20 text-center">
+      <p class="text-xs font-black uppercase tracking-[0.2em] text-blue-700">L'Ecosistema Integrato</p>
+      <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+        I Tre Progetti Interconnessi
+      </h1>
+      <p class="mt-5 max-w-3xl mx-auto text-base leading-8 text-slate-600 sm:text-lg">
+        <strong>PosturaCorretta</strong>, <strong>Percorso Integrato</strong> e <strong>Il Giardino del Corpo</strong> si supportano a vicenda: 
+        senza l'aspetto educativo di consapevolezza corporea e senza una filosofia che metta davvero al centro l'essere umano, non potrà mai esistere un vero percorso integrato per la salute.
+      </p>
+    </div>
+  </header>
+
+  <!-- Schema Grafico del Triangolo (3-progetti.png) -->
+  <section class="bg-white py-12 border-b border-slate-200">
+    <div class="mx-auto max-w-4xl px-5 text-center">
+      <div class="inline-block rounded-3xl border border-slate-200 bg-slate-50 p-4 shadow-sm hover:shadow-md transition">
+        <img 
+          src="https://ik.imagekit.io/posturacorretta/3-progetti.png" 
+          alt="Schema dei Tre Progetti: PosturaCorretta, Percorso Integrato e Il Giardino del Corpo" 
+          class="mx-auto h-auto max-h-[420px] w-full object-contain rounded-2xl"
+        >
+      </div>
+      <p class="mt-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">
+        Tre vertici di un unico ecosistema · Educazione, Accompagnamento &amp; Filosofia
+      </p>
+    </div>
+  </section>
+
+  <!-- Dettaglio dei Tre Progetti (Vertici del Triangolo) -->
+  <section class="py-16 px-5 sm:px-6 lg:px-14 max-w-screen-xl mx-auto">
+    <div class="max-w-2xl mb-10">
+      <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Tre possibilità di accesso</p>
+      <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Scegli da dove iniziare</h2>
+      <p class="mt-3 text-base leading-7 text-slate-600">
+        Puoi iniziare dalla pratica e dall'educazione posturale, richiedere un accompagnamento su misura con un tutor o partecipare agli eventi dal vivo. I tre progetti comunicano continuamente tra loro.
+      </p>
+    </div>
+
+    <div class="space-y-6">
+      
+      <!-- Card 1: PosturaCorretta -->
+      <article class="grid overflow-hidden rounded-3xl border border-blue-200 bg-white shadow-sm transition hover:shadow-md md:grid-cols-[minmax(0,1fr)_19rem] lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <div class="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+          <div class="flex items-center gap-2">
+            <span class="bg-blue-50 grid size-8 place-items-center rounded-lg text-lg">🧍</span>
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">1. Educazione &amp; Pratica</p>
+          </div>
+          <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">PosturaCorretta &amp; Accademia</h3>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+            Un percorso educativo per conoscere il funzionamento del corpo, sviluppare la consapevolezza corporea e apprendere le metodiche posturali. Dai primi gruppi posturali base fino all'Accademia avanzata e alla formazione per insegnanti.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-4 items-center">
+            <%= link_to "Scopri PosturaCorretta →", posturacorretta_path, class: "inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900" %>
+            <%= link_to "Accademia →", posturacorretta_accademia_path, class: "inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-slate-900" %>
+          </div>
+        </div>
+        <div class="flex min-h-56 items-center justify-center bg-blue-50/40 p-5 sm:p-7">
+          <img src="https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777" alt="Educazione al corpo con PosturaCorretta" class="max-h-64 w-full object-contain" loading="lazy">
+        </div>
+      </article>
+
+      <!-- Card 2: Percorso Integrato -->
+      <article class="grid overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-sm transition hover:shadow-md md:grid-cols-[minmax(0,1fr)_19rem] lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <div class="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+          <div class="flex items-center gap-2">
+            <span class="bg-emerald-50 grid size-8 place-items-center rounded-lg text-lg">🧭</span>
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">2. Accompagnamento Personalizzato</p>
+          </div>
+          <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Percorso Integrato</h3>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+            Con un tutor dedicato costruisci un programma su misura. Metti in relazione i tuoi bisogni di salute, i professionisti sanitari ed educativi con le giuste metodiche, in un percorso coordinato intorno alla tua persona.
+          </p>
+          <div class="mt-6">
+            <%= link_to "Crea il tuo percorso su misura →", percorso_integrato_path, class: "inline-flex items-center gap-2 text-sm font-bold text-emerald-700 hover:text-emerald-900" %>
+          </div>
+        </div>
+        <div class="flex min-h-56 items-center justify-center bg-emerald-50/40 p-5 sm:p-7">
+          <img src="https://ik.imagekit.io/posturacorretta/percorso%20integrato.png" alt="Il Percorso Integrato PosturaCorretta" class="max-h-64 w-full object-contain" loading="lazy">
+        </div>
+      </article>
+
+      <!-- Card 3: Il Giardino del Corpo -->
+      <article class="grid overflow-hidden rounded-3xl border border-violet-200 bg-white shadow-sm transition hover:shadow-md md:grid-cols-[minmax(0,1fr)_19rem] lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <div class="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+          <div class="flex items-center gap-2">
+            <span class="bg-violet-50 grid size-8 place-items-center rounded-lg text-lg">🌳</span>
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-violet-700">3. Filosofia, Eventi &amp; Comunità</p>
+          </div>
+          <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Il Giardino del Corpo</h3>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+            Vivi la filosofia incontrando persone e attività sul territorio e nella natura. Dalla consapevolezza fisica alla vita comunitaria, riscoprendo il valore dello scambio circolare e della relazione con l'ambiente.
+          </p>
+          <div class="mt-6">
+            <%= link_to "Scopri la filosofia e gli eventi →", giardino_del_corpo_path, class: "inline-flex items-center gap-2 text-sm font-bold text-violet-700 hover:text-violet-900" %>
+          </div>
+        </div>
+        <div class="flex min-h-56 items-center justify-center bg-violet-50/40 p-5 sm:p-7">
+          <img src="https://ik.imagekit.io/posturacorretta/giusta_posizione.png?tr=w-1100,q-85" alt="Eventi e filosofia de Il Giardino del Corpo" class="max-h-64 w-full object-contain" loading="lazy">
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Relazione Filosofica e Profonda tra i Tre Progetti -->
+  <section class="bg-slate-900 text-white py-16 px-5 sm:px-6 lg:px-14">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-xs font-black uppercase tracking-[0.2em] text-amber-400">L'Unità dell'Ecosistema</p>
+      <h2 class="mt-3 text-3xl font-extrabold sm:text-4xl">Perché i tre progetti sono inseparabili?</h2>
+      <p class="mt-4 text-slate-300 text-base leading-8">
+        Ogni vertice risponde a una necessità fondamentale. Senza uno di essi, l'architettura della salute resta incompleta.
+      </p>
+
+      <div class="mt-12 grid gap-6 text-left sm:grid-cols-3">
+        <div class="rounded-2xl bg-slate-800/80 p-6 border border-slate-700">
+          <div class="text-blue-400 font-bold text-lg">1. La Base Educativa</div>
+          <p class="mt-2 text-xs text-slate-300 leading-relaxed">
+            <strong>PosturaCorretta</strong> fornisce la consapevolezza e il linguaggio con cui la persona impara a comprendere il proprio corpo e la propria salute.
+          </p>
+        </div>
+        <div class="rounded-2xl bg-slate-800/80 p-6 border border-slate-700">
+          <div class="text-emerald-400 font-bold text-lg">2. La Guida Personalizzata</div>
+          <p class="mt-2 text-xs text-slate-300 leading-relaxed">
+            Il <strong>Percorso Integrato</strong> traduce la teoria in azione clinica e terapeutica, coordinando i migliori professionisti attorno ai bisogni reali.
+          </p>
+        </div>
+        <div class="rounded-2xl bg-slate-800/80 p-6 border border-slate-700">
+          <div class="text-violet-400 font-bold text-lg">3. Il Contesto e la Vita</div>
+          <p class="mt-2 text-xs text-slate-300 leading-relaxed">
+            <strong>Il Giardino del Corpo</strong> colloca la salute nella vita reale: nella natura, nelle relazioni umane, nella cultura e negli scambi della comunità.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>

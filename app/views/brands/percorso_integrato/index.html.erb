@@ -1,0 +1,79 @@
+<% content_for :title, "Percorso Integrato — Programmi, professionisti e verifiche" %>
+<% content_for :description, @site.fetch("description") %>
+<% content_for :landing_nav do %><%= render "brands/percorso_integrato/header" %><% end %>
+
+<div class="min-h-screen bg-[#f8fbf8] text-slate-950">
+  <main>
+    <section class="overflow-hidden border-b border-emerald-100 bg-white">
+      <div class="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:px-8">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700"><%= @site.fetch("eyebrow") %></p>
+          <h1 class="mt-5 max-w-4xl text-5xl font-black leading-[.98] tracking-[-.045em] text-slate-950 sm:text-6xl"><%= @site.fetch("title") %></h1>
+          <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600"><%= @site.fetch("description") %></p>
+          <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+            <a href="#inizia" class="inline-flex justify-center rounded-xl bg-emerald-700 px-6 py-3.5 font-bold text-white shadow-lg shadow-emerald-900/10 hover:bg-emerald-800">Racconta la tua richiesta</a>
+            <a href="#come-funziona" class="inline-flex justify-center rounded-xl border border-emerald-200 bg-white px-6 py-3.5 font-bold text-emerald-900 hover:border-emerald-400">Scopri come funziona</a>
+          </div>
+        </div>
+        <div class="rounded-[2rem] border border-emerald-200 bg-emerald-950 p-8 text-white shadow-xl shadow-emerald-950/10 sm:p-10">
+          <p class="text-xs font-black uppercase tracking-[.16em] text-emerald-300">La differenza</p>
+          <p class="mt-5 text-3xl font-black leading-tight">Non una somma di interventi, ma una direzione condivisa.</p>
+          <p class="mt-5 leading-7 text-emerald-100">Il percorso rende visibili bisogni, programmi, responsabilità, attività e verifiche, affinché la persona e i professionisti sappiano dove stanno andando.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="come-funziona" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Il modello</p>
+        <h2 class="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">Dal bisogno a un percorso che può essere seguito e verificato.</h2>
+        <div class="mt-12 grid gap-5 md:grid-cols-2">
+          <% @principles.each do |principle| %>
+            <article class="rounded-2xl border border-emerald-100 bg-white p-7 shadow-sm">
+              <span class="text-xs font-black text-emerald-700"><%= principle.fetch("number") %></span>
+              <h3 class="mt-3 text-xl font-black"><%= principle.fetch("title") %></h3>
+              <p class="mt-3 leading-7 text-slate-600"><%= principle.fetch("description") %></p>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section id="ruoli" class="scroll-mt-24 border-y border-emerald-100 bg-white px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Chi partecipa</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Ruoli differenti, responsabilità leggibili.</h2>
+        <div class="mt-12 grid gap-5 md:grid-cols-3">
+          <% @roles.each do |role| %>
+            <article class="rounded-2xl border border-slate-200 p-7">
+              <h3 class="text-xl font-black"><%= role.fetch("title") %></h3>
+              <p class="mt-3 text-sm leading-7 text-slate-600"><%= role.fetch("description") %></p>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section id="inizia" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Primo passo</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Invia la richiesta, poi decidi sulla proposta.</h2>
+          <p class="mt-5 leading-7 text-slate-600">Il primo contatto serve a capire il problema e preparare una bozza. Il percorso viene aperto soltanto dopo che hai ricevuto e confermato la proposta.</p>
+          <%= link_to "Scrivi su WhatsApp", "https://wa.me/#{@site.fetch("whatsapp_number")}?text=#{ERB::Util.url_encode(@site.fetch("whatsapp_message"))}", target: "_blank", rel: "noopener noreferrer", class: "mt-7 inline-flex rounded-xl bg-emerald-700 px-6 py-3.5 font-bold !text-white hover:bg-emerald-800 hover:!text-white" %>
+        </div>
+        <ol class="space-y-4">
+          <% @steps.each_with_index do |step, index| %>
+            <li class="flex gap-4 rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+              <span class="grid size-9 shrink-0 place-items-center rounded-full bg-emerald-100 text-xs font-black text-emerald-800"><%= index + 1 %></span>
+              <div><h3 class="font-black"><%= step.fetch("title") %></h3><p class="mt-2 text-sm leading-6 text-slate-600"><%= step.fetch("description") %></p></div>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+    </section>
+
+    <%= render "shared/ecosystem/three_projects_connection", current_project: :percorso_integrato %>
+  </main>
+  <%= render "posturacorretta/footer" %>
+</div>

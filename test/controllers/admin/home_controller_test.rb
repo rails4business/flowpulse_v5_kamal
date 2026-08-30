@@ -60,6 +60,24 @@ module Admin
       assert_select "h2", "Pagine per Ruolo"
     end
 
+    test "superadmin can open the didactic hub and its yaml sources" do
+      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
+
+      get admin_percorso_insegnanti_path
+      assert_response :success
+      assert_select "aside nav a[href='#{admin_percorso_insegnanti_path}']", text: /Percorso didattico/
+      assert_select "h2", text: "Percorso didattico"
+      assert_select "a[href='#{admin_note_path(source: "docs", path: "appunti/avvio_piattaforma_posturacorretta.md")}']", text: /Avvio della piattaforma PosturaCorretta/
+      assert_select "a[href='#{admin_note_path(source: "docs", path: "appunti/programma_didattico_ruoli_e_partecipazioni.md")}']"
+      assert_select "a[href='#{admin_didactic_source_path(path: "posturacorretta_percorso_guidato.yml")}']"
+      assert_select "a", text: /Lezione pratica PosturaCorretta in un mese/
+
+      get admin_didactic_source_path(path: "attivita_percorso_guidato/lezione_pratica_primo_mese.yml")
+      assert_response :success
+      assert_select "h1", text: "Lezione pratica PosturaCorretta in un mese"
+      assert_includes response.body, "levels:"
+    end
+
     test "traveler cannot see dashboard" do
       post session_url, params: { email_address: @traveler.email_address, password: "password123" }
       get admin_dashboard_url

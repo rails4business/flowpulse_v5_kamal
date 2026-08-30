@@ -6,7 +6,15 @@
   </div>
   <h3 class="mt-4 text-lg font-black leading-6 text-slate-950"><%= project["title"] %></h3>
   <p class="mt-2 line-clamp-3 text-sm leading-6 text-slate-600"><%= project["summary"] %></p>
+  
+  <div class="mt-4 flex flex-wrap gap-1.5 text-[11px] font-semibold text-slate-500">
+    <span class="rounded-md bg-slate-100 px-2 py-0.5" title="Idea &amp; Risultati">1. GeneraImpresa</span>
+    <span class="rounded-md bg-slate-100 px-2 py-0.5" title="Sviluppo MVP">2. Rails4B</span>
+    <span class="rounded-md bg-slate-100 px-2 py-0.5" title="Persone &amp; Ore">3. 1Impegno</span>
+    <span class="rounded-md bg-slate-100 px-2 py-0.5" title="Garanzia &amp; DASH">4. DASH</span>
+  </div>
+
   <div class="mt-auto pt-5">
-    <%= link_to "Vedi il progetto →", genera_impresa_project_path(project.fetch("slug")), class: "text-sm font-black text-red-600 hover:text-red-700" %>
+    <%= link_to "Vedi il progetto (4 Risposte) →", genera_impresa_project_path(project.fetch("slug")), class: "text-sm font-black text-red-600 hover:text-red-700" %>
   </div>
 </article>

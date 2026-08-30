@@ -16,10 +16,16 @@
 </script>
 
 <div class="mx-auto max-w-5xl px-4 py-8">
-  <div class="mb-8 border-b border-slate-200 pb-5">
-    <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Accademia PosturaCorretta</p>
-    <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">Flusso Formazione &amp; Crescita Insegnanti</h1>
-    <p class="mt-2 text-sm text-slate-600">Mappa concettuale del percorso dello studente, dall'apprendimento di base alla possibile formazione come Maestro.</p>
+  <div class="mb-8 border-b border-slate-200 pb-5 sm:flex sm:items-end sm:justify-between sm:gap-6">
+    <div>
+      <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Accademia PosturaCorretta</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">Flusso Formazione &amp; Crescita Insegnanti</h1>
+      <p class="mt-2 text-sm text-slate-600">Mappa concettuale del percorso dello studente, dall'apprendimento di base alla possibile formazione come Maestro.</p>
+    </div>
+    <%= link_to admin_note_path(source: "docs", path: "appunti/programma_didattico_ruoli_e_partecipazioni.md"), class: "mt-4 inline-flex shrink-0 items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-bold !text-blue-800 transition hover:border-blue-300 hover:bg-blue-100 sm:mt-0" do %>
+      Leggi la specifica
+      <span aria-hidden="true">→</span>
+    <% end %>
   </div>
 
   <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -63,4 +69,41 @@ flowchart TD
       <p class="mt-1 text-xs text-emerald-700">Passaggio graduale da Insegnante Base ad Avanzato, fino all'aspirazione a Maestro.</p>
     </div>
   </div>
+
+  <section class="mt-10 border-t border-slate-200 pt-8" aria-labelledby="didactic-sources-title">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Documentazione e fonti</p>
+        <h2 id="didactic-sources-title" class="mt-1 text-2xl font-bold tracking-tight text-slate-950">Percorso didattico</h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Lo schema Mermaid mostra il flusso; la specifica descrive le regole; gli YAML definiscono programma, incontri e lezioni.</p>
+      </div>
+      <%= link_to "Tutti gli appunti", admin_notes_path, class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
+    </div>
+
+    <div class="mt-6 grid gap-4 md:grid-cols-2">
+      <%= link_to admin_note_path(source: "docs", path: "appunti/avvio_piattaforma_posturacorretta.md"), class: "group rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 transition hover:border-emerald-400 hover:bg-emerald-50" do %>
+        <span class="text-[10px] font-extrabold uppercase tracking-[.14em] text-emerald-700">Piano di avvio</span>
+        <h3 class="mt-2 font-bold text-slate-950 group-hover:text-emerald-800">Avvio della piattaforma PosturaCorretta</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Ossatura delle pagine, primo flusso reale, pubblicazione settimanale e avvio progressivo degli insegnanti.</p>
+      <% end %>
+
+      <%= link_to admin_note_path(source: "docs", path: "appunti/programma_didattico_ruoli_e_partecipazioni.md"), class: "group rounded-xl border border-blue-200 bg-blue-50/50 p-5 transition hover:border-blue-400 hover:bg-blue-50" do %>
+        <span class="text-[10px] font-extrabold uppercase tracking-[.14em] text-blue-700">Specifica Markdown</span>
+        <h3 class="mt-2 font-bold text-slate-950 group-hover:text-blue-800">Programma didattico: ruoli e partecipazioni</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Ruoli, livelli, modalità, appuntamenti, stati e regole di avanzamento.</p>
+      <% end %>
+
+      <% @didactic_sources.each do |source| %>
+        <%= link_to admin_didactic_source_path(path: source.fetch(:path)), class: "group rounded-xl border border-slate-200 bg-white p-5 transition hover:border-blue-300 hover:bg-blue-50/30" do %>
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-[10px] font-extrabold uppercase tracking-[.14em] text-slate-500"><%= source.fetch(:kind) %></span>
+            <span aria-hidden="true" class="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-blue-700">→</span>
+          </div>
+          <h3 class="mt-2 font-bold text-slate-950 group-hover:text-blue-800"><%= source.fetch(:title) %></h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600"><%= source.fetch(:description) %></p>
+          <p class="mt-3 truncate font-mono text-[11px] text-slate-400"><%= source.fetch(:path) %></p>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
 </div>

@@ -40,6 +40,9 @@ application.register("posturacorrettastart", PosturacorrettastartController)
 import SortableController from "./sortable_controller"
 application.register("sortable", SortableController)
 
+import ScrollSelectedController from "./scroll_selected_controller"
+application.register("scroll-selected", ScrollSelectedController)
+
 import TimerController from "./timer_controller"
 application.register("timer", TimerController)
 

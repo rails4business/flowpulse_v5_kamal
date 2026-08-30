@@ -51,11 +51,11 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "PosturaCorretta"
-    assert_select "title", text: "Cambiare punto di vista fa la differenza"
-    assert_select "meta[name='description'][content='Trova la giusta posizione da cui osservare il mondo']"
+    assert_select "title", text: "Percorso · PosturaCorretta Seme"
+    assert_select "meta[name='description'][content='Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati.']"
     assert_select "link[rel='icon'][href='https://cdn.example.com/posturacorretta-icon.png']"
-    assert_select "meta[property='og:title'][content='Cambiare punto di vista fa la differenza']"
-    assert_select "meta[property='og:description'][content='Trova la giusta posizione da cui osservare il mondo']"
+    assert_select "meta[property='og:title'][content='Percorso · PosturaCorretta Seme']"
+    assert_select "meta[property='og:description'][content='Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati.']"
     assert_select "meta[property='og:image'][content='https://cdn.example.com/posturacorretta-social.png']"
     assert_select "meta[name='twitter:image'][content='https://cdn.example.com/posturacorretta-social.png']"
   end
@@ -90,6 +90,17 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Flowpulse"
   end
 
+  test "renders markpostura domain with its prepared events" do
+    Domain.create!(hostname: "markpostura.it", target_controller: "landing", target_action: "markpostura", locale: "it")
+    host! "markpostura.it"
+
+    get root_url
+
+    assert_response :success
+    assert_select "h1", text: /Il corpo,/
+    assert_select "#eventi"
+  end
+
   test "renders GeneraImpresa on its domain with domain metadata" do
     Domain.create!(
       hostname: "generaimpresa.it",
@@ -108,6 +119,23 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "GeneraImpresa"
     assert_select "meta[name='description'][content=?]", GeneraImpresaCatalog.load.site.fetch("description")
     assert_select "link[rel='icon'][href='https://cdn.example.com/generaimpresa.png']"
+  end
+
+  test "renders Percorso Integrato on its own domain" do
+    Domain.create!(
+      hostname: "percorsointegrato.it",
+      target_controller: "brands/percorso_integrato",
+      target_action: "index",
+      locale: "it",
+      site_title: "Percorso Integrato"
+    )
+    host! "percorsointegrato.it"
+
+    get root_url
+
+    assert_response :success
+    assert_select "h1", text: "Costruisci un percorso personale, leggibile e coordinato."
+    assert_select "title", text: /Percorso Integrato/
   end
 
   test "redirects canonical domain aliases" do

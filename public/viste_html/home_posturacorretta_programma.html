@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Programma Step - PosturaCorretta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- HEADER                                                        -->
+    <!-- ============================================================ -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
+        <div class="max-w-3xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-bold text-slate-800">Programma Step</h1>
+                <p class="text-xs text-slate-400">PosturaCorretta</p>
+            </div>
+            <button onclick="window.print()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition shadow-sm shadow-blue-500/20">
+                <i class="fas fa-print mr-1"></i>Stampa
+            </button>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- MAIN CONTENT                                                 -->
+    <!-- ============================================================ -->
+    <main class="max-w-3xl mx-auto px-4 py-6">
+
+        <!-- ============================================================ -->
+        <!-- TIMELINE - IDENTICO A HYPERUI                                -->
+        <!-- ============================================================ -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/70 p-6">
+            <ol class="relative space-y-8 before:absolute before:-ms-px before:h-full before:w-0.5 before:rounded-full before:bg-gray-200">
+
+                <!-- STEP 1 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-emerald-500"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 1</time>
+                            <span class="text-xs font-medium text-emerald-600">
+                                <i class="fas fa-check-circle mr-1"></i>Completato
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Incontro di Attivazione</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            Presentazione del metodo e della piattaforma
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 2 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-blue-600"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 2</time>
+                            <span class="text-xs font-medium text-blue-600">
+                                <i class="fas fa-clock mr-1"></i>In corso
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Lezione pratica</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            Lezione base + avanzata su PosturaCorretta in un mese
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 3 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-emerald-500"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 3</time>
+                            <span class="text-xs font-medium text-emerald-600">
+                                <i class="fas fa-check-circle mr-1"></i>Completato
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Igiene Posturale</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            Mobilità articolare · Punti di tensione · Vie di discesa · Recettori sensoriali
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 4 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-emerald-500"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 4</time>
+                            <span class="text-xs font-medium text-emerald-600">
+                                <i class="fas fa-check-circle mr-1"></i>Completato
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Principi di Fisioterapia</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            Sistemi: respiratorio · nervoso · muscolo-scheletrico · cardiocircolatorio · linfatico · digerente
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 5 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-blue-600"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 5</time>
+                            <span class="text-xs font-medium text-blue-600">
+                                <i class="fas fa-clock mr-1"></i>In corso
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Biomeccanica comportamentale (GDS)</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            5 direzioni di movimento · Catene AM · AL · PM · PL · PA/AP
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 6 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 6</time>
+                            <span class="text-xs font-medium text-gray-400">
+                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Principi di Osteopatia</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            Disfunzioni · Sistema fasciale · viscerale · cranio-sacrale · neurovegetativo
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 7 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 7</time>
+                            <span class="text-xs font-medium text-gray-400">
+                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Metodo Corpo e Coscienza</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            2 circolazioni · 3 centri di gravità · 4 tipi di movimento · 5 elementi · 6 meridiani · 7 centri neurolinfatici
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 8 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 8</time>
+                            <span class="text-xs font-medium text-gray-400">
+                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Altre metodiche posturali</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            Kinesiologia Applicata · Feldenkrais · Alexander · Sintesi del percorso
+                        </p>
+                    </div>
+                </li>
+
+                <!-- STEP 9 -->
+                <li class="relative -ms-1.5 flex items-start gap-4">
+                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
+                    <div class="-mt-2">
+                        <div class="flex items-center gap-2">
+                            <time class="text-xs/none font-medium text-gray-700">STEP 9</time>
+                            <span class="text-xs font-medium text-gray-400">
+                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Tirocinio in compresenza</h3>
+                        <p class="mt-0.5 text-sm text-gray-700">
+                            Affiancamento con Maestro per lezioni Base e Avanzate
+                        </p>
+                    </div>
+                </li>
+
+            </ol>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- RIEPILOGO                                                    -->
+        <!-- ============================================================ -->
+        <div class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200/70 p-4 no-print">
+            <div class="grid grid-cols-4 gap-2 text-center text-xs">
+                <div>
+                    <p class="text-lg font-bold text-slate-700">9</p>
+                    <p class="text-slate-400">Step totali</p>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-emerald-600">3</p>
+                    <p class="text-slate-400">Completati</p>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-blue-600">2</p>
+                    <p class="text-slate-400">In corso</p>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-slate-400">4</p>
+                    <p class="text-slate-400">Da fare</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================ -->
+    <!-- FOOTER                                                        -->
+    <!-- ============================================================ -->
+    <footer class="max-w-3xl mx-auto px-4 py-4 text-center text-xs text-slate-400 border-t border-slate-200/70 mt-6 no-print">
+        <p>PosturaCorretta · Programma Step</p>
+    </footer>
+
+</body>
+</html>

@@ -274,7 +274,7 @@
         </div>
 
         <div class="mt-12 grid gap-6 md:grid-cols-3">
-          <% @markpostura_events.each do |event| %>
+          <% Array(@markpostura_events).each do |event| %>
             <a href="<%= event.fetch("url") %>" class="group overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
               <div class="aspect-[16/9] overflow-hidden bg-emerald-100">
                 <img src="<%= event.fetch("image") %>" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" alt="<%= event.fetch("title") %>" loading="lazy">

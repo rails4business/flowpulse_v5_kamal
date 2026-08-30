@@ -35,6 +35,10 @@
     "giardino" => "bg-violet-600 text-white shadow-sm"
   }
   content_view = params[:view].presence_in(%w[list grid]) || "list"
+  courses_page = @content_catalog_mode == "courses"
+  visible_category_keys = courses_page ? ["corsi"] : blog_category_order
+  initial_category = visible_category_keys.first
+  initial_category_data = @catalog.fetch(initial_category.to_sym)
 %>
 
 <div id="top" class="content-catalog content-view-<%= content_view %> bg-white text-slate-900 antialiased" data-content-view="<%= content_view %>">
@@ -42,18 +46,13 @@
     <div class="mx-auto max-w-6xl" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
       <div class="relative mb-8 flex min-h-[3rem] flex-col gap-4 sm:flex-row sm:items-center">
         <div id="header-controls" class="flex w-full min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
-          <div class="inline-flex justify-self-start rounded-full bg-slate-100 p-1 shadow-inner shrink-0">
-            <button type="button" onclick="switchMacroTab('contenuti')" id="macro-tab-contenuti" class="macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition">Contenuti</button>
-            <button type="button" onclick="switchMacroTab('corsi')" id="macro-tab-corsi" class="macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition">Corsi</button>
-          </div>
-
           <label class="relative block w-full sm:w-56 sm:focus-within:w-72">
-            <span class="sr-only">Cerca nei contenuti</span>
+            <span class="sr-only">Cerca <%= courses_page ? "nei corsi" : "nei contenuti" %></span>
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="pointer-events-none absolute left-3 top-1/2 z-20 h-5 w-5 -translate-y-1/2 text-slate-400">
               <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
               <path d="m20 20-3.5-3.5" stroke-width="2" stroke-linecap="round"></path>
             </svg>
-            <input id="blog-search" type="search" value="<%= params[:q] %>" placeholder="Cerca un video..." class="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
+            <input id="blog-search" type="search" value="<%= params[:q] %>" placeholder="<%= courses_page ? "Cerca un corso..." : "Cerca un contenuto..." %>" class="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
           </label>
         </div>
 
@@ -71,7 +70,7 @@
             Filtri
           </button>
           <span id="content-visible-count" class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500 whitespace-nowrap" aria-live="polite">
-            <%= @catalog.fetch(:tutti)[:articles].size %> video
+            <%= initial_category_data[:articles].size %> <%= courses_page ? "corsi" : "contenuti" %>
           </span>
         </div>
       </div>
@@ -81,7 +80,7 @@
       <div class="grid gap-7 lg:grid-cols-[15rem_minmax(0,1fr)]">
         <%= render "posturacorretta/content_filter_aside" %>
         <div class="min-w-0">
-      <% (blog_category_order + ["corsi"]).each_with_index do |key, category_index| %>
+      <% visible_category_keys.each_with_index do |key, category_index| %>
         <% category = @catalog.fetch(key.to_sym, nil) %>
         <% next unless category %>
         <% colors = blog_color_classes.fetch(category[:color] || "slate", blog_color_classes["blue"]) %>
@@ -266,7 +265,7 @@
 </div>
 
 <script>
-  let activeBlogCategory = "tutti";
+  let activeBlogCategory = "<%= initial_category %>";
 
   window.switchContentView = function(view) {
     const catalog = document.querySelector(".content-catalog");
@@ -293,18 +292,12 @@
     selectedSection.classList.remove("hidden");
     activeBlogCategory = key;
 
-    // Evidenzia Contenuti se è pubblica
-    if (key !== "corsi") {
-      const btnContenuti = document.getElementById("macro-tab-contenuti");
-      const btnCorsi = document.getElementById("macro-tab-corsi");
-      if(btnContenuti && btnCorsi) {
-        btnContenuti.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition";
-        btnCorsi.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition";
-      }
-    }
-
     const url = new URL(window.location);
-    url.searchParams.set("categoria", key);
+    if (<%= courses_page %>) {
+      url.searchParams.delete("categoria");
+    } else {
+      url.searchParams.set("categoria", key);
+    }
     history.replaceState({}, "", url);
 
     // Reset e applica filtri di ricerca
@@ -374,36 +367,14 @@
 
   }
 
-  window.switchMacroTab = function(tab) {
-    const btnContenuti = document.getElementById("macro-tab-contenuti");
-    const btnCorsi = document.getElementById("macro-tab-corsi");
-
-    if (tab === 'contenuti') {
-      btnContenuti.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition";
-      btnCorsi.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition";
-      const category = new URLSearchParams(window.location.search).get("categoria") || "tutti";
-      window.switchBlogCategory(category === "corsi" ? "tutti" : category);
-    } else {
-      btnCorsi.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold shadow bg-white text-slate-900 transition";
-      btnContenuti.className = "macro-tab rounded-full px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition";
-      window.switchBlogCategory("corsi");
-    }
-  };
-
   function initializeContentCatalog() {
     const search = document.getElementById("blog-search");
     if (!search || search.dataset.catalogReady === "true") return;
     search.dataset.catalogReady = "true";
     search.addEventListener("input", applyBlogFilters);
     const params = new URLSearchParams(window.location.search);
-    const requestedCategory = params.get("categoria") || params.get("subtab") || "tutti";
-
-    if (requestedCategory === "corsi") {
-      switchMacroTab("corsi");
-    } else {
-      switchMacroTab("contenuti");
-      window.switchBlogCategory(requestedCategory);
-    }
+    const requestedCategory = <%= courses_page ? '"corsi"'.html_safe : '(params.get("categoria") || params.get("subtab") || "tutti")'.html_safe %>;
+    window.switchBlogCategory(requestedCategory);
 
     const requestedQuery = params.get("q");
     if (requestedQuery) {

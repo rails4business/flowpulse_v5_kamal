@@ -1,0 +1,51 @@
+<% active_mode = local_assigns.fetch(:active) %>
+<% active_course = local_assigns.fetch(:course) %>
+<% active_lesson = local_assigns[:lesson] %>
+<nav aria-label="Indice del corso" data-controller="scroll-selected">
+  <% if active_mode == :program %>
+    <% activities = @lesson_delivery_by_course.fetch(active_course.fetch("slug"), {}).fetch("program", []) %>
+    <p class="text-[10px] font-bold uppercase tracking-[.14em] text-amber-700">Percorso guidato</p>
+    <h2 class="mt-1 text-lg font-bold text-slate-950">Incontri e lezioni</h2>
+    <% if activities.empty? %>
+      <p class="rounded-lg border border-dashed border-amber-200 bg-amber-50/60 px-3 py-4 text-xs leading-5 text-amber-900">Le lezioni di questo corso sono in preparazione.</p>
+    <% end %>
+    <ol class="mt-5">
+      <% activities.each_with_index do |activity, index| %>
+        <% selected = @selected_program_step&.fetch("slug", nil) == activity.fetch("slug") %>
+        <% progress_state = activity.fetch("progress_state", "available") %>
+        <% completed = progress_state == "completed" %>
+        <% locked = progress_state == "locked" %>
+        <li class="relative">
+          <% unless index == activities.size - 1 %><span class="absolute bottom-0 left-3 top-7 w-px bg-amber-200" aria-hidden="true"></span><% end %>
+          <% item_classes = "relative grid grid-cols-[1.5rem_minmax(0,1fr)] gap-3 rounded-lg pb-6 text-sm leading-5 transition #{selected ? "font-bold text-amber-950" : locked ? "cursor-not-allowed text-slate-400" : "text-slate-600 hover:text-amber-900"}" %>
+          <% item_content = capture do %>
+            <span class="relative z-10 grid size-6 shrink-0 place-items-center rounded-full text-[9px] font-bold <%= completed ? "bg-emerald-500 text-white" : locked ? "border-2 border-slate-200 bg-slate-50 text-slate-400" : selected ? "bg-amber-500 text-white ring-4 ring-amber-50" : "border-2 border-amber-300 bg-white text-amber-700" %>"><%= completed ? "✓" : index + 1 %></span>
+            <span class="rounded-md px-1.5 py-0.5 <%= selected ? "bg-amber-50" : "" %>"><%= activity.fetch("title") %><% if locked %><span class="mt-0.5 block text-[10px] font-semibold text-slate-400">Completa prima la precedente</span><% end %></span>
+          <% end %>
+          <% if locked %>
+            <span class="<%= item_classes %>" aria-disabled="true"><%= item_content %></span>
+          <% else %>
+            <%= link_to posturacorretta_course_lesson_path(corso: active_course.fetch("slug"), attivita: activity.fetch("slug")), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: item_classes do %><%= item_content %><% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  <% else %>
+    <p class="text-[10px] font-bold uppercase tracking-[.14em] text-indigo-700">Corso online</p>
+    <h2 class="mt-1 text-lg font-bold text-slate-950">Indice dei capitoli</h2>
+    <% if active_course.fetch("chapters", []).empty? %>
+      <p class="rounded-lg border border-dashed border-indigo-200 bg-indigo-50/60 px-3 py-4 text-xs leading-5 text-indigo-900">I capitoli di questo corso sono in preparazione.</p>
+    <% end %>
+    <ol class="mt-5 divide-y divide-slate-200 border-y border-slate-200">
+      <% active_course.fetch("chapters", []).each_with_index do |chapter, index| %>
+        <% selected = active_lesson&.fetch("slug", nil) == chapter.fetch("slug") %>
+        <li>
+          <%= link_to posturacorretta_course_chapter_path(corso: active_course.fetch("slug"), capitolo: chapter.fetch("slug")), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "block border-l-2 px-3 py-3.5 transition #{selected ? "border-indigo-600 bg-indigo-50 text-indigo-950" : "border-transparent text-slate-600 hover:border-indigo-300 hover:bg-slate-50 hover:text-indigo-800"}" do %>
+            <span class="block text-[9px] font-extrabold uppercase tracking-[.12em] <%= selected ? "text-indigo-700" : "text-slate-400" %>">Capitolo <%= format("%02d", index + 1) %></span>
+            <span class="mt-1 block text-sm leading-5 <%= selected ? "font-bold" : "font-medium" %>"><%= chapter.fetch("title") %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  <% end %>
+</nav>

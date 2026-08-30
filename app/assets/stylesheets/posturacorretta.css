@@ -158,6 +158,21 @@
   }
 }
 
+@keyframes pc-course-aside-enter {
+  from { opacity: 0; transform: translateX(-1.25rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pc-course-main-enter {
+  from { opacity: 0; transform: translateX(1rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .pc-course-aside-enter { animation: pc-course-aside-enter 220ms ease-out both; }
+  .pc-course-main-enter { animation: pc-course-main-enter 240ms 35ms ease-out both; }
+}
+
 .book-dialog::backdrop {
   background: rgb(15 23 42 / 0.58);
   backdrop-filter: blur(4px);
@@ -1818,6 +1833,28 @@ html {
 
 .posturacorretta-ui footer a:hover {
   color: var(--pc-brand);
+}
+
+.posturacorretta-ui a.pc-primary-cta {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.posturacorretta-ui a.pc-primary-cta:hover {
+  background: #1e40af;
+  color: #fff;
+}
+
+.posturacorretta-ui a.pc-appointment-cta {
+  border-color: #fcd34d;
+  background: #fffbeb;
+  color: #78350f;
+}
+
+.posturacorretta-ui a.pc-appointment-cta:hover {
+  border-color: #f59e0b;
+  background: #fef3c7;
+  color: #78350f;
 }
 
 @media (prefers-reduced-motion: reduce) {

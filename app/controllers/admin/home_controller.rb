@@ -1,11 +1,32 @@
 module Admin
   class HomeController < BaseController
     dashboard_section :dashboard, only: :dashboard
-    dashboard_section :pages, only: [:elenco_pagine, :percorso_insegnanti]
+    dashboard_section :pages, only: :elenco_pagine
+    dashboard_section :didactic_path, only: :percorso_insegnanti
 
     before_action :require_superadmin!, only: [:elenco_pagine, :percorso_insegnanti, :set_override]
 
     def percorso_insegnanti
+      sheets_root = PosturacorrettaSemeController::GUIDED_ACTIVITIES_ROOT
+      @didactic_sources = [
+        {
+          title: "Indice del percorso guidato",
+          description: "Ordine dei corsi e riferimenti alle attività guidate.",
+          path: "posturacorretta_percorso_guidato.yml",
+          kind: "YAML generale"
+        }
+      ]
+      @didactic_sources.concat(
+        sheets_root.glob("*.{yml,yaml}").sort.map do |path|
+          data = YAML.safe_load_file(path, permitted_classes: [], aliases: false)
+          {
+            title: data["title"].presence || path.basename(path.extname).to_s.humanize,
+            description: data["description"].presence || "Attività del percorso guidato.",
+            path: "attivita_percorso_guidato/#{path.basename}",
+            kind: data["type"] == "lesson" ? "Lezione" : "Incontro"
+          }
+        end
+      )
     end
 
     def dashboard

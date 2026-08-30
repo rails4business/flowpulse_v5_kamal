@@ -1,0 +1,43 @@
+<% reader_course = local_assigns.fetch(:course) %>
+<% active_mode = local_assigns.fetch(:active).to_s %>
+<% tab_class = lambda do |mode|
+     active_mode == mode ? "border-blue-600 text-gray-950" : "border-transparent text-gray-600 hover:border-blue-500 hover:text-gray-950"
+   end %>
+<% first_program_step = @program_by_course.fetch(reader_course.fetch("slug"), {}).fetch("program", []).first %>
+<% first_chapter = reader_course.fetch("chapters", []).first %>
+<% encounters_path = first_program_step ? posturacorretta_course_lesson_path(corso: reader_course.fetch("slug"), attivita: first_program_step.fetch("slug")) : posturacorretta_course_path(corso: reader_course.fetch("slug"), vista: "incontri") %>
+<% chapters_path = first_chapter ? posturacorretta_course_chapter_path(corso: reader_course.fetch("slug"), capitolo: first_chapter.fetch("slug")) : posturacorretta_course_path(corso: reader_course.fetch("slug"), vista: "capitoli") %>
+
+<header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 min-w-0 items-center gap-3 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
+      <%= link_to posturacorretta_path, class: "shrink-0 lg:justify-self-start", aria: { label: "PosturaCorretta home" } do %>
+        <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="" class="size-9 rounded-full bg-blue-600 object-cover">
+      <% end %>
+
+      <%= link_to posturacorretta_course_path(corso: reader_course.fetch("slug"), vista: active_mode), class: "group flex min-w-0 flex-1 items-center gap-2 text-slate-800 hover:text-blue-700 lg:hidden", aria: { label: "Torna all'indice del corso #{reader_course.fetch("title")}" } do %>
+        <span aria-hidden="true" class="shrink-0 text-lg transition group-hover:-translate-x-0.5">←</span>
+        <span class="truncate text-sm font-bold"><%= reader_course.fetch("title") %></span>
+      <% end %>
+
+      <div class="hidden items-center justify-center gap-7 lg:flex">
+        <%= link_to posturacorretta_course_path(corso: reader_course.fetch("slug"), vista: active_mode), class: "group flex max-w-72 min-w-0 items-center gap-2 text-slate-800 hover:text-blue-700", aria: { label: "Torna all'indice del corso #{reader_course.fetch("title")}" } do %>
+          <span aria-hidden="true" class="shrink-0 text-lg transition group-hover:-translate-x-0.5">←</span>
+          <span class="truncate text-sm font-bold"><%= reader_course.fetch("title") %></span>
+        <% end %>
+
+        <nav class="flex items-center gap-5" aria-label="Navigazione del corso">
+          <%= link_to "Corso online", chapters_path, role: "tab", aria: { selected: active_mode == "capitoli", current: ("page" if active_mode == "capitoli") }, class: "border-b-2 px-0.5 py-1 text-sm font-semibold transition #{tab_class.call("capitoli")}" %>
+          <%= link_to "Percorso guidato", encounters_path, role: "tab", aria: { selected: active_mode == "incontri", current: ("page" if active_mode == "incontri") }, class: "border-b-2 px-0.5 py-1 text-sm font-semibold transition #{tab_class.call("incontri")}" %>
+        </nav>
+      </div>
+
+      <div class="shrink-0 lg:justify-self-end"><%= render "posturacorretta/account_nav" %></div>
+    </div>
+
+    <nav class="-mt-px grid grid-cols-2 lg:hidden" aria-label="Navigazione del corso">
+      <%= link_to "Corso online", chapters_path, role: "tab", aria: { selected: active_mode == "capitoli", current: ("page" if active_mode == "capitoli") }, class: "border-b-2 px-2 py-2.5 text-center text-xs font-semibold transition #{tab_class.call("capitoli")}" %>
+      <%= link_to "Percorso guidato", encounters_path, role: "tab", aria: { selected: active_mode == "incontri", current: ("page" if active_mode == "incontri") }, class: "border-b-2 px-2 py-2.5 text-center text-xs font-semibold transition #{tab_class.call("incontri")}" %>
+    </nav>
+  </div>
+</header>

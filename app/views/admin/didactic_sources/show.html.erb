@@ -1,0 +1,19 @@
+<% content_for :title, "#{@source_title} · Percorso didattico" %>
+
+<section class="mx-auto max-w-5xl">
+  <%= link_to "← Percorso didattico", admin_percorso_insegnanti_path, class: "text-sm font-semibold text-blue-700 hover:text-blue-900" %>
+
+  <div class="mt-6 border-b border-slate-200 pb-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Fonte YAML · sola lettura</p>
+      <span class="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-800">Superadmin</span>
+    </div>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950"><%= @source_title %></h1>
+    <p class="mt-2 font-mono text-xs text-slate-500"><%= @relative_path %></p>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-sm">
+    <div class="border-b border-white/10 px-5 py-3 text-xs font-semibold text-slate-400">config/data/posturacorretta/accademia/<%= @relative_path %></div>
+    <pre class="overflow-x-auto p-5 text-sm leading-6 text-slate-100"><code><%= @source_content %></code></pre>
+  </div>
+</section>
