@@ -28,6 +28,9 @@ Rails.application.routes.draw do
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "giardino-del-corpo" => "landing#giardino_del_corpo", as: :giardino_del_corpo
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
+  get "percorso-integrato/professionisti" => "brands/percorso_integrato#professionals", as: :percorso_integrato_professionals
+  get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional
+  get "percorso-integrato/luoghi" => "brands/percorso_integrato#places", as: :percorso_integrato_places
   get "markpostura" => "landing#markpostura", as: :markpostura
   get "markpostura/eventi" => "landing#markpostura_events", as: :markpostura_events
   get "markpostura/contenuti" => "landing#markpostura_contents", as: :markpostura_contents
@@ -60,6 +63,7 @@ Rails.application.routes.draw do
   get "posturacorretta/metodiche/:slug" => "brands/posturacorretta#metodica", as: :posturacorretta_metodica
   get "posturacorretta/professionisti" => "brands/posturacorretta#professionisti", as: :posturacorretta_professionisti
   get "posturacorretta/professionisti/:slug" => "brands/posturacorretta#professionista", as: :posturacorretta_professionista
+  get "posturacorretta/insegnanti" => "brands/posturacorretta#insegnanti", as: :posturacorretta_insegnanti
   get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/corsi" => "brands/posturacorretta#corsi", as: :posturacorretta_corsi
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo

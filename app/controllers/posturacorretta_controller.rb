@@ -39,6 +39,7 @@ class PosturacorrettaController < ApplicationController
   end
   def percorsi_sul_territorio
     @territory_tab = params[:tab].presence_in(%w[people places]) || "people"
+    return redirect_to(posturacorretta_insegnanti_path, status: :moved_permanently) if @territory_tab == "people"
     @professional_area = params[:area].presence_in(%w[all percorso accademia contenuti eventi metodiche]) || "all"
     @territory_domain = Domain.active.find_by(hostname: "posturacorretta.org")
 
@@ -62,34 +63,23 @@ class PosturacorrettaController < ApplicationController
 
     centers_path = Rails.root.join("config/data/posturacorretta/accademia/centers.yml")
     centers_data = centers_path.file? ? YAML.safe_load_file(centers_path, permitted_classes: [], aliases: false) || {} : {}
-    @territory_catalog_places = centers_data.fetch("centers", {}).values.reject { |place| place["city"] == "Online" }
+    @territory_catalog_places = centers_data.fetch("centers", {}).values.select do |place|
+      place["city"] != "Online" && Array(place["projects"]).include?("posturacorretta")
+    end
   end
+
+  def insegnanti
+    curriculum = AcademyCurriculum.load
+    @teachers = curriculum.fetch("teachers", {}).values.select { |teacher| teacher.fetch("public", true) }
+    @academy_modules_by_slug = curriculum.fetch("modules", []).index_by { |mod| mod.fetch("slug") }
+  end
+
   def professionisti
-    @professionals = posturacorretta_public_professionals
-    redirect_to percorso_integrato_path
+    redirect_to percorso_integrato_professionals_path, status: :moved_permanently
   end
   
   def professionista
-    @professional = posturacorretta_public_professionals.find { |p| p["slug"] == params[:slug] }
-    return redirect_to posturacorretta_path, alert: "Professionista non trovato" unless @professional
-
-    # Carica percorsi
-    percorsi_path = Rails.root.join("config/data/posturacorretta/collegamenti/servizi.yml")
-    @percorsi = []
-    if percorsi_path.file?
-      percorsi_data = YAML.safe_load_file(percorsi_path, permitted_classes: [], aliases: false) || {}
-      @percorsi = percorsi_data.fetch("paths", []).select { |p| p["professional_slug"] == params[:slug] }
-    end
-
-    # Carica contenuti
-    contenuti_path = Rails.root.join("config/data/posturacorretta/collegamenti/contenuti.yml")
-    @contenuti = []
-    if contenuti_path.file?
-      contenuti_data = YAML.safe_load_file(contenuti_path, permitted_classes: [], aliases: false) || {}
-      @contenuti = contenuti_data.fetch("content_connections", []).select { |c| c["professional_slug"] == params[:slug] }
-    end
-    
-    # Carica accademia e altri quando ci saranno i file
+    redirect_to percorso_integrato_professional_path(params[:slug]), status: :moved_permanently
   end
 
   def dash
@@ -351,9 +341,9 @@ class PosturacorrettaController < ApplicationController
     raw_catalog = File.exist?(catalog_path) ? YAML.safe_load_file(catalog_path, permitted_classes: [], aliases: false, symbolize_names: true) || {} : {}
     catalog_editor = Current.user&.superadmin_user? || false
 
-    @catalog = raw_catalog.transform_values do |category|
+    processed_catalog = raw_catalog.transform_values do |category|
       indexed_articles = category.fetch(:articles, []).each_with_index.filter_map do |article, index|
-        publication_date = catalog_publication_date(article)
+        publication_date = catalog_publication_date(article) || catalog_date(article, :data_pubblicazione_video)
         video_recording_date = catalog_date(article, :data_registrazione_video)
         video_publication_date = catalog_date(article, :data_pubblicazione_video)
         scheduled = publication_date.present? && publication_date > Date.current
@@ -384,6 +374,30 @@ class PosturacorrettaController < ApplicationController
 
       category.merge(articles: sorted_articles)
     end
+
+    # Crea la sezione dinamica 'tutti' con l'unione di TUTTI i video e i post .md pubblici
+    video_archive = processed_catalog.dig(:tutti, :articles) || []
+    category_articles = processed_catalog.except(:tutti, :non_in_elenco, :corsi).values.flat_map { |cat| cat[:articles] || [] }
+    all_articles = (category_articles + video_archive).uniq { |art| art[:slug] }
+    
+    sorted_all_articles = all_articles.sort_by do |art|
+      pub_date = art[:_publication_date]
+      pub_date ? [0, -pub_date.jd, art[:title].to_s] : [1, 0, art[:title].to_s]
+    end
+
+    public_categories = processed_catalog.except(:tutti, :non_in_elenco, :corsi)
+
+    @catalog = {
+      tutti: {
+        label: "Tutti",
+        eyebrow: "Tutti i contenuti",
+        icon: "📚",
+        color: "blue",
+        description: "Esplora tutti i post, video e approfondimenti in ordine di pubblicazione.",
+        subcategories: ["Tutti"],
+        articles: sorted_all_articles
+      }
+    }.merge(public_categories)
   end
 
   def catalog_publication_date(article)

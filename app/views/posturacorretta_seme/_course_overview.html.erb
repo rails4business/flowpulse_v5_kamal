@@ -106,7 +106,7 @@
                       <% if state == "locked" %>
                         <span class="inline-flex rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold text-slate-400" aria-disabled="true">Da sbloccare</span>
                       <% else %>
-                        <%= link_to(state == "completed" ? "Apri scheda" : (authenticated? ? "Apri e prenota" : "Accedi per prenotare"), activity_access_path, class: "inline-flex rounded-lg #{state == "completed" ? "border border-slate-200 bg-white text-slate-700" : "bg-blue-700 text-white hover:bg-blue-800"} px-4 py-2 text-xs font-bold transition") %>
+                        <%= link_to(state == "completed" ? "Apri scheda" : (authenticated? ? "Prenota" : "Accedi per prenotare"), activity_access_path, class: "inline-flex rounded-lg #{state == "completed" ? "border border-slate-200 bg-white text-slate-700" : "bg-blue-700 text-white hover:bg-blue-800"} px-4 py-2 text-xs font-bold transition") %>
                       <% end %>
                     </div>
                   </li>

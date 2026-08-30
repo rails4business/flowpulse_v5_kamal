@@ -8,16 +8,17 @@
     posturacorretta_contenuti_path(query)
   end
   filter_groups = [
-    ["Ambito", "ambito", @content_taxonomy.fetch("ambiti", {}).map { |key, ambit| [key, ambit.fetch("label")] }, true],
-    ["Aree della salute", "area", @content_taxonomy.fetch("aree", {}).map { |key, label| [key, label] }, true],
-    ["Paradigmi", "paradigma", @content_taxonomy.fetch("paradigmi", {}).map { |key, label| [key, label] }, true],
-    ["Metodiche", "metodica", @content_taxonomy.fetch("metodiche", {}).map { |key, label| [key, label] }, true],
-    ["Canali", "canale", @content_taxonomy.fetch("canali", {}).map { |key, label| [key, label] }, true],
-    ["Piattaforme", "piattaforma", @content_taxonomy.fetch("piattaforme", {}).map { |key, label| [key, label] }, true],
-    ["Zone del corpo", "zona", @content_taxonomy.fetch("zone-corpo", {}).map { |key, label| [key, label] }, true],
-    ["Livello di approfondimento", "livello", @content_taxonomy.fetch("livelli", {}).map { |key, label| [key, label] }, true],
-    ["Professionisti", "professionista", @content_people_filter_options, true],
-    ["Luoghi", "luogo", @content_directory_places.map { |place| [place.slug, [place.name, place.city].compact.join(" · ")] }, true]
+    ["Anno / Data", "anno", [["2026", "Pubblicati nel 2026"], ["2025", "Storico 2025"]], false],
+    ["Ambito", "ambito", @content_taxonomy.fetch("ambiti", {}).map { |key, ambit| [key, ambit.fetch("label")] }, false],
+    ["Aree della salute", "area", @content_taxonomy.fetch("aree", {}).map { |key, label| [key, label] }, false],
+    ["Paradigmi", "paradigma", @content_taxonomy.fetch("paradigmi", {}).map { |key, label| [key, label] }, false],
+    ["Metodiche", "metodica", @content_taxonomy.fetch("metodiche", {}).map { |key, label| [key, label] }, false],
+    ["Canali", "canale", @content_taxonomy.fetch("canali", {}).map { |key, label| [key, label] }, false],
+    ["Piattaforme", "piattaforma", @content_taxonomy.fetch("piattaforme", {}).map { |key, label| [key, label] }, false],
+    ["Zone del corpo", "zona", @content_taxonomy.fetch("zone-corpo", {}).map { |key, label| [key, label] }, false],
+    ["Livello di approfondimento", "livello", @content_taxonomy.fetch("livelli", {}).map { |key, label| [key, label] }, false],
+    ["Professionisti", "professionista", @content_people_filter_options, false],
+    ["Luoghi", "luogo", @content_directory_places.map { |place| [place.slug, [place.name, place.city].compact.join(" · ")] }, false]
   ]
 %>
 <aside id="contenuti-mobile-filtri" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] -translate-x-full overflow-y-auto bg-white p-5 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:block lg:w-auto lg:max-w-none lg:translate-x-0 lg:overflow-visible lg:bg-transparent lg:p-0 lg:shadow-none lg:self-stretch lg:border-r lg:border-slate-200 lg:pr-6" data-mobile-aside-target="panel" aria-label="Ricerca contenuti" aria-hidden="true">

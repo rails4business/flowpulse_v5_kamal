@@ -17,6 +17,34 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "#collabora-accademia h4", text: "Segreteria e team management"
   end
 
+  test "shows teachers in PosturaCorretta and redirects professionals to Percorso Integrato" do
+    get posturacorretta_insegnanti_path
+    assert_response :success
+    assert_select "h1", text: "Insegnanti PosturaCorretta"
+    assert_select "h2", text: "Marco Beffa"
+    assert_select "h2", text: "Davide Cattaneo", count: 0
+
+    get posturacorretta_professionisti_path
+    assert_redirected_to percorso_integrato_professionals_path
+    assert_response :moved_permanently
+
+    get posturacorretta_professionista_path("giovanni-damiata")
+    assert_redirected_to percorso_integrato_professional_path("giovanni-damiata")
+    assert_response :moved_permanently
+  end
+
+  test "shows only PosturaCorretta places in its directory" do
+    get posturacorretta_percorsi_sul_territorio_path(tab: "places")
+    assert_response :success
+    assert_select "h2", text: "Centro PosturaCorretta"
+    assert_select "h2", text: "Studio Movimento"
+    assert_select "h2", text: "Giardino del Corpo", count: 0
+
+    get posturacorretta_percorsi_sul_territorio_path(tab: "people")
+    assert_redirected_to posturacorretta_insegnanti_path
+    assert_response :moved_permanently
+  end
+
   test "renders professional collaboration guides from markdown" do
     {
       "contenuti-video" => "Collabora alla creazione di contenuti",

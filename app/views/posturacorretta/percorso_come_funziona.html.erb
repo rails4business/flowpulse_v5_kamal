@@ -8,7 +8,7 @@
       <div class="border-b border-slate-200">
         <nav class="flex gap-1 overflow-x-auto" aria-label="Accesso al percorso">
           <%= link_to "Inizia", posturacorretta_percorso_path, class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-blue-300 hover:text-blue-700" %>
-          <%= link_to "Professionisti e servizi", posturacorretta_percorsi_sul_territorio_path(tab: "people", source: "path"), class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-blue-300 hover:text-blue-700" %>
+          <%= link_to "Professionisti e servizi", percorso_integrato_professionals_path, class: "shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700" %>
           <%= link_to "Come funziona", posturacorretta_percorso_come_funziona_path, class: "shrink-0 border-b-2 border-blue-600 px-4 py-3 text-sm font-bold text-blue-700", aria: { current: "page" } %>
           <% if Current.user&.superadmin_user? || Current.user&.tutor_user? %>
             <%= link_to "Linee guida", posturacorretta_guida_path(sezione: "percorso"), class: "shrink-0 border-b-2 border-dashed border-amber-500 px-4 py-3 text-sm font-bold text-amber-700 transition hover:bg-amber-50" %>
@@ -48,7 +48,7 @@
 
         <div class="mt-10 flex flex-wrap gap-3">
           <%= link_to "Inizia il tuo percorso", posturacorretta_percorso_path, class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700" %>
-          <%= link_to "Scopri professionisti e servizi", posturacorretta_percorsi_sul_territorio_path(tab: "people", source: "path"), class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700" %>
+          <%= link_to "Scopri professionisti e servizi", percorso_integrato_professionals_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-700" %>
         </div>
       </article>
     </div>

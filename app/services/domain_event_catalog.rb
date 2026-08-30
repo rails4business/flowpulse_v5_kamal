@@ -67,7 +67,7 @@ class DomainEventCatalog
 
         canonical_domain = event.fetch("canonical_domain", source_domain).to_s
         projects = Array(event["projects"]).map(&:to_s)
-        projects << canonical_domain
+        projects << canonical_domain if projects.empty?
         projects << "giardino-del-corpo" if Array(event["ambiti"]).map(&:to_s).include?("giardino")
         projects = projects.reject(&:blank?).uniq
         organizers = Array(event["organizer_usernames"]).map { |username| normalize_username(username) }.reject(&:blank?).uniq

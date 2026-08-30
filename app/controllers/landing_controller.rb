@@ -35,6 +35,9 @@ class LandingController < ApplicationController
 
   def giardino_del_corpo
     @garden_events = visible_garden_events
+    @garden_places = AcademyCurriculum.load.fetch("locations", {}).values.select do |place|
+      Array(place["projects"]).include?("giardino-del-corpo")
+    end
   end
 
   def markpostura

@@ -206,6 +206,7 @@ Gestisce calendario, disponibilità, gruppi, conferme, spostamenti e annullament
 
 ## Dati e file attuali
 
+- `teachers.yml`: insegnanti attivi e candidati già attestati ma non ancora pubblicati; attestato, abilitazione operativa e disponibilità restano dati distinti;
 - `posturacorretta_titoli_sezioni_e_corsi.yml`: indice generale con sezioni e corsi;
 - `posturacorretta_percorso.yml`: corsi online, organizzati in moduli e capitoli;
 - `posturacorretta_percorso_guidato.yml`: incontri e lezioni prenotabili, ordinati per corso;

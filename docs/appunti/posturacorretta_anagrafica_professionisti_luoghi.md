@@ -2,7 +2,13 @@
 
 ## Obiettivo
 
-Per ora **PosturaCorretta** gestisce in modo autonomo professionisti, insegnanti, scuole, centri e luoghi. Impegno e GeneraImpresa restano fuori da questa prima implementazione.
+L'anagrafica può essere condivisa, ma ogni progetto espone soltanto i ruoli e i luoghi pertinenti:
+
+- **PosturaCorretta** espone insegnanti e luoghi del percorso educativo;
+- **Percorso Integrato** espone professionisti, programmi, studi e strutture;
+- **Il Giardino del Corpo** espone conduttori, luoghi naturali ed esperienze.
+
+Impegno e GeneraImpresa restano fuori da questa prima implementazione.
 
 Ogni persona e ogni luogo deve esistere una sola volta, con uno **slug univoco**. Le sezioni del sito non devono duplicare nome, descrizione, immagine, contatti o indirizzo: devono soltanto creare un collegamento alla rispettiva anagrafica e aggiungere il ruolo svolto in quel contesto.
 
@@ -14,7 +20,11 @@ La prima anagrafica è già attiva in:
 config/data/posturacorretta/posturacorretta_professionisti.yml
 ```
 
-Contiene per ora Giovanni Damiata e Marco Belleri. La pagina **Percorsi sul territorio → Professionisti** e il filtro dei contenuti la leggono come integrazione provvisoria ai record database.
+Contiene per ora Giovanni Damiata e Marco Belleri. Le loro pagine pubbliche appartengono al **Percorso Integrato**. Gli insegnanti PosturaCorretta sono invece letti da `accademia/teachers.yml`.
+
+I luoghi attualmente presenti in `accademia/centers.yml` dichiarano i progetti nei quali possono comparire attraverso `projects`. Lo stesso luogo può appartenere a più progetti senza essere duplicato.
+
+Gli eventi usano già `projects` come relazione molti-a-molti. Possono quindi essere associati a `posturacorretta`, `giardino-del-corpo`, entrambi oppure a un altro progetto. Il dominio canonico indica dove vive la scheda originale, non obbliga l'evento ad apparire in quel progetto quando `projects` è dichiarato esplicitamente.
 
 Il vecchio file `config/data/posturacorretta/professionisti/professionisti.yml` contiene dati storici/di esempio e non deve ricevere nuovi inserimenti: verrà archiviato solo dopo la migrazione completa.
 
