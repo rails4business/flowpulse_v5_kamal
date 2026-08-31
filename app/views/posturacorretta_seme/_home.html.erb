@@ -147,7 +147,7 @@
           <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
             <p class="text-xs leading-5 text-slate-500">Il ticket specificherà modalità, data e partecipazione: incontro con tutor, lezione con insegnante o tirocinio.</p>
             <% booking_path = posturacorretta_impegno_path(corso: @learning_course.fetch("slug"), attivita: selected_step.fetch("slug"), livello: @selected_program_level, ruolo: @selected_participation_role, tirocinio: @selected_internship_mode) %>
-            <%= link_to(authenticated? ? (selected_last_date ? "Prenota di nuovo" : "Prenota") : "Accedi per prenotare", authenticated? ? booking_path : new_session_path(return_to: request.fullpath), class: "inline-flex rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-800") %>
+            <%= link_to(authenticated? ? (selected_last_date ? "Prenota di nuovo" : "Prenota") : "Accedi per prenotare", authenticated? ? booking_path : new_session_path(authentication_context_link_params(return_to: request.fullpath)), class: "inline-flex rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-800") %>
           </div>
         </div>
       </section>

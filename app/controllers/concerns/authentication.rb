@@ -31,11 +31,11 @@ module Authentication
 
     def request_authentication
       session[:return_to_after_authenticating] = request.url
-      redirect_to new_session_path
+      redirect_to new_session_path(authentication_context_link_params(return_to: request.fullpath))
     end
 
     def after_authentication_url
-      session.delete(:return_to_after_authenticating) || root_url
+      session.delete(:return_to_after_authenticating) || authentication_context_default_return_to
     end
 
     def start_new_session_for(user)

@@ -2,6 +2,7 @@ class Profile < ApplicationRecord
   belongs_to :user
   has_many :role_assignments, dependent: :destroy
   has_many :traveler_subscriptions, dependent: :destroy
+  has_many :domain_memberships, dependent: :destroy
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
   has_many :created_data_commitments,
            class_name: "Brands::Impegno::Commitment",

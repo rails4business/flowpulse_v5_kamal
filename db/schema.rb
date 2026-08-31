@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_06_052716) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_31_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,6 +77,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_06_052716) do
     t.index ["status"], name: "index_data_commitments_on_status"
     t.index ["subject_type", "subject_id"], name: "index_data_commitments_on_subject"
     t.index ["sync_key"], name: "index_data_commitments_on_sync_key", unique: true
+  end
+
+  create_table "domain_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "domain_id", null: false
+    t.datetime "joined_at", null: false
+    t.bigint "profile_id", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain_id"], name: "index_domain_memberships_on_domain_id"
+    t.index ["profile_id", "domain_id"], name: "index_domain_memberships_on_profile_id_and_domain_id", unique: true
+    t.index ["profile_id"], name: "index_domain_memberships_on_profile_id"
+    t.index ["status"], name: "index_domain_memberships_on_status"
   end
 
   create_table "domains", force: :cascade do |t|
@@ -297,6 +310,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_06_052716) do
   add_foreign_key "data_commitments", "profiles", column: "assignee_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "created_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
+  add_foreign_key "domain_memberships", "domains"
+  add_foreign_key "domain_memberships", "profiles"
   add_foreign_key "domains", "nodes"
   add_foreign_key "domains", "role_assignments"
   add_foreign_key "impegno_contacts", "profiles"

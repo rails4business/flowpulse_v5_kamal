@@ -94,7 +94,7 @@
                   <% durations = plans.filter_map { |plan| plan["duration_minutes"] }.uniq %>
                   <% kind = activity["type"] == "tutor_meeting" ? "Incontro con tutor" : "Lezione con insegnante" %>
                   <% activity_path = posturacorretta_course_lesson_path(corso: @reader_course_slug, attivita: activity.fetch("slug")) %>
-                  <% activity_access_path = authenticated? ? activity_path : new_session_path(return_to: activity_path) %>
+                  <% activity_access_path = authenticated? ? activity_path : new_session_path(authentication_context_link_params(return_to: activity_path)) %>
                   <li class="grid gap-4 px-5 py-5 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-center sm:px-7">
                     <span class="grid size-10 place-items-center rounded-full border-2 text-xs font-bold <%= state == "completed" ? "border-emerald-500 bg-emerald-500 text-white" : state == "available" ? "border-amber-400 bg-white text-amber-800" : "border-slate-200 bg-slate-50 text-slate-400" %>"><%= state == "completed" ? "✓" : format("%02d", index + 1) %></span>
                     <div class="min-w-0">
@@ -113,7 +113,7 @@
                 <% end %>
               </ol>
               <div class="border-t border-slate-200 bg-slate-50/70 px-5 py-4 sm:px-7">
-                <%= link_to "Vedi tutti i corsi nella dashboard →", authenticated? ? posturacorretta_seme_student_dashboard_path : new_session_path(return_to: posturacorretta_seme_student_dashboard_path), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
+                <%= link_to "Vedi tutti i corsi nella dashboard →", authenticated? ? posturacorretta_seme_student_dashboard_path : new_session_path(authentication_context_link_params(return_to: posturacorretta_seme_student_dashboard_path)), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
               </div>
             </div>
           <% else %>

@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Authentication
+  include AuthenticationBrandContext
   include CurrentDomain
   include FlowRoles::ControllerHelpers
   helper_method :dashboard_current_section
@@ -91,6 +92,17 @@ class ApplicationController < ActionController::Base
       subscription.status = "active"
       subscription.subscribed_at ||= Time.current
       subscription.save!
+    end
+
+    def ensure_current_user_domain_membership!(domain)
+      return if Current.user.blank? || domain.blank?
+
+      profile = current_profile
+      membership = profile.domain_memberships.find_or_initialize_by(domain: domain)
+      membership.status = "active"
+      membership.joined_at ||= Time.current
+      membership.save!
+      membership
     end
 
     def require_permission!(resource, action = :read)

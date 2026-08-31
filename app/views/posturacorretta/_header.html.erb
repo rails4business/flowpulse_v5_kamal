@@ -29,7 +29,7 @@
           <%= link_to "Libri", posturacorretta_libri_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50" %>
           <%= link_to "Collabora", posturacorretta_collabora_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50" %>
           <div class="my-1 border-t border-slate-100"></div>
-          <%= link_to "La mia area corsi", posturacorretta_seme_student_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50" %>
+          <%= link_to "La mia area corsi", posturacorretta_student_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50" %>
           <% if Current.user&.teacher_user? || Current.user&.superadmin_user? %><%= link_to "Dashboard insegnante", posturacorretta_seme_teacher_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50" %><% end %>
           <% if Current.user&.superadmin_user? %><%= link_to "Visione e progetto · Bozza", posturacorretta_guida_path(sezione: "progetto"), class: "block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100" %><% end %>
         </div>

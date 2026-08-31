@@ -10,10 +10,28 @@ module Admin
       sheets_root = PosturacorrettaSemeController::GUIDED_ACTIVITIES_ROOT
       @didactic_sources = [
         {
+          title: "Sezioni e corsi",
+          description: "Indice generale del percorso educativo con sezioni, corsi, ordine e presentazione.",
+          path: "posturacorretta_titoli_sezioni_e_corsi.yml",
+          kind: "YAML catalogo"
+        },
+        {
+          title: "Corsi online",
+          description: "Moduli e capitoli consultabili nei corsi online.",
+          path: "posturacorretta_percorso.yml",
+          kind: "YAML contenuti"
+        },
+        {
           title: "Indice del percorso guidato",
           description: "Ordine dei corsi e riferimenti alle attività guidate.",
           path: "posturacorretta_percorso_guidato.yml",
           kind: "YAML generale"
+        },
+        {
+          title: "Insegnanti e abilitazioni",
+          description: "Insegnanti pubblici, candidati, corsi autorizzati, livelli e possibilità di supervisione.",
+          path: "teachers.yml",
+          kind: "YAML persone"
         }
       ]
       @didactic_sources.concat(

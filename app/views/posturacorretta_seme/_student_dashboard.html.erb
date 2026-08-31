@@ -1,4 +1,4 @@
-<% participation_labels = { "autonomy" => "Autonomia", "group" => "Gruppo", "individual" => "Individuale" } %>
+<% participation_labels = { "group" => "Gruppo", "individual" => "Individuale" } %>
 <main class="bg-[#F6F7F4]">
   <section class="border-b border-slate-200 bg-white">
     <div class="mx-auto max-w-[1280px] px-4 py-10 sm:px-6 lg:py-14">
@@ -6,9 +6,9 @@
         <div>
           <p class="text-xs font-semibold uppercase tracking-[.18em] text-indigo-600">Area personale</p>
           <h1 class="mt-3 text-4xl font-semibold tracking-[-.03em] text-slate-950">Dashboard studente</h1>
-          <p class="mt-4 max-w-2xl leading-7 text-slate-600">Segui i corsi, scegli come partecipare e riprendi dall’ultima lezione.</p>
+          <p class="mt-4 max-w-2xl leading-7 text-slate-600">Trova il prossimo passo, consulta il corso online e tieni insieme incontri, lezioni e avanzamento.</p>
         </div>
-        <%= link_to "Esplora il percorso", posturacorretta_path, class: "rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800" %>
+        <%= link_to "Esplora i corsi", posturacorretta_path, class: "rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800" %>
       </div>
     </div>
   </section>
@@ -22,26 +22,43 @@
     <% end %>
 
     <div class="grid gap-5 sm:grid-cols-3">
-      <% [["Corsi disponibili", @courses.size], ["Lezioni", @lesson_count], ["Completate", 0]].each do |label, value| %>
+      <% [["Corsi", @dashboard_courses.size], ["Incontri e lezioni", @lesson_count], ["Capitoli online", @chapter_count]].each do |label, value| %>
         <article class="rounded-2xl border border-slate-200 bg-white p-5"><p class="text-sm text-slate-500"><%= label %></p><strong class="mt-2 block text-3xl tracking-tight text-slate-950"><%= value %></strong></article>
       <% end %>
     </div>
 
-    <section class="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
+    <section class="mt-8 overflow-hidden rounded-3xl border border-blue-200 bg-white">
+      <div class="border-b border-blue-100 bg-blue-50 px-6 py-3 text-xs font-bold uppercase tracking-[.16em] text-blue-700">Da dove iniziare</div>
+      <div class="p-6 sm:p-8">
       <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-        <div><p class="text-xs font-semibold uppercase tracking-[.15em] text-indigo-600">Inizia qui</p><h2 class="mt-2 text-2xl font-semibold text-slate-950">PosturaCorretta in un mese</h2></div>
-        <span class="text-sm font-semibold text-slate-500">0 / <%= @base_stage.fetch("lessons").size %> lezioni</span>
+        <div><h2 class="text-2xl font-semibold text-slate-950"><%= @starting_course.fetch("title") %></h2><p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"><%= @starting_course.fetch("description", "Il primo corso del percorso educativo PosturaCorretta.") %></p></div>
+        <span class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"><%= @starting_course.fetch("program").size %> attività · <%= @starting_course.fetch("chapter_count") %> capitoli</span>
       </div>
-      <div class="mt-6 h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="Avanzamento PosturaCorretta in un mese" aria-valuemin="0" aria-valuemax="<%= @base_stage.fetch("lessons").size %>" aria-valuenow="0"><span class="block h-full w-0 bg-indigo-600"></span></div>
       <div class="mt-6 flex flex-wrap gap-3">
-        <%= link_to "Apri l’indice", posturacorretta_course_chapters_path(corso: "postura-corretta-in-un-mese"), class: "rounded-xl bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-800" %>
-        <button type="button" disabled class="cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-400">Calendario in arrivo</button>
+        <% if (next_activity = @starting_course["next_activity"]) %><%= link_to "Inizia dal prossimo passo", posturacorretta_course_lesson_path(corso: @starting_course.fetch("slug"), attivita: next_activity.fetch("slug")), class: "rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800" %><% end %>
+        <%= link_to "Apri il corso online", posturacorretta_course_chapters_path(corso: @starting_course.fetch("slug")), class: "rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-300 hover:text-blue-700" %>
+      </div>
       </div>
     </section>
 
     <section class="mt-8 grid gap-5 lg:grid-cols-2">
-      <article class="rounded-3xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-semibold text-slate-950">Prossimi incontri</h2><p class="mt-5 rounded-2xl bg-slate-50 p-5 text-sm leading-6 text-slate-500">Non risultano ancora lezioni di gruppo o individuali programmate.</p></article>
-      <article class="rounded-3xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-semibold text-slate-950">Le tue modalità</h2><div class="mt-5 flex flex-wrap gap-2"><span class="rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700">Autonomia</span><span class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-500">Gruppo</span><span class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-500">Individuale</span></div></article>
+      <article class="rounded-3xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-semibold text-slate-950">I tuoi appuntamenti</h2><p class="mt-5 rounded-2xl bg-slate-50 p-5 text-sm leading-6 text-slate-500">Non risultano ancora incontri con il tutor o lezioni prenotate. Compariranno qui quando la prenotazione sarà collegata al calendario.</p></article>
+      <article class="rounded-3xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-semibold text-slate-950">Come puoi partecipare</h2><div class="mt-5 flex flex-wrap gap-2"><span class="rounded-full bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-700">In gruppo</span><span class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-600">Individuale</span></div><p class="mt-4 text-sm leading-6 text-slate-500">Il corso online resta consultabile; incontri e lezioni vengono programmati con tutor o insegnante.</p></article>
+    </section>
+
+    <section class="mt-8">
+      <div class="mb-4"><p class="text-xs font-bold uppercase tracking-[.16em] text-blue-700">Percorso educativo</p><h2 class="mt-2 text-2xl font-semibold text-slate-950">Tutti i corsi</h2></div>
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <% @dashboard_courses.each do |course| %>
+          <article class="flex flex-col rounded-2xl border border-slate-200 bg-white p-5">
+            <p class="text-xs font-bold uppercase tracking-wide text-slate-400"><%= course["section_slug"].present? ? "Corso della sezione" : "Corso" %></p>
+            <h3 class="mt-2 text-lg font-semibold text-slate-950"><%= course.fetch("title") %></h3>
+            <p class="mt-2 flex-1 text-sm leading-6 text-slate-600"><%= course.fetch("description", "Materiali e attività del corso PosturaCorretta.") %></p>
+            <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500"><span><%= course.fetch("program").size %> attività</span><span><%= course.fetch("chapter_count") %> capitoli</span></div>
+            <%= link_to "Apri il corso", posturacorretta_course_path(corso: course.fetch("slug")), class: "mt-4 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900" %>
+          </article>
+        <% end %>
+      </div>
     </section>
   </div>
 </main>

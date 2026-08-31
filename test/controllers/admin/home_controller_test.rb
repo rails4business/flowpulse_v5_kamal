@@ -69,7 +69,10 @@ module Admin
       assert_select "h2", text: "Percorso didattico"
       assert_select "a[href='#{admin_note_path(source: "docs", path: "appunti/avvio_piattaforma_posturacorretta.md")}']", text: /Avvio della piattaforma PosturaCorretta/
       assert_select "a[href='#{admin_note_path(source: "docs", path: "appunti/programma_didattico_ruoli_e_partecipazioni.md")}']"
+      assert_select "a[href='#{admin_didactic_source_path(path: "posturacorretta_titoli_sezioni_e_corsi.yml")}']"
+      assert_select "a[href='#{admin_didactic_source_path(path: "posturacorretta_percorso.yml")}']"
       assert_select "a[href='#{admin_didactic_source_path(path: "posturacorretta_percorso_guidato.yml")}']"
+      assert_select "a[href='#{admin_didactic_source_path(path: "teachers.yml")}']"
       assert_select "a", text: /Lezione pratica PosturaCorretta in un mese/
 
       get admin_didactic_source_path(path: "attivita_percorso_guidato/lezione_pratica_primo_mese.yml")

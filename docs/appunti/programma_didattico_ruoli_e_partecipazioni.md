@@ -226,6 +226,32 @@ La presente specifica collega questi elementi, ma non deve duplicarne tutti i co
 4. Creare le viste dedicate a studente, tutor, insegnante e segreteria.
 5. Aggiungere gruppi, disponibilità e gestione delle presenze.
 6. Aggiungere abilitazioni per livelli avanzati e tirocinio.
+
+## Dashboard studente
+
+La dashboard studente è l'area personale del percorso educativo e deve restare distinta dal catalogo pubblico. Il suo indirizzo definitivo è `/posturacorretta/dashboard`; richiede l'accesso dell'utente.
+
+La prima versione mostra già la struttura reale definita negli YAML:
+
+- corso da cui iniziare;
+- prossimo incontro o lezione previsto dal programma;
+- accesso al corso online;
+- numero di attività e capitoli per corso;
+- modalità di partecipazione individuale o di gruppo;
+- elenco di tutti i corsi disponibili.
+
+Non devono essere mostrati avanzamenti inventati. Finché iscrizioni, prenotazioni e conclusioni non sono salvate per il singolo profilo, la dashboard dichiara esplicitamente che non risultano appuntamenti personali.
+
+Per renderla operativa servono, nell'ordine:
+
+1. iscrizione della persona al corso;
+2. prenotazione di un incontro o di una lezione disponibile;
+3. creazione del `DataCommitment` nel calendario dello studente e del responsabile;
+4. registrazione della presenza e dei moduli realmente svolti;
+5. avanzamento personale per corso e modulo;
+6. sblocco della successiva attività prevista.
+
+Il materiale online può essere consultato indipendentemente, ma non completa automaticamente incontri, lezioni o tirocinio.
 # Tirocinio: struttura predisposta
 
 Per ora il tirocinio registra la modalità della singola partecipazione, senza determinare automaticamente l'avanzamento formativo:

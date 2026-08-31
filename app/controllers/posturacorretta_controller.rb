@@ -385,8 +385,6 @@ class PosturacorrettaController < ApplicationController
       pub_date ? [0, -pub_date.jd, art[:title].to_s] : [1, 0, art[:title].to_s]
     end
 
-    public_categories = processed_catalog.except(:tutti, :non_in_elenco, :corsi)
-
     @catalog = {
       tutti: {
         label: "Tutti",
@@ -397,7 +395,7 @@ class PosturacorrettaController < ApplicationController
         subcategories: ["Tutti"],
         articles: sorted_all_articles
       }
-    }.merge(public_categories)
+    }.merge(processed_catalog.except(:tutti, :non_in_elenco))
   end
 
   def catalog_publication_date(article)

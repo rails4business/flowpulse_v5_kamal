@@ -1,11 +1,17 @@
-<% content_for :title, "Accedi" %>
+<% if authentication_context? %>
+  <% content_for :landing_nav do %><%= render "posturacorretta/header" %><% end %>
+<% end %>
+<% content_for :title, authentication_context? ? "Accedi · #{authentication_context_domain.site_title}" : "Accedi" %>
 
 <section class="mx-auto w-full max-w-md px-4 py-10 sm:py-16">
   <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
     <div class="border-b border-slate-100 bg-slate-50/70 px-6 py-6 sm:px-7">
-      <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600">Il tuo spazio</p>
+      <% if authentication_context? %>
+        <img src="<%= authentication_context_domain.logo_full_url %>" alt="<%= authentication_context_domain.site_title %>" class="mb-5 h-8 w-auto max-w-full object-contain">
+      <% end %>
+      <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600"><%= authentication_context? ? authentication_context_domain.site_title : "Il tuo spazio" %></p>
       <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950">Bentornato</h1>
-      <p class="mt-2 text-sm leading-6 text-slate-600">Accedi per ritrovare agenda, percorsi e le tue attività.</p>
+      <p class="mt-2 text-sm leading-6 text-slate-600"><%= authentication_context? ? "Accedi al tuo spazio PosturaCorretta per ritrovare corsi, lezioni e appuntamenti." : "Accedi per ritrovare agenda, percorsi e le tue attività." %></p>
     </div>
 
     <div class="px-6 py-7 sm:px-7">
@@ -16,6 +22,8 @@
       <% end %>
 
       <%= form_with url: session_url, class: "space-y-5" do |form| %>
+        <% if local_request? && authentication_context? %><%= hidden_field_tag :site, authentication_context_site %><% end %>
+        <% if session[:return_to_after_authenticating].present? %><%= hidden_field_tag :return_to, session[:return_to_after_authenticating] %><% end %>
         <% if @subscription_domain.present? %>
           <%= hidden_field_tag :subscription_domain_id, @subscription_domain.id %>
         <% end %>
@@ -38,7 +46,7 @@
 
       <div class="mt-6 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
         Non hai ancora un account?
-        <%= verified_link_to "Crea un account", new_user_path(subscription_domain_id: @subscription_domain&.id), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
+        <%= verified_link_to "Crea un account", new_user_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating]).merge(subscription_domain_id: @subscription_domain&.id)), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
       </div>
     </div>
   </div>

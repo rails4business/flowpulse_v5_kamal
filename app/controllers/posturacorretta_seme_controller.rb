@@ -95,12 +95,14 @@ class PosturacorrettaSemeController < ApplicationController
   end
 
   def dashboard_student
+    ensure_current_user_domain_membership!(authentication_context_domain) if authentication_context?
     load_dashboard_data
     @dashboard_kind = "student"
     render :show
   end
 
   def dashboard_teacher
+    ensure_current_user_domain_membership!(authentication_context_domain) if authentication_context?
     load_dashboard_data
     @dashboard_kind = "teacher"
     @teacher_access = Current.user&.teacher_user? || Current.user&.superadmin_user? || false
@@ -360,8 +362,19 @@ class PosturacorrettaSemeController < ApplicationController
 
   def load_dashboard_data
     load_curriculum_sources
-    @courses = build_courses
-    @lesson_count = @courses.sum { |course| course.fetch("lessons").size }
+    @courses = @all_didactic_courses
+    @dashboard_courses = @courses.map do |course|
+      program = @program_by_course.fetch(course.fetch("slug"), { "program" => [] })
+      activities = decorate_program_steps(program.fetch("program", []))
+      course.merge(
+        "program" => activities,
+        "chapter_count" => course.fetch("chapters", []).size,
+        "next_activity" => activities.find { |activity| activity.fetch("progress_state") == "available" }
+      )
+    end
+    @lesson_count = @dashboard_courses.sum { |course| course.fetch("program").size }
+    @chapter_count = @dashboard_courses.sum { |course| course.fetch("chapter_count") }
+    @starting_course = @dashboard_courses.find { |course| course.fetch("slug") == "postura-corretta-in-un-mese" } || @dashboard_courses.first
     @selected_participation = params[:participation].presence_in(%w[group individual])
   end
 

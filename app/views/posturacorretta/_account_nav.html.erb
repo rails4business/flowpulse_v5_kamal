@@ -16,8 +16,9 @@
     </details>
   <% else %>
     <div class="flex items-center gap-1">
-      <%= link_to "Accedi", new_session_path, class: "rounded-lg px-2 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 sm:px-2.5 sm:text-sm" %>
-      <%= link_to "Registrati", new_user_path, class: "hidden rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700 sm:inline-flex" %>
+      <% auth_params = authentication_context_link_params(return_to: request.fullpath) %>
+      <%= link_to "Accedi", new_session_path(auth_params), class: "rounded-lg px-2 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 sm:px-2.5 sm:text-sm" %>
+      <%= link_to "Registrati", new_user_path(auth_params), class: "hidden rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700 sm:inline-flex" %>
     </div>
   <% end %>
 </div>

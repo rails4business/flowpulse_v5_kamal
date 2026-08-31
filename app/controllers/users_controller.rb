@@ -4,6 +4,7 @@ class UsersController < ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
 
   def new
+    persist_authentication_context!
     session[:return_to_after_authenticating] = params[:return_to] if params[:return_to].present?
     @user = User.new
     @user.build_profile
@@ -11,14 +12,23 @@ class UsersController < ApplicationController
   end
 
   def create
+    persist_authentication_context!
     @user = User.new(user_params)
     @user.build_profile
 
     if @user.save
       start_new_session_for @user
+      brand_domain = authentication_context_domain
+      ensure_current_user_domain_membership!(brand_domain) if brand_domain.present?
       domain = pending_subscription_domain
       subscribe_current_user_to_domain(domain) if domain.present?
-      notice = domain.present? ? "Registrazione completata. Ti sei iscritto gratuitamente a #{domain.display_hostname}." : "Registrazione completata."
+      notice = if brand_domain.present?
+        "Registrazione completata. Benvenuto in #{brand_domain.site_title}."
+      elsif domain.present?
+        "Registrazione completata. Ti sei iscritto gratuitamente a #{domain.display_hostname}."
+      else
+        "Registrazione completata."
+      end
       redirect_to after_authentication_url, notice: notice
     else
       @subscription_domain = pending_subscription_domain

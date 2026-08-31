@@ -39,6 +39,9 @@ class DomainTest < ActiveSupport::TestCase
       social_image_url: "https://cdn.example.com/social.png",
       site_title: "PosturaCorretta",
       site_description: "Descrizione del dominio",
+      auth_slug: " PosturaCorretta ",
+      auth_default_path: "/posturacorretta/dashboard",
+      auth_enabled: true,
       locale: "it"
     )
 
@@ -48,6 +51,9 @@ class DomainTest < ActiveSupport::TestCase
     assert_equal "https://cdn.example.com/favicon.png", Domain.export_to_hash["www.posturacorretta.org"]["favicon_url"]
     assert_equal "https://cdn.example.com/social.png", Domain.export_to_hash["www.posturacorretta.org"]["social_image_url"]
     assert_equal "PosturaCorretta", Domain.export_to_hash["www.posturacorretta.org"]["site_title"]
+    assert_equal "posturacorretta", Domain.export_to_hash["www.posturacorretta.org"]["auth_slug"]
+    assert_equal "/posturacorretta/dashboard", Domain.export_to_hash["www.posturacorretta.org"]["auth_default_path"]
+    assert_equal true, Domain.export_to_hash["www.posturacorretta.org"]["auth_enabled"]
   end
 
   test "display hostname removes www prefix" do

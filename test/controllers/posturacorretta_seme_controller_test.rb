@@ -156,7 +156,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
   test "shows the student dashboard frontend" do
     get posturacorretta_seme_student_dashboard_path
-    assert_redirected_to new_session_url
+    assert_redirected_to new_session_url(return_to: posturacorretta_seme_student_dashboard_path)
 
     sign_in(create_test_user("seme-student@example.com"))
     get posturacorretta_seme_student_dashboard_path(participation: "group")
@@ -164,12 +164,32 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Dashboard studente"
     assert_select "p", text: "Gruppo"
-    assert_select "[role='progressbar']"
+    assert_select "[role='progressbar']", count: 0
+    assert_select "h2", text: "Tutti i corsi"
+    assert_select "a[href='#{posturacorretta_course_chapters_path(corso: "postura-corretta-in-un-mese")}']", text: "Apri il corso online"
+
+    get posturacorretta_student_dashboard_path
+    assert_response :success
+    assert_select "h1", text: "Dashboard studente"
+  end
+
+  test "student dashboard keeps the PosturaCorretta site context when login is required locally" do
+    posturacorretta_domain = Domain.find_or_create_by!(hostname: "posturacorretta.org") do |domain|
+      domain.target_controller = "brands/posturacorretta"
+      domain.target_action = "home"
+      domain.locale = "it"
+    end
+    posturacorretta_domain.update!(auth_slug: "posturacorretta", auth_enabled: true)
+
+    host! "localhost"
+    get posturacorretta_student_dashboard_path
+
+    assert_redirected_to new_session_url(site: "posturacorretta", return_to: posturacorretta_student_dashboard_path)
   end
 
   test "shows the teacher dashboard frontend preview" do
     get posturacorretta_seme_teacher_dashboard_path
-    assert_redirected_to new_session_url
+    assert_redirected_to new_session_url(return_to: posturacorretta_seme_teacher_dashboard_path)
 
     sign_in(create_test_user("seme-teacher-preview@example.com"))
     get posturacorretta_seme_teacher_dashboard_path
