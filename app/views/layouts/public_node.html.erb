@@ -81,7 +81,7 @@
 
         <% if @traveler_subscription_domain.present? %>
           <% if Current.user.blank? %>
-            <%= link_to "Iscriviti gratis", new_user_path(subscription_domain_id: @traveler_subscription_domain.id, return_to: request.fullpath),
+            <%= link_to "Iscriviti gratis", new_user_path(subscription: @traveler_subscription_domain.signed_id(purpose: :free_subscription), return_to: request.fullpath),
               title: "Registrati per iscriverti gratuitamente a #{@traveler_subscription_domain.display_hostname}.",
               class: "rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-bold text-white hover:bg-slate-800" %>
           <% elsif FlowRoles.active_role_for(Current.user) == "traveler" && @traveler_subscription.present? %>
@@ -191,7 +191,7 @@
                 method: :delete,
                 class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
             <% else %>
-              <% auth_context = @traveler_subscription_domain.present? ? { subscription_domain_id: @traveler_subscription_domain.id, return_to: request.fullpath } : {} %>
+              <% auth_context = @traveler_subscription_domain.present? ? { subscription: @traveler_subscription_domain.signed_id(purpose: :free_subscription), return_to: request.fullpath } : {} %>
               <%= link_to "Accedi", new_session_path(auth_context), class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
               <%= link_to "Registrati", new_user_path(auth_context), class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
             <% end %>

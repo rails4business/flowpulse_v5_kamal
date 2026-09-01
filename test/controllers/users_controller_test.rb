@@ -17,7 +17,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_difference -> { User.count }, 1 do
       assert_difference -> { TravelerSubscription.count }, 1 do
         post users_url, params: {
-          subscription_domain_id: @domain.id,
+          subscription: @domain.signed_id(purpose: :free_subscription),
           user: {
             email_address: "new-domain-traveler@example.com",
             password: "password123",
@@ -43,6 +43,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
       locale: "it",
       auth_slug: "posturacorretta",
       auth_enabled: true,
+      auth_default_path: "/posturacorretta/dashboard",
       site_title: "PosturaCorretta",
       logo_full_url: "https://cdn.example.com/posturacorretta-logo.png"
     )
@@ -87,5 +88,64 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert user.profile.domain_memberships.active.exists?(domain: posturacorretta)
     assert_redirected_to "/posturacorretta/dashboard"
     assert_equal "Registrazione completata. Benvenuto in PosturaCorretta.", flash[:notice]
+  end
+
+  test "registration in a brand context creates a traveler subscription when the domain has a node" do
+    @domain.update!(
+      auth_slug: "posturacorretta",
+      auth_enabled: true,
+      auth_default_path: "/posturacorretta/dashboard",
+      site_title: "PosturaCorretta"
+    )
+
+    host! "localhost"
+    get new_user_path(site: "posturacorretta")
+
+    assert_difference -> { DomainMembership.count }, 1 do
+      assert_difference -> { TravelerSubscription.count }, 1 do
+        post users_path, params: {
+          site: "posturacorretta",
+          user: {
+            email_address: "new-posturacorretta-traveler@example.com",
+            password: "password123",
+            password_confirmation: "password123"
+          }
+        }
+      end
+    end
+
+    user = User.find_by!(email_address: "new-posturacorretta-traveler@example.com")
+    assert user.profile.traveler_subscriptions.active.exists?(node: @node)
+    assert user.profile.domain_memberships.active.exists?(domain: @domain)
+    assert_redirected_to "/posturacorretta/dashboard"
+  end
+
+  test "invalid brand registration leaves no partial account or access records" do
+    @domain.update!(auth_slug: "posturacorretta", auth_enabled: true, auth_default_path: "/posturacorretta/dashboard", site_title: "PosturaCorretta")
+    host! "localhost"
+    get new_user_path(site: "posturacorretta")
+
+    assert_no_difference [-> { User.count }, -> { DomainMembership.count }, -> { TravelerSubscription.count }] do
+      post users_path, params: {
+        site: "posturacorretta",
+        user: {
+          email_address: "invalid-brand-registration@example.com",
+          password: "password123",
+          password_confirmation: "different-password"
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "input[name='site'][value='posturacorretta']"
+  end
+
+  test "an authenticated user cannot reopen the registration form" do
+    user = User.create!(email_address: "already-logged@example.com", password: "password123", password_confirmation: "password123")
+    user.create_profile!(display_name: "Already logged")
+    post session_url, params: { email_address: user.email_address, password: "password123" }
+
+    get new_user_path
+    assert_redirected_to profile_path
   end
 end

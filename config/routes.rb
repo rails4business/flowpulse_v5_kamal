@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   get "posturacorretta/seme/percorsi-integrati" => "posturacorretta_seme#integrated_paths", as: :posturacorretta_seme_integrated_paths
   get "posturacorretta/seme/dashboard/studente" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_seme_student_dashboard
   get "posturacorretta/dashboard" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_student_dashboard
+  get "posturacorretta/dashboard/appuntamenti" => "posturacorretta_seme#dashboard_appointments", as: :posturacorretta_student_appointments
   get "posturacorretta/seme/dashboard/insegnante" => "posturacorretta_seme#dashboard_teacher", as: :posturacorretta_seme_teacher_dashboard
   get "posturacorretta/primo-mese" => "brands/posturacorretta#primo_mese", as: :posturacorretta_primo_mese
   get "posturacorretta/guida" => "brands/posturacorretta#guide", as: :posturacorretta_guida

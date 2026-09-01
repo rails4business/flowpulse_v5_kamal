@@ -198,7 +198,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(@published_node)
 
     assert_response :success
-    assert_select "header a[href=?]", new_user_path(subscription_domain_id: domain.id, return_to: node_path(@published_node)), text: "Iscriviti gratis"
+    assert_select "header a[href=?]", new_user_path(subscription: domain.signed_id(purpose: :free_subscription), return_to: node_path(@published_node)), text: "Iscriviti gratis"
   end
 
   test "traveler sees subscribe action on nodes inside a navigation domain" do

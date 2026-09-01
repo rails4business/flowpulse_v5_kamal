@@ -24,7 +24,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
       post session_url, params: {
         email_address: @user.email_address,
         password: "password123",
-        subscription_domain_id: @domain.id
+        subscription: @domain.signed_id(purpose: :free_subscription)
       }
     end
 
@@ -81,6 +81,32 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Benvenuto in PosturaCorretta.", flash[:notice]
   end
 
+  test "login in a brand context creates a traveler subscription when the domain has a node" do
+    @domain.update!(
+      auth_slug: "posturacorretta",
+      auth_enabled: true,
+      auth_default_path: "/posturacorretta/dashboard",
+      site_title: "PosturaCorretta"
+    )
+
+    host! "localhost"
+    get new_session_path(site: "posturacorretta")
+
+    assert_difference -> { DomainMembership.count }, 1 do
+      assert_difference -> { TravelerSubscription.count }, 1 do
+        post session_path, params: {
+          site: "posturacorretta",
+          email_address: @user.email_address,
+          password: "password123"
+        }
+      end
+    end
+
+    assert @user.profile.traveler_subscriptions.active.exists?(node: @node)
+    assert @user.profile.domain_memberships.active.exists?(domain: @domain)
+    assert_redirected_to "/posturacorretta/dashboard"
+  end
+
   test "login from PosturaCorretta uses its dashboard as the default destination" do
     Domain.create!(
       hostname: "posturacorretta.org",
@@ -97,6 +123,51 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     get new_session_path(site: "posturacorretta")
     post session_path, params: { site: "posturacorretta", email_address: @user.email_address, password: "password123" }
 
+    assert_redirected_to "/posturacorretta/dashboard"
+  end
+
+  test "login from PosturaCorretta rejects external and unrelated return paths" do
+    Domain.create!(
+      hostname: "posturacorretta.org",
+      target_controller: "brands/posturacorretta",
+      target_action: "home",
+      locale: "it",
+      auth_slug: "posturacorretta",
+      auth_enabled: true,
+      auth_default_path: "/posturacorretta/dashboard",
+      site_title: "PosturaCorretta"
+    )
+
+    host! "localhost"
+    get new_session_path(site: "posturacorretta", return_to: "https://evil.example")
+    post session_path, params: { site: "posturacorretta", email_address: @user.email_address, password: "password123" }
+    assert_redirected_to "/posturacorretta/dashboard"
+
+    delete session_path
+    get new_session_path(site: "posturacorretta", return_to: "/impegno")
+    post session_path, params: { site: "posturacorretta", email_address: @user.email_address, password: "password123" }
+    assert_redirected_to "/posturacorretta/dashboard"
+  end
+
+  test "an authenticated user cannot reopen the login form" do
+    post session_url, params: { email_address: @user.email_address, password: "password123" }
+
+    get new_session_path
+    assert_redirected_to profile_path
+
+    posturacorretta = Domain.create!(
+      hostname: "posturacorretta.org",
+      target_controller: "brands/posturacorretta",
+      target_action: "home",
+      locale: "it",
+      auth_slug: "posturacorretta",
+      auth_enabled: true,
+      auth_default_path: "/posturacorretta/dashboard",
+      site_title: "PosturaCorretta"
+    )
+    host! "localhost"
+    post session_path, params: { email_address: @user.email_address, password: "password123" }
+    get new_session_path(site: posturacorretta.auth_slug)
     assert_redirected_to "/posturacorretta/dashboard"
   end
 end

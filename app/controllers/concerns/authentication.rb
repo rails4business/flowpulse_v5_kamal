@@ -30,12 +30,12 @@ module Authentication
     end
 
     def request_authentication
-      session[:return_to_after_authenticating] = request.url
-      redirect_to new_session_path(authentication_context_link_params(return_to: request.fullpath))
+      persist_authentication_return_to!(request.fullpath)
+      redirect_to new_session_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating]))
     end
 
     def after_authentication_url
-      session.delete(:return_to_after_authenticating) || authentication_context_default_return_to
+      safe_authentication_return_to(session.delete(:return_to_after_authenticating)) || authentication_context_default_return_to
     end
 
     def start_new_session_for(user)

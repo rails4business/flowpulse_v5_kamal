@@ -1,34 +1,148 @@
 # Avvio della piattaforma PosturaCorretta
 
+## Priorità di lancio
+
+L'obiettivo del primo lancio non è automatizzare l'Accademia: è permettere a una persona reale di entrare, capire il programma, vedere quando può partecipare e ritrovare ciò che sta facendo. La gestione iniziale resta nelle mani del superadmin.
+
+### Indispensabile per il primo lancio
+
+Prima di pubblicare date e prezzi occorre distinguere tre livelli, che non devono essere confusi:
+
+- **Programma didattico**: un file YAML contiene tutte le sezioni, i corsi, gli incontri e le lezioni previste nell'anno. È la mappa completa e può essere mostrata nel Percorso guidato.
+- **Offerte di partecipazione**: ciò a cui una persona può aderire davvero: percorso di un mese, gruppo, lezione individuale in studio, lezione individuale online, oppure singola lezione quando sarà prevista.
+- **Calendario dell'insegnante**: un file separato per ogni insegnante contiene soltanto le singole date e disponibilità pubblicate, collegate a una voce del programma, a una modalità e a un luogo oppure online.
+
+Il programma completo può essere preparato ora; al lancio saranno attive soltanto le date che Mark decide di inserire nel proprio calendario. Una lezione può quindi esistere nel programma senza essere ancora disponibile.
+
+Le **schede** restano file dedicati e vengono richiamate dal YAML del programma: per ogni incontro o lezione conterranno obiettivo, programma, pratica, materiali e link a PDF o contenuti. Possono essere aggiunte un passo alla volta. Così la stessa voce didattica, con la stessa scheda e gli stessi moduli, può essere proposta più volte da Mark o da altri insegnanti, senza duplicare contenuti o date.
+
+1. **Accesso PosturaCorretta**
+   - registrazione e accesso nel contesto del sito;
+   - profilo collegato al brand PosturaCorretta;
+   - dashboard studente raggiungibile dopo l'accesso.
+
+2. **Un solo percorso iniziale realmente utilizzabile**
+   - PosturaCorretta in un mese;
+   - incontro iniziale con tutor;
+   - almeno una lezione Base;
+   - programma e scheda dell'incontro o della lezione;
+   - corso online con i primi contenuti sufficientemente chiari.
+
+   Il percorso di un mese è la prima offerta: non è ancora un abbonamento automatico. L'adesione può includere o proporre incontro iniziale, materiali online e una lezione con insegnante; le condizioni definitive saranno rese esplicite prima della prenotazione.
+
+3. **Calendario visibile in dashboard**
+   - futuri e passati;
+   - data, orario di inizio e fine, insegnante, gruppo o individuale, luogo oppure online;
+   - calendario in sola lettura per studenti e altri utenti;
+   - calendario modificabile soltanto dal superadmin nella prima fase.
+
+   Nella dashboard il nome della vista personale è **Appuntamenti**. In futuro potrà raccogliere appuntamenti di tutti i domini Flowpulse, mostrando per ogni voce una pill del sito di provenienza e una pill del ruolo svolto nell'appuntamento. Dentro PosturaCorretta le voci del sito sono complete; gli impegni personali degli altri spazi restano visibili in semitrasparenza per evitare sovrapposizioni. Per ora solo il superadmin accede direttamente a 1Impegno e gestisce tutti i contesti.
+
+4. **Orari e gruppi pubblicati da @markpostura**
+   - almeno un orario individuale;
+   - almeno un gruppo con giorno, orario, luogo e capienza;
+   - distinzione chiara tra incontro con tutor e lezione con insegnante;
+   - richiesta o prenotazione inizialmente gestibile manualmente dal superadmin.
+
+   Le modalità da prevedere già nel modello, anche se non tutte attive il primo giorno, sono: gruppo in presenza, individuale in studio e individuale online. Ogni disponibilità deve indicare durata, capienza quando è un gruppo, luogo oppure collegamento online e insegnante.
+
+5. **Schede e contenuti minimi**
+   - una scheda concreta per ogni incontro o lezione pubblicata;
+   - collegamenti ai capitoli e ai contenuti necessari;
+   - indicazione onesta di ciò che è ancora in preparazione.
+
+### Utile subito dopo il lancio
+
+- prenotazione autonoma di individuali e gruppi;
+- capienza e lista partecipanti;
+- creazione automatica di `DataCommitment` per prenotazione;
+- registrazione della presenza e della lezione svolta;
+- dashboard con appuntamenti personali reali e avanzamento;
+- primo flusso assistito per tutor e segreteria.
+- adesione a un mese o a un gruppo con appuntamenti successivi già associati;
+- catalogo completo delle lezioni di **Postura e Recupero**, seguito progressivamente dalle altre sezioni dell'Accademia.
+
+### Da rimandare deliberatamente
+
+- pagamenti automatici;
+- calendario modificabile dagli studenti;
+- automazione completa di gruppi, liste d'attesa e recuperi;
+- attestati automatici;
+- tirocinio automatizzato;
+- Percorso Integrato completo e offerte definitive del dottor Damiata;
+- dashboard complete per tutti i ruoli;
+- tutti i corsi e tutti i contenuti pronti prima dell'avvio.
+
+### Ordine pratico delle prossime settimane
+
+1. Completare il profilo pubblico e l'abilitazione di **@markpostura** come insegnante.
+2. Inserire nel calendario YAML soltanto le prime due date reali: incontro iniziale con tutor e lezione pratica del primo mese.
+3. Completare la scheda e i materiali minimi di entrambe le attività.
+4. Verificare che Appuntamenti mostri correttamente prossimi, passati e altri impegni personali senza rendere la pagina modificabile agli utenti.
+5. Fare una prova completa con una persona reale: accesso, dashboard, modulo, appuntamento, scheda e storico.
+6. Aggiungere un primo gruppo di Igiene Posturale soltanto dopo la prova del flusso iniziale.
+7. Solo dopo questa verifica, introdurre una richiesta di prenotazione con conferma manuale del superadmin.
+8. Solo quando il flusso manuale funziona, decidere se introdurre prenotazione autonoma e `DataCommitment` automatico.
+
+**Prima priorità attuale:** pubblicare un primo appuntamento reale di @markpostura, con scheda collegata, e provarne tutto il percorso con una persona reale.
+
+### Prossimo flusso da rendere reale
+
+Non aggiungere per ora altri ruoli, automazioni o pagamenti. Lavorare soltanto su questo percorso:
+
+1. Inserire **@markpostura** come insegnante attivo e completare la sua pagina pubblica essenziale.
+2. Pubblicare nel calendario YAML una prima data reale per l'**incontro iniziale con tutor** e una per la **lezione pratica del primo mese**. Se viene definito, aggiungere anche un primo gruppo di Igiene Posturale.
+3. Collegare ogni data a una scheda concreta: obiettivo, programma, pratica e materiali o PDF disponibili.
+4. Lasciare **Appuntamenti** in sola lettura: dentro PosturaCorretta mostra gli appuntamenti del sito normalmente e gli impegni personali di altri spazi in semitrasparenza, per evitare sovrapposizioni.
+5. Fare una prova completa: registrazione → dashboard → modulo → appuntamento → scheda → storico.
+6. Solo dopo questa prova introdurre una richiesta di prenotazione con conferma manuale del superadmin.
+
+L'accesso operativo a 1Impegno resta visibile soltanto al superadmin. Gli altri utenti usano la vista Appuntamenti di PosturaCorretta.
+
 ## TODO operativo
 
 Questa è la checklist principale per l'avvio. Va aggiornata nello stesso momento in cui una funzione viene completata e verificata. Non aprire il blocco successivo finché il flusso minimo del blocco corrente non funziona con una persona reale.
 
 ### Blocco 1 — Registrazione e accesso PosturaCorretta
 
-- [ ] Riconoscere automaticamente il contesto PosturaCorretta su `posturacorretta.org`.
-- [ ] Riconoscere il contesto PosturaCorretta nei percorsi locali `/posturacorretta/...`.
-- [ ] Mostrare logo, titolo, descrizione, colori e navigazione PosturaCorretta nelle pagine di registrazione e accesso.
-- [ ] Conservare una destinazione `return_to` interna e sicura.
-- [x] Dopo la registrazione collegare o riattivare il profilo su PosturaCorretta con `DomainMembership`.
+- [x] Riconoscere automaticamente il contesto PosturaCorretta su `posturacorretta.org`.
+- [x] Riconoscere il contesto PosturaCorretta nei percorsi locali `/posturacorretta/...`.
+- [x] Mostrare logo, titolo, descrizione, colori e navigazione PosturaCorretta nelle pagine di registrazione e accesso.
+- [x] Conservare una destinazione `return_to` interna e sicura.
+- [x] Dopo la registrazione collegare o riattivare il profilo al dominio con `DomainMembership` e, quando il dominio ha un nodo, anche al brand con `TravelerSubscription`.
 - [x] Dopo accesso o registrazione tornare alla dashboard, alla lezione o alla pagina inizialmente richiesta.
-- [ ] Mantenere un solo account e una sola autenticazione per tutta la piattaforma.
+- [x] Mantenere un solo account e una sola autenticazione per tutta la piattaforma.
 - [ ] Verificare registrazione, accesso, errori, uscita e nuovo accesso sia da localhost sia dal dominio.
 
 **Completato quando:** un nuovo utente entra da PosturaCorretta, crea l'account, ritorna alla dashboard PosturaCorretta e al successivo accesso ritrova lo stesso profilo senza vedere Flowpulse o dover effettuare un secondo login.
 
-### Collegamento del profilo al sito
+### Collegamento del profilo al sito e al brand
 
-`TravelerSubscription` non viene usato per l'adesione a PosturaCorretta: richiede un `Node` ed è riservato ai contenuti Node-based già esistenti.
+L'accesso distingue il **brand** dal singolo hostname:
 
-Per l'adesione a un sito viene usato `DomainMembership`:
+- quando il dominio è collegato a un `Node`/brand, l'appartenenza al brand viene rappresentata da una `TravelerSubscription` identificata da `profile_id + node_id`;
+- nello stesso caso viene mantenuta anche una `DomainMembership`, che registra a quale specifico dominio del brand la persona ha aderito;
+- quando il dominio è autonomo e non possiede un nodo, l'appartenenza viene rappresentata da una `DomainMembership` identificata da `profile_id + domain_id`;
+- una `DomainMembership` su un dominio appartenente a un brand registra l'accesso allo specifico hostname, ma non sostituisce l'iscrizione al brand;
+- `DomainMembership` non salva un `traveler_subscription_id`: l'eventuale relazione viene ricostruita tramite profilo e `domain.node_id`, evitando due fonti di verità.
 
-- `profile_id`;
-- `domain_id`;
-- `status` (`active` o `cancelled`);
-- `joined_at`.
+Se un brand possiede più domini, nel selettore compare una sola volta. Il dominio determina routing, configurazione grafica e host; la `TravelerSubscription` determina l'appartenenza al brand. Registrazione e accesso restano comuni: non sono richiesti un secondo account o una seconda autenticazione.
 
-Registrazione, accesso e apertura della dashboard in contesto PosturaCorretta creano o riattivano in modo idempotente la membership. Non sono richiesti un secondo account o un secondo accesso.
+**Stato locale:** è stato creato il Node `PosturaCorretta`, appartenente al Creator world di `@markpostura`, e `posturacorretta.org` è stato collegato sia al nodo sia al relativo `RoleAssignment`.
+
+**Passaggio ancora da completare in produzione:** creare o individuare lo stesso Node e collegare il record `posturacorretta.org` dalla gestione Domini. L'importazione di `config/domains.yml` non può identificare automaticamente un record Node del database di produzione.
+
+Il collegamento è ripetibile in modo idempotente con:
+
+```bash
+bin/rails brands:setup_posturacorretta
+```
+
+Per usare un proprietario diverso da `@markpostura`:
+
+```bash
+POSTURACORRETTA_OWNER=username bin/rails brands:setup_posturacorretta
+```
 
 #### Implementazione del Blocco 1 — un punto alla volta
 
@@ -69,41 +183,50 @@ Non vanno create nuove route di autenticazione per ogni brand. In produzione il 
 
 ##### Punto 3 — Conservazione durante il flusso
 
-- [ ] Conservare temporaneamente lo slug nella sessione durante accesso e registrazione.
-- [ ] Conservare una sola destinazione `return_to` interna e verificata.
-- [ ] Mantenere contesto e destinazione quando il form presenta errori.
-- [ ] Eliminare il contesto temporaneo quando il flusso è concluso.
+- [x] Conservare temporaneamente lo slug nella sessione durante accesso e registrazione.
+- [x] Conservare una sola destinazione `return_to` interna e verificata.
+- [x] Mantenere contesto e destinazione quando il form presenta errori.
+- [x] Eliminare la destinazione temporanea quando il flusso è concluso.
+
+**Regola di sicurezza:** sono ammessi solo percorsi relativi interni. URL assoluti, destinazioni che iniziano con `//`, backslash e caratteri di controllo sono ignorati. In contesto PosturaCorretta sono ammessi solo percorsi che iniziano con `/posturacorretta`; negli altri casi il ritorno di ripiego è la dashboard configurata nel dominio.
 
 ##### Punto 4 — Form comuni brandizzati
 
-- [ ] Fare leggere a `/session/new` e `/users/new` il contesto risolto.
-- [ ] Mostrare logo, nome, colori, testi e navigazione del sito.
-- [ ] Conservare contesto e `return_to` nei collegamenti tra registrazione e accesso.
-- [ ] Evitare riferimenti visibili a Flowpulse quando il contesto è PosturaCorretta.
-- [ ] Mantenere accessibili le pagine anche senza contesto specifico.
+- [x] Fare leggere a `/session/new` e `/users/new` il contesto risolto.
+- [x] Mostrare logo, nome, colori, testi e navigazione del sito.
+- [x] Conservare contesto e `return_to` nei collegamenti tra registrazione e accesso.
+- [x] Evitare riferimenti visibili a Flowpulse quando il contesto è PosturaCorretta.
+- [x] Mantenere accessibili le pagine anche senza contesto specifico.
+- [x] Reindirizzare gli utenti già autenticati: dashboard del sito nel contesto brandizzato, profilo nel contesto generale.
 
 ##### Punto 5 — Sicurezza della destinazione
 
-- [ ] Accettare esclusivamente percorsi interni.
-- [ ] Rifiutare URL assoluti, destinazioni con `//` e host esterni.
-- [ ] Verificare che la destinazione sia coerente con il sito quando è presente un contesto specifico.
-- [ ] Usare la dashboard del sito come destinazione di ripiego.
+- [x] Accettare esclusivamente percorsi interni.
+- [x] Rifiutare URL assoluti, destinazioni con `//` e host esterni.
+- [x] Verificare che la destinazione sia coerente con il sito quando è presente un contesto specifico.
+- [x] Usare la dashboard del sito come destinazione di ripiego.
 
-##### Punto 6 — Registrazione e collegamento al sito
+##### Punto 6 — Registrazione e collegamento al brand o al sito
 
-- [ ] Creare `User` e `Profile` con la procedura comune.
-- [ ] Collegare o riattivare il profilo sul sito corrente.
-- [ ] Eseguire creazione dell'account e collegamento in modo atomico.
-- [ ] Avviare una sola sessione.
-- [ ] Reindirizzare alla destinazione richiesta.
+- [x] Creare `User` e `Profile` con la procedura comune.
+- [x] Se il dominio ha un nodo, creare o riattivare sia la `TravelerSubscription` del profilo per il brand sia la `DomainMembership` per lo specifico dominio.
+- [x] Se il dominio non ha un nodo, creare o riattivare la `DomainMembership` per quel sito autonomo.
+- [x] Evitare duplicati quando più domini appartengono allo stesso nodo.
+
+**Implementato:** login, registrazione e dashboard usano `ensure_current_user_site_access!`. Il metodo mantiene sempre la `DomainMembership`; quando è presente `domain.node_id`, mantiene anche la `TravelerSubscription`, cercata per `profile_id + node_id` e non per hostname.
+- [x] Eseguire creazione dell'account e collegamento in modo atomico.
+- [x] Avviare una sola sessione dopo il completamento della transazione.
+- [x] Reindirizzare alla destinazione richiesta.
+
+Il dominio destinato all'iscrizione gratuita non viene più esposto tramite un ID numerico o un hostname modificabile: i form trasmettono un `signed_id` con scopo `free_subscription` e il controller accetta esclusivamente un dominio attivo verificato dalla firma.
 
 ##### Punto 7 — Accesso di un account esistente
 
-- [ ] Autenticare l'account globale con la procedura comune.
-- [ ] Verificare il collegamento del profilo al sito corrente.
-- [ ] Richiedere una conferma esplicita prima di creare un collegamento mancante, se l'accesso non era partito da un'azione di adesione chiara.
-- [ ] Riattivare un collegamento annullato soltanto con una conferma esplicita.
-- [ ] Tornare alla destinazione richiesta.
+- [x] Autenticare l'account globale con la procedura comune.
+- [x] Verificare e creare il collegamento del profilo al sito corrente.
+- [x] Considerare l'accesso dal contesto PosturaCorretta come adesione esplicita al sito e al brand.
+- [x] Riattivare automaticamente i collegamenti annullati quando l'utente accede nuovamente dal contesto PosturaCorretta.
+- [x] Tornare alla destinazione richiesta.
 
 ##### Punto 8 — Link del sito
 
@@ -132,7 +255,7 @@ Non vanno create nuove route di autenticazione per ogni brand. In produzione il 
 - [ ] Dominio reale senza parametro `site`.
 - [ ] Accesso generale senza alcun sito specifico.
 
-**Punto attualmente in lavorazione:** Punto 3 — conservazione del contesto e validazione sicura di `return_to` durante accesso e registrazione.
+**Punto attualmente in lavorazione:** Punto 10 — prova finale sul dominio di produzione dopo l'esecuzione di `brands:setup_posturacorretta`.
 
 ### Blocco 2 — Profilo e disponibilità di @markpostura
 
@@ -173,6 +296,8 @@ Non vanno create nuove route di autenticazione per ogni brand. In produzione il 
 ### Blocco 5 — Tutor e segreteria
 
 - [ ] Elenco delle persone da accogliere e delle richieste aperte.
+- [ ] Consentire l'ingresso sia tramite registrazione autonoma sia tramite registrazione assistita dalla segreteria.
+- [ ] Salvare per ogni iscrizione il centro di riferimento e, quando presente, il professionista di riferimento.
 - [ ] Prenotazione assistita per chi ha difficoltà.
 - [ ] Procedura sicura per aiutare nella registrazione senza conoscere la password dell'utente.
 - [ ] Assegnazione di tutor e insegnante.
@@ -181,6 +306,22 @@ Non vanno create nuove route di autenticazione per ogni brand. In produzione il 
 - [ ] Registrazione delle eccezioni motivate al programma.
 
 **Completato quando:** tutor o segreteria possono accompagnare una persona dall'ingresso al primo appuntamento senza interventi tecnici.
+
+#### Regola per studenti, centri e professionisti di riferimento
+
+Il nome e i dati personali appartengono al `Profile`; il collegamento generale al sito appartiene a `DomainMembership`. Centro e professionista di riferimento, invece, non vanno salvati in uno di questi due record: possono cambiare in base al corso o al percorso frequentato.
+
+Quando verrà introdotta l'iscrizione, il record di iscrizione al corso/percorso dovrà quindi contenere almeno:
+
+- `profile_id`;
+- corso o percorso scelto;
+- `center_slug` facoltativo;
+- `reference_professional_slug` facoltativo;
+- provenienza: registrazione autonoma oppure segreteria;
+- stato dell'iscrizione e data;
+- tutor o insegnante assegnato, quando necessario.
+
+All'inizio la segreteria può compilare questi dati per la persona e invitarla poi a creare o completare il proprio account. In questo modo non deve mai conoscere o gestire la password dell'utente.
 
 ### Blocco 6 — Ciclo settimanale contenuti e YouTube
 

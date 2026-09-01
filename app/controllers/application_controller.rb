@@ -78,31 +78,43 @@ class ApplicationController < ActionController::Base
       return false if profile.blank?
 
       ancestor_node_ids = node.self_and_ancestors.select(:id)
-      subscribed_domain_ids = profile.traveler_subscriptions.active.select(:domain_id)
-
-      Domain.active.where(node_id: ancestor_node_ids, id: subscribed_domain_ids).exists?
+      profile.traveler_subscriptions.active.where(node_id: ancestor_node_ids).exists?
     end
 
     def subscribe_current_user_to_domain(domain)
       return if Current.user.blank? || domain.blank?
 
-      profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
-      subscription = profile.traveler_subscriptions.find_or_initialize_by(domain: domain)
+      subscribe_profile_to_domain(current_profile, domain)
+    end
+
+    def subscribe_profile_to_domain(profile, domain)
+      return if profile.blank? || domain.blank? || domain.node_id.blank?
+
+      subscription = profile.traveler_subscriptions.find_or_initialize_by(node_id: domain.node_id)
+      subscription.domain ||= domain
       subscription.node = domain.node
       subscription.status = "active"
       subscription.subscribed_at ||= Time.current
       subscription.save!
+      subscription
     end
 
-    def ensure_current_user_domain_membership!(domain)
+    def ensure_current_user_site_access!(domain)
       return if Current.user.blank? || domain.blank?
 
-      profile = current_profile
+      ensure_profile_site_access!(current_profile, domain)
+    end
+
+    def ensure_profile_site_access!(profile, domain)
+      return if profile.blank? || domain.blank?
+
       membership = profile.domain_memberships.find_or_initialize_by(domain: domain)
       membership.status = "active"
       membership.joined_at ||= Time.current
       membership.save!
-      membership
+
+      subscription = subscribe_profile_to_domain(profile, domain) if domain.node_id.present?
+      { domain_membership: membership, traveler_subscription: subscription }
     end
 
     def require_permission!(resource, action = :read)

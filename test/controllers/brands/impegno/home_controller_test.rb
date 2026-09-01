@@ -28,7 +28,7 @@ module Brands
         assert_select "input[type=hidden][name=brand][value=impegno]", minimum: 1
         assert_select "select[name=brand]", count: 0
         assert_select "select[name=area] option[selected][value=agenda]", text: "Agenda"
-        assert_select "select[name=area] option[value=professional]", count: 1
+        assert_select "select[name=area] option[value=professional]", count: 0
         assert_select "span", text: "Agenda"
         assert_select "a[href*='view=practices']", count: 0
         assert_select "nav[aria-label='Navigazione 1impegno']", count: 1
@@ -96,7 +96,7 @@ module Brands
         get impegno_url(area: "user", view: "programs")
 
         assert_response :success
-        assert_select "select[name=area] option[value=professional]", count: 0
+        assert_select "select[name=area] option[value=domain_roles]", count: 0
         assert_select "a[aria-current=page]", text: "Esperienze"
         assert_select "nav[aria-label='Tipi di esperienza'] a", text: "Eventi"
         assert_select "h1", text: "Routine"
@@ -109,13 +109,18 @@ module Brands
           password_confirmation: "password123"
         )
         user.create_profile!(display_name: "Professional User", username: "professional_user")
+        domain = Domain.create!(hostname: "percorsointegrato.it", locale: "it", target_controller: "brands/percorso_integrato", target_action: "index", primary: true, active: true, settings: { operational_roles: ["professional", "tutor"] })
+        user.profile.domain_memberships.create!(domain: domain)
         creator_assignment = RoleAssignment.create!(profile: user.profile, role: :creator_of_worlds)
-        RoleAssignment.create!(profile: user.profile, role: :professional, parent: creator_assignment)
+        RoleAssignment.create!(profile: user.profile, role: :professional, context: domain, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
-        get impegno_url(area: "professional", view: "offering", tab: "events")
+        get impegno_url(brand: "percorso_integrato", area: "domain_roles", role: "professional", view: "offering", tab: "events")
 
         assert_response :success
+        assert_select "select[name=area] option[selected][value=domain_roles]", text: "Ruoli operativi"
+        assert_select "select[name=role]", count: 0
+        assert_select "span[aria-label='Ruoli assegnati nel sito']", text: /Professionista/
         assert_select "a[aria-current=page]", text: "Offerta"
         assert_select "nav[aria-label='Tipi di offerta professionale']" do
           assert_select "a", text: "Prestazioni"
@@ -126,6 +131,17 @@ module Brands
         end
         assert_select "turbo-frame#impegno_workspace:not([src])", count: 1
         assert_select "h1", text: "Eventi"
+      end
+
+      test "redirects the legacy professional area to domain roles" do
+        user = User.create!(email_address: "impegno-legacy-professional@example.com", password: "password123", password_confirmation: "password123")
+        user.create_profile!(display_name: "Legacy Professional", username: "legacy_professional")
+        post session_url, params: { email_address: user.email_address, password: "password123" }
+
+        get impegno_url(brand: "posturacorretta", area: "professional", view: "offering")
+
+        assert_redirected_to impegno_url(brand: "posturacorretta", area: "domain_roles", view: "offering")
+        assert_response :moved_permanently
       end
 
       test "loads the professional agenda with event and booking-slot filters" do
@@ -156,12 +172,52 @@ module Brands
         user.create_profile!(display_name: "User Only", username: "user_only")
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
-        get impegno_url(area: "professional", view: "offering")
+        domain = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, settings: { operational_roles: ["teacher", "tutor", "segreteria_clienti"] })
+        user.profile.domain_memberships.create!(domain: domain)
+
+        get impegno_url(brand: "posturacorretta", area: "domain_roles", role: "teacher")
 
         assert_response :success
-        assert_select "select[name=area] option[selected][value=user]", text: "Utente"
-        assert_select "select[name=area] option[value=professional]", count: 0
+        assert_select "select[name=area] option[selected][value=user]", text: "Personale"
+        assert_select "select[name=area] option[value=domain_roles]", count: 0
         assert_select "a[aria-current=page]", text: "Esperienze"
+      end
+
+      test "shows only operational roles assigned in the selected domain" do
+        user = User.create!(email_address: "posturacorretta-teacher@example.com", password: "password123", password_confirmation: "password123")
+        user.create_profile!(display_name: "Postura Teacher", username: "postura_teacher")
+        domain = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, settings: { operational_roles: ["teacher", "tutor", "segreteria_clienti"] })
+        user.profile.domain_memberships.create!(domain: domain)
+        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :creator_of_worlds)
+        RoleAssignment.create!(profile: user.profile, role: :teacher, context: domain, parent: creator_assignment)
+        post session_url, params: { email_address: user.email_address, password: "password123" }
+
+        get impegno_url(brand: "posturacorretta", area: "domain_roles", role: "teacher")
+
+        assert_response :success
+        assert_select "select[name=area] option[selected][value=domain_roles]", text: "Ruoli operativi"
+        assert_select "select[name=role]", count: 0
+        assert_select "span[aria-label='Ruoli assegnati nel sito']", text: /Insegnante/
+        assert_select "span[aria-label='Ruoli assegnati nel sito']", text: /Tutor/, count: 0
+        assert_select "h1", text: "Spazio operativo"
+      end
+
+      test "offers only active domain memberships in the site selector" do
+        user = User.create!(email_address: "impegno-memberships@example.com", password: "password123", password_confirmation: "password123")
+        user.create_profile!(display_name: "Membership User", username: "membership_user")
+        postura = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, site_title: "PosturaCorretta")
+        genera = Domain.create!(hostname: "generaimpresa.it", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true, site_title: "GeneraImpresa")
+        Domain.create!(hostname: "unrelated.test", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true, site_title: "Non iscritto")
+        user.profile.domain_memberships.create!(domain: postura)
+        user.profile.domain_memberships.create!(domain: genera)
+        post session_url, params: { email_address: user.email_address, password: "password123" }
+
+        get impegno_url(brand: "posturacorretta")
+
+        assert_response :success
+        assert_select "select[name=brand] option[value=posturacorretta]", text: "PosturaCorretta"
+        assert_select "select[name=brand] option[value=generaimpresa]", text: "GeneraImpresa"
+        assert_select "select[name=brand] option", text: "Non iscritto", count: 0
       end
 
       test "loads shared places and contacts as Impegno workspace areas" do

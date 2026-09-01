@@ -33,6 +33,12 @@ default: &default
     auth_slug: posturacorretta
     auth_default_path: /posturacorretta/dashboard
     auth_enabled: true
+    operational_roles:
+      - teacher
+      - tutor
+      - segreteria_clienti
+      - segreteria_amministrativa
+      - responsabile_location
     site_title: "PosturaCorretta"
     site_description: "Percorsi, programmi, contenuti e professionisti per conoscere e prendersi cura del corpo."
     logo_full_url: "https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
@@ -50,6 +56,12 @@ default: &default
     primary: true
     site_title: "Percorso Integrato — Programmi, professionisti e verifiche"
     site_description: "Costruisci un percorso personale e coordinato collegando bisogni, programmi, professionisti e verifiche."
+    operational_roles:
+      - professional
+      - tutor
+      - segreteria_clienti
+      - segreteria_amministrativa
+      - responsabile_location
 
   www.percorsointegrato.it:
     canonical_host: percorsointegrato.it

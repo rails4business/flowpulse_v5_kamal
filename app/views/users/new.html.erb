@@ -30,7 +30,7 @@
         <% if local_request? && authentication_context? %><%= hidden_field_tag :site, authentication_context_site %><% end %>
         <% if session[:return_to_after_authenticating].present? %><%= hidden_field_tag :return_to, session[:return_to_after_authenticating] %><% end %>
         <% if @subscription_domain.present? %>
-          <%= hidden_field_tag :subscription_domain_id, @subscription_domain.id %>
+          <%= hidden_field_tag :subscription, @subscription_domain.signed_id(purpose: :free_subscription) %>
           <div class="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-900">
             Creando l’account ti iscrivi gratuitamente a <strong><%= @subscription_domain.display_hostname %></strong>.
           </div>
@@ -56,7 +56,7 @@
 
       <div class="mt-6 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
         Hai già un account?
-        <%= verified_link_to "Accedi", new_session_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating]).merge(subscription_domain_id: @subscription_domain&.id)), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
+        <%= verified_link_to "Accedi", new_session_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating]).merge(subscription: @subscription_domain&.signed_id(purpose: :free_subscription))), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
       </div>
     </div>
   </div>

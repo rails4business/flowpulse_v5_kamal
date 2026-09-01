@@ -73,7 +73,7 @@
           <%= link_to posturacorretta_course_path(corso: @reader_course_slug, vista: "capitoli"), role: "tab", aria: { selected: @course_overview_tab == "capitoli", current: ("page" if @course_overview_tab == "capitoli") }, class: "whitespace-nowrap rounded-t-xl border px-4 py-3 text-sm font-bold transition sm:px-5 #{@course_overview_tab == "capitoli" ? "border-slate-200 !border-b-white !bg-white text-indigo-800 shadow-[0_-2px_8px_rgba(15,23,42,0.04)]" : "border-transparent bg-slate-100/70 text-slate-500 hover:border-slate-200 hover:bg-white hover:text-slate-800"}" do %>
             Corso online <span class="ml-1 text-xs font-semibold opacity-70"><%= @course_lessons.size %></span>
           <% end %>
-          <%= link_to posturacorretta_course_path(corso: @reader_course_slug, vista: "incontri"), role: "tab", aria: { selected: @course_overview_tab == "incontri", current: ("page" if @course_overview_tab == "incontri") }, class: "whitespace-nowrap rounded-t-xl border px-4 py-3 text-sm font-bold transition sm:px-5 #{@course_overview_tab == "incontri" ? "border-slate-200 !border-b-white !bg-white text-amber-800 shadow-[0_-2px_8px_rgba(15,23,42,0.04)]" : "border-transparent bg-slate-100/70 text-slate-500 hover:border-slate-200 hover:bg-white hover:text-slate-800"}" do %>
+          <%= link_to posturacorretta_course_path(corso: @reader_course_slug, vista: "incontri"), role: "tab", aria: { selected: @course_overview_tab == "incontri", current: ("page" if @course_overview_tab == "incontri") }, class: "whitespace-nowrap rounded-t-xl border px-4 py-3 text-sm font-bold transition sm:px-5 #{@course_overview_tab == "incontri" ? "border-slate-200 !border-b-white !bg-white text-indigo-700 shadow-[0_-2px_8px_rgba(15,23,42,0.04)]" : "border-transparent bg-slate-100/70 text-slate-500 hover:border-slate-200 hover:bg-white hover:text-slate-800"}" do %>
             Percorso guidato <span class="ml-1 text-xs font-semibold opacity-70"><%= @course_program_steps.size %></span>
           <% end %>
         </nav>
@@ -81,11 +81,11 @@
 
       <% if @course_overview_tab == "incontri" %>
         <section id="incontri-lezioni" class="rounded-b-2xl border-x border-b border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 lg:px-12">
-          <p class="text-xs font-extrabold uppercase tracking-[.15em] text-amber-700">Appuntamenti</p>
+          <p class="text-xs font-extrabold uppercase tracking-[.15em] text-indigo-700">Appuntamenti</p>
           <h2 class="mt-1 text-2xl font-semibold text-slate-950">Incontri e lezioni</h2>
           <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Segui le attività nell’ordine indicato. Apri la prossima disponibile per consultare programma, scheda e modalità di prenotazione.</p>
           <% if @course_program_steps.present? %>
-            <div class="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
               <ol class="divide-y divide-slate-200" aria-label="Attività del percorso guidato">
                 <% @course_program_steps.each_with_index do |activity, index| %>
                   <% state = activity.fetch("progress_state") %>
@@ -96,11 +96,11 @@
                   <% activity_path = posturacorretta_course_lesson_path(corso: @reader_course_slug, attivita: activity.fetch("slug")) %>
                   <% activity_access_path = authenticated? ? activity_path : new_session_path(authentication_context_link_params(return_to: activity_path)) %>
                   <li class="grid gap-4 px-5 py-5 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-center sm:px-7">
-                    <span class="grid size-10 place-items-center rounded-full border-2 text-xs font-bold <%= state == "completed" ? "border-emerald-500 bg-emerald-500 text-white" : state == "available" ? "border-amber-400 bg-white text-amber-800" : "border-slate-200 bg-slate-50 text-slate-400" %>"><%= state == "completed" ? "✓" : format("%02d", index + 1) %></span>
+                    <span class="grid size-10 place-items-center rounded-full border-2 text-xs font-bold <%= state == "completed" ? "border-emerald-500 bg-emerald-500 text-white" : state == "available" ? "border-indigo-600 bg-indigo-600 text-white shadow-xs" : "border-slate-200 bg-slate-50 text-slate-400" %>"><%= state == "completed" ? "✓" : format("%02d", index + 1) %></span>
                     <div class="min-w-0">
                       <h3 class="font-bold text-slate-950"><%= activity.fetch("title") %></h3>
                       <p class="mt-1 text-xs leading-5 text-slate-500"><%= kind %><% if durations.present? %> · <%= durations.join("–") %> minuti<% end %><% if delivery["responsible"].present? %> · @<%= delivery.fetch("responsible") %><% end %></p>
-                      <p class="mt-2 text-xs font-semibold <%= state == "completed" ? "text-emerald-700" : state == "available" ? "text-amber-800" : "text-slate-400" %>"><%= state == "completed" ? "Completata" : state == "available" ? "Da programmare" : "Disponibile dopo il passaggio precedente" %></p>
+                      <p class="mt-2 text-xs font-semibold <%= state == "completed" ? "text-emerald-700" : state == "available" ? "text-indigo-700" : "text-slate-400" %>"><%= state == "completed" ? "Completata" : state == "available" ? "Pronto da programmare" : "Disponibile dopo il passaggio precedente" %></p>
                     </div>
                     <div class="sm:text-right">
                       <% if state == "locked" %>

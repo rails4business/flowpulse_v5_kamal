@@ -23,6 +23,23 @@ class DomainMembership < ApplicationRecord
     update!(status: "active", joined_at: Time.current)
   end
 
+  # A membership remains specific to one hostname. When that hostname belongs
+  # to a Node/brand, brand access is resolved through the profile subscription
+  # instead of storing a duplicate foreign key on this record.
+  def traveler_subscription
+    return if domain.node_id.blank?
+
+    profile.traveler_subscriptions.active.find_by(node_id: domain.node_id)
+  end
+
+  def brand_access?
+    traveler_subscription.present?
+  end
+
+  def standalone_domain?
+    domain.node_id.blank?
+  end
+
   private
 
     def set_defaults

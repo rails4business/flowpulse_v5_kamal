@@ -1,7 +1,11 @@
 <% context_course = @lesson ? @selected_course : (@selected_program_step ? @learning_course : nil) %>
 <% context_mode = @lesson ? "capitoli" : (@selected_program_step ? "incontri" : nil) %>
 <% content_for :landing_nav do %>
-  <% if context_course && context_mode %>
+  <% if @dashboard_kind == "student" %>
+    <%= render "posturacorretta_seme/student_dashboard_header" %>
+  <% elsif @course_overview %>
+    <%= render "posturacorretta_seme/student_dashboard_header", active_item: :percorso %>
+  <% elsif context_course && context_mode %>
     <%= render "posturacorretta_seme/course_reader_header", course: context_course, active: context_mode %>
   <% else %>
     <%= render "posturacorretta_seme/header" %>

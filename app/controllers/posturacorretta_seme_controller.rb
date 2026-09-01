@@ -1,12 +1,14 @@
 class PosturacorrettaSemeController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
-  before_action :require_authentication, only: [:dashboard_student, :dashboard_teacher]
+  before_action :require_authentication, only: [:dashboard_student, :dashboard_appointments, :dashboard_teacher]
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
   ACADEMY_PATH = Rails.root.join("config/data/posturacorretta/accademia/academy.yml").freeze
   DIDACTIC_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_titoli_sezioni_e_corsi.yml").freeze
   GUIDED_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso_guidato.yml").freeze
+  LESSON_PROGRAM_PATH = Rails.root.join("config/data/posturacorretta/accademia/programma_lezioni_posturacorretta.yml").freeze
+  SCHEDULED_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/lezioni_programmate.yml").freeze
   GUIDED_ACTIVITIES_ROOT = Rails.root.join("config/data/posturacorretta/accademia/attivita_percorso_guidato").freeze
   LEARNING_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso.yml").freeze
   CONTENT_ROOT = Rails.root.join("config/data/posturacorretta").cleanpath.freeze
@@ -95,14 +97,23 @@ class PosturacorrettaSemeController < ApplicationController
   end
 
   def dashboard_student
-    ensure_current_user_domain_membership!(authentication_context_domain) if authentication_context?
+    ensure_current_user_site_access!(authentication_context_domain) if authentication_context?
+    return redirect_to(posturacorretta_student_appointments_path) if params[:vista] == "calendario"
+
     load_dashboard_data
     @dashboard_kind = "student"
     render :show
   end
 
+  def dashboard_appointments
+    ensure_current_user_site_access!(authentication_context_domain) if authentication_context?
+    load_dashboard_data(view: "calendario")
+    @dashboard_kind = "student"
+    render :show
+  end
+
   def dashboard_teacher
-    ensure_current_user_domain_membership!(authentication_context_domain) if authentication_context?
+    ensure_current_user_site_access!(authentication_context_domain) if authentication_context?
     load_dashboard_data
     @dashboard_kind = "teacher"
     @teacher_access = Current.user&.teacher_user? || Current.user&.superadmin_user? || false
@@ -360,12 +371,15 @@ class PosturacorrettaSemeController < ApplicationController
     }
   end
 
-  def load_dashboard_data
+  def load_dashboard_data(view: nil)
     load_curriculum_sources
+    lesson_program_data = YAML.safe_load_file(LESSON_PROGRAM_PATH, permitted_classes: [], aliases: false)
+    lesson_program_by_course = lesson_program_data.fetch("courses").index_by { |course| course.fetch("course_slug") }
     @courses = @all_didactic_courses
     @dashboard_courses = @courses.map do |course|
-      program = @program_by_course.fetch(course.fetch("slug"), { "program" => [] })
-      activities = decorate_program_steps(program.fetch("program", []))
+      configured_program = @program_by_course.fetch(course.fetch("slug"), { "program" => [] }).fetch("program", [])
+      program = configured_program.presence || lesson_program_by_course.fetch(course.fetch("slug"), { "program" => [] }).fetch("program", [])
+      activities = decorate_program_steps(program)
       course.merge(
         "program" => activities,
         "chapter_count" => course.fetch("chapters", []).size,
@@ -375,7 +389,78 @@ class PosturacorrettaSemeController < ApplicationController
     @lesson_count = @dashboard_courses.sum { |course| course.fetch("program").size }
     @chapter_count = @dashboard_courses.sum { |course| course.fetch("chapter_count") }
     @starting_course = @dashboard_courses.find { |course| course.fetch("slug") == "postura-corretta-in-un-mese" } || @dashboard_courses.first
+    @dashboard_view = view.presence_in(%w[programma calendario]) || params[:vista].presence_in(%w[programma calendario]) || "programma"
+    dashboard_courses_by_slug = @dashboard_courses.index_by { |course| course.fetch("slug") }
+    @dashboard_sections = []
+    @dashboard_sections << {
+      "title" => "Corsi iniziali",
+      "description" => "Le basi del percorso educativo PosturaCorretta.",
+      "courses" => @didactic_courses.filter_map { |course| dashboard_courses_by_slug[course.fetch("slug")] }
+    }
+    @dashboard_sections.concat(@didactic_sections.map do |section|
+      section.slice("slug", "title", "description").merge(
+        "courses" => section.fetch("courses", []).filter_map { |course| dashboard_courses_by_slug[course.fetch("slug")] }
+      )
+    end)
+    load_dashboard_agenda
     @selected_participation = params[:participation].presence_in(%w[group individual])
+  end
+
+  def load_dashboard_agenda
+    schedule_data = YAML.safe_load_file(SCHEDULED_LESSONS_PATH, permitted_classes: [], aliases: false)
+    scheduled_lessons = schedule_data.fetch("lessons", []).filter_map do |lesson|
+      next unless lesson.fetch("status", "draft") == "published"
+      next if lesson["starts_at"].blank?
+
+      starts_at = Time.zone.parse(lesson.fetch("starts_at"))
+      next unless starts_at
+
+      {
+        source: "scheduled_lesson",
+        title: lesson.fetch("title"),
+        starts_at: starts_at,
+        ends_at: lesson["ends_at"].present? ? Time.zone.parse(lesson.fetch("ends_at")) : nil,
+        domain_label: "PosturaCorretta",
+        role_label: lesson["audience_role"].to_s.humanize.presence,
+        format: lesson["format"],
+        delivery: lesson["delivery"],
+        location_name: lesson["location_name"],
+        teacher_slug: lesson["teacher_slug"],
+        status: lesson.fetch("status")
+      }
+    end
+
+    profile = Current.user.profile
+    commitments = if Current.user.superadmin_user?
+      DataCommitment.includes(:domain).where.not(status: "cancelled")
+    elsif profile
+      profile.data_commitments.includes(:domain).where.not(status: "cancelled")
+    else
+      DataCommitment.none
+    end
+    commitment_entries = commitments.map do |commitment|
+      metadata = commitment.metadata.to_h
+      posturacorretta_commitment = commitment.domain&.auth_slug == "posturacorretta" ||
+        %w[posturacorretta.org www.posturacorretta.org].include?(commitment.domain&.hostname)
+      {
+        source: "commitment",
+        title: commitment.title,
+        starts_at: commitment.starts_at,
+        ends_at: commitment.ends_at,
+        domain_label: commitment.domain&.site_title.presence || commitment.domain&.hostname || "Flowpulse",
+        role_label: metadata["role_context"].presence || metadata["role"].presence,
+        format: metadata["format"],
+        delivery: commitment.online_url.present? ? "online" : "in_person",
+        location_name: commitment.location_name,
+        teacher_slug: metadata["teacher_slug"],
+        status: commitment.status,
+        external_context: !posturacorretta_commitment
+      }
+    end
+
+    @dashboard_agenda_entries = (scheduled_lessons + commitment_entries).sort_by { |entry| entry.fetch(:starts_at) }
+    @dashboard_agenda_upcoming = @dashboard_agenda_entries.select { |entry| entry.fetch(:starts_at) >= Time.current }
+    @dashboard_agenda_past = @dashboard_agenda_entries.select { |entry| entry.fetch(:starts_at) < Time.current }.reverse
   end
 
   def load_lesson_content

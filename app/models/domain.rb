@@ -8,7 +8,8 @@ class Domain < ApplicationRecord
     :social_image_url,
     :auth_slug,
     :auth_default_path,
-    :auth_enabled
+    :auth_enabled,
+    :operational_roles
 
   belongs_to :role_assignment, optional: true
   belongs_to :node, optional: true
@@ -26,6 +27,7 @@ class Domain < ApplicationRecord
   validate :target_controller_and_action_presence
   validate :role_assignment_is_creator_world
   validate :node_belongs_to_role_assignment
+  validate :operational_roles_are_known
 
   scope :active, -> { where(active: true) }
 
@@ -119,7 +121,14 @@ class Domain < ApplicationRecord
       self.auth_slug = auth_slug.to_s.strip.downcase.presence
       self.auth_default_path = auth_default_path.to_s.strip.presence
       self.auth_enabled = ActiveModel::Type::Boolean.new.cast(raw_auth_enabled) unless raw_auth_enabled.nil?
+      raw_operational_roles = operational_roles
+      self.operational_roles = Array(raw_operational_roles).filter_map { |role| role.to_s.strip.presence }.uniq unless raw_operational_roles.nil?
       self.settings = settings.to_h.compact.presence
+    end
+
+    def operational_roles_are_known
+      unknown_roles = Array(operational_roles) - RoleAssignment.roles.keys
+      errors.add(:operational_roles, "contiene ruoli non riconosciuti: #{unknown_roles.join(', ')}") if unknown_roles.any?
     end
 
     def target_controller_and_action_presence

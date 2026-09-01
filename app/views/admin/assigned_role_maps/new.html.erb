@@ -3,7 +3,7 @@
 <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
   <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Nuova assegnazione</p>
   <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">New assigned role</h1>
-  <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Il superadmin assegna solo ruoli root. I ruoli children vengono creati dal relativo creator of worlds.</span>
+  <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Assegna un ruolo globale oppure un ruolo operativo nel contesto di uno specifico dominio.</span>
 </header>
 
 <section class="mt-6 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -37,6 +37,16 @@
           <option value="<%= profile.user.email_address %>">Email: <%= profile.display_name %> (@<%= profile.username %>)</option>
         <% end %>
       </datalist>
+    </div>
+
+    <div>
+      <%= label_tag "role_assignment_domain_id", "Dominio", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+      <%= select_tag "role_assignment[domain_id]",
+        options_for_select(@operational_domains.map { |domain| [domain.display_hostname, domain.id] }, @selected_domain_id),
+        include_blank: "Nessun dominio · ruolo globale",
+        id: "role_assignment_domain_id",
+        class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      <p class="mt-2 text-xs leading-5 text-slate-500">In assenza di dominio puoi assegnare solo Creator of worlds o Demo. I ruoli operativi devono essere previsti dal dominio.</p>
     </div>
 
     <div>

@@ -10,6 +10,7 @@ class TravelerSubscription < ApplicationRecord
 
   validates :status, presence: true, inclusion: { in: STATUSES }
   validates :domain_id, uniqueness: { scope: :profile_id }
+  validates :node_id, uniqueness: { scope: :profile_id, message: "ha già un'iscrizione per questo brand" }
   validate :domain_has_node
   validate :node_matches_domain
 

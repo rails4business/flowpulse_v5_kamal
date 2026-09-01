@@ -37,8 +37,32 @@ module AuthenticationBrandContext
     def authentication_context_link_params(return_to: nil)
       params = {}
       params[:site] = authentication_context_site if local_request? && authentication_context_site.present?
-      params[:return_to] = return_to if return_to.present?
+      safe_return_to = safe_authentication_return_to(return_to)
+      params[:return_to] = safe_return_to if safe_return_to.present?
       params
+    end
+
+    def persist_authentication_return_to!(value = params[:return_to])
+      safe_return_to = safe_authentication_return_to(value)
+      if safe_return_to.present?
+        session[:return_to_after_authenticating] = safe_return_to
+      elsif value.present?
+        session.delete(:return_to_after_authenticating)
+      end
+    end
+
+    def safe_authentication_return_to(value)
+      candidate = value.to_s.strip
+      return if candidate.blank?
+      return unless candidate.start_with?("/")
+      return if candidate.start_with?("//") || candidate.include?("\\") || candidate.match?(/[\r\n\0]/)
+
+      if authentication_context?
+        prefix = authentication_context_path_prefix
+        return unless prefix.present? && (candidate == prefix || candidate.start_with?("#{prefix}/"))
+      end
+
+      candidate
     end
 
     def persist_authentication_context!
@@ -51,6 +75,13 @@ module AuthenticationBrandContext
 
     def clear_authentication_context!
       session.delete(:authentication_site)
+    end
+
+    def redirect_authenticated_user_from_authentication!
+      return unless authenticated?
+
+      destination = authentication_context? ? authentication_context_default_return_to : profile_path
+      redirect_to destination, notice: "Hai già effettuato l’accesso."
     end
 
     def authentication_enabled?(domain)
@@ -74,5 +105,12 @@ module AuthenticationBrandContext
       return if site.blank?
 
       Domain.active.to_a.find { |domain| domain.auth_slug == site }
+    end
+
+    def authentication_context_path_prefix
+      path = authentication_context_domain&.auth_default_path.to_s
+      return if path.blank? || !path.start_with?("/")
+
+      "/#{path.split("/")[1]}"
     end
 end

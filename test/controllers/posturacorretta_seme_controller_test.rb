@@ -51,13 +51,10 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "#incontri-lezioni a[href='#{new_session_path(return_to: posturacorretta_seme_student_dashboard_path)}']", text: /Vedi tutti i corsi nella dashboard/
     assert_select "#capitoli", count: 0
     assert_select "nav[aria-label='Indice generale dei corsi'] a[aria-current='page']", text: /PosturaCorretta in un mese/
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Home"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
-    assert_select "[aria-label='Esplora PosturaCorretta'] a", text: "Lezioni", count: 0
-    assert_select "[aria-label='Esplora PosturaCorretta'] a", text: "Corso online", count: 0
-    assert_select "a", text: "Contenuti"
-    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_contenuti_path}']", text: "Contenuti"
-    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_corsi_path}']", text: "Corsi"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta']", count: 0
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Percorso"
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a", text: "Moduli"
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a", text: "Appuntamenti"
 
     get posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")
     assert_response :success
@@ -158,19 +155,58 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_seme_student_dashboard_path
     assert_redirected_to new_session_url(return_to: posturacorretta_seme_student_dashboard_path)
 
-    sign_in(create_test_user("seme-student@example.com"))
+    user = create_test_user("seme-student@example.com")
+    sign_in(user)
     get posturacorretta_seme_student_dashboard_path(participation: "group")
 
     assert_response :success
-    assert_select "h1", text: "Dashboard studente"
+    assert_select "h1", text: "Il tuo percorso", count: 0
     assert_select "p", text: "Gruppo"
     assert_select "[role='progressbar']", count: 0
-    assert_select "h2", text: "Tutti i corsi"
-    assert_select "a[href='#{posturacorretta_course_chapters_path(corso: "postura-corretta-in-un-mese")}']", text: "Apri il corso online"
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Moduli"
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")}']", text: "Percorso"
+    assert_select "h1", text: "Moduli", count: 1
+    assert_select "h3", text: "Postura e Recupero"
+    assert_select "article h4", text: "Igiene Posturale"
+    assert_select "span", text: "Con tutor"
+    assert_select "span", text: "Con insegnante"
+    assert_select "a", text: "Apri il corso online", count: 0
+
+    other_domain = Domain.find_or_create_by!(hostname: "agenda-esterna.test") do |domain|
+      domain.target_controller = "brands/impegno/home"
+      domain.target_action = "index"
+      domain.locale = "it"
+      domain.settings = { auth_slug: "impegno", site_title: "Impegno" }
+    end
+    profile = Profile.find_or_create_by!(user: user)
+    DataCommitment.create!(
+      profile: profile,
+      created_by_profile: profile,
+      domain: other_domain,
+      title: "Dettaglio che resta privato",
+      kind: "personal",
+      status: "planned",
+      starts_at: 1.day.from_now.change(hour: 10),
+      ends_at: 1.day.from_now.change(hour: 11),
+      pricing_type: "none",
+      contribution_type: "unpaid"
+    )
+
+    get posturacorretta_student_appointments_path
+    assert_response :success
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Appuntamenti"
+    assert_select "h2", text: "I tuoi appuntamenti"
+    assert_select "h3", text: "Prossimi"
+    assert_select "h3", text: "Passati"
+    assert_select "li.opacity-50 h4", text: "Dettaglio che resta privato"
+    assert_select "a", text: "Apri 1Impegno", count: 0
+
+    get posturacorretta_student_dashboard_path(vista: "calendario")
+    assert_redirected_to posturacorretta_student_appointments_path
 
     get posturacorretta_student_dashboard_path
     assert_response :success
-    assert_select "h1", text: "Dashboard studente"
+    assert_select "h1", text: "Il tuo percorso", count: 0
   end
 
   test "student dashboard keeps the PosturaCorretta site context when login is required locally" do
@@ -179,7 +215,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
       domain.target_action = "home"
       domain.locale = "it"
     end
-    posturacorretta_domain.update!(auth_slug: "posturacorretta", auth_enabled: true)
+    posturacorretta_domain.update!(auth_slug: "posturacorretta", auth_enabled: true, auth_default_path: "/posturacorretta/dashboard")
 
     host! "localhost"
     get posturacorretta_student_dashboard_path

@@ -12,6 +12,7 @@
       impegno_path({
         brand: @impegno_brand,
         area: @impegno_area,
+        role: @impegno_role,
         view: @impegno_view,
         tab: @impegno_tab,
         date: params[:date].presence,
@@ -22,7 +23,7 @@
     view_labels = {
       "agenda" => {},
       "user" => { "practices" => "Esperienze", "recurring" => "Ricorrenze" },
-      "professional" => { "offering" => "Offerta", "exchange" => "Valore e scambi", "reports" => "Resoconti" },
+      "domain_roles" => @impegno_role == "professional" ? { "offering" => "Offerta", "exchange" => "Valore e scambi", "reports" => "Resoconti" } : { "workspace" => "Spazio operativo" },
       "places" => {},
       "contacts" => {}
     }
@@ -30,16 +31,35 @@
 
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto grid min-h-16 max-w-7xl grid-cols-1 items-center gap-3 px-4 py-3 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-5">
-      <% workspace_filter = form_with url: impegno_path, method: :get, class: "flex min-w-0 items-center gap-2" do |form| %>
-        <%= form.hidden_field :brand, value: @impegno_brand %>
+      <div class="flex min-w-0 flex-wrap items-center gap-2">
+        <% if @impegno_domain_options.many? %>
+          <% domain_filter = form_with url: impegno_path, method: :get, class: "min-w-0" do |form| %>
+            <%= form.select :brand, @impegno_domain_options, { selected: @impegno_brand }, onchange: "this.form.requestSubmit()", aria: { label: "Sito" }, class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
+          <% end %>
+          <%= domain_filter %>
+        <% elsif @impegno_default_domain.present? %>
+          <span class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700"><%= @impegno_default_domain.site_title.presence || @impegno_default_domain.hostname %></span>
+        <% end %>
+
+        <% workspace_filter = form_with url: impegno_path, method: :get, class: "flex min-w-0 items-center gap-2" do |form| %>
+          <%= form.hidden_field :brand, value: @impegno_brand %>
         <%= form.select :area,
-                        [["Agenda", "agenda"], ["Utente", "user"]] + (@impegno_professional_access ? [["Professionista", "professional"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
+                        [["Agenda", "agenda"], ["Personale", "user"]] + (@impegno_domain_roles.any? ? [["Ruoli operativi", "domain_roles"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
                         { selected: @impegno_area },
                         onchange: "this.form.elements['view'].value = ''; this.form.requestSubmit()",
                         class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
         <%= form.hidden_field :view, value: @impegno_view %>
-      <% end %>
-      <%= workspace_filter %>
+        <% end %>
+        <%= workspace_filter %>
+
+        <% if @impegno_area == "domain_roles" %>
+          <span class="flex flex-wrap gap-1.5" aria-label="Ruoli assegnati nel sito">
+            <% @impegno_domain_roles.each do |role| %>
+              <span class="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700"><%= @impegno_domain_role_labels.fetch(role, role.humanize) %></span>
+            <% end %>
+          </span>
+        <% end %>
+      </div>
 
       <% if @impegno_area == "agenda" && @impegno_view == "agenda" %>
         <div class="grid justify-center gap-2">
@@ -107,7 +127,7 @@
         <% end %>
       </nav>
 
-      <% if @impegno_area == "professional" && @impegno_view == "offering" %>
+      <% if @impegno_area == "domain_roles" && @impegno_role == "professional" && @impegno_view == "offering" %>
         <nav class="mb-5 flex gap-1 overflow-x-auto" aria-label="Tipi di offerta professionale">
           <% { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.each do |tab, label| %>
             <%= link_to label,
@@ -135,8 +155,8 @@
       <% else %>
         <% workspace_frame = turbo_frame_tag "impegno_workspace" do %>
           <section class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
-            <p class="text-xs font-black uppercase tracking-wider text-blue-600"><%= @impegno_area == "user" ? "Utente" : "Professionista" %></p>
-            <% workspace_title = if @impegno_area == "professional" && @impegno_view == "offering"
+            <p class="text-xs font-black uppercase tracking-wider text-blue-600"><%= @impegno_area == "user" ? "Personale" : @impegno_domain_role_labels.fetch(@impegno_role, @impegno_role.to_s.humanize) %></p>
+            <% workspace_title = if @impegno_area == "domain_roles" && @impegno_role == "professional" && @impegno_view == "offering"
               { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.fetch(@impegno_tab)
             elsif @impegno_area == "user" && @impegno_view == "practices"
               { "habits" => "Routine", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.fetch(@impegno_tab)

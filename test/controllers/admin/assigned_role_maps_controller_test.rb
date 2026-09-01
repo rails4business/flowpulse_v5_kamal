@@ -30,7 +30,7 @@ module Admin
       assert_includes response.body, "New assigned role"
       assert_includes response.body, "Creator of worlds"
       assert_includes response.body, "Demo"
-      assert_not_includes response.body, "Teacher"
+      assert_includes response.body, "Nessun dominio · ruolo globale"
     end
 
     test "superadmin can create root role assignment" do
@@ -90,6 +90,41 @@ module Admin
       end
 
       assert_response :unprocessable_entity
+      assert_includes response.body, "seleziona un dominio"
+    end
+
+    test "superadmin can assign a role in a domain that provides it" do
+      superadmin = create_user("assigned-role-domain-superadmin@example.com", superadmin: true)
+      superadmin.update!(active_role: :superadmin)
+      target = create_user("assigned-role-domain-target@example.com")
+      creator_assignment = create_creator_assignment
+      domain = Domain.create!(
+        hostname: "assigned-role-posturacorretta.test",
+        locale: "it",
+        target_controller: "brands/posturacorretta",
+        target_action: "home",
+        primary: true,
+        active: true,
+        role_assignment: creator_assignment,
+        settings: { operational_roles: ["teacher", "tutor"] }
+      )
+
+      post session_url, params: { email_address: superadmin.email_address, password: "password123" }
+
+      assert_difference -> { target.role_assignments.reload.count }, 1 do
+        post admin_assigned_role_map_url, params: {
+          role_assignment: {
+            user_identifier: target.email_address,
+            domain_id: domain.id,
+            role: "teacher"
+          }
+        }
+      end
+
+      assert_redirected_to admin_assigned_role_map_url
+      assignment = target.role_assignments.find_by!(role: "teacher")
+      assert_equal domain, assignment.context
+      assert_equal creator_assignment, assignment.parent
     end
 
     test "superadmin cannot assign creator_of_worlds to a user without a profile" do

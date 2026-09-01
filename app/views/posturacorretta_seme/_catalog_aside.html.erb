@@ -23,8 +23,8 @@
           <% course_number += 1 %>
           <% selected = course.fetch("slug") == active_course.fetch("slug") %>
           <li>
-            <%= link_to posturacorretta_course_path(corso: course.fetch("slug"), vista: "capitoli"), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "flex items-start gap-3 rounded-lg border px-2.5 py-2.5 text-sm leading-5 transition #{selected ? "border-blue-300 bg-blue-50 font-bold text-blue-900 shadow-sm" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"}" do %>
-              <span class="grid size-6 shrink-0 place-items-center rounded-full text-[9px] font-bold <%= selected ? "bg-blue-700 text-white" : "border border-slate-300 bg-white text-slate-500" %>"><%= format("%02d", course_number) %></span>
+            <%= link_to posturacorretta_course_path(corso: course.fetch("slug"), vista: "capitoli"), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "flex items-center gap-3 rounded-lg border px-2.5 py-2.5 text-sm leading-5 transition #{selected ? "border-blue-300 bg-blue-50 font-bold text-blue-900 shadow-sm" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"}" do %>
+              <span class="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-black <%= selected ? "bg-blue-600 text-white shadow-xs" : "bg-slate-100 text-slate-600" %>"><%= format("%02d", course_number) %></span>
               <span><%= course.fetch("title") %></span>
             <% end %>
           </li>

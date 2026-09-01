@@ -23,6 +23,37 @@ Il prototipo [1Impegno](../public/viste_html/18-00-14-7-2026-1impegno.html) rest
 8. La logica di calendario, prenotazione e iscrizione non deve essere duplicata nei controller PosturaCorretta.
 9. L'architettura deve funzionare oggi nel monolite e permettere domani di separare Impegno e PosturaCorretta.
 
+### Ruoli operativi legati al dominio
+
+L'area tecnica di Impegno è `domain_roles`; nell'interfaccia viene chiamata **Ruoli operativi**. `roles` da solo non viene usato perché non chiarirebbe il contesto, mentre `professional` era troppo limitato per Tutor, Insegnanti e Segreterie.
+
+Ogni dominio dichiara in `config/domains.yml` i propri `operational_roles`. L'appartenenza generale della persona al sito resta in `DomainMembership`; il ruolo effettivo viene assegnato con un `RoleAssignment` contestuale:
+
+```text
+Profile + Domain + role
+```
+
+In termini di record, `RoleAssignment.context_type` è `Domain` e `context_id` identifica il dominio. Lo stesso profilo può quindi essere Insegnante in PosturaCorretta e Professionista in Percorso Integrato senza ricevere entrambi i ruoli globalmente.
+
+Il selettore distingue due casi:
+
+- se il dominio appartiene a un `Node`/brand, l'accesso al brand deriva dalla `TravelerSubscription` attiva del profilo per quel nodo e la `DomainMembership` conserva l'adesione allo specifico hostname;
+- se il dominio non appartiene a un nodo, l'accesso deriva dalla `DomainMembership` attiva per quello specifico hostname.
+
+I domini dello stesso nodo vengono raggruppati in una sola voce di brand. Se è disponibile una sola voce, l'interfaccia ne mostra il nome senza aprire un menu. `DomainMembership` e `TravelerSubscription` vengono mantenute entrambe, ma `DomainMembership` non contiene un `traveler_subscription_id`: l'eventuale relazione si ricava senza duplicare la fonte di verità attraverso `membership.domain.node_id` e `membership.profile_id`.
+
+Una coppia `profile_id + node_id` può avere una sola `TravelerSubscription`: cambiare hostname dello stesso brand non deve creare una seconda iscrizione.
+
+I ruoli non vengono scelti dall'utente: sono permessi contestuali assegnati dal superadmin. L'interfaccia li mostra come badge informativi e usa automaticamente quelli disponibili per determinare le viste accessibili. Il parametro `role` resta accettato nei collegamenti diretti per compatibilità con gli URL esistenti.
+
+Gli URL seguono questa forma:
+
+```text
+/impegno?brand=posturacorretta&area=domain_roles&role=teacher
+```
+
+Il vecchio parametro `area=professional` viene reindirizzato a `area=domain_roles`. Il superadmin assegna i ruoli contestuali dalla pagina Assigned roles; il dominio deve avere un Creator world collegato, che diventa il parent dell'assegnazione.
+
 ## Stato attuale
 
 Il modello canonico è `Brands::Impegno::Commitment`, salvato nella tabella `data_commitments`. L'alias `DataCommitment` mantiene la compatibilità con il codice esistente.
