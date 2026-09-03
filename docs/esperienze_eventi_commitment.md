@@ -1,5 +1,9 @@
 # Esperienze, eventi e partecipazioni
 
+> **Documento in riallineamento.** Il vocabolario definitivo di eventi e partecipazioni segue l'analisi corrente in [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md); questo testo resta temporaneamente come riferimento concettuale.
+
+> **Stato del documento:** distinzione concettuale precedente. Per l'MVP, evento, sessione e slot vengono valutati come nodi dello stesso albero `DataEvent`, mentre `DataCommitment` rappresenta anche registrazione e partecipazione. La futura `Activity` potrà recuperare il ruolo qui attribuito all'Esperienza. Vedi [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md).
+
 ## Distinzione
 
 - **Esperienza**: descrive che cosa si fa. È una scheda riutilizzabile e non richiede una data.

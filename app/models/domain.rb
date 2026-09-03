@@ -16,6 +16,7 @@ class Domain < ApplicationRecord
   has_many :traveler_subscriptions, dependent: :destroy
   has_many :domain_memberships, dependent: :destroy
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
+  has_many :data_events, dependent: :restrict_with_error
 
   before_validation :normalize_hosts
   before_validation :normalize_brand_settings
@@ -32,7 +33,21 @@ class Domain < ApplicationRecord
   scope :active, -> { where(active: true) }
 
   def self.find_for_host(host)
-    active.find_by(hostname: normalize_host(host))
+    normalized = normalize_host(host)
+    domain = active.find_by(hostname: normalized)
+
+    if domain&.canonical_host.present?
+      primary = active.find_by(hostname: domain.canonical_host)
+      return primary if primary
+    end
+
+    return domain if domain
+
+    if normalized.start_with?("www.")
+      active.find_by(hostname: normalized.sub(/\Awww\./, ""))
+    else
+      active.find_by(hostname: "www.#{normalized}")
+    end
   end
 
   def self.import_from_config!(environment = Rails.env)

@@ -17,13 +17,22 @@
         tab: @impegno_tab,
         date: params[:date].presence,
         period: @impegno_period,
-        agenda_filter: @impegno_agenda_filter
+        agenda_filter: @impegno_agenda_filter,
+        request_status: @impegno_request_status,
+        view_mode: params[:view_mode].presence
       }.merge(overrides).compact)
     end
     view_labels = {
       "agenda" => {},
       "user" => { "practices" => "Esperienze", "recurring" => "Ricorrenze" },
-      "domain_roles" => @impegno_role == "professional" ? { "offering" => "Offerta", "exchange" => "Valore e scambi", "reports" => "Resoconti" } : { "workspace" => "Spazio operativo" },
+      "domain_roles" => { "requests" => "Richieste" }.merge(case @impegno_role
+      when "professional"
+        { "offering" => "Offerta", "exchange" => "Valore e scambi", "reports" => "Resoconti" }
+      when "teacher"
+        { "offering" => "Attività proposte", "exchange" => "Valore e scambi", "reports" => "Resoconti" }
+      else
+        { "workspace" => "Spazio operativo" }
+      end),
       "places" => {},
       "contacts" => {}
     }
@@ -32,19 +41,10 @@
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto grid min-h-16 max-w-7xl grid-cols-1 items-center gap-3 px-4 py-3 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-5">
       <div class="flex min-w-0 flex-wrap items-center gap-2">
-        <% if @impegno_domain_options.many? %>
-          <% domain_filter = form_with url: impegno_path, method: :get, class: "min-w-0" do |form| %>
-            <%= form.select :brand, @impegno_domain_options, { selected: @impegno_brand }, onchange: "this.form.requestSubmit()", aria: { label: "Sito" }, class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
-          <% end %>
-          <%= domain_filter %>
-        <% elsif @impegno_default_domain.present? %>
-          <span class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700"><%= @impegno_default_domain.site_title.presence || @impegno_default_domain.hostname %></span>
-        <% end %>
-
         <% workspace_filter = form_with url: impegno_path, method: :get, class: "flex min-w-0 items-center gap-2" do |form| %>
           <%= form.hidden_field :brand, value: @impegno_brand %>
         <%= form.select :area,
-                        [["Agenda", "agenda"], ["Personale", "user"]] + (@impegno_domain_roles.any? ? [["Ruoli operativi", "domain_roles"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
+                        [["Agenda", "agenda"], ["Utente", "user"]] + (@impegno_has_domain_roles ? [["Ruoli operativi", "domain_roles"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
                         { selected: @impegno_area },
                         onchange: "this.form.elements['view'].value = ''; this.form.requestSubmit()",
                         class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
@@ -53,6 +53,16 @@
         <%= workspace_filter %>
 
         <% if @impegno_area == "domain_roles" %>
+          <% if @impegno_domain_options.many? %>
+            <% domain_filter = form_with url: impegno_path, method: :get, class: "min-w-0" do |form| %>
+              <%= form.hidden_field :area, value: "domain_roles" %>
+              <%= form.select :brand, @impegno_domain_options, { selected: @impegno_brand }, onchange: "this.form.requestSubmit()", aria: { label: "Sito dei ruoli operativi" }, class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
+            <% end %>
+            <%= domain_filter %>
+          <% elsif @impegno_default_domain.present? %>
+            <span class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700"><%= @impegno_default_domain.site_title.presence || @impegno_default_domain.hostname %></span>
+          <% end %>
+
           <span class="flex flex-wrap gap-1.5" aria-label="Ruoli assegnati nel sito">
             <% @impegno_domain_roles.each do |role| %>
               <span class="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700"><%= @impegno_domain_role_labels.fetch(role, role.humanize) %></span>
@@ -85,15 +95,21 @@
       <% end %>
 
       <div class="flex items-center justify-start gap-2 lg:justify-end">
-        <button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="modal#open" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">● Registra</button>
-        <button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="modal#open" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700">+ Nuovo impegno</button>
+        <button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="click->modal#open" onclick="document.getElementById('start-commitment-dialog')?.showModal()" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">● Registra</button>
+        <button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="click->modal#open" onclick="document.getElementById('new-commitment-dialog')?.showModal()" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700">+ Nuovo impegno</button>
       </div>
     </div>
   </header>
 
-  <dialog id="start-commitment-dialog" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
-    <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4"><div><p class="text-xs font-black uppercase tracking-wider text-emerald-600">Registra attività</p><h2 class="mt-1 text-xl font-black text-slate-950">Cosa stai facendo?</h2></div><button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="modal#close" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button></div>
-    <% start_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
+  <dialog id="start-commitment-dialog" data-controller="modal" data-action="click->modal#backdropClose" onclick="if (event.target === this) this.close()" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+    <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
+      <div>
+        <p class="text-xs font-black uppercase tracking-wider text-emerald-600">Registra attività</p>
+        <h2 class="mt-1 text-xl font-black text-slate-950">Cosa stai facendo?</h2>
+      </div>
+      <button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="click->modal#close" onclick="this.closest('dialog')?.close()" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
+    </div>
+    <%= form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
       <%= hidden_field_tag :start_now, "1" %>
       <%= hidden_field_tag :return_to, request.fullpath %>
       <%= hidden_field_tag :context_brand, @impegno_brand %>
@@ -102,9 +118,11 @@
       <div><%= form.label :description, "Cosa fai in questo momento?", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 3, placeholder: "Descrivi brevemente l'attività.", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
       <div><%= form.label :kind, "Tipo", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Attività", "work"], ["Personale", "personal"], ["Contenuto", "content"], ["Progetto", "project"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div>
       <%= form.hidden_field :calendar_label, value: Current.user.profile.display_name.presence || Current.user.profile.username %>
-      <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="modal#close" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "▶ Avvia attività", class: "cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700" %></div>
+      <div class="flex justify-end gap-2 border-t border-slate-100 pt-4">
+        <button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="click->modal#close" onclick="this.closest('dialog')?.close()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button>
+        <%= form.submit "▶ Avvia attività", class: "cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700" %>
+      </div>
     <% end %>
-    <%= start_form %>
   </dialog>
 
   <main class="min-h-[calc(100vh-4rem)] bg-slate-50">
@@ -127,9 +145,10 @@
         <% end %>
       </nav>
 
-      <% if @impegno_area == "domain_roles" && @impegno_role == "professional" && @impegno_view == "offering" %>
-        <nav class="mb-5 flex gap-1 overflow-x-auto" aria-label="Tipi di offerta professionale">
-          <% { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.each do |tab, label| %>
+      <% if @impegno_area == "domain_roles" && @impegno_view == "offering" %>
+        <% offering_labels = @impegno_role == "teacher" ? { "services" => "Lezioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" } : { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" } %>
+        <nav class="mb-5 flex gap-1 overflow-x-auto" aria-label="Tipi di attività operative">
+          <% offering_labels.each do |tab, label| %>
             <%= link_to label,
                         state_path.call(tab: tab),
                         aria: { current: ("page" if @impegno_tab == tab) },
@@ -147,7 +166,162 @@
         </nav>
       <% end %>
 
-      <% if @workspace_src %>
+      <% if @impegno_area == "domain_roles" && @impegno_view == "requests" %>
+        <section aria-labelledby="requests-title">
+          <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p class="text-xs font-black uppercase tracking-wider text-blue-600">Ruoli operativi</p>
+              <h1 id="requests-title" class="mt-1 text-2xl font-black text-slate-950">Richieste di partecipazione</h1>
+            </div>
+            <div class="flex items-center gap-2"><span class="rounded-full bg-slate-200 px-3 py-1 text-xs font-bold text-slate-700"><%= @request_status_counts.fetch("requested", 0) %> in attesa</span><%= link_to "Gestisci eventi", impegno_data_events_path(domain_id: @impegno_default_domain&.id), class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:border-blue-300 hover:text-blue-700" %></div>
+          </div>
+
+          <nav class="mb-5 flex flex-wrap gap-2" aria-label="Filtra richieste per stato">
+            <% { "requested" => "In attesa", "confirmed" => "Confermate", "cancelled" => "Annullate", "all" => "Tutte" }.each do |status, label| %>
+              <% count = status == "all" ? @request_status_counts.values.sum : @request_status_counts.fetch(status, 0) %>
+              <%= link_to "#{label} (#{count})", state_path.call(request_status: status, request_id: nil), aria: { current: ("page" if @impegno_request_status == status) }, class: "rounded-lg border px-3 py-2 text-sm font-bold #{@impegno_request_status == status ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700'}" %>
+            <% end %>
+          </nav>
+
+          <% if @selected_request %>
+            <% participant_contact = @selected_request.participant_contact %>
+            <% participant_profile = @selected_request.assignee_profile || @selected_request.profile %>
+            <% participant_name = participant_contact&.name || participant_profile&.display_name.presence || participant_profile&.username %>
+            <% event = @selected_request.requested_data_event %>
+            <% place = event.effective_place %>
+            <article class="mb-5 rounded-2xl border border-blue-200 bg-white p-5 shadow-sm" aria-labelledby="request-detail-title">
+              <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                  <p class="text-xs font-black uppercase tracking-wider text-blue-600">Richiesta #<%= @selected_request.id %></p>
+                  <h2 id="request-detail-title" class="mt-1 text-xl font-black text-slate-950"><%= participant_name %></h2>
+                  <p class="mt-1 text-sm font-semibold text-slate-600"><%= event.title %></p>
+                </div>
+                <%= link_to "Chiudi dettaglio", state_path.call(view: "requests", request_id: nil), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-900" %>
+              </div>
+
+              <dl class="mt-4 grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <dt class="text-xs font-bold uppercase tracking-wide text-slate-400">Partecipante</dt>
+                  <dd class="mt-1 font-bold text-slate-900"><%= participant_name %></dd>
+                  <% if participant_contact %>
+                    <dd class="mt-0.5 text-xs text-slate-500">Contatto senza account</dd>
+                    <% if participant_contact.email.present? %><dd class="mt-1 text-slate-600"><%= participant_contact.email %></dd><% end %>
+                    <% if participant_contact.phone.present? %><dd class="text-slate-600"><%= participant_contact.phone %></dd><% end %>
+                  <% elsif participant_profile&.user %>
+                    <dd class="mt-1 text-slate-600"><%= participant_profile.user.email_address %></dd>
+                  <% end %>
+                </div>
+                <div>
+                  <dt class="text-xs font-bold uppercase tracking-wide text-slate-400">Richiesta inserita da</dt>
+                  <dd class="mt-1 font-bold text-slate-900"><%= @selected_request.created_by_profile.display_name.presence || @selected_request.created_by_profile.username %></dd>
+                  <% if @selected_request.created_by_profile.user %><dd class="mt-1 text-slate-600"><%= @selected_request.created_by_profile.user.email_address %></dd><% end %>
+                </div>
+                <div>
+                  <dt class="text-xs font-bold uppercase tracking-wide text-slate-400">Data richiesta</dt>
+                  <dd class="mt-1 font-bold text-slate-900"><%= l(@selected_request.created_at, format: :short) %></dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-bold uppercase tracking-wide text-slate-400">Appuntamento richiesto</dt>
+                  <dd class="mt-1 font-bold text-slate-900"><%= @selected_request.starts_at ? l(@selected_request.starts_at, format: :short) : "Da concordare" %></dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-bold uppercase tracking-wide text-slate-400">Luogo</dt>
+                  <dd class="mt-1 font-bold text-slate-900"><%= place&.name.presence || @selected_request.location_name.presence || "Da definire" %></dd>
+                  <% if place&.address.present? || @selected_request.location_address.present? %><dd class="mt-1 text-slate-600"><%= place&.address.presence || @selected_request.location_address %></dd><% end %>
+                </div>
+                <div>
+                  <dt class="text-xs font-bold uppercase tracking-wide text-slate-400">Condizioni</dt>
+                  <dd class="mt-1 font-bold text-slate-900"><%= @selected_request.agreed_duration_minutes || @selected_request.agreement_snapshot["duration_minutes"] ? "#{@selected_request.agreed_duration_minutes || @selected_request.agreement_snapshot["duration_minutes"]} minuti" : "Non specificate" %></dd>
+                  <% price_cents = @selected_request.agreed_price_cents || @selected_request.agreement_snapshot["price_cents"] %>
+                  <% if price_cents.present? %><dd class="mt-1 text-slate-600"><%= number_to_currency(price_cents / 100.0, unit: @selected_request.agreed_currency || @selected_request.agreement_snapshot["currency"] || "EUR") %></dd><% end %>
+                </div>
+              </dl>
+
+              <% if @selected_request.description.present? %>
+                <div class="mt-4 rounded-xl bg-slate-50 p-4"><p class="text-xs font-bold uppercase tracking-wide text-slate-400">Note</p><p class="mt-1 whitespace-pre-line text-sm text-slate-700"><%= @selected_request.description %></p></div>
+              <% end %>
+
+              <section class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4" aria-labelledby="request-history-title">
+                <h3 id="request-history-title" class="text-xs font-bold uppercase tracking-wide text-slate-500">Cronologia</h3>
+                <ol class="mt-3 space-y-3">
+                  <% @selected_request_history.each do |entry| %>
+                    <li class="border-l-2 border-blue-200 pl-3">
+                      <p class="text-sm font-bold text-slate-900"><%= entry[:label] %></p>
+                      <p class="mt-0.5 text-xs text-slate-500">
+                        <%= l(entry[:occurred_at], format: :short) %>
+                        <% if entry[:profile] %> · <%= entry[:profile].display_name.presence || entry[:profile].username %><% end %>
+                      </p>
+                      <% if entry[:reason].present? %><p class="mt-1 text-sm text-slate-700"><%= entry[:reason] %></p><% end %>
+                    </li>
+                  <% end %>
+                </ol>
+              </section>
+
+              <div class="mt-4 flex flex-wrap items-start justify-between gap-3 border-t border-slate-100 pt-4">
+                <div class="flex flex-wrap items-start gap-2">
+                  <% if @selected_request.status == "requested" %>
+                    <%= button_to "Conferma richiesta", confirm_impegno_request_path(@selected_request), method: :patch, params: { brand: @impegno_brand }, data: { turbo_confirm: "Confermare la richiesta e impegnare i calendari di partecipante e organizzatore?" }, class: "rounded-lg bg-emerald-600 px-3 py-2 text-sm font-bold text-white hover:bg-emerald-700" %>
+                    <details class="group [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50">Rifiuta richiesta</summary>
+                    <%= form_with url: reject_impegno_request_path(@selected_request), method: :patch, class: "mt-2 w-full max-w-md rounded-xl border border-red-100 bg-red-50/50 p-3" do |form| %>
+                      <%= form.hidden_field :brand, value: @impegno_brand %>
+                      <%= form.label :rejection_reason, "Motivazione (opzionale)", class: "text-xs font-bold text-slate-700" %>
+                      <%= form.text_area :rejection_reason, rows: 3, placeholder: "Annotazione interna sul motivo del rifiuto", class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
+                      <%= form.submit "Conferma rifiuto", data: { turbo_confirm: "Rifiutare questa richiesta? Il record resterà nello storico." }, class: "mt-2 cursor-pointer rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-700" %>
+                    <% end %>
+                    </details>
+                  <% elsif @selected_request.status == "confirmed" %>
+                    <details class="group [&_summary::-webkit-details-marker]:hidden">
+                      <summary class="cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50">Annulla partecipazione</summary>
+                      <%= form_with url: cancel_confirmed_impegno_request_path(@selected_request), method: :patch, class: "mt-2 w-full max-w-md rounded-xl border border-red-100 bg-red-50/50 p-3" do |form| %>
+                        <%= form.hidden_field :brand, value: @impegno_brand %>
+                        <%= form.label :cancellation_reason, "Motivazione (opzionale)", class: "text-xs font-bold text-slate-700" %>
+                        <%= form.text_area :cancellation_reason, rows: 3, placeholder: "Annotazione interna sull’annullamento", class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
+                        <%= form.submit "Conferma annullamento", data: { turbo_confirm: "Annullare la partecipazione confermata e liberare il posto?" }, class: "mt-2 cursor-pointer rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-700" %>
+                      <% end %>
+                    </details>
+                  <% end %>
+                </div>
+                <%= link_to "Vedi evento completo", posturacorretta_data_event_path(event), class: "rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700" %>
+              </div>
+            </article>
+          <% end %>
+
+          <% if @requested_commitments.any? %>
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <ul class="divide-y divide-slate-100" aria-label="Richieste filtrate">
+                <% @requested_commitments.each do |commitment| %>
+                  <% participant_name = commitment.participant_contact&.name || commitment.assignee_profile&.display_name.presence || commitment.assignee_profile&.username || commitment.profile.display_name.presence || commitment.profile.username %>
+                  <li class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="min-w-0">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <p class="truncate text-sm font-black text-slate-950"><%= participant_name %></p>
+                        <span class="rounded-full px-2 py-0.5 text-[11px] font-bold <%= commitment.status == 'confirmed' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' %>"><%= commitment.status == "confirmed" ? "Confermata" : "In attesa" %></span>
+                      </div>
+                      <p class="mt-1 text-sm font-semibold text-slate-700"><%= commitment.requested_data_event.title %></p>
+                      <p class="mt-1 text-xs text-slate-500">Richiesta il <%= l(commitment.created_at, format: :short) %><% if commitment.starts_at %> · Appuntamento <%= l(commitment.starts_at, format: :short) %><% end %></p>
+                    </div>
+                    <%= link_to "Apri richiesta", state_path.call(view: "requests", request_id: commitment.id), class: "shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-center text-sm font-bold text-slate-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700" %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% else %>
+            <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
+              <h2 class="text-lg font-black text-slate-950">Nessuna richiesta in questo stato</h2>
+              <p class="mt-2 text-sm text-slate-500">Prova un altro filtro oppure attendi nuove richieste per questo sito.</p>
+            </div>
+          <% end %>
+        </section>
+      <% elsif @workspace_src %>
+        <% if @impegno_area == "agenda" && @impegno_view == "agenda" %>
+          <nav class="mb-4 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm" aria-label="Vista agenda">
+            <% list_active = params[:view_mode] != "weekplan" %>
+            <%= link_to "Elenco", state_path.call(view_mode: nil), aria: { current: ("page" if list_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{list_active ? 'border-slate-900 bg-slate-900 text-white shadow-sm' : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50'}", style: ("background-color:#0f172a;color:#fff;border-color:#0f172a" if list_active) %>
+            <% week_active = !list_active %>
+            <%= link_to "Settimana", state_path.call(view_mode: "weekplan"), aria: { current: ("page" if week_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{week_active ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-transparent bg-white text-blue-700 hover:border-blue-200 hover:bg-blue-50'}", style: ("background-color:#2563eb;color:#fff;border-color:#2563eb" if week_active) %>
+          </nav>
+        <% end %>
         <% workspace_frame = turbo_frame_tag "impegno_workspace", src: @workspace_src, loading: :eager do %>
           <div class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">Caricamento dell’Agenda…</div>
         <% end %>
@@ -155,9 +329,9 @@
       <% else %>
         <% workspace_frame = turbo_frame_tag "impegno_workspace" do %>
           <section class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
-            <p class="text-xs font-black uppercase tracking-wider text-blue-600"><%= @impegno_area == "user" ? "Personale" : @impegno_domain_role_labels.fetch(@impegno_role, @impegno_role.to_s.humanize) %></p>
-            <% workspace_title = if @impegno_area == "domain_roles" && @impegno_role == "professional" && @impegno_view == "offering"
-              { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.fetch(@impegno_tab)
+            <p class="text-xs font-black uppercase tracking-wider text-blue-600"><%= @impegno_area == "user" ? "Utente" : @impegno_domain_role_labels.fetch(@impegno_role, @impegno_role.to_s.humanize) %></p>
+            <% workspace_title = if @impegno_area == "domain_roles" && @impegno_view == "offering"
+              (@impegno_role == "teacher" ? { "services" => "Lezioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" } : { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }).fetch(@impegno_tab)
             elsif @impegno_area == "user" && @impegno_view == "practices"
               { "habits" => "Routine", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.fetch(@impegno_tab)
             elsif @impegno_area == "agenda"

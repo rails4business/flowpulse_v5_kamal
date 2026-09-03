@@ -12,9 +12,10 @@ module Brands
         "contacts" => []
       }.freeze
       DOMAIN_ROLE_VIEWS = {
-        "professional" => %w[offering exchange reports]
+        "professional" => %w[requests offering exchange reports],
+        "teacher" => %w[requests offering exchange reports]
       }.freeze
-      DEFAULT_DOMAIN_ROLE_VIEWS = %w[workspace].freeze
+      DEFAULT_DOMAIN_ROLE_VIEWS = %w[requests workspace].freeze
       DOMAIN_ROLE_LABELS = {
         "professional" => "Professionista",
         "teacher" => "Insegnante",
@@ -27,34 +28,43 @@ module Brands
       EXPERIENCE_TABS = %w[habits paths classes courses events].freeze
       AGENDA_PERIODS = %w[upcoming past].freeze
       PROFESSIONAL_AGENDA_FILTERS = %w[all events booking_slots].freeze
+      REQUEST_STATUS_FILTERS = %w[requested confirmed cancelled all].freeze
       DOMAIN_BRANDS = {
         "1impegno.it" => "impegno",
         "posturacorretta.org" => "posturacorretta",
         "percorsointegrato.it" => "percorso_integrato",
-        "generaimpresa.it" => "generaimpresa"
+        "generaimpresa.it" => "generaimpresa",
+        "cantachetipassa.it" => "cantachetipassa"
       }.freeze
 
       def index
         return unless authenticated?
         return redirect_legacy_professional_area if params[:area] == "professional"
 
-        @impegno_brand = params[:brand].presence_in(%w[impegno posturacorretta percorso_integrato generaimpresa personale]) || "impegno"
+        @impegno_brand = params[:brand].presence_in(%w[impegno posturacorretta percorso_integrato generaimpresa cantachetipassa personale]) || "impegno"
         @impegno_domains = available_impegno_domains
         @impegno_domain_options = domain_options
         @impegno_default_domain = default_domain_for(@impegno_brand)
         @impegno_domain_roles = available_domain_roles(@impegno_default_domain)
-        @impegno_role = params[:role].presence_in(@impegno_domain_roles) || @impegno_domain_roles.first
         @impegno_domain_role_labels = DOMAIN_ROLE_LABELS
         @impegno_professional_access = Current.user.professional_user?
         requested_area = params[:area].presence_in(AREAS) || "agenda"
-        @impegno_area = requested_area == "domain_roles" && @impegno_role.blank? ? "user" : requested_area
+        @impegno_has_domain_roles = Current.user.superadmin_user?
+        fallback_domain = @impegno_domains.find { |domain| available_domain_roles(domain).any? } || @impegno_domains.first
+        if requested_area == "domain_roles" && @impegno_has_domain_roles && @impegno_domain_roles.empty? && fallback_domain
+          @impegno_default_domain = fallback_domain
+          @impegno_brand = brand_key_for(fallback_domain)
+          @impegno_domain_roles = available_domain_roles(fallback_domain)
+        end
+        @impegno_role = params[:role].presence_in(@impegno_domain_roles) || @impegno_domain_roles.first
+        @impegno_area = requested_area == "domain_roles" && !@impegno_has_domain_roles ? "user" : requested_area
         requested_view = params[:view] == "programs" ? "practices" : params[:view]
         @impegno_area = "agenda" if %w[user domain_roles].include?(@impegno_area) && requested_view == "agenda"
         available_views = views_for_area(@impegno_area)
         @impegno_view = requested_view.presence_in(available_views) || available_views.first
         @impegno_period = @impegno_view == "agenda" ? params[:period].presence_in(AGENDA_PERIODS) : nil
         @impegno_agenda_filter = @impegno_area == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(PROFESSIONAL_AGENDA_FILTERS) || "all" : nil
-        @impegno_tab = if @impegno_area == "domain_roles" && @impegno_role == "professional" && @impegno_view == "offering"
+        @impegno_tab = if @impegno_area == "domain_roles" && @impegno_view == "offering"
           params[:tab].presence_in(OFFERING_TABS) || "services"
         elsif @impegno_area == "user" && @impegno_view == "practices"
           params[:tab].presence_in(EXPERIENCE_TABS) || "habits"
@@ -63,6 +73,13 @@ module Brands
         end
         @workspace_date = parse_workspace_date
         @workspace_src = workspace_src
+        if @impegno_area == "domain_roles" && @impegno_view == "requests"
+          @impegno_request_status = params[:request_status].presence_in(REQUEST_STATUS_FILTERS) || "requested"
+          @request_status_counts = request_commitments_scope.reorder(nil).group(:status).count
+          @requested_commitments = requested_commitments
+          @selected_request = @requested_commitments.find_by(id: params[:request_id]) if params[:request_id].present?
+          @selected_request_history = request_history(@selected_request) if @selected_request
+        end
       end
 
       private
@@ -89,6 +106,55 @@ module Brands
           configured_roles & assigned_roles
         end
 
+        def requested_commitments
+          scope = request_commitments_scope
+          return scope if @impegno_request_status == "all"
+
+          scope.where(status: @impegno_request_status)
+        end
+
+        def request_commitments_scope
+          return DataCommitment.none unless Current.user.superadmin_user? && @impegno_default_domain
+
+          DataCommitment
+            .where(domain: @impegno_default_domain, status: %w[requested confirmed cancelled])
+            .where.not(requested_data_event_id: nil)
+            .includes(:profile, :created_by_profile, :assignee_profile, :participant_contact, requested_data_event: :place)
+            .order(created_at: :desc)
+        end
+
+        def request_history(commitment)
+          entries = [{
+            label: "Richiesta inviata",
+            occurred_at: commitment.created_at,
+            profile_id: commitment.created_by_profile_id
+          }]
+          audit_definitions = {
+            "confirmation" => ["Partecipazione confermata", "confirmed_at", "confirmed_by_profile_id"],
+            "rejection" => ["Richiesta rifiutata", "rejected_at", "rejected_by_profile_id"],
+            "withdrawal" => ["Richiesta ritirata", "withdrawn_at", "withdrawn_by_profile_id"],
+            "cancellation" => ["Partecipazione annullata", "cancelled_at", "cancelled_by_profile_id"]
+          }
+
+          audit_definitions.each do |key, (label, time_key, profile_key)|
+            audit = commitment.metadata[key]
+            next unless audit.is_a?(Hash) && audit[time_key].present?
+
+            entries << {
+              label:,
+              occurred_at: Time.zone.parse(audit[time_key]),
+              profile_id: audit[profile_key],
+              reason: audit["reason"].presence
+            }
+          rescue ArgumentError
+            next
+          end
+
+          profiles = Profile.where(id: entries.filter_map { |entry| entry[:profile_id] }.uniq).index_by(&:id)
+          entries.each { |entry| entry[:profile] = profiles[entry[:profile_id].to_i] }
+          entries.sort_by { |entry| entry[:occurred_at] }
+        end
+
         def parse_workspace_date
           Date.iso8601(params[:date])
         rescue Date::Error, TypeError
@@ -106,6 +172,7 @@ module Brands
             period: @impegno_period,
             area: @impegno_area,
             agenda_filter: @impegno_agenda_filter,
+            view_mode: params[:view_mode].presence,
             default_brand: @impegno_brand,
             return_to: request.fullpath
           }.compact
@@ -138,12 +205,15 @@ module Brands
         end
 
         def collapse_domains_by_brand(domains)
-          domains.to_a.uniq { |domain| domain.node_id.present? ? [:node, domain.node_id] : [:domain, domain.id] }
+          domains.to_a.uniq do |domain|
+            brand = brand_key_for(domain)
+            brand.present? ? [:brand, brand] : (domain.node_id.present? ? [:node, domain.node_id] : [:hostname, domain.hostname.sub(/\Awww\./, "")])
+          end
         end
 
         def brand_key_for(domain)
           configured_slug = domain.auth_slug.to_s.presence_in(%w[impegno posturacorretta percorso_integrato generaimpresa personale])
-          configured_slug || DOMAIN_BRANDS[domain.hostname]
+          configured_slug || DOMAIN_BRANDS[domain.hostname.sub(/\Awww\./, "")]
         end
 
         def default_domain_for(brand)

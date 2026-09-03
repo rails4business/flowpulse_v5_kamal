@@ -165,11 +165,11 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "[role='progressbar']", count: 0
     assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Moduli"
     assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")}']", text: "Percorso"
-    assert_select "h1", text: "Moduli", count: 1
+    assert_select "h1", text: "Il tuo piano di studi", count: 1
     assert_select "h3", text: "Postura e Recupero"
-    assert_select "article h4", text: "Igiene Posturale"
-    assert_select "span", text: "Con tutor"
-    assert_select "span", text: "Con insegnante"
+    assert_select "span", text: "Igiene Posturale"
+    assert_select "span", text: "👤 Tutor"
+    assert_select "span", text: "👨‍🏫 Insegnante"
     assert_select "a", text: "Apri il corso online", count: 0
 
     other_domain = Domain.find_or_create_by!(hostname: "agenda-esterna.test") do |domain|

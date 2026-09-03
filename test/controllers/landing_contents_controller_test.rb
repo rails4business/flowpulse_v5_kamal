@@ -1,9 +1,14 @@
 require "test_helper"
 
 class LandingContentsControllerTest < ActionDispatch::IntegrationTest
-  test "shows the Giardino del Corpo landing with shared project events" do
-    get giardino_del_corpo_path
+  test "shows the Giardino del Corpo landing with shared project events and redirects old path" do
+    assert_equal "/il-giardino-del-corpo", giardino_del_corpo_path
 
+    get "/giardino-del-corpo"
+    assert_response :moved_permanently
+    assert_redirected_to "/il-giardino-del-corpo"
+
+    get "/il-giardino-del-corpo"
     assert_response :success
     assert_select "h1", text: "Coltiva il corpo, le capacità e le relazioni."
     assert_select "#esperienze"
@@ -13,6 +18,7 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h3", text: "Incontro al Lago d'Idro", minimum: 1
     assert_select "a[href='#{posturacorretta_path}']", minimum: 1
     assert_select "a[href='#{flowpulse_path}']", minimum: 1
+    assert_select "a[href='https://il-giardinio-del-corpo-5xsl9ik.gamma.site/']", text: /Vecchia versione/
   end
 
   test "shows Flowpulse contents and a working events action on the landing page" do
@@ -21,7 +27,7 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "img[src='https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png']", count: 1
     assert_select "a[href='#{eventi_path}']", text: "Organizza un evento", count: 1
-    assert_select "a[href='/flowpulse/contenuti/costruire-un-sistema-economico-nuovo']", count: 1
+    assert_select "a[href='/flowpulse/contenuti/il-giardino-del-corpo-geografia-della-vita']", count: 1
     assert_select "a[href='/flowpulse/contenuti/dalla-moneta-alla-comunita-economia-circolare-dash']", count: 1
   end
 

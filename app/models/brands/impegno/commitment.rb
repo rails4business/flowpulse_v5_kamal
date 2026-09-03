@@ -8,7 +8,7 @@ module Brands
         @model_name ||= ActiveModel::Name.new(self, nil, "DataCommitment")
       end
   KINDS = %w[personal appointment event project path content academy work service purchase report].freeze
-  STATUSES = %w[draft planned confirmed in_progress completed cancelled].freeze
+  STATUSES = %w[draft requested planned confirmed in_progress completed cancelled].freeze
   PRICING_TYPES = %w[hourly fixed none].freeze
   CONTRIBUTION_TYPES = %w[time_investment money_investment paid unpaid].freeze
 
@@ -18,6 +18,13 @@ module Brands
   belongs_to :subject, polymorphic: true, optional: true
   belongs_to :assignee_profile, class_name: "Profile", optional: true
   belongs_to :responsible_profile, class_name: "Profile", optional: true
+  belongs_to :participant_contact, class_name: "Brands::Impegno::Contact", optional: true,
+             inverse_of: :participant_data_commitments
+  belongs_to :parent, class_name: "Brands::Impegno::Commitment", optional: true, inverse_of: :children
+  has_many :children, class_name: "Brands::Impegno::Commitment", foreign_key: :parent_id,
+           inverse_of: :parent, dependent: :restrict_with_error
+  belongs_to :requested_data_event, class_name: "DataEvent", optional: true, inverse_of: :requested_data_commitments
+  belongs_to :data_event, optional: true, inverse_of: :data_commitments
 
   validates :title, :starts_at, presence: true
   validates :calendar_key, :calendar_label, presence: true
@@ -29,6 +36,8 @@ module Brands
   validate :ends_after_start
   validate :actual_end_after_actual_start
   validate :calendar_interval_does_not_overlap
+  validate :data_event_interval_matches
+  validate :participant_contact_is_a_person
 
   before_validation :set_default_calendar_identity
   before_validation :calculate_hourly_total
@@ -101,6 +110,19 @@ module Brands
         .where.not(id: id)
         .find { |other| other.effective_interval && interval.begin < other.effective_interval.end && other.effective_interval.begin < interval.end }
       errors.add(:base, "Questo calendario contiene già un impegno nello stesso intervallo") if conflict
+    end
+
+    def data_event_interval_matches
+      return unless data_event&.starts_at && starts_at
+      return if data_event.starts_at == starts_at && (data_event.ends_at.blank? || data_event.ends_at == ends_at)
+
+      errors.add(:data_event, "deve avere lo stesso intervallo dell'impegno")
+    end
+
+    def participant_contact_is_a_person
+      return if participant_contact.blank? || participant_contact.kind == "person"
+
+      errors.add(:participant_contact, "deve essere una persona")
     end
     end
   end

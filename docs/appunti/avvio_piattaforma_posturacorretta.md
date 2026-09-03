@@ -99,6 +99,120 @@ Non aggiungere per ora altri ruoli, automazioni o pagamenti. Lavorare soltanto s
 
 L'accesso operativo a 1Impegno resta visibile soltanto al superadmin. Gli altri utenti usano la vista Appuntamenti di PosturaCorretta.
 
+## Architettura minima di Impegno e integrazione con i brand
+
+Questa sezione definisce il lavoro da valutare prima di aggiungere nuove fonti YAML, modelli o migrazioni. L'obiettivo è fare convergere in Impegno calendario, disponibilità, lezioni, servizi, percorsi, eventi, routine e attività progettuali, lasciando a ogni brand la proprietà dei propri contenuti e programmi.
+
+Lo schema centrale da verificare è:
+
+```text
+Brand / Dominio
+└── Proposta
+    ├── Scheda e programma
+    ├── Ruoli necessari
+    ├── Modalità di partecipazione
+    └── Edizioni o ricorrenze
+        ├── eventuali slot
+        └── adesioni o prenotazioni
+            └── DataCommitment
+```
+
+Routine, Percorsi, Classi, Corsi, Eventi, Servizi e Progetti non devono necessariamente introdurre calendari separati: possono essere tipologie e viste specializzate costruite sopra una struttura condivisa.
+
+### 1. Vocabolario comune
+
+Definire i nomi e i confini di Proposta, Scheda, Programma, Edizione o Occorrenza, Slot, Partecipazione e DataCommitment. Lo stesso termine non deve indicare contemporaneamente un contenuto riutilizzabile, una data reale e la presenza di una persona.
+
+Il glossario viene compilato e verificato in [Vocabolario comune di Impegno e dei brand](../vocabolario_impegno_e_brand.md).
+
+### 2. Proposta
+
+La Proposta descrive ciò che può essere offerto o ripetuto senza dipendere da una data specifica. Può rappresentare una lezione, un incontro con tutor, una prestazione, una classe, un corso, un evento, una routine o un'attività progettuale.
+
+### 3. Scheda e programma
+
+Ogni proposta può avere una Scheda con obiettivo, preparazione, durata, materiali, pratica, verifiche e collegamenti. Il Programma ordina uno o più moduli o attività che compongono la proposta. Va chiarito quali dati appartengono alla Scheda e quali al Programma per non ripeterli nelle date.
+
+### 4. Tipologie condivise
+
+Definire Routine, Percorso, Classe, Corso, Evento, Servizio e Progetto come tipologie funzionali. Devono condividere la base comune e aggiungere soltanto le regole realmente specifiche del proprio caso.
+
+### 5. Edizione o occorrenza
+
+Rappresenta la realizzazione concreta e datata di una proposta: inizio, fine, luogo o collegamento online, conduttori, capienza, stato, prezzo eventuale, dominio e progetto coinvolti. Una proposta ricorrente può generare più occorrenze.
+
+### 6. Disponibilità e slot
+
+La disponibilità descrive una fascia offerta da una persona, un luogo o una risorsa e non deve necessariamente occupare il calendario. Gli slot dividono una disponibilità quando occorre scegliere un appuntamento individuale. Una lezione di gruppo già fissata può essere una singola occorrenza senza ulteriori slot.
+
+### 7. Partecipazioni e prenotazioni
+
+La Partecipazione collega una persona a un'occorrenza o a uno slot e conserva richiesta, conferma, presenza, assenza, annullamento ed eventuale stato economico. Una partecipazione confermata può generare o collegare il relativo DataCommitment.
+
+### 8. DataCommitment
+
+Resta l'unica fonte di verità per ciò che occupa realmente un calendario. Deve poter indicare calendario, dominio, ruolo svolto, proposta o progetto collegato, inizio, fine, stato, blocco del calendario ed eventuale valore economico o temporale.
+
+Può rappresentare, tra gli altri, una presenza a lezione, un appuntamento, una routine eseguita, una scadenza, un'attività GeneraImpresa, una partecipazione a un evento o un'attività organizzativa.
+
+### 9. Ruoli contestuali
+
+Il ruolo deve essere legato al profilo e al dominio o progetto. La stessa persona può essere studente o insegnante in PosturaCorretta, tutor o professionista nel Percorso Integrato, organizzatore nel Giardino del Corpo e lavoratore o responsabile in GeneraImpresa.
+
+```text
+Profilo + dominio o progetto + ruolo
+```
+
+### 10. Viste Routine, Percorsi, Classi, Corsi ed Eventi
+
+Recuperare le suddivisioni utili già presenti nel prototipo di Impegno come viste specializzate, non come fonti dati indipendenti.
+
+Area personale:
+
+```text
+Agenda
+Routine
+Percorsi
+Classi
+Corsi
+Eventi
+```
+
+Area operativa:
+
+```text
+Agenda
+Disponibilità
+Servizi
+Percorsi
+Classi
+Corsi
+Eventi
+```
+
+### 11. Organizzazione della settimana
+
+La vista settimanale deve riunire impegni personali, lezioni condotte, partecipazioni, appuntamenti professionali, gruppi, routine, attività progettuali e disponibilità prenotabili. Dominio, ruolo, tipologia e stato devono essere riconoscibili senza creare calendari duplicati.
+
+### 12. Regole di ricorrenza
+
+Definire come routine quotidiane, classi settimanali, lezioni periodiche, disponibilità e incontri ripetuti generano occorrenze entro un intervallo limitato, conservando eccezioni, cancellazioni e storico.
+
+### 13. Confini tra i brand
+
+- **Impegno** possiede calendario, disponibilità, occorrenze, slot, prenotazioni e commitment.
+- **PosturaCorretta** possiede programmi educativi, schede e moduli.
+- **Percorso Integrato** possiede percorsi, programmi professionali e servizi.
+- **GeneraImpresa** possiede progetti, fasi, step e task.
+- **Giardino del Corpo** possiede filosofia, esperienze ed eventi.
+- **Canta che ti passa** possiede corsi, incontri, prove ed esercitazioni.
+
+Ogni brand descrive il proprio contenuto; Impegno lo trasforma in tempo organizzato e partecipazioni reali.
+
+### Ordine di analisi
+
+I tredici punti devono essere considerati uno alla volta, nello stesso ordine. Prima di creare tabelle o migrazioni vanno stabilizzati almeno: vocabolario, Proposta, Scheda e Programma e tipologie condivise.
+
 ## TODO operativo
 
 Questa è la checklist principale per l'avvio. Va aggiornata nello stesso momento in cui una funzione viene completata e verificata. Non aprire il blocco successivo finché il flusso minimo del blocco corrente non funziona con una persona reale.
@@ -112,7 +226,7 @@ Questa è la checklist principale per l'avvio. Va aggiornata nello stesso moment
 - [x] Dopo la registrazione collegare o riattivare il profilo al dominio con `DomainMembership` e, quando il dominio ha un nodo, anche al brand con `TravelerSubscription`.
 - [x] Dopo accesso o registrazione tornare alla dashboard, alla lezione o alla pagina inizialmente richiesta.
 - [x] Mantenere un solo account e una sola autenticazione per tutta la piattaforma.
-- [ ] Verificare registrazione, accesso, errori, uscita e nuovo accesso sia da localhost sia dal dominio.
+- [x] Verificare registrazione, accesso, errori, uscita e nuovo accesso sia da localhost sia dal dominio.
 
 **Completato quando:** un nuovo utente entra da PosturaCorretta, crea l'account, ritorna alla dashboard PosturaCorretta e al successivo accesso ritrova lo stesso profilo senza vedere Flowpulse o dover effettuare un secondo login.
 
@@ -130,7 +244,7 @@ Se un brand possiede più domini, nel selettore compare una sola volta. Il domin
 
 **Stato locale:** è stato creato il Node `PosturaCorretta`, appartenente al Creator world di `@markpostura`, e `posturacorretta.org` è stato collegato sia al nodo sia al relativo `RoleAssignment`.
 
-**Passaggio ancora da completare in produzione:** creare o individuare lo stesso Node e collegare il record `posturacorretta.org` dalla gestione Domini. L'importazione di `config/domains.yml` non può identificare automaticamente un record Node del database di produzione.
+**Stato in produzione:** il Node PosturaCorretta e il collegamento del dominio sono stati configurati; il flusso di autenticazione è stato verificato ed è considerato chiuso.
 
 Il collegamento è ripetibile in modo idempotente con:
 
@@ -255,11 +369,11 @@ Il dominio destinato all'iscrizione gratuita non viene più esposto tramite un I
 - [ ] Dominio reale senza parametro `site`.
 - [ ] Accesso generale senza alcun sito specifico.
 
-**Punto attualmente in lavorazione:** Punto 10 — prova finale sul dominio di produzione dopo l'esecuzione di `brands:setup_posturacorretta`.
+**Blocco autenticazione completato:** registrazione, accesso, collegamento al dominio e al brand e ritorno alla dashboard sono operativi. Le verifiche restano nella checklist come riferimento per le future regressioni.
 
 ### Blocco 2 — Profilo e disponibilità di @markpostura
 
-- [ ] Completare la pagina pubblica dell'insegnante.
+- [x] Pubblicare il profilo essenziale di @markpostura come insegnante maestro attivo.
 - [ ] Definire le disponibilità settimanali individuali.
 - [ ] Consentire la creazione di lezioni di gruppo.
 - [ ] Registrare data, inizio, fine, durata, presenza/online, luogo e capienza.
@@ -267,6 +381,8 @@ Il dominio destinato all'iscrizione gratuita non viene più esposto tramite un I
 - [ ] Collegare corsi e moduli che possono essere svolti nella lezione.
 
 **Completato quando:** @markpostura può pubblicare almeno una disponibilità individuale e una lezione di gruppo realmente selezionabili.
+
+**Stato attuale:** `teachers.yml` contiene @markpostura come insegnante maestro pubblico e attivo, abilitato alle lezioni Base e Avanzate, individuali e di gruppo, online e alla supervisione del tirocinio. La pagina pubblica degli insegnanti usa questa stessa fonte. Il prossimo dato necessario non è un altro profilo, ma la prima disponibilità reale da pubblicare in `lezioni_programmate.yml`.
 
 ### Blocco 3 — Prenotazione e Impegno
 
@@ -675,3 +791,7 @@ Il primo traguardo non è avere tutta l'Accademia completa. È permettere a una 
 5. vedere chiaramente il passo successivo.
 
 Quando questo flusso funziona senza assistenza tecnica, la piattaforma può iniziare a crescere una settimana alla volta.
+
+## Prossima analisi tecnica
+
+La definizione dell'MVP basato su `DataEvent` e `DataCommitment` viene affrontata una decisione alla volta nel documento [DataEvent MVP — decisioni da analizzare](data_event_mvp_decisioni.md).

@@ -32,7 +32,7 @@ Eventi e incontri permettono di vivere la filosofia attraverso esperienze dedica
 
 Gli eventi uniscono educazione al corpo e alla salute con attività dedicate alla formazione, al territorio e alla natura. I contenuti rendono accessibili domande, esperienze e punti di vista; le pagine dedicate alle metodiche aiutano a comprenderne principi, scuole e ambiti di applicazione.
 
-- [Scopri Il Giardino del Corpo →](/giardino-del-corpo)
+- [Scopri Il Giardino del Corpo →](/il-giardino-del-corpo)
 - [Esplora i contenuti →](/posturacorretta/contenuti)
 - [Conosci le metodiche →](/posturacorretta/metodiche)
 

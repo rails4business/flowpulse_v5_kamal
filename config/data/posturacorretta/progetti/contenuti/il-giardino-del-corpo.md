@@ -3,3 +3,7 @@
 Osservare, conoscere, nutrire, proteggere, lasciare riposare e intervenire con attenzione diventano passaggi di un’esperienza educativa.
 
 Il progetto potrà diventare un corso dell’Accademia composto da racconti, immagini, attività di osservazione e pratiche introduttive, collegato al percorso di Benessere integrato.
+
+---
+
+[Vecchia versione del progetto (Gamma) ↗](https://il-giardinio-del-corpo-5xsl9ik.gamma.site/)

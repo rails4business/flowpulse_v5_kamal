@@ -4,6 +4,7 @@
 
 <% kind_labels = { "personal" => "Personale", "appointment" => "Appuntamento", "event" => "Evento", "project" => "Progetto", "path" => "Percorso", "content" => "Contenuto", "academy" => "Accademia", "work" => "Lavoro", "service" => "Servizio", "purchase" => "Acquisto", "report" => "Report" } %>
 <% status_labels = { "draft" => "Bozza", "planned" => "Da iniziare", "confirmed" => "Confermato", "in_progress" => "In corso", "completed" => "Concluso", "cancelled" => "Annullato" } %>
+<% participation_labels = { "participant" => "Partecipante", "teacher" => "Insegnante", "professional" => "Professionista", "organizer" => "Organizzatore", "tutor" => "Tutor", "teacher_trainee" => "Tirocinante", "supervisor" => "Supervisore" } %>
 <% kind_classes = {
   "event" => "bg-purple-100 text-purple-700",
   "service" => "bg-blue-50 text-blue-600",
@@ -85,7 +86,7 @@
           </div>
         </details>
         
-        <button class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700" command="show-modal" commandfor="new-commitment-dialog">＋ Nuova voce</button>
+        <button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="click->modal#open" onclick="document.getElementById('new-commitment-dialog')?.showModal()" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700">＋ Nuova voce</button>
       </div>
     </header>
 
@@ -104,17 +105,28 @@
 
     <% if @active_view == "agenda" %>
       <!-- INIZIO AGENDA -->
-      <% if @active_area == "agenda" && Current.user.professional_user? %>
-        <nav class="mb-5 flex items-center gap-1 border-b border-slate-200" aria-label="Filtro agenda professionista">
-          <% { "all" => "Tutti", "events" => "I miei eventi", "booking_slots" => "Slot prenotazione" }.each do |filter, label| %>
-            <%= link_to label,
-                        impegno_agenda_path(workspace: "1", area: "agenda", date: params[:date].presence, period: params[:period].presence, agenda_filter: filter, return_to: params[:return_to].presence),
-                        aria: { current: ("page" if @agenda_filter == filter) },
-                        class: "whitespace-nowrap border-b-2 px-3 py-2 text-sm font-bold transition #{@agenda_filter == filter ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
-          <% end %>
-        </nav>
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+        <% if @active_area == "agenda" && Current.user.professional_user? %>
+          <nav class="flex items-center gap-1" aria-label="Filtro agenda professionista">
+            <% { "all" => "Tutti", "events" => "I miei eventi", "booking_slots" => "Slot prenotazione" }.each do |filter, label| %>
+              <%= link_to label,
+                          impegno_agenda_path(workspace: "1", area: "agenda", date: params[:date].presence, period: params[:period].presence, agenda_filter: filter, view_mode: params[:view_mode], return_to: params[:return_to].presence),
+                          aria: { current: ("page" if @agenda_filter == filter) },
+                          class: "whitespace-nowrap border-b-2 px-3 py-2 text-sm font-bold transition #{@agenda_filter == filter ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
+            <% end %>
+          </nav>
+        <% end %>
+
+        <%# Il selettore Elenco / Settimana vive nella shell principale di 1impegno.
+            Evitiamo un secondo selettore nel turbo frame, che cambierebbe soltanto
+            il frame senza aggiornare l'URL e lo stato della pagina principale. %>
+      </div>
+
+      <% if params[:view_mode] == "weekplan" %>
+        <%= render "brands/impegno/commitments/weekplan_grid" %>
       <% end %>
-      <% if @commitments_by_day.any? %>
+
+      <% if params[:view_mode] != "weekplan" && @commitments_by_day.any? %>
         <% @commitments_by_day.each do |date, commitments_for_day| %>
           <div class="col-span-full mb-8">
             <div class="mb-3 flex items-baseline gap-2.5">
@@ -137,6 +149,9 @@
                   value_label = commitment.total_price.present? ? number_to_currency(commitment.total_price, unit: "€", format: "%n %u") : nil
                   status_label = commitment.tracking? ? "In corso" : status_labels.fetch(commitment.status, commitment.status.humanize)
                   status_class = commitment.tracking? ? "bg-red-50 text-red-700" : commitment.status == "completed" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
+                  participation_label = participation_labels.fetch(commitment.participation_role, commitment.participation_role.to_s.humanize).presence
+                  represented_contact = commitment.participant_contact
+                  managed_by_label = represented_contact ? (commitment.created_by_profile.display_name.presence || commitment.created_by_profile.username) : nil
                 %>
                 
                 <article id="commitment-<%= commitment.id %>" class="relative grid grid-cols-[112px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-3 transition hover:z-10 hover:bg-slate-50 lg:grid-cols-[112px_minmax(230px,1fr)_minmax(170px,.72fr)_auto] lg:gap-x-4 <%= border_top %>">
@@ -144,10 +159,10 @@
                     <strong class="text-sm font-semibold text-slate-900"><%= commitment.all_day? ? "Tutto il giorno" : displayed_start.strftime("%H:%M") %></strong><span aria-hidden="true">→</span><strong class="text-sm font-semibold text-slate-900"><%= commitment.all_day? ? "" : (displayed_end&.strftime("%H:%M") || "—") %></strong>
                   </div>
                   <div class="min-w-0">
-                    <div class="flex flex-wrap items-center gap-2"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider <%= kind_classes[commitment.kind] || kind_classes['personal'] %>"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span><strong class="min-w-0 truncate text-base text-slate-900"><%= commitment.title %></strong></div>
-                    <p class="mt-1 truncate text-[13px] text-slate-500"><%= [commitment.domain.display_hostname, context_label, place_label].compact.join(" · ") %></p>
+                    <div class="flex flex-wrap items-center gap-2"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider <%= kind_classes[commitment.kind] || kind_classes['personal'] %>"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span><% if participation_label %><span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-700"><%= participation_label %></span><% end %><% if represented_contact %><span class="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-extrabold text-violet-700">Per <%= represented_contact.name %></span><% end %><strong class="min-w-0 truncate text-base text-slate-900"><%= commitment.data_event&.title.presence || commitment.title %></strong></div>
+                    <p class="mt-1 truncate text-[13px] text-slate-500"><%= [commitment.domain.display_hostname, context_label, place_label, ("Gestito da #{managed_by_label}" if managed_by_label)].compact.join(" · ") %></p>
                   </div>
-                  <div class="hidden min-w-0 lg:grid lg:gap-1"><span class="truncate text-xs font-bold text-slate-600"><%= commitment.calendar_label %></span><span class="inline-flex w-fit rounded-full px-2 py-0.5 text-[10px] font-extrabold <%= status_class %>"><%= status_label %></span></div>
+                  <div class="hidden min-w-0 lg:grid lg:gap-1"><span class="truncate text-xs font-bold text-slate-600">Calendario di <%= commitment.calendar_label %></span><span class="inline-flex w-fit rounded-full px-2 py-0.5 text-[10px] font-extrabold <%= status_class %>"><%= status_label %></span></div>
                   <div class="col-span-3 flex items-center justify-end gap-2 border-t border-slate-100 pt-2 lg:col-span-1 lg:border-0 lg:pt-0">
                     <span class="text-sm font-black <%= value_label.present? ? 'text-emerald-700' : 'text-slate-400' %>"><%= value_label || "—" %></span>
                     <details class="relative z-30 [&_summary::-webkit-details-marker]:hidden">
@@ -203,14 +218,14 @@
     <% end %>
 
     <!-- Modale "Nuovo Impegno" -->
-    <dialog id="new-commitment-dialog" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+    <dialog id="new-commitment-dialog" data-controller="modal" data-action="click->modal#backdropClose" onclick="if (event.target === this) this.close()" class="m-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
       <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
         <div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Impegno</p><h2 class="mt-1 text-xl font-black text-slate-950">Nuovo impegno</h2></div>
-        <button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="modal#close" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
+        <button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="click->modal#close" onclick="this.closest('dialog')?.close()" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button>
       </div>
       <% selected_commitment_date = @agenda_date || Date.current %>
       <% initial_start = Time.zone.local(selected_commitment_date.year, selected_commitment_date.month, selected_commitment_date.day, 9, 0) %>
-      <% commitment_form = form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
+      <%= form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
         <%= hidden_field_tag :return_to, params[:return_to] %>
         <%= hidden_field_tag :context_brand, @default_brand %>
         <%= form.hidden_field :domain_id, value: @default_domain&.id %>
@@ -230,9 +245,8 @@
           <%= form.hidden_field :ends_at, value: (initial_start + 1.hour).strftime("%Y-%m-%dT%H:%M"), data: { commitment_schedule_target: "endsAt" } %>
         </div>
         <label class="flex items-center gap-2 text-sm text-slate-600"><%= form.check_box :all_day, class: "rounded border-slate-300 text-blue-600" %> Giornata intera</label>
-        <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="modal#close" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Aggiungi", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div>
+        <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="click->modal#close" onclick="this.closest('dialog')?.close()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "Aggiungi", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" %></div>
       <% end %>
-      <%= commitment_form %>
     </dialog>
   <% end %>
 </main>

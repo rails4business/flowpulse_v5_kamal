@@ -1,0 +1,103 @@
+<%
+  current_week_start = @week_start || (@agenda_date || Date.current).beginning_of_week
+  week_days = (0..6).map { |i| current_week_start + i.days }
+  days_map = { 0 => "lun", 1 => "mar", 2 => "mer", 3 => "gio", 4 => "ven", 5 => "sab", 6 => "dom" }
+  day_names = { 0 => "Lunedì", 1 => "Martedì", 2 => "Mercoledì", 3 => "Giovedì", 4 => "Venerdì", 5 => "Sabato", 6 => "Domenica" }
+  
+  brand_colors = {
+    "posturacorretta" => "bg-blue-100 border-blue-300 text-blue-900",
+    "generaimpresa" => "bg-amber-100 border-amber-300 text-amber-900",
+    "rails4business" => "bg-amber-100 border-amber-300 text-amber-900",
+    "percorso_integrato" => "bg-teal-100 border-teal-300 text-teal-900",
+    "percorsointegrato" => "bg-teal-100 border-teal-300 text-teal-900",
+    "cantachetipassa" => "bg-orange-100 border-orange-300 text-orange-900",
+    "events" => "bg-violet-100 border-violet-300 text-violet-900",
+    "ilgiardinodelcorpo" => "bg-violet-100 border-violet-300 text-violet-900",
+    "personal" => "bg-rose-100 border-rose-300 text-rose-900",
+    "default" => "bg-slate-100 border-slate-300 text-slate-900"
+  }
+  role_labels = { "participant" => "Partecipante", "teacher" => "Insegnante", "professional" => "Professionista", "organizer" => "Organizzatore", "tutor" => "Tutor", "teacher_trainee" => "Tirocinante", "supervisor" => "Supervisore" }
+  week_path = ->(date) { impegno_agenda_path(request.query_parameters.merge(date: date.iso8601, view_mode: "weekplan")) }
+%>
+
+<div class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+    <div class="flex items-center gap-3">
+      <h3 class="text-lg font-black text-slate-950">Vista settimana</h3>
+      <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+        <%= l(current_week_start, format: "%d %B") %> – <%= l(current_week_start + 6.days, format: "%d %B %Y") %>
+      </span>
+      <div class="flex items-center gap-1"><%= link_to "←", week_path.call(current_week_start - 1.week), class: "rounded-lg px-2 py-1 text-sm font-bold text-slate-600 hover:bg-slate-100", aria: { label: "Settimana precedente" } %><%= link_to "Oggi", week_path.call(Date.current), class: "rounded-lg px-2 py-1 text-xs font-bold text-blue-700 hover:bg-blue-50" %><%= link_to "→", week_path.call(current_week_start + 1.week), class: "rounded-lg px-2 py-1 text-sm font-bold text-slate-600 hover:bg-slate-100", aria: { label: "Settimana successiva" } %></div>
+    </div>
+    
+    <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+      <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-amber-100 text-amber-900"><span class="size-2 rounded-full bg-amber-500"></span> GeneraImpresa / Rails4B</span>
+      <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-100 text-blue-900"><span class="size-2 rounded-full bg-blue-500"></span> PosturaCorretta</span>
+      <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-teal-100 text-teal-900"><span class="size-2 rounded-full bg-teal-500"></span> Percorso Integrato</span>
+      <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-orange-100 text-orange-900"><span class="size-2 rounded-full bg-orange-500"></span> Canta che ti passa</span>
+      <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-violet-100 text-violet-900"><span class="size-2 rounded-full bg-violet-500"></span> Eventi / GDC</span>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <div class="min-w-[700px]">
+      <!-- Intestazione Giorni -->
+      <div class="grid grid-cols-8 gap-2 border-b border-slate-200 pb-2 text-center text-xs font-black text-slate-600 uppercase tracking-wider">
+        <div class="py-1 text-slate-400">Ora</div>
+        <% week_days.each_with_index do |day_date, index| %>
+          <div class="py-1 rounded-lg <%= day_date == Date.today ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-800' %>">
+            <div><%= day_names[index] %></div>
+            <div class="text-[10px] font-normal opacity-90"><%= day_date.strftime("%d/%m") %></div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Griglia Oraria (08:00 -> 20:00) -->
+      <div class="mt-2 grid grid-cols-8 gap-2 divide-y divide-slate-100 text-xs">
+        <% (8..20).each do |hour| %>
+          <div class="contents">
+            <div class="py-3 font-mono font-bold text-slate-400 text-right pr-2 text-[11px] self-start">
+              <%= format("%02d:00", hour) %>
+            </div>
+
+            <% week_days.each do |day_date| %>
+              <%
+                # Trova i commitment della giornata in questa ora
+                commitments_in_slot = (@commitments || []).select do |c|
+                  c_date = (c.starts_at || c.created_at).to_date
+                  c_hour = (c.starts_at || c.created_at).hour
+                  c_date == day_date && (c_hour == hour || (c.starts_at && c.ends_at && c_hour <= hour && c.ends_at.hour > hour))
+                end
+              %>
+
+              <div class="min-h-[50px] rounded-lg border border-slate-100 bg-slate-50/50 p-1 transition-colors hover:bg-slate-100/50 flex flex-col gap-1">
+                <% commitments_in_slot.each do |commitment| %>
+                  <%
+                    brand_key = commitment.domain&.auth_slug.presence || commitment.domain&.hostname.to_s.split(".").first || commitment.kind
+                    color_class = brand_colors[brand_key] || brand_colors[commitment.kind] || brand_colors["default"]
+                    person = commitment.participant_contact&.name || commitment.calendar_label
+                    role = role_labels[commitment.participation_role] || commitment.participation_role.to_s.humanize
+                  %>
+                  <% card_body = capture do %>
+                    <div class="font-extrabold truncate"><%= commitment.data_event&.title.presence || commitment.title %></div>
+                    <div class="text-[10px] opacity-90 font-medium">
+                      <% if commitment.starts_at %>
+                        <%= commitment.starts_at.strftime("%H:%M") %><%= "–#{commitment.ends_at.strftime('%H:%M')}" if commitment.ends_at %>
+                      <% end %>
+                      <%= " · #{role}" if commitment.participation_role.present? %><%= " · #{person}" if commitment.participant_contact %>
+                    </div>
+                  <% end %>
+                  <% if commitment.data_event && Current.user&.superadmin_user? %>
+                    <%= link_to impegno_data_event_path(commitment.data_event.root_event), class: "block rounded-md border p-1.5 shadow-xs text-[11px] leading-tight #{color_class} hover:ring-2 hover:ring-blue-300", aria: { label: "Apri evento #{commitment.data_event.title}" } do %><%= card_body %><% end %>
+                  <% else %>
+                    <div class="rounded-md border p-1.5 shadow-xs text-[11px] leading-tight <%= color_class %>"><%= card_body %></div>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -134,6 +134,9 @@ class DomainsController < ApplicationController
         include_drafts: Current.user&.superadmin_user? || false
       ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
        .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
+      @garden_places = AcademyCurriculum.load.fetch("locations", {}).values.select do |place|
+        Array(place["projects"]).include?("giardino-del-corpo")
+      end
     end
 
     def prepare_markpostura_landing

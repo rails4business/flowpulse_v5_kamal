@@ -1,5 +1,9 @@
 # Impegno, eventi e integrazione con i brand
 
+> **Documento in riallineamento.** Le sezioni basate su `EventFormat`, `EventOccurrence`, `EventRegistration`, `Event` ed `EventSlot` descrivono ipotesi precedenti e non sono più la fonte decisionale corrente. L'MVP viene definito una scelta alla volta in [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md). Al termine dell'analisi questo documento verrà consolidato eliminando i modelli sostituiti.
+
+> **Stato del documento:** architettura precedente, mantenuta come storico e raccolta di requisiti. Per il nuovo MVP non prevalgono più `EventFormat`, `EventOccurrence`, `EventRegistration` ed `EventSlot` come modelli separati. Le decisioni correnti vengono consolidate in [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md). Le sezioni sottostanti saranno migrate o archiviate dopo la conferma dei singoli punti.
+
 ## Obiettivo
 
 Costruire progressivamente in Flowpulse le funzioni di agenda, eventi, prenotazioni, contatti e luoghi, mantenendo una separazione chiara tra:
@@ -15,7 +19,7 @@ Il prototipo [1Impegno](../public/viste_html/18-00-14-7-2026-1impegno.html) rest
 
 1. `DataCommitment` è il singolo elemento che occupa un calendario.
 2. Un evento non è un commitment: è un contenitore dal quale possono derivare uno o più commitment.
-3. Evento e slot sono modelli distinti.
+3. La precedente separazione tra evento e slot è in revisione: nell'MVP entrambi possono essere nodi gerarchici di `DataEvent`.
 4. Gli stati e le modalità si rappresentano con valori enumerati, non con una serie di booleani.
 5. Contatti e luoghi appartengono a Impegno e sono riutilizzabili da più brand.
 6. Il proprietario determina responsabilità e permessi; il contatto e il luogo determinano le informazioni mostrate.

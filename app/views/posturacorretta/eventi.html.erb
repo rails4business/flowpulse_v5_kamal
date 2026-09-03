@@ -275,6 +275,9 @@
 
       <!-- Footer Buttons -->
       <div class="mt-6 border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
+        <a id="event-modal-details-btn" href="#" class="hidden inline-flex flex-1 items-center justify-center rounded-xl border border-blue-200 bg-white px-6 py-3.5 text-sm font-bold text-blue-700 transition hover:bg-blue-50">
+          Apri programma completo
+        </a>
         <a id="event-modal-register-btn" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex flex-1 items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.98]">
           Iscriviti ora su WhatsApp →
         </a>
@@ -524,6 +527,7 @@
     const card = document.getElementById("event-modal-card");
     const content = document.getElementById("event-modal-content");
     const registerBtn = document.getElementById("event-modal-register-btn");
+    const detailsBtn = document.getElementById("event-modal-details-btn");
 
     content.innerHTML = `
       <div class="grid gap-6 md:grid-cols-[160px_1fr]">
@@ -587,6 +591,13 @@
     `;
 
     registerBtn.href = `https://wa.me/393792891488?text=${encodeURIComponent(event.waText)}`;
+    if (event.show_path) {
+      detailsBtn.href = event.show_path;
+      detailsBtn.classList.remove("hidden");
+    } else {
+      detailsBtn.href = "#";
+      detailsBtn.classList.add("hidden");
+    }
 
     modal.classList.remove("hidden");
     modal.classList.add("flex");

@@ -206,7 +206,47 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
 
     delete session_url
     get impegno_agenda_url(workspace: "1")
-    assert_redirected_to new_session_url
+    assert_redirected_to new_session_url(return_to: impegno_agenda_path(workspace: "1"))
+  end
+
+  test "agenda distinguishes organizer participation and a represented contact" do
+    contact = Brands::Impegno::Contact.create!(profile: @profile, name: "Maria Assistita", kind: "person")
+    DataCommitment.create!(profile: @profile, created_by_profile: @profile, participant_contact: contact, domain: @domain, title: "Visita assistita", kind: "appointment", status: "confirmed", starts_at: 1.day.from_now.change(hour: 10), ends_at: 1.day.from_now.change(hour: 11), blocks_calendar: true, participation_role: "participant", pricing_type: "none", contribution_type: "unpaid", calendar_key: "contact:#{contact.id}", calendar_label: contact.name)
+    DataCommitment.create!(profile: @profile, created_by_profile: @profile, assignee_profile: @profile, domain: @domain, title: "Lezione condotta", kind: "work", status: "confirmed", starts_at: 2.days.from_now.change(hour: 15), ends_at: 2.days.from_now.change(hour: 16), blocks_calendar: true, participation_role: "teacher", pricing_type: "none", contribution_type: "unpaid")
+
+    get impegno_agenda_url(workspace: "1")
+
+    assert_response :success
+    assert_select "article", text: /Visita assistita/ do
+      assert_select "span", text: "Partecipante"
+      assert_select "span", text: "Per Maria Assistita"
+      assert_select "p", text: /Gestito da Mark Postura/
+      assert_select "span", text: "Calendario di Maria Assistita"
+    end
+    assert_select "article", text: /Lezione condotta/ do
+      assert_select "span", text: "Insegnante"
+      assert_select "span", text: /Per /, count: 0
+    end
+  end
+
+  test "week view shows only commitments in the selected week with role and event link" do
+    week_day = Date.new(2026, 9, 16)
+    root = DataEvent.create!(title: "Percorso settimana", classification: "path", node_kind: "root", domain: @domain, created_by_profile: @profile, status: "organizing", visibility: "private")
+    day = root.children.create!(title: "Mercoledì", classification: "path", node_kind: "day", domain: @domain, created_by_profile: @profile, starts_at: week_day.in_time_zone.change(hour: 14), ends_at: week_day.in_time_zone.change(hour: 18), status: "proposed", visibility: "private")
+    session = day.children.create!(title: "Sessione percorso", classification: "path", node_kind: "session", domain: @domain, created_by_profile: @profile, starts_at: week_day.in_time_zone.change(hour: 15), ends_at: week_day.in_time_zone.change(hour: 16), status: "proposed", visibility: "private")
+    shown = DataCommitment.create!(profile: @profile, created_by_profile: @profile, assignee_profile: @profile, domain: @domain, data_event: session, title: "Conduzione percorso", kind: "work", status: "confirmed", starts_at: session.starts_at, ends_at: session.ends_at, blocks_calendar: false, participation_role: "teacher", pricing_type: "none", contribution_type: "unpaid")
+    DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Fuori settimana", kind: "work", status: "planned", starts_at: week_day.next_week.in_time_zone.change(hour: 10), blocks_calendar: false, pricing_type: "none", contribution_type: "unpaid")
+    DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Annullato", kind: "work", status: "cancelled", starts_at: week_day.in_time_zone.change(hour: 17), blocks_calendar: false, pricing_type: "none", contribution_type: "unpaid")
+
+    get impegno_agenda_url(workspace: "1", view_mode: "weekplan", date: week_day.iso8601)
+
+    assert_response :success
+    assert_select "h3", text: "Vista settimana"
+    assert_select "a[aria-label='Apri evento Sessione percorso'][href='#{impegno_data_event_path(root)}']", count: 1
+    assert_includes response.body, "Insegnante"
+    assert_includes response.body, shown.data_event.title
+    assert_not_includes response.body, "Fuori settimana"
+    assert_not_includes response.body, "Annullato"
   end
 
   test "PosturaCorretta exposes its dedicated calendar path" do

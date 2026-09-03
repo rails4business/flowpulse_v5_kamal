@@ -10,6 +10,11 @@ module Brands
       KINDS = %w[person organization].freeze
 
       belongs_to :profile
+      has_many :participant_data_commitments,
+               class_name: "Brands::Impegno::Commitment",
+               foreign_key: :participant_contact_id,
+               inverse_of: :participant_contact,
+               dependent: :restrict_with_error
 
       validates :name, presence: true
       validates :kind, inclusion: { in: KINDS }

@@ -28,9 +28,16 @@ module Brands
     @default_domain = default_domain_for(@default_brand)
 
     @profile = current_profile
-    @commitments = @profile.data_commitments.includes(:domain).order(:starts_at)
+    @commitments = @profile.data_commitments.includes(:domain, :participant_contact, :assignee_profile, :created_by_profile, :data_event).order(:starts_at)
     @agenda_date = parse_agenda_date
-    if @agenda_date
+    if params[:view_mode] == "weekplan"
+      @week_start = (@agenda_date || Date.current).beginning_of_week
+      @week_end = @week_start + 6.days
+      @commitments = @commitments.select do |commitment|
+        date = (commitment.actual_started_at || commitment.starts_at)&.in_time_zone&.to_date
+        date && date.between?(@week_start, @week_end)
+      end
+    elsif @agenda_date
       @commitments = @commitments.select do |commitment|
         (commitment.actual_started_at || commitment.starts_at)&.in_time_zone&.to_date == @agenda_date
       end
@@ -44,6 +51,7 @@ module Brands
     elsif @agenda_filter == "booking_slots"
       @commitments = @commitments.select { |commitment| ActiveModel::Type::Boolean.new.cast(commitment.metadata.to_h["booking_slot"]) }
     end
+    @commitments = @commitments.reject { |commitment| commitment.status == "cancelled" } if params[:view_mode] == "weekplan"
     
     # Raggruppa i commitment per giorno
     @commitments_by_day = @commitments.group_by { |c| (c.actual_started_at || c.starts_at || Time.current).to_date }

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programma Evento - Tree View</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .text-muted-foreground-1 { color: rgb(107 114 128); }
+    .text-muted-foreground-2 { color: rgb(156 163 175); }
+    .bg-muted-active { background-color: rgb(243 244 246); }
+    .hover\:bg-muted-hover:hover { background-color: rgb(243 244 246); }
+    .focus\:bg-muted-focus:focus { background-color: rgb(229 231 235); }
+    .border-line-2 { border-color: rgb(229 231 235); }
+    .text-foreground { color: rgb(17 24 39); }
+    .focus\:outline-hidden:focus { outline: none; }
+    .before\:inset-s-3:before { left: 0.75rem; }
+    .before\:-ms-px:before { margin-left: -1px; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-6 md:p-10">
+
+  <div class="max-w-xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="mb-6">
+      <h1 class="text-lg font-semibold text-gray-900">Programma Evento</h1>
+      <p class="text-sm text-gray-500">Struttura: Evento · Day · Session · Task</p>
+    </div>
+
+    <!-- Tree Root -->
+    <div class="hs-accordion-treeview-root" role="tree" aria-orientation="vertical">
+      <div class="hs-accordion-group" role="group" data-hs-accordion-always-open>
+
+        <!-- 1st Level: EVENTO (ROOT) -->
+        <div class="hs-accordion active" role="treeitem" aria-expanded="true" id="event-heading">
+          <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+            <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="true" aria-controls="event-collapse">
+              <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2 rotate-90" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+              </svg>
+            </button>
+
+            <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+              <div class="flex items-center gap-x-3">
+                <!-- ICONA EVENTO (ROOT) -->
+                <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                  <line x1="4" x2="4" y1="22" y2="15"/>
+                </svg>
+                <div class="grow">
+                  <span class="text-sm font-medium text-foreground">Hackathon Innovazione 2026</span>
+                  <span class="text-xs text-muted-foreground-1 ml-2 font-normal">15 – 17 Ottobre 2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evento Collapse -->
+          <div id="event-collapse" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="event-heading">
+            <div class="hs-accordion-group ps-7 relative before:absolute before:top-0 before:inset-s-3 before:-ms-px before:h-full before:border-s before:border-line-2" role="group" data-hs-accordion-always-open>
+
+              <!-- 2nd Level: DAY 1 -->
+              <div class="hs-accordion active" role="treeitem" aria-expanded="true" id="day1-heading">
+                <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+                  <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="true" aria-controls="day1-collapse">
+                    <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2 rotate-90" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                    </svg>
+                  </button>
+
+                  <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+                    <div class="flex items-center gap-x-3">
+                      <!-- ICONA DAY -->
+                      <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                      <div class="grow">
+                        <span class="text-sm font-medium text-foreground">Day 1</span>
+                        <span class="text-xs text-muted-foreground-1 ml-2 font-normal">Mercoledì 15 Ottobre</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="day1-collapse" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="day1-heading">
+                  <div class="hs-accordion-group ps-7 relative before:absolute before:top-0 before:inset-s-3 before:-ms-px before:h-full before:border-s before:border-line-2" role="group" data-hs-accordion-always-open>
+
+                    <!-- 3rd Level: SESSION 1 -->
+                    <div class="hs-accordion active" role="treeitem" aria-expanded="true" id="day1-s1-heading">
+                      <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+                        <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="true" aria-controls="day1-s1-collapse">
+                          <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2 rotate-90" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                          </svg>
+                        </button>
+
+                        <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+                          <div class="flex items-center gap-x-3">
+                            <!-- ICONA SESSION -->
+                            <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="12" r="10"/>
+                              <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <div class="grow">
+                              <span class="text-sm text-foreground">Registrazione & Apertura</span>
+                              <span class="text-xs text-muted-foreground-1 ml-2">09:00 – 10:30</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="day1-s1-collapse" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="day1-s1-heading">
+                        <!-- TASKS RIENTRATI PIU' DENTRO -->
+                        <div class="ms-8 ps-3 relative before:absolute before:top-0 before:inset-s-0 before:-ms-px before:h-full before:border-s before:border-line-2">
+                          
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <!-- ICONA TASK -->
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Check-in partecipanti</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Presentazione regole e team</span>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End Session 1 -->
+
+                    <!-- 3rd Level: SESSION 2 -->
+                    <div class="hs-accordion" role="treeitem" aria-expanded="false" id="day1-s2-heading">
+                      <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+                        <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="false" aria-controls="day1-s2-collapse">
+                          <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                          </svg>
+                        </button>
+
+                        <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+                          <div class="flex items-center gap-x-3">
+                            <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="12" r="10"/>
+                              <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <div class="grow">
+                              <span class="text-sm text-foreground">Coding Session I</span>
+                              <span class="text-xs text-muted-foreground-1 ml-2">11:00 – 13:00</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="day1-s2-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="day1-s2-heading">
+                        <div class="ms-8 ps-3 relative before:absolute before:top-0 before:inset-s-0 before:-ms-px before:h-full before:border-s before:border-line-2">
+                          
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Definizione architettura</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Setup ambiente di sviluppo</span>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End Session 2 -->
+
+                  </div>
+                </div>
+              </div>
+              <!-- End Day 1 -->
+
+              <!-- 2nd Level: DAY 2 -->
+              <div class="hs-accordion" role="treeitem" aria-expanded="false" id="day2-heading">
+                <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+                  <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="false" aria-controls="day2-collapse">
+                    <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                    </svg>
+                  </button>
+
+                  <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+                    <div class="flex items-center gap-x-3">
+                      <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                      <div class="grow">
+                        <span class="text-sm font-medium text-foreground">Day 2</span>
+                        <span class="text-xs text-muted-foreground-1 ml-2 font-normal">Giovedì 16 Ottobre</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="day2-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="day2-heading">
+                  <div class="hs-accordion-group ps-7 relative before:absolute before:top-0 before:inset-s-3 before:-ms-px before:h-full before:border-s before:border-line-2" role="group" data-hs-accordion-always-open>
+
+                    <div class="hs-accordion" role="treeitem" aria-expanded="false" id="day2-s1-heading">
+                      <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+                        <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="false" aria-controls="day2-s1-collapse">
+                          <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                          </svg>
+                        </button>
+
+                        <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+                          <div class="flex items-center gap-x-3">
+                            <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="12" r="10"/>
+                              <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <div class="grow">
+                              <span class="text-sm text-foreground">Coding Session II</span>
+                              <span class="text-xs text-muted-foreground-1 ml-2">09:00 – 18:00</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="day2-s1-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="day2-s1-heading">
+                        <div class="ms-8 ps-3 relative before:absolute before:top-0 before:inset-s-0 before:-ms-px before:h-full before:border-s before:border-line-2">
+                          
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Sviluppo MVP</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Code review intermedia</span>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <!-- End Day 2 -->
+
+              <!-- 2nd Level: DAY 3 -->
+              <div class="hs-accordion" role="treeitem" aria-expanded="false" id="day3-heading">
+                <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+                  <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="false" aria-controls="day3-collapse">
+                    <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                    </svg>
+                  </button>
+
+                  <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+                    <div class="flex items-center gap-x-3">
+                      <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                      <div class="grow">
+                        <span class="text-sm font-medium text-foreground">Day 3</span>
+                        <span class="text-xs text-muted-foreground-1 ml-2 font-normal">Venerdì 17 Ottobre</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="day3-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="day3-heading">
+                  <div class="hs-accordion-group ps-7 relative before:absolute before:top-0 before:inset-s-3 before:-ms-px before:h-full before:border-s before:border-line-2" role="group" data-hs-accordion-always-open>
+
+                    <div class="hs-accordion" role="treeitem" aria-expanded="false" id="day3-s1-heading">
+                      <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
+                        <button class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none" aria-expanded="false" aria-controls="day3-s1-collapse">
+                          <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                          </svg>
+                        </button>
+
+                        <div class="grow hs-accordion-selectable hs-accordion-selected:bg-muted-active px-1.5 rounded-md cursor-pointer">
+                          <div class="flex items-center gap-x-3">
+                            <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="12" r="10"/>
+                              <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <div class="grow">
+                              <span class="text-sm text-foreground">Final Pitch & Premiazione</span>
+                              <span class="text-xs text-muted-foreground-1 ml-2">10:00 – 12:00</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="day3-s1-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="group" aria-labelledby="day3-s1-heading">
+                        <div class="ms-8 ps-3 relative before:absolute before:top-0 before:inset-s-0 before:-ms-px before:h-full before:border-s before:border-line-2">
+                          
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Preparazione demo</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="hs-accordion-selectable hs-accordion-selected:bg-muted-active px-2 rounded-md cursor-pointer" role="treeitem">
+                            <div class="flex items-center gap-x-3">
+                              <svg class="shrink-0 size-4 text-muted-foreground-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                              </svg>
+                              <div class="grow">
+                                <span class="text-sm text-foreground">Presentazione alla giuria</span>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <!-- End Day 3 -->
+
+            </div>
+          </div>
+          <!-- End Evento Collapse -->
+        </div>
+        <!-- End 1st Level Accordion -->
+
+      </div>
+      <!-- End 1st Level Accordion Group -->
+    </div>
+    <!-- End Tree Root -->
+  </div>
+
+  <script>
+    document.querySelectorAll('.hs-accordion-toggle').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const accordion = button.closest('.hs-accordion');
+        const content = document.getElementById(button.getAttribute('aria-controls'));
+        const arrow = button.querySelector('svg');
+        const isOpen = !content.classList.contains('hidden');
+
+        if (isOpen) {
+          content.style.height = content.scrollHeight + 'px';
+          content.offsetHeight;
+          content.style.height = '0px';
+          setTimeout(() => {
+            content.classList.add('hidden');
+            content.style.height = '';
+          }, 300);
+          button.setAttribute('aria-expanded', 'false');
+          accordion.setAttribute('aria-expanded', 'false');
+          arrow.classList.remove('rotate-90');
+        } else {
+          content.classList.remove('hidden');
+          content.style.height = '0px';
+          content.offsetHeight;
+          content.style.height = content.scrollHeight + 'px';
+          setTimeout(() => {
+            content.style.height = 'auto';
+          }, 300);
+          button.setAttribute('aria-expanded', 'true');
+          accordion.setAttribute('aria-expanded', 'true');
+          arrow.classList.add('rotate-90');
+        }
+      });
+    });
+
+    document.querySelectorAll('.hs-accordion-selectable').forEach(item => {
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.hs-accordion-toggle')) return;
+        document.querySelectorAll('.hs-accordion-selectable').forEach(i => i.classList.remove('bg-muted-active'));
+        item.classList.add('bg-muted-active');
+      });
+    });
+  </script>
+</body>
+</html>

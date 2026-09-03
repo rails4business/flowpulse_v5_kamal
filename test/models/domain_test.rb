@@ -24,9 +24,17 @@ class DomainTest < ActiveSupport::TestCase
   end
 
   test "finds active domain by host" do
-    Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+    primary = Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+    alias_domain = Domain.create!(hostname: "www.posturacorretta.org", canonical_host: "posturacorretta.org", locale: "it")
 
-    assert_equal "posturacorretta", Domain.find_for_host("POSTURACORRETTA.ORG").target_action
+    assert_equal primary, Domain.find_for_host("POSTURACORRETTA.ORG")
+    assert_equal primary, Domain.find_for_host("www.posturacorretta.org")
+  end
+
+  test "finds active domain by www fallback when alias record is missing" do
+    primary = Domain.create!(hostname: "posturacorretta.org", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+
+    assert_equal primary, Domain.find_for_host("www.posturacorretta.org")
   end
 
   test "exports config hash" do

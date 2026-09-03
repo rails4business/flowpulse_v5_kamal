@@ -216,4 +216,14 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Creator Home Node"
     assert_not_includes response.body, "Specific Target Node"
   end
+
+  test "renders Giardino del Corpo for ilgiardinodelcorpo.it host" do
+    host! "ilgiardinodelcorpo.it"
+
+    get root_url
+
+    assert_response :success
+    assert_includes response.body, "Il Giardino del Corpo"
+    assert_select "h1", text: "Coltiva il corpo, le capacità e le relazioni."
+  end
 end

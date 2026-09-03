@@ -1,0 +1,35 @@
+<%
+  has_children = event.children.any?
+  node_icon = { "root" => "⚑", "day" => "□", "session" => "◷", "task" => "✓" }.fetch(event.node_kind, "•")
+  node_label = { "root" => "Evento", "day" => "Day", "session" => "Session", "task" => "Task" }.fetch(event.node_kind, event.node_kind)
+  node_commitments = event.node_kind == "session" ? commitments_by_event_id.fetch(event.id, []) : []
+  time_label = if event.starts_at
+    event.ends_at ? "#{l(event.starts_at, format: :short)} – #{event.ends_at.strftime('%H:%M')}" : l(event.starts_at, format: :short)
+  end
+%>
+
+<div class="<%= depth.positive? ? 'relative ml-3 border-l border-slate-200 pl-5 sm:ml-5' : '' %>" role="treeitem" aria-level="<%= depth + 1 %>" data-node-kind="<%= event.node_kind %>">
+  <% if has_children %>
+    <details open class="group" data-data-event-node="<%= event.id %>">
+      <summary class="flex cursor-pointer list-none items-start gap-2 rounded-lg px-2 py-2 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+        <span class="mt-0.5 flex size-5 shrink-0 items-center justify-center text-xs text-slate-400 transition group-open:rotate-90" aria-hidden="true">›</span>
+        <span class="mt-0.5 shrink-0 text-base text-slate-500" aria-hidden="true"><%= node_icon %></span>
+        <span class="min-w-0 grow"><span class="flex flex-wrap items-baseline gap-x-2 gap-y-1"><span class="text-sm font-bold text-slate-950"><%= event.title %></span><span class="text-xs text-slate-500"><%= node_label %><%= " · #{time_label}" if time_label %></span></span></span>
+      </summary>
+      <div class="mt-1" role="group"><% event.children.each do |child| %><%= render "operational_node", event: child, commitments_by_event_id:, depth: depth + 1 %><% end %></div>
+    </details>
+  <% else %>
+    <div class="flex items-start gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"><span class="flex size-5 shrink-0" aria-hidden="true"></span><span class="mt-0.5 shrink-0 text-base text-slate-500" aria-hidden="true"><%= node_icon %></span><span class="min-w-0 grow"><span class="flex flex-wrap items-baseline gap-x-2 gap-y-1"><span class="text-sm font-bold text-slate-950"><%= event.title %></span><span class="text-xs text-slate-500"><%= node_label %><%= " · #{time_label}" if time_label %></span></span></span></div>
+  <% end %>
+
+  <% if event.node_kind == "session" %>
+    <div class="mb-3 ml-9 mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 sm:ml-11">
+      <div class="flex flex-wrap items-center gap-2 text-xs"><span class="font-bold text-slate-700"><%= event.bookable? ? "Prenotabile" : "Non prenotabile" %></span><% if event.effective_maximum_participants %><span class="text-slate-500"><%= event.confirmed_participants_count %>/<%= event.effective_maximum_participants %> confermati</span><% end %></div>
+      <% if node_commitments.any? %>
+        <ul class="mt-2 space-y-1.5" aria-label="Persone e ruoli della sessione"><% node_commitments.each do |commitment| %><% person = commitment.participant_contact&.name || commitment.assignee_profile&.display_name.presence || commitment.assignee_profile&.username || commitment.profile.display_name.presence || commitment.profile.username %><li class="flex flex-wrap items-center justify-between gap-2 text-sm"><span class="font-medium text-slate-800"><%= person %></span><span class="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold text-slate-600"><%= commitment.participation_role.presence || "impegno" %></span></li><% end %></ul>
+      <% else %>
+        <p class="mt-2 text-xs text-slate-500">Nessun commitment attivo collegato a questa sessione.</p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

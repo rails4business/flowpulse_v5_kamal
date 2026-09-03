@@ -1,6 +1,10 @@
 # Eventi trasversali tra domini, progetti e persone
 
-Ogni evento possiede una sola fonte YAML. Il record distingue:
+> **Documento in riallineamento.** Le regole trasversali ancora valide verranno adattate alla struttura `DataEvent` + `DataCommitment` definita in [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md).
+
+> **Stato del documento:** descrive il catalogo YAML attualmente in uso. Il target dell'MVP è trasferire progressivamente gli eventi operativi nel database tramite `DataEvent`; il catalogo YAML non sarà la fonte definitiva. Vedi [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md).
+
+Nella versione attuale ogni evento possiede una sola fonte YAML. Il record distingue:
 
 - `canonical_domain`: il dominio che pubblica l'evento e ne conserva la fonte;
 - `projects`: i progetti e i brand coinvolti nell'iniziativa;

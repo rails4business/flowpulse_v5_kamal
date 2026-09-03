@@ -93,6 +93,15 @@ default: &default
     target_controller: landing
     target_action: cantachetipassa
     primary: true
+    auth_slug: cantachetipassa
+    auth_default_path: /impegno
+    auth_enabled: true
+    operational_roles:
+      - teacher
+      - tutor
+      - segreteria_clienti
+      - segreteria_amministrativa
+      - responsabile_location
     site_title: "Canta che ti passa — Musica, canto e territorio"
     site_description: "Fisarmonica, chitarra, canto, ritmo e canti popolari come strumenti di educazione, espressione, memoria e relazione."
 
@@ -135,6 +144,18 @@ default: &default
 
   www.igieneposturale.it:
     canonical_host: igieneposturale.it
+
+  ilgiardinodelcorpo.it:
+    locale: it
+    target_controller: landing
+    target_action: giardino_del_corpo
+    primary: true
+    site_title: "Il Giardino del Corpo"
+    site_description: "Esperienze tra corpo, apprendimento, espressione, territorio e natura."
+
+  www.ilgiardinodelcorpo.it:
+    canonical_host: ilgiardinodelcorpo.it
+
 
 development:
   <<: *default

@@ -1,0 +1,24 @@
+<%= form_with model: day, url: form_url, class: "space-y-5" do |form| %>
+  <% if day.errors.any? %>
+    <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+      <p class="font-bold">Controlla la fascia inserita</p>
+      <ul class="mt-2 list-disc pl-5"><% day.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+    </div>
+  <% end %>
+  <div>
+    <%= form.label :title, "Titolo della fascia", class: "text-sm font-bold text-slate-700" %>
+    <%= form.text_field :title, required: true, placeholder: "Mattina, pomeriggio o sera", class: "mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5" %>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div><%= form.label :starts_at, "Inizio", class: "text-sm font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5" %></div>
+    <div><%= form.label :ends_at, "Fine", class: "text-sm font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, required: true, class: "mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5" %></div>
+  </div>
+  <label class="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+    <%= form.check_box :bookable, class: "mt-0.5 size-4 rounded border-slate-300 text-blue-600" %>
+    <span><span class="block text-sm font-bold text-slate-800">Fascia prenotabile</span><span class="mt-1 block text-xs text-slate-500">L’utente potrà proporre uno degli orari disponibili dentro questa finestra.</span></span>
+  </label>
+  <div class="flex flex-wrap gap-3 border-t border-slate-200 pt-5">
+    <%= form.submit day.persisted? ? "Salva fascia" : "Aggiungi fascia", class: "cursor-pointer rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700" %>
+    <%= link_to "Annulla", edit_impegno_data_event_path(root_event), class: "rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700" %>
+  </div>
+<% end %>
