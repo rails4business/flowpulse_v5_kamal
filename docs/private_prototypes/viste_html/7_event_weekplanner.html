@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Plan · Attività con dropdown</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .planner-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+    .planner-container {
+      flex: 2;
+      min-width: 700px;
+      background: white;
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.05);
+      height: fit-content;
+      max-height: 90vh;
+      overflow: auto;
+    }
+    .editor-container {
+      flex: 1;
+      min-width: 360px;
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.05);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .planner {
+      height: 80vh;
+      min-height: 500px;
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 6px;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+    .hours {
+      display: grid;
+      grid-template-rows: 14px repeat(26, minmax(0, 1fr));
+      height: 100%;
+      font-size: 7px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-align: right;
+      padding-right: 4px;
+    }
+    .days-grid {
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .day {
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 28px minmax(0, 1fr);
+    }
+    .day-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
+    }
+    .day-name {
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #475569;
+    }
+    .day-date {
+      font-size: 11px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .time-grid {
+      display: grid;
+      grid-template-rows: repeat(26, minmax(0, 1fr));
+      height: 100%;
+      min-height: 0;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      padding: 3px;
+      position: relative;
+    }
+    .event-date {
+      min-height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      padding: 4px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      line-height: 1.05;
+      cursor: pointer;
+      transition: 0.1s;
+      border: 2px solid transparent;
+    }
+    .event-date:hover {
+      border-color: #0f172a;
+      opacity: 0.9;
+      transform: scale(1.01);
+    }
+    .event-title { font-size: 7px; line-height: 1.05; font-weight: 900; text-transform: uppercase; }
+    .event-text { font-size: 6px; line-height: 1.1; font-weight: 800; }
+    .activity-item { margin-top: 2px; padding: 1px 4px; border-radius: 4px; font-size: 5.5px; font-weight: 700; display: inline-block; }
+    .appointment { font-size: 5.5px; line-height: 1.05; font-weight: 800; opacity: 0.85; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 4px;
+    }
+    .tabs button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.1s;
+      background: transparent;
+      color: #64748b;
+    }
+    .tabs button.active {
+      background: white;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .tabs button:hover:not(.active) { background: #e2e8f0; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Attività */
+    .attivita-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-radius: 12px;
+      margin-bottom: 6px;
+      transition: 0.1s;
+      border-left: 3px solid #94a3b8;
+    }
+    .attivita-item:hover { background: #f1f5f9; }
+    .attivita-item .checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: 0.1s;
+    }
+    .attivita-item .checkbox.checked {
+      background: #0f172a;
+      border-color: #0f172a;
+      color: white;
+    }
+    .attivita-item .checkbox.checked::after {
+      content: "✓";
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .attivita-item .info {
+      flex: 1;
+    }
+    .attivita-item .info .nome {
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .attivita-item .info .giorni {
+      font-size: 10px;
+      color: #64748b;
+    }
+    .attivita-item .info .giorni .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 2px;
+    }
+    .attivita-item .delete-btn-sm {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 4px;
+    }
+    .attivita-item .delete-btn-sm:hover { color: #ef4444; }
+
+    .add-attivita {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .add-attivita input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+    }
+    .add-attivita input:focus { outline: none; border-color: #94a3b8; }
+    .add-attivita .btn-sm {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      background: #0f172a;
+      color: white;
+    }
+    .add-attivita .btn-sm:hover { background: #1e293b; }
+
+    .attivita-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+    }
+
+    /* Editor */
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .editor-header h2 {
+      font-size: 16px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+    .editor-header .btn-sm {
+      padding: 6px 14px;
+      font-size: 12px;
+      width: auto;
+      margin: 0;
+    }
+    .btn {
+      background: #0f172a; color: white; border: none; padding: 10px 16px; border-radius: 40px;
+      font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.1s; letter-spacing: 0.3px;
+    }
+    .btn:hover { background: #1e293b; }
+    .btn-outline { background: transparent; color: #0f172a; border: 1px solid #e2e8f0; }
+    .btn-outline:hover { background: #f1f5f9; }
+    .btn-sm { padding: 6px 14px; font-size: 11px; width: auto; margin-top: 0; display: inline-block; }
+
+    .event-item {
+      background: #f1f5f9; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px;
+      border-left: 4px solid #94a3b8; cursor: pointer; transition: 0.1s;
+    }
+    .event-item:hover { background: #e9edf2; }
+    .event-item .meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: #334155; }
+    .event-item strong { font-weight: 800; font-size: 13px; display: block; margin-bottom: 2px; }
+    .badge { display: inline-block; padding: 0 8px; border-radius: 30px; font-size: 9px; font-weight: 700; }
+    .delete-btn { background: #fee2e2; color: #b91c1c; border: none; border-radius: 30px; padding: 4px 12px; font-weight: 700; font-size: 11px; cursor: pointer; margin-left: 8px; }
+    .delete-btn:hover { background: #fecaca; }
+
+    /* Week Nav */
+    .week-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-radius: 16px;
+    }
+    .week-nav .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .week-nav button {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: 0.1s;
+    }
+    .week-nav button:hover { background: #e2e8f0; }
+    .week-nav select {
+      padding: 4px 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      background: white;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      min-width: 140px;
+    }
+    .week-nav select:focus { outline: none; border-color: #94a3b8; }
+
+    .day-selector {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .day-selector button {
+      flex: 1;
+      padding: 6px 4px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: white;
+      font-weight: 700;
+      font-size: 10px;
+      cursor: pointer;
+      transition: 0.1s;
+      text-transform: uppercase;
+      min-width: 40px;
+    }
+    .day-selector button:hover { background: #f1f5f9; }
+    .day-selector button.active {
+      border-color: #0f172a;
+      background: #0f172a;
+      color: white;
+    }
+
+    .event-list-container { max-height: 300px; overflow-y: auto; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      opacity: 0; visibility: hidden;
+      transition: 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1; visibility: visible;
+    }
+    .modal {
+      background: white; border-radius: 32px; padding: 32px; 
+      max-width: 520px; width: 90%; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.2);
+      transform: scale(0.95); transition: 0.2s ease;
+      position: relative;
+    }
+    .modal-overlay.active .modal { transform: scale(1); }
+    .modal h3 { font-size: 20px; font-weight: 800; margin-top: 0; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .modal .subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+    .modal .close-btn {
+      position: absolute; top: 16px; right: 20px; background: none; border: none;
+      font-size: 28px; cursor: pointer; color: #94a3b8; padding: 4px 8px;
+    }
+    .modal .close-btn:hover { color: #0f172a; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-actions .btn { margin-top: 0; flex: 1; }
+    .modal-actions .btn-danger { background: #ef4444; color: white; }
+    .modal-actions .btn-danger:hover { background: #dc2626; }
+    .modal-actions .btn-outline { background: transparent; border: 1px solid #e2e8f0; }
+    .modal-actions .btn-outline:hover { background: #f1f5f9; }
+    .modal label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #475569; display: block; margin-top: 14px; margin-bottom: 4px; }
+    .modal input, .modal select { width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-family: 'Inter', sans-serif; background: #f8fafc; }
+    .modal input:focus, .modal select:focus { outline: none; border-color: #94a3b8; background: white; }
+    .modal .row { display: flex; gap: 12px; }
+    .modal .row > * { flex: 1; }
+
+    /* Select multiplo per attività */
+    .modal select[multiple] {
+      min-height: 80px;
+      padding: 6px;
+      background: white;
+    }
+    .modal select[multiple] option {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .modal select[multiple] option:checked {
+      background: #0f172a;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .planner-container { min-width: unset; }
+      .planner-wrapper { flex-direction: column; }
+      .editor-container { min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="planner-wrapper">
+  <!-- PLANNER -->
+  <div class="planner-container">
+    <div class="week-nav">
+      <div class="nav-group">
+        <button id="prevWeek">←</button>
+        <select id="weekSelect"></select>
+        <button id="nextWeek">→</button>
+      </div>
+      <button id="todayBtn" class="btn-sm btn-outline">Oggi</button>
+    </div>
+    <div class="planner" id="plannerRoot">
+      <div class="hours" id="hours"></div>
+      <div class="days-grid" id="days-grid"></div>
+    </div>
+  </div>
+
+  <!-- EDITOR SIDEBAR -->
+  <div class="editor-container">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="active" data-tab="eventi">📋 Eventi</button>
+      <button data-tab="attivita">✅ Attività</button>
+    </div>
+
+    <!-- Tab Eventi -->
+    <div class="tab-content active" id="tab-eventi">
+      <div class="editor-header">
+        <h2>Eventi</h2>
+        <button class="btn btn-sm" id="addNewBtn">➕ Nuovo</button>
+      </div>
+      <div class="day-selector" id="daySelector"></div>
+      <div class="event-list-container" id="eventList"></div>
+    </div>
+
+    <!-- Tab Attività -->
+    <div class="tab-content" id="tab-attivita">
+      <div class="editor-header">
+        <h2>Attività</h2>
+        <span style="font-size:11px;color:#94a3b8;" id="attivitaCount">0</span>
+      </div>
+      <div class="attivita-list" id="attivitaList"></div>
+      <div class="add-attivita">
+        <input type="text" id="newAttivitaInput" placeholder="Nuova attività..." />
+        <button class="btn-sm" id="addAttivitaBtn">➕</button>
+      </div>
+    </div>
+
+    <!-- JSON Editor -->
+    <div style="margin-top:auto;border-top:1px solid #f1f5f9;padding-top:12px;">
+      <textarea id="jsonEditor" style="font-family: monospace; font-size: 10px; min-height: 80px; background: #f1f5f9; width:100%;padding:8px;border:1px solid #e2e8f0;border-radius:12px;resize:vertical;"></textarea>
+      <div style="display:flex;gap:6px;margin-top:6px;">
+        <button class="btn" id="applyJsonBtn" style="flex:1;padding:6px;font-size:11px;">Applica JSON</button>
+        <button class="btn btn-outline" id="resetDataBtn" style="flex:1;padding:6px;font-size:11px;">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="close-btn" id="modalCloseBtn">✕</button>
+    <h3 id="modalTitle">✎ Modifica evento</h3>
+    <div class="subtitle" id="modalSubtitle">Modifica i dettagli dell'evento</div>
+    
+    <div class="row">
+      <div><label>Giorno</label><select id="editDay"><option value="lun">lun</option><option value="mar">mar</option><option value="mer">mer</option><option value="gio">gio</option><option value="ven">ven</option><option value="sab">sab</option><option value="dom">dom</option></select></div>
+      <div><label>Tipo</label><select id="editType"><option value="appointments">appointments</option><option value="posturacorretta">posturacorretta</option><option value="rails4business">rails4business</option><option value="events">events</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Titolo</label><input id="editTitle" value="Nuovo evento" /></div>
+      <div><label>Luogo</label><input id="editLocation" value="Studio" /></div>
+    </div>
+    <div class="row">
+      <div><label>Inizio</label><input id="editStart" type="time" value="09:00" /></div>
+      <div><label>Fine</label><input id="editEnd" type="time" value="10:00" /></div>
+    </div>
+    
+    <label>Attività incluse <span style="font-size:10px;font-weight:400;color:#94a3b8;">(Ctrl+Click per multipla)</span></label>
+    <select multiple id="editAttivita" style="min-height:80px;padding:6px;"></select>
+    
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="modalCancelBtn">Annulla</button>
+      <button class="btn" id="modalSaveBtn">💾 Salva</button>
+      <button class="btn btn-danger" id="modalDeleteBtn">🗑 Elimina</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- DATA ----------
+  let data = {
+    "time_range": { "start": "08:00", "end": "21:00", "step_minutes": 30 },
+    "days": ["lun", "mar", "mer", "gio", "ven", "sab", "dom"],
+    "event_dates": [
+      { "day": "lun", "type": "rails4business", "title": "RAILS 4B", "start": "09:00", "end": "20:00", "location": "Studio / Online", "attivita_selezionate": ["Preparazione settimanale", "Revisione codice"], "activities": [ { "title": "Sviluppo FlowPulse", "service": "coding", "appointments": [ { "contact": "Mark", "role": "developer", "status": "planned" } ] } ] },
+      { "day": "mar", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "attivita_selezionate": [], "activities": [] },
+      { "day": "mar", "type": "posturacorretta", "title": "PosturaCorretta", "start": "20:00", "end": "21:00", "location": "Viadana / Calvisano", "attivita_selezionate": [], "activities": [] },
+      { "day": "mer", "type": "posturacorretta", "title": "Appuntamenti", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "status": "da_confermare", "attivita_selezionate": ["Riunione con clienti"], "activities": [] },
+      { "day": "gio", "type": "appointments", "title": "Lezione", "start": "11:00", "end": "12:00", "location": "Musica", "attivita_selezionate": [], "activities": [ { "title": "Fisarmonica", "service": "musica", "appointments": [ { "contact": "Mark", "role": "studente", "status": "confirmed" } ] } ] },
+      { "day": "gio", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "attivita_selezionate": ["Revisione codice"], "activities": [ { "title": "Lezioni individuali", "service": "igiene_posturale_individuale", "appointments": [ { "contact": "Cliente 1", "role": "cliente", "status": "confirmed" }, { "contact": "Mark", "role": "insegnante", "status": "confirmed" } ] } ] },
+      { "day": "ven", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "attivita_selezionate": [], "activities": [ { "title": "Lezioni / gruppo", "service": "posturacorretta", "appointments": [ { "contact": "Clienti", "role": "cliente", "status": "planned" }, { "contact": "Mark", "role": "insegnante", "status": "planned" } ] } ] },
+      { "day": "sab", "type": "events", "title": "Eventi", "start": "09:00", "end": "12:00", "location": "Outdoor / GDC", "attivita_selezionate": ["Preparazione settimanale", "Aggiornamento documentazione"], "activities": [ { "title": "PosturaCorretta in evento", "service": "evento_posturacorretta", "appointments": [ { "contact": "Partecipanti", "role": "gruppo", "status": "open" }, { "contact": "Mark", "role": "organizzatore", "status": "planned" } ] } ] },
+      { "day": "dom", "type": "events", "title": "Eventi", "start": "09:00", "end": "12:00", "location": "Outdoor / GDC", "attivita_selezionate": ["Riunione con clienti"], "activities": [ { "title": "Evento / camminata / pratica", "service": "evento_gdc", "appointments": [ { "contact": "Partecipanti", "role": "gruppo", "status": "open" }, { "contact": "Mark", "role": "organizzatore", "status": "planned" } ] } ] }
+    ],
+    "attivita": [
+      { "id": 1, "nome": "Preparazione settimanale", "completata": false },
+      { "id": 2, "nome": "Revisione codice", "completata": false },
+      { "id": 3, "nome": "Riunione con clienti", "completata": false },
+      { "id": 4, "nome": "Aggiornamento documentazione", "completata": false }
+    ]
+  };
+
+  let nextAttivitaId = 5;
+
+  const colors = {
+    appointments: { bg: "bg-rose-100", border: "border-rose-300", text: "text-rose-900", light: "bg-rose-50", hex: "#f43f5e" },
+    posturacorretta: { bg: "bg-blue-100", border: "border-blue-300", text: "text-blue-900", light: "bg-blue-50", hex: "#3b82f6" },
+    rails4business: { bg: "bg-amber-100", border: "border-amber-300", text: "text-amber-900", light: "bg-amber-50", hex: "#f59e0b" },
+    events: { bg: "bg-violet-100", border: "border-violet-300", text: "text-violet-900", light: "bg-violet-50", hex: "#8b5cf6" }
+  };
+
+  let editingIndex = null;
+  let currentWeekOffset = 0;
+  let selectedDay = null;
+
+  // ---------- DATE HELPERS ----------
+  function getWeekDates(offset = 0) {
+    const now = new Date();
+    const current = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    current.setDate(current.getDate() + (offset * 7));
+    const day = current.getDay();
+    const diff = current.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(current.setDate(diff));
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      dates.push(d);
+    }
+    return dates;
+  }
+
+  function formatDate(date) {
+    return date.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  }
+
+  function getDayOfWeek(date) {
+    const days = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
+    return days[date.getDay()];
+  }
+
+  function getWeekNumber(date) {
+    const d = new Date(date);
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+    const week1 = new Date(d.getFullYear(), 0, 4);
+    return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+  }
+
+  function getYearWeekLabel(date) {
+    return `Sett. ${getWeekNumber(date)} (${date.getFullYear()})`;
+  }
+
+  // ---------- HELPERS ----------
+  function minutesFromTime(time) { const [h,m]=time.split(":").map(Number); return h*60+m; }
+  function timeToRow(time) {
+    const start = minutesFromTime(data.time_range.start);
+    const current = minutesFromTime(time);
+    return Math.floor((current - start) / data.time_range.step_minutes) + 1;
+  }
+  function spanRows(start,end) {
+    const diff = minutesFromTime(end) - minutesFromTime(start);
+    return Math.max(1, diff / data.time_range.step_minutes);
+  }
+
+  // ---------- RENDER ----------
+  function renderHours() {
+    const hours = document.getElementById("hours");
+    const start = minutesFromTime(data.time_range.start);
+    const end = minutesFromTime(data.time_range.end);
+    const step = data.time_range.step_minutes;
+    hours.innerHTML = "<div></div>";
+    for (let min = start; min < end; min += step) {
+      const h = String(Math.floor(min/60)).padStart(2,"0");
+      const m = String(min%60).padStart(2,"0");
+      hours.innerHTML += m === "00" ? `<div>${h}:${m}</div>` : "<div></div>";
+    }
+  }
+
+  function renderWeekPlan() {
+    const grid = document.getElementById("days-grid");
+    grid.innerHTML = "";
+    const weekDates = getWeekDates(currentWeekOffset);
+    
+    data.days.forEach((day, index) => {
+      const date = weekDates[index];
+      const dayOfMonth = date.getDate();
+      
+      const dayEl = document.createElement("div");
+      dayEl.className = "day";
+      dayEl.innerHTML = `
+        <div class="day-header">
+          <div class="day-name">${day}</div>
+          <div class="day-date">${dayOfMonth}</div>
+        </div>
+        <div class="time-grid"></div>
+      `;
+      
+      const timeGrid = dayEl.querySelector(".time-grid");
+      const eventDates = data.event_dates.filter(e => e.day === day);
+      
+      eventDates.forEach((ev) => {
+        const globalIdx = data.event_dates.indexOf(ev);
+        const el = document.createElement("div");
+        const color = colors[ev.type] || colors.appointments;
+        el.className = `event-date border ${color.bg} ${color.border} ${color.text}`;
+        el.style.gridRowStart = timeToRow(ev.start);
+        el.style.gridRowEnd = `span ${spanRows(ev.start, ev.end)}`;
+        el.dataset.index = globalIdx;
+        el.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openModal(globalIdx);
+        });
+        
+        // Mostra le attività selezionate
+        const attivitaHtml = (ev.attivita_selezionate || []).map(nome => {
+          return `<span class="activity-item" style="background:${color.hex}20;color:${color.hex}">${nome}</span>`;
+        }).join(' ');
+        
+        el.innerHTML = `
+          <div class="event-title">${ev.title}</div>
+          <div class="event-text">${ev.start} - ${ev.end}</div>
+          ${ev.location ? `<div class="event-text">${ev.location}</div>` : ""}
+          ${ev.status ? `<div class="event-text">${ev.status}</div>` : ""}
+          ${attivitaHtml ? `<div style="margin-top:2px;">${attivitaHtml}</div>` : ''}
+        `;
+        timeGrid.appendChild(el);
+      });
+      
+      grid.appendChild(dayEl);
+    });
+  }
+
+  // ---------- WEEK SELECTOR ----------
+  function populateWeekSelect() {
+    const select = document.getElementById('weekSelect');
+    select.innerHTML = '';
+    for (let offset = -52; offset <= 52; offset++) {
+      const weekDates = getWeekDates(offset);
+      const firstDate = weekDates[0];
+      const lastDate = weekDates[6];
+      const label = `${formatDate(firstDate)} - ${formatDate(lastDate)} (${getYearWeekLabel(firstDate)})`;
+      const option = document.createElement('option');
+      option.value = offset;
+      option.textContent = label;
+      if (offset === currentWeekOffset) option.selected = true;
+      select.appendChild(option);
+    }
+  }
+
+  // ---------- DAY SELECTOR & EVENT LIST ----------
+  function renderDaySelector() {
+    const container = document.getElementById('daySelector');
+    container.innerHTML = '';
+    const weekDates = getWeekDates(currentWeekOffset);
+    
+    if (selectedDay === null) {
+      const today = new Date();
+      const todayDay = getDayOfWeek(today);
+      if (data.event_dates.some(e => e.day === todayDay)) {
+        selectedDay = todayDay;
+      } else {
+        for (let day of data.days) {
+          if (data.event_dates.some(e => e.day === day)) {
+            selectedDay = day;
+            break;
+          }
+        }
+      }
+    }
+    
+    weekDates.forEach((date, index) => {
+      const dayName = data.days[index];
+      const btn = document.createElement('button');
+      btn.textContent = `${dayName} ${date.getDate()}`;
+      btn.style.cssText = `
+        flex:1; padding:6px 4px; border:2px solid #e2e8f0; border-radius:12px;
+        background: white; font-weight:700; font-size:10px; cursor:pointer;
+        transition:0.1s; text-transform:uppercase; min-width:40px;
+      `;
+      if (selectedDay === dayName) {
+        btn.style.borderColor = '#0f172a';
+        btn.style.background = '#0f172a';
+        btn.style.color = 'white';
+      }
+      btn.addEventListener('click', () => {
+        selectedDay = dayName;
+        renderDaySelector();
+        renderEventList();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function renderEventList() {
+    const container = document.getElementById("eventList");
+    container.innerHTML = "";
+    
+    const events = data.event_dates.filter(e => e.day === selectedDay);
+    
+    if (events.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:#94a3b8;font-size:12px;padding:20px 0;">Nessun evento per questo giorno</p>';
+      return;
+    }
+    
+    events.forEach((ev, idx) => {
+      const globalIdx = data.event_dates.indexOf(ev);
+      const color = colors[ev.type] || colors.appointments;
+      const div = document.createElement("div");
+      div.className = "event-item";
+      div.style.borderLeftColor = color.hex;
+      div.style.background = color.light;
+      div.dataset.index = globalIdx;
+      div.addEventListener('click', function() {
+        openModal(globalIdx);
+      });
+      
+      const attivitaStr = (ev.attivita_selezionate || []).join(' · ');
+      const meta = `<span class="badge" style="background:${color.hex};color:white;">${ev.type}</span> ${ev.start}–${ev.end}`;
+      div.innerHTML = `
+        <strong>${ev.title}</strong>
+        <div class="meta">${meta} ${ev.location ? '· '+ev.location : ''}</div>
+        ${attivitaStr ? `<div style="font-size:11px;color:#475569;margin-top:4px;">📌 ${attivitaStr}</div>` : ''}
+        <button class="delete-btn" data-index="${globalIdx}" onclick="event.stopPropagation();">🗑 Elimina</button>
+      `;
+      container.appendChild(div);
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const idx = parseInt(this.dataset.index);
+        if (confirm('Eliminare questo evento?')) {
+          data.event_dates.splice(idx, 1);
+          if (editingIndex === idx) editingIndex = null;
+          else if (editingIndex !== null && editingIndex > idx) editingIndex--;
+          updateAll();
+        }
+      });
+    });
+  }
+
+  // ---------- ATTIVITÀ ----------
+  function renderAttivita() {
+    const container = document.getElementById('attivitaList');
+    container.innerHTML = '';
+    
+    if (!data.attivita || data.attivita.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:#94a3b8;font-size:12px;padding:10px 0;">Nessuna attività</p>';
+      return;
+    }
+
+    data.attivita.forEach(att => {
+      const div = document.createElement('div');
+      div.className = 'attivita-item';
+      
+      // Check which days have this activity
+      const daysPresent = [];
+      data.event_dates.forEach(ev => {
+        if (ev.attivita_selezionate && ev.attivita_selezionate.includes(att.nome)) {
+          daysPresent.push(ev.day);
+        }
+      });
+      
+      const daysStr = daysPresent.length > 0 
+        ? daysPresent.map(d => {
+            const ev = data.event_dates.find(e => e.day === d);
+            const color = colors[ev?.type] || colors.appointments;
+            return `<span class="dot" style="background:${color.hex}"></span>`;
+          }).join('')
+        : '📅 non pianificata';
+      
+      div.innerHTML = `
+        <div class="checkbox ${att.completata ? 'checked' : ''}" data-id="${att.id}"></div>
+        <div class="info">
+          <div class="nome">${att.nome}</div>
+          <div class="giorni">${daysStr}</div>
+        </div>
+        <button class="delete-btn-sm" data-id="${att.id}">✕</button>
+      `;
+      
+      div.querySelector('.checkbox').addEventListener('click', function() {
+        att.completata = !att.completata;
+        renderAttivita();
+        updateJsonEditor();
+      });
+      
+      div.querySelector('.delete-btn-sm').addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (confirm('Eliminare questa attività?')) {
+          data.event_dates.forEach(ev => {
+            if (ev.attivita_selezionate) {
+              ev.attivita_selezionate = ev.attivita_selezionate.filter(a => a !== att.nome);
+            }
+          });
+          data.attivita = data.attivita.filter(a => a.id !== att.id);
+          renderAttivita();
+          updateAll();
+        }
+      });
+      
+      container.appendChild(div);
+    });
+
+    document.getElementById('attivitaCount').textContent = data.attivita.length;
+  }
+
+  function addAttivita() {
+    const input = document.getElementById('newAttivitaInput');
+    const nome = input.value.trim();
+    if (!nome) return;
+    if (data.attivita.some(a => a.nome === nome)) {
+      alert('Attività già esistente!');
+      return;
+    }
+    
+    if (!data.attivita) data.attivita = [];
+    data.attivita.push({ id: nextAttivitaId++, nome, completata: false });
+    input.value = '';
+    renderAttivita();
+    updateJsonEditor();
+  }
+
+  // ---------- MODAL ----------
+  function renderModalAttivita(selected) {
+    const select = document.getElementById('editAttivita');
+    select.innerHTML = '';
+    
+    if (!data.attivita || data.attivita.length === 0) {
+      const opt = document.createElement('option');
+      opt.textContent = 'Nessuna attività disponibile';
+      opt.disabled = true;
+      select.appendChild(opt);
+      return;
+    }
+    
+    data.attivita.forEach(att => {
+      const opt = document.createElement('option');
+      opt.value = att.nome;
+      opt.textContent = att.nome;
+      if (selected && selected.includes(att.nome)) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+  }
+
+  function openModal(index) {
+    const isNew = index === undefined || index === null || index < 0 || index >= data.event_dates.length;
+    
+    if (isNew) {
+      editingIndex = null;
+      document.getElementById('modalTitle').textContent = '➕ Nuovo evento';
+      document.getElementById('modalSubtitle').textContent = 'Inserisci i dettagli del nuovo evento';
+      document.getElementById('editDay').value = selectedDay || 'lun';
+      document.getElementById('editType').value = 'appointments';
+      document.getElementById('editTitle').value = 'Nuovo evento';
+      document.getElementById('editLocation').value = 'Studio';
+      document.getElementById('editStart').value = '09:00';
+      document.getElementById('editEnd').value = '10:00';
+      document.getElementById('modalDeleteBtn').style.display = 'none';
+      renderModalAttivita([]);
+    } else {
+      editingIndex = index;
+      const ev = data.event_dates[index];
+      document.getElementById('modalTitle').textContent = `✎ ${ev.title}`;
+      document.getElementById('modalSubtitle').textContent = `Modifica evento #${index+1}`;
+      document.getElementById('editDay').value = ev.day || 'lun';
+      document.getElementById('editType').value = ev.type || 'appointments';
+      document.getElementById('editTitle').value = ev.title || '';
+      document.getElementById('editLocation').value = ev.location || '';
+      document.getElementById('editStart').value = ev.start || '09:00';
+      document.getElementById('editEnd').value = ev.end || '10:00';
+      document.getElementById('modalDeleteBtn').style.display = 'block';
+      renderModalAttivita(ev.attivita_selezionate || []);
+    }
+    document.getElementById('modalOverlay').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+
+  function saveModal() {
+    const day = document.getElementById('editDay').value;
+    const type = document.getElementById('editType').value;
+    const title = document.getElementById('editTitle').value.trim() || 'Evento';
+    const location = document.getElementById('editLocation').value.trim() || '';
+    const start = document.getElementById('editStart').value || '09:00';
+    const end = document.getElementById('editEnd').value || '10:00';
+    
+    // Prendi le attività selezionate dal select multiplo
+    const select = document.getElementById('editAttivita');
+    const selectedAttivita = Array.from(select.selectedOptions).map(opt => opt.value);
+
+    const eventData = {
+      day, type, title, start, end, location,
+      attivita_selezionate: selectedAttivita,
+      activities: []
+    };
+
+    if (editingIndex !== null) {
+      data.event_dates[editingIndex] = { ...data.event_dates[editingIndex], ...eventData };
+    } else {
+      data.event_dates.push(eventData);
+    }
+    updateAll();
+    closeModal();
+  }
+
+  function deleteModal() {
+    if (editingIndex === null) return;
+    if (!confirm('Eliminare questo evento?')) return;
+    data.event_dates.splice(editingIndex, 1);
+    editingIndex = null;
+    updateAll();
+    closeModal();
+  }
+
+  // ---------- UPDATE ALL ----------
+  function updateAll() {
+    renderHours();
+    renderWeekPlan();
+    populateWeekSelect();
+    renderDaySelector();
+    renderEventList();
+    renderAttivita();
+    updateJsonEditor();
+  }
+
+  function updateJsonEditor() {
+    document.getElementById('jsonEditor').value = JSON.stringify(data, null, 2);
+  }
+
+  // ---------- NAVIGATION ----------
+  function goToWeek(offset) {
+    currentWeekOffset += offset;
+    selectedDay = null;
+    updateAll();
+  }
+
+  function goToToday() {
+    currentWeekOffset = 0;
+    const today = new Date();
+    selectedDay = getDayOfWeek(today);
+    updateAll();
+  }
+
+  function goToWeekSelect(value) {
+    currentWeekOffset = parseInt(value);
+    selectedDay = null;
+    updateAll();
+  }
+
+  // ---------- RESET ----------
+  function resetData() {
+    const defaultData = {
+      "time_range": { "start": "08:00", "end": "21:00", "step_minutes": 30 },
+      "days": ["lun", "mar", "mer", "gio", "ven", "sab", "dom"],
+      "event_dates": [
+        { "day": "lun", "type": "rails4business", "title": "RAILS 4B", "start": "09:00", "end": "20:00", "location": "Studio / Online", "attivita_selezionate": ["Preparazione settimanale", "Revisione codice"], "activities": [ { "title": "Sviluppo FlowPulse", "service": "coding", "appointments": [ { "contact": "Mark", "role": "developer", "status": "planned" } ] } ] },
+        { "day": "mar", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "attivita_selezionate": [], "activities": [] },
+        { "day": "mar", "type": "posturacorretta", "title": "PosturaCorretta", "start": "20:00", "end": "21:00", "location": "Viadana / Calvisano", "attivita_selezionate": [], "activities": [] },
+        { "day": "mer", "type": "posturacorretta", "title": "Appuntamenti", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "status": "da_confermare", "attivita_selezionate": ["Riunione con clienti"], "activities": [] },
+        { "day": "gio", "type": "appointments", "title": "Lezione", "start": "11:00", "end": "12:00", "location": "Musica", "attivita_selezionate": [], "activities": [ { "title": "Fisarmonica", "service": "musica", "appointments": [ { "contact": "Mark", "role": "studente", "status": "confirmed" } ] } ] },
+        { "day": "gio", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "attivita_selezionate": ["Revisione codice"], "activities": [ { "title": "Lezioni individuali", "service": "igiene_posturale_individuale", "appointments": [ { "contact": "Cliente 1", "role": "cliente", "status": "confirmed" }, { "contact": "Mark", "role": "insegnante", "status": "confirmed" } ] } ] },
+        { "day": "ven", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "location": "Viadana / Calvisano", "attivita_selezionate": [], "activities": [ { "title": "Lezioni / gruppo", "service": "posturacorretta", "appointments": [ { "contact": "Clienti", "role": "cliente", "status": "planned" }, { "contact": "Mark", "role": "insegnante", "status": "planned" } ] } ] },
+        { "day": "sab", "type": "events", "title": "Eventi", "start": "09:00", "end": "12:00", "location": "Outdoor / GDC", "attivita_selezionate": ["Preparazione settimanale", "Aggiornamento documentazione"], "activities": [ { "title": "PosturaCorretta in evento", "service": "evento_posturacorretta", "appointments": [ { "contact": "Partecipanti", "role": "gruppo", "status": "open" }, { "contact": "Mark", "role": "organizzatore", "status": "planned" } ] } ] },
+        { "day": "dom", "type": "events", "title": "Eventi", "start": "09:00", "end": "12:00", "location": "Outdoor / GDC", "attivita_selezionate": ["Riunione con clienti"], "activities": [ { "title": "Evento / camminata / pratica", "service": "evento_gdc", "appointments": [ { "contact": "Partecipanti", "role": "gruppo", "status": "open" }, { "contact": "Mark", "role": "organizzatore", "status": "planned" } ] } ] }
+      ],
+      "attivita": [
+        { "id": 1, "nome": "Preparazione settimanale", "completata": false },
+        { "id": 2, "nome": "Revisione codice", "completata": false },
+        { "id": 3, "nome": "Riunione con clienti", "completata": false },
+        { "id": 4, "nome": "Aggiornamento documentazione", "completata": false }
+      ]
+    };
+    data = defaultData;
+    nextAttivitaId = 5;
+    editingIndex = null;
+    currentWeekOffset = 0;
+    selectedDay = null;
+    updateAll();
+    closeModal();
+  }
+
+  // ---------- APPLY JSON ----------
+  function applyJson() {
+    try {
+      const parsed = JSON.parse(document.getElementById('jsonEditor').value);
+      if (!parsed.event_dates || !Array.isArray(parsed.event_dates)) throw new Error('Missing event_dates array');
+      data = parsed;
+      if (!data.attivita) data.attivita = [];
+      nextAttivitaId = data.attivita.reduce((max, a) => Math.max(max, a.id || 0), 0) + 1;
+      editingIndex = null;
+      updateAll();
+      closeModal();
+    } catch(e) { alert('JSON non valido: ' + e.message); }
+  }
+
+  // ---------- TABS ----------
+  function initTabs() {
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+      });
+    });
+  }
+
+  // ---------- INIT ----------
+  document.addEventListener('DOMContentLoaded', function() {
+    initTabs();
+    document.getElementById('jsonEditor').value = JSON.stringify(data, null, 2);
+
+    // Navigation
+    document.getElementById('prevWeek').addEventListener('click', () => goToWeek(-1));
+    document.getElementById('nextWeek').addEventListener('click', () => goToWeek(1));
+    document.getElementById('todayBtn').addEventListener('click', goToToday);
+    document.getElementById('weekSelect').addEventListener('change', function() {
+      goToWeekSelect(this.value);
+    });
+
+    // Modal controls
+    document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('modalSaveBtn').addEventListener('click', saveModal);
+    document.getElementById('modalDeleteBtn').addEventListener('click', deleteModal);
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // Event buttons
+    document.getElementById('addNewBtn').addEventListener('click', function() {
+      openModal(null);
+    });
+
+    // Attività
+    document.getElementById('addAttivitaBtn').addEventListener('click', addAttivita);
+    document.getElementById('newAttivitaInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') addAttivita();
+    });
+
+    // JSON
+    document.getElementById('applyJsonBtn').addEventListener('click', applyJson);
+    document.getElementById('resetDataBtn').addEventListener('click', resetData);
+
+    // Keyboard shortcut: ESC to close modal
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    updateAll();
+  });
+</script>
+</body>
+</html>

@@ -164,21 +164,7 @@ class PosturacorrettaController < ApplicationController
       "posturacorretta",
       include_drafts: Current.user&.superadmin_user? || false
     )
-    domain = Domain.find_by(hostname: "posturacorretta.org")
-    imported_by_slug = if domain
-      DataEvent.where(domain: domain, node_kind: "root", classification: "event")
-        .where("metadata ->> 'source' = ?", "yaml")
-        .index_by { |event| event.metadata["yaml_event_slug"] }
-    else
-      {}
-    end
-    @events = catalog_events.map do |event|
-      imported = imported_by_slug[event.fetch("slug")]
-      event.merge(
-        "data_event_id" => imported&.id,
-        "show_path" => imported ? posturacorretta_data_event_path(imported) : nil
-      )
-    end
+    @events = catalog_events
     @places = data.fetch("places", [])
     @teachers = data.fetch("teachers", [])
     @event_filter_taxonomy = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/contenuti/tassonomia.yml"), permitted_classes: [], aliases: false) || {}

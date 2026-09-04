@@ -430,31 +430,6 @@ class PosturacorrettaSemeController < ApplicationController
       }
     end
 
-    posturacorretta_domains = Domain.where(hostname: %w[posturacorretta.org www.posturacorretta.org])
-    data_event_entries = DataEvent.published
-      .where(domain: posturacorretta_domains, node_kind: "session")
-      .where.not(starts_at: nil)
-      .includes(:domain, :place, :responsible_profile)
-      .map do |event|
-        {
-          source: "data_event",
-          data_event_id: event.id,
-          title: event.title,
-          starts_at: event.starts_at,
-          ends_at: event.ends_at,
-          domain_label: event.domain.site_title.presence || "PosturaCorretta",
-          role_label: nil,
-          format: event.maximum_participants == 1 ? "individual" : "group",
-          delivery: event.place&.kind == "online" ? "online" : "in_person",
-          location_name: event.effective_place&.name,
-          teacher_slug: event.effective_responsible_profile&.username,
-          status: event.status,
-          registration_status: event.registration_status,
-          bookable: event.bookable?,
-          available_event: true,
-          show_path: posturacorretta_data_event_path(event)
-        }
-      end
 
     profile = Current.user.profile
     commitments = if Current.user.superadmin_user?
@@ -484,7 +459,7 @@ class PosturacorrettaSemeController < ApplicationController
       }
     end
 
-    @dashboard_agenda_entries = (data_event_entries + scheduled_lessons + commitment_entries).sort_by { |entry| entry.fetch(:starts_at) }
+    @dashboard_agenda_entries = (scheduled_lessons + commitment_entries).sort_by { |entry| entry.fetch(:starts_at) }
     @dashboard_agenda_upcoming = @dashboard_agenda_entries.select { |entry| entry.fetch(:starts_at) >= Time.current }
     @dashboard_agenda_past = @dashboard_agenda_entries.select { |entry| entry.fetch(:starts_at) < Time.current }.reverse
   end

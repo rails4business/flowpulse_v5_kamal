@@ -79,7 +79,7 @@
                     role = role_labels[commitment.participation_role] || commitment.participation_role.to_s.humanize
                   %>
                   <% card_body = capture do %>
-                    <div class="font-extrabold truncate"><%= commitment.data_event&.title.presence || commitment.title %></div>
+                    <div class="font-extrabold truncate"><%= commitment.title %></div>
                     <div class="text-[10px] opacity-90 font-medium">
                       <% if commitment.starts_at %>
                         <%= commitment.starts_at.strftime("%H:%M") %><%= "–#{commitment.ends_at.strftime('%H:%M')}" if commitment.ends_at %>
@@ -87,11 +87,7 @@
                       <%= " · #{role}" if commitment.participation_role.present? %><%= " · #{person}" if commitment.participant_contact %>
                     </div>
                   <% end %>
-                  <% if commitment.data_event && Current.user&.superadmin_user? %>
-                    <%= link_to impegno_data_event_path(commitment.data_event.root_event), class: "block rounded-md border p-1.5 shadow-xs text-[11px] leading-tight #{color_class} hover:ring-2 hover:ring-blue-300", aria: { label: "Apri evento #{commitment.data_event.title}" } do %><%= card_body %><% end %>
-                  <% else %>
-                    <div class="rounded-md border p-1.5 shadow-xs text-[11px] leading-tight <%= color_class %>"><%= card_body %></div>
-                  <% end %>
+                  <div class="rounded-md border p-1.5 shadow-xs text-[11px] leading-tight <%= color_class %>"><%= card_body %></div>
                 <% end %>
               </div>
             <% end %>

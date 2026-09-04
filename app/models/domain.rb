@@ -16,7 +16,6 @@ class Domain < ApplicationRecord
   has_many :traveler_subscriptions, dependent: :destroy
   has_many :domain_memberships, dependent: :destroy
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
-  has_many :data_events, dependent: :restrict_with_error
 
   before_validation :normalize_hosts
   before_validation :normalize_brand_settings

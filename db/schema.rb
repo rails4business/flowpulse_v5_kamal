@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_02_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_04_193000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -46,7 +46,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_100000) do
     t.string "contribution_type", default: "time_investment", null: false
     t.datetime "created_at", null: false
     t.bigint "created_by_profile_id", null: false
-    t.bigint "data_event_id"
     t.text "description"
     t.bigint "domain_id", null: false
     t.datetime "ends_at"
@@ -62,7 +61,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_100000) do
     t.string "participation_role"
     t.string "pricing_type", default: "hourly", null: false
     t.bigint "profile_id", null: false
-    t.bigint "requested_data_event_id"
     t.bigint "responsible_profile_id"
     t.datetime "starts_at", null: false
     t.string "status", default: "completed", null: false
@@ -75,7 +73,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_100000) do
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
     t.index ["created_by_profile_id"], name: "index_data_commitments_on_created_by_profile_id"
-    t.index ["data_event_id"], name: "index_data_commitments_on_data_event_id"
     t.index ["domain_id"], name: "index_data_commitments_on_domain_id"
     t.index ["genera_impresa"], name: "index_data_commitments_on_genera_impresa", using: :gin
     t.index ["kind"], name: "index_data_commitments_on_kind"
@@ -84,64 +81,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_100000) do
     t.index ["profile_id", "calendar_key", "starts_at"], name: "index_commitments_on_owner_calendar_start"
     t.index ["profile_id", "calendar_key"], name: "index_one_active_timer_per_calendar", unique: true, where: "(((status)::text = 'in_progress'::text) AND (actual_ended_at IS NULL))"
     t.index ["profile_id"], name: "index_data_commitments_on_profile_id"
-    t.index ["requested_data_event_id"], name: "index_data_commitments_on_requested_data_event_id"
     t.index ["responsible_profile_id"], name: "index_data_commitments_on_responsible_profile_id"
     t.index ["starts_at"], name: "index_data_commitments_on_starts_at"
     t.index ["status"], name: "index_data_commitments_on_status"
     t.index ["subject_type", "subject_id"], name: "index_data_commitments_on_subject"
     t.index ["sync_key"], name: "index_data_commitments_on_sync_key", unique: true
-  end
-
-  create_table "data_events", force: :cascade do |t|
-    t.date "active_from"
-    t.date "active_until"
-    t.boolean "all_day", default: false, null: false
-    t.jsonb "allowed_roles", default: [], null: false
-    t.datetime "archived_at"
-    t.boolean "bookable", default: false, null: false
-    t.string "booking_mode", default: "none", null: false
-    t.text "booking_notes"
-    t.string "classification", null: false
-    t.datetime "created_at", null: false
-    t.bigint "created_by_profile_id", null: false
-    t.string "currency", default: "EUR", null: false
-    t.text "description"
-    t.bigint "domain_id", null: false
-    t.integer "duration_minutes"
-    t.datetime "ends_at"
-    t.integer "maximum_participants"
-    t.jsonb "metadata", default: {}, null: false
-    t.integer "minimum_participants"
-    t.string "node_kind", default: "root", null: false
-    t.jsonb "operator_roles", default: [], null: false
-    t.bigint "parent_id"
-    t.bigint "place_id"
-    t.integer "position", default: 0, null: false
-    t.integer "price_cents"
-    t.datetime "published_at"
-    t.jsonb "recurrence", default: {}, null: false
-    t.string "registration_mode", default: "none", null: false
-    t.string "registration_status", default: "pending", null: false
-    t.bigint "responsible_profile_id"
-    t.bigint "service_data_event_id"
-    t.boolean "service_definition", default: false, null: false
-    t.string "service_scope", default: "private", null: false
-    t.datetime "starts_at"
-    t.string "status", default: "draft", null: false
-    t.string "title", null: false
-    t.datetime "updated_at", null: false
-    t.string "visibility", default: "private", null: false
-    t.index ["created_by_profile_id"], name: "index_data_events_on_created_by_profile_id"
-    t.index ["domain_id", "classification", "status"], name: "index_data_events_on_domain_id_and_classification_and_status"
-    t.index ["domain_id"], name: "index_data_events_on_domain_id"
-    t.index ["parent_id", "position"], name: "index_data_events_on_parent_id_and_position"
-    t.index ["parent_id"], name: "index_data_events_on_parent_id"
-    t.index ["place_id"], name: "index_data_events_on_place_id"
-    t.index ["published_at"], name: "index_data_events_on_published_at"
-    t.index ["recurrence"], name: "index_data_events_on_recurrence", using: :gin
-    t.index ["responsible_profile_id"], name: "index_data_events_on_responsible_profile_id"
-    t.index ["service_data_event_id"], name: "index_data_events_on_service_data_event_id"
-    t.index ["starts_at", "ends_at"], name: "index_data_events_on_starts_at_and_ends_at"
   end
 
   create_table "domain_memberships", force: :cascade do |t|
@@ -376,20 +320,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_100000) do
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "data_commitments", column: "parent_id"
-  add_foreign_key "data_commitments", "data_events"
-  add_foreign_key "data_commitments", "data_events", column: "requested_data_event_id"
   add_foreign_key "data_commitments", "domains"
   add_foreign_key "data_commitments", "impegno_contacts", column: "participant_contact_id"
   add_foreign_key "data_commitments", "profiles"
   add_foreign_key "data_commitments", "profiles", column: "assignee_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "created_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
-  add_foreign_key "data_events", "data_events", column: "parent_id"
-  add_foreign_key "data_events", "data_events", column: "service_data_event_id"
-  add_foreign_key "data_events", "domains"
-  add_foreign_key "data_events", "impegno_places", column: "place_id"
-  add_foreign_key "data_events", "profiles", column: "created_by_profile_id"
-  add_foreign_key "data_events", "profiles", column: "responsible_profile_id"
   add_foreign_key "domain_memberships", "domains"
   add_foreign_key "domain_memberships", "profiles"
   add_foreign_key "domains", "nodes"

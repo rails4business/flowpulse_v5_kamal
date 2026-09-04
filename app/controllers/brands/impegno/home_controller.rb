@@ -28,7 +28,6 @@ module Brands
       EXPERIENCE_TABS = %w[habits paths classes courses events].freeze
       AGENDA_PERIODS = %w[upcoming past].freeze
       PROFESSIONAL_AGENDA_FILTERS = %w[all events booking_slots].freeze
-      REQUEST_STATUS_FILTERS = %w[requested confirmed cancelled all].freeze
       DOMAIN_BRANDS = {
         "1impegno.it" => "impegno",
         "posturacorretta.org" => "posturacorretta",
@@ -73,13 +72,6 @@ module Brands
         end
         @workspace_date = parse_workspace_date
         @workspace_src = workspace_src
-        if @impegno_area == "domain_roles" && @impegno_view == "requests"
-          @impegno_request_status = params[:request_status].presence_in(REQUEST_STATUS_FILTERS) || "requested"
-          @request_status_counts = request_commitments_scope.reorder(nil).group(:status).count
-          @requested_commitments = requested_commitments
-          @selected_request = @requested_commitments.find_by(id: params[:request_id]) if params[:request_id].present?
-          @selected_request_history = request_history(@selected_request) if @selected_request
-        end
       end
 
       private
@@ -104,55 +96,6 @@ module Brands
 
           assigned_roles = Current.user.profile.role_assignments.for_context(domain).where(role: configured_roles).pluck(:role)
           configured_roles & assigned_roles
-        end
-
-        def requested_commitments
-          scope = request_commitments_scope
-          return scope if @impegno_request_status == "all"
-
-          scope.where(status: @impegno_request_status)
-        end
-
-        def request_commitments_scope
-          return DataCommitment.none unless Current.user.superadmin_user? && @impegno_default_domain
-
-          DataCommitment
-            .where(domain: @impegno_default_domain, status: %w[requested confirmed cancelled])
-            .where.not(requested_data_event_id: nil)
-            .includes(:profile, :created_by_profile, :assignee_profile, :participant_contact, requested_data_event: :place)
-            .order(created_at: :desc)
-        end
-
-        def request_history(commitment)
-          entries = [{
-            label: "Richiesta inviata",
-            occurred_at: commitment.created_at,
-            profile_id: commitment.created_by_profile_id
-          }]
-          audit_definitions = {
-            "confirmation" => ["Partecipazione confermata", "confirmed_at", "confirmed_by_profile_id"],
-            "rejection" => ["Richiesta rifiutata", "rejected_at", "rejected_by_profile_id"],
-            "withdrawal" => ["Richiesta ritirata", "withdrawn_at", "withdrawn_by_profile_id"],
-            "cancellation" => ["Partecipazione annullata", "cancelled_at", "cancelled_by_profile_id"]
-          }
-
-          audit_definitions.each do |key, (label, time_key, profile_key)|
-            audit = commitment.metadata[key]
-            next unless audit.is_a?(Hash) && audit[time_key].present?
-
-            entries << {
-              label:,
-              occurred_at: Time.zone.parse(audit[time_key]),
-              profile_id: audit[profile_key],
-              reason: audit["reason"].presence
-            }
-          rescue ArgumentError
-            next
-          end
-
-          profiles = Profile.where(id: entries.filter_map { |entry| entry[:profile_id] }.uniq).index_by(&:id)
-          entries.each { |entry| entry[:profile] = profiles[entry[:profile_id].to_i] }
-          entries.sort_by { |entry| entry[:occurred_at] }
         end
 
         def parse_workspace_date

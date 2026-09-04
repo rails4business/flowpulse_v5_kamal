@@ -28,7 +28,7 @@ module Brands
     @default_domain = default_domain_for(@default_brand)
 
     @profile = current_profile
-    @commitments = @profile.data_commitments.includes(:domain, :participant_contact, :assignee_profile, :created_by_profile, :data_event).order(:starts_at)
+    @commitments = @profile.data_commitments.includes(:domain, :participant_contact, :assignee_profile, :created_by_profile).order(:starts_at)
     @agenda_date = parse_agenda_date
     if params[:view_mode] == "weekplan"
       @week_start = (@agenda_date || Date.current).beginning_of_week

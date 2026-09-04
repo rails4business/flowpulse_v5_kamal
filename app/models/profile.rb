@@ -14,8 +14,6 @@ class Profile < ApplicationRecord
   has_many :impegno_contacts, class_name: "Brands::Impegno::Contact", dependent: :destroy
   has_many :impegno_places, class_name: "Brands::Impegno::Place", dependent: :destroy
   has_many :data_commitment_imports, foreign_key: :target_profile_id, dependent: :nullify
-  has_many :created_data_events, class_name: "DataEvent", foreign_key: :created_by_profile_id, inverse_of: :created_by_profile, dependent: :restrict_with_error
-  has_many :responsible_data_events, class_name: "DataEvent", foreign_key: :responsible_profile_id, inverse_of: :responsible_profile, dependent: :nullify
 
   validates :user_id, uniqueness: true
   validates :username, presence: true,

@@ -229,12 +229,9 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "week view shows only commitments in the selected week with role and event link" do
+  test "week view shows only commitments in the selected week with role" do
     week_day = Date.new(2026, 9, 16)
-    root = DataEvent.create!(title: "Percorso settimana", classification: "path", node_kind: "root", domain: @domain, created_by_profile: @profile, status: "organizing", visibility: "private")
-    day = root.children.create!(title: "Mercoledì", classification: "path", node_kind: "day", domain: @domain, created_by_profile: @profile, starts_at: week_day.in_time_zone.change(hour: 14), ends_at: week_day.in_time_zone.change(hour: 18), status: "proposed", visibility: "private")
-    session = day.children.create!(title: "Sessione percorso", classification: "path", node_kind: "session", domain: @domain, created_by_profile: @profile, starts_at: week_day.in_time_zone.change(hour: 15), ends_at: week_day.in_time_zone.change(hour: 16), status: "proposed", visibility: "private")
-    shown = DataCommitment.create!(profile: @profile, created_by_profile: @profile, assignee_profile: @profile, domain: @domain, data_event: session, title: "Conduzione percorso", kind: "work", status: "confirmed", starts_at: session.starts_at, ends_at: session.ends_at, blocks_calendar: false, participation_role: "teacher", pricing_type: "none", contribution_type: "unpaid")
+    shown = DataCommitment.create!(profile: @profile, created_by_profile: @profile, assignee_profile: @profile, domain: @domain, title: "Conduzione percorso", kind: "work", status: "confirmed", starts_at: week_day.in_time_zone.change(hour: 15), ends_at: week_day.in_time_zone.change(hour: 16), blocks_calendar: false, participation_role: "teacher", pricing_type: "none", contribution_type: "unpaid")
     DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Fuori settimana", kind: "work", status: "planned", starts_at: week_day.next_week.in_time_zone.change(hour: 10), blocks_calendar: false, pricing_type: "none", contribution_type: "unpaid")
     DataCommitment.create!(profile: @profile, created_by_profile: @profile, domain: @domain, title: "Annullato", kind: "work", status: "cancelled", starts_at: week_day.in_time_zone.change(hour: 17), blocks_calendar: false, pricing_type: "none", contribution_type: "unpaid")
 
@@ -242,9 +239,8 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h3", text: "Vista settimana"
-    assert_select "a[aria-label='Apri evento Sessione percorso'][href='#{impegno_data_event_path(root)}']", count: 1
     assert_includes response.body, "Insegnante"
-    assert_includes response.body, shown.data_event.title
+    assert_includes response.body, shown.title
     assert_not_includes response.body, "Fuori settimana"
     assert_not_includes response.body, "Annullato"
   end

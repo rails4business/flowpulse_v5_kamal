@@ -13,7 +13,6 @@ module Brands
 
       belongs_to :profile
       belongs_to :domain, optional: true
-      has_many :data_events, inverse_of: :place, dependent: :restrict_with_error
 
       validates :name, presence: true
       validates :kind, inclusion: { in: KINDS }

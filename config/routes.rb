@@ -73,8 +73,6 @@ Rails.application.routes.draw do
   get "posturacorretta/corsi" => "brands/posturacorretta#corsi", as: :posturacorretta_corsi
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo
   get "posturacorretta/eventi" => "brands/posturacorretta#eventi", as: :posturacorretta_eventi
-  get "posturacorretta/eventi/:id" => "posturacorretta_data_events#show", as: :posturacorretta_data_event
-  post "posturacorretta/eventi/:id/prenotazione" => "posturacorretta_data_events#create_booking", as: :book_posturacorretta_data_event
   get "posturacorretta/dash" => "brands/posturacorretta#dash", as: :posturacorretta_dash
   get "posturacorretta/libri" => "brands/posturacorretta#libri", as: :posturacorretta_libri
   get "posturacorretta/visione" => redirect("/posturacorretta/guida?sezione=progetto&capitolo=visione", status: 301), as: :posturacorretta_visione
@@ -104,19 +102,6 @@ Rails.application.routes.draw do
   get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
   get "impegno" => "brands/impegno/home#index", as: :impegno
   get "impegno/agenda" => "brands/impegno/commitments#index", as: :impegno_agenda
-  patch "impegno/requests/:id/reject" => "brands/impegno/requests#reject", as: :reject_impegno_request
-  patch "impegno/requests/:id/confirm" => "brands/impegno/requests#confirm", as: :confirm_impegno_request
-  patch "impegno/requests/:id/cancel-confirmation" => "brands/impegno/requests#cancel_confirmation", as: :cancel_confirmed_impegno_request
-  patch "impegno/requests/:id/withdraw" => "brands/impegno/requests#withdraw", as: :withdraw_impegno_request
-  resources :impegno_data_events, path: "impegno/data-events", controller: "brands/impegno/data_events", only: %i[index show new create edit update]
-  get "impegno/data-events/:data_event_id/days/new" => "brands/impegno/data_event_days#new", as: :new_impegno_data_event_day
-  post "impegno/data-events/:data_event_id/days" => "brands/impegno/data_event_days#create", as: :impegno_data_event_days
-  get "impegno/data-events/:data_event_id/days/:id/edit" => "brands/impegno/data_event_days#edit", as: :edit_impegno_data_event_day
-  patch "impegno/data-events/:data_event_id/days/:id" => "brands/impegno/data_event_days#update", as: :impegno_data_event_day
-  get "impegno/data-events/:data_event_id/days/:day_id/sessions/new" => "brands/impegno/data_event_sessions#new", as: :new_impegno_data_event_session
-  post "impegno/data-events/:data_event_id/days/:day_id/sessions" => "brands/impegno/data_event_sessions#create", as: :impegno_data_event_sessions
-  get "impegno/data-events/:data_event_id/days/:day_id/sessions/:id/edit" => "brands/impegno/data_event_sessions#edit", as: :edit_impegno_data_event_session
-  patch "impegno/data-events/:data_event_id/days/:day_id/sessions/:id" => "brands/impegno/data_event_sessions#update", as: :impegno_data_event_session
   resources :impegno_contacts, path: "impegno/contacts", controller: "brands/impegno/contacts", as: :impegno_contacts, only: %i[index create edit update destroy]
   resources :impegno_places, path: "impegno/places", controller: "brands/impegno/places", as: :impegno_places, only: %i[index create edit update destroy]
 

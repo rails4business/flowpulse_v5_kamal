@@ -22,13 +22,15 @@ Questo comportamento indica chiaramente che:
 
 docker ps --filter "label=service=flowpulse_v_5" --format "{{.Names}}"
 
-flowpulse_v_5-web-ab6f7b37b689110edeaa28fcde12bbd5f30fea82
 
 
-docker logs --since 10m flowpulse_v_5-web-ab6f7b37b689110edeaa28fcde12bbd5f30fea82 2>&1 | grep public_listing
+
+docker logs --since 5m NOME_CONTAINER 2>&1 | grep public_listing | tail -20
 
 
-docker exec flowpulse_v_5-web-ab6f7b37b689110edeaa28fcde12bbd5f30fea82 sh -lc 'for i in 1 2 3 4 5; do curl -sS -o /dev/null -w "Puma: %{http_code} %{time_starttransfer}s\n" http://127.0.0.1:3000/up; done'
+docker exec NOME_CONTAINER sh -lc 'for i in 1 2 3; do curl -sS -o /dev/null -w "Puma: %{http_code} %{time_starttransfer}s\n" http://127.0.0.1:3000/up; done'
+docker exec 
+
 ---
 
 ## Scomposizione del Flusso Temporale (Pipeline End-to-End)
