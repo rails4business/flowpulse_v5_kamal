@@ -1,6 +1,14 @@
 require "test_helper"
 
 class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
+  test "does not index filtered content listings" do
+    get posturacorretta_contenuti_path(ambito: "dolore", area: "cura")
+
+    assert_response :success
+    assert_select 'link[rel="canonical"][href$="/posturacorretta/contenuti"]'
+    assert_select 'meta[name="robots"][content="noindex, follow"]'
+  end
+
   test "should get accademia (landing page)" do
     get posturacorretta_url
     assert_response :success

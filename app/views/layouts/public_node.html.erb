@@ -5,10 +5,13 @@
     <% page_title = content_for(:title).presence || @node&.title.presence || page_domain&.site_title.presence || "Flowpulse" %>
     <% page_description = content_for(:description).presence || page_domain&.site_description.presence || "Contenuti e risorse pubbliche." %>
     <% page_social_image = page_domain&.social_image_url.presence || page_domain&.logo_square_url.presence || page_domain&.favicon_url.presence %>
-    <% page_url = request.original_url %>
+    <% page_url = seo_canonical_url %>
     <title><%= page_title %></title>
     <meta name="description" content="<%= page_description %>">
     <link rel="canonical" href="<%= page_url %>">
+    <% if seo_noindex? %>
+      <meta name="robots" content="noindex, follow">
+    <% end %>
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="<%= page_domain&.site_title.presence || page_title %>">
     <meta property="og:title" content="<%= page_title %>">

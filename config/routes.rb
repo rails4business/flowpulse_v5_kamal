@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resource :site_selection, only: :create
   resources :users, only: %i[new create]
   resources :passwords, param: :token
+  get "sitemap.xml", to: "sitemaps#show", defaults: { format: :xml }
 
   # Public Routes
   constraints ->(request) { request.host == "posturacorretta.org" } do
@@ -164,6 +165,7 @@ Rails.application.routes.draw do
     get "dashboard" => "home#dashboard", as: :dashboard
     post "set_override" => "home#set_override", as: :set_override
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
+    get "prototipi/*path" => "prototype_pages#show", as: :prototype, format: false
     get "percorso_insegnanti" => "home#percorso_insegnanti", as: :percorso_insegnanti
     get "percorso_insegnanti/fonti/*path" => "didactic_sources#show", as: :didactic_source, format: false
     get "appunti" => "notes#index", as: :notes

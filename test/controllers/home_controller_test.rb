@@ -63,7 +63,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "title=\"Evento costi e ruoli\""
-    assert_includes response.body, "/viste_html/evento_costi_ruoli.html"
+    assert_includes response.body, "/admin/prototipi/viste_html/evento_costi_ruoli.html"
   end
 
   test "should redirect dashboard when not authenticated" do

@@ -51,7 +51,7 @@ module Demo
       end
 
       def view_file_path(page)
-        path = "/viste_html/#{page.fetch(:file)}"
+        path = Rails.application.routes.url_helpers.admin_prototype_path(path: "viste_html/#{page.fetch(:file)}")
         query = page[:query]
 
         return path if query.blank?

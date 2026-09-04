@@ -1,10 +1,17 @@
 class PosturacorrettaController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
+
+  # These listings load and filter a sizeable YAML catalog. Keep abusive crawls from
+  # occupying every Puma thread before the expensive callbacks below are reached.
+  rate_limit to: 24, within: 1.minute, only: %i[contenuti metodiche], by: -> { request.remote_ip }, with: -> { throttled_public_listing }
+  rate_limit to: 120, within: 1.minute, only: %i[contenuti metodiche], by: -> { "posturacorretta-public-listings" }, with: -> { throttled_public_listing }
+
   before_action :load_academy_curriculum, only: %i[accademia accademia_modulo accademia_recensioni]
   before_action :load_methodologies, only: %i[metodiche metodica]
   before_action :load_projects, only: %i[progetti progetto]
   before_action :load_catalog, only: %i[contenuti corsi articolo]
+  after_action :log_public_listing_request, only: %i[contenuti metodiche]
   helper_method :posturacorretta_public_professionals
 
   def accademia
@@ -268,6 +275,39 @@ class PosturacorrettaController < ApplicationController
   end
 
   private
+
+  def throttled_public_listing
+    Rails.logger.warn(
+      event: "public_listing_throttled",
+      path: request.path,
+      ip_hash: anonymized_request_ip,
+      user_agent: request.user_agent.to_s.first(180)
+    ).to_json
+
+    render plain: "Troppe richieste. Riprova tra poco.", status: :too_many_requests
+  end
+
+  def log_public_listing_request
+    Rails.logger.info(
+      event: "public_listing_request",
+      path: request.path,
+      status: response.status,
+      filter_keys: request.query_parameters.keys.sort,
+      ip_hash: anonymized_request_ip,
+      user_agent: request.user_agent.to_s.first(180),
+      referrer_host: referrer_host
+    ).to_json
+  end
+
+  def anonymized_request_ip
+    Digest::SHA256.hexdigest("#{Rails.application.secret_key_base}:#{request.remote_ip}").first(16)
+  end
+
+  def referrer_host
+    URI.parse(request.referer).host if request.referer.present?
+  rescue URI::InvalidURIError
+    nil
+  end
 
   def posturacorretta_professional_sections
     sections = Hash.new { |hash, slug| hash[slug] = [] }

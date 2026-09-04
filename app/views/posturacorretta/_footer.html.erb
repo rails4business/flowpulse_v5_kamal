@@ -41,7 +41,7 @@
         <li><a class="hover:text-blue-700" href="/contatti">Contatti</a></li>
         <% if Current.user&.superadmin_user? %>
           <li class="pt-2 border-t border-slate-100">
-            <a class="font-semibold text-amber-600 hover:text-amber-700 inline-flex items-center gap-1.5" href="/quadrangolazione_instagram.html" title="Strategia Instagram Ecosistema Flowpulse">
+            <a class="font-semibold text-amber-600 hover:text-amber-700 inline-flex items-center gap-1.5" href="<%= admin_prototype_path(path: "quadrangolazione_instagram.html") %>" title="Strategia Instagram Ecosistema Flowpulse">
               <span>⚡ Strategy @markpostura</span>
               <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-mono uppercase">Superadmin</span>
             </a>

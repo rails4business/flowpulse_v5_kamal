@@ -14,15 +14,15 @@
 
     <% if @active_tab == "eventi" %>
       <nav class="resources-subtabs" aria-label="Strumenti eventi">
-        <a href="/viste_html/4_calendario_eventi_attività.html" class="resources-subtab" target="_blank" rel="noreferrer">
+        <a href="<%= admin_prototype_path(path: "viste_html/4_calendario_eventi_attività.html") %>" class="resources-subtab" target="_blank" rel="noreferrer">
           <strong>4 Calendario eventi</strong>
           <span>Attivita e agenda operativa</span>
         </a>
-        <a href="/viste_html/5_transacion_cal.html" class="resources-subtab" target="_blank" rel="noreferrer">
+        <a href="<%= admin_prototype_path(path: "viste_html/5_transacion_cal.html") %>" class="resources-subtab" target="_blank" rel="noreferrer">
           <strong>5 Transacion Cal</strong>
           <span>Transazioni agganciate al calendario</span>
         </a>
-        <a href="/viste_html/6_weekplan.html" class="resources-subtab" target="_blank" rel="noreferrer">
+        <a href="<%= admin_prototype_path(path: "viste_html/6_weekplan.html") %>" class="resources-subtab" target="_blank" rel="noreferrer">
           <strong>6 Weekplan</strong>
           <span>Vista settimanale di pianificazione</span>
         </a>

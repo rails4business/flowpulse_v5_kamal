@@ -69,7 +69,7 @@ module Admin
 
     def elenco_pagine
       @registered_pages = Demo::ViewPagesController::PAGES
-      @html_files = Dir.children(Rails.root.join("public", "viste_html")).select { |file| file.ends_with?(".html") }.sort
+      @html_files = Dir.children(Rails.root.join("docs", "private_prototypes", "viste_html")).select { |file| file.ends_with?(".html") }.sort
     end
   end
 end

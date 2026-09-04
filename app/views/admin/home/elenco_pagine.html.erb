@@ -19,7 +19,7 @@
       <h2>Viste HTML</h2>
       <div class="prototype-grid">
         <% @html_files.each do |file| %>
-          <a href="/viste_html/<%= file %>" target="_blank"><%= file %></a>
+          <%= link_to file, admin_prototype_path(path: "viste_html/#{file}"), target: "_blank", rel: "noreferrer" %>
         <% end %>
       </div>
     </section>
