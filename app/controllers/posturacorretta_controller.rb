@@ -277,18 +277,19 @@ class PosturacorrettaController < ApplicationController
   private
 
   def throttled_public_listing
-    Rails.logger.warn(
+    payload = {
       event: "public_listing_throttled",
       path: request.path,
       ip_hash: anonymized_request_ip,
       user_agent: request.user_agent.to_s.first(180)
-    ).to_json
+    }
+    Rails.logger.warn(payload.to_json)
 
     render plain: "Troppe richieste. Riprova tra poco.", status: :too_many_requests
   end
 
   def log_public_listing_request
-    Rails.logger.info(
+    payload = {
       event: "public_listing_request",
       path: request.path,
       status: response.status,
@@ -296,7 +297,8 @@ class PosturacorrettaController < ApplicationController
       ip_hash: anonymized_request_ip,
       user_agent: request.user_agent.to_s.first(180),
       referrer_host: referrer_host
-    ).to_json
+    }
+    Rails.logger.info(payload.to_json)
   end
 
   def anonymized_request_ip

@@ -19,10 +19,16 @@ Questo comportamento indica chiaramente che:
 > **Il 98% del ritardo (circa 2.45 secondi su 2.53 secondi totali) si verifica TRA il reverse proxy / container e l'inizio dell'esecuzione di Rails**, oppure durante l'instradamento/accodamento interno, NON nel codice dell'action del controller o nel database PostgreSQL (che per la homepage impiega appena 17 ms).
 
 
-docker exec flowpulse_v_5-web-eea1944efefa18d4c4b1a6bfc1521c56ab3a8d5d sh -lc 'for i in 1 2 3 4 5; do curl -sS -o /dev/null -w "Puma: %{http_code} %{time_starttransfer}s\n" http://127.0.0.1:3000/up; done'
 
-docker logs --since 10m flowpulse_v_5-web-eea1944efefa18d4c4b1a6bfc1521c56ab3a8d5d 2>&1 | grep public_listing
+docker ps --filter "label=service=flowpulse_v_5" --format "{{.Names}}"
 
+flowpulse_v_5-web-ab6f7b37b689110edeaa28fcde12bbd5f30fea82
+
+
+docker logs --since 10m flowpulse_v_5-web-ab6f7b37b689110edeaa28fcde12bbd5f30fea82 2>&1 | grep public_listing
+
+
+docker exec flowpulse_v_5-web-ab6f7b37b689110edeaa28fcde12bbd5f30fea82 sh -lc 'for i in 1 2 3 4 5; do curl -sS -o /dev/null -w "Puma: %{http_code} %{time_starttransfer}s\n" http://127.0.0.1:3000/up; done'
 ---
 
 ## Scomposizione del Flusso Temporale (Pipeline End-to-End)
