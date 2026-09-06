@@ -26,7 +26,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_equal "insegnamenti-metodiche-posturali", base_lesson.dig("modules", 0, "module_slug")
   end
 
-  test "shows appointments and chapters as tabs in the course overview main" do
+  test "shows practical sheets and chapters as tabs in the course overview main" do
     get posturacorretta_course_path(corso: "postura-corretta-in-un-mese")
 
     assert_response :success
@@ -37,23 +37,21 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")}']", text: "Inizia"
     assert_not_includes response.body, 'header class="border-b border-slate-200 bg-[#F6F7F4] p-4 sm:p-6 lg:p-8"'
     assert_select "nav[aria-label='Navigazione del corso']", count: 0
-    assert_select "h2", text: "Incontri e lezioni"
-    assert_select "p", text: "Appuntamenti"
-    assert_select "nav[aria-label='Contenuti del corso'] a[aria-current='page']", text: /Percorso guidato/
+    assert_select "h2", text: "Schede pratiche"
+    assert_select "p", text: "Pratica"
+    assert_select "nav[aria-label='Contenuti del corso'] a[aria-current='page']", text: /Schede pratiche/
     assert_select "nav[aria-label='Contenuti del corso'][role='tablist'] a[role='tab'][aria-selected='true']", count: 1
     assert_select "nav[aria-label='Contenuti del corso'] a", text: /Corso online/
     assert_select "nav[aria-label='Contenuti del corso'] a:first-child", text: /Corso online/
-    assert_select "#incontri-lezioni h3", text: /Presentazione del metodo/
-    assert_select "#incontri-lezioni ol[aria-label='Attività del percorso guidato'] li", count: 2
-    activity_path = posturacorretta_course_lesson_path(corso: "postura-corretta-in-un-mese", attivita: "presentazione-del-metodo")
-    assert_select "#incontri-lezioni a[href='#{new_session_path(return_to: activity_path)}']", text: /Accedi per prenotare/
-    assert_select "#incontri-lezioni span[aria-disabled='true']", text: /Da sbloccare/
-    assert_select "#incontri-lezioni a[href='#{new_session_path(return_to: posturacorretta_seme_student_dashboard_path)}']", text: /Vedi tutti i corsi nella dashboard/
+    assert_select "#schede-pratiche h3", text: "Da definire", count: 12
+    assert_select "#schede-pratiche ol[aria-label='Schede pratiche del corso'] li", count: 12
+    assert_select "#schede-pratiche span", text: "Apri scheda", count: 12
+    assert_select "#schede-pratiche a[href='#{new_session_path(return_to: posturacorretta_seme_student_dashboard_path)}']", text: /Vedi tutti i corsi nella dashboard/
     assert_select "#capitoli", count: 0
     assert_select "nav[aria-label='Indice generale dei corsi'] a[aria-current='page']", text: /PosturaCorretta in un mese/
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta']", count: 0
     assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Percorso"
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a", text: "Moduli"
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a", text: "Programma lezioni"
     assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a", text: "Appuntamenti"
 
     get posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")
@@ -65,7 +63,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "#capitoli a", text: /L'incontro con la salute e con le metodiche posturali/
     assert_select "#capitoli span", text: "Capitolo 01"
     assert_select "#capitoli ol.divide-y", count: 1
-    assert_select "#incontri-lezioni", count: 0
+    assert_select "#schede-pratiche", count: 0
   end
 
   test "keeps program activities sequential and redirects a locked activity" do
@@ -78,12 +76,12 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "header a[aria-label^='Torna all']", text: /PosturaCorretta in un mese/
-    assert_select "nav[aria-label='Navigazione del corso'] [role='tab'][aria-current='page']", text: /Percorso guidato/
+    assert_select "nav[aria-label='Navigazione del corso'] [role='tab'][aria-current='page']", text: /Schede pratiche/
     assert_select "nav[aria-label='Navigazione del corso'] a[href='#{posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")}']", text: /Corso online/
     assert_select "#programma-aside #course-aside-title", count: 0
     assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
     assert_select "nav[aria-label='Indice del corso'] a[aria-current='page']", text: /Presentazione del metodo/
-    assert_select "nav[aria-label='Indice del corso'] h2", text: "Incontri e lezioni"
+    assert_select "nav[aria-label='Indice del corso'] h2", text: "Schede del corso"
     assert_select "nav[aria-label='Indice del corso'] span.bg-amber-200", count: 2
     assert_select "nav[aria-label='Indice del corso'] span[aria-disabled='true']", text: /Lezione pratica PosturaCorretta in un mese/
     assert_select "#scheda-attivita h2", text: "Presentazione del metodo"
@@ -140,7 +138,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "p", text: "Capitolo del corso"
     assert_select "header a[aria-label^='Torna all']", text: /PosturaCorretta in un mese/
     assert_select "nav[aria-label='Navigazione del corso'] [role='tab'][aria-current='page']", text: /Corso online/
-    assert_select "nav[aria-label='Navigazione del corso'] a[href='#{posturacorretta_course_lesson_path(corso: "postura-corretta-in-un-mese", attivita: "presentazione-del-metodo")}']", text: /Percorso guidato/
+    assert_select "nav[aria-label='Navigazione del corso'] a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "schede")}']", text: /Schede pratiche/
     assert_select "#seme-aside #course-aside-title", count: 0
     assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
     assert_select "nav[aria-label='Indice del corso'] h2", text: "Indice dei capitoli"
@@ -163,13 +161,14 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Il tuo percorso", count: 0
     assert_select "p", text: "Gruppo"
     assert_select "[role='progressbar']", count: 0
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Moduli"
+    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Programma lezioni"
     assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")}']", text: "Percorso"
-    assert_select "h1", text: "Il tuo piano di studi", count: 1
-    assert_select "h3", text: "Postura e Recupero"
-    assert_select "span", text: "Igiene Posturale"
-    assert_select "span", text: "👤 Tutor"
-    assert_select "span", text: "👨‍🏫 Insegnante"
+    assert_select "h1", text: "Programma lezioni", count: 1
+    assert_select "ol[aria-label='Lezioni del programma studenti'] > li", count: 43
+    assert_select ".sheet-number", text: /MS-001/
+    assert_select ".sheet-number", text: /MV-001/
+    assert_select ".sheet-number", text: /MD-001/
+    assert_select "a[href^='https://wa.me/393792891488']", text: "Richiedi un primo incontro su WhatsApp"
     assert_select "a", text: "Apri il corso online", count: 0
 
     other_domain = Domain.find_or_create_by!(hostname: "agenda-esterna.test") do |domain|
@@ -264,8 +263,8 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Postura e Fisiologia"
-    assert_select "h2", text: "Incontri e lezioni"
-    assert_select "p", text: "Gli incontri e le lezioni di questo corso sono in preparazione."
+    assert_select "h2", text: "Schede pratiche"
+    assert_select "p", text: "Le schede pratiche di questo corso sono in preparazione."
     assert_select "nav[aria-label='Contenuti del corso'] a", text: /Corso online/
 
     get posturacorretta_course_path(corso: "postura-e-fisiologia", vista: "capitoli")

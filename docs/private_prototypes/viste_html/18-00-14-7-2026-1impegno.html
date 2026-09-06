@@ -1353,7 +1353,7 @@
             <option value="purchase">🛒 Acquisto</option>
             <option value="report">⚙️ Resoconto automatico</option>
           </select></label>
-        <label>Professionista<input name="professional" placeholder="Es. Marco Beffa"></label>
+        <label>Professionista<input name="professional" placeholder="Es. Mark Postura"></label>
         <label>Brand<select name="brand">
             <option>PosturaCorretta</option>
             <option>1impegno</option>
@@ -1381,13 +1381,13 @@
 
   <script>
     const seed = [
-      { id: 1, date: '2026-07-13', time: '09:00', endTime: '10:00', title: 'Trattamento con Mario', kind: 'service', professional: 'Marco Beffa', brand: 'PosturaCorretta', event: '', place: 'Studio Calvisano', referral: 'Centro Salute', direction: 'income', amount: 60, tags: ['cliente', 'fisioterapia'] },
+      { id: 1, date: '2026-07-13', time: '09:00', endTime: '10:00', title: 'Trattamento con Mario', kind: 'service', professional: 'Mark Postura', brand: 'PosturaCorretta', event: '', place: 'Studio Calvisano', referral: 'Centro Salute', direction: 'income', amount: 60, tags: ['cliente', 'fisioterapia'] },
       { id: 2, date: '2026-07-13', time: '11:30', endTime: '12:30', title: 'Lezione di Igiene Posturale', kind: 'service', professional: 'Antonio Ventura', brand: 'Accademia', event: 'Accademia online', place: 'Online', referral: '', direction: 'income', amount: 120, tags: ['lezione', 'gruppo'] },
-      { id: 3, date: '2026-07-14', time: '18:00', endTime: '20:00', title: 'Postura in natura', kind: 'event', professional: 'Marco Beffa', brand: 'PosturaCorretta', event: 'Bagno con il fieno', place: 'Monte Maddalena', referral: 'Spontaneamente', direction: 'income', amount: 240, tags: ['evento', 'natura'] },
+      { id: 3, date: '2026-07-14', time: '18:00', endTime: '20:00', title: 'Postura in natura', kind: 'event', professional: 'Mark Postura', brand: 'PosturaCorretta', event: 'Bagno con il fieno', place: 'Monte Maddalena', referral: 'Spontaneamente', direction: 'income', amount: 240, tags: ['evento', 'natura'] },
       { id: 4, date: '2026-07-15', time: '10:00', endTime: '10:15', title: 'Acquisto dominio e hosting', kind: 'purchase', professional: '', brand: '1impegno', event: 'Fornitore hosting', place: 'Online', referral: '', direction: 'expense', amount: 28, tags: ['acquisto', 'software', 'carta'] },
       { id: 5, date: '2026-07-31', time: '23:45', endTime: '23:59', title: 'Vendita libri · Luglio', kind: 'report', professional: '', brand: 'PosturaCorretta', event: 'Il corpo, un mondo da scoprire', place: 'Vendite online', referral: '', direction: 'income', amount: 961, tags: ['automatico', '31 copie', 'mensile'] },
       { id: 6, date: '2026-07-18', time: '09:30', endTime: '11:00', title: 'Colazione Business', kind: 'event', professional: 'Giulia Riva', brand: 'GeneraImpresa', event: 'Incontro tra professionisti', place: 'Brescia', referral: 'Luca · referral', direction: 'income', amount: 150, tags: ['evento referral', 'business'] },
-      { id: 7, date: '2026-07-16', time: '07:00', endTime: '08:00', title: 'Camminata e planning', kind: 'event', professional: 'Marco Beffa', brand: 'Personale', event: '', place: 'Calvisano', referral: '', direction: 'none', amount: 0, tags: ['salute', 'settimana'] }
+      { id: 7, date: '2026-07-16', time: '07:00', endTime: '08:00', title: 'Camminata e planning', kind: 'event', professional: 'Mark Postura', brand: 'Personale', event: '', place: 'Calvisano', referral: '', direction: 'none', amount: 0, tags: ['salute', 'settimana'] }
     ];
     let entries = JSON.parse(localStorage.getItem('1impegno.entries.v2') || 'null') || seed;
     let activeBrand = 'all';
@@ -1425,7 +1425,7 @@
     const paths = [
       {
         id: 'healing', title: 'Percorso guarigione', brand: 'PosturaCorretta', description: 'Percorso condiviso che può raccogliere i programmi di più professionisti.', programs: [
-          { id: 'postural', title: 'Programma posturale', professional: 'Marco Beffa', items: [
+          { id: 'postural', title: 'Programma posturale', professional: 'Mark Postura', items: [
             { id: 'assessment', title: 'Valutazione iniziale', done: true, entryIds: [1] },
             { id: 'treatment', title: 'Primo trattamento', done: true, entryIds: [3] },
             { id: 'routine', title: 'Routine posturale', done: false, entryIds: [1, 7] },
@@ -1457,21 +1457,21 @@
       { title: 'Movimento e respirazione', brand: 'Benessere Integrato', schedule: 'Ogni giovedì · 19:00–20:00', period: 'Ciclo trimestrale', status: 'Posti disponibili' }
     ];
     const professionalServices = [
-      { id: 'initial-assessment-60', title: 'Valutazione iniziale', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '60 min', price: 80, place: 'Studio Calvisano' },
-      { id: 'individual-session-60', title: 'Seduta individuale', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '60 min', price: 65, place: 'Studio Calvisano oppure online' },
-      { id: 'final-check-60', title: 'Verifica conclusiva', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '60 min', price: 70, place: 'Studio Calvisano oppure online' },
-      { id: 'initial-interview-30', title: 'Colloquio iniziale', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '30 min', price: 35, place: 'Online' },
-      { id: 'orientation-session-30', title: 'Incontro di orientamento', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '30 min', price: 35, place: 'Online' },
-      { id: 'final-check-30', title: 'Verifica conclusiva breve', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '30 min', price: 35, place: 'Online' }
+      { id: 'initial-assessment-60', title: 'Valutazione iniziale', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '60 min', price: 80, place: 'Studio Calvisano' },
+      { id: 'individual-session-60', title: 'Seduta individuale', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '60 min', price: 65, place: 'Studio Calvisano oppure online' },
+      { id: 'final-check-60', title: 'Verifica conclusiva', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '60 min', price: 70, place: 'Studio Calvisano oppure online' },
+      { id: 'initial-interview-30', title: 'Colloquio iniziale', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '30 min', price: 35, place: 'Online' },
+      { id: 'orientation-session-30', title: 'Incontro di orientamento', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '30 min', price: 35, place: 'Online' },
+      { id: 'final-check-30', title: 'Verifica conclusiva breve', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '30 min', price: 35, place: 'Online' }
     ];
     const professionalPaths = [
       {
         title: 'Percorso posturale semestrale',
         brand: 'PosturaCorretta',
-        coordinator: 'Marco Beffa',
+        coordinator: 'Mark Postura',
         duration: '6 mesi',
         programs: [
-          { id:'postural-care', title:'Programma posturale', professional:'Marco Beffa', services:[
+          { id:'postural-care', title:'Programma posturale', professional:'Mark Postura', services:[
             { serviceId: 'initial-assessment-60', quantity: 1 },
             { serviceId: 'individual-session-60', quantity: 8 },
             { serviceId: 'final-check-60', quantity: 1 }
@@ -1486,10 +1486,10 @@
       {
         title: 'Percorso di orientamento iniziale',
         brand: 'PosturaCorretta',
-        coordinator: 'Marco Beffa',
+        coordinator: 'Mark Postura',
         duration: '6 settimane',
         programs: [
-          { id:'orientation', title:'Programma di orientamento', professional:'Marco Beffa', services:[
+          { id:'orientation', title:'Programma di orientamento', professional:'Mark Postura', services:[
             { serviceId: 'initial-interview-30', quantity: 1 },
             { serviceId: 'orientation-session-30', quantity: 1 },
             { serviceId: 'final-check-30', quantity: 1 }
@@ -1500,16 +1500,16 @@
       }
     ];
     const professionalClasses = [
-      { title: 'Classe settimanale di Igiene Posturale', brand: 'PosturaCorretta', professional: 'Marco Beffa', schedule: 'Martedì · 18:30–19:30', period: 'Settembre–Giugno', capacity: '12 persone', price: 45 },
-      { title: 'Movimento e respirazione', brand: 'Benessere Integrato', professional: 'Marco Beffa', schedule: 'Giovedì · 19:00–20:00', period: 'Ciclo trimestrale', capacity: '10 persone', price: 55 }
+      { title: 'Classe settimanale di Igiene Posturale', brand: 'PosturaCorretta', professional: 'Mark Postura', schedule: 'Martedì · 18:30–19:30', period: 'Settembre–Giugno', capacity: '12 persone', price: 45 },
+      { title: 'Movimento e respirazione', brand: 'Benessere Integrato', professional: 'Mark Postura', schedule: 'Giovedì · 19:00–20:00', period: 'Ciclo trimestrale', capacity: '10 persone', price: 55 }
     ];
     const professionalCourses = [
-      { title: 'Igiene Posturale · corso introduttivo', brand: 'PosturaCorretta', professional: 'Marco Beffa', format: '4 lezioni', delivery: 'Online e in presenza', price: 120 },
-      { title: 'Formazione insegnanti', brand: 'Accademia', professional: 'Marco Beffa', format: 'Percorso modulare', delivery: 'Calendario in preparazione', price: 0 }
+      { title: 'Igiene Posturale · corso introduttivo', brand: 'PosturaCorretta', professional: 'Mark Postura', format: '4 lezioni', delivery: 'Online e in presenza', price: 120 },
+      { title: 'Formazione insegnanti', brand: 'Accademia', professional: 'Mark Postura', format: 'Percorso modulare', delivery: 'Calendario in preparazione', price: 0 }
     ];
     const professionalEvents = [
-      { title: 'Introduzione all’Igiene Posturale', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '4 ore e 30 min', programItems: 3, occurrences: 2, price: 50 },
-      { title: 'Postura in natura', brand: 'PosturaCorretta', professional: 'Marco Beffa', duration: '2 ore', programItems: 2, occurrences: 1, price: 30 }
+      { title: 'Introduzione all’Igiene Posturale', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '4 ore e 30 min', programItems: 3, occurrences: 2, price: 50 },
+      { title: 'Postura in natura', brand: 'PosturaCorretta', professional: 'Mark Postura', duration: '2 ore', programItems: 2, occurrences: 1, price: 30 }
     ];
     const recurrences = [
       { id: 'consulting', title: 'Consulenza continuativa', brand: 'GeneraImpresa', amount: 500, frequency: 'Mensile · giorno 1', method: 'Bonifico', next: ['2026-08-01', '2026-09-01', '2026-10-01'], direction: 'income' },

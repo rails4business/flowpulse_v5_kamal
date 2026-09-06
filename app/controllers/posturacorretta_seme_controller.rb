@@ -9,6 +9,8 @@ class PosturacorrettaSemeController < ApplicationController
   GUIDED_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso_guidato.yml").freeze
   LESSON_PROGRAM_PATH = Rails.root.join("config/data/posturacorretta/accademia/programma_lezioni_posturacorretta.yml").freeze
   SCHEDULED_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/lezioni_programmate.yml").freeze
+  PRACTICAL_SHEETS_ROOT = Rails.root.join("config/data/posturacorretta/accademia/schede_pratiche").freeze
+  STUDENT_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/programma_studenti_lezioni.yml").freeze
   GUIDED_ACTIVITIES_ROOT = Rails.root.join("config/data/posturacorretta/accademia/attivita_percorso_guidato").freeze
   LEARNING_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso.yml").freeze
   CONTENT_ROOT = Rails.root.join("config/data/posturacorretta").cleanpath.freeze
@@ -28,7 +30,7 @@ class PosturacorrettaSemeController < ApplicationController
     return if performed?
 
     if params[:attivita].blank?
-      return redirect_to posturacorretta_course_path(corso: @learning_course.fetch("slug"), vista: "incontri")
+      return redirect_to posturacorretta_course_path(corso: @learning_course.fetch("slug"), vista: "schede")
     end
     render :show
   end
@@ -37,6 +39,7 @@ class PosturacorrettaSemeController < ApplicationController
     load_curriculum_sources
     course_slug = params[:corso].presence_in(@all_didactic_courses.map { |item| item.fetch("slug") })
     return redirect_to(posturacorretta_path, alert: "Corso non trovato") unless course_slug
+    return redirect_to(posturacorretta_course_path(corso: course_slug, vista: "schede"), status: :moved_permanently) if params[:vista] == "incontri"
 
     load_course_overview(course_slug)
     render :show
@@ -234,15 +237,28 @@ class PosturacorrettaSemeController < ApplicationController
     didactic_course = @all_didactic_courses.find { |course| course.fetch("slug") == course_slug }
 
     @course_overview = true
-    @course_overview_tab = params[:vista].presence_in(%w[incontri capitoli]) || "incontri"
+    @course_overview_tab = params[:vista].presence_in(%w[schede capitoli]) || "schede"
     @reader_course_slug = course_slug
     @selected_course = didactic_course
     @course_program_steps = decorate_program_steps(program_by_course.fetch(course_slug, { "program" => [] }).fetch("program", []))
+    @course_practical_sheets = practical_sheets_for(course_slug)
     selected_activity_slug = params[:attivita].presence_in(@course_program_steps.map { |step| step.fetch("slug") })
     @selected_course_program_step = @course_program_steps.find { |step| step.fetch("slug") == selected_activity_slug } ||
       @course_program_steps.find { |step| step.fetch("progress_state") == "available" } ||
       @course_program_steps.first
     @course_lessons = didactic_course.fetch("chapters", []).map { |chapter| learning_lesson(chapter) }
+  end
+
+  def practical_sheets_for(course_slug)
+    course_directory = PRACTICAL_SHEETS_ROOT.join(course_slug).cleanpath
+    return [] unless course_directory.directory? && course_directory.to_s.start_with?("#{PRACTICAL_SHEETS_ROOT}/")
+
+    Dir.children(course_directory).grep(/\.yml\z/).sort.filter_map do |filename|
+      sheet = YAML.safe_load_file(course_directory.join(filename), permitted_classes: [], aliases: false)
+      next unless sheet.is_a?(Hash)
+
+      sheet.merge("file" => "#{course_slug}/#{filename}")
+    end.sort_by { |sheet| sheet.fetch("number", "") }
   end
 
   def decorate_program_steps(steps)
@@ -402,8 +418,28 @@ class PosturacorrettaSemeController < ApplicationController
         "courses" => section.fetch("courses", []).filter_map { |course| dashboard_courses_by_slug[course.fetch("slug")] }
       )
     end)
+    load_student_lessons_program
     load_dashboard_agenda
     @selected_participation = params[:participation].presence_in(%w[group individual])
+  end
+
+  def load_student_lessons_program
+    program = YAML.safe_load_file(STUDENT_LESSONS_PATH, permitted_classes: [], aliases: false).fetch("programma")
+    @student_lessons_program_title = program.fetch("title")
+    @student_lessons_program = program.fetch("lessons").map do |lesson|
+      sheets = lesson.fetch("sheets", {}).filter_map do |area, reference|
+        relative_path = reference.fetch("file")
+        sheet_path = PRACTICAL_SHEETS_ROOT.join(relative_path).cleanpath
+        next unless sheet_path.file? && sheet_path.to_s.start_with?("#{PRACTICAL_SHEETS_ROOT}/")
+
+        sheet = YAML.safe_load_file(sheet_path, permitted_classes: [], aliases: false)
+        next unless sheet.is_a?(Hash)
+
+        sheet.merge("area" => area, "file" => relative_path)
+      end
+
+      lesson.merge("sheets" => sheets)
+    end
   end
 
   def load_dashboard_agenda

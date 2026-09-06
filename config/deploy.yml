@@ -35,6 +35,12 @@ proxy:
     - www.markpostura.com
     - ilgiardinodelcorpo.it
     - www.ilgiardinodelcorpo.it
+    - percorsointegrato.it
+    - www.percorsointegrato.it
+    - svuotamente.it
+    - www.svuotamente.it
+    - impegno.it
+    - www.impegno.it
     
   healthcheck:
     path: /up
@@ -54,7 +60,7 @@ env:
     DB_PORT: 5432
     DB_NAME: flowpulse_v_5_production
     DB_USERNAME: flowpulse
-    APP_HOSTS: "flowpulse.net,www.flowpulse.net,generaimpresa.it,www.generaimpresa.it,rails4b.com,www.rails4b.com,1impegno.it,www.1impegno.it,cantachetipassa.it,www.cantachetipassa.it,posturacorretta.org,www.posturacorretta.org,igieneposturale.it,www.igieneposturale.it,markpostura.it,www.markpostura.it,markpostura.com,www.markpostura.com,ilgiardinodelcorpo.it,www.ilgiardinodelcorpo.it"
+    APP_HOSTS: "flowpulse.net,www.flowpulse.net,generaimpresa.it,www.generaimpresa.it,rails4b.com,www.rails4b.com,1impegno.it,www.1impegno.it,impegno.it,www.impegno.it,cantachetipassa.it,www.cantachetipassa.it,posturacorretta.org,www.posturacorretta.org,igieneposturale.it,www.igieneposturale.it,markpostura.it,www.markpostura.it,markpostura.com,www.markpostura.com,ilgiardinodelcorpo.it,www.ilgiardinodelcorpo.it,percorsointegrato.it,www.percorsointegrato.it,svuotamente.it,www.svuotamente.it"
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"

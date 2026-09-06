@@ -18,6 +18,11 @@ module Admin
       get admin_prototype_path(path: "viste_html/6_weekplan.html")
       assert_response :success
       assert_equal "text/html", response.content_type
+
+      get admin_prototype_path(path: "viste_html/home_posturacorretta_programma.html")
+      assert_response :success
+    assert_select "h1", text: "Programma lezioni"
+      assert_select "ol[aria-label='Lezioni del programma studenti'] li", count: 43
     end
   end
 end

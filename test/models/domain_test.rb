@@ -1,6 +1,16 @@
 require "test_helper"
 
 class DomainTest < ActiveSupport::TestCase
+  test "configures 1impegno as an authenticated primary domain" do
+    config = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access.fetch("1impegno.it")
+
+    assert_equal "brands/impegno/home", config.fetch("target_controller")
+    assert_equal "index", config.fetch("target_action")
+    assert_equal "impegno", config.fetch("auth_slug")
+    assert_equal "/impegno", config.fetch("auth_default_path")
+    assert_equal true, config.fetch("auth_enabled")
+  end
+
   test "normalizes hostnames" do
     domain = Domain.create!(
       hostname: " POSTURACORRETTA.ORG ",

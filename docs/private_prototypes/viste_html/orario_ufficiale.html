@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settimana Tipo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f6f8;color:#111827;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.panel{background:#fff;border:1px solid #e5e7eb;border-radius:18px}
+.btn{border:0;border-radius:10px;padding:9px 12px;font-weight:800;font-size:12px;cursor:pointer}
+.btn-dark{background:#111827;color:#fff}
+.btn-light{background:#f3f4f6;color:#374151}
+.field{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:9px 10px;font-size:13px;background:#fff}
+.calendar-wrap{overflow:auto}
+.calendar-grid{display:grid;grid-template-columns:50px repeat(7,minmax(145px,1fr));min-width:1100px}
+.daybody{position:relative;border-left:1px solid #eef0f2;height:1008px}
+.daybody::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent 27px,#eef0f2 27px,#eef0f2 28px);pointer-events:none}
+.hour-label{height:28px;font-size:10px;color:#9ca3af;text-align:right;padding:7px 8px 0 0}
+.event{position:absolute;left:3px;right:3px;border-radius:8px;padding:5px 6px;font-size:10px;font-weight:800;overflow:hidden;cursor:grab;border:1px solid rgba(0,0,0,.06);touch-action:none;user-select:none}
+.event:active{cursor:grabbing}
+.event.dragging{opacity:.72;outline:2px solid rgba(17,24,39,.25);z-index:20}
+.daybody.drag-over{background:rgba(17,24,39,.025)}
+.event small{display:block;font-size:9px;font-weight:600;opacity:.7;margin-top:2px}
+.day-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+.day-sub{font-size:9px;color:#9ca3af;margin-top:2px}
+.gruppi{background:#ddd6fe}
+.appuntamenti{background:#bfdbfe}
+.risorse{background:#fdba74}
+.apprendimento{background:#fecaca}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.42);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal-backdrop.open{display:flex}
+.modal{width:min(450px,100%);background:#fff;border-radius:18px;border:1px solid #e5e7eb;box-shadow:0 24px 80px rgba(15,23,42,.25);padding:18px}
+</style>
+</head>
+<body>
+
+<div class="max-w-[1750px] mx-auto p-4 md:p-6">
+  <header class="flex flex-wrap items-end justify-between gap-4 mb-4">
+    <div>
+      <h1 class="text-3xl font-black tracking-tight">Settimana tipo</h1>
+      <p class="text-sm text-gray-500 mt-1">04:00 — 22:00</p>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button class="btn btn-dark filter-btn" data-filter="all">Tutti</button>
+        <button class="btn btn-light filter-btn" data-filter="gruppi">Gruppi PosturaCorretta</button>
+        <button class="btn btn-light filter-btn" data-filter="appuntamenti">Appuntamenti</button>
+        <button class="btn btn-light filter-btn" data-filter="risorse">Risorse</button>
+        <button class="btn btn-light filter-btn" data-filter="apprendimento">Apprendimento</button>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <button id="newBtn" class="btn btn-dark">+ Nuova attività</button>
+      <button id="saveBtn" class="btn btn-light">Salva</button>
+      <button id="exportBtn" class="btn btn-light">Esporta JSON</button>
+      <label class="btn btn-light cursor-pointer">
+        Importa JSON
+        <input id="importInput" type="file" accept=".json,application/json" class="hidden">
+      </label>
+    </div>
+  </header>
+
+  <main class="panel overflow-hidden">
+    <div class="calendar-wrap">
+      <div class="calendar-grid">
+        <div class="p-3 border-b border-gray-100"></div>
+        <div class="p-3 text-center border-b border-gray-100"><div class="day-title">🌙 Lunedì</div><div class="day-sub">Sentire</div></div>
+        <div class="p-3 text-center border-b border-gray-100"><div class="day-title">♂ Martedì</div><div class="day-sub">Agire</div></div>
+        <div class="p-3 text-center border-b border-gray-100"><div class="day-title">☿ Mercoledì</div><div class="day-sub">Comunicare</div></div>
+        <div class="p-3 text-center border-b border-gray-100"><div class="day-title">♃ Giovedì</div><div class="day-sub">Crescere</div></div>
+        <div class="p-3 text-center border-b border-gray-100"><div class="day-title">♀ Venerdì</div><div class="day-sub">Armonizzare</div></div>
+        <div class="p-3 text-center border-b border-gray-100"><div class="day-title">♄ Sabato</div><div class="day-sub">Organizzare</div></div>
+        <div class="p-3 text-center border-b border-gray-100"><div class="day-title">☉ Domenica</div><div class="day-sub">Essere</div></div>
+
+        <div id="hours"></div>
+        <div class="daybody" data-day="lun"></div>
+        <div class="daybody" data-day="mar"></div>
+        <div class="daybody" data-day="mer"></div>
+        <div class="daybody" data-day="gio"></div>
+        <div class="daybody" data-day="ven"></div>
+        <div class="daybody" data-day="sab"></div>
+        <div class="daybody" data-day="dom"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="eventModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="flex justify-between items-center gap-3 mb-4">
+      <h2 id="modalTitle" class="text-lg font-black">Nuova attività</h2>
+      <button id="closeModal" class="btn btn-light">✕</button>
+    </div>
+
+    <div class="space-y-3">
+      <select id="presetSelect" class="field">
+        <option value="">Attività preimpostata…</option>
+      </select>
+
+      <input id="nameInput" class="field" placeholder="Nome attività">
+
+      <select id="calendarInput" class="field">
+        <option value="gruppi">Gruppi PosturaCorretta</option>
+        <option value="appuntamenti">Appuntamenti</option>
+        <option value="risorse">Risorse</option>
+        <option value="apprendimento">Apprendimento</option>
+      </select>
+
+      <select id="dayInput" class="field">
+        <option value="lun">Lunedì</option>
+        <option value="mar">Martedì</option>
+        <option value="mer">Mercoledì</option>
+        <option value="gio">Giovedì</option>
+        <option value="ven">Venerdì</option>
+        <option value="sab">Sabato</option>
+        <option value="dom">Domenica</option>
+      </select>
+
+      <div class="grid grid-cols-2 gap-2">
+        <input id="startInput" type="time" min="04:00" max="22:00" value="09:00" class="field">
+        <input id="endInput" type="time" min="04:00" max="22:00" value="10:00" class="field">
+      </div>
+
+      <div class="flex gap-2 pt-1">
+        <button id="deleteBtn" class="btn btn-light text-red-600 hidden">Elimina</button>
+        <div class="flex-1"></div>
+        <button id="cancelBtn" class="btn btn-light">Annulla</button>
+        <button id="saveEventBtn" class="btn btn-dark">Salva</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const START=4*60, END=22*60, PX=28/30;
+const STORAGE_KEY="settimana_tipo_v5";
+let activeFilter="all";
+let editingIndex=null;
+
+const presets=[
+  {name:"Gruppo PosturaCorretta",calendar:"gruppi",day:"mer",start:"15:00",end:"16:00"},
+  {name:"Appuntamenti",calendar:"appuntamenti",day:"mar",start:"16:00",end:"19:00"},
+  {name:"Registrare video",calendar:"risorse",day:"mer",start:"09:00",end:"12:00"},
+  {name:"Programmazione",calendar:"risorse",day:"gio",start:"09:00",end:"12:00"},
+  {name:"Suonare",calendar:"apprendimento",day:"ven",start:"18:30",end:"19:30"},
+  {name:"Camminare",calendar:"apprendimento",day:"lun",start:"07:00",end:"08:00"},
+  {name:"Paziente domiciliare",calendar:"appuntamenti",day:"lun",start:"15:00",end:"16:00"},
+  {name:"Gruppo PosturaCorretta",calendar:"gruppi",day:"ven",start:"20:00",end:"21:00"}
+];
+
+const defaultEvents=[
+  {title:"Camminare",day:"lun",start:"07:00",end:"08:00",calendar:"apprendimento"},
+  {title:"Paziente domiciliare",day:"lun",start:"15:00",end:"16:00",calendar:"appuntamenti"},
+  {title:"Paziente domiciliare",day:"lun",start:"16:00",end:"17:00",calendar:"appuntamenti"},
+
+  {title:"Appuntamenti",day:"mar",start:"16:00",end:"19:00",calendar:"appuntamenti"},
+  {title:"Paziente domiciliare",day:"mar",start:"14:00",end:"15:00",calendar:"appuntamenti"},
+  {title:"Paziente domiciliare",day:"mar",start:"19:00",end:"20:00",calendar:"appuntamenti"},
+
+  {title:"Registrare video",day:"mer",start:"09:00",end:"12:00",calendar:"risorse"},
+  {title:"Call professionisti",day:"mer",start:"13:00",end:"14:30",calendar:"risorse"},
+  {title:"Gruppo PosturaCorretta",day:"mer",start:"15:00",end:"16:00",calendar:"gruppi"},
+  {title:"Gruppo PosturaCorretta",day:"mer",start:"20:00",end:"21:00",calendar:"gruppi"},
+
+  {title:"Programmazione",day:"gio",start:"09:00",end:"12:00",calendar:"risorse"},
+
+  {title:"Gruppo PosturaCorretta",day:"ven",start:"15:00",end:"16:00",calendar:"gruppi"},
+  {title:"Suonare",day:"ven",start:"18:30",end:"19:30",calendar:"apprendimento"},
+  {title:"Gruppo PosturaCorretta",day:"ven",start:"20:00",end:"21:00",calendar:"gruppi"},
+
+  {title:"Organizzazione",day:"sab",start:"09:00",end:"11:00",calendar:"risorse"},
+  {title:"Camminare",day:"dom",start:"08:00",end:"09:00",calendar:"apprendimento"}
+];
+
+let events=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null")?.events || structuredClone(defaultEvents);
+
+function mins(t){const [h,m]=t.split(":").map(Number);return h*60+m}
+function topPos(t){return (mins(t)-START)*PX}
+function blockHeight(a,b){return Math.max(28,(mins(b)-mins(a))*PX)}
+function timeFromMinutes(total){
+  total=Math.max(START,Math.min(END,total));
+  const h=Math.floor(total/60),m=total%60;
+  return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
+}
+function roundTo15(total){
+  return Math.round(total/15)*15;
+}
+
+function renderHours(){
+  const hours=document.getElementById("hours");
+  hours.innerHTML="";
+  for(let h=4;h<22;h++){
+    ["00","30"].forEach(m=>{
+      const d=document.createElement("div");
+      d.className="hour-label";
+      d.textContent=m==="00"?String(h).padStart(2,"0")+":00":"";
+      hours.appendChild(d);
+    });
+  }
+}
+
+function render(){
+  document.querySelectorAll(".daybody").forEach(c=>c.innerHTML="");
+  events.forEach((ev,index)=>{
+    if(activeFilter!=="all" && ev.calendar!==activeFilter)return;
+    const col=document.querySelector(`.daybody[data-day="${ev.day}"]`);
+    if(!col)return;
+    const el=document.createElement("div");
+    el.className=`event ${ev.calendar}`;
+    el.style.top=topPos(ev.start)+"px";
+    el.style.height=blockHeight(ev.start,ev.end)+"px";
+    el.innerHTML=`${ev.title}<small>${ev.start}–${ev.end}</small>`;
+
+    let dragState=null;
+    let suppressClick=false;
+
+    el.addEventListener("pointerdown",(e)=>{
+      if(e.button!==0 && e.pointerType==="mouse")return;
+      const rect=el.getBoundingClientRect();
+      dragState={
+        pointerId:e.pointerId,
+        startX:e.clientX,
+        startY:e.clientY,
+        offsetY:e.clientY-rect.top,
+        originalDay:ev.day,
+        originalStart:ev.start,
+        originalEnd:ev.end,
+        duration:mins(ev.end)-mins(ev.start),
+        moved:false
+      };
+      el.setPointerCapture(e.pointerId);
+    });
+
+    el.addEventListener("pointermove",(e)=>{
+      if(!dragState || e.pointerId!==dragState.pointerId)return;
+      const dx=Math.abs(e.clientX-dragState.startX);
+      const dy=Math.abs(e.clientY-dragState.startY);
+      if(!dragState.moved && dx<5 && dy<5)return;
+
+      dragState.moved=true;
+      suppressClick=true;
+      el.classList.add("dragging");
+
+      document.querySelectorAll(".daybody").forEach(c=>c.classList.remove("drag-over"));
+      const target=document.elementFromPoint(e.clientX,e.clientY)?.closest(".daybody");
+      if(target)target.classList.add("drag-over");
+    });
+
+    el.addEventListener("pointerup",(e)=>{
+      if(!dragState || e.pointerId!==dragState.pointerId)return;
+
+      document.querySelectorAll(".daybody").forEach(c=>c.classList.remove("drag-over"));
+      el.classList.remove("dragging");
+
+      if(dragState.moved){
+        const target=document.elementFromPoint(e.clientX,e.clientY)?.closest(".daybody");
+        if(target){
+          const rect=target.getBoundingClientRect();
+          const relativeY=e.clientY-rect.top-dragState.offsetY;
+          let newStart=roundTo15(START + relativeY/PX);
+          newStart=Math.max(START,Math.min(END-dragState.duration,newStart));
+          const newEnd=newStart+dragState.duration;
+
+          ev.day=target.dataset.day;
+          ev.start=timeFromMinutes(newStart);
+          ev.end=timeFromMinutes(newEnd);
+          render();
+        }
+      }
+
+      dragState=null;
+      setTimeout(()=>{suppressClick=false},0);
+    });
+
+    el.addEventListener("pointercancel",()=>{
+      document.querySelectorAll(".daybody").forEach(c=>c.classList.remove("drag-over"));
+      el.classList.remove("dragging");
+      dragState=null;
+    });
+
+    el.addEventListener("click",()=>{
+      if(!suppressClick)openModal(index);
+    });
+
+    col.appendChild(el);
+  });
+}
+function openModal(index=null){
+  editingIndex=index;
+  document.getElementById("presetSelect").value="";
+  if(index===null){
+    document.getElementById("modalTitle").textContent="Nuova attività";
+    document.getElementById("nameInput").value="";
+    document.getElementById("calendarInput").value="gruppi";
+    document.getElementById("dayInput").value="lun";
+    document.getElementById("startInput").value="09:00";
+    document.getElementById("endInput").value="10:00";
+    document.getElementById("deleteBtn").classList.add("hidden");
+  }else{
+    const ev=events[index];
+    document.getElementById("modalTitle").textContent="Modifica attività";
+    document.getElementById("nameInput").value=ev.title;
+    document.getElementById("calendarInput").value=ev.calendar;
+    document.getElementById("dayInput").value=ev.day;
+    document.getElementById("startInput").value=ev.start;
+    document.getElementById("endInput").value=ev.end;
+    document.getElementById("deleteBtn").classList.remove("hidden");
+  }
+  document.getElementById("eventModal").classList.add("open");
+}
+
+function closeModal(){
+  document.getElementById("eventModal").classList.remove("open");
+  editingIndex=null;
+}
+
+presets.forEach((p,i)=>{
+  const o=document.createElement("option");
+  o.value=i;
+  o.textContent=p.name;
+  document.getElementById("presetSelect").appendChild(o);
+});
+
+document.getElementById("presetSelect").onchange=e=>{
+  if(e.target.value==="")return;
+  const p=presets[Number(e.target.value)];
+  document.getElementById("nameInput").value=p.name;
+  document.getElementById("calendarInput").value=p.calendar;
+  document.getElementById("dayInput").value=p.day;
+  document.getElementById("startInput").value=p.start;
+  document.getElementById("endInput").value=p.end;
+};
+
+document.getElementById("newBtn").onclick=()=>openModal();
+document.getElementById("closeModal").onclick=closeModal;
+document.getElementById("cancelBtn").onclick=closeModal;
+document.getElementById("eventModal").onclick=e=>{if(e.target.id==="eventModal")closeModal()};
+
+document.getElementById("saveEventBtn").onclick=()=>{
+  const title=document.getElementById("nameInput").value.trim();
+  const calendar=document.getElementById("calendarInput").value;
+  const day=document.getElementById("dayInput").value;
+  const start=document.getElementById("startInput").value;
+  const end=document.getElementById("endInput").value;
+  if(!title)return alert("Inserisci il nome dell'attività.");
+  if(mins(start)<START||mins(end)>END||mins(end)<=mins(start))return alert("Usa un orario valido tra 04:00 e 22:00.");
+  const data={title,calendar,day,start,end};
+  if(editingIndex===null)events.push(data);else events[editingIndex]=data;
+  render();
+  closeModal();
+};
+
+document.getElementById("deleteBtn").onclick=()=>{
+  if(editingIndex===null)return;
+  events.splice(editingIndex,1);
+  render();
+  closeModal();
+};
+
+document.querySelectorAll(".filter-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    activeFilter=btn.dataset.filter;
+    document.querySelectorAll(".filter-btn").forEach(b=>{b.classList.remove("btn-dark");b.classList.add("btn-light")});
+    btn.classList.remove("btn-light");btn.classList.add("btn-dark");
+    render();
+  };
+});
+
+document.getElementById("saveBtn").onclick=()=>{
+  localStorage.setItem(STORAGE_KEY,JSON.stringify({version:5,events}));
+  alert("Settimana salvata.");
+};
+
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify({version:5,events},null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="settimana_tipo.json";a.click();
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById("importInput").onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(!Array.isArray(data.events))throw new Error();
+    events=data.events;render();
+  }catch{alert("JSON non valido.");}
+  e.target.value="";
+};
+
+renderHours();
+render();
+</script>
+</body>
+</html>

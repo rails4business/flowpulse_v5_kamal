@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scheda percorso studente — PosturaCorretta</title>
+  <style>
+    :root { --ink:#18222d; --muted:#64748b; --line:#cbd5e1; --soft:#f1f5f9; --accent:#0f766e; --accent-soft:#ccfbf1; --gold:#b7791f; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#e2e8f0; color:var(--ink); font:10pt/1.32 Arial, Helvetica, sans-serif; }
+    .sheet { width:210mm; min-height:297mm; margin:10mm auto; padding:11mm 12mm; background:white; box-shadow:0 4px 25px #47556944; page-break-after:always; position:relative; }
+    .sheet:last-child { page-break-after:auto; }
+    .masthead { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid var(--ink); padding-bottom:5mm; margin-bottom:5mm; }
+    .brand { font-size:9pt; letter-spacing:.18em; font-weight:700; text-transform:uppercase; color:var(--accent); }
+    h1 { font-size:22pt; margin:1mm 0 0; line-height:1; letter-spacing:-.03em; }
+    h2 { margin:0 0 2.5mm; font-size:10pt; text-transform:uppercase; letter-spacing:.08em; }
+    h3 { margin:0; font-size:9pt; }
+    p { margin:0; }
+    .doc-code { text-align:right; font-size:8pt; color:var(--muted); }
+    .intro { max-width:140mm; color:#334155; font-size:9.5pt; margin-bottom:5mm; }
+    .grid { display:grid; gap:3mm; }
+    .two { grid-template-columns:1fr 1fr; }
+    .three { grid-template-columns:repeat(3,1fr); }
+    .four { grid-template-columns:repeat(4,1fr); }
+    .field { border-bottom:1px solid var(--line); min-height:9mm; padding:1mm 0; }
+    .label { display:block; color:var(--muted); font-size:7.5pt; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+    .value { display:block; padding-top:1.2mm; font-weight:700; }
+    .block { border:1px solid var(--line); padding:3.2mm; margin-top:4mm; }
+    .soft { background:var(--soft); border:0; }
+    .route { display:grid; grid-template-columns:25mm 1fr; border:1px solid var(--line); margin-top:4mm; }
+    .route > div { padding:3mm; border-bottom:1px solid var(--line); }
+    .route > div:nth-last-child(-n+2) { border-bottom:0; }
+    .route .step { font-size:8pt; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); border-right:1px solid var(--line); }
+    .route strong { display:block; }
+    .route small { display:block; margin-top:.8mm; color:var(--muted); }
+    .lesson-head { display:grid; grid-template-columns:18mm 31mm 1fr 18mm; gap:2mm; font-size:7.5pt; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; padding:0 2mm 1.5mm; }
+    .lesson { display:grid; grid-template-columns:18mm 31mm 1fr 18mm; gap:2mm; align-items:stretch; border-top:1px solid var(--line); min-height:10.5mm; padding:1.5mm 2mm; }
+    .lesson:nth-child(even) { background:#fafcff; }
+    .lesson .date { font-weight:700; }
+    .areas { display:flex; gap:1.3mm; flex-wrap:wrap; align-content:flex-start; }
+    .tag { border:1px solid #94a3b8; border-radius:99px; padding:.5mm 1.5mm; font-size:7.3pt; white-space:nowrap; }
+    .tag.massage { border-color:#d6a866; background:#fff8e8; }
+    .tag.movement { border-color:#68a8a0; background:#effcf9; }
+    .tag.meditation { border-color:#a78bca; background:#f7f3ff; }
+    .check { display:inline-block; width:3.5mm; height:3.5mm; border:1px solid #64748b; margin-right:1mm; vertical-align:-.5mm; }
+    .weeks { display:grid; grid-template-columns:repeat(23,1fr); gap:1mm; margin-top:2mm; }
+    .week { border:1px solid var(--line); min-height:7.5mm; text-align:center; padding-top:1mm; font-size:7pt; }
+    .week b { display:block; font-size:6.5pt; color:var(--muted); }
+    .week.done { background:var(--accent-soft); border-color:#5eead4; }
+    .notice { border-left:3px solid var(--accent); background:#f0fdfa; padding:2.5mm 3mm; color:#134e4a; font-size:8.5pt; margin-top:4mm; }
+    .small { font-size:8pt; color:var(--muted); }
+    .internship { display:grid; grid-template-columns:29mm 1fr 22mm; border-top:1px solid var(--line); min-height:13mm; }
+    .internship > div { padding:2mm; border-right:1px solid var(--line); }
+    .internship > div:last-child { border-right:0; }
+    .internship strong { font-size:8.5pt; }
+    .signature { border-top:1px solid var(--ink); min-height:14mm; padding-top:1.5mm; font-size:7.5pt; color:var(--muted); }
+    .outcome { border:2px solid var(--accent); padding:4mm; margin-top:4mm; }
+    .outcome h2 { color:var(--accent); }
+    .status { display:grid; grid-template-columns:1fr 1fr; gap:3mm; margin-top:3mm; }
+    .status > div { border:1px solid var(--line); padding:2.5mm; min-height:19mm; }
+    .status .active { border-color:var(--accent); background:#f0fdfa; }
+    .footer { position:absolute; left:12mm; right:12mm; bottom:8mm; display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:2mm; color:var(--muted); font-size:7.5pt; }
+    @media print { body { background:white; } .sheet { margin:0; box-shadow:none; } }
+    @page { size:A4 portrait; margin:0; }
+  </style>
+</head>
+<body>
+  <section class="sheet">
+    <header class="masthead">
+      <div>
+        <div class="brand">PosturaCorretta · Accademia</div>
+        <h1>Scheda percorso studente</h1>
+      </div>
+      <div class="doc-code">Registro personale · fronte<br>Anno formativo: __________</div>
+    </header>
+
+    <p class="intro">Una scheda semplice, aggiornata lezione dopo lezione. Registra il percorso formativo, le pratiche svolte e l’accesso graduale al tirocinio e all’abilitazione.</p>
+
+    <div class="grid two">
+      <div class="field"><span class="label">Studente</span><span class="value">Nome e cognome ____________________________________</span></div>
+      <div class="field"><span class="label">Codice / profilo</span><span class="value">____________________________________</span></div>
+      <div class="field"><span class="label">Luogo principale</span><span class="value">Sede / città ________________________________________</span></div>
+      <div class="field"><span class="label">Insegnante responsabile</span><span class="value">____________________________________</span></div>
+    </div>
+
+    <div class="route" aria-label="Percorso di formazione">
+      <div class="step">1 · Studio</div><div><strong>Lezioni e pratica guidata</strong><small>Fino a 46 settimane attive; ogni lezione ha data, presenza e schede aggiornate.</small></div>
+      <div class="step">2 · Pratica</div><div><strong>Consolidamento delle tre aree</strong><small>Massaggio · Movimento · Meditazione, con osservazioni dell’insegnante.</small></div>
+      <div class="step">3 · Tirocinio</div><div><strong>Affiancamento e conduzione supervisionata</strong><small>Gruppo e singolo, secondo il profilo professionale dello studente.</small></div>
+      <div class="step">4 · Diploma</div><div><strong>Abilitazione insegnante</strong><small>La scheda diventa attestazione e apre la pagina pubblica dell’insegnante.</small></div>
+    </div>
+
+    <section class="block soft">
+      <h2>Calendario formativo · 46 settimane attive</h2>
+      <p class="small">Spuntare una settimana solo dopo avere registrato almeno una lezione. Le date effettive e le schede della lezione restano nel profilo digitale.</p>
+      <div class="weeks">
+        <div class="week done"><b>SETT.</b>1</div><div class="week"><b>SETT.</b>2</div><div class="week"><b>SETT.</b>3</div><div class="week"><b>SETT.</b>4</div><div class="week"><b>SETT.</b>5</div><div class="week"><b>SETT.</b>6</div><div class="week"><b>SETT.</b>7</div><div class="week"><b>SETT.</b>8</div><div class="week"><b>SETT.</b>9</div><div class="week"><b>SETT.</b>10</div><div class="week"><b>SETT.</b>11</div><div class="week"><b>SETT.</b>12</div><div class="week"><b>SETT.</b>13</div><div class="week"><b>SETT.</b>14</div><div class="week"><b>SETT.</b>15</div><div class="week"><b>SETT.</b>16</div><div class="week"><b>SETT.</b>17</div><div class="week"><b>SETT.</b>18</div><div class="week"><b>SETT.</b>19</div><div class="week"><b>SETT.</b>20</div><div class="week"><b>SETT.</b>21</div><div class="week"><b>SETT.</b>22</div><div class="week"><b>SETT.</b>23</div>
+        <div class="week"><b>SETT.</b>24</div><div class="week"><b>SETT.</b>25</div><div class="week"><b>SETT.</b>26</div><div class="week"><b>SETT.</b>27</div><div class="week"><b>SETT.</b>28</div><div class="week"><b>SETT.</b>29</div><div class="week"><b>SETT.</b>30</div><div class="week"><b>SETT.</b>31</div><div class="week"><b>SETT.</b>32</div><div class="week"><b>SETT.</b>33</div><div class="week"><b>SETT.</b>34</div><div class="week"><b>SETT.</b>35</div><div class="week"><b>SETT.</b>36</div><div class="week"><b>SETT.</b>37</div><div class="week"><b>SETT.</b>38</div><div class="week"><b>SETT.</b>39</div><div class="week"><b>SETT.</b>40</div><div class="week"><b>SETT.</b>41</div><div class="week"><b>SETT.</b>42</div><div class="week"><b>SETT.</b>43</div><div class="week"><b>SETT.</b>44</div><div class="week"><b>SETT.</b>45</div><div class="week"><b>SETT.</b>46</div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Registro sintetico delle lezioni</h2>
+      <div class="lesson-head"><span>N.</span><span>Data / presenza</span><span>Schede e pratica svolta</span><span>Firma</span></div>
+      <div class="lesson"><strong>01</strong><span class="date">___ / ___ / ____<br><span class="small">□ presente □ recupero</span></span><div class="areas"><span class="tag massage">Massaggio</span><span class="tag movement">Movimento</span><span class="tag meditation">Meditazione</span><span class="small">Schede: ____________________</span></div><span>________</span></div>
+      <div class="lesson"><strong>02</strong><span class="date">___ / ___ / ____<br><span class="small">□ presente □ recupero</span></span><div class="areas"><span class="tag massage">Massaggio</span><span class="tag movement">Movimento</span><span class="tag meditation">Meditazione</span><span class="small">Schede: ____________________</span></div><span>________</span></div>
+      <div class="lesson"><strong>03</strong><span class="date">___ / ___ / ____<br><span class="small">□ presente □ recupero</span></span><div class="areas"><span class="tag massage">Massaggio</span><span class="tag movement">Movimento</span><span class="tag meditation">Meditazione</span><span class="small">Schede: ____________________</span></div><span>________</span></div>
+      <div class="lesson"><strong>…</strong><span class="date">Calendario completo</span><div class="small">Le restanti lezioni sono registrate nello stesso formato nel profilo digitale dello studente.</div><span>________</span></div>
+    </section>
+
+    <aside class="notice"><strong>Regola del percorso:</strong> una lezione non è solo una presenza. Viene registrata con data, luogo, responsabile e schede effettivamente svolte; così la formazione rimane leggibile anche dopo anni.</aside>
+    <footer class="footer"><span>PosturaCorretta · Registro percorso studente</span><span>Fronte · 1 / 2</span></footer>
+  </section>
+
+  <section class="sheet">
+    <header class="masthead">
+      <div><div class="brand">PosturaCorretta · Accademia</div><h1>Tirocinio, abilitazione e diploma</h1></div>
+      <div class="doc-code">Registro personale · retro<br>Studente: __________________</div>
+    </header>
+
+    <section class="block soft">
+      <h2>Profilo di ingresso</h2>
+      <div class="grid two">
+        <div><span class="check"></span>Studente senza professione sanitaria / benessere riconosciuta</div>
+        <div><span class="check"></span>Professionista del benessere o della salute</div>
+      </div>
+      <p class="small" style="margin-top:3mm">Il profilo non riduce la qualità richiesta: serve a definire il piano di tirocinio e le competenze già documentate. Valutazione a cura dell’insegnante responsabile.</p>
+    </section>
+
+    <section class="block">
+      <h2>Tirocinio supervisionato</h2>
+      <p class="small" style="margin-bottom:2mm">Ogni passaggio richiede data, persona/contesto, insegnante presente ed esito. Le persone coinvolte restano nel registro digitale nel rispetto della riservatezza.</p>
+      <div class="internship"><div><strong>1 · Gruppo</strong><br><span class="small">Affiancare una lezione</span></div><div>Data ________ · Gruppo / sede __________________________<br>Insegnante responsabile _________________________________</div><div>□ svolto<br>Firma ________</div></div>
+      <div class="internship"><div><strong>2 · Gruppo</strong><br><span class="small">Condurre una lezione</span></div><div>Data ________ · Gruppo / sede __________________________<br>Con presenza dell’insegnante ____________________________</div><div>□ svolto<br>Firma ________</div></div>
+      <div class="internship"><div><strong>3 · Singolo</strong><br><span class="small">Affiancare una sessione</span></div><div>Data ________ · Contesto _______________________________<br>Insegnante responsabile _________________________________</div><div>□ svolto<br>Firma ________</div></div>
+      <div class="internship"><div><strong>4 · Singolo</strong><br><span class="small">Pratica sull’insegnante</span></div><div>Data ________ · Area osservata __________________________<br>Note / correzioni _______________________________________</div><div>□ svolto<br>Firma ________</div></div>
+      <div class="internship"><div><strong>5 · Singolo</strong><br><span class="small">Condurre supervisionato</span></div><div>Data ________ · Contesto _______________________________<br>Insegnante presente _____________________________________</div><div>□ svolto<br>Firma ________</div></div>
+    </section>
+
+    <section class="block">
+      <h2>Valutazione essenziale</h2>
+      <div class="grid three">
+        <div><h3>Massaggio</h3><p class="small">Presenza, ascolto, manualità e sicurezza.</p><p style="margin-top:2mm">□ pronto &nbsp; □ da consolidare</p></div>
+        <div><h3>Movimento</h3><p class="small">Proposta, adattamento e conduzione del gruppo.</p><p style="margin-top:2mm">□ pronto &nbsp; □ da consolidare</p></div>
+        <div><h3>Meditazione</h3><p class="small">Voce, ritmo, spazio e accompagnamento.</p><p style="margin-top:2mm">□ pronto &nbsp; □ da consolidare</p></div>
+      </div>
+      <div class="field" style="margin-top:3mm"><span class="label">Osservazione conclusiva dell’insegnante responsabile</span><span class="value">__________________________________________________________________________________________</span></div>
+    </section>
+
+    <section class="outcome">
+      <h2>Esito del percorso</h2>
+      <div class="status">
+        <div><h3>In formazione</h3><p class="small" style="margin-top:1mm">Continua lezioni, pratica e tirocinio. La scheda resta il registro di studio.</p></div>
+        <div class="active"><h3>Abilitato / diploma insegnante</h3><p class="small" style="margin-top:1mm">Può condurre lezioni singole e di gruppo nel perimetro autorizzato da PosturaCorretta.</p></div>
+      </div>
+      <div class="grid two" style="margin-top:4mm">
+        <div class="field"><span class="label">Data abilitazione / diploma</span><span class="value">___ / ___ / ______</span></div>
+        <div class="field"><span class="label">Numero diploma</span><span class="value">PC-________________________</span></div>
+        <div class="signature">Firma insegnante responsabile</div>
+        <div class="signature">Firma studente / insegnante abilitato</div>
+      </div>
+      <div class="notice" style="margin-top:4mm"><strong>Scheda insegnante:</strong> dopo l’abilitazione il profilo studente viene collegato alla sua pagina insegnante. Link pubblico: <strong>posturacorretta.org/insegnanti/________________</strong></div>
+    </section>
+
+    <footer class="footer"><span>PosturaCorretta · Registro percorso studente</span><span>Retro · 2 / 2</span></footer>
+  </section>
+</body>
+</html>

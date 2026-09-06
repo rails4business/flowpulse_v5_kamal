@@ -9,7 +9,7 @@
 
     <nav class="flex min-w-0 items-center justify-center gap-1 sm:gap-4" aria-label="Navigazione dashboard PosturaCorretta">
       <%= link_to "Percorso", course_path, aria: { current: ("page" if active_item == :percorso) }, class: ["border-b-2 px-2 py-2 text-xs font-bold transition sm:px-1 sm:text-sm", active_item == :percorso ? "border-blue-600 text-slate-950" : "border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950"] %>
-      <% { "programma" => ["Moduli", posturacorretta_student_dashboard_path], "calendario" => ["Appuntamenti", posturacorretta_student_appointments_path] }.each do |view, (label, path)| %>
+      <% { "programma" => ["Programma lezioni", posturacorretta_student_dashboard_path], "calendario" => ["Appuntamenti", posturacorretta_student_appointments_path] }.each do |view, (label, path)| %>
         <% active = active_item == view %>
         <%= link_to label, path,
           aria: { current: ("page" if active) },

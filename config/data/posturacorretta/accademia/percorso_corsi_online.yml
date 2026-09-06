@@ -1,0 +1,84 @@
+# Fonte canonica del percorso online. Non contiene date, gruppi o prenotazioni.
+schema_version: 1
+percorso:
+  slug: percorso-corsi-online-posturacorretta
+  title: Percorso corsi online PosturaCorretta
+  description: Studio ordinato di sezioni, corsi e capitoli. Il programma pratico delle lezioni è definito separatamente in programma_lezioni.yml.
+  sections:
+    - slug: postura-e-fisiologia
+      number: "01"
+      title: Postura e fisiologia
+      courses:
+        - slug: introduzione
+          number: "00"
+          title: "Intro: basi e fondamenti"
+          image: https://ik.imagekit.io/posturacorretta/immagini_brand/intro_postura_e_fisiologia.png?updatedAt=1771244698755
+          chapters:
+            - { slug: perche-la-postura, title: "Perché la postura" }
+            - { slug: rosso-verde-blu, title: "Rosso, verde, blu" }
+            - { slug: informati-pratica-insegna, title: "Informati, pratica, insegna" }
+            - { slug: massaggio-presenza-e-autotrattamento, title: "Massaggio, presenza e autotrattamento" }
+        - slug: igiene-posturale
+          number: "01"
+          title: Igiene Posturale
+          image: https://ik.imagekit.io/posturacorretta/immagini_brand/igiene-posturale.png?updatedAt=1763752348993
+          chapters:
+            - { slug: mobilita-articolare, title: "Mobilità articolare" }
+            - { slug: punti-di-tensione, title: "Punti di tensione" }
+            - { slug: vie-di-discesa, title: "Vie di discesa" }
+            - { slug: recettori-sensoriali, title: "Recettori sensoriali" }
+        - slug: principi-di-fisioterapia
+          number: "02"
+          title: Principi di Fisioterapia
+          image: https://ik.imagekit.io/posturacorretta/immagini_brand/principi-fisioterapia.png?updatedAt=1763752348755
+          chapters:
+            - { slug: sistema-respiratorio, title: "Sistema respiratorio" }
+            - { slug: sistema-nervoso-e-urogenitale, title: "Sistema nervoso e urogenitale" }
+            - { slug: sistema-muscolo-scheletrico, title: "Sistema muscolo-scheletrico" }
+            - { slug: sistema-cardiocircolatorio, title: "Sistema cardiocircolatorio" }
+            - { slug: sistema-linfatico-e-digerente, title: "Sistema linfatico e digerente" }
+            - { slug: approfondimento-fisioterapia, title: "Scopri di più sulla metodica" }
+        - slug: biomeccanica-comportamentale-gds
+          number: "03"
+          title: "Introduzione alla biomeccanica comportamentale (GDS)"
+          image: https://ik.imagekit.io/posturacorretta/immagini_brand/metodo-gds.png?updatedAt=1763752349069
+          chapters:
+            - { slug: le-5-direzioni-di-movimento, title: "Le 5 direzioni di movimento" }
+            - { slug: catena-am, title: "Catena AM" }
+            - { slug: catena-al, title: "Catena AL" }
+            - { slug: catena-pm, title: "Catena PM" }
+            - { slug: catena-pl, title: "Catena PL" }
+            - { slug: catene-pa-ap, title: "Catene PA/AP" }
+            - { slug: approfondimento-gds, title: "Scopri di più sulla metodica" }
+        - slug: principi-di-osteopatia
+          number: "04"
+          title: Principi di Osteopatia
+          image: https://ik.imagekit.io/posturacorretta/immagini_brand/principi-osteopatia.png?updatedAt=1763752348975
+          chapters:
+            - { slug: eliminare-le-disfunzioni, title: "Eliminare le disfunzioni" }
+            - { slug: il-sistema-fasciale, title: "Il sistema fasciale" }
+            - { slug: il-sistema-viscerale, title: "Il sistema viscerale" }
+            - { slug: il-sistema-cranio-sacrale, title: "Il sistema cranio-sacrale" }
+            - { slug: il-sistema-neurovegetativo, title: "Il sistema neurovegetativo" }
+            - { slug: approfondimento-osteopatia, title: "Scopri di più sulla metodica" }
+        - slug: introduzione-al-metodo-corpo-e-coscienza
+          number: "05"
+          title: "Introduzione al metodo Corpo e Coscienza"
+          image: https://ik.imagekit.io/posturacorretta/immagini_brand/corpo-e-coscienza.png?updatedAt=1763752348994
+          chapters:
+            - { slug: le-2-circolazioni, title: "Le 2 circolazioni" }
+            - { slug: i-3-centri-di-gravita, title: "I 3 centri di gravità" }
+            - { slug: i-4-tipi-di-movimento, title: "I 4 tipi di movimento" }
+            - { slug: i-5-elementi, title: "I 5 elementi" }
+            - { slug: le-6-coppie-di-meridiani, title: "Le 6 coppie di meridiani" }
+            - { slug: i-7-centri-neurolinfatici, title: "I 7 centri neurolinfatici" }
+            - { slug: approfondimento-corpo-coscienza, title: "Scopri di più sulla metodica" }
+        - slug: altre-metodiche-posturali
+          number: "06"
+          title: Altre metodiche posturali
+          image: https://ik.imagekit.io/posturacorretta/immagini_brand/principi_kinesiologia.png?updatedAt=1771072358017
+          chapters:
+            - { slug: sequenza-di-kinesiologia-applicata, title: "Sequenza di Kinesiologia Applicata" }
+            - { slug: feldenkrais, title: "Feldenkrais" }
+            - { slug: alexander-e-consapevolezza, title: "Alexander e consapevolezza" }
+            - { slug: sintesi-del-percorso, title: "Sintesi del percorso" }

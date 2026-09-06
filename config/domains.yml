@@ -124,6 +124,9 @@ default: &default
     target_controller: brands/impegno/home
     target_action: index
     primary: true
+    auth_slug: impegno
+    auth_default_path: /impegno
+    auth_enabled: true
     site_title: "1Impegno — Il tuo tempo, in un solo posto"
     site_description: "Calendario personale per organizzare appuntamenti, attività, lavori e tempo impiegato nei diversi progetti."
 

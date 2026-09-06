@@ -1,228 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Programma Step - PosturaCorretta</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Programma lezioni — PosturaCorretta</title>
+  <style>
+    :root { --ink:#17212b; --muted:#6b7280; --line:#dbe3e8; --canvas:#f5f7f7; --paper:#fff; --teal:#0f766e; --mass:#a16207; --move:#0f766e; --medit:#7c3aed; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--canvas); color:var(--ink); font:13px/1.35 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; } main { max-width:850px; margin:auto; padding:31px 20px 50px; }
+    .brand { color:var(--teal); font-size:11px; text-transform:uppercase; letter-spacing:.11em; font-weight:800; } h1 { margin:5px 0 3px; font-size:27px; letter-spacing:-.045em; } .intro { margin:0; color:var(--muted); } .course { display:flex; flex-wrap:wrap; gap:7px; margin:20px 0 24px; } .course span { padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; color:#475569; font-size:11px; font-weight:700; }
+    .timeline { margin:0; padding:0; list-style:none; } .item { display:flex; gap:12px; } .rail { width:30px; display:flex; flex-direction:column; align-items:center; flex-shrink:0; } .number { display:grid; place-items:center; width:29px; height:29px; border:1px solid #b7c6cf; border-radius:50%; background:#fff; color:#334155; font-size:11px; font-weight:800; } .line { width:1px; min-height:22px; flex:1; margin-top:5px; background:#cad5dc; } .item:last-child .line { display:none; }
+    .entry { flex:1; min-width:0; padding:0 0 18px; } .session { display:grid; grid-template-columns:84px 1fr 1fr; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:9px 9px 0 0; background:#fff; } .field label { display:block; color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.06em; font-weight:800; } .blank { display:block; min-height:18px; padding-top:3px; border-bottom:1px solid #dbe3e8; color:#94a3b8; font-size:11px; } .time { display:flex; gap:6px; } .time .blank { flex:1; } .where { grid-column:span 2; } .choices { display:flex; flex-wrap:wrap; gap:8px; padding-top:3px; color:#475569; font-size:11px; font-weight:700; } .box { display:inline-block; width:12px; height:12px; border:1px solid #94a3b8; margin-right:3px; vertical-align:-2px; border-radius:2px; }
+    .sheets { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:9px 12px 11px; border:1px solid var(--line); border-top:0; border-radius:0 0 9px 9px; background:#fbfdfe; } .sheet { display:grid; grid-template-columns:26px 1fr; gap:6px; align-items:center; min-width:0; padding:6px; border:1px solid var(--line); border-radius:7px; background:#fff; } .sheet img { width:25px; height:25px; object-fit:contain; } .sheet b { display:block; font-size:10px; } .sheet.mass b { color:var(--mass); } .sheet.move b { color:var(--move); } .sheet.medit b { color:var(--medit); } .sheet .blank { font-size:10px; min-height:15px; } .sheet-number { color:#94a3b8; font-size:9px; }
+    .training .number { color:#6d28d9; border-color:#a78bfa; } .training .session { background:#fcfaff; } .hint { margin:14px 0 0 42px; padding:9px 11px; border-left:2px solid var(--teal); background:#ecfdf9; color:#115e59; font-size:11px; }
+    @media(max-width:620px) { main { padding:26px 14px 42px; } .session { grid-template-columns:1fr 1fr; } .where { grid-column:span 2; } .sheets { grid-template-columns:1fr; } .time { max-width:220px; } }
+  </style>
 </head>
 <body>
-
-    <!-- ============================================================ -->
-    <!-- HEADER                                                        -->
-    <!-- ============================================================ -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
-        <div class="max-w-3xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div>
-                <h1 class="text-lg font-bold text-slate-800">Programma Step</h1>
-                <p class="text-xs text-slate-400">PosturaCorretta</p>
-            </div>
-            <button onclick="window.print()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition shadow-sm shadow-blue-500/20">
-                <i class="fas fa-print mr-1"></i>Stampa
-            </button>
-        </div>
-    </header>
-
-    <!-- ============================================================ -->
-    <!-- MAIN CONTENT                                                 -->
-    <!-- ============================================================ -->
-    <main class="max-w-3xl mx-auto px-4 py-6">
-
-        <!-- ============================================================ -->
-        <!-- TIMELINE - IDENTICO A HYPERUI                                -->
-        <!-- ============================================================ -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200/70 p-6">
-            <ol class="relative space-y-8 before:absolute before:-ms-px before:h-full before:w-0.5 before:rounded-full before:bg-gray-200">
-
-                <!-- STEP 1 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-emerald-500"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 1</time>
-                            <span class="text-xs font-medium text-emerald-600">
-                                <i class="fas fa-check-circle mr-1"></i>Completato
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Incontro di Attivazione</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            Presentazione del metodo e della piattaforma
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 2 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-blue-600"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 2</time>
-                            <span class="text-xs font-medium text-blue-600">
-                                <i class="fas fa-clock mr-1"></i>In corso
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Lezione pratica</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            Lezione base + avanzata su PosturaCorretta in un mese
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 3 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-emerald-500"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 3</time>
-                            <span class="text-xs font-medium text-emerald-600">
-                                <i class="fas fa-check-circle mr-1"></i>Completato
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Igiene Posturale</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            Mobilità articolare · Punti di tensione · Vie di discesa · Recettori sensoriali
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 4 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-emerald-500"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 4</time>
-                            <span class="text-xs font-medium text-emerald-600">
-                                <i class="fas fa-check-circle mr-1"></i>Completato
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Principi di Fisioterapia</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            Sistemi: respiratorio · nervoso · muscolo-scheletrico · cardiocircolatorio · linfatico · digerente
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 5 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-blue-600"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 5</time>
-                            <span class="text-xs font-medium text-blue-600">
-                                <i class="fas fa-clock mr-1"></i>In corso
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Biomeccanica comportamentale (GDS)</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            5 direzioni di movimento · Catene AM · AL · PM · PL · PA/AP
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 6 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 6</time>
-                            <span class="text-xs font-medium text-gray-400">
-                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Principi di Osteopatia</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            Disfunzioni · Sistema fasciale · viscerale · cranio-sacrale · neurovegetativo
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 7 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 7</time>
-                            <span class="text-xs font-medium text-gray-400">
-                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Metodo Corpo e Coscienza</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            2 circolazioni · 3 centri di gravità · 4 tipi di movimento · 5 elementi · 6 meridiani · 7 centri neurolinfatici
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 8 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 8</time>
-                            <span class="text-xs font-medium text-gray-400">
-                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Altre metodiche posturali</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            Kinesiologia Applicata · Feldenkrais · Alexander · Sintesi del percorso
-                        </p>
-                    </div>
-                </li>
-
-                <!-- STEP 9 -->
-                <li class="relative -ms-1.5 flex items-start gap-4">
-                    <span class="size-3 shrink-0 rounded-full bg-gray-300"></span>
-                    <div class="-mt-2">
-                        <div class="flex items-center gap-2">
-                            <time class="text-xs/none font-medium text-gray-700">STEP 9</time>
-                            <span class="text-xs font-medium text-gray-400">
-                                <i class="fas fa-circle mr-1" style="font-size:6px;"></i>Da fare
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Tirocinio in compresenza</h3>
-                        <p class="mt-0.5 text-sm text-gray-700">
-                            Affiancamento con Maestro per lezioni Base e Avanzate
-                        </p>
-                    </div>
-                </li>
-
-            </ol>
-        </div>
-
-        <!-- ============================================================ -->
-        <!-- RIEPILOGO                                                    -->
-        <!-- ============================================================ -->
-        <div class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200/70 p-4 no-print">
-            <div class="grid grid-cols-4 gap-2 text-center text-xs">
-                <div>
-                    <p class="text-lg font-bold text-slate-700">9</p>
-                    <p class="text-slate-400">Step totali</p>
-                </div>
-                <div>
-                    <p class="text-lg font-bold text-emerald-600">3</p>
-                    <p class="text-slate-400">Completati</p>
-                </div>
-                <div>
-                    <p class="text-lg font-bold text-blue-600">2</p>
-                    <p class="text-slate-400">In corso</p>
-                </div>
-                <div>
-                    <p class="text-lg font-bold text-slate-400">4</p>
-                    <p class="text-slate-400">Da fare</p>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- ============================================================ -->
-    <!-- FOOTER                                                        -->
-    <!-- ============================================================ -->
-    <footer class="max-w-3xl mx-auto px-4 py-4 text-center text-xs text-slate-400 border-t border-slate-200/70 mt-6 no-print">
-        <p>PosturaCorretta · Programma Step</p>
-    </footer>
-
+  <main>
+    <div class="brand">PosturaCorretta</div>
+    <h1>Programma lezioni</h1>
+    <p class="intro">Ogni incontro è una riga con tre schede: massaggio, movimento e meditazione.</p>
+    <div class="course"><span>Percorso PosturaCorretta</span><span>Studente: ____________________</span><span>Insegnante responsabile: ____________________</span></div>
+    <ol id="program" class="timeline" aria-label="Registro del programma lezioni"></ol>
+    <p class="hint">Il programma non assegna date da solo. Data, orario, luogo, modalità e insegnante vengono compilati quando l’incontro è programmato per un gruppo, un domicilio, online o una lezione singola.</p>
+  </main>
+  <script>
+    const icons = {
+      massaggio: "https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png",
+      movimento: "https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png",
+      meditazione: "https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+    };
+    const areas = Object.entries(icons).map(([name, url]) => `<div class="sheet ${name === "massaggio" ? "mass" : name === "movimento" ? "move" : "medit"}"><img src="${url}" alt=""><div><b>${name[0].toUpperCase() + name.slice(1)}</b><span class="sheet-number">N. scheda: __________</span><span class="blank">Titolo scheda</span></div></div>`).join("");
+    const session = `<div class="session"><div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div><div class="field"><label>Ora</label><div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div></div><div class="field"><label>Modalità</label><div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span></div></div><div class="field where"><label>Luogo</label><div class="choices"><span><i class="box"></i>Centro</span><span><i class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span class="blank">Nome del luogo / indirizzo / collegamento online</span></div><div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div><div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div></div>`;
+    const list = document.getElementById("program");
+    for (let number = 1; number <= 43; number += 1) {
+      const internship = number >= 39;
+      list.insertAdjacentHTML("beforeend", `<li class="item ${internship ? "training" : ""}"><div class="rail"><span class="number">${String(number).padStart(2, "0")}</span><span class="line"></span></div><div class="entry">${session}<div class="sheets">${areas}</div></div></li>`);
+    }
+  </script>
 </body>
 </html>

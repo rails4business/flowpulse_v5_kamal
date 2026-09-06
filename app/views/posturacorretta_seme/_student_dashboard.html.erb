@@ -1,5 +1,5 @@
 <% participation_labels = { "group" => "Gruppo", "individual" => "Individuale" } %>
-<<main class="bg-white min-h-screen">
+<main class="bg-white min-h-screen">
   <div class="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 lg:py-10">
     
     <!-- Modalità selezionata -->
@@ -113,7 +113,8 @@
         </article>
       </section>
     <% else %>
-      
+      <%= render "posturacorretta_seme/student_lessons_program" %>
+      <% if false %>
       <!-- VIEW PROGRAMMA - Stepper Verticale a Lista -->
       <section aria-labelledby="programma-title">
         <div class="mb-8">
@@ -243,6 +244,7 @@
             </section>
           <% end %>
         </div>
+      <% end %>
     <% end %>
   </div>
 </main>

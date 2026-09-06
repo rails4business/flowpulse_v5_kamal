@@ -4,10 +4,10 @@
 <nav aria-label="Indice del corso" data-controller="scroll-selected">
   <% if active_mode == :program %>
     <% activities = @lesson_delivery_by_course.fetch(active_course.fetch("slug"), {}).fetch("program", []) %>
-    <p class="text-[10px] font-bold uppercase tracking-[.14em] text-amber-700">Percorso guidato</p>
-    <h2 class="mt-1 text-lg font-bold text-slate-950">Incontri e lezioni</h2>
+    <p class="text-[10px] font-bold uppercase tracking-[.14em] text-amber-700">Schede pratiche</p>
+    <h2 class="mt-1 text-lg font-bold text-slate-950">Schede del corso</h2>
     <% if activities.empty? %>
-      <p class="rounded-lg border border-dashed border-amber-200 bg-amber-50/60 px-3 py-4 text-xs leading-5 text-amber-900">Le lezioni di questo corso sono in preparazione.</p>
+      <p class="rounded-lg border border-dashed border-amber-200 bg-amber-50/60 px-3 py-4 text-xs leading-5 text-amber-900">Le schede pratiche di questo corso sono in preparazione.</p>
     <% end %>
     <ol class="mt-5">
       <% activities.each_with_index do |activity, index| %>
