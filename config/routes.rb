@@ -41,6 +41,8 @@ Rails.application.routes.draw do
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
   get "posturacorretta" => "posturacorretta_seme#index", as: :posturacorretta
+  get "posturacorretta/presentazione-posturacorretta" => "posturacorretta_seme#triathlon_handout", as: :posturacorretta_presentation
+  get "posturacorretta/guida-triatlon" => redirect("/posturacorretta/presentazione-posturacorretta", status: 301)
   get "posturacorretta/corsi/:corso" => "posturacorretta_seme#course", as: :posturacorretta_course
   get "posturacorretta/corsi/:corso/lezioni" => "posturacorretta_seme#programma", as: :posturacorretta_course_lessons
   get "posturacorretta/corsi/:corso/lezioni/:attivita" => "posturacorretta_seme#programma", as: :posturacorretta_course_lesson
@@ -101,6 +103,7 @@ Rails.application.routes.draw do
   get "brands/svuotamente" => "brands/svuotamente#index", as: :svuotamente
   get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
   get "impegno" => "brands/impegno/home#index", as: :impegno
+  get "impegno/composer" => "brands/impegno/composer#show", as: :impegno_composer
   get "impegno/agenda" => "brands/impegno/commitments#index", as: :impegno_agenda
   resources :impegno_contacts, path: "impegno/contacts", controller: "brands/impegno/contacts", as: :impegno_contacts, only: %i[index create edit update destroy]
   resources :impegno_places, path: "impegno/places", controller: "brands/impegno/places", as: :impegno_places, only: %i[index create edit update destroy]

@@ -128,6 +128,13 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale", vista: "capitoli")}'][aria-label='Apri il corso Igiene Posturale']"
   end
 
+  test "serves the triathlon handout as a PDF" do
+    get posturacorretta_presentation_path
+
+    assert_response :success
+    assert_equal "application/pdf", response.media_type
+  end
+
   test "shows a base lesson and keeps its advanced content out of the public response" do
     get posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")
 
@@ -287,6 +294,21 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_percorso_educativo_path(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")
     assert_redirected_to posturacorretta_course_chapter_url(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")
     assert_response :moved_permanently
+  end
+
+  test "displays Canva superadmin links in footer only for superadmin users" do
+    get posturacorretta_path
+    assert_response :success
+    assert_not_includes response.body, "benessereintegrato.my.canva.site"
+
+    superadmin = create_test_user("superadmin-canva@example.com")
+    superadmin.update!(superadmin: true)
+    sign_in(superadmin)
+
+    get posturacorretta_path
+    assert_response :success
+    assert_includes response.body, "benessereintegrato.my.canva.site/postura-sito-4-ante-presentazione-servizi-centri-sito-web"
+    assert_includes response.body, "benessereintegrato.my.canva.site/home"
   end
 
   private

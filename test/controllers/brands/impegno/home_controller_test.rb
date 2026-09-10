@@ -27,10 +27,11 @@ module Brands
         assert_response :success
         assert_select "input[type=hidden][name=brand][value=impegno]", minimum: 1
         assert_select "select[name=brand]", count: 0
-        assert_select "select[name=area] option[selected][value=agenda]", text: "Agenda"
-        assert_select "select[name=area] option[value=professional]", count: 0
-        assert_select "span", text: "Agenda"
-        assert_select "a[href*='view=practices']", count: 0
+        assert_select "select[name=area]", count: 0
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Luoghi"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Contatti"
+        assert_select "section[aria-label='Contesti dell’agenda'], section[aria-label=\"Contesti dell'agenda\"]", text: /La mia agenda/
         assert_select "nav[aria-label='Navigazione 1impegno']", count: 1
         assert_select "nav[aria-label='Navigazione 1impegno'] details[data-close-on-outside] summary.profile-menu-toggle[aria-label='Apri menu profilo']", count: 1
         assert_select "nav[aria-label='Navigazione 1impegno'] a[href='#{profile_path}']", text: "Profilo"
@@ -56,6 +57,18 @@ module Brands
         assert_response :success
         assert_select "nav[aria-label='Vista agenda'] a[aria-current=page][style*='background-color:#0f172a']", text: "Elenco"
         assert_select "turbo-frame#impegno_workspace[src*='view_mode=weekplan']", count: 0
+
+        get impegno_url(brand: "impegno", area: "agenda", view: "agenda", view_mode: "structure")
+        assert_response :success
+        assert_select "nav[aria-label='Vista agenda'] a[aria-current=page][style*='background-color:#4f46e5']", text: "Struttura & Calendari"
+        assert_select "turbo-frame#impegno_workspace[src*='view_mode=structure']", count: 1
+
+        get impegno_agenda_url(workspace: "1", view_mode: "structure")
+        assert_response :success
+        assert_select "#oneimpegno", count: 1
+        assert_select "script#oneimpegno-data", count: 1
+        assert_select "#oneimpegno button[data-view='tree']", text: "Struttura"
+        assert_select "#oneimpegno button[data-view='week']", text: "Calendari"
       end
 
       test "uses the same Impegno shell from PosturaCorretta with its brand preselected" do
@@ -97,7 +110,7 @@ module Brands
         assert_select "button[commandfor='complete-commitment-#{commitment.id}']", text: /Concludi/
       end
 
-      test "normalizes the legacy programs view concept to Esperienze" do
+      test "normalizes the legacy programs view into the single agenda" do
         user = User.create!(
           email_address: "impegno-practices@example.com",
           password: "password123",
@@ -109,10 +122,10 @@ module Brands
         get impegno_url(area: "user", view: "programs")
 
         assert_response :success
-        assert_select "select[name=area] option[value=domain_roles]", count: 0
-        assert_select "a[aria-current=page]", text: "Esperienze"
-        assert_select "nav[aria-label='Tipi di esperienza'] a", text: "Eventi"
-        assert_select "h1", text: "Routine"
+        assert_select "select[name=area]", count: 0
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "nav[aria-label='Tipi di esperienza']", count: 0
+        assert_select "section[aria-label='Contesti dell’agenda'], section[aria-label=\"Contesti dell'agenda\"]", text: /La mia agenda/
       end
 
       test "keeps operational roles private even for a professional" do
@@ -131,8 +144,9 @@ module Brands
         get impegno_url(brand: "percorso_integrato", area: "domain_roles", role: "professional", view: "offering", tab: "events")
 
         assert_response :success
-        assert_select "select[name=area] option[selected][value=user]", text: "Utente"
-        assert_select "select[name=area] option[value=domain_roles]", count: 0
+        assert_select "select[name=area]", count: 0
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "span", text: "Professionista", count: 0
       end
 
       test "redirects the legacy professional area to domain roles" do
@@ -156,7 +170,7 @@ module Brands
         get impegno_url(area: "agenda", view: "agenda", agenda_filter: "events", date: "2026-08-02")
 
         assert_response :success
-        assert_select "span", text: "Agenda"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
         assert_select "turbo-frame#impegno_workspace[src*='area=agenda'][src*='agenda_filter=events']", count: 1
 
         get impegno_agenda_url(workspace: "1", area: "agenda", agenda_filter: "events")
@@ -180,9 +194,9 @@ module Brands
         get impegno_url(brand: "posturacorretta", area: "domain_roles", role: "teacher")
 
         assert_response :success
-        assert_select "select[name=area] option[selected][value=user]", text: "Utente"
-        assert_select "select[name=area] option[value=domain_roles]", count: 0
-        assert_select "a[aria-current=page]", text: "Esperienze"
+        assert_select "select[name=area]", count: 0
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "span", text: "Insegnante", count: 0
       end
 
       test "does not expose operational roles to a teacher" do
@@ -197,9 +211,9 @@ module Brands
         get impegno_url(brand: "posturacorretta", area: "domain_roles", role: "teacher")
 
         assert_response :success
-        assert_select "select[name=area] option[selected][value=user]", text: "Utente"
-        assert_select "select[name=area] option[value=domain_roles]", count: 0
-        assert_select "h1", text: "Routine"
+        assert_select "select[name=area]", count: 0
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "span", text: "Insegnante", count: 0
       end
 
       test "offers only active domain memberships in the site selector" do
@@ -217,19 +231,20 @@ module Brands
         get impegno_url(brand: "posturacorretta")
 
         assert_response :success
-        assert_select "select[name=brand]", count: 0
-        assert_select "select[name=area] option[value=domain_roles]", text: "Ruoli operativi"
+        assert_select "select[name=area]", count: 0
+        assert_select "select[name=brand][aria-label='Sito dei ruoli operativi']", count: 1
 
-        get impegno_url(brand: "impegno", area: "domain_roles")
-
-        assert_response :success
-        assert_select "select[name=area] option[selected][value=domain_roles]", text: "Ruoli operativi"
-        assert_select "select[name=brand] option[selected][value=posturacorretta]", count: 1
-
-        get impegno_url(brand: "posturacorretta", area: "domain_roles")
+        get impegno_url(brand: "impegno", area: "agenda")
 
         assert_response :success
-        assert_select "form input[type=hidden][name=area][value=domain_roles] + select[name=brand][aria-label='Sito dei ruoli operativi']" do
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "select[name=brand] option[value=posturacorretta]", count: 1
+        assert_select "select[name=brand] option[value=generaimpresa]", count: 1
+
+        get impegno_url(brand: "posturacorretta", area: "agenda")
+
+        assert_response :success
+        assert_select "form input[type=hidden][name=area][value=agenda] + input[type=hidden][name=view][value=agenda] + select[name=brand][aria-label='Sito dei ruoli operativi']" do
           assert_select "option[value=posturacorretta]", count: 1
           assert_select "option[value=generaimpresa]", count: 1
           assert_select "option", text: "Non iscritto", count: 0
@@ -244,7 +259,7 @@ module Brands
         get impegno_url(area: "places")
 
         assert_response :success
-        assert_select "select[name=area] option[selected][value=places]", text: "Luoghi"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Luoghi"
         assert_select "turbo-frame#impegno_workspace[src*='impegno/places']", count: 1
       end
     end

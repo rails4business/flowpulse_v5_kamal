@@ -1,0 +1,718 @@
+<style>
+body.oi-page{margin:0;background:#f6f7f9}
+#oneimpegno{--ink:#172033;--muted:#626d7e;--line:#e1e5ec;--blue:#2456da;font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);max-width:1240px;margin:auto;padding:28px 24px 48px;color-scheme:light}
+#oneimpegno *{box-sizing:border-box}#oneimpegno [hidden]{display:none!important}
+#oneimpegno button,#oneimpegno input,#oneimpegno select,#oneimpegno textarea{font:inherit}
+#oneimpegno button{cursor:pointer}#oneimpegno button:disabled{opacity:.45;cursor:default}
+#oneimpegno button:focus-visible,#oneimpegno input:focus-visible,#oneimpegno select:focus-visible,#oneimpegno textarea:focus-visible{outline:3px solid #95b3ff;outline-offset:2px}
+#oneimpegno .oi-top,#oneimpegno .oi-tools,#oneimpegno .oi-row,#oneimpegno .oi-inline{display:flex;align-items:center;gap:10px}
+#oneimpegno .oi-top{justify-content:space-between;flex-wrap:wrap;margin-bottom:24px}
+#oneimpegno h1{font-size:25px;letter-spacing:-.8px;margin:0}#oneimpegno h2{font-size:19px;margin:0}#oneimpegno h3{font-size:16px;margin:0}
+#oneimpegno p{margin:6px 0}#oneimpegno .oi-muted{color:var(--muted)}#oneimpegno .oi-small{font-size:13px}
+#oneimpegno .oi-mark{background:var(--ink);color:white;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:24px;font-weight:750}
+#oneimpegno .oi-btn{border:1px solid var(--line);border-radius:8px;background:white;padding:8px 12px;color:var(--ink);font-size:14px;min-height:38px;white-space:nowrap}
+#oneimpegno .oi-btn:hover{background:#f0f3f8}#oneimpegno .oi-primary{background:var(--blue);color:white;border-color:var(--blue)}#oneimpegno .oi-primary:hover{background:#1944b8}
+#oneimpegno .oi-quiet{background:transparent;border-color:transparent;color:var(--muted)}#oneimpegno .oi-danger{color:#b42334}
+#oneimpegno .oi-iconbtn{padding:6px;min-height:30px;width:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+#oneimpegno svg{width:17px;height:17px;flex-shrink:0;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#oneimpegno .oi-nav{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);margin-bottom:20px;flex-wrap:wrap}
+#oneimpegno .oi-tab{font-size:15px;font-weight:600;background:none;border:0;border-bottom:3px solid transparent;padding:12px 16px;color:var(--muted)}
+#oneimpegno .oi-tab[aria-selected=true]{border-color:var(--blue);color:var(--blue)}#oneimpegno .oi-nav .oi-scope{margin-left:auto;display:flex;align-items:center;gap:8px;padding-bottom:8px;font-size:14px}
+#oneimpegno .oi-tools{justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}#oneimpegno .oi-inline{flex-wrap:wrap}
+#oneimpegno select,#oneimpegno input:not([type=checkbox]),#oneimpegno textarea{border:1px solid #cdd4de;background:white;color:var(--ink);border-radius:7px;padding:8px 10px;min-width:0}
+#oneimpegno input[type=checkbox]{width:17px;height:17px;accent-color:var(--blue);cursor:pointer;flex-shrink:0}
+#oneimpegno .oi-group{margin:22px 0 10px;display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700}#oneimpegno .oi-swatch{width:10px;height:10px;border-radius:3px;display:inline-block;background:var(--c,#6b7280)}
+#oneimpegno .oi-root{background:white;border:1px solid var(--line);border-radius:12px;padding:18px 16px;margin-bottom:12px;box-shadow:0 1px 2px #14203304}
+#oneimpegno .oi-tree,#oneimpegno .oi-children{list-style:none;margin:0;padding:0}
+#oneimpegno .oi-children{margin:4px 0 5px 14px;padding-left:25px;border-left:1px solid var(--line)}
+#oneimpegno .oi-children.oi-leaves{margin-left:15px;padding-left:32px}
+#oneimpegno .oi-row{gap:5px;min-height:38px;border-radius:6px;flex-wrap:wrap}
+#oneimpegno .oi-row:hover{background:#f8f9fb}#oneimpegno .oi-node{flex:1;min-width:140px;text-align:left;background:none;border:0;border-radius:5px;padding:5px 6px;color:var(--ink);display:flex;align-items:center;gap:10px}
+#oneimpegno .oi-node:hover{background:#f0f3f7}#oneimpegno .oi-node svg{color:#778296}
+#oneimpegno .oi-node-text{display:flex;gap:6px 10px;align-items:baseline;flex-wrap:wrap;min-width:0}#oneimpegno .oi-title{font-size:14px;overflow-wrap:anywhere}#oneimpegno .oi-root-title{font-size:16px;font-weight:650}
+#oneimpegno .oi-meta{font-size:13px;color:var(--muted)}#oneimpegno .oi-pill{font-size:12px;border-radius:5px;padding:2px 7px;background:#f0f2f6;color:#576277;white-space:nowrap}
+#oneimpegno .oi-eventpill{background:#edf3ff;color:#2051b5}#oneimpegno .oi-actions{display:flex;gap:2px;margin-left:auto;align-items:center}
+#oneimpegno .oi-add{font-size:13px;min-height:30px;padding:4px 8px}#oneimpegno .oi-fold svg{width:12px;height:12px;transition:transform .15s}#oneimpegno .oi-fold[aria-expanded=true] svg{transform:rotate(90deg)}
+#oneimpegno .oi-done .oi-title{text-decoration:line-through;color:#7b8493}#oneimpegno .oi-note{font-size:13px;color:var(--muted);margin:2px 0 10px 43px;white-space:pre-wrap}
+#oneimpegno .oi-empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px;background:white}#oneimpegno .oi-empty-small{font-size:13px;color:var(--muted);padding:9px 7px}
+#oneimpegno .oi-statusline{font-size:13px;color:var(--muted);margin-top:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#oneimpegno .oi-weekrange{font-size:16px;font-weight:650;min-width:200px;text-align:center}
+#oneimpegno .oi-weekscroll{border:1px solid var(--line);background:white;border-radius:12px;overflow:auto;max-height:calc(100vh - 275px);min-height:300px}
+#oneimpegno .oi-weekhead,#oneimpegno .oi-weekbody{display:grid;grid-template-columns:56px repeat(7,minmax(112px,1fr));min-width:860px}
+#oneimpegno .oi-weekhead{position:sticky;top:0;background:white;z-index:4;box-shadow:0 1px 0 var(--line)}
+#oneimpegno .oi-dayhead{padding:9px 3px;text-align:center;border-left:1px solid var(--line);font-size:14px;font-weight:650}#oneimpegno .oi-dayhead .oi-small{font-weight:400;color:var(--muted)}#oneimpegno .oi-today{background:#f0f5ff;color:var(--blue)}
+#oneimpegno .oi-hourcol{position:relative;background:#fff;z-index:1}#oneimpegno .oi-hour{position:absolute;right:7px;font-size:12px;color:#758097;transform:translateY(-8px)}#oneimpegno .oi-hour:first-child{transform:none}
+#oneimpegno .oi-daycol{position:relative;border-left:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--step-h) - 1px),#edf0f5 calc(var(--step-h) - 1px),#edf0f5 var(--step-h))}
+#oneimpegno .oi-daycol.oi-drop{background-color:#eaf1ff}
+#oneimpegno .oi-event{position:absolute;border:1px solid color-mix(in srgb,var(--c) 30%,white);border-left:3px solid var(--c);background:color-mix(in srgb,var(--c) 10%,white);color:#172033;border-radius:6px;padding:3px 5px;overflow:hidden;text-align:left;min-height:22px;line-height:1.25;cursor:grab}
+#oneimpegno .oi-event:active{cursor:grabbing}#oneimpegno .oi-event strong{font-size:13px;display:block;font-weight:650}#oneimpegno .oi-event span{font-size:12px;display:block}#oneimpegno .oi-event.oi-overlap{outline:1px dashed #b45309;outline-offset:1px}
+#oneimpegno .oi-calendar-note{font-size:13px;color:var(--muted);margin:10px 0}#oneimpegno .oi-warning{color:#92500b;background:#fff6e6;border-radius:8px;padding:10px 12px;font-size:14px;margin:10px 0}
+#oneimpegno dialog{color:var(--ink);background:white;border:1px solid var(--line);border-radius:14px;max-width:calc(100vw - 28px);width:620px;max-height:90vh;padding:24px;box-shadow:0 24px 90px #101a3b33}
+#oneimpegno dialog::backdrop{background:#14203966}#oneimpegno .oi-modalhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+#oneimpegno .oi-formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}#oneimpegno .oi-field{display:flex;flex-direction:column;gap:5px;font-size:14px}#oneimpegno .oi-full{grid-column:1/-1}#oneimpegno .oi-field small{font-size:12px;color:var(--muted)}#oneimpegno .oi-checkfield{display:flex;align-items:center;gap:8px;font-size:14px}
+#oneimpegno .oi-formfoot{margin-top:22px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}#oneimpegno .oi-formfoot .oi-danger{margin-right:auto}
+#oneimpegno .oi-error{color:#a82235;font-size:14px;white-space:pre-line;margin-top:12px}#oneimpegno textarea{resize:vertical;width:100%}
+#oneimpegno #oi-json-modal{width:900px}#oneimpegno #oi-json-text{height:44vh;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2;margin:10px 0}
+#oneimpegno .oi-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 30px);background:#182237;color:white;padding:10px 18px;border-radius:8px;box-shadow:0 5px 20px #0002;z-index:15;font-size:14px}
+@media(max-width:650px){#oneimpegno{padding:16px 10px 30px}#oneimpegno .oi-top{gap:12px;margin-bottom:10px}#oneimpegno .oi-nav .oi-scope{margin-left:0;width:100%}#oneimpegno .oi-root{padding:12px 7px}#oneimpegno .oi-children{margin-left:10px;padding-left:12px}#oneimpegno .oi-children.oi-leaves{padding-left:12px}#oneimpegno .oi-actions{gap:0}#oneimpegno .oi-add{font-size:12px;padding:4px}#oneimpegno .oi-formgrid{grid-template-columns:1fr}#oneimpegno dialog{padding:18px}#oneimpegno .oi-node{min-width:100px}#oneimpegno .oi-weekscroll{max-height:68vh}#oneimpegno .oi-weekrange{min-width:0}}
+</style>
+</head>
+<body class="oi-page">
+<!-- RAILS: il contenitore, il CSS e i due script possono essere separati in partial/assets.
+     Nessun dato viene inviato in rete. API: window.OneImpegno.getData(), loadData(json),
+     extractEvents(weekStart), extractTasks(), exportWeekPlan(weekStart).
+     Il contenitore emette oneimpegno:change con detail.data dopo una modifica.
+     Per usare Rails come archivio, imposta data-persist="false" sul contenitore e
+     fornisci il JSON iniziale nello script oneimpegno-data usando json_escape.
+     Ascolta oneimpegno:change in Stimulus e salva detail.data nel tuo controller.
+     Gli stati di accordo sono annotazioni locali: questa versione non invia inviti o pagamenti. -->
+<main id="oneimpegno">
+  <header class="oi-top">
+    <div class="oi-inline"><span class="oi-mark" aria-hidden="true">1</span><div><h1>1Impegno</h1><div class="oi-small oi-muted">Root · Day · Session · Task</div></div></div>
+    <div class="oi-inline"><button class="oi-btn" data-act="json">JSON · importa / esporta</button><button class="oi-btn" data-act="html">Salva HTML</button><button class="oi-btn oi-primary" data-act="new" data-kind="root">+ Root</button></div>
+  </header>
+  <nav class="oi-nav" aria-label="Viste">
+    <div role="tablist" aria-label="Organizzazione"><button id="oi-tab-tree" class="oi-tab" role="tab" aria-selected="true" aria-controls="oi-tree-view" data-act="view" data-view="tree">Struttura</button><button id="oi-tab-week" class="oi-tab" role="tab" aria-selected="false" aria-controls="oi-week-view" tabindex="-1" data-act="view" data-view="week">Calendari</button></div>
+    <label class="oi-scope">Calendario <select id="oi-group-filter" aria-label="Filtra per calendario"><option value="all">Tutti</option></select></label>
+  </nav>
+  <section id="oi-tree-view" role="tabpanel" aria-labelledby="oi-tab-tree">
+    <div class="oi-tools"><div><h2>Organizza gli impegni</h2><p class="oi-small oi-muted" id="oi-counts"></p></div><div class="oi-inline"><button class="oi-btn oi-quiet" data-act="expand">Espandi tutto</button><button class="oi-btn oi-quiet" data-act="collapse">Comprimi</button></div></div>
+    <div id="oi-roots"></div>
+  </section>
+  <section id="oi-week-view" role="tabpanel" aria-labelledby="oi-tab-week" hidden>
+    <div class="oi-tools"><div class="oi-inline"><button class="oi-btn" data-act="prev" aria-label="Settimana precedente">‹</button><span class="oi-weekrange" id="oi-week-label"></span><button class="oi-btn" data-act="next" aria-label="Settimana successiva">›</button><button class="oi-btn" data-act="today">Oggi</button></div><label class="oi-small">Vai a <input id="oi-week-date" type="date" aria-label="Scegli settimana"></label></div>
+    <div class="oi-tools"><p class="oi-small oi-muted" id="oi-week-count"></p><div class="oi-inline"><button class="oi-btn" data-act="range">Orari</button><button class="oi-btn" data-act="weekjson">Esporta week plan</button></div></div>
+    <div id="oi-week-warnings"></div><div class="oi-weekscroll" id="oi-week-grid"></div>
+    <p class="oi-calendar-note">Solo le sessioni «Evento» con data e orario entrano qui. I task restano nella struttura. Clicca un evento per modificarlo; trascinalo per spostarlo di giorno o orario.</p>
+  </section>
+  <footer class="oi-statusline"><span id="oi-save-status" role="status">Dati locali in questo browser.</span><span>Usa «Esporta JSON» per conservarne una copia.</span><button class="oi-btn oi-quiet" data-act="undo" id="oi-undo" disabled>Annulla ultima modifica</button></footer>
+  <dialog id="oi-editor" aria-labelledby="oi-editor-title"><div class="oi-modalhead"><h2 id="oi-editor-title"></h2><button class="oi-btn oi-iconbtn" data-act="close" aria-label="Chiudi">×</button></div><form id="oi-form"><div id="oi-form-fields" class="oi-formgrid"></div><p id="oi-form-error" class="oi-error" role="alert"></p><div class="oi-formfoot"><button type="button" class="oi-btn oi-danger" id="oi-delete" data-act="delete-current">Elimina</button><button type="button" class="oi-btn" data-act="close">Annulla</button><button type="submit" class="oi-btn oi-primary">Salva</button></div></form></dialog>
+  <dialog id="oi-json-modal" aria-labelledby="oi-json-title"><div class="oi-modalhead"><h2 id="oi-json-title">Dati JSON</h2><button class="oi-btn oi-iconbtn" data-act="close" aria-label="Chiudi">×</button></div><div class="oi-inline"><label class="oi-field">Contenuto<select id="oi-json-mode"><option value="all">Struttura completa</option><option value="root">Un root</option><option value="events">Eventi della settimana</option><option value="tasks">Task della struttura</option><option value="weekplan">Week plan compatibile</option></select></label><label class="oi-field" id="oi-json-root-field" hidden>Root<select id="oi-json-root"></select></label></div><p class="oi-small oi-muted" id="oi-json-help"></p><textarea id="oi-json-text" spellcheck="false" aria-label="Dati JSON"></textarea><p id="oi-json-error" class="oi-error" role="alert"></p><div class="oi-inline"><button class="oi-btn oi-primary" data-act="download-json">Esporta JSON</button><button class="oi-btn" data-act="copy-json">Copia</button><button class="oi-btn" data-act="read-file">Apri JSON / HTML</button><button class="oi-btn" data-act="legacy">Carica week plan allegato</button></div><div class="oi-formfoot"><button class="oi-btn" data-act="append-json">Aggiungi root dal JSON</button><button class="oi-btn" data-act="apply-json">Sostituisci dati dal JSON</button></div><input id="oi-json-file" type="file" accept=".json,.html,.txt,application/json,text/html,text/plain" hidden><p class="oi-small oi-muted">Struttura completa = archivio modificabile. Eventi e week plan = viste derivate. Il JSON di un root può essere aggiunto agli altri. L'importazione di un vecchio week plan usa la settimana selezionata.</p></dialog>
+  <div class="oi-toast" id="oi-toast" role="status" hidden></div>
+</main>
+<script id="oneimpegno-data" type="application/json">
+{
+  "schema_version": 1,
+  "workspace_id": "oneimpegno-demo-v1",
+  "calendar": {
+    "week_start": "2026-09-07",
+    "start": "04:00",
+    "end": "22:00",
+    "step_minutes": 30
+  },
+  "groups": [
+    {
+      "id": "pc",
+      "title": "PosturaCorretta",
+      "color": "#2563eb"
+    },
+    {
+      "id": "r4b",
+      "title": "Rails4Business",
+      "color": "#c7820a"
+    },
+    {
+      "id": "gdc",
+      "title": "Giardino del Corpo",
+      "color": "#8950c5"
+    },
+    {
+      "id": "personal",
+      "title": "Personale",
+      "color": "#52657d"
+    }
+  ],
+  "roots": [
+    {
+      "id": "root-r4b",
+      "title": "1Impegno · prima versione",
+      "kind": "project",
+      "group_id": "r4b",
+      "notes": "Esempio modificabile: date, orari e stati non sono conferme reali.",
+      "repeat": {
+        "frequency": "none",
+        "interval": 1,
+        "until": ""
+      },
+      "days": [
+        {
+          "id": "day-r4b",
+          "title": "Giornata",
+          "date": "2026-09-10",
+          "sessions": [
+            {
+              "id": "ses-build",
+              "title": "Sviluppo app HTML",
+              "kind": "event",
+              "start": "09:00",
+              "end": "11:00",
+              "location": "Studio digitale",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [
+                {
+                  "id": "task-tree",
+                  "title": "Struttura root → day → session → task",
+                  "done": false,
+                  "assignee": ""
+                },
+                {
+                  "id": "task-json",
+                  "title": "Importare ed esportare il JSON",
+                  "done": false,
+                  "assignee": ""
+                }
+              ],
+              "exceptions": {}
+            },
+            {
+              "id": "ses-next",
+              "title": "Da organizzare",
+              "kind": "task",
+              "start": "",
+              "end": "",
+              "location": "",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [
+                {
+                  "id": "task-week",
+                  "title": "Collegare gli eventi al week plan",
+                  "done": false,
+                  "assignee": ""
+                },
+                {
+                  "id": "task-integration",
+                  "title": "Integrare la pagina in Rails",
+                  "done": false,
+                  "assignee": ""
+                }
+              ],
+              "exceptions": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "root-pc",
+      "title": "PosturaCorretta · pratica in gruppo",
+      "kind": "multi_event",
+      "group_id": "pc",
+      "notes": "Esempio modificabile: date, orari e stati non sono conferme reali.",
+      "repeat": {
+        "frequency": "weekly",
+        "interval": 1,
+        "until": ""
+      },
+      "days": [
+        {
+          "id": "day-pc-wed",
+          "title": "Day 1",
+          "date": "2026-09-09",
+          "sessions": [
+            {
+              "id": "ses-pc-wed1",
+              "title": "Esercizi in gruppo",
+              "kind": "event",
+              "start": "15:00",
+              "end": "16:00",
+              "location": "Studio",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [
+                {
+                  "id": "task-pc-contact",
+                  "title": "Raccogliere le adesioni",
+                  "done": false,
+                  "assignee": ""
+                }
+              ],
+              "exceptions": {}
+            },
+            {
+              "id": "ses-pc-wed2",
+              "title": "Esercizi in gruppo",
+              "kind": "event",
+              "start": "20:00",
+              "end": "21:00",
+              "location": "Studio",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [],
+              "exceptions": {}
+            }
+          ]
+        },
+        {
+          "id": "day-pc-fri",
+          "title": "Day 2",
+          "date": "2026-09-11",
+          "sessions": [
+            {
+              "id": "ses-pc-fri1",
+              "title": "Esercizi in gruppo",
+              "kind": "event",
+              "start": "15:00",
+              "end": "16:00",
+              "location": "Studio",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [],
+              "exceptions": {}
+            },
+            {
+              "id": "ses-pc-fri2",
+              "title": "Esercizi in gruppo",
+              "kind": "event",
+              "start": "20:00",
+              "end": "21:00",
+              "location": "Studio",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [],
+              "exceptions": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "root-gdc",
+      "title": "Musica e natura",
+      "kind": "project",
+      "group_id": "gdc",
+      "notes": "Esempio modificabile: date, orari e stati non sono conferme reali.",
+      "repeat": {
+        "frequency": "none",
+        "interval": 1,
+        "until": ""
+      },
+      "days": [
+        {
+          "id": "day-gdc",
+          "title": "Da pianificare",
+          "date": "",
+          "sessions": [
+            {
+              "id": "ses-music",
+              "title": "Suonare e camminare",
+              "kind": "task",
+              "start": "",
+              "end": "",
+              "location": "",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [
+                {
+                  "id": "task-fisa",
+                  "title": "Concordare la prossima lezione di fisarmonica",
+                  "done": false,
+                  "assignee": ""
+                },
+                {
+                  "id": "task-nature",
+                  "title": "Scegliere luogo e tempo per una camminata",
+                  "done": false,
+                  "assignee": ""
+                }
+              ],
+              "exceptions": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "root-payment",
+      "title": "Abbonamento · esempio",
+      "kind": "recurring_payment",
+      "group_id": "personal",
+      "notes": "Esempio modificabile: date, orari e stati non sono conferme reali.",
+      "repeat": {
+        "frequency": "monthly",
+        "interval": 1,
+        "until": ""
+      },
+      "days": [
+        {
+          "id": "day-payment",
+          "title": "Giornata",
+          "date": "2026-09-15",
+          "sessions": [
+            {
+              "id": "ses-payment",
+              "title": "Scadenza abbonamento",
+              "kind": "event",
+              "start": "08:00",
+              "end": "08:30",
+              "location": "",
+              "assignee": "",
+              "status": "draft",
+              "notes": "",
+              "tasks": [
+                {
+                  "id": "task-payment",
+                  "title": "Verificare il pagamento",
+                  "done": false,
+                  "assignee": ""
+                }
+              ],
+              "exceptions": {}
+            }
+          ]
+        }
+      ],
+      "payment": {
+        "amount": null,
+        "currency": "EUR"
+      }
+    }
+  ],
+  "sample": true
+}
+</script>
+<script id="oi-legacy-data" type="application/json">
+{"time_range": {"start": "08:00", "end": "21:00", "step_minutes": 30}, "days": ["lun", "mar", "mer", "gio", "ven", "sab", "dom"], "slots": [{"day": "lun", "type": "rails4business", "title": "RAILS 4B", "start": "09:00", "end": "20:00", "details": ["Coding", "FlowPulse"]}, {"day": "mar", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "details": ["Individuali", "Viadana / Calvisano"]}, {"day": "mer", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "details": ["Viadana / Calvisano", "Con conferma"]}, {"day": "gio", "type": "appointments", "title": "Lezione", "start": "11:00", "end": "12:00", "details": ["Fisarmonica"]}, {"day": "gio", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "details": ["Individuali", "Viadana / Calvisano"]}, {"day": "ven", "type": "appointments", "title": "Pittura", "start": "10:00", "end": "12:00"}, {"day": "ven", "type": "posturacorretta", "title": "PosturaCorretta", "start": "17:00", "end": "20:00", "details": ["Viadana / Calvisano"]}, {"day": "sab", "type": "events", "title": "Eventi", "start": "09:00", "end": "12:00"}, {"day": "dom", "type": "events", "title": "Eventi", "start": "09:00", "end": "12:00"}]}
+</script>
+<script id="oneimpegno-code">
+(() => {
+'use strict';
+/* Modello e proiezioni: nessuna dipendenza da DOM o Rails. */
+const ROOT_KINDS={project:'Progetto',multi_event:'Evento multiplo',event:'Evento singolo',recurring_payment:'Pagamento ricorrente'};
+const STATUS={draft:'Da concordare',agreed:'Concordato',done:'Completato'};
+const FREQ={none:'Nessuna',weekly:'Settimanale',monthly:'Mensile'};
+const DAY_KEYS=['lun','mar','mer','gio','ven','sab','dom'];
+const uid=()=>globalThis.crypto?.randomUUID?.() || 'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+const clone=x=>JSON.parse(JSON.stringify(x));
+const dateObj=s=>new Date(s+'T12:00:00Z');
+const iso=d=>d.toISOString().slice(0,10);
+const isDate=s=>typeof s==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(dateObj(s)) && iso(dateObj(s))===s;
+const plusDays=(s,n)=>{const d=dateObj(s);d.setUTCDate(d.getUTCDate()+n);return iso(d)};
+const monday=s=>plusDays(s,-((dateObj(s).getUTCDay()+6)%7));
+const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+const mins=s=>Number(s.slice(0,2))*60+Number(s.slice(3));
+const isTime=s=>typeof s==='string' && /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(s);
+const endTime=s=>isTime(s)||s==='24:00';
+const hhmm=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
+const validTime=s=>isTime(s.start)&&endTime(s.end)&&mins(s.end)>mins(s.start);
+const fmtDate=(s,weekday=false)=>isDate(s)?dateObj(s).toLocaleDateString('it-IT',{day:'numeric',month:'short',...(weekday?{weekday:'short'}:{}),timeZone:'UTC'}):'Senza data';
+function plusMonths(s,n){const d=dateObj(s),day=d.getUTCDate();d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()+n);const last=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).getUTCDate();d.setUTCDate(Math.min(day,last));return iso(d)}
+function repeatDates(base,repeat,from,to){
+  if(!isDate(base))return [];
+  const freq=repeat?.frequency||'none',interval=repeat?.interval||1,until=repeat?.until||'9999-12-31';
+  if(freq==='none')return base>=from&&base<=to?[base]:[];
+  let n=0;
+  if(freq==='weekly') n=Math.max(0,Math.floor((dateObj(from)-dateObj(base))/86400000/(7*interval))-1);
+  if(freq==='monthly')n=Math.max(0,Math.floor(((dateObj(from).getUTCFullYear()-dateObj(base).getUTCFullYear())*12+dateObj(from).getUTCMonth()-dateObj(base).getUTCMonth())/interval)-1);
+  const out=[];for(let i=0;i<1000;i++,n++){const v=freq==='weekly'?plusDays(base,n*7*interval):plusMonths(base,n*interval);if(v>to||v>until)break;if(v>=from)out.push(v)}return out;
+}
+function extractEvents(data,weekStart){
+  const from=monday(weekStart),to=plusDays(from,6),out=[];
+  for(const root of data.roots)for(const day of root.days)for(const session of day.sessions){
+    if(session.kind!=='event'||!isDate(day.date)||!validTime(session))continue;
+    const dates=new Set(repeatDates(day.date,root.repeat,from,to));
+    for(const [origin,ex]of Object.entries(session.exceptions||{}))if(ex.date>=from&&ex.date<=to)dates.add(origin);
+    for(const origin of dates){
+      if(!repeatDates(day.date,root.repeat,origin,origin).includes(origin))continue;
+      const ex=session.exceptions?.[origin]||{},date=ex.date||origin,start=ex.start||session.start,end=ex.end||session.end;
+      if(date<from||date>to||ex.cancelled||!validTime({start,end}))continue;
+      const group=data.groups.find(g=>g.id===root.group_id);
+      out.push({id:session.id+'@'+origin,root_id:root.id,day_id:day.id,session_id:session.id,occurrence_date:origin,date,day:DAY_KEYS[(dateObj(date).getUTCDay()+6)%7],title:session.title,start,end,group_id:root.group_id,group:group?.title||'Senza gruppo',color:group?.color||'#52657d',root_title:root.title,root_kind:root.kind,location:session.location,assignee:session.assignee,status:ex.status||session.status,recurring:root.repeat.frequency!=='none',payment:root.payment||null});
+    }
+  }return out.sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
+}
+function extractTasks(data){
+  const out=[];for(const root of data.roots)for(const day of root.days)for(const s of day.sessions){
+    const context={root_id:root.id,day_id:day.id,session_id:s.id,group_id:root.group_id,date:day.date};
+    if(s.kind==='task')out.push({...context,id:s.id,source:'session',title:s.title,done:s.status==='done',assignee:s.assignee});
+    for(const t of s.tasks)out.push({...context,id:t.id,source:'task',title:t.title,done:t.done,assignee:t.assignee});
+  }return out;
+}
+function exportWeekPlan(data,weekStart){
+  const events=extractEvents(data,weekStart);let start=mins(data.calendar.start),end=mins(data.calendar.end);
+  for(const e of events){start=Math.min(start,Math.floor(mins(e.start)/60)*60);end=Math.max(end,Math.ceil(mins(e.end)/60)*60)}
+  const legacyType=g=>({posturacorretta:'posturacorretta',rails4business:'rails4business','giardino del corpo':'events'}[g.toLowerCase()]||'appointments');
+  return {time_range:{start:hhmm(start),end:hhmm(end),step_minutes:data.calendar.step_minutes},week_start:monday(weekStart),days:DAY_KEYS,slots:events.map(e=>({day:e.day,date:e.date,type:legacyType(e.group),group_id:e.group_id,title:e.title,start:e.start,end:e.end,details:[e.root_title,e.location,e.assignee].filter(Boolean),root_id:e.root_id,session_id:e.session_id,occurrence_date:e.occurrence_date,color:e.color}))};
+}
+function overlapLayout(events){
+  const sorted=events.map(e=>({...e,col:0,cols:1})).sort((a,b)=>mins(a.start)-mins(b.start)||mins(b.end)-mins(a.end));
+  let block=[],blockEnd=-1,ends=[];
+  const finish=()=>{for(const e of block)e.cols=ends.length;block=[];ends=[]};
+  for(const e of sorted){if(mins(e.start)>=blockEnd){finish();blockEnd=-1}let c=ends.findIndex(end=>end<=mins(e.start));if(c<0)c=ends.length;e.col=c;ends[c]=mins(e.end);block.push(e);blockEnd=Math.max(blockEnd,mins(e.end))}finish();return sorted;
+}
+function normalize(input){
+  const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
+  let d=clone(input);if(Array.isArray(d))d={roots:d};else if(d&&Array.isArray(d.days)&&!d.roots&&!d.slots)d={roots:[d]};
+  assert(d&&typeof d==='object'&&Array.isArray(d.roots),'Serve un oggetto con roots: [...], un array di root o un singolo root.');
+  assert(!d.schema_version||d.schema_version===1,'Versione JSON non supportata.');assert(d.roots.length<=1000,'Troppi root (massimo 1000).');
+  d.schema_version=1;d.workspace_id=String(d.workspace_id||uid());
+  d.calendar={week_start:monday(today()),start:'04:00',end:'22:00',step_minutes:30,...d.calendar};
+  assert(isDate(d.calendar.week_start),'La settimana deve essere una data valida.');d.calendar.week_start=monday(d.calendar.week_start);
+  assert(isTime(d.calendar.start)&&endTime(d.calendar.end)&&mins(d.calendar.end)>mins(d.calendar.start),'Intervallo del calendario non valido.');
+  assert([15,30,60].includes(d.calendar.step_minutes),'Passo calendario ammesso: 15, 30 o 60 minuti.');
+  d.groups=d.groups||[];assert(Array.isArray(d.groups),'groups deve essere un array.');
+  const used=new Set(),takeId=(obj)=>{obj.id=String(obj.id||uid());assert(/^[a-zA-Z0-9_-]{1,100}$/.test(obj.id),'ID non valido: '+obj.id);assert(!used.has(obj.id),'ID duplicato: '+obj.id);used.add(obj.id)};
+  const str=(v)=>v==null?'':String(v);
+  for(const g of d.groups){takeId(g);g.title=str(g.title).trim()||'Calendario';g.color=g.color||'#52657d';assert(/^#[0-9a-fA-F]{6}$/.test(g.color),'Colore non valido per '+g.title)}
+  let total=0;
+  for(const r of d.roots){
+    takeId(r);r.title=str(r.title).trim();assert(r.title,'Titolo root mancante.');r.kind=r.kind||'project';assert(Object.hasOwn(ROOT_KINDS,r.kind),'Tipo root non valido: '+r.kind);r.notes=str(r.notes);r.group_id=str(r.group_id)||'ungrouped';
+    if(!d.groups.some(g=>g.id===r.group_id)){const g={id:r.group_id,title:r.group_id==='ungrouped'?'Senza gruppo':r.group_id,color:'#52657d'};takeId(g);d.groups.push(g)}
+    r.repeat={frequency:'none',interval:1,until:'',...r.repeat};assert(Object.hasOwn(FREQ,r.repeat.frequency),'Ricorrenza non valida.');assert(Number.isInteger(r.repeat.interval)&&r.repeat.interval>=1&&r.repeat.interval<=365,'Intervallo ricorrenza non valido.');assert(!r.repeat.until||isDate(r.repeat.until),'Fine ricorrenza non valida.');
+    if(r.payment){assert(r.payment.amount==null||(Number.isFinite(r.payment.amount)&&r.payment.amount>=0),'Importo non valido.');r.payment.currency=str(r.payment.currency||'EUR');assert(/^[A-Z]{3}$/.test(r.payment.currency),'Valuta non valida.');}
+    r.days=r.days||[];assert(Array.isArray(r.days),'days deve essere un array.');
+    for(const day of r.days){takeId(day);day.title=str(day.title)||'Giornata';day.date=str(day.date);assert(!day.date||isDate(day.date),'Data non valida in '+day.title);day.sessions=day.sessions||[];assert(Array.isArray(day.sessions),'sessions deve essere un array.');
+      for(const s of day.sessions){takeId(s);s.title=str(s.title).trim();assert(s.title,'Titolo sessione mancante.');s.kind=s.kind||'task';assert(['event','task'].includes(s.kind),'Tipo sessione non valido.');s.start=str(s.start);s.end=str(s.end);assert(!s.start||isTime(s.start),'Ora iniziale non valida in '+s.title);assert(!s.end||endTime(s.end),'Ora finale non valida in '+s.title);assert(!(s.start&&s.end)||mins(s.end)>mins(s.start),'La fine deve seguire l’inizio in '+s.title);s.location=str(s.location);s.assignee=str(s.assignee);s.notes=str(s.notes);s.status=s.status||'draft';assert(Object.hasOwn(STATUS,s.status),'Stato sessione non valido.');s.exceptions=s.exceptions||{};assert(!Array.isArray(s.exceptions)&&typeof s.exceptions==='object','Eccezioni non valide.');
+        for(const [origin,ex]of Object.entries(s.exceptions)){assert(isDate(origin)&&ex&&typeof ex==='object','Eccezione non valida.');assert(!ex.date||isDate(ex.date),'Data eccezione non valida.');assert(!ex.start||isTime(ex.start),'Ora eccezione non valida.');assert(!ex.end||endTime(ex.end),'Fine eccezione non valida.');assert(validTime({start:ex.start||s.start,end:ex.end||s.end}),'Intervallo eccezione non valido.');assert(!ex.status||Object.hasOwn(STATUS,ex.status),'Stato eccezione non valido.');}
+        s.tasks=s.tasks||[];assert(Array.isArray(s.tasks),'tasks deve essere un array.');for(const t of s.tasks){takeId(t);t.title=str(t.title).trim();assert(t.title,'Titolo task mancante.');t.done=t.done===true;t.assignee=str(t.assignee);total++}total++;assert(total<=20000,'Troppi elementi (massimo 20000).');
+      }
+    }
+  }return d;
+}
+function moveSession(data,rootId,dayId,sessionId,date,start,end){
+  const r=data.roots.find(x=>x.id===rootId),d=r?.days.find(x=>x.id===dayId),s=d?.sessions.find(x=>x.id===sessionId);if(!s)throw new Error('Sessione non trovata.');
+  s.start=start;s.end=end;if(date===d.date)return;
+  let target=r.days.find(x=>x.date===date);if(!target){target={id:uid(),title:'Giornata',date,sessions:[]};r.days.push(target)}d.sessions=d.sessions.filter(x=>x.id!==s.id);target.sessions.push(s);
+}
+// CORE-END
+/* Interfaccia, esportazione file e hook per integrazione Rails. */
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const icons={flag:'<path d="M4 22V3c5-4 10 4 16 0v12c-6 4-11-4-16 0"/>',day:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 11h18"/>',session:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',task:'<rect x="4" y="4" width="16" height="16" rx="2"/>',chevron:'<path d="m9 5 7 7-7 7"/>',edit:'<path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-4-4L5 15z"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>'};
+const icon=n=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+icons[n]+'</svg>';
+let app,data,seed,abort,undoData=null,view='tree',filter='all',collapsed=new Set(),editor=null,storageOK=true,toastTimer,dragging=null,ignoreClickUntil=0;
+const $=id=>app.querySelector('#'+id);
+const storageKey=()=> 'oneimpegno-v1:'+seed.workspace_id;
+const groupOf=r=>data.groups.find(g=>g.id===r.group_id)||{id:'',title:'Senza gruppo',color:'#52657d'};
+const refs=x=>['root','day','session','task'].filter(k=>x[k]).map(k=>' data-'+k+'="'+esc(x[k])+'"').join('');
+const btn=(act,label,attrs='',cls='')=>'<button type="button" class="oi-btn '+cls+'" data-act="'+act+'" '+attrs+'>'+label+'</button>';
+const badge=(txt,event=false)=>'<span class="oi-pill '+(event?'oi-eventpill':'')+'">'+esc(txt)+'</span>';
+const nodeAttrs=(kind,ref)=>'data-kind="'+kind+'"'+refs(ref);
+function findNode(ref){const root=data.roots.find(x=>x.id===ref.root),day=root?.days.find(x=>x.id===ref.day),session=day?.sessions.find(x=>x.id===ref.session),task=session?.tasks.find(x=>x.id===ref.task);return {root,day,session,task}}
+function toast(message){clearTimeout(toastTimer);$('oi-toast').textContent=message;$('oi-toast').hidden=false;toastTimer=setTimeout(()=>{$('oi-toast').hidden=true},3800)}
+function persist(){if(app.dataset.persist==='false'){$('oi-save-status').textContent='Dati in memoria · salvataggio affidato all’app Rails.';return}try{localStorage.setItem(storageKey(),JSON.stringify(data));storageOK=true}catch(e){storageOK=false} $('oi-save-status').textContent=storageOK?(data.sample?'Esempi modificabili · salvati in questo browser.':'Salvato in questo browser.'):'Salvataggio browser non disponibile: esporta il JSON prima di chiudere.'}
+function commit(change,message){const before=clone(data);try{change();data=normalize(data)}catch(e){data=before;throw e}undoData=before;persist();render();app.dispatchEvent(new CustomEvent('oneimpegno:change',{bubbles:true,detail:{data:clone(data)}}));if(message)toast(message)}
+function fold(id,title){return btn('fold',icon('chevron'),'data-id="'+esc(id)+'" aria-expanded="'+!collapsed.has(id)+'" aria-controls="children-'+esc(id)+'" aria-label="Apri o chiudi '+esc(title)+'"','oi-quiet oi-iconbtn oi-fold')}
+function controls(kind,ref,child){const attr=nodeAttrs(kind,ref);return '<div class="oi-actions">'+(child?btn('new','+ '+({day:'Day',session:'Session',task:'Task'}[child]),nodeAttrs(child,ref),'oi-quiet oi-add'):'')+btn('edit',icon('edit'),attr+' aria-label="Modifica '+kind+'"','oi-quiet oi-iconbtn')+btn('delete',icon('trash'),attr+' aria-label="Elimina '+kind+'"','oi-quiet oi-iconbtn oi-danger')+'</div>'}
+function nodeLabel(kind,ref,title,meta,ic,root=false){return '<button type="button" class="oi-node" data-act="edit" '+nodeAttrs(kind,ref)+'>'+icon(ic)+'<span class="oi-node-text"><span class="oi-title '+(root?'oi-root-title':'')+'">'+esc(title)+'</span>'+meta+'</span></button>'}
+function taskHTML(r,d,s,t){const ref={root:r.id,day:d.id,session:s.id,task:t.id};return '<li><div class="oi-row '+(t.done?'oi-done':'')+'"><input type="checkbox" data-toggle-task="true" '+refs(ref)+' '+(t.done?'checked':'')+' aria-label="Completa '+esc(t.title)+'">'+nodeLabel('task',ref,t.title,t.assignee?'<span class="oi-meta">'+esc(t.assignee)+'</span>':'','task')+controls('task',ref)+'</div></li>'}
+function sessionHTML(r,d,s){const ref={root:r.id,day:d.id,session:s.id},planned=s.kind==='event'&&isDate(d.date)&&validTime(s);
+  let meta=badge(s.kind==='event'?'Evento':'Task',s.kind==='event');if(s.kind==='event')meta+='<span class="oi-meta">'+(validTime(s)?esc(s.start+' – '+s.end):'Senza orario')+'</span>'+(planned?'':badge('Da pianificare'));
+  meta+=(s.location?'<span class="oi-meta">'+esc(s.location)+'</span>':'')+(s.status!=='draft'?badge(STATUS[s.status]):'');
+  return '<li><div class="oi-row '+(s.status==='done'?'oi-done':'')+'">'+fold(s.id,s.title)+nodeLabel('session',ref,s.title,meta,'session')+controls('session',ref,'task')+'</div><ul id="children-'+esc(s.id)+'" class="oi-children oi-leaves" '+(collapsed.has(s.id)?'hidden':'')+'>'+(s.tasks.length?s.tasks.map(t=>taskHTML(r,d,s,t)).join(''):'<li class="oi-empty-small">Nessun task · usa + Task per aggiungerlo.</li>')+'</ul></li>';
+}
+function dayHTML(r,d){const ref={root:r.id,day:d.id};return '<li><div class="oi-row">'+fold(d.id,d.title)+nodeLabel('day',ref,d.title,'<span class="oi-meta">'+esc(fmtDate(d.date,true))+'</span>','day')+controls('day',ref,'session')+'</div><ul id="children-'+esc(d.id)+'" class="oi-children" '+(collapsed.has(d.id)?'hidden':'')+'>'+(d.sessions.length?d.sessions.map(s=>sessionHTML(r,d,s)).join(''):'<li class="oi-empty-small">Aggiungi una sessione evento o task.</li>')+'</ul></li>'}
+function rootHTML(r){const ref={root:r.id},group=groupOf(r);let meta=badge(ROOT_KINDS[r.kind]);if(r.repeat.frequency!=='none')meta+=badge('↻ '+FREQ[r.repeat.frequency]+(r.repeat.interval>1?' ×'+r.repeat.interval:''));if(r.payment?.amount!=null)meta+=badge(r.payment.amount.toFixed(2)+' '+r.payment.currency);
+return '<article class="oi-root" style="--c:'+group.color+'"><div class="oi-row">'+fold(r.id,r.title)+nodeLabel('root',ref,r.title,meta,'flag',true)+btn('root-json','{ }',refs(ref)+' aria-label="JSON di '+esc(r.title)+'"','oi-quiet oi-iconbtn')+controls('root',ref,'day')+'</div><div id="children-'+esc(r.id)+'" '+(collapsed.has(r.id)?'hidden':'')+'>'+(r.notes?'<p class="oi-note">'+esc(r.notes)+'</p>':'')+'<ul class="oi-children">'+(r.days.length?r.days.map(d=>dayHTML(r,d)).join(''):'<li class="oi-empty-small">Aggiungi il primo Day.</li>')+'</ul></div></article>'}
+function renderTree(){
+  const roots=data.roots.filter(r=>filter==='all'||r.group_id===filter),sessions=roots.flatMap(r=>r.days.flatMap(d=>d.sessions));
+  $('oi-counts').textContent=roots.length+' root · '+sessions.filter(s=>s.kind==='event').length+' sessioni evento · '+extractTasks({...data,roots}).length+' task';
+  $('oi-roots').innerHTML=roots.length?data.groups.filter(g=>roots.some(r=>r.group_id===g.id)).map(g=>'<div class="oi-group"><span class="oi-swatch" style="--c:'+g.color+'"></span>'+esc(g.title)+'</div>'+roots.filter(r=>r.group_id===g.id).map(rootHTML).join('')).join(''):'<div class="oi-empty">Nessun root in questo calendario. Crea un root oppure importa il tuo JSON.</div>';
+}
+function renderWeek(){
+  const week=data.calendar.week_start,dates=Array.from({length:7},(_,i)=>plusDays(week,i)),events=extractEvents(data,week).filter(e=>filter==='all'||e.group_id===filter);
+  $('oi-week-label').textContent=fmtDate(week)+' – '+fmtDate(dates[6])+' '+dateObj(dates[6]).getUTCFullYear();$('oi-week-date').value=week;
+  let min=mins(data.calendar.start),max=mins(data.calendar.end),outside=false;for(const e of events){if(mins(e.start)<min||mins(e.end)>max)outside=true;min=Math.min(min,Math.floor(mins(e.start)/60)*60);max=Math.max(max,Math.ceil(mins(e.end)/60)*60)}
+  const px=0.8,height=(max-min)*px,stepPx=data.calendar.step_minutes*px;let hours='';for(let n=min;n<max;n+=60)hours+='<span class="oi-hour" style="top:'+((n-min)*px)+'px">'+hhmm(n)+'</span>';
+  let overlaps=0;
+  const columns=dates.map(date=>{const layout=overlapLayout(events.filter(e=>e.date===date));overlaps+=layout.filter(e=>e.cols>1).length;
+    const blocks=layout.map(e=>'<button type="button" class="oi-event '+(e.cols>1?'oi-overlap':'')+'" draggable="true" data-act="event" data-event="'+esc(e.id)+'" title="'+esc(e.title+' · '+e.start+'–'+e.end+' · '+e.root_title+' · '+STATUS[e.status]+(e.location?' · '+e.location:''))+'" style="--c:'+e.color+';top:'+((mins(e.start)-min)*px)+'px;height:'+Math.max(22,(mins(e.end)-mins(e.start))*px-3)+'px;left:calc('+e.col/e.cols*100+'% + 3px);width:calc('+100/e.cols+'% - 6px)"><strong>'+esc(e.title)+'</strong><span>'+e.start+' – '+e.end+(e.recurring?' ↻':'')+'</span>'+(mins(e.end)-mins(e.start)>=60&&e.location?'<span>'+esc(e.location)+'</span>':'')+'</button>').join('');
+    return '<div class="oi-daycol" data-date="'+date+'" data-min="'+min+'" style="height:'+height+'px;--step-h:'+stepPx+'px">'+blocks+'</div>';
+  }).join('');
+  const scroller=$('oi-week-grid'),scroll=scroller.scrollTop;scroller.innerHTML='<div class="oi-weekhead"><div></div>'+dates.map((d,i)=>'<div class="oi-dayhead '+(d===today()?'oi-today':'')+'">'+DAY_KEYS[i].toUpperCase()+'<div class="oi-small">'+fmtDate(d)+'</div></div>').join('')+'</div><div class="oi-weekbody"><div class="oi-hourcol" style="height:'+height+'px">'+hours+'</div>'+columns+'</div>';scroller.scrollTop=scroll;
+  const waiting=data.roots.filter(r=>filter==='all'||r.group_id===filter).flatMap(r=>r.days.flatMap(d=>d.sessions.filter(s=>s.kind==='event'&&(!isDate(d.date)||!validTime(s))))).length;
+  $('oi-week-count').textContent=events.length+' eventi · '+(events.reduce((sum,e)=>sum+mins(e.end)-mins(e.start),0)/60).toLocaleString('it-IT',{maximumFractionDigits:1})+' ore programmate';
+  $('oi-week-warnings').innerHTML=(waiting?'<p class="oi-warning">'+waiting+' sessioni evento senza data o orario completo: restano nella struttura.</p>':'')+(overlaps?'<p class="oi-warning">'+overlaps+' eventi hanno sovrapposizioni. Sono mostrati affiancati.</p>':'')+(outside?'<p class="oi-small oi-muted">Orari estesi automaticamente per mostrare tutti gli eventi.</p>':'')+(!events.length?'<p class="oi-small oi-muted">Nessun evento in questa settimana. Le sessioni task non occupano il calendario.</p>':'');
+}
+function render(){
+  if(filter!=='all'&&!data.groups.some(g=>g.id===filter))filter='all';
+  $('oi-group-filter').innerHTML='<option value="all">Tutti</option>'+data.groups.map(g=>'<option value="'+esc(g.id)+'">'+esc(g.title)+'</option>').join('');$('oi-group-filter').value=filter;
+  $('oi-tree-view').hidden=view!=='tree';$('oi-week-view').hidden=view!=='week';for(const v of ['tree','week']){$('oi-tab-'+v).setAttribute('aria-selected',String(view===v));$('oi-tab-'+v).tabIndex=view===v?0:-1}
+  $('oi-undo').disabled=!undoData;renderTree();if(view==='week')renderWeek();
+}
+const options=(obj,value)=>Object.entries(obj).map(([k,v])=>'<option value="'+esc(k)+'" '+(k===String(value)?'selected':'')+'>'+esc(v)+'</option>').join('');
+const field=(label,name,value='',type='text',attrs='',full=false)=>'<label class="oi-field '+(full?'oi-full':'')+'">'+label+'<input name="'+name+'" type="'+type+'" value="'+esc(value)+'" '+attrs+'></label>';
+const selectField=(label,name,obj,value,full=false)=>'<label class="oi-field '+(full?'oi-full':'')+'">'+label+'<select name="'+name+'">'+options(obj,value)+'</select></label>';
+const notesField=v=>'<label class="oi-field oi-full">Note<textarea name="notes" rows="2">'+esc(v||'')+'</textarea></label>';
+function openEditor(kind,ref={},isNew=false,occurrence=null){
+  const found=findNode(ref),current=found[kind];editor={kind,ref:{...ref},isNew,occurrence};$('oi-form-error').textContent='';$('oi-delete').hidden=isNew||kind==='range';
+  $('oi-editor-title').textContent=(isNew?'Nuovo ':'Modifica ')+({root:'root',day:'Day',session:'Session',task:'Task',range:'orari del calendario'}[kind]);
+  let html='';
+  if(kind==='root'){
+    const r=current||{},group=r.group_id?groupOf(r):data.groups.find(g=>g.id===filter)||data.groups[0];
+    html=field('Titolo','title',r.title||'','text','required maxlength="250"',true)+selectField('Tipo di root','kind',ROOT_KINDS,r.kind||'project')+field('Raggruppamento / calendario','group_title',group?.title||'Personale','text','required list="oi-groups-list"')+'<datalist id="oi-groups-list">'+data.groups.map(g=>'<option value="'+esc(g.title)+'">').join('')+'</datalist>'+field('Colore del calendario','color',group?.color||'#52657d','color')+selectField('Ripeti le sessioni evento','frequency',FREQ,r.repeat?.frequency||'none')+field('Ogni N settimane / mesi','interval',r.repeat?.interval||1,'number','min="1" max="365" required')+field('Fino al (facoltativo)','until',r.repeat?.until||'','date')+'<div id="oi-payment-fields" class="oi-full oi-formgrid" '+(r.kind==='recurring_payment'?'':'hidden')+'>'+field('Importo per occorrenza (facoltativo)','amount',r.payment?.amount??'','number','min="0" step="0.01"')+field('Valuta','currency',r.payment?.currency||'EUR','text','pattern="[A-Z]{3}" maxlength="3"')+'</div>'+notesField(r.notes)+'<p class="oi-small oi-muted oi-full">La ricorrenza usa la data di ogni Day. I task rimangono checklist della struttura. Il colore vale per tutti i root dello stesso calendario.</p>';
+  }else if(kind==='day'){
+    const d=current||{};html=field('Nome del Day','title',d.title||'Giornata','text','required',true)+field('Data (può restare vuota)','date',d.date||'','date','',true)+'<p class="oi-small oi-muted oi-full">La data appartiene al Day. Cambiandola, sposti le sue sessioni evento.</p>';
+  }else if(kind==='session'){
+    const s=current||{},ex=occurrence?s.exceptions?.[occurrence]||{}:{},date=ex.date||occurrence||found.day?.date||'';
+    if(occurrence)html+=selectField('Modifica','scope',{occurrence:'Solo questa occorrenza',series:'Sessione di origine e ricorrenze'},'occurrence',true);
+    html+=field('Titolo','title',s.title||'','text','required maxlength="250" data-base="true"',true)+selectField('Tipo di sessione','kind',{event:'Evento → calendario',task:'Task → resta nella struttura'},s.kind||'task')+selectField('Stato annotato','status',STATUS,ex.status||s.status||'draft')+field('Data','date',date,'date','',true)+'<div id="oi-time-fields" class="oi-full oi-formgrid" '+((s.kind||'task')==='event'?'':'hidden')+'>'+field('Inizio','start',ex.start||s.start||'','time')+field('Fine','end',ex.end||s.end||'','text','placeholder="HH:MM" pattern="([01][0-9]|2[0-3]):[0-5][0-9]|24:00"')+'</div>'+field('Luogo / collegamento','location',s.location||'','text','data-base="true"')+field('Responsabile / persone','assignee',s.assignee||'','text','data-base="true"')+notesField(s.notes)+'<p class="oi-small oi-muted oi-full">Un evento entra nel calendario quando ha data, inizio e fine. La fine deve essere nello stesso giorno; per la mezzanotte usa 24:00. Gli stati sono annotazioni locali.</p>';
+  }else if(kind==='task'){
+    const t=current||{};html=field('Attività','title',t.title||'','text','required maxlength="250"',true)+field('Responsabile','assignee',t.assignee||'','text','',true)+'<label class="oi-checkfield oi-full"><input name="done" type="checkbox" '+(t.done?'checked':'')+'>Completato</label>';
+  }else if(kind==='range')html=field('Dalle','start',data.calendar.start,'time','required')+field('Alle','end',data.calendar.end,'text','required pattern="([01][0-9]|2[0-3]):[0-5][0-9]|24:00"')+selectField('Intervallo della griglia','step',{15:'15 minuti',30:'30 minuti',60:'60 minuti'},String(data.calendar.step_minutes),true);
+  $('oi-form-fields').innerHTML=html;if(occurrence)syncOccurrenceFields();$('oi-editor').showModal();
+}
+function syncOccurrenceFields(){
+  const form=$('oi-form'),only=form.elements.scope?.value==='occurrence',found=findNode(editor.ref),s=found.session;if(!s)return;
+  for(const el of form.querySelectorAll('[data-base], [name=kind], [name=notes]'))el.disabled=only;
+  const ex=only?s.exceptions?.[editor.occurrence]||{}:{};form.elements.date.value=ex.date||(only?editor.occurrence:found.day.date);form.elements.start.value=ex.start||s.start;form.elements.end.value=ex.end||s.end;form.elements.status.value=ex.status||s.status;
+}
+function saveEditor(){
+  const f=$('oi-form'),values=new FormData(f),v=n=>String(values.get(n)||'').trim(),{kind,ref,isNew,occurrence}=editor;
+  if(kind==='session'&&v('kind')==='event'&&v('start')&&v('end')&&!validTime({start:v('start'),end:v('end')}))throw new Error('La fine deve essere successiva all’inizio.');
+  commit(()=>{
+    const found=findNode(ref);let obj=found[kind];
+    if(kind==='root'){
+      let group=data.groups.find(g=>g.title.toLocaleLowerCase()===v('group_title').toLocaleLowerCase());if(!group){group={id:uid(),title:v('group_title'),color:v('color')};data.groups.push(group)}group.color=v('color');
+      if(isNew){obj={id:uid(),days:[]};data.roots.push(obj)}
+      Object.assign(obj,{title:v('title'),kind:v('kind'),group_id:group.id,notes:v('notes'),repeat:{frequency:v('frequency'),interval:Number(v('interval')),until:v('until')}});
+      if(obj.kind==='recurring_payment')obj.payment={amount:v('amount')===''?null:Number(v('amount')),currency:v('currency')||'EUR'};else delete obj.payment;
+    }else if(kind==='day'){
+      if(isNew){obj={id:uid(),sessions:[]};found.root.days.push(obj)}obj.title=v('title');obj.date=v('date');collapsed.delete(found.root.id);
+    }else if(kind==='session'){
+      if(occurrence&&v('scope')==='occurrence'){
+        if(!isDate(v('date'))||!validTime({start:v('start'),end:v('end')}))throw new Error('Questa occorrenza richiede data e orario completi.');
+        obj.exceptions[occurrence]={...obj.exceptions[occurrence],date:v('date'),start:v('start'),end:v('end'),status:v('status')};
+      }else{
+        if(isNew){obj={id:uid(),tasks:[],exceptions:{}};found.day.sessions.push(obj)}
+        Object.assign(obj,{title:v('title'),kind:v('kind'),start:v('start'),end:v('end'),status:v('status'),location:v('location'),assignee:v('assignee'),notes:v('notes')});
+        if(v('date')!==found.day.date){moveSession(data,found.root.id,found.day.id,obj.id,v('date'),obj.start,obj.end);obj.exceptions={}}
+      }
+      collapsed.delete(found.root.id);collapsed.delete(found.day.id);
+    }else if(kind==='task'){
+      if(isNew){obj={id:uid()};found.session.tasks.push(obj)}Object.assign(obj,{title:v('title'),assignee:v('assignee'),done:values.get('done')==='on'});collapsed.delete(found.session.id);
+    }else if(kind==='range')Object.assign(data.calendar,{start:v('start'),end:v('end'),step_minutes:Number(v('step'))});
+  },'Modifica salvata');$('oi-editor').close();
+}
+function deleteNode(kind,ref,occurrence=null){
+  const found=findNode(ref),node=found[kind];if(!node)return;
+  const only=occurrence&&$('oi-form').elements.scope?.value==='occurrence';
+  if(!confirm(only?'Rimuovere solo questa occorrenza dal calendario?':'Eliminare «'+node.title+'»'+(['root','day','session'].includes(kind)?' e tutti gli elementi contenuti':'')+'? Puoi annullare l’ultima modifica.'))return;
+  commit(()=>{if(only)found.session.exceptions[occurrence]={...found.session.exceptions[occurrence],cancelled:true};else if(kind==='root')data.roots=data.roots.filter(x=>x.id!==ref.root);else if(kind==='day')found.root.days=found.root.days.filter(x=>x.id!==ref.day);else if(kind==='session')found.day.sessions=found.day.sessions.filter(x=>x.id!==ref.session);else if(kind==='task')found.session.tasks=found.session.tasks.filter(x=>x.id!==ref.task)},'Elemento eliminato');if($('oi-editor').open)$('oi-editor').close();
+}
+function parseManyJSON(text){
+  const t=text.replace(/^\uFEFF/,'').trim();if(!t)throw new Error('Il JSON è vuoto.');
+  try{return JSON.parse(t)}catch(original){
+    let start=-1,depth=0,quoted=false,escaped=false;const parts=[];
+    for(let i=0;i<t.length;i++){const c=t[i];if(start===-1){if(/[\s,]/.test(c))continue;if(c!=='{')throw new Error('JSON non valido: '+original.message);start=i}
+      if(quoted){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c==='"')quoted=false;continue}
+      if(c==='"')quoted=true;else if(c==='{'||c==='[')depth++;else if(c==='}'||c===']'){depth--;if(depth===0){parts.push(JSON.parse(t.slice(start,i+1)));start=-1}}
+    }if(start!==-1||!parts.length)throw new Error('JSON incompleto o non valido.');if(parts.length===1)return parts[0];return parts;
+  }
+}
+function legacyToData(old,weekStart){
+  if(!Array.isArray(old.slots))throw new Error('Il week plan non contiene slots.');const d={schema_version:1,workspace_id:uid(),groups:[],roots:[],calendar:{...data.calendar,...old.time_range,week_start:monday(old.week_start||weekStart)}};
+  const map={posturacorretta:['PosturaCorretta','#2563eb'],rails4business:['Rails4Business','#c7820a'],appointments:['Appuntamenti','#ba4565'],events:['Giardino del Corpo','#8950c5']};
+  for(const slot of old.slots){if(!DAY_KEYS.includes(slot.day)&&!isDate(slot.date))throw new Error('Giorno non valido nel week plan.');const type=String(slot.type||'altro');let root=d.roots.find(r=>r.legacy_type===type);if(!root){const [title,color]=map[type]||[type,'#52657d'],group={id:uid(),title,color};d.groups.push(group);root={id:uid(),title:'Week plan · '+title,kind:'multi_event',group_id:group.id,legacy_type:type,notes:'Importato dal week plan: verificare date e impegni.',repeat:{frequency:'weekly',interval:1,until:''},days:[]};d.roots.push(root)}const date=isDate(slot.date)?slot.date:plusDays(d.calendar.week_start,DAY_KEYS.indexOf(slot.day));let day=root.days.find(x=>x.date===date);if(!day){day={id:uid(),title:'Giornata',date,sessions:[]};root.days.push(day)}day.sessions.push({id:uid(),title:slot.title||'Evento',kind:'event',start:slot.start,end:slot.end,location:'',assignee:'',status:'draft',notes:(slot.details||[]).join(' · '),tasks:[],exceptions:{}})}return normalize(d);
+}
+function decodedInput(text){
+  let value;if(/^\s*<(?:!doctype|html|script)/i.test(text)){
+    const doc=new DOMParser().parseFromString(text,'text/html');const el=doc.querySelector('script#oneimpegno-data[type="application/json"], script#weekplan-data[type="application/json"]');if(!el)throw new Error('Nell’HTML non trovo oneimpegno-data o weekplan-data.');value=parseManyJSON(el.textContent);
+  }else value=parseManyJSON(text);
+  if(value?.slots)return legacyToData(value,data.calendar.week_start);
+  if(Array.isArray(value)&&value.some(x=>x&&(x.root_id||x.session_id)&&!x.days))throw new Error('Questo è un elenco derivato di eventi o task. Importa la struttura completa o il JSON di un root.');
+  if(Array.isArray(value)){const ids=new Set(value.map(r=>r.group_id));value={roots:value,groups:data.groups.filter(g=>ids.has(g.id))}}
+  else if(value&&Array.isArray(value.days)&&!value.roots)value={roots:[value],groups:data.groups.filter(g=>g.id===value.group_id)};
+  return normalize(value);
+}
+function jsonValue(){const mode=$('oi-json-mode').value;if(mode==='events')return extractEvents(data,data.calendar.week_start).filter(e=>filter==='all'||e.group_id===filter);if(mode==='tasks')return extractTasks(data).filter(t=>filter==='all'||t.group_id===filter);if(mode==='weekplan'){const all=exportWeekPlan(data,data.calendar.week_start);all.slots=all.slots.filter(s=>filter==='all'||s.group_id===filter);return all}if(mode==='root'){const r=data.roots.find(x=>x.id===$('oi-json-root').value);return {schema_version:1,calendar:data.calendar,groups:r?data.groups.filter(g=>g.id===r.group_id):[],roots:r?[r]:[]}}return data}
+function refreshJSON(){const mode=$('oi-json-mode').value;$('oi-json-root-field').hidden=mode!=='root';$('oi-json-text').value=JSON.stringify(jsonValue(),null,2);$('oi-json-text').readOnly=!['all','root'].includes(mode);$('oi-json-error').textContent='';$('oi-json-help').textContent=({all:'Tutti i root, uno sotto l’altro. Modificabile e reimportabile.',root:'Un root completo, da conservare o aggiungere ad altri archivi.',events:'Solo sessioni evento della settimana e del calendario selezionati. Proiezione in sola lettura.',tasks:'Sessioni task e checklist figlie di tutte le sessioni del calendario selezionato. Non occupano il week plan.',weekplan:'Formato days / slots del week plan allegato. Settimana e calendario selezionati.'}[mode]);for(const el of app.querySelectorAll('[data-act="apply-json"],[data-act="append-json"]'))el.disabled=!['all','root'].includes(mode)}
+function openJSON(mode='all',rootId){$('oi-json-root').innerHTML=data.roots.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.title)+'</option>').join('');if(rootId)$('oi-json-root').value=rootId;$('oi-json-mode').value=mode;refreshJSON();$('oi-json-modal').showModal()}
+function applyJSON(append){
+  const incoming=decodedInput($('oi-json-text').value);
+  if(!confirm(append?'Aggiungere '+incoming.roots.length+' root? Saranno assegnati nuovi ID.':'Sostituire la struttura attuale con '+incoming.roots.length+' root? Puoi annullare l’ultima modifica.'))return;
+  commit(()=>{
+    if(!append){const workspace=data.workspace_id;data=incoming;data.workspace_id=workspace;filter='all';collapsed.clear();return}
+    const groupMap=new Map();for(const g of incoming.groups){let existing=data.groups.find(x=>x.id===g.id||x.title.toLocaleLowerCase()===g.title.toLocaleLowerCase());if(!existing){existing={...g,id:uid()};data.groups.push(existing)}groupMap.set(g.id,existing.id)}
+    for(const root of incoming.roots){root.id=uid();root.group_id=groupMap.get(root.group_id);for(const day of root.days){day.id=uid();for(const s of day.sessions){s.id=uid();for(const t of s.tasks)t.id=uid()}}data.roots.push(root)}
+  },append?'Root aggiunti':'JSON importato');$('oi-json-modal').close();
+}
+function download(name,content,type='application/json'){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+function downloadHTML(){
+  const html=document.documentElement.cloneNode(true),snapshot=clone(data);snapshot.workspace_id=uid();html.querySelector('#oneimpegno-data').textContent='\n'+JSON.stringify(snapshot,null,2).replace(/</g,'\\u003c')+'\n';html.querySelectorAll('dialog').forEach(d=>d.removeAttribute('open'));html.querySelector('#oi-json-text').textContent='';html.querySelector('#oi-form-fields').innerHTML='';html.querySelector('#oneimpegno').removeAttribute('data-mounted');html.querySelector('#oi-toast').hidden=true;
+  download('1impegno.html','<!doctype html>\n'+html.outerHTML,'text/html;charset=utf-8');toast('HTML esportato con i dati attuali');
+}
+function eventById(id){return extractEvents(data,data.calendar.week_start).find(x=>x.id===id)}
+async function onClick(e){
+  const b=e.target.closest('[data-act]');if(!b||!app.contains(b)||b.disabled)return;
+  const a=b.dataset.act,ref={root:b.dataset.root,day:b.dataset.day,session:b.dataset.session,task:b.dataset.task};
+  try{
+    if(a==='view'){view=b.dataset.view;render()}
+    else if(a==='fold'){const id=b.dataset.id;collapsed.has(id)?collapsed.delete(id):collapsed.add(id);const container=$('children-'+id);container.hidden=collapsed.has(id);b.setAttribute('aria-expanded',String(!container.hidden))}
+    else if(a==='expand'){collapsed.clear();renderTree()}
+    else if(a==='collapse'){collapsed=new Set(data.roots.map(r=>r.id));renderTree()}
+    else if(a==='new'||a==='edit')openEditor(b.dataset.kind,ref,a==='new');
+    else if(a==='delete')deleteNode(b.dataset.kind,ref);
+    else if(a==='delete-current')deleteNode(editor.kind,editor.ref,editor.occurrence);
+    else if(a==='close')b.closest('dialog').close();
+    else if(a==='json')openJSON();
+    else if(a==='root-json')openJSON('root',ref.root);
+    else if(a==='weekjson')openJSON('weekplan');
+    else if(a==='range')openEditor('range');
+    else if(a==='html')downloadHTML();
+    else if(a==='prev'||a==='next'||a==='today'){data.calendar.week_start=a==='today'?monday(today()):plusDays(data.calendar.week_start,a==='prev'?-7:7);persist();renderWeek()}
+    else if(a==='event'&&Date.now()>ignoreClickUntil){const event=eventById(b.dataset.event);if(event)openEditor('session',{root:event.root_id,day:event.day_id,session:event.session_id},false,event.recurring?event.occurrence_date:null)}
+    else if(a==='undo'&&undoData){data=normalize(undoData);undoData=null;persist();render();app.dispatchEvent(new CustomEvent('oneimpegno:change',{bubbles:true,detail:{data:clone(data)}}));toast('Ultima modifica annullata')}
+    else if(a==='download-json'){download('1impegno-'+$('oi-json-mode').value+'.json',$('oi-json-text').value);toast('JSON esportato')}
+    else if(a==='copy-json'){const text=$('oi-json-text').value;try{await navigator.clipboard.writeText(text);toast('JSON copiato')}catch(err){$('oi-json-text').focus();$('oi-json-text').select();const copied=document.execCommand('copy');toast(copied?'JSON copiato':'Testo selezionato: usa Ctrl/Cmd + C')}}
+    else if(a==='read-file')$('oi-json-file').click();
+    else if(a==='legacy'){$('oi-json-mode').value='all';refreshJSON();$('oi-json-text').value=JSON.stringify(legacyToData(JSON.parse(document.getElementById('oi-legacy-data').textContent),data.calendar.week_start),null,2);$('oi-json-help').textContent='Week plan allegato convertito. Scegli se aggiungerlo o sostituire i dati.'}
+    else if(a==='apply-json'||a==='append-json')applyJSON(a==='append-json');
+  }catch(err){if($('oi-json-modal').open)$('oi-json-error').textContent=err.message;else if($('oi-editor').open)$('oi-form-error').textContent=err.message;else toast(err.message)}
+}
+async function onChange(e){
+  const el=e.target;
+  try{
+    if(el.id==='oi-group-filter'){filter=el.value;render()}
+    else if(el.id==='oi-week-date'){if(!isDate(el.value))return;data.calendar.week_start=monday(el.value);persist();renderWeek()}
+    else if(el.id==='oi-json-mode'||el.id==='oi-json-root')refreshJSON();
+    else if(el.id==='oi-json-file'){
+      const file=el.files[0];el.value='';if(!file)return;if(file.size>10*1024*1024)throw new Error('Il file supera 10 MB.');const parsed=decodedInput(await file.text());$('oi-json-mode').value='all';refreshJSON();$('oi-json-text').value=JSON.stringify(parsed,null,2);$('oi-json-help').textContent='File letto. Controlla i dati, poi scegli Aggiungi o Sostituisci.';
+    }else if(el.dataset.toggleTask){const ref={root:el.dataset.root,day:el.dataset.day,session:el.dataset.session,task:el.dataset.task};commit(()=>{findNode(ref).task.done=el.checked},el.checked?'Task completato':'Task riaperto')}
+    else if(el.name==='scope')syncOccurrenceFields();
+    else if(el.name==='kind'&&editor?.kind==='session')$('oi-time-fields').hidden=el.value!=='event';
+    else if(el.name==='kind'&&editor?.kind==='root'){$('oi-payment-fields').hidden=el.value!=='recurring_payment';if(el.value==='recurring_payment'&&$('oi-form').elements.frequency.value==='none')$('oi-form').elements.frequency.value='monthly'}
+    else if(el.name==='group_title'&&editor?.kind==='root'){const g=data.groups.find(g=>g.title.toLocaleLowerCase()===el.value.trim().toLocaleLowerCase());if(g)$('oi-form').elements.color.value=g.color}
+  }catch(err){if($('oi-json-modal').open)$('oi-json-error').textContent=err.message;else toast(err.message)}
+}
+function onDragStart(e){const block=e.target.closest('.oi-event');if(!block)return;const event=eventById(block.dataset.event);if(!event)return;dragging={event,offset:e.clientY-block.getBoundingClientRect().top};e.dataTransfer.setData('text/plain',event.id);e.dataTransfer.effectAllowed='move'}
+function onDragOver(e){const col=e.target.closest('.oi-daycol');if(!col||!dragging)return;e.preventDefault();e.dataTransfer.dropEffect='move';app.querySelectorAll('.oi-drop').forEach(x=>x.classList.remove('oi-drop'));col.classList.add('oi-drop')}
+function onDrop(e){
+  const col=e.target.closest('.oi-daycol');if(!col||!dragging)return;e.preventDefault();const {event,offset}=dragging,duration=mins(event.end)-mins(event.start),step=data.calendar.step_minutes;
+  const raw=Number(col.dataset.min)+(e.clientY-col.getBoundingClientRect().top-offset)/0.8;
+  const start=Math.max(0,Math.min(1440-duration,Math.round(raw/step)*step)),date=col.dataset.date;dragging=null;ignoreClickUntil=Date.now()+350;
+  try{commit(()=>{const found=findNode({root:event.root_id,day:event.day_id,session:event.session_id});if(event.recurring)found.session.exceptions[event.occurrence_date]={...found.session.exceptions[event.occurrence_date],date,start:hhmm(start),end:hhmm(start+duration)};else moveSession(data,event.root_id,event.day_id,event.session_id,date,hhmm(start),hhmm(start+duration))},event.recurring?'Spostata solo questa occorrenza':'Evento spostato')}catch(err){toast(err.message)}
+}
+function beforeCache(){if(!app)return;app.querySelectorAll('dialog[open]').forEach(d=>d.close());abort?.abort();app.removeAttribute('data-mounted');clearTimeout(toastTimer)}
+function init(){
+  const el=document.getElementById('oneimpegno');if(!el||el.dataset.mounted==='true')return;app=el;
+  try{seed=normalize(JSON.parse(document.getElementById('oneimpegno-data').textContent));data=clone(seed)}catch(err){app.innerHTML='<p class="oi-error">Dati iniziali non validi: '+esc(err.message)+'</p>';return}
+  let recovery='';
+  if(app.dataset.persist!=='false')try{const saved=localStorage.getItem(storageKey());if(saved)data=normalize(JSON.parse(saved))}catch(err){recovery='Copia locale non leggibile: sto mostrando i dati del file. Esporta prima di modificare.';storageOK=false}
+  app.dataset.mounted='true';abort=new AbortController();const opts={signal:abort.signal};app.addEventListener('click',onClick,opts);app.addEventListener('change',onChange,opts);$('oi-form').addEventListener('submit',e=>{e.preventDefault();try{saveEditor()}catch(err){$('oi-form-error').textContent=err.message}},opts);
+  app.addEventListener('dragstart',onDragStart,opts);app.addEventListener('dragover',onDragOver,opts);app.addEventListener('drop',onDrop,opts);app.addEventListener('dragend',()=>{dragging=null;ignoreClickUntil=Date.now()+350;app.querySelectorAll('.oi-drop').forEach(x=>x.classList.remove('oi-drop'))},opts);
+  app.addEventListener('keydown',e=>{if(e.target.matches('.oi-tab')&&['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();view=e.key==='Home'?'tree':e.key==='End'?'week':view==='tree'?'week':'tree';render();$('oi-tab-'+view).focus()}},opts);
+  render();$('oi-save-status').textContent=recovery||(data.sample?'Esempi modificabili · dati locali in questo browser.':'Dati locali caricati in questo browser.');
+  if(recovery)toast(recovery);
+}
+if(window.OneImpegno?.destroy)window.OneImpegno.destroy();
+window.OneImpegno={
+  init,
+  destroy(){beforeCache();document.removeEventListener('turbo:load',init);document.removeEventListener('turbo:frame-load',init);document.removeEventListener('turbo:before-cache',beforeCache)},
+  getData:()=>clone(data),
+  loadData:input=>commit(()=>{data=normalize(typeof input==='string'?parseManyJSON(input):input);filter='all';collapsed.clear()},'Dati caricati'),
+  extractEvents:(weekStart=data.calendar.week_start)=>extractEvents(data,weekStart),
+  extractTasks:()=>extractTasks(data),
+  exportWeekPlan:(weekStart=data.calendar.week_start)=>exportWeekPlan(data,weekStart),
+  core:{normalize,extractEvents,extractTasks,exportWeekPlan,repeatDates,overlapLayout,moveSession,parseManyJSON}
+};
+document.addEventListener('turbo:load',init);document.addEventListener('turbo:frame-load',init);document.addEventListener('turbo:before-cache',beforeCache);init();
+})();
+</script>

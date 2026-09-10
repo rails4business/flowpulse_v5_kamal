@@ -31,6 +31,18 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='/flowpulse/contenuti/dalla-moneta-alla-comunita-economia-circolare-dash']", count: 1
   end
 
+  test "shows the projects prototype link only to a superadmin" do
+    get flowpulse_path
+    assert_select "a[href='#{admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html")}']", count: 0
+
+    user = User.create!(email_address: "flowpulse-prototype@example.com", password: "password123", password_confirmation: "password123", superadmin: true, active_role: :superadmin)
+    user.create_profile!(display_name: "Flowpulse", username: "flowpulse")
+    post session_path, params: { email_address: user.email_address, password: "password123" }
+
+    get flowpulse_path
+    assert_select "a[href='#{admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html")}']", text: "Progetti e sovranità"
+  end
+
   test "shows contents attributed to markpostura across domains" do
     get markpostura_contents_path
 

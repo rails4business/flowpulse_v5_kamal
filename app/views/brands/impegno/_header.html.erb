@@ -5,7 +5,7 @@
     <% end %>
     <%= impegno_logo %>
     <nav class="flex items-center gap-2" aria-label="Navigazione 1impegno">
-      <%= link_to "Agenda", impegno_path(area: "user", view: "agenda"), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+      <%= link_to "Agenda", impegno_path(area: "agenda", view: "agenda"), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
       <% if authenticated? %>
         <details class="group relative [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
           <summary class="profile-menu-toggle cursor-pointer list-none gap-2 rounded-full border border-slate-200 bg-white p-1 pr-3 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" aria-label="Apri menu profilo">

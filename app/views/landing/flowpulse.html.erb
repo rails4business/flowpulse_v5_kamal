@@ -92,3 +92,12 @@
     </section>
   </section>
 </main>
+
+<% if Current.user&.superadmin_user? %>
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-sm sm:px-6">
+      <span class="font-semibold text-slate-400">Strumenti di lavoro · accesso superadmin</span>
+      <%= link_to "Progetti e sovranità", admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html"), class: "font-bold text-violet-700 hover:text-violet-900" %>
+    </div>
+  </footer>
+<% end %>

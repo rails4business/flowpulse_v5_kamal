@@ -56,20 +56,14 @@ module Brands
           @impegno_domain_roles = available_domain_roles(fallback_domain)
         end
         @impegno_role = params[:role].presence_in(@impegno_domain_roles) || @impegno_domain_roles.first
-        @impegno_area = requested_area == "domain_roles" && !@impegno_has_domain_roles ? "user" : requested_area
         requested_view = params[:view] == "programs" ? "practices" : params[:view]
-        @impegno_area = "agenda" if %w[user domain_roles].include?(@impegno_area) && requested_view == "agenda"
-        available_views = views_for_area(@impegno_area)
-        @impegno_view = requested_view.presence_in(available_views) || available_views.first
-        @impegno_period = @impegno_view == "agenda" ? params[:period].presence_in(AGENDA_PERIODS) : nil
+        @impegno_legacy_area = requested_area if %w[user domain_roles].include?(requested_area)
+        @impegno_legacy_view = requested_view.presence
+        @impegno_area = requested_area.presence_in(%w[places contacts]) || "agenda"
+        @impegno_view = @impegno_area == "agenda" ? "agenda" : nil
+        @impegno_period = @impegno_area == "agenda" ? params[:period].presence_in(AGENDA_PERIODS) : nil
         @impegno_agenda_filter = @impegno_area == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(PROFESSIONAL_AGENDA_FILTERS) || "all" : nil
-        @impegno_tab = if @impegno_area == "domain_roles" && @impegno_view == "offering"
-          params[:tab].presence_in(OFFERING_TABS) || "services"
-        elsif @impegno_area == "user" && @impegno_view == "practices"
-          params[:tab].presence_in(EXPERIENCE_TABS) || "habits"
-        else
-          params[:tab].to_s.presence
-        end
+        @impegno_tab = params[:tab].to_s.presence
         @workspace_date = parse_workspace_date
         @workspace_src = workspace_src
       end

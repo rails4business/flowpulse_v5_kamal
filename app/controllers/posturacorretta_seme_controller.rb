@@ -11,6 +11,7 @@ class PosturacorrettaSemeController < ApplicationController
   SCHEDULED_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/lezioni_programmate.yml").freeze
   PRACTICAL_SHEETS_ROOT = Rails.root.join("config/data/posturacorretta/accademia/schede_pratiche").freeze
   STUDENT_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/programma_studenti_lezioni.yml").freeze
+  TRIATHLON_HANDOUT_PATH = Rails.root.join("docs/handouts/Presentazione PosturaCorretta.pdf").freeze
   GUIDED_ACTIVITIES_ROOT = Rails.root.join("config/data/posturacorretta/accademia/attivita_percorso_guidato").freeze
   LEARNING_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso.yml").freeze
   CONTENT_ROOT = Rails.root.join("config/data/posturacorretta").cleanpath.freeze
@@ -21,6 +22,10 @@ class PosturacorrettaSemeController < ApplicationController
     @courses = build_courses
     @direct_courses = @didactic_courses
     render :show
+  end
+
+  def triathlon_handout
+    send_file TRIATHLON_HANDOUT_PATH, type: "application/pdf", disposition: "inline"
   end
 
   def programma

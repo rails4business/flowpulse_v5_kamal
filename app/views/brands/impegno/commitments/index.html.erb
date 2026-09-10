@@ -20,7 +20,7 @@
 } %>
 
 <% workspace_frame = turbo_frame_tag "impegno_workspace" do %>
-<main class="mx-auto w-full max-w-[920px] px-4 py-7 pb-20 sm:px-0">
+<main class="mx-auto w-full <%= params[:view_mode] == 'structure' ? 'max-w-7xl' : 'max-w-[920px]' %> px-4 py-7 pb-20 sm:px-0">
   <% unless authenticated? %>
     <section class="mx-auto max-w-2xl py-12 text-center">
       <span class="mx-auto flex size-14 items-center justify-center rounded-2xl bg-blue-100 text-xl font-black text-blue-700">1</span>
@@ -122,11 +122,11 @@
             il frame senza aggiornare l'URL e lo stato della pagina principale. %>
       </div>
 
-      <% if params[:view_mode] == "weekplan" %>
+      <% if params[:view_mode] == "structure" %>
+        <%= render "brands/impegno/commitments/official_2026" %>
+      <% elsif params[:view_mode] == "weekplan" %>
         <%= render "brands/impegno/commitments/weekplan_grid" %>
-      <% end %>
-
-      <% if params[:view_mode] != "weekplan" && @commitments_by_day.any? %>
+      <% elsif @commitments_by_day.any? %>
         <% @commitments_by_day.each do |date, commitments_for_day| %>
           <div class="col-span-full mb-8">
             <div class="mb-3 flex items-baseline gap-2.5">

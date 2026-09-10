@@ -1,0 +1,99 @@
+# Registro leggero dei progetti della rete Flowpulse.
+#
+# È la fonte di orientamento e di pubblicazione iniziale: non è ancora un
+# database e non registra appuntamenti, partecipazioni o avanzamenti storici.
+# Un solo progetto può avere lo stato `active_pilot`.
+
+registry:
+  version: 1
+  active_pilot: posturacorretta
+  review_rule: "Si porta avanti un solo pilota alla volta; gli altri restano in coda o da valutare."
+
+projects:
+  - slug: posturacorretta
+    title: PosturaCorretta
+    kind: progetto_rete
+    ownership: flowpulse
+    status: active_pilot
+    visibility: public
+    domain: posturacorretta.org
+    public_path: /posturacorretta
+    summary: Educazione e pratica posturale, corsi online e programma di lezioni pratiche.
+    areas: [salute, apprendimento, sovranita_personale]
+    current_goal: Attivare e testare il primo percorso PosturaCorretta.
+    next_step: Presentare il percorso e raccogliere le prime richieste di incontro.
+    legacy_sources:
+      - posturacorretta/progetti/projects.yml#accademia-posturacorretta
+
+  - slug: percorso-integrato
+    title: Percorso Integrato
+    kind: progetto_rete
+    ownership: flowpulse
+    status: queued
+    visibility: public
+    public_path: /posturacorretta/tre-progetti
+    summary: Accompagnamento personalizzato che collega bisogni, tutor, professionisti e pratiche.
+    areas: [salute, sovranita_personale]
+    current_goal: Da definire dopo il primo pilota PosturaCorretta.
+    next_step: Raccogliere i casi d'uso reali senza costruire ancora flussi dedicati.
+
+  - slug: giardino-del-corpo
+    title: Il Giardino del Corpo
+    kind: progetto_rete
+    ownership: flowpulse
+    status: queued
+    visibility: public
+    public_path: /posturacorretta/tre-progetti
+    summary: Filosofia, eventi e comunità per collegare salute, risorse e apprendimento nel territorio.
+    areas: [salute, risorse, apprendimento, territorio]
+    current_goal: Da definire dopo il primo pilota PosturaCorretta.
+    next_step: Raccogliere idee e contatti, senza aprire ancora un calendario eventi.
+
+  - slug: 1impegno
+    title: 1Impegno
+    kind: strumento_rete
+    ownership: flowpulse
+    status: queued
+    visibility: internal
+    domain: 1impegno.it
+    public_path: /impegno
+    summary: Strumento per impegni, luoghi, contatti e organizzazione personale o di progetto.
+    areas: [organizzazione, sovranita_personale]
+    current_goal: Sostenere il pilota attivo senza estendere ancora il modello eventi.
+    next_step: Definire il minimo Root, Day, Session e Task partendo da casi reali.
+
+  - slug: generaimpresa
+    title: GeneraImpresa
+    kind: strumento_rete
+    ownership: flowpulse
+    status: queued
+    visibility: public
+    public_path: /generaimpresa
+    summary: Spazio per verificare e sostenere progetti necessari, persone, risorse e fattibilità.
+    areas: [risorse, sovranita_personale]
+    current_goal: Tenere una cornice semplice per i progetti, senza avviare più iniziative insieme.
+    next_step: Riprendere un progetto soltanto quando PosturaCorretta avrà un primo ciclo testato.
+
+  - slug: rails4business
+    title: Rails4Business
+    kind: servizio_rete
+    ownership: flowpulse
+    status: queued
+    visibility: internal
+    summary: Competenze digitali e sviluppo degli strumenti che servono ai progetti della rete.
+    areas: [apprendimento, risorse]
+    current_goal: Supportare soltanto ciò che serve al pilota attivo.
+    next_step: Tracciare il lavoro nel piano settimanale, senza aprire un progetto autonomo.
+
+  - slug: webapp-svuotamente
+    title: Webapp SvuotaMente
+    kind: progetto_sostenuto
+    ownership: da_confermare
+    status: review
+    visibility: internal
+    summary: Proposta di webapp per destinare, vendere o donare oggetti entro una scadenza.
+    areas: [risorse, territorio]
+    current_goal: Valutare soltanto dopo il pilota PosturaCorretta.
+    next_step: Verificare proprietario, primi utenti e bisogno concreto prima di riaprire lo sviluppo.
+    legacy_sources:
+      - generaimpresa/projects.yml#webapp-svuotamente

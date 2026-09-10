@@ -34,6 +34,9 @@ application.register("mobile-aside", MobileAsideController)
 import ModalController from "./modal_controller"
 application.register("modal", ModalController)
 
+import OperationalComposerController from "./operational_composer_controller"
+application.register("operational-composer", OperationalComposerController)
+
 import PosturacorrettastartController from "./posturacorrettastart_controller"
 application.register("posturacorrettastart", PosturacorrettastartController)
 

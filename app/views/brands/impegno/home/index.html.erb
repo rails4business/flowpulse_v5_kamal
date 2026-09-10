@@ -22,40 +22,22 @@
         view_mode: params[:view_mode].presence
       }.merge(overrides).compact)
     end
-    view_labels = {
-      "agenda" => {},
-      "user" => { "practices" => "Esperienze", "recurring" => "Ricorrenze" },
-      "domain_roles" => { "requests" => "Richieste" }.merge(case @impegno_role
-      when "professional"
-        { "offering" => "Offerta", "exchange" => "Valore e scambi", "reports" => "Resoconti" }
-      when "teacher"
-        { "offering" => "Attività proposte", "exchange" => "Valore e scambi", "reports" => "Resoconti" }
-      else
-        { "workspace" => "Spazio operativo" }
-      end),
-      "places" => {},
-      "contacts" => {}
-    }
   %>
 
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto grid min-h-16 max-w-7xl grid-cols-1 items-center gap-3 px-4 py-3 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-5">
       <div class="flex min-w-0 flex-wrap items-center gap-2">
-        <% workspace_filter = form_with url: impegno_path, method: :get, class: "flex min-w-0 items-center gap-2" do |form| %>
-          <%= form.hidden_field :brand, value: @impegno_brand %>
-        <%= form.select :area,
-                        [["Agenda", "agenda"], ["Utente", "user"]] + (@impegno_has_domain_roles ? [["Ruoli operativi", "domain_roles"]] : []) + [["Luoghi", "places"], ["Contatti", "contacts"]],
-                        { selected: @impegno_area },
-                        onchange: "this.form.elements['view'].value = ''; this.form.requestSubmit()",
-                        class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
-        <%= form.hidden_field :view, value: @impegno_view %>
-        <% end %>
-        <%= workspace_filter %>
+        <nav class="flex items-center gap-1" aria-label="Sezioni di Impegno">
+          <%= link_to "Agenda", state_path.call(area: "agenda", view: "agenda", tab: nil), aria: { current: ("page" if @impegno_area == "agenda") }, class: "rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'agenda' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+          <%= link_to "Luoghi", state_path.call(area: "places", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "places") }, class: "rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'places' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+          <%= link_to "Contatti", state_path.call(area: "contacts", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "contacts") }, class: "rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'contacts' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+        </nav>
 
-        <% if @impegno_area == "domain_roles" %>
+        <% if @impegno_area == "agenda" && @impegno_has_domain_roles %>
           <% if @impegno_domain_options.many? %>
             <% domain_filter = form_with url: impegno_path, method: :get, class: "min-w-0" do |form| %>
-              <%= form.hidden_field :area, value: "domain_roles" %>
+              <%= form.hidden_field :area, value: "agenda" %>
+              <%= form.hidden_field :view, value: "agenda" %>
               <%= form.select :brand, @impegno_domain_options, { selected: @impegno_brand }, onchange: "this.form.requestSubmit()", aria: { label: "Sito dei ruoli operativi" }, class: "min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900" %>
             <% end %>
             <%= domain_filter %>
@@ -127,52 +109,37 @@
 
   <main class="min-h-[calc(100vh-4rem)] bg-slate-50">
     <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6">
-      <nav class="mb-5 flex gap-1 overflow-x-auto border-b border-slate-200" aria-label="Sezioni di Impegno">
-        <% if @impegno_area == "agenda" %>
-          <span class="whitespace-nowrap border-b-2 border-blue-600 px-4 py-2.5 text-sm font-bold text-blue-600">Agenda</span>
-        <% elsif %w[places contacts].include?(@impegno_area) %>
-          <%= link_to "Luoghi", state_path.call(area: "places", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "places") }, class: "whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition #{@impegno_area == 'places' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
-          <%= link_to "Contatti", state_path.call(area: "contacts", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "contacts") }, class: "whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition #{@impegno_area == 'contacts' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
-        <% else %>
-          <% view_labels.fetch(@impegno_area).each do |view, label| %>
-            <%= link_to label,
-                        state_path.call(view: view, tab: nil),
-                        aria: { current: ("page" if @impegno_view == view) },
-                        class: "whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition #{@impegno_view == view ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
-          <% end %>
-          <%= link_to "Luoghi", state_path.call(area: "places", view: nil, tab: nil), class: "whitespace-nowrap border-b-2 border-transparent px-4 py-2.5 text-sm font-bold text-slate-500 transition hover:text-slate-800" %>
-          <%= link_to "Contatti", state_path.call(area: "contacts", view: nil, tab: nil), class: "whitespace-nowrap border-b-2 border-transparent px-4 py-2.5 text-sm font-bold text-slate-500 transition hover:text-slate-800" %>
-        <% end %>
-      </nav>
-
-      <% if @impegno_area == "domain_roles" && @impegno_view == "offering" %>
-        <% offering_labels = @impegno_role == "teacher" ? { "services" => "Lezioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" } : { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" } %>
-        <nav class="mb-5 flex gap-1 overflow-x-auto" aria-label="Tipi di attività operative">
-          <% offering_labels.each do |tab, label| %>
-            <%= link_to label,
-                        state_path.call(tab: tab),
-                        aria: { current: ("page" if @impegno_tab == tab) },
-                        class: "whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-bold transition #{@impegno_tab == tab ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700'}" %>
-          <% end %>
-        </nav>
-      <% elsif @impegno_area == "user" && @impegno_view == "practices" %>
-        <nav class="mb-5 flex gap-1 overflow-x-auto" aria-label="Tipi di esperienza">
-          <% { "habits" => "Routine", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.each do |tab, label| %>
-            <%= link_to label,
-                        state_path.call(tab: tab),
-                        aria: { current: ("page" if @impegno_tab == tab) },
-                        class: "whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-bold transition #{@impegno_tab == tab ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700'}" %>
-          <% end %>
-        </nav>
+      <% if @impegno_area == "agenda" %>
+        <section class="mb-5 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2" aria-label="Contesti dell'agenda">
+          <div>
+            <p class="text-xs font-black uppercase tracking-wider text-blue-600">Utente</p>
+            <p class="mt-1 text-sm font-bold text-slate-900">La mia agenda</p>
+            <p class="mt-1 text-xs leading-5 text-slate-500">Appuntamenti, attività e tempo personale sono raccolti qui.</p>
+          </div>
+          <div class="border-t border-slate-100 pt-3 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">
+            <p class="text-xs font-black uppercase tracking-wider text-violet-600">Ruoli operativi</p>
+            <% if @impegno_has_domain_roles && @impegno_domain_roles.any? %>
+              <p class="mt-1 text-sm font-bold text-slate-900"><%= @impegno_default_domain&.site_title.presence || @impegno_default_domain&.hostname || "Brand selezionato" %></p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <% @impegno_domain_roles.each do |role| %><span class="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700"><%= @impegno_domain_role_labels.fetch(role, role.humanize) %></span><% end %>
+                <% %w[Lezioni Percorsi Classi Corsi Eventi].each do |label| %><span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"><%= label %></span><% end %>
+              </div>
+            <% else %>
+              <p class="mt-1 text-xs leading-5 text-slate-500">Quando avrai un ruolo operativo su un brand, le sue attività compariranno qui insieme alla tua agenda.</p>
+            <% end %>
+          </div>
+        </section>
       <% end %>
 
       <% if @workspace_src %>
         <% if @impegno_area == "agenda" && @impegno_view == "agenda" %>
           <nav class="mb-4 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm" aria-label="Vista agenda">
-            <% list_active = params[:view_mode] != "weekplan" %>
+            <% list_active = params[:view_mode] != "weekplan" && params[:view_mode] != "structure" %>
             <%= link_to "Elenco", state_path.call(view_mode: nil), aria: { current: ("page" if list_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{list_active ? 'border-slate-900 bg-slate-900 text-white shadow-sm' : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50'}", style: ("background-color:#0f172a;color:#fff;border-color:#0f172a" if list_active) %>
-            <% week_active = !list_active %>
+            <% week_active = params[:view_mode] == "weekplan" %>
             <%= link_to "Settimana", state_path.call(view_mode: "weekplan"), aria: { current: ("page" if week_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{week_active ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-transparent bg-white text-blue-700 hover:border-blue-200 hover:bg-blue-50'}", style: ("background-color:#2563eb;color:#fff;border-color:#2563eb" if week_active) %>
+            <% structure_active = params[:view_mode] == "structure" %>
+            <%= link_to "Struttura & Calendari", state_path.call(view_mode: "structure"), aria: { current: ("page" if structure_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{structure_active ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm' : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50'}", style: ("background-color:#4f46e5;color:#fff;border-color:#4f46e5" if structure_active) %>
           </nav>
         <% end %>
         <% workspace_frame = turbo_frame_tag "impegno_workspace", src: @workspace_src, loading: :eager do %>
@@ -182,16 +149,8 @@
       <% else %>
         <% workspace_frame = turbo_frame_tag "impegno_workspace" do %>
           <section class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
-            <p class="text-xs font-black uppercase tracking-wider text-blue-600"><%= @impegno_area == "user" ? "Utente" : @impegno_domain_role_labels.fetch(@impegno_role, @impegno_role.to_s.humanize) %></p>
-            <% workspace_title = if @impegno_area == "domain_roles" && @impegno_view == "offering"
-              (@impegno_role == "teacher" ? { "services" => "Lezioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" } : { "services" => "Prestazioni", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }).fetch(@impegno_tab)
-            elsif @impegno_area == "user" && @impegno_view == "practices"
-              { "habits" => "Routine", "paths" => "Percorsi", "classes" => "Classi", "courses" => "Corsi", "events" => "Eventi" }.fetch(@impegno_tab)
-            elsif @impegno_area == "agenda"
-              "Agenda"
-            else
-              view_labels.fetch(@impegno_area).fetch(@impegno_view)
-            end %>
+            <p class="text-xs font-black uppercase tracking-wider text-blue-600"><%= @impegno_area == "agenda" ? "Agenda" : @impegno_area.humanize %></p>
+            <% workspace_title = @impegno_area == "agenda" ? "Agenda" : @impegno_area.humanize %>
             <h1 class="mt-2 text-2xl font-black text-slate-950"><%= workspace_title %></h1>
             <p class="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-500">La shell e l’URL di questa sezione sono pronti. Il contenuto verrà migrato dal prototipo nella prossima fase.</p>
           </section>
@@ -205,8 +164,11 @@
       <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <span class="text-xs font-semibold text-slate-400">Strumenti di lavoro · accesso superadmin</span>
         <nav class="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Prototipi di lavoro">
+          <%= link_to "1Impegno 2026", state_path.call(view_mode: "structure"), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
           <%= link_to "Orario ufficiale", admin_prototype_path(path: "viste_html/orario_ufficiale.html"), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
           <%= link_to "Vista evento", admin_prototype_path(path: "viste_html/0_dataevent_show.html"), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
+          <%= link_to "Composer operativo", impegno_composer_path, class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
+          <%= link_to "Progetti e sovranità", admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html"), class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
         </nav>
       </div>
     </footer>
