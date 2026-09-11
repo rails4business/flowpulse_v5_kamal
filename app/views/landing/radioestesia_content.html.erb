@@ -1,0 +1,59 @@
+<% content_for :title, "#{@radioestesia_content.fetch('title')} · #{@radioestesia.dig('site', 'name')}" %>
+<% content_for :head do %><meta name="robots" content="noindex,nofollow"><% end %>
+
+<main class="min-h-screen bg-[#fbfaf7] text-[#27342d]">
+  <header class="border-b border-[#d8dfd4] bg-[#f3f5ef]">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
+      <a href="<%= radioestesia_path %>" class="flex items-center gap-3" aria-label="Armonia, home"><img src="<%= @radioestesia.dig('site', 'logo_url') %>" alt="Logo Armonia" class="size-12 rounded-full object-cover" referrerpolicy="no-referrer"><span><span class="block font-serif text-2xl italic leading-none text-[#53654b]">Armonia</span><span class="mt-1 block text-[10px] font-bold uppercase tracking-[.13em] text-[#738069]"><%= @radioestesia.dig('site', 'tagline') %></span></span></a>
+      <a href="<%= radioestesia_page_path('contenuti') %>" class="rounded-full border border-[#9caf91] px-4 py-2 text-sm font-bold" style="color: #40573c">← Tutti i contenuti</a>
+    </div>
+  </header>
+
+  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_17rem] lg:py-20">
+    <article class="min-w-0">
+      <p class="text-xs font-black uppercase tracking-[.2em] text-[#789166]"><%= @radioestesia_content.fetch('kind') %> · <%= @radioestesia_content.fetch('access') %></p>
+      <h1 class="mt-4 font-serif text-5xl leading-[.98] text-[#304432] sm:text-6xl"><%= @radioestesia_content.fetch('title') %></h1>
+      <p class="mt-6 text-xl leading-8 text-[#536258]"><%= @radioestesia_content.fetch('description') %></p>
+      <% if @radioestesia_content['image_path'].present? %><img src="<%= asset_path(@radioestesia_content.fetch('image_path')) %>" alt="<%= @radioestesia_content.fetch('title') %>" class="mt-8 max-h-[34rem] w-full rounded-2xl border border-[#d5dfcd] object-cover object-top"><% end %>
+
+      <% if @radioestesia_purchase.present? %>
+        <% purchase_title = case @radioestesia_purchase.fetch(:kind); when 'event' then 'Partecipa alla masterclass'; when 'online_material' then 'Acquista i materiali online'; when 'online_material_pending' then 'Materiali online in preparazione'; when 'course' then 'Acquista questa masterclass'; else 'Acquista questo contenuto'; end %>
+        <section id="acquista" class="mt-10 rounded-2xl border border-[#d5dfcd] bg-white p-6 sm:p-8">
+          <p class="text-xs font-black uppercase tracking-[.17em] text-[#789166]">Accesso a pagamento</p>
+          <h2 class="mt-2 font-serif text-3xl text-[#385039]"><%= purchase_title %></h2>
+          <% if @radioestesia_purchase.fetch(:kind) == 'online_material' %><p class="mt-3 leading-7 text-[#647069]">L’evento è passato: qui è disponibile soltanto il materiale digitale collegato.</p><% elsif @radioestesia_purchase.fetch(:kind) == 'online_material_pending' %><p class="mt-3 leading-7 text-[#647069]">L’evento è passato. Il prezzo dei materiali online verrà inserito quando saranno pronti.</p><% elsif @radioestesia_purchase.fetch(:kind) == 'event' %><p class="mt-3 leading-7 text-[#647069]">Puoi acquistare il biglietto dell’evento oppure usare lo sconto previsto dall’accesso annuale.</p><% end %>
+          <div class="mt-6 grid gap-4 <%= @radioestesia_purchase.fetch(:kind) == 'online_material_pending' ? '' : 'sm:grid-cols-2' %>">
+            <% unless @radioestesia_purchase.fetch(:kind) == 'online_material_pending' %>
+            <div class="rounded-xl border-2 border-[#789166] bg-[#f3f8ef] p-5"><p class="text-sm font-black" style="color: #40573c"><%= purchase_title %></p><p class="mt-3 font-serif text-4xl" style="color: #304432"><%= euro_price(@radioestesia_purchase.fetch(:price_eur)) %></p><button type="button" class="mt-5 w-full rounded-full bg-[#516747] px-4 py-3 text-sm font-bold" style="color: #fff">Scegli questo accesso</button></div>
+            <% end %>
+            <div class="rounded-xl border border-[#d5dfcd] p-5"><p class="text-sm font-black" style="color: #40573c">Abbonamento annuale</p><p class="mt-3 font-serif text-4xl" style="color: #304432"><%= euro_price(@radioestesia_purchase.fetch(:annual_price_eur)) %></p><p class="mt-2 text-sm leading-6 text-[#647069]">Materiali online riservati + <%= @radioestesia_purchase.fetch(:event_discount_percent) %>% di sconto sugli eventi futuri.<% if @radioestesia_purchase[:annual_event_price_eur] %> Per questa masterclass aggiungi <%= euro_price(@radioestesia_purchase.fetch(:annual_event_price_eur)) %>: totale <%= euro_price(@radioestesia_purchase.fetch(:annual_event_total_eur)) %>.<% end %></p><button type="button" class="mt-5 w-full rounded-full border border-[#789166] px-4 py-3 text-sm font-bold" style="color: #40573c">Scegli l’annuale</button></div>
+          </div>
+          <p class="mt-5 text-xs text-[#718071]">Anteprima: il collegamento al pagamento verrà attivato dopo la conferma di Elisa.</p>
+        </section>
+      <% else %>
+        <% if @radioestesia_content['video_url'].present? %>
+          <div class="mt-10 aspect-video overflow-hidden rounded-2xl border border-[#d5dfcd] bg-black"><iframe class="size-full" src="<%= @radioestesia_content.fetch('video_url') %>" title="<%= @radioestesia_content.fetch('title') %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <% elsif @radioestesia_content.fetch('kind') == 'Video e materiali' %>
+          <div class="mt-10 rounded-2xl border border-dashed border-[#aab9a1] bg-[#eef3ea] p-8 text-center"><p class="font-serif text-2xl text-[#456140]">Spazio video</p><p class="mt-2 text-sm leading-6 text-[#647069]">Qui apparirà il video non appena Elisa inserirà il link YouTube o Vimeo nel file YAML.</p></div>
+        <% end %>
+        <div class="markdown-content mt-10 text-lg leading-8 text-[#4f5d54]"><%= raw markdown(@radioestesia_markdown.presence || "# Contenuto in preparazione") %></div>
+      <% end %>
+    </article>
+
+    <% if @radioestesia_course.present? %>
+      <aside class="self-start rounded-2xl border border-[#d5dfcd] bg-white p-5 lg:sticky lg:top-6">
+        <p class="text-xs font-black uppercase tracking-[.17em] text-[#789166]"><%= @radioestesia_course.fetch('kind') %></p>
+        <a href="<%= radioestesia_content_path(@radioestesia_course.fetch('slug')) %>" class="mt-2 block font-serif text-2xl leading-7" style="color: #385039"><%= @radioestesia_course.fetch('title') %></a>
+        <ol class="mt-5 space-y-1 border-t border-[#e0e7dc] pt-3">
+          <% @radioestesia_course.fetch('chapters').each_with_index do |slug, index| %>
+            <% chapter = @radioestesia_chapters.fetch(slug) %>
+            <% active = @radioestesia_content.fetch('slug') == slug %>
+            <li><a href="<%= radioestesia_content_path(slug) %>" class="block rounded-lg px-3 py-2 text-sm leading-5" style="color: <%= active ? '#fff' : '#4b5d4c' %>; background-color: <%= active ? '#516747' : 'transparent' %>"><span class="mr-2 text-xs font-bold opacity-70"><%= index + 1 %>.</span><%= chapter.fetch('title') %></a></li>
+          <% end %>
+        </ol>
+      </aside>
+    <% end %>
+  </div>
+
+  <footer class="border-t border-[#dce3d7] bg-[#f3f5ef]"><div class="mx-auto max-w-6xl px-5 py-8 text-center text-xs text-[#73806f] sm:px-8">Anteprima riservata · non indicizzata</div></footer>
+</main>

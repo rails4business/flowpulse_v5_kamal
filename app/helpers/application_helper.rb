@@ -1,4 +1,7 @@
 module ApplicationHelper
+  def euro_price(value)
+    number_to_currency(value, unit: "€", format: "%u%n", precision: (value.to_f % 1).zero? ? 0 : 2, separator: ",", delimiter: ".")
+  end
   PUBLIC_FULL_WIDTH_ACTIONS = {
     "domains" => %w[show],
     "demo/pages" => %w[mari carta_nautica],

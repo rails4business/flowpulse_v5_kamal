@@ -1,0 +1,70 @@
+<% content_for :title, "#{@radioestesia.dig('site', 'name')} · #{@radioestesia_page_data.fetch('title')}" %>
+<% content_for :head do %><meta name="robots" content="noindex,nofollow"><% end %>
+
+<main class="min-h-screen bg-[#fbfaf7] text-[#27342d]">
+  <header class="border-b border-[#d8dfd4] bg-[#f3f5ef]">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
+      <a href="<%= radioestesia_path %>" class="flex items-center gap-3" aria-label="Armonia, home">
+        <img src="<%= @radioestesia.dig('site', 'logo_url') %>" alt="Logo Armonia" class="size-12 rounded-full object-cover" referrerpolicy="no-referrer">
+        <span><span class="block font-serif text-2xl italic leading-none text-[#53654b]"><%= @radioestesia.dig('site', 'name') %></span><span class="mt-1 block text-[10px] font-bold uppercase tracking-[.13em] text-[#738069]"><%= @radioestesia.dig('site', 'tagline') %></span></span>
+      </a>
+      <nav class="hidden items-center gap-5 text-sm font-semibold text-[#4a594d] md:flex" aria-label="Navigazione Radiestesia">
+        <% @radioestesia.fetch('navigation').each do |item| %>
+          <% target = item.fetch('key') == 'home' ? radioestesia_path : radioestesia_page_path(item.fetch('key')) %>
+          <a href="<%= target %>" class="border-b-2 pb-1 <%= @radioestesia_page == item.fetch('key') ? 'border-[#7b946d]' : 'border-transparent hover:border-[#b8c7ad]' %>" style="color: <%= @radioestesia_page == item.fetch('key') ? '#2d412e' : '#4a594d' %>"><%= item.fetch('label') %></a>
+        <% end %>
+      </nav>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-[#dde3d9] px-5 py-3 text-sm font-semibold text-[#4a594d] md:hidden" aria-label="Navigazione mobile Radiestesia">
+      <% @radioestesia.fetch('navigation').each do |item| %>
+        <% target = item.fetch('key') == 'home' ? radioestesia_path : radioestesia_page_path(item.fetch('key')) %>
+        <a class="shrink-0" style="color: <%= @radioestesia_page == item.fetch('key') ? '#315035' : '#4a594d' %>" href="<%= target %>"><%= item.fetch('label') %></a>
+      <% end %>
+    </nav>
+  </header>
+
+  <section class="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[1.15fr_.85fr] lg:py-24">
+    <div class="self-center">
+      <p class="text-xs font-black uppercase tracking-[.2em] text-[#789166]"><%= @radioestesia_page_data.fetch('eyebrow') %></p>
+      <h1 class="mt-5 max-w-3xl font-serif text-5xl leading-[.95] text-[#304432] sm:text-6xl"><%= @radioestesia_page_data.fetch('title') %></h1>
+      <p class="mt-7 max-w-2xl text-xl leading-8 text-[#536258]"><%= @radioestesia_page_data.fetch('lead') %></p>
+      <p class="mt-5 max-w-2xl leading-7 text-[#657068]"><%= @radioestesia_page_data.fetch('body') %></p>
+      <% cta_target = @radioestesia_page_data.fetch('cta_page') == 'home' ? radioestesia_path : radioestesia_page_path(@radioestesia_page_data.fetch('cta_page')) %>
+      <a href="<%= cta_target %>" class="mt-8 inline-flex rounded-full bg-[#516747] px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#3d5237]" style="color: #fff"><%= @radioestesia_page_data.fetch('cta') %> <span class="ml-2">→</span></a>
+    </div>
+    <aside class="rounded-[2rem] border border-[#d5dfcd] bg-[#e8eee3] p-8 sm:p-10"><img src="<%= @radioestesia.dig('site', 'logo_url') %>" alt="" class="mx-auto size-36 rounded-full object-cover opacity-90" referrerpolicy="no-referrer"><p class="mt-8 text-center font-serif text-2xl italic leading-8 text-[#52654b]">“L'ascolto di sé è il primo passo di ogni percorso.”</p></aside>
+  </section>
+
+  <% if @radioestesia_page_data['cards'].present? %>
+    <section class="border-y border-[#dce3d7] bg-white"><div class="mx-auto max-w-6xl px-5 py-14 sm:px-8"><div class="grid gap-5 md:grid-cols-3"><% @radioestesia_page_data.fetch('cards').each do |card| %><article class="rounded-2xl border border-[#e2e7df] bg-[#fcfdfb] p-6"><h2 class="font-serif text-2xl text-[#385039]"><%= card.fetch('title') %></h2><p class="mt-3 text-sm leading-6 text-[#647069]"><%= card.fetch('text') %></p></article><% end %></div></div></section>
+  <% end %>
+
+  <% if @radioestesia_page == 'contenuti' %>
+    <section class="mx-auto max-w-4xl px-5 py-14 sm:px-8">
+      <div class="inline-flex rounded-xl border border-[#cbd8c3] bg-white p-1" role="tablist" aria-label="Periodo contenuti">
+        <% { "prossimi" => "Prossimi", "passati" => "Passati" }.each do |tab, label| %>
+          <% active = @radioestesia_timeline_tab == tab %>
+          <a href="<%= radioestesia_page_path('contenuti', tab: tab) %>" class="rounded-lg px-4 py-2 text-sm font-bold" role="tab" aria-selected="<%= active %>" style="color: <%= active ? '#fff' : '#40573c' %>; background-color: <%= active ? '#516747' : 'transparent' %>"><%= label %></a>
+        <% end %>
+      </div>
+      <% contents = @radioestesia_timeline_tab == 'passati' ? @radioestesia_past_contents : @radioestesia_future_contents %>
+      <div class="mt-5" role="tabpanel">
+          <% if contents.empty? %><p class="rounded-xl border border-dashed border-[#cbd8c3] bg-white p-6 text-sm text-[#647069]">Nessun contenuto in questa sezione.</p><% else %>
+          <div class="divide-y divide-[#dce3d7] border-y border-[#dce3d7] bg-white">
+            <% contents.each do |content| %>
+              <% item_date = Date.iso8601(content.fetch('date')) %>
+              <a href="<%= radioestesia_content_path(content.fetch('slug')) %>" class="flex gap-4 p-5 transition hover:bg-[#f3f7ef] sm:gap-6 sm:p-6" style="color: #385039">
+                <time datetime="<%= content.fetch('date') %>" class="flex w-16 shrink-0 flex-col rounded-xl bg-[#e9f0e4] px-2 py-3 text-center"><span class="text-2xl font-black leading-none"><%= item_date.strftime('%d') %></span><span class="mt-1 text-[10px] font-black uppercase tracking-[.12em]"><%= item_date.strftime('%b') %></span><span class="mt-1 text-xs"><%= item_date.strftime('%Y') %></span></time>
+                <% if content['image_path'].present? %><img src="<%= asset_path(content.fetch('image_path')) %>" alt="" class="hidden h-28 w-20 shrink-0 rounded-lg object-cover sm:block"><% end %>
+                <span class="min-w-0 grow"><span class="flex flex-wrap gap-2"><span class="rounded-full bg-[#edf2e9] px-2.5 py-1 text-[11px] font-black uppercase tracking-[.12em]" style="color: #4e6848"><%= content.fetch('kind') %></span><span class="rounded-full px-2.5 py-1 text-[11px] font-black uppercase tracking-[.12em] <%= content.fetch('access') == 'Free' ? 'bg-[#e6f1e3] text-[#3c703c]' : 'bg-[#f5edcf] text-[#84671c]' %>"><%= content.fetch('access') %></span></span><span class="mt-3 block font-serif text-2xl leading-7"><%= content.fetch('title') %></span><span class="mt-2 block text-sm leading-6 text-[#647069]"><%= content.fetch('description') %></span><% if content['starts_at'].present? %><span class="mt-2 block text-sm font-bold" style="color: #40573c"><%= content.fetch('attendance') %> · <%= content.fetch('starts_at') %>–<%= content.fetch('ends_at') %></span><% end %></span><span class="self-center text-xl" style="color: #516747">→</span>
+              </a>
+            <% end %>
+          </div>
+          <% end %>
+      </div>
+      <aside class="mt-10 rounded-2xl bg-[#334632] p-7 text-white"><p class="text-xs font-black uppercase tracking-[.18em] text-[#cce0b9]"><%= @radioestesia.dig('site', 'membership', 'name') %></p><p class="mt-3 max-w-2xl text-lg leading-7"><%= @radioestesia.dig('site', 'membership', 'description') %></p><p class="mt-3 text-sm text-[#dbe6d6]">L'attivazione del pagamento sarà il passo successivo, dopo la revisione dell'offerta.</p></aside>
+    </section>
+  <% end %>
+
+  <footer class="border-t border-[#dce3d7] bg-[#f3f5ef]"><div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-center text-xs text-[#73806f] sm:flex-row sm:px-8 sm:text-left"><span>Anteprima riservata · non indicizzata</span><span>Armonia · Radiestesia e Benessere</span></div></footer>
+</main>

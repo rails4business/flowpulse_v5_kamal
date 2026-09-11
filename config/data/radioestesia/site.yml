@@ -1,0 +1,111 @@
+site:
+  name: "Armonia"
+  tagline: "La Radiestesia al servizio del tuo Benessere"
+  logo_url: "https://static.wixstatic.com/media/235e28_562c3332474c4a1d86610522b496d23e~mv2.png/v1/crop/x_61,y_340,w_892,h_877/fill/w_238,h_238,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo%20pendolo.png"
+  membership:
+    name: "Accesso annuale"
+    price_eur: 79
+    event_discount_percent: 20
+    description: "Uno spazio riservato per approfondire con video, articoli e materiali di conferenze."
+navigation:
+  - { key: "home", label: "Home" }
+  - { key: "chi-sono", label: "Chi sono" }
+  - { key: "percorsi", label: "Percorsi" }
+  - { key: "contatti", label: "Contatti" }
+  - { key: "contenuti", label: "Contenuti" }
+pages:
+  home:
+    eyebrow: "Benvenuta, benvenuto"
+    title: "Riscopri la tua energia più autentica"
+    lead: "Uno spazio dedicato al benessere, alla centratura e alla riconnessione con sé attraverso la radiestesia."
+    body: "Ogni percorso parte dall'ascolto della persona e dai suoi bisogni del momento."
+    cta: "Scopri i percorsi"
+    cta_page: "percorsi"
+    cards:
+      - { title: "Riequilibrio radiestesico", text: "Un momento di ascolto e riequilibrio energetico." }
+      - { title: "Blocchi e credenze", text: "Uno spazio per osservare ciò che oggi impedisce di procedere." }
+      - { title: "Alimentazione energetica", text: "Un approfondimento sul rapporto personale con gli alimenti." }
+  chi-sono:
+    eyebrow: "Chi sono"
+    title: "Un accompagnamento sensibile e personale"
+    lead: "Con passione e sensibilità accompagno le persone a riscoprire la propria energia più autentica."
+    body: "Qui inseriremo la presentazione, la formazione e il modo in cui Elisa desidera raccontare il proprio lavoro."
+    cta: "Conosci i percorsi"
+    cta_page: "percorsi"
+  percorsi:
+    eyebrow: "Percorsi"
+    title: "Percorsi per ritrovare equilibrio e centratura"
+    lead: "Proposte individuali da scegliere insieme, con tempi e modalità adatti alla persona."
+    body: "Le singole proposte saranno approfondite in schede dedicate quando Elisa avrà validato testi, durata e modalità di incontro."
+    cards:
+      - { title: "Riequilibrio radiestesico", text: "Per dedicare attenzione all'equilibrio energetico personale." }
+      - { title: "Rimozione di blocchi e credenze limitanti", text: "Per esplorare nodi e schemi che si desidera trasformare." }
+      - { title: "Mappa energetica degli alimenti", text: "Un percorso di osservazione del proprio rapporto con l'alimentazione." }
+    cta: "Contatta Elisa"
+    cta_page: "contatti"
+  contatti:
+    eyebrow: "Contatti"
+    title: "Parliamone insieme"
+    lead: "Per informazioni o per capire quale percorso può essere più adatto a te."
+    body: "I riferimenti pubblici di Elisa saranno inseriti qui dopo la sua revisione: email, WhatsApp e modalità di appuntamento."
+    cta: "Vai ai percorsi"
+    cta_page: "percorsi"
+  contenuti:
+    eyebrow: "Contenuti"
+    title: "Approfondire, con i propri tempi"
+    lead: "Articoli, video e materiali di conferenze per continuare la ricerca anche da casa."
+    body: "Alcuni contenuti restano liberi; altri saranno disponibili con l'accesso annuale. Pagamento e area riservata verranno attivati solo dopo aver definito l'offerta con Elisa."
+    cta: "Scopri l'accesso annuale"
+    cta_page: "contenuti"
+contents:
+  - slug: "introduzione-alla-radiestesia"
+    title: "Introduzione alla radiestesia"
+    kind: "Articolo"
+    content_type: "article"
+    access: "Free"
+    date: "2026-09-08"
+    description: "Un primo orientamento alla pratica e al linguaggio del sito."
+    source: "contenuti/introduzione-alla-radiestesia.md"
+  - slug: "mappa-energetica-alimenti"
+    title: "Mappa energetica degli alimenti"
+    kind: "Approfondimento"
+    content_type: "chapter"
+    access: "Free"
+    date: "2026-09-18"
+    description: "Una guida introduttiva al tema dell'alimentazione energetica."
+    source: "contenuti/mappa-energetica-alimenti.md"
+  - slug: "materiali-conferenze"
+    title: "Materiali di conferenze"
+    kind: "Video e materiali"
+    content_type: "chapter"
+    access: "Pagamento"
+    price_eur: 12
+    date: "2026-09-18"
+    description: "Materiali riservati per chi sceglie di approfondire."
+    source: "contenuti/materiali-conferenze.md"
+    video_url:
+  - slug: "pratiche-di-ascolto"
+    title: "Pratiche di ascolto quotidiano"
+    kind: "Articolo"
+    content_type: "article"
+    access: "Free"
+    date: "2026-09-08"
+    description: "Un articolo indipendente: non appartiene a un corso e resta consultabile dalla biblioteca."
+    source: "contenuti/pratiche-di-ascolto.md"
+  - slug: "incontro-di-approfondimento"
+    title: "Prepara la tua energia all’Autunno"
+    kind: "Masterclass dal vivo"
+    content_type: "event"
+    access: "Pagamento"
+    event_price_eur: 111
+    online_material_price_eur:
+    date: "2026-09-19"
+    starts_at: "09:00"
+    ends_at: "11:00"
+    attendance: "Online"
+    image_path: "radioestesia/masterclass-prepara-energia-autunno.jpg"
+    description: "Masterclass online su nutrizione energetica e medicina tradizionale cinese."
+    source: "contenuti/incontro-di-approfondimento.md"
+    chapters:
+      - "mappa-energetica-alimenti"
+      - "materiali-conferenze"

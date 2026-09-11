@@ -26,6 +26,10 @@ Rails.application.routes.draw do
   get "flowpulse/contenuti" => "landing#flowpulse_contents", as: :flowpulse_contents
   get "flowpulse/contenuti/:slug" => "landing#flowpulse_content", as: :flowpulse_content
   get "rails4b" => "landing#rails4b", as: :rails4b
+  get "posturacorretta/radioestesia" => "landing#radioestesia", as: :radioestesia
+  get "posturacorretta/radioestesia/contenuti/:slug" => "landing#radioestesia_content", as: :radioestesia_content
+  get "posturacorretta/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,
+      constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "il-giardino-del-corpo" => "landing#giardino_del_corpo", as: :giardino_del_corpo
   get "giardino-del-corpo" => redirect("/il-giardino-del-corpo", status: 301)

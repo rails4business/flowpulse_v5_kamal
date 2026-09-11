@@ -30,6 +30,31 @@ class LandingController < ApplicationController
   def rails4b
   end
 
+  def radioestesia
+    load_radioestesia
+    @radioestesia_page = params[:page].presence || "home"
+    @radioestesia_page_data = @radioestesia.fetch("pages").fetch(@radioestesia_page)
+    load_radioestesia_timeline if @radioestesia_page == "contenuti"
+  end
+
+  def radioestesia_content
+    load_radioestesia
+    @radioestesia_page = "contenuti"
+    @radioestesia_content = @radioestesia.fetch("contents").find { |content| content.fetch("slug") == params[:slug] }
+    return redirect_to(radioestesia_page_path("contenuti"), alert: "Contenuto non trovato") unless @radioestesia_content
+
+    @radioestesia_course = if Array(@radioestesia_content["chapters"]).present?
+      @radioestesia_content
+    else
+      @radioestesia.fetch("contents").find { |content| Array(content["chapters"]).include?(@radioestesia_content.fetch("slug")) }
+    end
+    @radioestesia_chapters = @radioestesia.fetch("contents").index_by { |content| content.fetch("slug") }
+    @radioestesia_purchase = radioestesia_purchase_for(@radioestesia_content)
+
+    content_file = Rails.root.join("config/data/radioestesia", @radioestesia_content.fetch("source")).cleanpath
+    @radioestesia_markdown = content_file.read if content_file.to_s.start_with?(Rails.root.join("config/data/radioestesia").to_s) && content_file.file?
+  end
+
   def cantachetipassa
   end
 
@@ -92,6 +117,48 @@ class LandingController < ApplicationController
   end
 
   private
+
+  def load_radioestesia
+    response.set_header("X-Robots-Tag", "noindex, nofollow")
+    @radioestesia = YAML.safe_load_file(Rails.root.join("config/data/radioestesia/site.yml"), permitted_classes: [], aliases: false) || {}
+  end
+
+  def load_radioestesia_timeline
+    standalone_contents = @radioestesia.fetch("contents").reject { |content| content["content_type"] == "chapter" }
+    @radioestesia_future_contents, @radioestesia_past_contents = standalone_contents.partition do |content|
+      Date.iso8601(content.fetch("date")) >= Date.current
+    end
+    @radioestesia_future_contents.sort_by! { |content| content.fetch("date") }
+    @radioestesia_past_contents.sort_by! { |content| content.fetch("date") }.reverse!
+    @radioestesia_timeline_tab = params[:tab].to_s == "passati" ? "passati" : "prossimi"
+  end
+
+  def radioestesia_purchase_for(content)
+    return unless content["access"] == "Pagamento"
+
+    annual = @radioestesia.dig("site", "membership")
+    if content["content_type"] == "event"
+      future_event = Date.iso8601(content.fetch("date")) >= Date.current
+      price = future_event ? content.fetch("event_price_eur") : content.fetch("online_material_price_eur")
+      return { kind: "online_material_pending", annual_price_eur: annual.fetch("price_eur"), event_discount_percent: annual.fetch("event_discount_percent") } if price.blank?
+
+      return {
+        kind: future_event ? "event" : "online_material",
+        price_eur: price,
+        annual_price_eur: annual.fetch("price_eur"),
+        event_discount_percent: annual.fetch("event_discount_percent"),
+        annual_event_price_eur: future_event ? (price * (100 - annual.fetch("event_discount_percent")) / 100.0).round(2) : nil,
+        annual_event_total_eur: future_event ? (annual.fetch("price_eur") + (price * (100 - annual.fetch("event_discount_percent")) / 100.0).round(2)).round(2) : nil
+      }
+    end
+
+    {
+      kind: content["content_type"] == "course" ? "course" : "content",
+      price_eur: content.fetch("price_eur"),
+      annual_price_eur: annual.fetch("price_eur"),
+      event_discount_percent: annual.fetch("event_discount_percent")
+    }
+  end
 
   def visible_flowpulse_articles
     DomainContentCatalog.for_domain(
