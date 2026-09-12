@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
   get "posturacorretta" => "posturacorretta_seme#index", as: :posturacorretta
+  get "posturacorretta/profilo" => "posturacorretta_seme#profile", as: :posturacorretta_profile
   get "posturacorretta/presentazione-posturacorretta" => "posturacorretta_seme#triathlon_handout", as: :posturacorretta_presentation
   get "posturacorretta/guida-triatlon" => redirect("/posturacorretta/presentazione-posturacorretta", status: 301)
   get "posturacorretta/corsi/:corso" => "posturacorretta_seme#course", as: :posturacorretta_course
@@ -62,8 +63,10 @@ Rails.application.routes.draw do
   get "posturacorretta/seme/percorso" => "posturacorretta_seme#percorso", as: :posturacorretta_seme_percorso
   get "posturacorretta/seme/percorsi-integrati" => "posturacorretta_seme#integrated_paths", as: :posturacorretta_seme_integrated_paths
   get "posturacorretta/seme/dashboard/studente" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_seme_student_dashboard
-  get "posturacorretta/dashboard" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_student_dashboard
-  get "posturacorretta/dashboard/appuntamenti" => "posturacorretta_seme#dashboard_appointments", as: :posturacorretta_student_appointments
+  get "posturacorretta/lezioni" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_student_dashboard
+  get "posturacorretta/lezioni/appuntamenti" => "posturacorretta_seme#dashboard_appointments", as: :posturacorretta_student_appointments
+  get "posturacorretta/dashboard" => redirect("/posturacorretta/lezioni", status: 301)
+  get "posturacorretta/dashboard/appuntamenti" => redirect("/posturacorretta/lezioni/appuntamenti", status: 301)
   get "posturacorretta/seme/dashboard/insegnante" => "posturacorretta_seme#dashboard_teacher", as: :posturacorretta_seme_teacher_dashboard
   get "posturacorretta/primo-mese" => "brands/posturacorretta#primo_mese", as: :posturacorretta_primo_mese
   get "posturacorretta/guida" => "brands/posturacorretta#guide", as: :posturacorretta_guida
@@ -78,6 +81,7 @@ Rails.application.routes.draw do
   get "posturacorretta/professionisti" => "brands/posturacorretta#professionisti", as: :posturacorretta_professionisti
   get "posturacorretta/professionisti/:slug" => "brands/posturacorretta#professionista", as: :posturacorretta_professionista
   get "posturacorretta/insegnanti" => "brands/posturacorretta#insegnanti", as: :posturacorretta_insegnanti
+  get "posturacorretta/insegnanti/:slug" => "brands/posturacorretta#insegnante", as: :posturacorretta_insegnante
   get "posturacorretta/contenuti" => "brands/posturacorretta#contenuti", as: :posturacorretta_contenuti
   get "posturacorretta/corsi" => "brands/posturacorretta#corsi", as: :posturacorretta_corsi
   get "posturacorretta/contenuti/:slug" => "brands/posturacorretta#articolo", as: :posturacorretta_articolo

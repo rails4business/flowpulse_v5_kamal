@@ -10,11 +10,11 @@
 <div class="border-b border-slate-200 pb-5">
   <%= link_to posturacorretta_path, class: "group flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 hover:text-blue-700" do %>
     <span aria-hidden="true" class="transition group-hover:-translate-x-0.5">←</span>
-    <span>Tutti i corsi</span>
+    <span>Indice percorso</span>
   <% end %>
 </div>
 
-<nav aria-label="Indice generale dei corsi" class="mt-5 space-y-6" data-controller="scroll-selected">
+<nav aria-label="Indice percorso" class="mt-5 space-y-6" data-controller="scroll-selected">
   <% groups.each do |group| %>
     <section>
       <h2 class="mb-2 px-2 text-[10px] font-extrabold uppercase tracking-[.14em] text-slate-400"><%= group.fetch("title") %></h2>

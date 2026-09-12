@@ -1,7 +1,7 @@
 class PosturacorrettaSemeController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
-  before_action :require_authentication, only: [:dashboard_student, :dashboard_appointments, :dashboard_teacher]
+  before_action :require_authentication, only: [:dashboard_student, :dashboard_appointments, :dashboard_teacher, :profile]
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
   ACADEMY_PATH = Rails.root.join("config/data/posturacorretta/accademia/academy.yml").freeze
@@ -126,6 +126,10 @@ class PosturacorrettaSemeController < ApplicationController
     @dashboard_kind = "teacher"
     @teacher_access = Current.user&.teacher_user? || Current.user&.superadmin_user? || false
     render :show
+  end
+
+  def profile
+    @posturacorretta_profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
   end
 
   private

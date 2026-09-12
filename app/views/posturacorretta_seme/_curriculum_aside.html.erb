@@ -2,6 +2,10 @@
 <% active_course = local_assigns.fetch(:course) %>
 <% active_lesson = local_assigns[:lesson] %>
 <nav aria-label="Indice del corso" data-controller="scroll-selected">
+  <%= link_to posturacorretta_path, class: "mb-5 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-sm font-bold text-blue-900 transition hover:border-blue-400 hover:bg-blue-100" do %>
+    <span class="grid size-6 place-items-center rounded-full bg-blue-600 text-[10px] font-black text-white">⌂</span>
+    <span><span class="block">Indice</span><span class="mt-0.5 block text-xs font-medium text-blue-700">Panoramica del percorso</span></span>
+  <% end %>
   <% if active_mode == :program %>
     <% activities = @lesson_delivery_by_course.fetch(active_course.fetch("slug"), {}).fetch("program", []) %>
     <p class="text-[10px] font-bold uppercase tracking-[.14em] text-amber-700">Schede pratiche</p>

@@ -31,6 +31,17 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Insegnanti PosturaCorretta"
     assert_select "h2", text: "Mark Postura"
     assert_select "h2", text: "Davide Cattaneo", count: 0
+    assert_select "a[href='#{posturacorretta_insegnante_path("markpostura")}']", text: "Apri profilo insegnante →"
+
+    get posturacorretta_insegnante_path("markpostura")
+    assert_response :success
+    assert_select "h1", text: "Mark Postura"
+    assert_select "h2", text: "Dove insegna"
+    assert_select "h2", text: "Scheda insegnante"
+    assert_select "h2", text: "Fondatore di PosturaCorretta e insegnante maestro"
+
+    get posturacorretta_insegnante_path("insegnante-inesistente")
+    assert_redirected_to posturacorretta_insegnanti_path
 
     get posturacorretta_professionisti_path
     assert_redirected_to percorso_integrato_professionals_path

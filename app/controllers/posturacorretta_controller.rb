@@ -81,6 +81,19 @@ class PosturacorrettaController < ApplicationController
     @academy_modules_by_slug = curriculum.fetch("modules", []).index_by { |mod| mod.fetch("slug") }
   end
 
+  def insegnante
+    curriculum = AcademyCurriculum.load
+    @teacher = curriculum.fetch("teachers", {}).fetch(params[:slug], nil)
+    return redirect_to(posturacorretta_insegnanti_path, alert: "Insegnante non trovato") unless @teacher&.fetch("public", true)
+
+    modules_by_slug = curriculum.fetch("modules", []).index_by { |mod| mod.fetch("slug") }
+    @teacher_modules = @teacher.fetch("active_modules", []).filter_map { |slug| modules_by_slug[slug] }
+    @teacher_centers = curriculum.fetch("locations", {}).values.select do |center|
+      Array(center["projects"]).include?("posturacorretta") &&
+        (Array(center["active_modules"]) & @teacher.fetch("active_modules", [])).any?
+    end
+  end
+
   def professionisti
     redirect_to percorso_integrato_professionals_path, status: :moved_permanently
   end

@@ -59,21 +59,15 @@
 <% end %>
 
 <main class="bg-white">
-  <section class="border-b border-slate-200 bg-[#F6F7F4]">
-    <div class="mx-auto max-w-[1040px] px-4 py-11 sm:px-6 sm:py-14">
-      <p class="text-xs font-bold uppercase tracking-[.18em] text-blue-700">Scopri come funziona il tuo corpo, e riattiva i tuoi sistemi!</p>
-      <h1 class="mt-3 max-w-3xl text-4xl font-semibold tracking-[-.035em] text-slate-950 sm:text-5xl"><%= @didactic_path.fetch("title") %></h1>
-      <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">L'educazione alla salute inizia dall'imparare ad ascoltare il corpo con le metodiche posturali!</p>
-    </div>
-  </section>
-
   <section class="mx-auto max-w-[1040px] px-4 py-12 sm:px-6 sm:py-16">
-    <% course_number = 0 %>
-    <section id="primi-corsi" class="scroll-mt-24">
-      <header class="mb-6 border-b border-slate-200 pb-5">
-        <p class="text-xs font-bold uppercase tracking-[.15em] text-blue-700">Inizia da qui</p>
-        <h2 class="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Primi corsi</h2>
-      </header>
+    <div>
+      <% course_number = 0 %>
+      <section id="primi-corsi" class="scroll-mt-24">
+        <header class="mb-7 max-w-3xl border-b border-slate-200 pb-5">
+          <% if @didactic_path["eyebrow"].present? %><p class="text-xs font-bold uppercase tracking-[.15em] text-blue-700"><%= @didactic_path.fetch("eyebrow") %></p><% end %>
+          <h1 class="!m-0 !mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= @didactic_path.fetch("title") %></h1>
+          <% if @didactic_path["description"].present? %><p class="mt-2 leading-7 text-slate-600"><%= @didactic_path.fetch("description") %></p><% end %>
+        </header>
       <div class="space-y-6">
         <% @didactic_courses.each do |course| %>
           <% course_number += 1 %>
@@ -82,21 +76,22 @@
       </div>
     </section>
 
-    <% @didactic_sections.each do |section| %>
-      <section id="<%= section.fetch("slug") %>" class="scroll-mt-24 pt-16">
-        <header class="mb-7 max-w-3xl border-b border-slate-200 pb-5">
-          <p class="text-xs font-bold uppercase tracking-[.15em] text-blue-700">Sezione del percorso</p>
-          <h2 class="mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= section.fetch("title") %></h2>
-          <p class="mt-2 leading-7 text-slate-600"><%= section.fetch("description") %></p>
-        </header>
-        <div class="space-y-6">
-          <% section.fetch("courses").each do |course| %>
-            <% course_number += 1 %>
-            <% course_row.call(course, course_number, section.fetch("level", "base")) %>
-          <% end %>
-        </div>
-      </section>
-    <% end %>
+      <% @didactic_sections.each do |section| %>
+        <section id="<%= section.fetch("slug") %>" class="scroll-mt-24 pt-16">
+          <header class="mb-7 max-w-3xl border-b border-slate-200 pb-5">
+            <% if section["eyebrow"].present? %><p class="text-xs font-bold uppercase tracking-[.15em] text-blue-700"><%= section.fetch("eyebrow") %></p><% end %>
+            <h2 class="mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= section.fetch("title") %></h2>
+            <p class="mt-2 leading-7 text-slate-600"><%= section.fetch("description") %></p>
+          </header>
+          <div class="space-y-6">
+            <% section.fetch("courses").each do |course| %>
+              <% course_number += 1 %>
+              <% course_row.call(course, course_number, section.fetch("level", "base")) %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
   </section>
 </main>
 

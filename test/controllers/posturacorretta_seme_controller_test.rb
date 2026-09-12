@@ -48,11 +48,10 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "#schede-pratiche span", text: "Apri scheda", count: 12
     assert_select "#schede-pratiche a[href='#{new_session_path(return_to: posturacorretta_seme_student_dashboard_path)}']", text: /Vedi tutti i corsi nella dashboard/
     assert_select "#capitoli", count: 0
-    assert_select "nav[aria-label='Indice generale dei corsi'] a[aria-current='page']", text: /PosturaCorretta in un mese/
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta']", count: 0
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Percorso"
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a", text: "Programma lezioni"
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a", text: "Appuntamenti"
+    assert_select "nav[aria-label='Indice percorso'] a[aria-current='page']", text: /PosturaCorretta in un mese/
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Home"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
 
     get posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")
     assert_response :success
@@ -116,13 +115,15 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_path
 
     assert_response :success
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "nav[aria-label='Indice generale']", count: 0
     assert_select "h1", text: "Percorso educativo PosturaCorretta"
     assert_select "h3", text: "PosturaCorretta in un mese"
     assert_select "h3", text: "Postura e Fisiologia"
     assert_select "h2", text: "Postura e Recupero"
     assert_select "h3", text: "Igiene Posturale"
-    assert_select "p", text: "Sezione del percorso"
+    assert_includes response.body, "Scopri come funziona il tuo corpo, e riattiva i tuoi sistemi!"
     assert_select "span", text: "Corso 01", minimum: 1
     assert_select "a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")}'][aria-label='Apri il corso PosturaCorretta in un mese']"
     assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale", vista: "capitoli")}'][aria-label='Apri il corso Igiene Posturale']"
@@ -168,8 +169,8 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Il tuo percorso", count: 0
     assert_select "p", text: "Gruppo"
     assert_select "[role='progressbar']", count: 0
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Programma lezioni"
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")}']", text: "Percorso"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Lezioni"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Home"
     assert_select "h1", text: "Programma lezioni", count: 1
     assert_select "ol[aria-label='Lezioni del programma studenti'] > li", count: 43
     assert_select ".sheet-number", text: /MS-001/
@@ -200,7 +201,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_student_appointments_path
     assert_response :success
-    assert_select "nav[aria-label='Navigazione dashboard PosturaCorretta'] a[aria-current='page']", text: "Appuntamenti"
+    assert_select "a[href='#{posturacorretta_student_appointments_path}']", text: "Appuntamenti"
     assert_select "h2", text: "I tuoi appuntamenti"
     assert_select "h3", text: "Prossimi"
     assert_select "h3", text: "Passati"
