@@ -1,0 +1,11 @@
+<% active = local_assigns.fetch(:active, :home) %>
+<nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8 sm:py-6" aria-label="Navigazione Rails4Business">
+  <%= link_to rails4b_path, class: "flex items-center gap-2 text-lg font-extrabold tracking-tight sm:text-xl" do %>
+    <%= image_tag "rails4b/rails4b_logo_quadrato.png", alt: "", class: "size-10 object-contain", width: 136, height: 132 %>
+    <span>rails<span class="text-blue-600">4</span>business</span>
+  <% end %>
+  <div class="flex items-center gap-5 text-sm font-bold">
+    <%= link_to "Home", rails4b_path, class: "border-b-2 py-2 transition #{active == :home ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700"}" %>
+    <%= link_to "Contenuti", rails4b_contents_path, class: "border-b-2 py-2 transition #{active == :contents ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700"}" %>
+  </div>
+</nav>

@@ -1,0 +1,35 @@
+<% content_for :title, "#{@rails4b_track.fetch("title")} — Rails4Business" %>
+
+<main class="min-h-screen bg-stone-50 text-slate-900">
+  <%= render "landing/rails4b_nav", active: :home %>
+
+  <div class="mx-auto grid max-w-7xl gap-8 px-5 pb-12 pt-4 lg:grid-cols-[17rem_minmax(0,1fr)] lg:px-8 lg:pt-8">
+    <aside class="lg:sticky lg:top-5 lg:self-start" aria-label="Contenuti del percorso">
+      <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+        <p class="px-3 pb-2 pt-1 text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700"><%= @rails4b_track.fetch("title") %></p>
+        <nav class="space-y-1">
+          <% @rails4b_track_steps.each do |step| %>
+            <%= link_to rails4b_track_path(@rails4b_track.fetch("slug"), contenuto: step.fetch("slug")), class: "flex items-start gap-3 rounded-xl px-3 py-3 text-sm transition #{step == @rails4b_article ? "bg-blue-600 text-white" : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"}", aria: { current: (step == @rails4b_article ? "page" : nil) } do %>
+              <span class="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border text-[10px] font-black #{step == @rails4b_article ? "border-white/50 bg-white/15" : "border-blue-200 bg-blue-50 text-blue-700"}"><%= step.fetch("number") %></span>
+              <span><span class="block font-black leading-5"><%= step.fetch("title") %></span><span class="mt-0.5 block text-xs leading-4 #{step == @rails4b_article ? "text-blue-100" : "text-slate-500"}"><%= step.fetch("status") == "scheduled" ? "In preparazione" : "Pubblicato" %></span></span>
+            <% end %>
+          <% end %>
+        </nav>
+      </div>
+    </aside>
+
+    <article class="min-w-0 rounded-3xl border border-slate-200 bg-white p-6 sm:p-10">
+      <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700"><%= @rails4b_article.fetch("eyebrow") %></p>
+      <h1 class="mt-4 text-3xl font-black tracking-[-0.04em] text-slate-950 sm:text-5xl"><%= @rails4b_article.fetch("title") %></h1>
+      <p class="mt-5 text-lg leading-8 text-slate-600"><%= @rails4b_article.fetch("description") %></p>
+      <p class="mt-4 text-sm font-bold text-slate-500"><%= Time.zone.parse(@rails4b_article.fetch("publication_at")).strftime("%d/%m/%Y · %H:%M") %></p>
+
+      <% if @rails4b_markdown.present? %>
+        <% if @rails4b_draft_preview %><p class="mt-8 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900">Bozza riservata al superadmin</p><% end %>
+        <div class="editorial-rich-text mt-10 text-lg leading-8 text-slate-700"><%= raw markdown(@rails4b_markdown) %></div>
+      <% else %>
+        <div class="mt-10 rounded-2xl border border-blue-200 bg-blue-50 p-6"><p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">In preparazione</p><h2 class="mt-2 text-xl font-black text-slate-950">Disponibile a breve</h2><p class="mt-2 leading-7 text-slate-600">Questo contenuto sarà pubblicato il <strong><%= Time.zone.parse(@rails4b_article.fetch("publication_at")).strftime("%d/%m/%Y alle %H:%M") %></strong>.</p></div>
+      <% end %>
+    </article>
+  </div>
+</main>

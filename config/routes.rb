@@ -26,6 +26,9 @@ Rails.application.routes.draw do
   get "flowpulse/contenuti" => "landing#flowpulse_contents", as: :flowpulse_contents
   get "flowpulse/contenuti/:slug" => "landing#flowpulse_content", as: :flowpulse_content
   get "rails4b" => "landing#rails4b", as: :rails4b
+  get "rails4b/percorsi/:slug" => "landing#rails4b_track", as: :rails4b_track
+  get "rails4b/contenuti" => "landing#rails4b_contents", as: :rails4b_contents
+  get "rails4b/contenuti/:slug" => "landing#rails4b_content", as: :rails4b_content
   get "posturacorretta/radioestesia" => "landing#radioestesia", as: :radioestesia
   get "posturacorretta/radioestesia/contenuti/:slug" => "landing#radioestesia_content", as: :radioestesia_content
   get "posturacorretta/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,

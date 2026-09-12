@@ -1,5 +1,5 @@
-// Import and register every controller pinned under controllers/ by Importmap.
+// Controllers load only when their data-controller appears in the page.
 import { application } from "controllers/application"
-import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
+import { lazyLoadControllersFrom } from "@hotwired/stimulus-loading"
 
-eagerLoadControllersFrom("controllers", application)
+lazyLoadControllersFrom("controllers", application)

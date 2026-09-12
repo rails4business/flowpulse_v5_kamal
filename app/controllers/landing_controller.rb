@@ -28,6 +28,38 @@ class LandingController < ApplicationController
   end
 
   def rails4b
+    load_rails4b
+    @rails4b_track = @rails4b_path.fetch("tracks").find { |track| track.fetch("slug") == params[:percorso] } || @rails4b_path.fetch("tracks").first
+    @rails4b_track_steps = rails4b_steps_for(@rails4b_track)
+  end
+
+  def rails4b_contents
+    load_rails4b
+    @rails4b_contents_tab = params[:tab] == "passati" ? "passati" : "prossimi"
+    @rails4b_contents = @rails4b_content_catalog.fetch("items", []).select do |content|
+      @rails4b_contents_tab == "prossimi" ? content["status"] == "scheduled" : content["status"] != "scheduled"
+    end.sort_by { |content| content.fetch("publication_at") }.then { |items| @rails4b_contents_tab == "passati" ? items.reverse : items }.map do |content|
+      content.merge("track_slug" => @rails4b_track_by_content_slug[content.fetch("slug")])
+    end
+  end
+
+  def rails4b_track
+    load_rails4b
+    @rails4b_track = @rails4b_path.fetch("tracks").find { |track| track.fetch("slug") == params[:slug] }
+    return redirect_to(rails4b_path, alert: "Percorso non trovato") unless @rails4b_track
+
+    @rails4b_track_steps = rails4b_steps_for(@rails4b_track)
+    @rails4b_article = @rails4b_track_steps.find { |content| content.fetch("slug") == params[:contenuto] } || @rails4b_track_steps.first
+    load_rails4b_article_body
+  end
+
+  def rails4b_content
+    load_rails4b
+    @rails4b_track = @rails4b_path.fetch("tracks").find { |track| track.fetch("steps").any? { |step| step.fetch("content_slug") == params[:slug] } }
+    @rails4b_article = @rails4b_contents_by_slug[params[:slug]]
+    return redirect_to(rails4b_path, alert: "Contenuto non trovato") unless @rails4b_article
+
+    load_rails4b_article_body
   end
 
   def radioestesia
@@ -121,6 +153,29 @@ class LandingController < ApplicationController
   def load_radioestesia
     response.set_header("X-Robots-Tag", "noindex, nofollow")
     @radioestesia = YAML.safe_load_file(Rails.root.join("config/data/radioestesia/site.yml"), permitted_classes: [], aliases: false) || {}
+  end
+
+  def load_rails4b
+    @rails4b = YAML.safe_load_file(Rails.root.join("config/data/rails4b/landing.yml"), permitted_classes: [], aliases: false) || {}
+    @rails4b_path = YAML.safe_load_file(Rails.root.join("config/data/rails4b/percorso.yml"), permitted_classes: [], aliases: false) || {}
+    @rails4b_content_catalog = YAML.safe_load_file(Rails.root.join("config/data/rails4b/contenuti/catalog.yml"), permitted_classes: [], aliases: false) || {}
+    @rails4b_contents_by_slug = @rails4b_content_catalog.fetch("items", []).index_by { |content| content.fetch("slug") }
+    @rails4b_track_by_content_slug = @rails4b_path.fetch("tracks").each_with_object({}) do |track, index|
+      track.fetch("steps").each { |step| index[step.fetch("content_slug")] = track.fetch("slug") }
+    end
+  end
+
+  def rails4b_steps_for(track)
+    track.fetch("steps").map do |step|
+      @rails4b_contents_by_slug.fetch(step.fetch("content_slug")).merge("number" => step.fetch("number"))
+    end
+  end
+
+  def load_rails4b_article_body
+    source_path = Rails.root.join("config/data/rails4b/contenuti", @rails4b_article.fetch("source")).cleanpath
+    content_root = Rails.root.join("config/data/rails4b/contenuti").to_s
+    @rails4b_draft_preview = @rails4b_article.fetch("status") != "published" && Current.user&.superadmin_user?
+    @rails4b_markdown = source_path.read if (@rails4b_article.fetch("status") == "published" || @rails4b_draft_preview) && source_path.to_s.start_with?(content_root) && source_path.file?
   end
 
   def load_radioestesia_timeline

@@ -1,0 +1,24 @@
+<% content_for :title, "#{@rails4b_article.fetch("title")} — Rails4Business" %>
+
+<main class="min-h-screen bg-stone-50 text-slate-900">
+  <%= render "landing/rails4b_nav", active: :contents %>
+
+  <article class="mx-auto max-w-3xl px-5 py-12 sm:px-6 sm:py-16">
+    <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700"><%= @rails4b_article.fetch("eyebrow") %></p>
+    <h1 class="mt-4 text-4xl font-black tracking-[-0.04em] text-slate-950 sm:text-5xl"><%= @rails4b_article.fetch("title") %></h1>
+    <p class="mt-5 text-lg leading-8 text-slate-600"><%= @rails4b_article.fetch("description") %></p>
+    <p class="mt-4 text-sm font-bold text-slate-500"><%= Time.zone.parse(@rails4b_article.fetch("publication_at")).strftime("%d/%m/%Y · %H:%M") %></p>
+
+    <% if @rails4b_markdown.present? %>
+      <% if @rails4b_draft_preview %><p class="mt-8 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900">Bozza riservata al superadmin</p><% end %>
+      <div class="editorial-rich-text mt-10 text-lg leading-8 text-slate-700"><%= raw markdown(@rails4b_markdown) %></div>
+    <% else %>
+      <div class="mt-10 rounded-2xl border border-blue-200 bg-blue-50 p-6"><p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">In preparazione</p><h2 class="mt-2 text-xl font-black text-slate-950">Disponibile a breve</h2><p class="mt-2 leading-7 text-slate-600">Questo contenuto sarà pubblicato il <strong><%= Time.zone.parse(@rails4b_article.fetch("publication_at")).strftime("%d/%m/%Y alle %H:%M") %></strong>.</p></div>
+    <% end %>
+
+    <div class="mt-12 flex flex-wrap gap-3">
+      <% if @rails4b_track %><%= link_to "Torna al trenino", rails4b_path(percorso: @rails4b_track.fetch("slug")), class: "rounded-xl bg-blue-600 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-700" %><% end %>
+      <%= link_to "Tutti i contenuti", rails4b_contents_path, class: "rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 transition hover:border-blue-300 hover:text-blue-700" %>
+    </div>
+  </article>
+</main>
