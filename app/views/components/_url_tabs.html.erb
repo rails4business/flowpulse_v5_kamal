@@ -1,0 +1,6 @@
+<nav class="inline-flex rounded-xl border border-[#cbd8c3] bg-white p-1" aria-label="<%= label %>">
+  <% items.each do |item| %>
+    <% active = item.fetch(:active) %>
+    <a href="<%= item.fetch(:href) %>" class="rounded-lg px-4 py-2 text-sm font-bold" aria-current="<%= 'page' if active %>" style="color: <%= active ? '#fff' : '#40573c' %>; background-color: <%= active ? '#516747' : 'transparent' %>"><%= item.fetch(:label) %></a>
+  <% end %>
+</nav>

@@ -45,6 +45,8 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
     assert_select "a", /Prepara la tua energia all’Autunno/
     assert_select "a", /Online · 09:00–11:00/
     assert_select "a[href*='tab=passati']", /Passati/
+    assert_select "a", text: /Scopri l'accesso annuale/, count: 0
+    assert_select "p", text: /L'ascolto di sé è il primo passo/, count: 0
     assert_select "a", text: /Mappa energetica degli alimenti/, count: 0
     assert_select "a", text: /Materiali di conferenze/, count: 0
 
