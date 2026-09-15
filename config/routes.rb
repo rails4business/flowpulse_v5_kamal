@@ -42,6 +42,7 @@ Rails.application.routes.draw do
   get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional
   get "percorso-integrato/luoghi" => "brands/percorso_integrato#places", as: :percorso_integrato_places
   get "markpostura" => "landing#markpostura", as: :markpostura
+  get "markpostura/weekplan" => "landing#markpostura_weekplan", as: :markpostura_weekplan
   get "markpostura/eventi" => "landing#markpostura_events", as: :markpostura_events
   get "markpostura/contenuti" => "landing#markpostura_contents", as: :markpostura_contents
   get "markpostura/contenuti/:slug" => "landing#markpostura_content", as: :markpostura_content
@@ -181,6 +182,7 @@ Rails.application.routes.draw do
       end
     end
     resources :brands, controller: :brands, only: %i[index show]
+    get "markpostura/settimane/:week" => "markpostura_weeks#show", as: :markpostura_week
     resources :password_reset_requests, only: :index do
       member do
         patch :complete

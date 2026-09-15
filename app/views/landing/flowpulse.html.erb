@@ -1,103 +1,25 @@
-<% content_for :title, "Flowpulse" %>
+<% content_for :title, "Flowpulse — La piattaforma dell'ecosistema" %>
+<% content_for :description, "Flowpulse è la webapp creata da Rails4Business per collegare Brand, progetti, processi, persone e impegni." %>
 
-<main class="max-w-5xl mx-auto px-4 py-6">
-      <!-- LANDING -->
-      <section id="landing-tab" class="tab-content space-y-6">
-        <!-- HERO PREMIUM HEADER -->
-        <header class="bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-stone-50 to-stone-50 rounded-[2.5rem] py-16 text-center sm:py-24 shadow-sm border border-slate-100 mb-12">
-          <div class="mx-auto w-full max-w-4xl px-5 sm:px-8 flex flex-col items-center text-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 mb-8">
-              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-              <span class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-blue-700">Flowpulse Engine</span>
-            </div>
+<main class="min-h-screen bg-white text-slate-950">
+  <nav class="border-b border-slate-200 bg-white"><div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4"><span class="text-sm font-black uppercase tracking-[0.2em] text-blue-700">Flowpulse</span><%= link_to "Rails4Business", rails4b_path, class: "text-sm font-bold text-slate-600 hover:text-blue-700" %></div></nav>
 
-            <h1 class="mx-auto text-5xl font-black leading-[0.94] tracking-[-0.055em] text-slate-900 sm:text-7xl max-w-4xl mb-6">
-              Flowpulse
-            </h1>
-
-            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 max-w-3xl leading-snug mb-6">
-              Trasforma percorsi, interessi, competenze e passioni in un viaggio.
-            </h2>
-
-            <p class="mx-auto mt-2 max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl mb-10">
-              Una piattaforma per organizzare eventi, percorsi e collaborazioni tra professionisti della salute e del benessere, creator, centri, spazi e community locali.
-            </p>
-
-            <div class="flex flex-wrap justify-center gap-3">
-              <%= verified_link_to "Trova eventi", eventi_path, class: "rounded-xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-blue-700" %>
-              <%= verified_link_to "Leggi i contenuti", flowpulse_contents_path, class: "rounded-xl border border-violet-200 bg-white px-6 py-4 font-bold text-violet-700 shadow-sm transition hover:border-violet-400 hover:text-violet-900" %>
-              <%= verified_link_to "Organizza un evento", eventi_path, class: "rounded-xl border border-slate-200 bg-white px-6 py-4 font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700" %>
-              <%= verified_link_to "Crea il tuo brand", "#", class: "rounded-xl bg-gradient-to-r from-blue-600 to-emerald-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition hover:-translate-y-0.5 hover:brightness-110" %>
-            </div>
-          </div>
-        </header>
-
-        <%= render "landing/flowpulse_ecosystem_map" %>
-        <%= render "landing/flowpulse_content_preview", articles: @flowpulse_articles %>
-
-        <!-- SEZIONE MANIFESTO -->
-    <!-- I 3 PILASTRI -->
-    <section class="py-12 md:py-16">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-5xl font-black leading-tight mb-4 text-slate-950">
-          Tre giardini da coltivare.
-        </h2>
-        <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-          Scegli il punto di partenza del tuo viaggio: la base del corpo, gli strumenti per il tuo progetto, o lo studio della mappa.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-6">
-        <!-- SALUTE -->
-        <article class="relative flex flex-col rounded-3xl border border-blue-200 bg-white p-8 shadow-sm hover:border-blue-400 hover:shadow-md transition">
-          <div class="mb-6 inline-flex size-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-600">💙</div>
-          <h3 class="text-2xl font-black mb-3 text-slate-900">Salute e Corpo</h3>
-          <p class="text-slate-600 leading-relaxed flex-1 mb-8">
-            Il punto di partenza. Ricerca su postura, fisiologia ed educazione alla salute. Ritrova l'equilibrio per costruire tutto il resto.
-          </p>
-          <div class="space-y-3 border-t border-slate-100 pt-6">
-            <%= verified_link_to "PosturaCorretta", posturacorretta_path, class: "flex items-center justify-between font-bold text-slate-900 hover:text-blue-600 transition" %>
-            <%= verified_link_to "Giardino del Corpo", giardino_del_corpo_path, class: "flex items-center justify-between font-bold text-slate-900 hover:text-blue-600 transition" %>
-          </div>
-        </article>
-
-        <!-- LAVORO -->
-        <article class="relative flex flex-col rounded-3xl border border-orange-200 bg-white p-8 shadow-sm hover:border-orange-400 hover:shadow-md transition">
-          <div class="mb-6 inline-flex size-14 items-center justify-center rounded-2xl bg-orange-50 text-2xl text-orange-600">🛠️</div>
-          <h3 class="text-2xl font-black mb-3 text-slate-900">Gestire le Risorse</h3>
-          <p class="text-slate-600 leading-relaxed flex-1 mb-8">
-            La Trilogia. Gli strumenti per organizzare il tuo tempo, validare i tuoi progetti e trasformarli in software utile e affidabile.
-          </p>
-          <div class="space-y-3 border-t border-slate-100 pt-6">
-            <%= verified_link_to "1Impegno", impegno_path, class: "flex items-center justify-between font-bold text-slate-900 hover:text-orange-600 transition" %>
-            <%= verified_link_to "GeneraImpresa", genera_impresa_path, class: "flex items-center justify-between font-bold text-slate-900 hover:text-orange-600 transition" %>
-            <%= verified_link_to "Rails4Business", rails4b_path, class: "flex items-center justify-between font-bold text-slate-900 hover:text-orange-600 transition" %>
-          </div>
-        </article>
-
-        <!-- FORMAZIONE -->
-        <article class="relative flex flex-col rounded-3xl border border-purple-200 bg-white p-8 shadow-sm hover:border-purple-400 hover:shadow-md transition">
-          <div class="mb-6 inline-flex size-14 items-center justify-center rounded-2xl bg-purple-50 text-2xl text-purple-600">📚</div>
-          <h3 class="text-2xl font-black mb-3 text-slate-900">Apprendimento e Formazione</h3>
-          <p class="text-slate-600 leading-relaxed flex-1 mb-8">
-            Lo studio della mappa. Formazione per insegnanti e tutor che vogliono comprendere le metodiche e guidare le persone.
-          </p>
-          <div class="space-y-3 border-t border-slate-100 pt-6">
-            <%= verified_link_to "Accademia", posturacorretta_accademia_path, class: "flex items-center justify-between font-bold text-slate-900 hover:text-purple-600 transition" %>
-            <%= verified_link_to "Canta che ti passa", cantachetipassa_path, class: "flex items-center justify-between font-bold text-slate-900 hover:text-purple-600 transition" %>
-            <%= verified_link_to "Insegnanti e Tutor", "#", class: "flex items-center justify-between font-bold text-slate-900 hover:text-purple-600 transition" %>
-          </div>
-        </article>
-      </div>
-    </section>
-  </section>
-</main>
-
-<% if Current.user&.superadmin_user? %>
-  <footer class="border-t border-slate-200 bg-white">
-    <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-sm sm:px-6">
-      <span class="font-semibold text-slate-400">Strumenti di lavoro · accesso superadmin</span>
-      <%= link_to "Progetti e sovranità", admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html"), class: "font-bold text-violet-700 hover:text-violet-900" %>
+  <header class="overflow-hidden bg-gradient-to-b from-blue-50 to-white">
+    <div class="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 lg:grid-cols-[1fr_0.75fr] lg:py-24">
+      <div><p class="text-xs font-black uppercase tracking-[0.22em] text-blue-700">Webapp creata da Rails4Business</p><h1 class="mt-5 text-5xl font-black tracking-[-0.055em] sm:text-7xl">Flowpulse</h1><p class="mt-6 max-w-3xl text-xl leading-9 text-slate-600">Una piattaforma comune per collegare persone, Brand, progetti, processi e impegni, lasciando a ogni realtà la propria identità.</p><div class="mt-9 flex flex-wrap gap-3"><%= link_to "Scopri chi la costruisce", rails4b_path, class: "rounded-full bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-700" %><%= link_to "I progetti di MarkPostura", markpostura_path, class: "rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-black text-slate-700 hover:border-blue-300 hover:text-blue-700" %></div></div>
+      <a href="https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png" target="_blank" rel="noopener noreferrer" class="mx-auto block max-w-sm overflow-hidden rounded-3xl border border-blue-100 bg-white p-2 shadow-xl"><img src="https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png?tr=w-700,q-80,f-webp" alt="Mappa dell'ecosistema Flowpulse" width="700" height="1023" class="max-h-[32rem] w-full rounded-[1.2rem] object-contain" fetchpriority="high"></a>
     </div>
-  </footer>
-<% end %>
+  </header>
+
+  <section class="border-y border-slate-200 bg-slate-50"><div class="mx-auto grid max-w-6xl gap-5 px-5 py-16 md:grid-cols-3">
+    <article class="rounded-3xl border border-blue-200 bg-white p-7 shadow-sm"><span class="text-2xl">🌱</span><p class="mt-5 text-xs font-black uppercase tracking-[0.18em] text-blue-700">Salute e corpo</p><h2 class="mt-3 text-2xl font-black">Partire dalla persona</h2><p class="mt-3 leading-7 text-slate-600">PosturaCorretta e i percorsi professionali trasformano conoscenza e pratica in esperienze accessibili.</p><%= link_to "PosturaCorretta →", posturacorretta_path, class: "mt-5 inline-flex text-sm font-black text-blue-700" %></article>
+    <article class="rounded-3xl border border-amber-200 bg-white p-7 shadow-sm"><span class="text-2xl">🛠️</span><p class="mt-5 text-xs font-black uppercase tracking-[0.18em] text-amber-700">Risorse e lavoro</p><h2 class="mt-3 text-2xl font-black">Dall’idea al processo</h2><p class="mt-3 leading-7 text-slate-600">Rails4Business costruisce il software; GeneraImpresa e 1Impegno aiutano a chiarire progetti, responsabilità e tempo.</p><%= link_to "Rails4Business →", rails4b_path, class: "mt-5 inline-flex text-sm font-black text-amber-700" %></article>
+    <article class="rounded-3xl border border-violet-200 bg-white p-7 shadow-sm"><span class="text-2xl">🌳</span><p class="mt-5 text-xs font-black uppercase tracking-[0.18em] text-violet-700">Esperienze e comunità</p><h2 class="mt-3 text-2xl font-black">Collegare ciò che viviamo</h2><p class="mt-3 leading-7 text-slate-600">Il Giardino del Corpo apre spazi per natura, musica, filosofia, apprendimento e relazioni sul territorio.</p><%= link_to "Il Giardino del Corpo →", giardino_del_corpo_path, class: "mt-5 inline-flex text-sm font-black text-violet-700" %></article>
+  </div></section>
+
+  <%= render "landing/flowpulse_ecosystem_map" %>
+
+  <section class="border-t border-slate-200 bg-blue-50"><div class="mx-auto max-w-4xl px-5 py-16 text-center"><p class="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Una piattaforma, molti Brand</p><h2 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Flowpulse sostiene la struttura. I contenuti restano nei progetti.</h2><p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Gli articoli sul software, sui processi e sulla costruzione dell’ecosistema sono pubblicati da Rails4Business. Flowpulse rimane la pagina di presentazione della webapp.</p><%= link_to "Contenuti futuri Rails4Business →", rails4b_contents_path, class: "mt-7 inline-flex rounded-full bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-700" %></div></section>
+
+  <% if Current.user&.superadmin_user? %><footer class="border-t border-slate-200 px-5 py-6 text-center"><%= link_to "Prototipo progetti e sovranità", admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html"), class: "text-sm font-bold text-violet-700 hover:text-violet-900" %></footer><% end %>
+</main>

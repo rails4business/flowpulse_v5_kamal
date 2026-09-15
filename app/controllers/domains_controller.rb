@@ -122,10 +122,6 @@ class DomainsController < ApplicationController
     end
 
     def prepare_flowpulse_landing
-      @flowpulse_articles = DomainContentCatalog.for_domain(
-        "flowpulse",
-        include_scheduled: Current.user&.superadmin_user? || false
-      ).first(3)
     end
 
     def prepare_garden_landing
@@ -140,11 +136,8 @@ class DomainsController < ApplicationController
     end
 
     def prepare_markpostura_landing
-      @markpostura_events = DomainEventCatalog.for_organizer(
-        "markpostura",
-        include_drafts: Current.user&.superadmin_user? || false
-      ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
-       .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
-       .first(3)
+      include_private = Current.user&.superadmin_user? || false
+      @markpostura = MarkposturaHome.load
+      @markpostura_timeline = MarkposturaHome.timeline(include_private:).first(6)
     end
 end

@@ -6,7 +6,7 @@
   <div class="mx-auto max-w-5xl px-5 py-6 sm:px-6 sm:py-10">
     <h1 class="sr-only">Contenuti Rails4Business</h1>
     <nav class="flex w-full max-w-sm rounded-xl border border-slate-200 bg-white p-1" aria-label="Periodo dei contenuti">
-      <% { "prossimi" => "Prossimi", "passati" => "Passati" }.each do |tab, label| %>
+      <% { "prossimi" => "Futuri", "passati" => "Passati" }.each do |tab, label| %>
         <%= link_to label, rails4b_contents_path(tab:), class: "flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-black #{@rails4b_contents_tab == tab ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-blue-700"}" %>
       <% end %>
     </nav>

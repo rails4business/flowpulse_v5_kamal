@@ -1,6 +1,17 @@
 require "test_helper"
 
 class LandingControllerTest < ActionDispatch::IntegrationTest
+  test "MarkPostura exposes a dedicated shareable Week Plan" do
+    get markpostura_weekplan_url(week: "2026-W38", spaces: "postura-gruppo,postura-app")
+
+    assert_response :success
+    assert_select "#weekplan"
+    assert_select "button[data-space]", count: 5
+    assert_select "dialog#wp-modal"
+    assert_includes response.body, "2026-W38"
+    assert_includes response.body, "postura-gruppo,postura-app"
+  end
+
   test "Rails4Business landing renders both current logo assets" do
     get rails4b_url
 
@@ -32,7 +43,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Contenuti Rails4Business"
-    assert_select "a[href='#{rails4b_contents_path(tab: "prossimi")}']", text: "Prossimi"
+    assert_select "a[href='#{rails4b_contents_path(tab: "prossimi")}']", text: "Futuri"
     assert_select "a[href='#{rails4b_contents_path(tab: "passati")}']", text: "Passati"
     assert_select "a[href='#{rails4b_track_path("collaborare", contenuto: "installa-dash-wallet")}']", text: /Installa Dash Wallet/
   end

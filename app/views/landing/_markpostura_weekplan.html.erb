@@ -1,0 +1,170 @@
+<% week = data.fetch("week_plan") %>
+<% spaces = week.fetch("spaces").index_by { |space| space.fetch("slug") } %>
+
+<section id="weekplan" class="mark-weekplan scroll-mt-24 bg-white">
+  <div class="mx-auto max-w-6xl px-5 py-16">
+    <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.18em] text-amber-700">Bozza settimanale</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight">Week Plan</h2>
+        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Gli impegni arrivano dal file YAML della settimana. Tocca un blocco per vedere tutti i dettagli.</p>
+      </div>
+      <div class="wp-nav">
+        <button type="button" id="wp-prev" aria-label="Settimana precedente">←</button>
+        <span><strong id="wp-week-label">Settimana</strong><small id="wp-week-range">—</small></span>
+        <button type="button" id="wp-next" aria-label="Settimana successiva">→</button>
+        <button type="button" id="wp-today">Oggi</button>
+      </div>
+    </div>
+
+    <div class="wp-legend" aria-label="Filtra le attività">
+      <% week.fetch("spaces").each do |space| %>
+        <button type="button" data-space="<%= space.fetch("slug") %>"><i class="wp-dot wp-<%= space.fetch("color") %>"></i><%= space.fetch("label") %></button>
+      <% end %>
+    </div>
+
+    <% if Current.user&.superadmin_user? %>
+      <p class="mt-3 text-right"><a id="wp-yaml-link" href="#" class="text-xs font-bold text-amber-700 hover:text-amber-900">Apri il file YAML →</a></p>
+    <% end %>
+
+    <div class="wp-empty" id="wp-empty" hidden>Nessun impegno inserito nel file YAML di questa settimana.</div>
+    <div class="wp-scroll">
+      <div class="wp-calendar" aria-label="Vista settimanale">
+        <div class="wp-hours" id="wp-hours"></div>
+        <div class="wp-days" id="wp-days"></div>
+      </div>
+    </div>
+    <p class="mt-4 text-xs leading-5 text-slate-500">Questa è una vista di pianificazione: non crea ancora DataSession o DataSlot e non modifica il database.</p>
+  </div>
+
+  <dialog id="wp-modal" class="wp-modal">
+    <form method="dialog"><button class="wp-modal-close" aria-label="Chiudi">×</button></form>
+    <p id="wp-modal-space" class="wp-modal-space"></p>
+    <h3 id="wp-modal-title"></h3>
+    <dl>
+      <div><dt>Quando</dt><dd id="wp-modal-time"></dd></div>
+      <div><dt>Dove</dt><dd id="wp-modal-location"></dd></div>
+    </dl>
+  </dialog>
+</section>
+
+<style>
+  .mark-weekplan { --wp-card:#fff; --wp-border:#e2e8f0; --wp-muted:#64748b; --wp-accent:#b45309; }
+  .wp-nav { display:flex; align-items:center; gap:.5rem; }
+  .wp-nav button { border:1px solid var(--wp-border); border-radius:.55rem; background:var(--wp-card); color:#334155; padding:.55rem .75rem; font-size:.8rem; }
+  .wp-nav button:hover { border-color:var(--wp-accent); }
+  .wp-nav span { min-width:7rem; text-align:center; }
+  .wp-nav strong,.wp-nav small { display:block; }
+  .wp-nav small { margin-top:.1rem; color:var(--wp-muted); font-size:.68rem; }
+  .wp-legend { display:flex; flex-wrap:wrap; gap:.55rem 1rem; margin-top:1.5rem; color:#64748b; font-size:.7rem; font-weight:700; }
+  .wp-legend button { display:inline-flex; align-items:center; gap:.35rem; border:1px solid #cbd5e1; border-radius:999px; padding:.4rem .65rem; opacity:.45; }
+  .wp-legend button.active { border-color:#94a3b8; background:#f8fafc; color:#0f172a; opacity:1; }
+  .wp-dot { display:inline-block; width:.65rem; height:.65rem; border-radius:.2rem; }
+  .wp-sky { background:#7dd3fc; } .wp-blue { background:#2563eb; } .wp-rose { background:#e11d48; } .wp-amber { background:#fbbf24; }
+  .wp-empty { margin-top:1rem; padding:.8rem 1rem; border:1px dashed var(--wp-border); border-radius:.7rem; color:var(--wp-muted); font-size:.8rem; }
+  .wp-scroll { overflow-x:auto; margin-top:1rem; padding-bottom:.4rem; }
+  .wp-calendar { display:grid; grid-template-columns:3.2rem minmax(49rem,1fr); gap:.4rem; height:42rem; min-width:53rem; }
+  .wp-hours { display:grid; grid-template-rows:1.7rem repeat(28,minmax(0,1fr)); color:#94a3b8; font-size:.58rem; font-weight:800; text-align:right; }
+  .wp-hours div { padding-right:.25rem; transform:translateY(-.25rem); }
+  .wp-days { display:grid; grid-template-columns:repeat(7,minmax(6.5rem,1fr)); gap:.4rem; min-height:0; }
+  .wp-day { display:grid; grid-template-rows:1.7rem minmax(0,1fr); min-height:0; }
+  .wp-day-title { text-align:center; color:#475569; font-size:.65rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
+  .wp-day-title strong,.wp-day-title small { display:block; }
+  .wp-day-title small { margin-top:.05rem; color:#94a3b8; font-size:.55rem; }
+  .wp-time-grid { display:grid; grid-template-rows:repeat(28,minmax(0,1fr)); min-height:0; border:1px solid #e2e8f0; border-radius:.7rem; background:repeating-linear-gradient(to bottom,#f8fafc 0,#f8fafc calc(100% / 28 - 1px),#e2e8f0 calc(100% / 28 - 1px),#e2e8f0 calc(100% / 28)); overflow:hidden; }
+  .wp-event { z-index:1; min-height:0; overflow:hidden; margin:1px 2px; border:0; border-left:3px solid currentColor; border-radius:.35rem; padding:.25rem .3rem; text-align:left; cursor:pointer; box-shadow:0 1px 3px rgb(0 0 0 / .3); }
+  .wp-event:hover { filter:brightness(1.12); }
+  .wp-event strong { display:block; overflow:hidden; font-size:.62rem; line-height:1.1; text-overflow:ellipsis; white-space:nowrap; }
+  .wp-event small { display:block; margin-top:.15rem; overflow:hidden; font-size:.53rem; line-height:1.15; text-overflow:ellipsis; white-space:nowrap; }
+  .wp-event.wp-sky { color:#075985; background:#bae6fd; } .wp-event.wp-blue { color:#dbeafe; background:#1d4ed8; } .wp-event.wp-rose { color:#ffe4e6; background:#be123c; } .wp-event.wp-amber { color:#422006; background:#fbbf24; }
+  .wp-modal { width:min(30rem,calc(100% - 2rem)); border:1px solid #e2e8f0; border-radius:1rem; background:#fff; color:#0f172a; padding:1.5rem; box-shadow:0 24px 80px rgb(15 23 42 / .25); }
+  .wp-modal::backdrop { background:rgb(0 0 0 / .72); backdrop-filter:blur(3px); }
+  .wp-modal-close { position:absolute; top:.65rem; right:.8rem; color:#64748b; font-size:1.5rem; }
+  .wp-modal-space { padding-right:2rem; color:#b45309; font-size:.68rem; font-weight:900; text-transform:uppercase; letter-spacing:.12em; }
+  .wp-modal h3 { margin-top:.65rem; font-size:1.5rem; font-weight:900; }
+  .wp-modal dl { display:grid; gap:.8rem; margin-top:1.25rem; }
+  .wp-modal dl div { border-top:1px solid #e2e8f0; padding-top:.7rem; }
+  .wp-modal dt { color:#64748b; font-size:.65rem; font-weight:900; text-transform:uppercase; letter-spacing:.1em; }
+  .wp-modal dd { margin-top:.2rem; color:#334155; font-size:.9rem; }
+  @media(max-width:640px){ .wp-nav{width:100%;justify-content:space-between}.wp-calendar{height:36rem} }
+</style>
+
+<script>
+(() => {
+  const root = document.getElementById("weekplan");
+  if (!root || root.dataset.ready === "true") return;
+  root.dataset.ready = "true";
+
+  const spaces = <%= raw json_escape(spaces.transform_values { |space| { label: space.fetch("label"), color: space.fetch("color") } }.to_json) %>;
+  const yamlWeeks = <%= raw json_escape(week.fetch("weeks", {}).to_json) %>;
+  const requestedWeek = <%= raw json_escape(params[:week].to_s.to_json) %>;
+  const requestedSpaces = <%= raw json_escape(params[:spaces].to_s.to_json) %>;
+  const days = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+  const dayNames = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+  const startMinute = 8 * 60;
+  const endMinute = 22 * 60;
+  const step = 30;
+  let monday = requestedWeek && yamlWeeks[requestedWeek]?.starts_on ? getMonday(new Date(yamlWeeks[requestedWeek].starts_on+"T12:00:00")) : getMonday(new Date());
+  let selectedSpaces = new Set(requestedSpaces.split(",").filter(slug=>spaces[slug]));
+  if(!selectedSpaces.size) selectedSpaces = new Set(Object.keys(spaces));
+
+  function getMonday(value){ const date=new Date(value); const day=date.getDay(); date.setDate(date.getDate()+(day===0?-6:1-day)); date.setHours(0,0,0,0); return date; }
+  function addDays(value,number){ const date=new Date(value); date.setDate(date.getDate()+number); return date; }
+  function format(date){ return String(date.getDate()).padStart(2,"0")+"/"+String(date.getMonth()+1).padStart(2,"0"); }
+  function minutes(time){ const parts=time.split(":").map(Number); return parts[0]*60+parts[1]; }
+  function rowFor(time){ return Math.max(1,Math.floor((minutes(time)-startMinute)/step)+1); }
+  function spanFor(start,end){ return Math.max(1,Math.ceil((minutes(end)-minutes(start))/step)); }
+  function weekKey(value){ const date=new Date(Date.UTC(value.getFullYear(),value.getMonth(),value.getDate())); const day=date.getUTCDay()||7; date.setUTCDate(date.getUTCDate()+4-day); const yearStart=new Date(Date.UTC(date.getUTCFullYear(),0,1)); return date.getUTCFullYear()+"-W"+String(Math.ceil((((date-yearStart)/86400000)+1)/7)).padStart(2,"0"); }
+  function updateUrl(){
+    const url=new URL(window.location.href); url.searchParams.set("week",weekKey(monday)); url.searchParams.set("spaces",Array.from(selectedSpaces).join(",")); history.replaceState({},"",url);
+    const yamlLink=root.querySelector("#wp-yaml-link"); if(yamlLink)yamlLink.href="/admin/markpostura/settimane/"+weekKey(monday);
+  }
+  function renderFilters(){ root.querySelectorAll("[data-space]").forEach(button=>button.classList.toggle("active",selectedSpaces.has(button.dataset.space))); }
+
+  function renderHours(){
+    const target=root.querySelector("#wp-hours"); target.innerHTML="<div></div>";
+    for(let minute=startMinute;minute<endMinute;minute+=step){ const item=document.createElement("div"); if(minute%60===0)item.textContent=String(Math.floor(minute/60)).padStart(2,"0")+":00"; target.appendChild(item); }
+  }
+
+  function openDetails(entry,space){
+    const modal=root.querySelector("#wp-modal");
+    root.querySelector("#wp-modal-space").textContent=space.label;
+    root.querySelector("#wp-modal-title").textContent=entry.title||space.label;
+    root.querySelector("#wp-modal-time").textContent=entry.day+" · "+entry.start+"–"+entry.end;
+    root.querySelector("#wp-modal-location").textContent=entry.location||"Da definire";
+    modal.showModal();
+  }
+
+  function renderWeek(){
+    const key=weekKey(monday); const entries=(yamlWeeks[key]?.entries||[]).filter(entry=>selectedSpaces.has(entry.space)); const grid=root.querySelector("#wp-days"); grid.innerHTML="";
+    const last=addDays(monday,6);
+    root.querySelector("#wp-week-label").textContent="Settimana "+parseInt(key.split("-W")[1],10);
+    root.querySelector("#wp-week-range").textContent=format(monday)+" – "+format(last)+" "+last.getFullYear();
+    root.querySelector("#wp-empty").hidden=entries.length!==0;
+    updateUrl(); renderFilters();
+
+    dayNames.forEach((dayName,index)=>{
+      const day=document.createElement("div"); day.className="wp-day";
+      const title=document.createElement("div"); title.className="wp-day-title"; title.innerHTML="<strong>"+days[index]+"</strong><small>"+format(addDays(monday,index))+"</small>";
+      const timeGrid=document.createElement("div"); timeGrid.className="wp-time-grid";
+      entries.filter(entry=>entry.day===dayName).forEach(entry=>{
+        if(minutes(entry.end)<=startMinute||minutes(entry.start)>=endMinute)return;
+        const space=spaces[entry.space]; if(!space)return;
+        const event=document.createElement("button"); event.type="button"; event.className="wp-event wp-"+space.color;
+        event.style.gridRowStart=rowFor(entry.start); event.style.gridRowEnd="span "+spanFor(entry.start,entry.end);
+        const eventTitle=document.createElement("strong"); eventTitle.textContent=entry.title||space.label;
+        const details=document.createElement("small"); details.textContent=entry.start+"–"+entry.end+(entry.location?" · "+entry.location:"");
+        event.append(eventTitle,details); event.addEventListener("click",()=>openDetails(entry,space)); timeGrid.appendChild(event);
+      });
+      day.append(title,timeGrid); grid.appendChild(day);
+    });
+  }
+
+  root.querySelector("#wp-prev").addEventListener("click",()=>{ monday=addDays(monday,-7); renderWeek(); });
+  root.querySelector("#wp-next").addEventListener("click",()=>{ monday=addDays(monday,7); renderWeek(); });
+  root.querySelector("#wp-today").addEventListener("click",()=>{ monday=getMonday(new Date()); renderWeek(); });
+  root.querySelectorAll("[data-space]").forEach(button=>button.addEventListener("click",()=>{ const slug=button.dataset.space; if(selectedSpaces.has(slug)){ if(selectedSpaces.size===1)return; selectedSpaces.delete(slug); }else{ selectedSpaces.add(slug); } renderWeek(); }));
+  root.querySelector("#wp-modal").addEventListener("click",event=>{ if(event.target===event.currentTarget)event.currentTarget.close(); });
+  renderHours(); renderWeek();
+})();
+</script>

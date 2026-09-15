@@ -15,21 +15,24 @@ Ogni brand conserva identità, linguaggio, responsabili, pubblico e dominio.
 La piattaforma fornisce una struttura condivisa per evitare di ricostruire ogni
 volta gli stessi strumenti.
 
-## 2. I tre canali principali
+## 2. Le aree principali
 
 ```text
 Flowpulse — piattaforma e principi comuni
 │
-├── Rails4Business — software house e processi
+├── Rails4Business — linee guida, collaborazione e costruzione dei processi
+├── GeneraImpresa — dall'idea al progetto sostenibile
+├── 1Impegno — uso quotidiano dei processi e organizzazione del tempo
 ├── PosturaCorretta — educazione, pratica e formazione posturale
 └── Il Giardino del Corpo — natura, musica e filosofia
 ```
 
 ### Rails4Business
 
-Rails4Business costruisce la piattaforma e aiuta i brand a rendere più chiari,
-semplici e sostenibili i propri processi. Ruby on Rails è il framework di
-punta e la sua filosofia ispira il nome e il modo di lavorare.
+Rails4Business raccoglie linee guida, consigli e modalità di collaborazione.
+Costruisce la piattaforma e aiuta i brand a rendere più chiari, semplici e
+sostenibili i propri processi. Ruby on Rails è il framework di punta e la sua
+filosofia ispira il nome e il modo di lavorare.
 
 Può lavorare:
 
@@ -41,6 +44,30 @@ Può lavorare:
 
 Rails4Business aiuta un progetto, ma non ne assume automaticamente la
 responsabilità editoriale o professionale.
+
+### GeneraImpresa
+
+GeneraImpresa accompagna il passaggio da un bisogno o un'idea a un progetto
+sostenibile. Serve a chiarire obiettivi, priorità, risorse, responsabilità e
+modello economico prima di trasformarli in attività operative.
+
+### 1Impegno
+
+1Impegno è il punto in cui i processi vengono usati: organizza il tempo, le
+Session, gli Slot, i luoghi, le persone e gli impegni effettivi.
+
+La distinzione guida è semplice:
+
+```text
+Rails4Business + professionisti digitali → costruiscono la macchina
+Professionisti + utenti in 1Impegno      → la pilotano e la usano
+GeneraImpresa                             → chiarisce cosa costruire e con quali risorse
+Flowpulse                                 → rende visibile e governa l'insieme
+```
+
+La dashboard gestionale appartiene quindi a Flowpulse. Rails4Business può
+condurre alla dashboard, ma non deve duplicarla: rimane l'area per comprendere,
+progettare e migliorare business e processi.
 
 ### PosturaCorretta
 
@@ -210,12 +237,14 @@ all'azione coerenti con il suo pubblico.
 
 1. Riordinare gli MD esistenti assegnando fonte, brand e stato.
 2. Sistemare provvisoriamente i contenuti nei tre canali principali.
-3. Creare un week plan HTML schematico e utilizzabile.
+3. Provare su MarkPostura un week plan HTML schematico, locale e raggiungibile
+   dal solo indice laterale.
 4. Scrivere l'articolo comune di presentazione dei tre canali.
 5. Proseguire il piano tecnico con `DataSession → DataSlot` in YAML.
 6. Provare la gestione contenuti per Brand e ruolo Creator.
 7. Unificare la visualizzazione datata di contenuti ed eventi.
-8. Soltanto dopo i casi reali, valutare database, Cycle e Service.
+8. Solo in seguito creare il registro YAML e la pagina interna dei processi.
+9. Soltanto dopo i casi reali, valutare database, Cycle e Service.
 
 ## 10. Criterio per non disperdere l'attenzione
 

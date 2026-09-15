@@ -15,20 +15,19 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#eventi"
     assert_select "#luoghi"
     assert_select "#luoghi h3", text: "Giardino del Corpo"
-    assert_select "h3", text: "Incontro al Lago d'Idro", minimum: 1
     assert_select "a[href='#{posturacorretta_path}']", minimum: 1
     assert_select "a[href='#{flowpulse_path}']", minimum: 1
     assert_select "a[href='https://il-giardinio-del-corpo-5xsl9ik.gamma.site/']", text: /Vecchia versione/
   end
 
-  test "shows Flowpulse contents and a working events action on the landing page" do
+  test "shows Flowpulse only as the platform presentation" do
     get flowpulse_path
 
     assert_response :success
-    assert_select "img[src='https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png']", count: 1
-    assert_select "a[href='#{eventi_path}']", text: "Organizza un evento", count: 1
-    assert_select "a[href='/flowpulse/contenuti/il-giardino-del-corpo-geografia-della-vita']", count: 1
-    assert_select "a[href='/flowpulse/contenuti/dalla-moneta-alla-comunita-economia-circolare-dash']", count: 1
+    assert_select "h1", text: "Flowpulse"
+    assert_select "a[href='#{rails4b_path}']", text: /Rails4Business/, minimum: 1
+    assert_select "a[href='#{eventi_path}']", count: 0
+    assert_select "a[href^='/flowpulse/contenuti']", count: 0
   end
 
   test "shows the projects prototype link only to a superadmin" do
@@ -40,7 +39,7 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     post session_path, params: { email_address: user.email_address, password: "password123" }
 
     get flowpulse_path
-    assert_select "a[href='#{admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html")}']", text: "Progetti e sovranità"
+    assert_select "a[href='#{admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html")}']", text: "Prototipo progetti e sovranità"
   end
 
   test "shows contents attributed to markpostura across domains" do
@@ -49,28 +48,22 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Contenuti"
     assert_select "a[href*='posturacorretta.org/posturacorretta/contenuti/']", minimum: 1
-    assert_select "a[href='https://flowpulse.net/flowpulse/contenuti/costruire-un-sistema-economico-nuovo']", count: 1
+    assert_select "a[href='https://rails4b.com/rails4b/contenuti/costruire-un-sistema-economico-nuovo']", count: 1
     assert_match "@markpostura", response.body
   end
 
-  test "shows a Flowpulse markdown article" do
+  test "redirects a legacy Flowpulse article to Rails4Business" do
     get flowpulse_content_path("costruire-un-sistema-economico-nuovo")
 
-    assert_response :success
-    assert_select "h1", text: "È possibile costruire un sistema economico nuovo senza diventare fuorilegge?", count: 1
-    assert_select "article.editorial-rich-text.editorial-rich-text--violet", count: 1
-    assert_match "Come possiamo costruire un'alternativa", response.body
-    assert_match "@markpostura", response.body
+    assert_response :moved_permanently
+    assert_redirected_to rails4b_content_path("costruire-un-sistema-economico-nuovo")
   end
 
-  test "shows the Flowpulse contents index" do
+  test "redirects the legacy Flowpulse contents index to Rails4Business" do
     get flowpulse_contents_path
 
-    assert_response :success
-    assert_select "h1", text: "Contenuti Flowpulse"
-    assert_select "a[href='/flowpulse/contenuti/costruire-un-sistema-economico-nuovo']", count: 1
-    assert_match "@markpostura", response.body
-    assert_match "21/08/2026", response.body
+    assert_response :moved_permanently
+    assert_redirected_to rails4b_contents_path
   end
 
   test "shows events organized by markpostura without duplicating their source" do

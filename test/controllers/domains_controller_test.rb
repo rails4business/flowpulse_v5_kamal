@@ -97,8 +97,11 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: /Il corpo,/
-    assert_select "#eventi"
+    assert_select "h1", text: "Tre progetti, una visione."
+    assert_select "#progetti"
+    assert_select "aside a[href='#{markpostura_weekplan_path}']", text: "Week Plan"
+    assert_select "#weekplan", count: 0
+    assert_select "img[src*='hero_mark_psotura']"
   end
 
   test "renders GeneraImpresa on its domain with domain metadata" do

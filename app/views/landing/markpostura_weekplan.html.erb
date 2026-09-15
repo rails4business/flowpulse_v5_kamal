@@ -1,0 +1,12 @@
+<% content_for :title, "Week Plan · Mark Postura" %>
+<% content_for :description, "La settimana di riferimento di Mark Postura." %>
+
+<main class="min-h-screen bg-white text-slate-950">
+  <nav class="border-b border-slate-200 bg-white" aria-label="Navigazione Week Plan">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+      <%= link_to "← Mark Postura", markpostura_path, class: "text-sm font-black uppercase tracking-[0.18em] text-amber-700" %>
+      <span class="text-sm font-semibold text-slate-500">Week Plan</span>
+    </div>
+  </nav>
+  <%= render "landing/markpostura_weekplan", data: @markpostura %>
+</main>

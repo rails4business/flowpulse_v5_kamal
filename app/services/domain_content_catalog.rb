@@ -16,6 +16,11 @@ class DomainContentCatalog
       "name" => "Mark Postura",
       "host" => "markpostura.it",
       "article_path" => "/markpostura/contenuti/%{slug}"
+    },
+    "rails4b" => {
+      "name" => "Rails4Business",
+      "host" => "rails4b.com",
+      "article_path" => "/rails4b/contenuti/%{slug}"
     }
   }.freeze
 
@@ -62,6 +67,8 @@ class DomainContentCatalog
       def catalog_articles(raw)
         if raw["articles"].is_a?(Array)
           raw.fetch("articles").map { |article| [article, nil, {}] }
+        elsif raw["items"].is_a?(Array)
+          raw.fetch("items").map { |article| [article, nil, {}] }
         else
           raw.flat_map do |category_key, category|
             next [] unless category.is_a?(Hash) && category["articles"].is_a?(Array)
@@ -75,7 +82,7 @@ class DomainContentCatalog
         return unless article.is_a?(Hash) && article["slug"].present?
 
         source = article["source"].presence || discover_dated_source(domain_key, article.fetch("slug")) || "articoli/#{article.fetch('slug')}.md"
-        publication_date = publication_date_from_source(source)
+        publication_date = parse_date(article["publication_at"]) || publication_date_from_source(source)
         scheduled = publication_date.present? && publication_date > Date.current
         return if scheduled && !include_scheduled
 
@@ -92,7 +99,7 @@ class DomainContentCatalog
           "domain_name" => settings.fetch("name"),
           "domain_host" => settings.fetch("host"),
           "category_key" => category_key,
-          "category_name" => category["label"] || category_key.to_s.humanize.presence,
+          "category_name" => category["label"] || article["eyebrow"] || category_key.to_s.humanize.presence,
           "publication_date" => publication_date,
           "publication_label" => publication_date&.strftime("%d/%m/%Y"),
           "scheduled" => scheduled,

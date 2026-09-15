@@ -5,26 +5,14 @@ class LandingController < ApplicationController
 
 
   def flowpulse
-    @flowpulse_articles = visible_flowpulse_articles
   end
 
   def flowpulse_contents
-    @domain_articles = DomainContentCatalog.for_domain(
-      "flowpulse",
-      include_scheduled: Current.user&.superadmin_user? || false
-    )
+    redirect_to rails4b_contents_path, status: :moved_permanently
   end
 
   def flowpulse_content
-    @article = DomainContentCatalog.find(
-      "flowpulse",
-      params[:slug],
-      include_scheduled: Current.user&.superadmin_user? || false
-    )
-    return redirect_to(flowpulse_contents_path, alert: "Contenuto non trovato") unless @article
-
-    content_path = @article["content_path"]
-    @content = File.read(content_path) if content_path.present? && File.file?(content_path)
+    redirect_to rails4b_content_path(params[:slug]), status: :moved_permanently
   end
 
   def rails4b
@@ -98,7 +86,12 @@ class LandingController < ApplicationController
   end
 
   def markpostura
-    @markpostura_events = visible_markpostura_events.first(3)
+    @markpostura = MarkposturaHome.load
+    @markpostura_timeline = MarkposturaHome.timeline(include_private: Current.user&.superadmin_user? || false).first(6)
+  end
+
+  def markpostura_weekplan
+    @markpostura = MarkposturaHome.load
   end
 
   def markpostura_events
@@ -237,6 +230,7 @@ class LandingController < ApplicationController
     ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
      .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
   end
+
 
   def load_posturacorretta_taxonomies
     @posturacorretta_taxonomies = PosturacorrettaTaxonomies.load

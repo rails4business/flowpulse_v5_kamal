@@ -4,6 +4,10 @@
 > `DataEvent`, `EventFormat`, `Occurrence` e `Slot` precedenti. Non vengono
 > create nuove tabelle finché YAML e viste non sono stati usati davvero.
 
+Questo è il **documento tecnico principale che tiene le fila dello sviluppo**.
+Le nuove decisioni operative vengono prima riportate qui e poi implementate un
+passaggio alla volta.
+
 I principi organizzativi, i tre canali e la divisione della settimana sono in
 [PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md](PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md).
 
@@ -34,6 +38,38 @@ Percorso                           DataSession
 
 L'editoriale risponde a **che cosa si legge, apprende o pratica**. La Session
 risponde a **che cosa si svolge e come si colloca una persona**.
+
+Il Week Plan viene prima dei due alberi: assegna spazi reali della settimana e
+permette di verificare il ritmo di lavoro. Non è ancora una DataSession e non è
+un contenuto, ma prepara il luogo in cui entrambi potranno essere programmati.
+
+## 0. Week Plan YAML — prototipo in uso
+
+MarkPostura carica un file per settimana da:
+
+```text
+config/data/markpostura/settimane/YYYY-Www.yml
+```
+
+Ogni voce richiede giorno, ora iniziale, ora finale e uno dei cinque `space`
+ammessi dal catalogo MarkPostura. `title` e `location` specificano cosa si fa e
+dove; se manca il titolo viene mostrato il nome dello spazio. Questa struttura
+resta distinta dal futuro database di 1Impegno.
+
+La vista è un calendario settimanale dalle 08:00 alle 22:00, ispirato al
+prototipo `docs/private_prototypes/viste_html/6_weekplan.html`. Non presenta una
+lista separata: colloca ogni voce YAML nel giorno e nell'orario corretti. Il
+blocco apre un dettaglio in modale senza cambiare pagina.
+
+La pagina dedicata usa parametri condivisibili:
+
+```text
+/markpostura/weekplan?week=2026-W38&spaces=postura-gruppo,postura-app
+```
+
+`week` identifica il file settimanale; `spaces` contiene una o più delle cinque
+categorie selezionate. Soltanto il superadmin può aprire la sorgente YAML da
+`/admin/markpostura/settimane/YYYY-Www`.
 
 ## 1. Albero editoriale e Creator
 
@@ -136,18 +172,20 @@ coincidere nella fase pilota, ma restano concetti distinti.
 
 ## Piano di lavoro — viste/YAML prima del database
 
-1. **Operator**: aggiungere `operator`, `role_operator` e `operator_roles` al
-   Brand; aggiornare Assigned roles.
-2. **1Impegno**: creare una single page/prototipo alimentata da YAML per
+1. **Operator — completato**: aggiunti `operator`, `role_operator` e
+   `operator_roles` al Brand e aggiornati gli Assigned roles.
+2. **Week Plan — in prova**: usare i file settimanali YAML su MarkPostura e
+   correggere le cinque categorie, i luoghi e gli orari su casi reali.
+3. **1Impegno — prossimo**: creare una single page/prototipo alimentata da YAML per
    `DataSession → DataSlot`, senza Cycle e Service.
-3. **Creator e contenuti**: attivare per Brand la funzione contenuti; provare
+4. **Creator e contenuti**: attivare per Brand la funzione contenuti; provare
    Corso → Contenuto con capitoli, schede ed esercizi.
-4. **Percorso PosturaCorretta**: completare `percorso.yml` con Section e corsi
+5. **Percorso PosturaCorretta**: completare `percorso.yml` con Section e corsi
    collegati, come indice della home.
-5. **Catalogo pubblico**: una vista datata Contenuti ed eventi con
+6. **Catalogo pubblico**: una vista datata Contenuti ed eventi con
    prossimi/passati, visibilità pubblica e privata.
-6. **Test reale**: usare YAML e correggere il vocabolario.
-7. **Solo dopo**: scegliere schema database, modelli, controller e migrazioni.
+7. **Test reale**: usare YAML e correggere il vocabolario.
+8. **Solo dopo**: scegliere schema database, modelli, controller e migrazioni.
 
 ## Decisioni ancora aperte
 
