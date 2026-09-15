@@ -3,16 +3,13 @@ module FlowRoles
   MUTATING_ACTIONS = %i[create update destroy publish import export manage mutate].freeze
   GROUP_LABELS = {
     workspace: "Workspace",
-    demo: "Demo",
     admin: "Admin"
   }.freeze
   ASIDE_CONTEXTS = {
     "traveler" => { eyebrow: "Workspace", title: "Esperienze", subtitle: "Eventi, categorie e brand" },
-    "creator" => { eyebrow: "Workspace", title: "Nodi e domini", subtitle: "Gestione domini e root node" },
-    "teacher" => { eyebrow: "Workspace", title: "Didattica", subtitle: "Percorsi, corsi e lezioni" },
-    "tutor" => { eyebrow: "Workspace", title: "Accompagnamento", subtitle: "Persone, follow-up e progressi" },
-    "professional" => { eyebrow: "Workspace", title: "Professionista", subtitle: "Servizi, abilita e disponibilita" },
-    "demo" => { eyebrow: "Demo", title: "Demo sandbox", subtitle: "Prototipi e viste read-only" },
+    "ideatore" => { eyebrow: "Workspace", title: "Ideatore", subtitle: "Brand, progetti e spazi" },
+    "creator" => { eyebrow: "Workspace", title: "Creator", subtitle: "Contenuti, eventi e cicli" },
+    "digital" => { eyebrow: "Workspace", title: "Digital", subtitle: "Strumenti e produzione digitale" },
     "admin" => { eyebrow: "Admin", title: "Admin", subtitle: "Strumenti operativi" },
     "superadmin" => { eyebrow: "Superadmin", title: "Superadmin", subtitle: "Governo app, domini e audit" }
   }.freeze
@@ -39,7 +36,6 @@ module FlowRoles
     role = role.to_s
     return false unless user
     return true if role == "traveler"
-    return user.has_demo_access? if role == "demo"
     return user.superadmin_user? if role == "superadmin"
     return user.admin_user? if role == "admin"
 
@@ -52,16 +48,10 @@ module FlowRoles
     case active_role_for(user)
     when "superadmin", "admin"
       routes.admin_dashboard_path
-    when "creator"
+    when "ideatore"
       routes.creator_world_root_path
-    when "teacher"
-      routes.teacher_root_path
-    when "tutor"
-      routes.tutor_root_path
-    when "professional"
-      routes.professional_root_path
-    when "demo"
-      routes.demo_viaggiatori_path
+    when "creator", "digital"
+      routes.dashboard_path
     else
       routes.viaggiatori_path
     end
@@ -101,11 +91,10 @@ module FlowRoles
     return false unless user
 
     active_role = active_role_for(user)
-    return false if MUTATING_ACTIONS.include?(action) && active_role == "demo"
 
     case resource
     when :demo
-      (active_role == "demo" || user.superadmin_user?) && user.has_demo_access? && READ_ACTIONS.include?(action)
+      active_role == "superadmin" && user.superadmin_user? && READ_ACTIONS.include?(action)
     when :admin
       %w[admin superadmin].include?(active_role) && (user.admin_user? || user.superadmin_user?)
     when :domains, :role_map, :assigned_role_map, :superadmin

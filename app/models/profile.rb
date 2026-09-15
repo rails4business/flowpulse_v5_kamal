@@ -1,5 +1,6 @@
 class Profile < ApplicationRecord
   belongs_to :user
+  belongs_to :primary_node, class_name: "Node", optional: true, inverse_of: :primary_professional_profile
   has_many :role_assignments, dependent: :destroy
   has_many :traveler_subscriptions, dependent: :destroy
   has_many :domain_memberships, dependent: :destroy
@@ -20,6 +21,7 @@ class Profile < ApplicationRecord
                        uniqueness: { case_sensitive: false },
                        format: { with: /\A[a-zA-Z0-9_]+\z/, message: "può contenere solo lettere, numeri e underscore (_)" },
                        length: { minimum: 3, maximum: 30 }
+  validate :primary_node_is_professional
 
   before_validation :set_default_username, on: :create
   before_validation :normalize_username
@@ -50,5 +52,11 @@ class Profile < ApplicationRecord
 
     def normalize_username
       self.username = username.to_s.strip.downcase if username.present?
+    end
+
+    def primary_node_is_professional
+      return if primary_node.blank? || primary_node.professional?
+
+      errors.add(:primary_node, "deve essere un nodo professionale")
     end
 end

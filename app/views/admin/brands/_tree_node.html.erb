@@ -1,0 +1,23 @@
+<% children = nodes_by_parent_id[node.id] || [] %>
+<li class="relative" role="treeitem" aria-expanded="<%= children.any? %>">
+  <div class="flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-slate-50">
+    <span class="flex size-5 shrink-0 items-center justify-center text-slate-400" aria-hidden="true"><%= children.any? ? "⌄" : "·" %></span>
+    <%= link_to admin_brand_path(node), class: "min-w-0 flex-1 text-sm font-semibold text-slate-800 hover:text-blue-700" do %>
+      <span class="truncate"><%= node.title %></span>
+    <% end %>
+    <span class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500"><%= node.node_type %></span>
+    <% if node.bridge_node? %>
+      <span class="shrink-0 rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-violet-700">ponte</span>
+    <% elsif node.domains.any? %>
+      <span class="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700"><%= pluralize(node.domains.size, "dominio") %></span>
+    <% end %>
+  </div>
+
+  <% if children.any? %>
+    <ul class="ml-4 border-l border-slate-200 pl-3" role="group">
+      <% children.each do |child| %>
+        <%= render "tree_node", node: child, nodes_by_parent_id: nodes_by_parent_id %>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

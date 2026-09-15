@@ -15,10 +15,10 @@ module CreatorWorld
     private
 
       def creator_assignments
-        scope = RoleAssignment.where(role: :creator_of_worlds)
+        scope = RoleAssignment.where(role: :ideatore)
         return scope if superadmin_user?
 
-        Current.user.role_assignments.where(role: :creator_of_worlds)
+        Current.user.role_assignments.where(role: :ideatore)
       end
 
       def creator_domain_context

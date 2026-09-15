@@ -4,7 +4,7 @@ module FlowRoles
 
     included do
       helper_method :superadmin?, :superadmin_user?, :admin_user?, :demo_mode?,
-        :creator_user?, :teacher_user?, :tutor_user?, :professional_user?,
+        :ideatore_user?, :creator_user?, :digital_user?, :responsabile_user?,
         :active_dashboard_role, :active_dashboard_role_label, :dashboard_home_path,
         :ruolo_label
     end
@@ -28,7 +28,7 @@ module FlowRoles
       end
 
       def demo_mode?
-        active_dashboard_role == "demo"
+        false
       end
 
       def creator_user?
@@ -74,7 +74,7 @@ module FlowRoles
       def require_not_demo_mode!
         return unless demo_mode?
 
-        redirect_to dashboard_home_path, alert: "La demo e solo in lettura."
+        redirect_to admin_dashboard_path, alert: "Le demo sono riservate al superadmin."
       end
   end
 end

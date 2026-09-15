@@ -1,4 +1,7 @@
-# Esperienze, eventi e partecipazioni
+# Esperienze, eventi e partecipazioni — storico
+
+> **Documento storico.** La distinzione corrente fra contenuti, cicli e
+> servizi è in [Architettura comune — contenuti, cicli e servizi](appunti/ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md).
 
 > **Documento in riallineamento.** Il vocabolario definitivo di eventi e partecipazioni segue l'analisi corrente in [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md); questo testo resta temporaneamente come riferimento concettuale.
 

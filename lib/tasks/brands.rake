@@ -4,7 +4,7 @@ namespace :brands do
     username = ENV.fetch("POSTURACORRETTA_OWNER", "markpostura")
     domain = Domain.find_by!(hostname: "posturacorretta.org")
     owner = RoleAssignment.joins(:profile).find_by!(
-      role: RoleAssignment.roles.fetch("creator_of_worlds"),
+      role: RoleAssignment.roles.fetch("ideatore"),
       profiles: { username: username }
     )
 

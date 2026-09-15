@@ -18,15 +18,10 @@ class HomeController < ApplicationController
 
     if Current.user.can_activate_role?(role)
       ra = nil
-      if role == "creator"
-        ra = Current.user.role_assignments.find_by(role: :creator_of_worlds)
-      elsif role == "demo"
-        ra = Current.user.role_assignments.find_by(role: :demo)
-      elsif role == "traveler" || role == "superadmin"
+      if %w[traveler admin superadmin].include?(role)
         ra = nil
       else
-        mapped_role = role == "admin" ? "segreteria_amministrativa" : role
-        ra = Current.user.role_assignments.find_by(role: mapped_role)
+        ra = Current.user.role_assignments.find_by(role: role)
       end
 
       Current.user.update!(active_role: role, current_role_assignment: ra)
@@ -43,13 +38,10 @@ class HomeController < ApplicationController
       if Current.user.superadmin_user?
         ra = RoleAssignment.find_by(id: ra_id)
       else
-        if active_dashboard_role == "creator"
-          ra = Current.user.role_assignments.find_by(id: ra_id, role: :creator_of_worlds)
-        elsif active_dashboard_role == "demo"
-          ra = Current.user.role_assignments.find_by(id: ra_id, role: :demo)
+        if active_dashboard_role == "ideatore"
+          ra = Current.user.role_assignments.find_by(id: ra_id, role: :ideatore)
         else
-          mapped_role = active_dashboard_role == "admin" ? "segreteria_amministrativa" : active_dashboard_role
-          ra = Current.user.role_assignments.find_by(id: ra_id, role: mapped_role)
+          ra = Current.user.role_assignments.find_by(id: ra_id, role: active_dashboard_role)
         end
       end
 

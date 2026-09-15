@@ -434,7 +434,37 @@ class PosturacorrettaController < ApplicationController
     # Crea la sezione dinamica 'tutti' con l'unione di TUTTI i video e i post .md pubblici
     video_archive = processed_catalog.dig(:tutti, :articles) || []
     category_articles = processed_catalog.except(:tutti, :non_in_elenco, :corsi).values.flat_map { |cat| cat[:articles] || [] }
-    all_articles = (category_articles + video_archive).uniq { |art| art[:slug] }
+    event_items = DomainEventCatalog.for_domain(
+      "posturacorretta",
+      include_drafts: Current.user&.superadmin_user? || false
+    ).filter_map do |event|
+      event_date = event.fetch("event_date", nil)
+      next unless event_date
+
+      event_type = event["event_type"].presence || event["format"].presence || "evento"
+      {
+        slug: "evento-#{event.fetch("slug")}",
+        title: event.fetch("title"),
+        excerpt: event["description"].presence || "Dettagli e programma in aggiornamento.",
+        author: event.fetch("organizer_usernames", []).first.presence || "markpostura",
+        item_type: "event",
+        event_type: event_type,
+        format: "event",
+        url: posturacorretta_eventi_path,
+        subcategory: event_type.to_s.humanize,
+        _publication_date: event_date,
+        _publication_label: event_date.strftime("%d/%m/%Y"),
+        _scheduled: event_date > Date.current,
+        area: Array(event["aree"]).first,
+        paradigm: Array(event["paradigmi"]).first,
+        places: [event["place_slug"]].compact,
+        professionals: Array(event["professional_slugs"]),
+        methodologies: [],
+        channel: "posturacorretta",
+        platform: "evento"
+      }
+    end
+    all_articles = (category_articles + video_archive + event_items).uniq { |art| art[:slug] }
     
     sorted_all_articles = all_articles.sort_by do |art|
       pub_date = art[:_publication_date]

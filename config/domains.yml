@@ -15,6 +15,7 @@ default: &default
     target_controller: landing
     target_action: markpostura
     primary: true
+    node_slug: markpostura
 
   www.markpostura.it:
     canonical_host: markpostura.it
@@ -30,15 +31,13 @@ default: &default
     target_controller: brands/posturacorretta
     target_action: home
     primary: true
+    node_slug: posturacorretta
     auth_slug: posturacorretta
     auth_default_path: /posturacorretta/lezioni
     auth_enabled: true
     operational_roles:
-      - teacher
-      - tutor
-      - segreteria_clienti
-      - segreteria_amministrativa
-      - responsabile_location
+      - insegnante
+      - segreteria
     site_title: "PosturaCorretta"
     site_description: "Percorsi, programmi, contenuti e professionisti per conoscere e prendersi cura del corpo."
     logo_full_url: "https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
@@ -57,11 +56,8 @@ default: &default
     site_title: "Percorso Integrato — Programmi, professionisti e verifiche"
     site_description: "Costruisci un percorso personale e coordinato collegando bisogni, programmi, professionisti e verifiche."
     operational_roles:
-      - professional
-      - tutor
-      - segreteria_clienti
-      - segreteria_amministrativa
-      - responsabile_location
+      - professionista
+      - segreteria
 
   www.percorsointegrato.it:
     canonical_host: percorsointegrato.it
@@ -82,6 +78,7 @@ default: &default
     target_controller: landing
     target_action: rails4b
     primary: true
+    node_slug: rails4business
     site_title: "Rails4Business — Dalla validazione alla realizzazione"
     site_description: "Programmazione Rails, implementazione, grafica, strumenti digitali, contenuti social e infrastruttura tecnica per trasformare un progetto validato in un prodotto utilizzabile."
 
@@ -97,11 +94,8 @@ default: &default
     auth_default_path: /impegno
     auth_enabled: true
     operational_roles:
-      - teacher
-      - tutor
-      - segreteria_clienti
-      - segreteria_amministrativa
-      - responsabile_location
+      - insegnante
+      - segreteria
     site_title: "Canta che ti passa — Musica, canto e territorio"
     site_description: "Fisarmonica, chitarra, canto, ritmo e canti popolari come strumenti di educazione, espressione, memoria e relazione."
 
@@ -153,6 +147,7 @@ default: &default
     target_controller: landing
     target_action: giardino_del_corpo
     primary: true
+    node_slug: ilgiardinodelcorpo
     site_title: "Il Giardino del Corpo"
     site_description: "Esperienze tra corpo, apprendimento, espressione, territorio e natura."
 

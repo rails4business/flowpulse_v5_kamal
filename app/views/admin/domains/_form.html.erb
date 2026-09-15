@@ -121,7 +121,7 @@
             Nessun creator (Dominio di Sistema)
           </div>
 
-          <% RoleAssignment.creator_of_worlds.includes(:profile).order(:id).each do |creator| %>
+          <% RoleAssignment.ideatore.includes(:profile).order(:id).each do |creator| %>
             <% 
               display_text = creator.display_name
               search_text = "#{creator.display_name} #{creator.user&.email_address}"
@@ -204,7 +204,7 @@
             Nessun nodo iniziale
           </div>
 
-          <% RoleAssignment.creator_of_worlds.includes(:profile, :nodes).order(:id).each do |creator| %>
+          <% RoleAssignment.ideatore.includes(:profile, :nodes).order(:id).each do |creator| %>
             <% creator.nodes.order(:id).each do |node| %>
               <% 
                 type_label = node.parent_id.nil? ? 'ROOT' : 'NODO'

@@ -51,11 +51,11 @@ module CreatorWorld
 
       def ensure_active_channel
         @active_channel = Current.user.current_role_assignment
-        if @active_channel.nil? || !@active_channel.creator_of_worlds?
+        if @active_channel.nil? || !@active_channel.ideatore?
           fallback_channel = if superadmin_user?
-                               RoleAssignment.creator_of_worlds.first
+                               RoleAssignment.ideatore.first
                              else
-                               Current.user.role_assignments.creator_of_worlds.first
+                               Current.user.role_assignments.ideatore.first
                              end
 
           if fallback_channel

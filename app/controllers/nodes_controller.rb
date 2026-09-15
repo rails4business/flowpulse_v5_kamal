@@ -129,7 +129,7 @@ class NodesController < ApplicationController
     return false unless Current.user.present?
     return false unless FlowRoles.active_role_for(Current.user) == "creator"
 
-    Current.user.role_assignments.exists?(id: @node.role_assignment_id, role: :creator_of_worlds)
+    Current.user.role_assignments.exists?(id: @node.role_assignment_id, role: :ideatore)
   end
 
   def set_traveler_subscription_context

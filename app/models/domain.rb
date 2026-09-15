@@ -20,6 +20,7 @@ class Domain < ApplicationRecord
   before_validation :normalize_hosts
   before_validation :normalize_brand_settings
   before_validation :sync_role_assignment_from_node
+  after_save :sync_operator_roles_to_node, if: -> { saved_change_to_settings? || saved_change_to_node_id? }
 
 
   validates :hostname, presence: true, uniqueness: true
@@ -56,6 +57,7 @@ class Domain < ApplicationRecord
   def self.import_from_hash!(domains_config)
     domains_config.each do |hostname, config|
       attrs = config.with_indifferent_access
+      node_slug = attrs.delete(:node_slug).presence
 
       find_or_initialize_by(hostname: hostname).tap do |domain|
         domain.canonical_host = attrs[:canonical_host]
@@ -64,6 +66,7 @@ class Domain < ApplicationRecord
         domain.target_action = attrs[:target_action]
         domain.primary = ActiveModel::Type::Boolean.new.cast(attrs.fetch(:primary, false))
         domain.active = ActiveModel::Type::Boolean.new.cast(attrs.fetch(:active, true))
+        domain.node = Node.find_by!(slug: node_slug) if node_slug
         domain.settings = attrs.except(:canonical_host, :locale, :target_controller, :target_action, :primary, :active).presence
         domain.save!
       end
@@ -77,19 +80,18 @@ class Domain < ApplicationRecord
   end
 
   def self.export_to_hash
-    order(:hostname).pluck(:hostname, :canonical_host, :locale, :primary, :active, :target_controller, :target_action, :settings).each_with_object({}) do |row, hash|
-      hostname, canonical_host, locale, primary, active, target_controller, target_action, settings = row
-
+    includes(:node).order(:hostname).each_with_object({}) do |domain, hash|
       config = {}
-      config["canonical_host"] = canonical_host if canonical_host.present?
-      config["locale"] = locale if canonical_host.blank?
-      config["target_controller"] = target_controller if target_controller.present?
-      config["target_action"] = target_action if target_action.present?
-      config["primary"] = true if primary
-      config["active"] = false unless active
-      config.merge!(settings.to_h) if settings.present?
+      config["canonical_host"] = domain.canonical_host if domain.canonical_host.present?
+      config["locale"] = domain.locale if domain.canonical_host.blank?
+      config["target_controller"] = domain.target_controller if domain.target_controller.present?
+      config["target_action"] = domain.target_action if domain.target_action.present?
+      config["primary"] = true if domain.primary?
+      config["active"] = false unless domain.active?
+      config["node_slug"] = domain.node.slug if domain.node.present? && domain.canonical_host.blank?
+      config.merge!(domain.settings.to_h) if domain.settings.present?
 
-      hash[hostname] = config
+      hash[domain.hostname] = config
     end
   end
 
@@ -141,8 +143,8 @@ class Domain < ApplicationRecord
     end
 
     def operational_roles_are_known
-      unknown_roles = Array(operational_roles) - RoleAssignment.roles.keys
-      errors.add(:operational_roles, "contiene ruoli non riconosciuti: #{unknown_roles.join(', ')}") if unknown_roles.any?
+      invalid_roles = Array(operational_roles).reject { |role| role.match?(/\A[a-z0-9_]+\z/) }
+      errors.add(:operational_roles, "contiene codici non validi: #{invalid_roles.join(', ')}") if invalid_roles.any?
     end
 
     def target_controller_and_action_presence
@@ -161,11 +163,19 @@ class Domain < ApplicationRecord
       end
     end
 
+    # Durante la transizione domains.yml conserva la lista iniziale; la fonte
+    # effettiva diventa il Node/Brand a cui il dominio è collegato.
+    def sync_operator_roles_to_node
+      return if node.blank? || operational_roles.blank?
+
+      node.update!(operator_roles: operational_roles)
+    end
+
     def role_assignment_is_creator_world
       return if role_assignment.blank?
-      return if role_assignment.creator_of_worlds?
+      return if role_assignment.ideatore?
 
-      errors.add(:role_assignment_id, "deve fare riferimento a un ruolo creator_of_worlds")
+      errors.add(:role_assignment_id, "deve fare riferimento a un ruolo ideatore")
     end
 
     def node_belongs_to_role_assignment

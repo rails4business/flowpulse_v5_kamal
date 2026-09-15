@@ -35,7 +35,7 @@ una prima lezione, usando gli strumenti già esistenti.
 - home: `/posturacorretta`;
 - tre progetti: `/posturacorretta/tre-progetti`;
 - presentazione stampabile: `/posturacorretta/presentazione-posturacorretta`;
-- programma lezioni per chi accede: `/posturacorretta/dashboard`;
+- programma lezioni per chi accede: `/posturacorretta/lezioni`;
 - primo contatto: WhatsApp al numero configurato, senza form o raccolta dati
   aggiuntiva.
 
@@ -45,21 +45,20 @@ Non serve un numero prestabilito di persone: basta avere alcuni casi reali,
 gestiti dall'inizio alla prima lezione, e una lista chiara dei passaggi che si
 ripetono. Quella lista diventerà il requisito della parte operativa.
 
-## 2. Vista operativa comune — dopo il pilota
+## 2. YAML comune — prima del database
 
+La fonte di verità è [Architettura comune — contenuti, cicli e servizi](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md).
 Si progetta e prova prima come pagina/prototipo, leggendo YAML di esempio.
-Non è ancora un database e non si chiama automaticamente “evento”.
+Non è ancora un database.
 
 | Livello | Significato minimo | Esempio |
 | --- | --- | --- |
-| Root | contenitore o intenzione | Gruppo PosturaCorretta di Leno |
-| Day | una fascia concreta in una data | mercoledì 15:00–16:00 |
-| Session | ciò che avviene in quella fascia | lezione di gruppo 3 |
-| Task | azione preparatoria o conseguenza | preparare le tre schede |
+| DataSession | ciò che avviene in una fascia | lezione di gruppo 3 |
+| DataSlot | contenuto, prenotazione o attività nella sessione | scheda mobilità o appuntamento 16:00 |
 
-La stessa vista deve poter affiancare un progetto, un impegno personale o un
-incontro, senza mescolarli: il Root può riferirsi a un progetto, mentre Day,
-Session e Task descrivono il lavoro concreto.
+Ogni DataSession collega una o più schede/contenuti tramite DataSlot. Una
+DataSession può essere presentata come lezione, incontro, appuntamento o
+evento. Cycle e Service restano in standby fino alla prova di questa vista.
 
 ## 3. Database — solo dopo uso ripetuto
 
@@ -71,5 +70,7 @@ Ordine confermato:
 4. `ProjectParticipation`;
 5. organizzazioni e sovranità.
 
-Eventuali entità operative arriveranno soltanto dopo avere validato la vista
-comune nel pilota, senza ripristinare il vecchio modello `DataEvent`.
+Le prime entità operative da valutare saranno DataSession e DataSlot. Cycle e
+Service arriveranno solo dopo il test dei YAML; senza ripristinare il vecchio
+modello `DataEvent`. Project e i modelli di aggiornamento restano successivi
+all'uso reale del pilota.

@@ -1,4 +1,9 @@
-# DataEvent MVP — decisioni da analizzare
+# DataEvent MVP — storico delle decisioni superate
+
+> **Non è la fonte di verità corrente.** La tabella `data_events` è stata
+> rimossa prima dell'uso reale. Le decisioni attuali sono in
+> [Architettura comune — contenuti, cicli e servizi](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md).
+> Questo documento resta come storico dei requisiti e delle domande emerse.
 
 ## Obiettivo
 

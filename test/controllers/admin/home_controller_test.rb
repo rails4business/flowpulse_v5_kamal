@@ -32,32 +32,10 @@ module Admin
       get admin_dashboard_url
 
       assert_response :success
-      assert_select "h1", "Superadmin Dashboard"
-      assert_select ".superadmin-tabs"
-      assert_includes response.body, "Panoramica &amp; Diagnostica"
-      assert_includes response.body, "Creator"
-      assert_includes response.body, "Domini"
-    end
-
-    test "superadmin can see dashboard worlds tab" do
-      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
-      get admin_dashboard_path(tab: "worlds")
-      assert_response :success
-      assert_select "h2", "Elenco Creator"
-    end
-
-    test "superadmin can see dashboard domains tab" do
-      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
-      get admin_dashboard_path(tab: "domains")
-      assert_response :success
-      assert_select "h2", "Domini Associati ai Creator"
-    end
-
-    test "superadmin can see dashboard guide tab" do
-      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
-      get admin_dashboard_path(tab: "guide")
-      assert_response :success
-      assert_select "h2", "Pagine per Ruolo"
+      assert_select "h1", "Regia tecnica"
+      assert_select "a[href='#{admin_brands_path}']", text: /Brand e domini/
+      assert_select "a[href='#{admin_brands_path(tab: "domains")}']"
+      assert_select "a[href='#{admin_assigned_role_map_path}']", text: /Ruoli assegnati/
     end
 
     test "superadmin can open the didactic hub and its yaml sources" do
@@ -99,7 +77,7 @@ module Admin
 
     test "anonymous user cannot see dashboard" do
       get admin_dashboard_url
-      assert_redirected_to new_session_url
+      assert_redirected_to new_session_url(return_to: "/admin/dashboard")
     end
 
     test "superadmin can set and reset domain override on localhost" do
@@ -119,7 +97,7 @@ module Admin
       assert_redirected_to admin_dashboard_path
       follow_redirect!
 
-      assert_includes response.body, "Nessuno (Standalone Fallback)"
+      assert_select "select[name='domain_id']"
     end
 
     test "site switcher redirects to the selected site home on localhost" do
@@ -143,8 +121,8 @@ module Admin
       follow_redirect!
 
       assert_response :success
-      assert_includes response.body, "other-host.net"
       assert_not_includes response.body, "Simulazione attiva"
+      assert_not_includes response.body, "Simulatore dominio"
     end
   end
 end

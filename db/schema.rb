@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_04_193000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -185,8 +185,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_193000) do
     t.text "description"
     t.bigint "link_node_id"
     t.string "node_type", default: "node", null: false
+    t.jsonb "operator_roles", default: [], null: false
     t.bigint "parent_id"
     t.integer "position"
+    t.boolean "professional", default: false, null: false
+    t.bigint "professional_owner_node_id"
     t.bigint "role_assignment_id", null: false
     t.string "slug"
     t.string "status", default: "draft", null: false
@@ -197,6 +200,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_193000) do
     t.index ["link_node_id"], name: "index_nodes_on_link_node_id"
     t.index ["node_type"], name: "index_nodes_on_node_type"
     t.index ["parent_id"], name: "index_nodes_on_parent_id"
+    t.index ["professional_owner_node_id"], name: "index_nodes_on_professional_owner_node_id"
     t.index ["role_assignment_id"], name: "index_nodes_on_role_assignment_id"
     t.index ["status"], name: "index_nodes_on_status"
     t.index ["view_type"], name: "index_nodes_on_view_type"
@@ -253,10 +257,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_193000) do
     t.string "display_name"
     t.string "first_name"
     t.string "last_name"
+    t.bigint "primary_node_id"
     t.string "role"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.string "username", null: false
+    t.index ["primary_node_id"], name: "index_profiles_on_primary_node_id", unique: true
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
     t.index ["username"], name: "index_profiles_on_username", unique: true
   end
@@ -268,10 +274,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_193000) do
     t.bigint "parent_id"
     t.bigint "profile_id", null: false
     t.integer "role", null: false
+    t.string "role_operator"
     t.datetime "updated_at", null: false
     t.index ["context_type", "context_id"], name: "index_role_assignments_on_context_type_and_context_id"
     t.index ["parent_id"], name: "index_role_assignments_on_parent_id"
-    t.index ["profile_id", "role", "context_type", "context_id"], name: "index_role_assignments_on_context_role", unique: true, where: "((context_type IS NOT NULL) AND (context_id IS NOT NULL))"
+    t.index ["profile_id", "role", "context_type", "context_id"], name: "index_role_assignments_on_context_role", unique: true, where: "((context_type IS NOT NULL) AND (context_id IS NOT NULL) AND (role <> 11))"
+    t.index ["profile_id", "role", "role_operator", "context_type", "context_id"], name: "index_role_assignments_on_operator_function", unique: true, where: "((context_type IS NOT NULL) AND (context_id IS NOT NULL) AND (role = 11))"
     t.index ["profile_id", "role"], name: "index_role_assignments_on_global_role", unique: true, where: "((context_type IS NULL) AND (context_id IS NULL))"
     t.index ["profile_id"], name: "index_role_assignments_on_profile_id"
     t.index ["role"], name: "index_role_assignments_on_role"
@@ -336,11 +344,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_04_193000) do
   add_foreign_key "node_contents", "nodes"
   add_foreign_key "nodes", "nodes", column: "link_node_id"
   add_foreign_key "nodes", "nodes", column: "parent_id"
+  add_foreign_key "nodes", "nodes", column: "professional_owner_node_id"
   add_foreign_key "nodes", "role_assignments"
   add_foreign_key "password_reset_requests", "users"
   add_foreign_key "posturacorretta_directory_people", "domains"
   add_foreign_key "posturacorretta_directory_people", "profiles"
   add_foreign_key "posturacorretta_directory_places", "domains"
+  add_foreign_key "profiles", "nodes", column: "primary_node_id"
   add_foreign_key "profiles", "users"
   add_foreign_key "role_assignments", "profiles"
   add_foreign_key "role_assignments", "role_assignments", column: "parent_id"

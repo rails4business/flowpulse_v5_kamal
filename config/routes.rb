@@ -180,6 +180,7 @@ Rails.application.routes.draw do
         post :import
       end
     end
+    resources :brands, controller: :brands, only: %i[index show]
     resources :password_reset_requests, only: :index do
       member do
         patch :complete

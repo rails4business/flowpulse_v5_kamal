@@ -1,70 +1,41 @@
 require "test_helper"
 
 class FlowRolesTest < ActiveSupport::TestCase
-  test "exposes roles labels and assignable roles" do
-    assert_includes FlowRoles.roles, "teacher"
-    assert_equal "Teacher", FlowRoles.label(:teacher)
-    assert_includes FlowRoles.assignable_roles, "demo"
-    assert_includes FlowRoles.assignable_roles, "creator_of_worlds"
-    assert_not_includes FlowRoles.assignable_roles, "tutor"
-    assert_not_includes FlowRoles.assignable_roles, "superadmin"
+  test "exposes the new transversal roles" do
+    assert_includes FlowRoles.roles, "ideatore"
+    assert_includes FlowRoles.roles, "creator"
+    assert_includes FlowRoles.roles, "digital"
+    assert_equal "Ideatore", FlowRoles.label(:ideatore)
+    assert_equal ["ideatore"], FlowRoles.assignable_roles
   end
 
-  test "checks role access from assignments and superadmin bypass" do
-    teacher = create_user("flow-roles-teacher@example.com")
-    RoleAssignment.create!(profile: teacher.profile, role: :teacher, parent: create_creator_assignment)
+  test "checks access from an ideatore assignment and superadmin bypass" do
+    ideatore = create_user("ideatore-flow@example.com")
+    RoleAssignment.create!(profile: ideatore.profile, role: :ideatore)
+    superadmin = create_user("superadmin-flow@example.com", superadmin: true)
 
-    superadmin = create_user("flow-roles-superadmin@example.com", superadmin: true)
-
-    assert FlowRoles.can_access_role?(teacher, :teacher)
-    assert_not FlowRoles.can_access_role?(teacher, :tutor)
-    assert FlowRoles.can_access_role?(superadmin, :tutor)
+    assert FlowRoles.can_access_role?(ideatore, :ideatore)
+    assert FlowRoles.can_access_role?(superadmin, :digital)
   end
 
-  test "denies admin access when active role is demo" do
-    user = create_user("flow-roles-demo-admin@example.com", demo_access: true, active_role: :demo)
-    RoleAssignment.create!(profile: user.profile, role: :admin, parent: create_creator_assignment)
+  test "demo is reserved to superadmin and no longer has an active role" do
+    user = create_user("member-flow@example.com")
+    superadmin = create_user("superadmin-demo@example.com", superadmin: true, active_role: :superadmin)
 
-    assert_not FlowRoles.can?(user, :show, :admin)
-    assert_not FlowRoles.can?(user, :update, :admin)
-    assert FlowRoles.can?(user, :show, :demo)
+    assert_not FlowRoles.can?(user, :show, :demo)
+    assert FlowRoles.can?(superadmin, :show, :demo)
   end
 
-  test "groups menu items for superadmin" do
-    user = create_user("flow-roles-menu-superadmin@example.com", superadmin: true)
-
-    groups = FlowRoles.grouped_menu_for(user, active_role: "superadmin")
-
-    assert_includes groups.keys, :workspace
-    assert_includes groups.keys, :demo
-    assert_includes groups.keys, :admin
-    assert_includes groups.fetch(:workspace).map(&:badge), "EXP"
-  end
-
-  test "returns aside context for role and admin areas" do
-    assert_equal "Didattica", FlowRoles.aside_context_for("teacher").fetch(:title)
-    assert_equal "Admin", FlowRoles.aside_context_for("teacher", admin: true).fetch(:title)
-    assert_equal "Superadmin", FlowRoles.aside_context_for("superadmin", admin: true).fetch(:title)
+  test "returns the new aside contexts" do
+    assert_equal "Ideatore", FlowRoles.aside_context_for("ideatore").fetch(:title)
+    assert_equal "Digital", FlowRoles.aside_context_for("digital").fetch(:title)
   end
 
   private
 
-    def create_user(email, **attributes)
-      demo_val = attributes.delete(:demo_access)
-      user = User.create!(
-        {
-          email_address: email,
-          password: "password123",
-          password_confirmation: "password123"
-        }.merge(attributes)
-      )
-      user.create_profile!(display_name: email.split("@").first.capitalize)
-      RoleAssignment.create!(profile: user.profile, role: :demo) if demo_val
-      user
-    end
-
-    def create_creator_assignment
-      creator = create_user("creator-#{SecureRandom.hex(4)}@example.com")
-      RoleAssignment.create!(profile: creator.profile, role: :creator_of_worlds)
-    end
+  def create_user(email, **attributes)
+    user = User.create!({ email_address: email, password: "password123", password_confirmation: "password123" }.merge(attributes))
+    user.create_profile!(display_name: email.split("@").first.capitalize)
+    user
+  end
 end

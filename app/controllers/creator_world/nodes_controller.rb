@@ -162,9 +162,9 @@ module CreatorWorld
 
     def set_role_assignment
       if superadmin?
-        @role_assignment = RoleAssignment.find_by!(id: params[:role_assignment_id], role: :creator_of_worlds)
+        @role_assignment = RoleAssignment.find_by!(id: params[:role_assignment_id], role: :ideatore)
       else
-        @role_assignment = Current.user.role_assignments.find_by!(id: params[:role_assignment_id], role: :creator_of_worlds)
+        @role_assignment = Current.user.role_assignments.find_by!(id: params[:role_assignment_id], role: :ideatore)
       end
     rescue ActiveRecord::RecordNotFound
       redirect_to dashboard_home_path, alert: "Non hai i permessi per gestire questa configurazione."

@@ -1,5 +1,10 @@
 # Flowpulse — Guida di integrazione della pagina “Sovranità, Progetti e Comunità”
 
+> **Nota di priorità:** la visione di questo documento resta valida, ma i
+> modelli `Project`, `ProjectUpdate`, `ProjectNeed` e `ProjectParticipation`
+> restano successivi al pilota PosturaCorretta. Prima si prova l'architettura
+> [contenuti, cicli e servizi](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md) in YAML.
+
 Prototipo visuale associato (privato, solo superadmin):
 `docs/private_prototypes/viste_html/flowpulse_sovranita_progetti_community.html`.
 

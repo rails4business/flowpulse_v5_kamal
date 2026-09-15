@@ -1,99 +1,70 @@
-<% content_for :title, "New assigned role" %>
+<% content_for :title, "Nuovo ruolo assegnato" %>
 
 <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-  <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Nuova assegnazione</p>
-  <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">New assigned role</h1>
-  <span class="mt-4 block max-w-3xl text-base leading-7 text-slate-600">Assegna un ruolo globale oppure un ruolo operativo nel contesto di uno specifico dominio.</span>
+  <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Ruoli e Brand</p>
+  <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">Nuova assegnazione</h1>
+  <p class="mt-4 max-w-3xl text-base leading-7 text-slate-600">Un ideatore è globale. Un operator lavora in uno specifico Brand e riceve una funzione prevista da quel Brand.</p>
 </header>
 
 <section class="mt-6 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
   <% if @role_assignment.errors.any? %>
-    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
-      <%= @role_assignment.errors.full_messages.to_sentence %>
-    </div>
+    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700"><%= @role_assignment.errors.full_messages.to_sentence %></div>
   <% end %>
 
-  <!-- Warning for Creator of Worlds profile constraint -->
-  <div id="profile-warning" class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-700 animate-pulse">
-    ⚠️ Attenzione: l'utente selezionato non possiede un profilo configurato. Non è possibile assegnargli il ruolo di <strong>Creator of Worlds</strong>.
-  </div>
-
-  <%= form_with model: @role_assignment, url: admin_assigned_role_map_path, method: :post, class: "grid gap-5" do |form| %>
+  <%= form_with model: @role_assignment, url: admin_assigned_role_map_path, method: :post, class: "grid gap-5", data: { operator_role_form: true } do |form| %>
     <div>
-      <%= form.label :user_identifier, "Utente (Cerca per Email o Username)", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
-      
-      <%= form.text_field :user_identifier,
-        list: "users-datalist",
-        id: "role_assignment_user_identifier",
-        class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500",
-        placeholder: "Cerca utente per email o username...",
-        autocomplete: "off",
-        value: @role_assignment.user&.email_address || params.dig(:role_assignment, :user_identifier) %>
-
+      <%= form.label :user_identifier, "Utente", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+      <%= form.text_field :user_identifier, list: "users-datalist", class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm", placeholder: "Email o username…", autocomplete: "off", value: @role_assignment.user&.email_address || params.dig(:role_assignment, :user_identifier) %>
       <datalist id="users-datalist">
         <% @profiles.each do |profile| %>
           <% next if profile.user.nil? %>
-          <option value="<%= profile.username %>">Username: <%= profile.display_name %> (<%= profile.user.email_address %>)</option>
-          <option value="<%= profile.user.email_address %>">Email: <%= profile.display_name %> (@<%= profile.username %>)</option>
+          <option value="<%= profile.username %>"><%= profile.display_name %> · @<%= profile.username %></option>
+          <option value="<%= profile.user.email_address %>"><%= profile.display_name %> · <%= profile.user.email_address %></option>
         <% end %>
       </datalist>
     </div>
 
     <div>
-      <%= label_tag "role_assignment_domain_id", "Dominio", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
-      <%= select_tag "role_assignment[domain_id]",
-        options_for_select(@operational_domains.map { |domain| [domain.display_hostname, domain.id] }, @selected_domain_id),
-        include_blank: "Nessun dominio · ruolo globale",
-        id: "role_assignment_domain_id",
-        class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" %>
-      <p class="mt-2 text-xs leading-5 text-slate-500">In assenza di dominio puoi assegnare solo Creator of worlds o Demo. I ruoli operativi devono essere previsti dal dominio.</p>
+      <%= form.label :role, "Ruolo", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+      <%= form.select :role, options_for_select(@assignable_roles.map { |role| [role == "operator" ? "Operator" : role.humanize, role] }, @role_assignment.role), { prompt: "Seleziona ruolo" }, id: "role_assignment_role", class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm" %>
     </div>
 
-    <div>
-      <%= form.label :role, "Ruolo", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
-      <%= form.select :role,
-        options_for_select(@assignable_roles.map { |role| [role.humanize, role] }, @role_assignment.role),
-        { prompt: "Seleziona ruolo" },
-        id: "role_assignment_role",
-        class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    <div id="operator-brand-fields" class="hidden grid gap-5 rounded-xl border border-blue-100 bg-blue-50/50 p-4">
+      <div>
+        <%= label_tag "role_assignment_brand_id", "Brand", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+        <%= select_tag "role_assignment[brand_id]", options_for_select(@operator_brands.map { |brand| [brand.title, brand.id] }, params.dig(:role_assignment, :brand_id)), include_blank: "Seleziona Brand…", id: "role_assignment_brand_id", class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm" %>
+      </div>
+      <div>
+        <%= form.label :role_operator, "Funzione operativa", class: "block text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+        <%= form.select :role_operator, options_for_select(@operator_brands.flat_map { |brand| brand.operator_roles.map { |role| ["#{role.humanize} · #{brand.title}", role, { "data-brand-id": brand.id }] } }, @role_assignment.role_operator), { prompt: "Prima seleziona il Brand" }, id: "role_assignment_role_operator", class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 shadow-sm" %>
+        <p class="mt-2 text-xs leading-5 text-slate-500">La funzione viene scelta esclusivamente dalla lista configurata per il Brand.</p>
+      </div>
     </div>
 
     <div class="flex flex-wrap items-center gap-3 pt-2">
-      <%= form.submit "Create", class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-extrabold text-white shadow-sm transition hover:bg-blue-700" %>
-      <%= link_to "Cancel", admin_assigned_role_map_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50" %>
+      <%= form.submit "Assegna ruolo", class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-extrabold text-white shadow-sm transition hover:bg-blue-700" %>
+      <%= link_to "Annulla", admin_assigned_role_map_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 hover:bg-slate-50" %>
     </div>
   <% end %>
 </section>
 
 <script>
   (() => {
-    const setupWarning = () => {
-      const userInput = document.getElementById("role_assignment_user_identifier");
-      const roleSelect = document.getElementById("role_assignment_role");
-      const warning = document.getElementById("profile-warning");
-      const noProfileEmails = <%= @no_profile_emails.to_json.html_safe %>;
-
-      const checkConstraint = () => {
-        if (!userInput || !roleSelect || !warning) return;
-        const val = userInput.value.trim();
-        const isCreator = roleSelect.value === "creator_of_worlds";
-        const hasNoProfile = noProfileEmails.includes(val);
-
-        if (isCreator && hasNoProfile) {
-          warning.classList.remove("hidden");
-        } else {
-          warning.classList.add("hidden");
-        }
-      };
-
-      userInput?.addEventListener("input", checkConstraint);
-      userInput?.addEventListener("change", checkConstraint);
-      roleSelect?.addEventListener("change", checkConstraint);
-
-      checkConstraint();
+    const role = document.getElementById("role_assignment_role");
+    const brand = document.getElementById("role_assignment_brand_id");
+    const fields = document.getElementById("operator-brand-fields");
+    const operatorRole = document.getElementById("role_assignment_role_operator");
+    const sync = () => {
+      const operator = role?.value === "operator";
+      fields?.classList.toggle("hidden", !operator);
+      operatorRole?.querySelectorAll("option[data-brand-id]").forEach((option) => {
+        option.hidden = !operator || option.dataset.brandId !== brand?.value;
+        option.disabled = option.hidden;
+      });
+      if (operatorRole?.selectedOptions[0]?.disabled) operatorRole.value = "";
     };
-
-    document.addEventListener("turbo:load", setupWarning);
-    setupWarning();
+    role?.addEventListener("change", sync);
+    brand?.addEventListener("change", sync);
+    sync();
   })();
 </script>

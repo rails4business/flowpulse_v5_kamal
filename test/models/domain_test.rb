@@ -164,4 +164,28 @@ class DomainTest < ActiveSupport::TestCase
     assert_not domain.valid?
     assert_includes domain.errors[:node_id], "deve appartenere allo stesso Creator del dominio"
   end
+
+  test "imports a canonical domain linked through node slug" do
+    user = User.create!(
+      email_address: "node-slug-domain@example.com",
+      password: "password123",
+      password_confirmation: "password123"
+    )
+    user.create_profile!(display_name: "Node Slug Owner")
+    assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
+    node = Node.create!(title: "Slug Brand", slug: "slug-brand", role_assignment: assignment)
+
+    Domain.import_from_hash!(
+      "slug-brand.example" => {
+        "locale" => "it",
+        "primary" => true,
+        "node_slug" => "slug-brand"
+      }
+    )
+
+    domain = Domain.find_by!(hostname: "slug-brand.example")
+    assert_equal node, domain.node
+    assert_equal "slug-brand", Domain.export_to_hash.dig("slug-brand.example", "node_slug")
+    assert_not domain.settings.to_h.key?("node_slug")
+  end
 end

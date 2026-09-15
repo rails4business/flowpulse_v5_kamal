@@ -99,7 +99,7 @@ module NavigationHelper
   end
 
   def admin_dashboard_section?(current_section)
-    current_section.to_sym.in?(%i[dashboard domains resources pages notes content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan])
+    current_section.to_sym.in?(%i[brands dashboard domains resources pages notes content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan])
   end
 
   def resolve_dashboard_menu_path(path)

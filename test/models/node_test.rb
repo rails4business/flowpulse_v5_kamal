@@ -141,4 +141,37 @@ class NodeTest < ActiveSupport::TestCase
     assert node.valid?
     assert_equal "Iscrizione gratuita", Node.visibility_label("subscription")
   end
+
+  test "professional node can exist without a registered professional profile" do
+    node = Node.create!(
+      title: "Professionista demo",
+      role_assignment: @role_assignment,
+      professional: true
+    )
+
+    assert node.professional?
+    assert_nil node.primary_professional_profile
+  end
+
+  test "professional owner must be a professional node" do
+    child = Node.new(
+      title: "Progetto professionale",
+      role_assignment: @role_assignment,
+      professional_owner_node: @node_a
+    )
+
+    assert_not child.valid?
+    assert_includes child.errors[:professional_owner_node], "deve essere un nodo professionale"
+
+    @node_a.update!(professional: true)
+    assert child.valid?
+  end
+
+  test "profile primary node must be professional" do
+    @user.profile.primary_node = @node_a
+    assert_not @user.profile.valid?
+
+    @node_a.update!(professional: true)
+    assert @user.profile.valid?
+  end
 end

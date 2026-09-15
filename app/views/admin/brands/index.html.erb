@@ -1,0 +1,68 @@
+<% content_for :title, "Brand e progetti" %>
+
+<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+  <header class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Superadmin</p>
+      <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-950">Brand e progetti</h1>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Qui compaiono soltanto i brand che hanno almeno un dominio. Progetti, figli e nodi ponte restano nella scheda del brand.</p>
+    </div>
+    <% if @active_tab == "domains" %>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to "Import/export YAML", export_admin_domains_path, class: "rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
+        <%= link_to "Nuovo dominio", new_admin_domain_path, class: "rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-500" %>
+      </div>
+    <% end %>
+  </header>
+
+  <nav class="mb-6 flex gap-1 border-b border-slate-200" aria-label="Amministrazione struttura">
+    <%= link_to "Dashboard", admin_dashboard_path, class: "border-b-2 border-transparent px-4 py-3 text-sm font-extrabold text-slate-500 hover:text-slate-800" %>
+    <%= link_to "Brand", admin_brands_path, class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'brands' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <%= link_to "Domini", admin_brands_path(tab: "domains"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'domains' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+  </nav>
+
+  <% if @active_tab == "domains" %>
+    <% if @domains.any? %>
+      <%= render "admin/domains/table", domains: @domains %>
+    <% else %>
+      <p class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">Non ci sono domini configurati.</p>
+    <% end %>
+  <% elsif @brands.any? %>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Brand</th>
+            <th class="hidden px-4 py-3 md:table-cell">Dominio</th>
+            <th class="hidden px-4 py-3 lg:table-cell">Creatore</th>
+            <th class="hidden px-4 py-3 sm:table-cell">Stato</th>
+            <th class="px-4 py-3"><span class="sr-only">Apri</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% @brands.each do |brand| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-4">
+                <%= link_to brand.title, admin_brand_path(brand), class: "font-extrabold text-slate-900 hover:text-blue-700" %>
+                <div class="mt-1 flex flex-wrap gap-2 text-xs text-slate-500">
+                  <span><%= brand.node_type %></span>
+                  <% if brand.parent.present? %><span>· sotto <%= brand.parent.title %></span><% end %>
+                </div>
+              </td>
+              <td class="hidden px-4 py-4 md:table-cell">
+                <% brand.domains.order(:hostname).each do |domain| %>
+                  <%= link_to domain.hostname, admin_domain_path(domain), class: "block font-semibold text-blue-700 hover:text-blue-500" %>
+                <% end %>
+              </td>
+              <td class="hidden px-4 py-4 text-slate-600 lg:table-cell"><%= brand.role_assignment&.display_name || "—" %></td>
+              <td class="hidden px-4 py-4 sm:table-cell"><span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600"><%= brand.status %></span></td>
+              <td class="px-4 py-4 text-right"><%= link_to "Apri", admin_brand_path(brand), class: "font-bold text-blue-700 hover:text-blue-500" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </section>
+  <% else %>
+    <p class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">Non ci sono ancora brand con un dominio collegato.</p>
+  <% end %>
+</main>

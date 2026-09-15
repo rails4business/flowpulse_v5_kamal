@@ -1,0 +1,68 @@
+<% content_for :title, @node.title %>
+
+<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Percorso">
+    <%= link_to "Brand e progetti", admin_brands_path, class: "font-semibold text-blue-700 hover:text-blue-500" %>
+    <% @ancestors.each do |ancestor| %>
+      <span aria-hidden="true">/</span>
+      <%= link_to ancestor.title, admin_brand_path(ancestor), class: "hover:text-slate-800" %>
+    <% end %>
+    <span aria-hidden="true">/</span>
+    <span class="font-semibold text-slate-800"><%= @node.title %></span>
+  </nav>
+
+  <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600"><%= [(@node.professional? ? "professional" : nil), (@node.domains.any? ? "brand" : "project"), (@node.node_type unless @node.node_type == "node")].compact.join(" · ") %></p>
+        <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-950"><%= @node.title %></h1>
+        <% if @node.description.present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= @node.description %></p><% end %>
+      </div>
+      <div class="text-right text-xs text-slate-500">
+        <div>Stato: <strong class="text-slate-800"><%= @node.status %></strong></div>
+        <div class="mt-1">Visibilità: <strong class="text-slate-800"><%= @node.visibility %></strong></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mt-6 flex gap-1 border-b border-slate-200" aria-label="Vista del brand">
+    <%= link_to "Albero", admin_brand_path(@node), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'tree' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <%= link_to "Informazioni", admin_brand_path(@node, tab: "info"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'info' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+  </nav>
+
+  <% if @active_tab == "tree" %>
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <div class="mb-4 flex items-center justify-between gap-4"><h2 class="text-base font-extrabold text-slate-950">Struttura</h2><span class="text-xs font-bold text-slate-500"><%= pluralize(@tree_nodes.size, "nodo") %></span></div>
+      <ul class="space-y-1" role="tree" aria-label="Albero di <%= @node.title %>">
+        <%= render "tree_node", node: @node, nodes_by_parent_id: @tree_nodes_by_parent_id %>
+      </ul>
+    </section>
+  <% else %>
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+        <h2 class="text-base font-extrabold text-slate-950">Domini collegati</h2>
+        <% if @domains.any? %>
+          <ul class="mt-4 space-y-3"><% @domains.each do |domain| %><li class="flex items-center justify-between gap-3"><%= link_to domain.hostname, admin_domain_path(domain), class: "font-semibold text-blue-700 hover:text-blue-500" %><span class="text-xs text-slate-500"><%= domain.active? ? "attivo" : "disattivo" %></span></li><% end %></ul>
+        <% else %><p class="mt-3 text-sm text-slate-500">Nessun dominio: è un progetto o un nodo interno.</p><% end %>
+      </section>
+      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+        <h2 class="text-base font-extrabold text-slate-950">Collegamenti</h2>
+        <dl class="mt-4 space-y-3 text-sm">
+          <div><dt class="text-slate-500">Creatore</dt><dd class="font-semibold text-slate-800"><%= @node.role_assignment&.display_name || "Non assegnato" %></dd></div>
+          <div><dt class="text-slate-500">Nodo padre</dt><dd><%= @node.parent ? link_to(@node.parent.title, admin_brand_path(@node.parent), class: "font-semibold text-blue-700 hover:text-blue-500") : "Radice" %></dd></div>
+          <div><dt class="text-slate-500">Responsabile professionale</dt><dd><%= @node.professional_owner_node ? link_to(@node.professional_owner_node.title, admin_brand_path(@node.professional_owner_node), class: "font-semibold text-blue-700 hover:text-blue-500") : (@node.professional? ? "Nodo professionale principale" : "Non assegnato") %></dd></div>
+          <% if @node.primary_professional_profile.present? %><div><dt class="text-slate-500">Profilo associato</dt><dd class="font-semibold text-slate-800">@<%= @node.primary_professional_profile.username %></dd></div><% elsif @node.professional? %><div><dt class="text-slate-500">Profilo associato</dt><dd class="text-amber-700">Demo — professionista non ancora iscritto</dd></div><% end %>
+          <% if @node.bridge_node? %><div><dt class="text-slate-500">Nodo ponte</dt><dd><%= link_to @node.link_node.title, admin_brand_path(@node.link_node), class: "font-semibold text-violet-700 hover:text-violet-500" %></dd></div><% end %>
+        </dl>
+      </section>
+      <section class="rounded-2xl border border-slate-200 bg-white p-6">
+        <h2 class="text-base font-extrabold text-slate-950">Funzioni operatore</h2>
+        <% if @node.operator_roles.any? %>
+          <div class="mt-4 flex flex-wrap gap-2"><% @node.operator_roles.each do |role| %><span class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700"><%= role.humanize %></span><% end %></div>
+        <% else %>
+          <p class="mt-3 text-sm text-slate-500">Nessuna funzione operativa configurata.</p>
+        <% end %>
+      </section>
+    </div>
+  <% end %>
+</main>

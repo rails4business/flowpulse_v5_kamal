@@ -29,18 +29,12 @@ module FlowRoles
     def assigned_role_names(context = nil)
       assignments = context.present? ? role_assignments.for_context(context) : role_assignments.global
       assignments.pluck(:role).map do |r|
-        case r
-        when "creator_of_worlds" then "creator"
-        when "segreteria_amministrativa" then "admin"
-        else r
-        end
+        r
       end
     end
 
     def has_assigned_role?(role_name, context = nil)
       role = role_name.to_s
-      role = "creator_of_worlds" if role == "creator"
-      role = "segreteria_amministrativa" if role == "admin"
       return true if superadmin_user?
       return false unless RoleAssignment.roles.key?(role)
 
@@ -56,28 +50,24 @@ module FlowRoles
       has_assigned_role?("admin")
     end
 
+    def ideatore_user?(context = nil)
+      has_assigned_role?("ideatore", context)
+    end
+
     def creator_user?(context = nil)
       has_assigned_role?("creator", context)
     end
 
-    def teacher_user?(context = nil)
-      has_assigned_role?("teacher", context)
-    end
-
-    def tutor_user?(context = nil)
-      has_assigned_role?("tutor", context)
-    end
-
-    def professional_user?(context = nil)
-      has_assigned_role?("professional", context)
+    def digital_user?(context = nil)
+      has_assigned_role?("digital", context)
     end
 
     def is_superadmin?
       superadmin_user?
     end
 
-    def has_demo_access?
-      superadmin_user? || role_assignments.where(role: "demo").exists?
+    def responsabile_user?(context = nil)
+      has_assigned_role?("responsabile", context)
     end
 
     def can_switch_roles?

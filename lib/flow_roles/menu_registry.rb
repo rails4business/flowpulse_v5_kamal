@@ -9,47 +9,17 @@ module FlowRoles
           title: "Viaggiatore",
           subtitle: "Esperienze, categorie e brand",
           path: :viaggiatori_path,
-          roles: %w[traveler demo admin superadmin],
+          roles: %w[traveler admin superadmin],
           group: :workspace,
           badge: "EXP",
           demo_visible: true
         ),
         MenuItem.build(
-          key: :demo,
-          title: "Demo",
-          subtitle: "Prototipi e viste sandbox",
-          path: :demo_viaggiatori_path,
-          roles: %w[demo superadmin],
-          group: :demo,
-          badge: "LAB",
-          demo_visible: true
-        ),
-        MenuItem.build(
-          key: :lavoro,
-          title: "Lavoro",
-          subtitle: "Creator, ruoli, attitudini, servizi",
-          path: :demo_lavoro_path,
-          roles: %w[demo superadmin],
-          group: :demo,
-          badge: "LAB",
-          demo_visible: true
-        ),
-        MenuItem.build(
-          key: :salute,
-          title: "Salute",
-          subtitle: "Percorsi e corsi",
-          path: :demo_salute_path,
-          roles: %w[demo superadmin],
-          group: :demo,
-          badge: "LAB",
-          demo_visible: true
-        ),
-        MenuItem.build(
-          key: :creator,
-          title: "Nodi e domini",
-          subtitle: "Gestione domini e root node",
+          key: :ideatore,
+          title: "Ideatore",
+          subtitle: "Brand, progetti e root node",
           path: :creator_world_root_path,
-          roles: %w[creator superadmin],
+          roles: %w[ideatore superadmin],
           group: :workspace,
           badge: "CR"
         ),
@@ -58,36 +28,9 @@ module FlowRoles
           title: "Ruoli",
           subtitle: "Gestione ruoli dipendenti",
           path: :creator_world_role_assignments_path,
-          roles: %w[creator superadmin],
+          roles: %w[ideatore superadmin],
           group: :workspace,
           badge: "ROL"
-        ),
-        MenuItem.build(
-          key: :teacher,
-          title: "Teacher",
-          subtitle: "Percorsi, corsi e lezioni",
-          path: :teacher_root_path,
-          roles: %w[teacher superadmin],
-          group: :workspace,
-          badge: "EDU"
-        ),
-        MenuItem.build(
-          key: :tutor,
-          title: "Tutor",
-          subtitle: "Accompagnamento e follow-up",
-          path: :tutor_root_path,
-          roles: %w[tutor superadmin],
-          group: :workspace,
-          badge: "SUP"
-        ),
-        MenuItem.build(
-          key: :professional,
-          title: "Professionista",
-          subtitle: "Servizi, abilita e disponibilita",
-          path: :professional_root_path,
-          roles: %w[professional superadmin],
-          group: :workspace,
-          badge: "PRO"
         ),
         MenuItem.build(
           key: :dashboard,
@@ -97,16 +40,6 @@ module FlowRoles
           roles: %w[admin superadmin],
           group: :admin,
           badge: "ADM",
-          mutating: true
-        ),
-        MenuItem.build(
-          key: :domains,
-          title: "Domini",
-          subtitle: "Gestione domini e routing",
-          path: :admin_domains_path,
-          roles: %w[superadmin],
-          group: :admin,
-          badge: "SYS",
           mutating: true
         ),
         MenuItem.build(
@@ -206,7 +139,7 @@ module FlowRoles
     end
 
     def admin_items
-      admin_keys = %i[dashboard domains resources pages notes didactic_path content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
+      admin_keys = %i[dashboard resources pages notes didactic_path content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
       items.select { |item| admin_keys.include?(item.key) }
     end
 

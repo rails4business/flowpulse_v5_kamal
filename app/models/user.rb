@@ -13,33 +13,27 @@ class User < ApplicationRecord
 
   enum :active_role, {
     traveler: 0,
-    demo: 1,
-    creator: 2,
-    tutor: 3,
-    teacher: 4,
-    professional: 5,
     admin: 6,
-    superadmin: 7
+    superadmin: 7,
+    ideatore: 8,
+    creator: 9,
+    digital: 10
   }
 
   ROLE_LABELS = {
     "traveler" => "Viaggiatore",
-    "demo" => "Demo",
+    "ideatore" => "Ideatore",
     "creator" => "Creator",
-    "teacher" => "Teacher",
-    "tutor" => "Tutor",
-    "professional" => "Professionista",
+    "digital" => "Digital",
     "admin" => "Admin",
     "superadmin" => "Superadmin"
   }.freeze
 
   SWITCHABLE_ROLES = %w[
     traveler
-    demo
+    ideatore
     creator
-    teacher
-    tutor
-    professional
+    digital
     admin
     superadmin
   ].freeze

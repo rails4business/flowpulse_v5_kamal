@@ -131,18 +131,14 @@ class ApplicationController < ActionController::Base
       role = user.active_role.to_s
       ra = user.current_role_assignment
 
-      if %w[traveler superadmin].include?(role)
+      if %w[traveler admin superadmin].include?(role)
         if ra.present?
           user.update!(current_role_assignment: nil)
         end
         return
       end
 
-      mapped_role = case role
-                    when "creator" then "creator_of_worlds"
-                    when "admin" then "segreteria_amministrativa"
-                    else role
-                    end
+      mapped_role = role
 
       if ra.nil? || ra.role.to_s != mapped_role
         new_ra = user.role_assignments.find_by(role: mapped_role)

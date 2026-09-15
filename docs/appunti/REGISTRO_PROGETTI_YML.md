@@ -27,6 +27,6 @@ La sequenza concreta è descritta in
 [`ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md`](ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md):
 
 1. usare e testare il pilota PosturaCorretta;
-2. progettare la vista comune Root → Day → Session → Task;
+2. provare i YAML comuni `DataSession → DataSlot`, collegati ai contenuti;
 3. solo dopo uso reale: `Project`, `ProjectUpdate`, `ProjectNeed`,
    `ProjectParticipation`, e infine organizzazioni/sovranità.

@@ -28,6 +28,7 @@
       <thead class="sticky top-0 z-10 bg-slate-50 text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500 shadow-[0_1px_0_rgba(226,232,240,1)]">
         <tr>
           <th class="px-4 py-3">Ruolo</th>
+          <th class="px-4 py-3">Funzione</th>
           <th class="px-4 py-3">Utente</th>
           <th class="px-4 py-3">Nome</th>
           <th class="px-4 py-3">Contesto</th>
@@ -40,12 +41,15 @@
           <% @role_assignments.each do |assignment| %>
             <tr class="align-top">
               <td class="whitespace-nowrap px-4 py-3 font-bold text-slate-950"><%= assignment.role.humanize %></td>
+              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= assignment.role_operator&.humanize || "—" %></td>
               <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= assignment.user.email_address %></td>
               <td class="px-4 py-3 text-slate-600"><%= assignment.display_name %></td>
               <td class="whitespace-nowrap px-4 py-3 text-slate-600">
                 <% if assignment.context.present? %>
                   <% if assignment.context.is_a?(Domain) %>
                     <%= assignment.context.display_hostname %>
+                  <% elsif assignment.context.is_a?(Node) %>
+                    <%= assignment.context.title %>
                   <% else %>
                     <%= assignment.context_type %> #<%= assignment.context_id %>
                   <% end %>
@@ -65,7 +69,7 @@
           <% end %>
         <% else %>
           <tr>
-            <td colspan="6" class="px-4 py-8 text-center text-sm font-semibold text-slate-500">Nessun ruolo assegnato.</td>
+            <td colspan="7" class="px-4 py-8 text-center text-sm font-semibold text-slate-500">Nessun ruolo assegnato.</td>
           </tr>
         <% end %>
       </tbody>

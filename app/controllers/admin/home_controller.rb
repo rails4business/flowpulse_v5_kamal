@@ -48,13 +48,10 @@ module Admin
     end
 
     def dashboard
-      @creator_worlds = RoleAssignment.creator_of_worlds.order(:id)
       @total_nodes = Node.count
       @total_contents = NodeContent.count
       @total_domains = Domain.count
-      @domains = Domain.order(:hostname)
-      @sample_creator_world = @creator_worlds.first
-      @sample_public_node = Node.published_public.order(:id).first
+      @brand_count = Node.joins(:domains).distinct.count
     end
 
     def set_override

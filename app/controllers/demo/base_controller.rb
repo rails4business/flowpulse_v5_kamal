@@ -6,8 +6,8 @@ module Demo
     private
 
     def require_demo_access!
-      unless FlowRoles.can?(Current.user, :read, :demo)
-        redirect_to root_path, alert: "Accesso riservato agli utenti demo."
+      unless Current.user&.superadmin_user? && active_dashboard_role == "superadmin"
+        redirect_to root_path, alert: "Accesso riservato al superadmin."
       end
     end
 

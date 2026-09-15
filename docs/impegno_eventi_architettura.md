@@ -1,4 +1,8 @@
-# Impegno, eventi e integrazione con i brand
+# Impegno, eventi e integrazione con i brand — storico
+
+> **Documento storico.** Per le scelte correnti usare
+> [Architettura comune — contenuti, cicli e servizi](appunti/ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md).
+> Il modello `DataEvent` qui citato è stato rimosso prima dell'uso reale.
 
 > **Documento in riallineamento.** Le sezioni basate su `EventFormat`, `EventOccurrence`, `EventRegistration`, `Event` ed `EventSlot` descrivono ipotesi precedenti e non sono più la fonte decisionale corrente. L'MVP viene definito una scelta alla volta in [DataEvent MVP — decisioni da analizzare](appunti/data_event_mvp_decisioni.md). Al termine dell'analisi questo documento verrà consolidato eliminando i modelli sostituiti.
 

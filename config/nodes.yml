@@ -1,0 +1,42 @@
+default: &default
+  nodes:
+    markpostura:
+      title: MarkPostura
+      professional: true
+      owner_username: markpostura
+      primary_profile_username: markpostura
+      status: published
+      visibility: public
+
+    rails4business:
+      title: Rails4Business
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    posturacorretta:
+      title: PosturaCorretta
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      operator_roles:
+        - insegnante
+        - segreteria
+
+    ilgiardinodelcorpo:
+      title: Il Giardino del Corpo
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

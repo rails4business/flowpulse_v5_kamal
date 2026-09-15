@@ -9,6 +9,15 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select 'meta[name="robots"][content="noindex, follow"]'
   end
 
+  test "shows dated events alongside contents with compact period controls" do
+    get posturacorretta_contenuti_path(periodo: "prossimi")
+
+    assert_response :success
+    assert_select "nav[aria-label='Periodo contenuti'] a", text: "Prossimi"
+    assert_select "summary", text: /Filtra/
+    assert_select ".blog-article[data-kind='masterclass']", minimum: 1
+  end
+
   test "should get accademia (landing page)" do
     get posturacorretta_url
     assert_response :success
@@ -173,6 +182,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Professionisti collegati"
     assert_select "body.posturacorretta-ui"
     assert_select "article.pc-rich-text h1", text: "Biomeccanica Comportamentale GDS"
+    assert_select "a[href='#{percorso_integrato_professional_path("sara-moretti")}']", text: "Vedi profilo e contatti su Percorso Integrato →"
   end
 
   test "should get contenuti" do

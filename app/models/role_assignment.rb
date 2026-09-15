@@ -1,21 +1,19 @@
 class RoleAssignment < ApplicationRecord
-  ROOT_ROLES = %w[creator_of_worlds demo].freeze
+  ROOT_ROLES = %w[ideatore].freeze
 
   enum :role, {
-    professional: 0, 
-    teacher: 1,
-    tutor: 2,
-    segreteria_clienti: 3,
-    responsabile_location: 4,
-    segreteria_amministrativa: 5,
-    creator_of_worlds: 6,
-    demo: 8
+    admin: 5,
+    ideatore: 6,
+    creator: 7,
+    digital: 9,
+    responsabile: 10,
+    operator: 11
   }
 
   def role=(val)
     mapped_val = case val&.to_s
-                 when "creator" then "creator_of_worlds"
-                 when "admin" then "segreteria_amministrativa"
+                 when "creator_of_worlds" then "ideatore"
+                 when "segreteria_amministrativa" then "admin"
                  else val
                  end
     super(mapped_val)
@@ -40,22 +38,32 @@ class RoleAssignment < ApplicationRecord
                 user&.email_address&.split('@')&.first
               end
 
-    if role == "creator_of_worlds"
-      "Creator (#{display})"
+    if role == "ideatore"
+      "Ideatore (#{display})"
+    elsif operator?
+      "#{role_operator.to_s.humanize} (#{display})"
     else
       "#{role.to_s.humanize} (#{display})"
     end
   end
 
   validates :role, presence: true
-  validates :role, uniqueness: { scope: [ :profile_id, :context_type, :context_id, :parent_id ] }
+  validates :role, uniqueness: { scope: [ :profile_id, :context_type, :context_id, :parent_id ] }, unless: :operator?
+  validates :role_operator, presence: true, uniqueness: { scope: [ :profile_id, :context_type, :context_id ], case_sensitive: false }, if: :operator?
   validate :context_fields_match
   validate :parent_role_assignment_constraints
+  validate :operator_assignment_matches_brand
+
+  before_validation :normalize_role_operator
 
   scope :global, -> { where(context_type: nil, context_id: nil) }
   scope :for_context, ->(context) { where(context: context) }
 
   private
+
+    def normalize_role_operator
+      self.role_operator = role_operator.to_s.strip.downcase.presence
+    end
 
     def context_fields_match
       return if context_type.blank? && context_id.blank?
@@ -72,9 +80,24 @@ class RoleAssignment < ApplicationRecord
       else
         if parent_id.blank?
           errors.add(:parent_id, "deve essere impostato per i ruoli children")
-        elsif !parent&.creator_of_worlds?
-          errors.add(:parent_id, "deve fare riferimento a un ruolo 'creator_of_worlds'")
+        elsif !parent&.ideatore?
+          errors.add(:parent_id, "deve fare riferimento a un ruolo 'ideatore'")
         end
+      end
+    end
+
+    def operator_assignment_matches_brand
+      return unless operator?
+
+      unless context.is_a?(Node)
+        errors.add(:context, "deve essere un Brand")
+        return
+      end
+
+      errors.add(:parent, "deve essere l'ideatore del Brand") if parent != context.role_assignment
+
+      unless context.operator_role?(role_operator)
+        errors.add(:role_operator, "non è previsto per questo Brand")
       end
     end
 end

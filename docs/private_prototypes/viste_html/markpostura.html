@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mark Postura — Ecosistema</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --text: #eaeaea;
+    --muted: #9a9a9a;
+    --accent: #d4a017;
+    --border: #2a2a2a;
+
+    /* Palette spazi */
+    --sp-postura-gruppo: #6ec6e8;   /* azzurrino */
+    --sp-postura-app:    #2f6fd0;   /* blu */
+    --sp-giardino:       #b3405e;   /* rosso/viola */
+    --sp-rails-aperti:   #e67e22;   /* arancio */
+    --sp-rails-processi: #e6c419;   /* giallo */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 60px 0; }
+
+  /* HERO */
+  .hero { text-align: center; margin-bottom: 80px; }
+  .hero h1 {
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 12px;
+  }
+  .hero .tagline {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* SEZIONI */
+  section { margin-bottom: 72px; }
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+  }
+
+  /* CARD PROGETTI */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: #3a3a3a; }
+  .card .icon { font-size: 1.6rem; margin-bottom: 12px; }
+  .card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+  .card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 16px; }
+  .card ul { list-style: none; }
+  .card ul li {
+    font-size: 0.9rem;
+    color: var(--muted);
+    padding: 4px 0 4px 18px;
+    position: relative;
+  }
+  .card ul li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .card.postura { border-top: 3px solid var(--sp-postura-app); }
+  .card.giardino { border-top: 3px solid var(--sp-giardino); }
+  .card.rails { border-top: 3px solid var(--sp-rails-aperti); }
+
+  /* GERARCHIA */
+  .hierarchy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-top: 24px;
+  }
+  .level {
+    width: 100%;
+    max-width: 620px;
+    text-align: center;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+  }
+  .level .label {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .level .name { font-weight: 700; font-size: 1.05rem; }
+  .level .desc { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+  .arrow { color: var(--muted); font-size: 1.2rem; padding: 6px 0; }
+
+  /* PERCORSO */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step .num {
+    counter-increment: step;
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+  .step .body h4 { font-size: 1rem; margin-bottom: 4px; }
+  .step .body p { color: var(--muted); font-size: 0.9rem; }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 32px;
+  }
+  .cta h2 { margin-bottom: 12px; }
+  .cta p { color: var(--muted); max-width: 500px; margin: 0 auto 28px; }
+  .btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #0f0f0f;
+    text-decoration: none;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 0 20px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--muted); text-decoration: none; margin: 0 8px; }
+  footer a:hover { color: var(--accent); }
+
+  /* ===== WEEK PLAN ===== */
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    user-select: none;
+  }
+  .legend-item:hover { transform: translateY(-2px); }
+  .legend-item.active { border-color: var(--accent); }
+  .legend-item .dot {
+    flex-shrink: 0;
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+  .legend-item .info h4 { font-size: 0.9rem; margin-bottom: 2px; }
+  .legend-item .info p { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+  .legend-item .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--border);
+    color: var(--muted);
+    margin-left: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Colori spazi */
+  .sp-postura-gruppo  { background: var(--sp-postura-gruppo); color: #0f1a20; }
+  .sp-postura-app     { background: var(--sp-postura-app);    color: #ffffff; }
+  .sp-giardino        { background: var(--sp-giardino);       color: #ffffff; }
+  .sp-rails-aperti    { background: var(--sp-rails-aperti);   color: #1a0f00; }
+  .sp-rails-processi  { background: var(--sp-rails-processi); color: #1a1500; }
+
+  .week-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .week-controls button {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .week-controls button:hover { border-color: var(--accent); }
+  .week-controls .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+  .week-controls .week-nav .label {
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 700;
+    text-align: center;
+  }
+  .week-controls .week-nav .sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+  .week-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .week-grid .day-head {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 0;
+    line-height: 1.2;
+  }
+  .week-grid .day-head .dow { font-weight: 700; color: var(--text); display: block; }
+  .week-grid .day-head .date { font-size: 0.7rem; color: var(--muted); display: block; }
+  .week-grid .slot-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .cell {
+    min-height: 84px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px;
+    font-size: 0.7rem;
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .cell:hover { border-color: #444; }
+  .cell.fixed { border-style: solid; border-width: 2px; }
+  .cell.mobile { border-style: dashed; }
+  .cell .chip {
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cell .chip small {
+    font-weight: 400;
+    opacity: 0.75;
+    margin-left: 4px;
+  }
+  .cell .time-inputs {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    margin-top: 2px;
+  }
+  .cell .time-inputs input {
+    width: 100%;
+    min-width: 0;
+    background: #111;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.65rem;
+    padding: 2px 3px;
+    border-radius: 4px;
+    font-family: inherit;
+    cursor: text;
+  }
+  .cell .time-inputs input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .cell .time-inputs span { color: var(--muted); font-size: 0.6rem; }
+
+  @media (max-width: 720px) {
+    .week-grid { grid-template-columns: 46px repeat(7, 1fr); font-size: 0.65rem; gap: 4px; }
+    .cell { min-height: 64px; padding: 4px; }
+    .week-grid .day-head { font-size: 0.62rem; }
+    .week-grid .slot-label { font-size: 0.55rem; padding-right: 4px; }
+    .legend { grid-template-columns: 1fr; }
+    .cell .time-inputs input { font-size: 0.55rem; padding: 1px 2px; }
+    .week-controls .week-nav { margin-left: 0; width: 100%; justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Mark <span>Postura</span></h1>
+    <p>Un ecosistema per il corpo, la mente e il lavoro. Tre progetti, una visione.</p>
+    <div class="tagline">postura · natura · tecnologia</div>
+  </div>
+
+  <!-- CHI SONO -->
+  <section>
+    <h2>Chi sono</h2>
+    <p class="sub">Il punto di partenza: la persona prima dei progetti.</p>
+    <p style="color: var(--muted); max-width: 700px;">
+      Sono [Nome Cognome], conosciuto come <strong style="color: var(--text);">Mark Postura</strong>.
+      Mi occupo di postura, movimento e benessere, ma la mia ricerca va oltre:
+      esploro il rapporto tra <strong style="color: var(--text);">corpo, natura e tecnologia</strong>.
+      Da questa ricerca nascono tre progetti complementari, uniti da un'unica filosofia:
+      <em>semplicità, modularità, attenzione alla persona</em>.
+    </p>
+  </section>
+
+  <!-- I 3 PROGETTI -->
+  <section>
+    <h2>I tre progetti</h2>
+    <p class="sub">Tre anime, un unico ecosistema.</p>
+    <div class="grid">
+
+      <div class="card postura">
+        <div class="icon">🦴</div>
+        <h3>PosturaCorretta</h3>
+        <p>Percorsi e formazione per ritrovare equilibrio e consapevolezza del corpo.</p>
+        <ul>
+          <li>Percorsi individuali</li>
+          <li>Percorsi di gruppo</li>
+          <li>Formazione professionisti</li>
+          <li>Appuntamenti e consulenze</li>
+        </ul>
+      </div>
+
+      <div class="card giardino">
+        <div class="icon">🌿</div>
+        <h3>Il Giardino del Corpo</h3>
+        <p>Eventi esperienziali che intrecciano natura, musica e filosofia.</p>
+        <ul>
+          <li>Eventi a tema</li>
+          <li>Natura e musica</li>
+          <li>Filosofia del valore</li>
+          <li>Ricchezza e spiritualità</li>
+        </ul>
+      </div>
+
+      <div class="card rails">
+        <div class="icon">⚙️</div>
+        <h3>Rails4B</h3>
+        <p>Software house e infrastruttura digitale dell'ecosistema.</p>
+        <ul>
+          <li>Sviluppo software (Ruby on Rails)</li>
+          <li>Gestione processi interni</li>
+          <li>Digital e contenuti</li>
+          <li>Progetti per clienti esterni</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- GERARCHIA -->
+  <section>
+    <h2>Come è organizzato</h2>
+    <p class="sub">Tre livelli: chi sei, cosa fai, come lo fai.</p>
+    <div class="hierarchy">
+
+      <div class="level">
+        <div class="label">Livello 1 — Brand</div>
+        <div class="name">Mark Postura</div>
+        <div class="desc">La persona e la visione che tiene insieme tutto</div>
+      </div>
+      <div class="arrow">↓</div>
+
+      <div class="level">
+        <div class="label">Livello 2 — Progetti</div>
+        <div class="name">PosturaCorretta · Il Giardino del Corpo · Rails4B</div>
+        <div class="desc">I tre business, ognuno con la sua identità</div>
+      </div>
+      <div class="arrow">↓</div>
+
+      <div class="level">
+        <div class="label">Livello 3 — Processi</div>
+        <div class="name">Contenuti · Appuntamenti · Eventi · Digital</div>
+        <div class="desc">Le attività operative, gestite da Rails4B</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PERCORSO -->
+  <section>
+    <h2>Come si entra</h2>
+    <p class="sub">Non si "viene assunti". Si partecipa, si collabora, si cresce.</p>
+    <div class="steps">
+
+      <div class="step">
+        <div class="num">1</div>
+        <div class="body">
+          <h4>Scopri</h4>
+          <p>Segui i canali, leggi i contenuti, partecipa agli eventi. Capisci se è per te.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">2</div>
+        <div class="body">
+          <h4>Partecipa</h4>
+          <p>Entra in contatto: commenta, scrivi, vieni a un evento. Inizia la relazione.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">3</div>
+        <div class="body">
+          <h4>Collabora</h4>
+          <p>Ti proponiamo un piccolo task, un contenuto, un evento. Vediamo come lavoriamo insieme.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">4</div>
+        <div class="body">
+          <h4>Responsabilità</h4>
+          <p>Se il percorso funziona, guidi un processo. Coordini altri, decidi, cresci.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">5</div>
+        <div class="body">
+          <h4>Referente</h4>
+          <p>Diventi il punto di riferimento di un progetto. Visione, strategia, rappresentanza.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WEEK PLAN -->
+  <section id="weekplan">
+    <h2>Week Plan</h2>
+    <p class="sub">
+      Componi la settimana scegliendo gli spazi. Clicca una cella per assegnare,
+      clicca di nuovo per rimuovere. Imposta gli orari direttamente nelle celle.
+      Gli spazi <strong>fissi</strong> hanno bordo pieno, quelli <strong>mobili</strong> bordo tratteggiato.
+    </p>
+
+    <!-- LEGENDA -->
+    <div class="legend">
+      <div class="legend-item" data-space="postura-gruppo">
+        <span class="dot sp-postura-gruppo"></span>
+        <div class="info">
+          <h4>PosturaCorretta — Gruppo</h4>
+          <p>Percorsi di gruppo, sessioni collettive, formazione.</p>
+        </div>
+      </div>
+      <div class="legend-item" data-space="postura-app">
+        <span class="dot sp-postura-app"></span>
+        <div class="info">
+          <h4>PosturaCorretta — Appuntamenti</h4>
+          <p>Sessioni individuali, consulenze, appuntamenti 1-a-1.</p>
+        </div>
+      </div>
+      <div class="legend-item" data-space="giardino">
+        <span class="dot sp-giardino"></span>
+        <div class="info">
+          <h4>Il Giardino del Corpo</h4>
+          <p>Incontri a tema. Percorso salute, Meditazione, suono, lettura, filosofia, stile di vita. </p>
+        </div>
+      </div>
+      <div class="legend-item" data-space="rails-aperti">
+        <span class="dot sp-rails-aperti"></span>
+        <div class="info">
+          <h4>Rails4B — Incontri aperti</h4>
+          <p>Incontri pubblici a tema business, tech, progetti.</p>
+        </div>
+      </div>
+      <div class="legend-item" data-space="rails-processi">
+        <span class="dot sp-rails-processi"></span>
+        <div class="info">
+          <h4>Rails4B — Processi <span class="badge">CHIUSO</span></h4>
+          <p>Tempo interno: processi, digital, contenuti, automazioni.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLLI -->
+    <div class="week-controls">
+      <button id="btn-clear">Pulisci settimana</button>
+      <button id="btn-export">Esporta (JSON)</button>
+      <div class="week-nav">
+        <button id="btn-prev" title="Settimana precedente">←</button>
+        <div>
+          <div class="label" id="week-label">Settimana 1</div>
+          <div class="sub" id="week-range">—</div>
+        </div>
+        <button id="btn-next" title="Settimana successiva">→</button>
+        <button id="btn-today" title="Torna a oggi">Oggi</button>
+      </div>
+    </div>
+
+    <!-- GRIGLIA -->
+    <div class="week-grid" id="week-grid"></div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="cta">
+      <h2>Ti riconosci?</h2>
+      <p>Se quello che leggi ti parla, il prossimo passo è una conversazione. Senza fretta, senza impegno.</p>
+      <a href="mailto:[tua-email]" class="btn">Scrivimi →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p style="margin-bottom: 12px;">Mark Postura — ecosistema per corpo, mente e lavoro</p>
+    <p>
+      <a href="[link-ig-mark]">Instagram Mark</a> ·
+      <a href="[link-ig-postura]">Instagram PosturaCorretta</a> ·
+      <a href="[link-ig-giardino]">Instagram Giardino</a> ·
+      <a href="[link-ig-rails]">Instagram Rails4B</a> ·
+      <a href="[link-yt]">YouTube</a>
+    </p>
+    <p style="margin-top: 16px; font-size: 0.8rem;">© [anno] Mark Postura</p>
+  </footer>
+
+</div>
+
+<script>
+(function() {
+  const SPACES = {
+    'postura-gruppo':  { label: 'PosturaCorretta — Gruppo',      class: 'sp-postura-gruppo',  short: 'Postura gr.' },
+    'postura-app':     { label: 'PosturaCorretta — Appuntamenti',class: 'sp-postura-app',     short: 'Postura app.' },
+    'giardino':        { label: 'Il Giardino del Corpo',         class: 'sp-giardino',        short: 'Giardino' },
+    'rails-aperti':    { label: 'Rails4B — Incontri aperti',     class: 'sp-rails-aperti',    short: 'Rails4B ap.' },
+    'rails-processi':  { label: 'Rails4B — Processi',            class: 'sp-rails-processi',  short: 'Rails4B pr.' }
+  };
+
+  const DAYS_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+  const SLOTS = [
+    { id: 'mattina',    label: 'Mattina' },
+    { id: 'pomeriggio', label: 'Pom.' },
+    { id: 'sera',       label: 'Sera' }
+  ];
+
+  // Spazi fissi (ricorrenti ogni settimana)
+  // "giorno-slot": { space, start, end }
+  // giorno: 0=Lun ... 6=Dom  |  slot: mattina | pomeriggio | sera
+  // start/end opzionali (es. "18:00", "19:30")
+  const FIXED = {
+    // "2-sera":    { space: "postura-gruppo", start: "18:00", end: "19:30" },
+    // "4-sera":    { space: "giardino",       start: "20:00", end: "22:00" },
+    // "1-mattina": { space: "rails-processi", start: "09:00", end: "13:00" },
+    // "3-sera":    { space: "rails-aperti",   start: "18:30", end: "20:00" }
+  };
+
+  const STORAGE_KEY = 'markpostura_weekplan_v2';
+
+  let store = loadStore();
+  let currentMonday = getMonday(new Date());
+  let selectedSpace = null;
+
+  const grid = document.getElementById('week-grid');
+  const weekLabel = document.getElementById('week-label');
+  const weekRange = document.getElementById('week-range');
+
+  // ===== STORAGE =====
+  function loadStore() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { weeks: {} };
+  }
+  function saveStore() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+  }
+
+  // ===== DATE UTILS =====
+  function getMonday(d) {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = (day === 0 ? -6 : 1 - day);
+    date.setDate(date.getDate() + diff);
+    date.setHours(0,0,0,0);
+    return date;
+  }
+  function addDays(d, n) {
+    const date = new Date(d);
+    date.setDate(date.getDate() + n);
+    return date;
+  }
+  function isoWeekKey(monday) {
+    const d = new Date(Date.UTC(monday.getFullYear(), monday.getMonth(), monday.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return d.getUTCFullYear() + '-W' + String(weekNo).padStart(2, '0');
+  }
+  function weekNumber(monday) {
+    const key = isoWeekKey(monday);
+    return parseInt(key.split('-W')[1], 10);
+  }
+  function formatDate(d) {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    return dd + '/' + mm;
+  }
+
+  function getWeekData() {
+    const key = isoWeekKey(currentMonday);
+    if (!store.weeks[key]) store.weeks[key] = {};
+    return store.weeks[key];
+  }
+
+  // ===== RENDER =====
+  function renderWeekHeader() {
+    const wnum = weekNumber(currentMonday);
+    const sunday = addDays(currentMonday, 6);
+    weekLabel.textContent = 'Settimana ' + wnum;
+    weekRange.textContent = formatDate(currentMonday) + ' – ' + formatDate(sunday) + ' ' + sunday.getFullYear();
+  }
+
+  function buildGrid() {
+    grid.innerHTML = '';
+    const data = getWeekData();
+
+    // Header
+    const corner = document.createElement('div');
+    corner.className = 'corner';
+    grid.appendChild(corner);
+
+    DAYS_SHORT.forEach((d, di) => {
+      const el = document.createElement('div');
+      el.className = 'day-head';
+      const date = addDays(currentMonday, di);
+      el.innerHTML = '<span class="dow">' + d + '</span><span class="date">' + formatDate(date) + '</span>';
+      grid.appendChild(el);
+    });
+
+    // Righe
+    SLOTS.forEach(slot => {
+      const label = document.createElement('div');
+      label.className = 'slot-label';
+      label.textContent = slot.label;
+      grid.appendChild(label);
+
+      DAYS_SHORT.forEach((_, di) => {
+        const key = di + '-' + slot.id;
+        const c = document.createElement('div');
+        c.className = 'cell';
+        c.dataset.key = key;
+        c.dataset.day = di;
+        c.dataset.slot = slot.id;
+
+        const isFixed = !!FIXED[key];
+        let entry = data[key];
+
+        if (isFixed && !entry) {
+          entry = { space: FIXED[key].space, start: FIXED[key].start || '', end: FIXED[key].end || '' };
+          data[key] = { ...entry };
+        }
+
+        if (isFixed) c.classList.add('fixed');
+        else c.classList.add('mobile');
+
+        renderCell(c, entry, isFixed);
+        grid.appendChild(c);
+      });
+    });
+
+    saveStore();
+  }
+
+  function renderCell(c, entry, isFixed) {
+    c.innerHTML = '';
+    c.classList.toggle('fixed', !!isFixed);
+    c.classList.toggle('mobile', !isFixed);
+
+    if (!entry || !entry.space) return;
+
+    const s = SPACES[entry.space];
+    if (!s) return;
+
+    const chip = document.createElement('span');
+    chip.className = 'chip ' + s.class;
+    chip.innerHTML = s.short + (isFixed ? ' <small>fisso</small>' : '');
+    c.appendChild(chip);
+
+    const timeWrap = document.createElement('div');
+    timeWrap.className = 'time-inputs';
+
+    const inpS = document.createElement('input');
+    inpS.type = 'time';
+    inpS.value = entry.start || '';
+    inpS.title = 'Ora inizio';
+
+    const sep = document.createElement('span');
+    sep.textContent = '–';
+
+    const inpE = document.createElement('input');
+    inpE.type = 'time';
+    inpE.value = entry.end || '';
+    inpE.title = 'Ora fine';
+
+    inpS.addEventListener('click', e => e.stopPropagation());
+    inpE.addEventListener('click', e => e.stopPropagation());
+
+    inpS.addEventListener('change', e => {
+      const data = getWeekData();
+      if (!data[c.dataset.key]) data[c.dataset.key] = { space: entry.space, start: '', end: '' };
+      data[c.dataset.key].start = e.target.value;
+      saveStore();
+    });
+    inpE.addEventListener('change', e => {
+      const data = getWeekData();
+      if (!data[c.dataset.key]) data[c.dataset.key] = { space: entry.space, start: '', end: '' };
+      data[c.dataset.key].end = e.target.value;
+      saveStore();
+    });
+
+    timeWrap.appendChild(inpS);
+    timeWrap.appendChild(sep);
+    timeWrap.appendChild(inpE);
+    c.appendChild(timeWrap);
+  }
+
+  // ===== INTERAZIONE =====
+  grid.addEventListener('click', e => {
+    const c = e.target.closest('.cell');
+    if (!c) return;
+    if (e.target.tagName === 'INPUT') return;
+
+    const key = c.dataset.key;
+    const data = getWeekData();
+    const isFixed = !!FIXED[key];
+
+    if (isFixed && data[key]) {
+      return; // i fissi non si rimuovono
+    }
+
+    if (!selectedSpace) {
+      if (data[key]) {
+        delete data[key];
+        saveStore();
+        renderCell(c, null, isFixed);
+      }
+      return;
+    }
+
+    const existing = data[key];
+    if (existing && existing.space === selectedSpace) {
+      if (isFixed) return;
+      delete data[key];
+      saveStore();
+      renderCell(c, null, isFixed);
+    } else {
+      const newEntry = {
+        space: selectedSpace,
+        start: existing ? existing.start : '',
+        end: existing ? existing.end : ''
+      };
+      data[key] = newEntry;
+      saveStore();
+      renderCell(c, newEntry, isFixed);
+    }
+  });
+
+  // Legenda
+  document.querySelectorAll('.legend-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.space;
+      if (selectedSpace === id) {
+        selectedSpace = null;
+        el.classList.remove('active');
+      } else {
+        selectedSpace = id;
+        document.querySelectorAll('.legend-item').forEach(x => x.classList.remove('active'));
+        el.classList.add('active');
+      }
+    });
+  });
+
+  // Pulisci
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (!confirm('Pulire tutti gli spazi mobili di questa settimana?')) return;
+    const data = getWeekData();
+    Object.keys(data).forEach(k => {
+      if (!FIXED[k]) delete data[k];
+    });
+    saveStore();
+    buildGrid();
+  });
+
+  // Esporta
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const key = isoWeekKey(currentMonday);
+    const data = getWeekData();
+    const out = {
+      week: key,
+      weekNumber: weekNumber(currentMonday),
+      monday: currentMonday.toISOString().slice(0, 10),
+      days: {}
+    };
+    DAYS_SHORT.forEach((d, i) => {
+      out.days[i] = {
+        name: d,
+        date: formatDate(addDays(currentMonday, i)),
+        slots: {}
+      };
+    });
+    Object.keys(data).forEach(k => {
+      const [day, slot] = k.split('-');
+      if (!out.days[day]) return;
+      out.days[day].slots[slot] = data[k];
+    });
+    const json = JSON.stringify(out, null, 2);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json)
+        .then(() => alert('Settimana copiata negli appunti (JSON).'))
+        .catch(() => prompt('Copia manualmente:', json));
+    } else {
+      prompt('Copia manualmente:', json);
+    }
+  });
+
+  // Navigazione settimane
+  document.getElementById('btn-prev').addEventListener('click', () => {
+    currentMonday = addDays(currentMonday, -7);
+    renderWeekHeader();
+    buildGrid();
+  });
+  document.getElementById('btn-next').addEventListener('click', () => {
+    currentMonday = addDays(currentMonday, 7);
+    renderWeekHeader();
+    buildGrid();
+  });
+  document.getElementById('btn-today').addEventListener('click', () => {
+    currentMonday = getMonday(new Date());
+    renderWeekHeader();
+    buildGrid();
+  });
+
+  // Init
+  renderWeekHeader();
+  buildGrid();
+})();
+</script>
+</body>
+</html>
