@@ -1,0 +1,5 @@
+<header id="<%= component.fetch("id") %>" class="mx-auto max-w-4xl scroll-mt-24 px-5 py-12 <%= variant == 'compact' ? '' : 'text-center' %>">
+  <% if data["eyebrow"].present? %><p class="text-xs font-black uppercase tracking-[0.2em] text-amber-700"><%= data["eyebrow"] %></p><% end %>
+  <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl"><%= editorial_inline_markdown(data.fetch("title")) %></h2>
+  <% if data["description"].present? %><div class="mt-4 text-lg leading-8 text-slate-600 <%= editorial_markdown_classes %>"><%= editorial_markdown(data["description"]) %></div><% end %>
+</header>

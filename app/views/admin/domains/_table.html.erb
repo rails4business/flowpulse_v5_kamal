@@ -41,7 +41,7 @@
             </div>
           </td>
           <td class="px-4 py-3 text-slate-600"><%= domain.role_assignment&.display_name || "-" %></td>
-          <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.present? ? "canonical → #{domain.canonical_host}" : [domain.target_controller, domain.target_action].compact.join("#").presence || "-" %></td>
+          <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.present? ? "canonical → #{domain.canonical_host}" : domain.site_key.presence || [domain.target_controller, domain.target_action].compact.join("#").presence || "-" %></td>
           <td class="px-4 py-3 text-slate-600"><%= domain.locale %></td>
           <td class="px-4 py-3 text-slate-600"><%= domain.active? ? "Attivo" : "Disattivo" %></td>
           <td class="px-4 py-3 text-right"><%= verified_link_to "Apri", admin_domain_path(domain), class: "font-bold text-blue-600 hover:text-blue-500" %></td>

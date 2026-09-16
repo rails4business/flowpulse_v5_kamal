@@ -33,6 +33,12 @@
     </div>
 
     <div>
+      <%= form.label :site_key, "Site editoriale", class: "text-sm font-bold text-slate-700" %>
+      <%= form.text_field :site_key, placeholder: "es. markpostura_it", class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      <p class="mt-1 text-xs text-slate-500">Se presente, il Site editoriale ha precedenza sul target controller/action.</p>
+    </div>
+
+    <div>
       <%= form.label :locale, "Locale", class: "text-sm font-bold text-slate-700" %>
       <%= form.text_field :locale, class: "mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" %>
     </div>

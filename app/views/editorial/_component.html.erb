@@ -1,0 +1,5 @@
+<%
+  definition = Editorial::ComponentRegistry.fetch(component.fetch("type"))
+  variant = component.fetch("variant", "default")
+%>
+<%= render definition.partial, component: component, data: component.fetch("data", {}), items: component.fetch("items", []), variant: variant %>

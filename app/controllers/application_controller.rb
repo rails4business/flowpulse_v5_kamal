@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include Authentication
   include AuthenticationBrandContext
   include CurrentDomain
+  include EditorialRendering
   include FlowRoles::ControllerHelpers
   helper_method :dashboard_current_section
   helper_method :active_data_commitment

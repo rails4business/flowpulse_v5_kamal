@@ -32,7 +32,9 @@ class DomainsController < ApplicationController
     end
 
     def dispatch_domain_action
-      if Current.domain&.target_controller.present?
+      if Current.domain&.site_key.present?
+        render_editorial_site(Current.domain.site_key)
+      elsif Current.domain&.target_controller.present?
         render_domain_target
       elsif Current.domain&.node.present? && render_public_node(Current.domain.node)
         # successfully rendered assigned node
@@ -102,10 +104,6 @@ class DomainsController < ApplicationController
         prepare_garden_landing
         return
       end
-      if target_action == "markpostura"
-        prepare_markpostura_landing
-        return
-      end
       return unless target_action == "posturacorretta"
 
       @home_data = YAML.safe_load_file(
@@ -135,9 +133,4 @@ class DomainsController < ApplicationController
       end
     end
 
-    def prepare_markpostura_landing
-      include_private = Current.user&.superadmin_user? || false
-      @markpostura = MarkposturaHome.load
-      @markpostura_timeline = MarkposturaHome.timeline(include_private:).first(6)
-    end
 end

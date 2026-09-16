@@ -28,6 +28,10 @@
       <dd class="mt-1 text-slate-950"><%= @domain.target_action.presence || "-" %></dd>
     </div>
     <div>
+      <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Site editoriale</dt>
+      <dd class="mt-1 text-slate-950"><%= @domain.site_key.presence || "-" %></dd>
+    </div>
+    <div>
       <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Locale</dt>
       <dd class="mt-1 text-slate-950"><%= @domain.locale %></dd>
     </div>

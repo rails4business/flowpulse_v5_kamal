@@ -11,6 +11,27 @@ class DomainTest < ActiveSupport::TestCase
     assert_equal true, config.fetch("auth_enabled")
   end
 
+  test "configures MarkPostura through its editorial Site" do
+    config = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access.fetch("markpostura.it")
+
+    assert_equal "markpostura_it", config.fetch("site_key")
+    assert_nil config[:target_controller]
+    assert_nil config[:target_action]
+  end
+
+  test "imports and exports an editorial site key" do
+    Domain.import_from_hash!(
+      "editorial.example" => {
+        "locale" => "it",
+        "site_key" => "markpostura_it"
+      }
+    )
+
+    domain = Domain.find_by!(hostname: "editorial.example")
+    assert_equal "markpostura_it", domain.site_key
+    assert_equal "markpostura_it", Domain.export_to_hash.dig("editorial.example", "site_key")
+  end
+
   test "normalizes hostnames" do
     domain = Domain.create!(
       hostname: " POSTURACORRETTA.ORG ",

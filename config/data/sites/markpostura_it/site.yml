@@ -1,0 +1,23 @@
+schema_version: 1
+
+site:
+  key: markpostura_it
+  node_slug: markpostura
+  locale: it
+  theme: markpostura
+
+  entrypoint:
+    mount: home
+
+  navigation:
+    label: Mark Postura
+    items:
+      - label: Progetti
+        anchor: progetti
+      - label: Week Plan
+        route: /markpostura/weekplan
+      - label: Contenuti
+        route: /markpostura/contenuti
+
+  footer:
+    tagline: Mark Postura · postura, natura e tecnologia

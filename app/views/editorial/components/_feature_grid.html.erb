@@ -1,0 +1,22 @@
+<section id="<%= component.fetch("id") %>" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-20">
+  <% if data["title"].present? %><h2 class="text-3xl font-black tracking-tight sm:text-4xl"><%= editorial_inline_markdown(data["title"]) %></h2><% end %>
+  <% if data["description"].present? %><div class="mt-3 text-slate-600 <%= editorial_markdown_classes %>"><%= editorial_markdown(data["description"]) %></div><% end %>
+  <div class="mt-10 grid gap-5 <%= variant == 'hierarchy' ? 'lg:grid-cols-1' : 'lg:grid-cols-3' %>">
+    <% items.each_with_index do |item, index| %>
+      <% card = capture do %>
+        <% if item["image"].present? %><div class="aspect-video overflow-hidden bg-slate-100"><%= image_tag item.dig("image", "url"), alt: item.dig("image", "alt"), class: "h-full w-full object-cover transition duration-500 group-hover:scale-105", loading: "lazy" %></div><% end %>
+        <div class="p-6 <%= 'text-center' if variant == 'hierarchy' %>">
+          <% if item["eyebrow"].present? %><p class="text-xs font-black uppercase tracking-[0.18em] text-amber-700"><%= item["eyebrow"] %></p><% end %>
+          <h3 class="mt-3 text-xl font-black"><%= editorial_inline_markdown(item.fetch("title")) %></h3>
+          <% if item["description"].present? %><div class="mt-3 text-sm leading-6 text-slate-600 <%= editorial_markdown_classes %>"><%= editorial_markdown(item["description"]) %></div><% end %>
+        </div>
+      <% end %>
+      <% if item["href"].present? %>
+        <a href="<%= item["href"] %>" class="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><%= card %></a>
+      <% else %>
+        <article class="rounded-3xl border border-slate-200 bg-white shadow-sm"><%= card %></article>
+      <% end %>
+      <% if variant == "hierarchy" && index < items.length - 1 %><div aria-hidden="true" class="text-center text-slate-300">↓</div><% end %>
+    <% end %>
+  </div>
+</section>

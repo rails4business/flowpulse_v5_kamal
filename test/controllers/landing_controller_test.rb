@@ -1,6 +1,15 @@
 require "test_helper"
 
 class LandingControllerTest < ActionDispatch::IntegrationTest
+  test "MarkPostura local route renders the editorial YAML home" do
+    get markpostura_url
+
+    assert_response :success
+    assert_select "h1", text: "Tre progetti, una visione."
+    assert_select "#progetti a", count: 3
+    assert_select "#ingresso li", count: 4
+  end
+
   test "MarkPostura exposes a dedicated shareable Week Plan" do
     get markpostura_weekplan_url(week: "2026-W38", spaces: "postura-gruppo,postura-app")
 

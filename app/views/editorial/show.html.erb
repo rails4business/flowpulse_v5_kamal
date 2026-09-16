@@ -1,0 +1,17 @@
+<% content_for :title, @editorial_page.fetch("title") %>
+<% content_for :description, @editorial_page.fetch("description") %>
+<% if @editorial_page["visibility"] != "public" || controller_path.start_with?("admin/") %>
+  <% content_for :head do %><meta name="robots" content="noindex,nofollow"><% end %>
+<% end %>
+
+<div class="<%= @editorial_theme.wrapper_class %>">
+  <%= render "editorial/site_navigation", site: @editorial_site.site %>
+
+  <main>
+    <% @editorial_page_config.fetch("components").each do |component| %>
+      <%= render "editorial/component", component: component %>
+    <% end %>
+  </main>
+
+  <%= render "editorial/site_footer", site: @editorial_site.site %>
+</div>

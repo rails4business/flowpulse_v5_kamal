@@ -3,7 +3,7 @@ module Admin
     before_action :require_superadmin!
 
     def show
-      source = MarkposturaHome.week_source(params[:week])
+      source = MarkposturaWeekPlan.week_source(params[:week])
       raise ActionController::RoutingError, "Settimana non trovata" unless source
 
       @week_key = params[:week]

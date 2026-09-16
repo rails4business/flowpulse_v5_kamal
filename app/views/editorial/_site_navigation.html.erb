@@ -1,0 +1,12 @@
+<% navigation = site.fetch("navigation", {}) %>
+<nav class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur" aria-label="Navigazione principale">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+    <a href="#inizio" class="text-sm font-black uppercase tracking-[0.2em] text-amber-700"><%= navigation.fetch("label", site.fetch("key")) %></a>
+    <div class="flex items-center gap-4 text-sm font-semibold text-slate-600">
+      <% Array(navigation["items"]).each do |item| %>
+        <% href = item["anchor"].present? ? "##{item['anchor']}" : item.fetch("route", "#") %>
+        <a href="<%= href %>" class="hover:text-slate-950"><%= item.fetch("label") %></a>
+      <% end %>
+    </div>
+  </div>
+</nav>

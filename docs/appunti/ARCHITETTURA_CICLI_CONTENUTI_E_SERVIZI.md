@@ -11,6 +11,10 @@ passaggio alla volta.
 I principi organizzativi, i tre canali e la divisione della settimana sono in
 [PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md](PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md).
 
+Le landing, le pagine YAML, i componenti e i Track editoriali sono definiti
+separatamente in
+[ARCHITETTURA_PAGINE_STATICHE_YML_E_COMPONENTI.md](ARCHITETTURA_PAGINE_STATICHE_YML_E_COMPONENTI.md).
+
 ## Scopo
 
 Tutti i brand possono usare la stessa struttura, mantenendo nav, CSS e parole

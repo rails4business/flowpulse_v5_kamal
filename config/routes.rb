@@ -182,6 +182,8 @@ Rails.application.routes.draw do
       end
     end
     resources :brands, controller: :brands, only: %i[index show]
+    get "sites/:site_key", to: "editorial_sites#show", as: :editorial_site
+    get "sites/:site_key/*path", to: "editorial_sites#show", as: :editorial_site_page, format: false
     get "markpostura/settimane/:week" => "markpostura_weeks#show", as: :markpostura_week
     resources :password_reset_requests, only: :index do
       member do

@@ -9,7 +9,8 @@ class Domain < ApplicationRecord
     :auth_slug,
     :auth_default_path,
     :auth_enabled,
-    :operational_roles
+    :operational_roles,
+    :site_key
 
   belongs_to :role_assignment, optional: true
   belongs_to :node, optional: true
@@ -137,6 +138,7 @@ class Domain < ApplicationRecord
       self.auth_slug = auth_slug.to_s.strip.downcase.presence
       self.auth_default_path = auth_default_path.to_s.strip.presence
       self.auth_enabled = ActiveModel::Type::Boolean.new.cast(raw_auth_enabled) unless raw_auth_enabled.nil?
+      self.site_key = site_key.to_s.strip.presence
       raw_operational_roles = operational_roles
       self.operational_roles = Array(raw_operational_roles).filter_map { |role| role.to_s.strip.presence }.uniq unless raw_operational_roles.nil?
       self.settings = settings.to_h.compact.presence

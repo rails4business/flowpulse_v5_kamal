@@ -86,12 +86,11 @@ class LandingController < ApplicationController
   end
 
   def markpostura
-    @markpostura = MarkposturaHome.load
-    @markpostura_timeline = MarkposturaHome.timeline(include_private: Current.user&.superadmin_user? || false).first(6)
+    render_editorial_site("markpostura_it")
   end
 
   def markpostura_weekplan
-    @markpostura = MarkposturaHome.load
+    @markpostura = MarkposturaWeekPlan.load
   end
 
   def markpostura_events

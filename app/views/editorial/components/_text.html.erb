@@ -1,0 +1,6 @@
+<section id="<%= component.fetch("id") %>" class="border-y border-slate-200 bg-slate-50">
+  <div class="mx-auto px-5 py-14 <%= variant == 'centered' ? 'max-w-4xl text-center' : 'grid max-w-6xl gap-8 lg:grid-cols-[0.6fr_1.4fr]' %>">
+    <% if data["title"].present? %><h2 class="text-3xl font-black tracking-tight"><%= editorial_inline_markdown(data["title"]) %></h2><% end %>
+    <div class="text-lg leading-8 text-slate-600 <%= editorial_markdown_classes %>"><%= editorial_markdown(data.fetch("body")) %></div>
+  </div>
+</section>

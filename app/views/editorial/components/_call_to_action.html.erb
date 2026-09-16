@@ -1,0 +1,9 @@
+<section id="<%= component.fetch("id") %>" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-16 <%= 'text-center' if variant == 'contact' %>">
+  <div class="rounded-3xl border p-7 sm:p-10 <%= variant == 'accent' ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white' %>">
+    <% if data["eyebrow"].present? %><p class="text-xs font-black uppercase tracking-[0.18em] text-amber-700"><%= data["eyebrow"] %></p><% end %>
+    <h2 class="mt-3 text-3xl font-black tracking-tight"><%= editorial_inline_markdown(data.fetch("title")) %></h2>
+    <div class="mt-4 max-w-3xl leading-7 text-slate-600 <%= 'mx-auto' if variant == 'contact' %> <%= editorial_markdown_classes %>"><%= editorial_markdown(data.fetch("description")) %></div>
+    <% actions = data["actions"].presence || [data["action"]].compact %>
+    <% if actions.any? %><div class="mt-7 flex flex-wrap gap-3 <%= 'justify-center' if variant == 'contact' %>"><% actions.each do |action| %><a href="<%= action.fetch("href") %>" class="rounded-full bg-slate-950 px-6 py-3 text-sm font-black text-white hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"><%= action.fetch("label") %> →</a><% end %></div><% end %>
+  </div>
+</section>

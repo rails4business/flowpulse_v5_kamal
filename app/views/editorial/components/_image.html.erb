@@ -1,0 +1,4 @@
+<figure id="<%= component.fetch("id") %>" class="mx-auto max-w-5xl px-5 py-12">
+  <%= image_tag data.fetch("url"), alt: data.fetch("alt"), class: "w-full rounded-3xl object-cover #{variant == 'portrait' ? 'mx-auto max-w-sm aspect-[4/5]' : 'aspect-video'}", loading: "lazy" %>
+  <% if data["caption"].present? %><figcaption class="mt-3 text-sm text-slate-500"><%= data["caption"] %></figcaption><% end %>
+</figure>

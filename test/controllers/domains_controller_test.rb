@@ -90,8 +90,8 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Flowpulse"
   end
 
-  test "renders markpostura domain with its prepared events" do
-    Domain.create!(hostname: "markpostura.it", target_controller: "landing", target_action: "markpostura", locale: "it")
+  test "renders markpostura domain from its editorial Site" do
+    Domain.create!(hostname: "markpostura.it", site_key: "markpostura_it", locale: "it")
     host! "markpostura.it"
 
     get root_url
@@ -99,9 +99,21 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Tre progetti, una visione."
     assert_select "#progetti"
-    assert_select "aside a[href='#{markpostura_weekplan_path}']", text: "Week Plan"
+    assert_select "nav a[href='#{markpostura_weekplan_path}']", text: "Week Plan"
+    assert_select "aside", count: 0
     assert_select "#weekplan", count: 0
     assert_select "img[src*='hero_mark_psotura']"
+    assert_select "meta[name='robots'][content='noindex,nofollow']", count: 0
+  end
+
+  test "redirects a MarkPostura alias to the canonical editorial domain" do
+    Domain.create!(hostname: "markpostura.it", site_key: "markpostura_it", locale: "it")
+    Domain.create!(hostname: "www.markpostura.it", canonical_host: "markpostura.it", locale: "it")
+    host! "www.markpostura.it"
+
+    get root_url
+
+    assert_redirected_to "http://markpostura.it/"
   end
 
   test "renders GeneraImpresa on its domain with domain metadata" do

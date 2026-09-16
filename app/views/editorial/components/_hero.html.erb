@@ -1,0 +1,17 @@
+<% compact = variant == "compact" %>
+<section id="<%= component.fetch("id") %>" class="mx-auto grid max-w-6xl scroll-mt-24 items-center gap-10 px-5 <%= compact ? 'py-16 lg:grid-cols-[0.55fr_1fr]' : 'py-16 lg:grid-cols-[1fr_0.72fr] lg:py-24' %>">
+  <div class="<%= compact ? 'lg:order-2' : '' %>">
+    <% if data["eyebrow"].present? %><p class="text-xs font-black uppercase tracking-[0.22em] text-amber-700"><%= data["eyebrow"] %></p><% end %>
+    <% heading_class = "mt-5 font-black tracking-[-0.04em] #{compact ? 'text-4xl' : 'max-w-3xl text-5xl leading-[0.95] sm:text-7xl'}" %>
+    <% if compact %><h2 class="<%= heading_class %>"><%= editorial_inline_markdown(data.fetch("title")) %></h2><% else %><h1 class="<%= heading_class %>"><%= editorial_inline_markdown(data.fetch("title")) %></h1><% end %>
+    <div class="mt-6 max-w-2xl text-lg leading-8 text-slate-600 <%= editorial_markdown_classes %>"><%= editorial_markdown(data.fetch("description")) %></div>
+    <% if data["action"].present? %>
+      <a href="<%= data.dig("action", "href") %>" class="mt-8 inline-block rounded-full bg-slate-950 px-6 py-3 text-sm font-black text-white hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"><%= data.dig("action", "label") %></a>
+    <% end %>
+  </div>
+  <% if data["image"].present? %>
+    <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 p-2 shadow-lg <%= compact ? 'lg:order-1' : '' %>">
+      <%= image_tag data.dig("image", "url"), alt: data.dig("image", "alt"), class: "aspect-[4/5] h-full w-full rounded-[1.6rem] object-cover", loading: compact ? "lazy" : "eager" %>
+    </div>
+  <% end %>
+</section>

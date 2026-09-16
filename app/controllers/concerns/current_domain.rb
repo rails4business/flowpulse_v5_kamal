@@ -10,6 +10,7 @@ module CurrentDomain
       if local_request? && session[:override_domain_id].present?
         Current.domain ||= Domain.find_by(id: session[:override_domain_id])
       end
+      Current.domain ||= Domain.active.find_by(hostname: current_domain_host)
       Current.domain ||= Domain.find_for_host(current_domain_host)
     end
 
