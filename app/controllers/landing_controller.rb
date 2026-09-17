@@ -90,7 +90,7 @@ class LandingController < ApplicationController
   end
 
   def markpostura_weekplan
-    @markpostura = MarkposturaWeekPlan.load
+    @markpostura = MarkposturaWeekPlan.load(include_private: Current.user&.superadmin_user? || false)
   end
 
   def markpostura_events

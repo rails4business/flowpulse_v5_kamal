@@ -3,9 +3,16 @@ module Admin
     dashboard_section :didactic_path
     before_action :require_superadmin!
 
-    ROOT = Rails.root.join("config/data/posturacorretta/accademia").cleanpath.freeze
+    ROOT = Rails.root.join("config/data/posturacorretta").cleanpath.freeze
+    ACADEMY_ROOT = ROOT.join("accademia").cleanpath.freeze
     GENERAL_SOURCE = "posturacorretta_percorso_guidato.yml"
     SHEETS_PREFIX = "attivita_percorso_guidato/"
+    CURRENT_SOURCES = %w[
+      contenuti/percorso.yml
+      contenuti/contents.yml
+      programmi/programma_lezioni_posturacorretta.yml
+      programmi/calendario_lezioni_gruppo.yml
+    ].freeze
 
     def show
       @relative_path = params[:path].to_s
@@ -25,7 +32,11 @@ module Admin
     def safe_source_path(relative_path)
       return unless allowed_relative_path?(relative_path)
 
-      candidate = ROOT.join(relative_path).cleanpath
+      candidate = if CURRENT_SOURCES.include?(relative_path)
+        ROOT.join(relative_path).cleanpath
+      else
+        ACADEMY_ROOT.join(relative_path).cleanpath
+      end
       return unless candidate.to_s.start_with?("#{ROOT}/")
       return unless candidate.extname.in?([".yml", ".yaml"])
 
@@ -33,7 +44,7 @@ module Admin
     end
 
     def allowed_relative_path?(relative_path)
-      relative_path == GENERAL_SOURCE || relative_path.start_with?(SHEETS_PREFIX)
+      CURRENT_SOURCES.include?(relative_path) || relative_path == GENERAL_SOURCE || relative_path.start_with?(SHEETS_PREFIX)
     end
   end
 end

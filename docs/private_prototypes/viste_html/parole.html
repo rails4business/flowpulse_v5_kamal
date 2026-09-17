@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mark Postura — Tre linguaggi</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg:    #ffffff;
+    --text:  #0a0a0a;
+    --muted: #9a9a9a;
+    --line:  #ececec;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    height: 100%;
+  }
+
+  /* Caret lampeggiante */
+  .caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: currentColor;
+    margin-left: 3px;
+    vertical-align: -0.12em;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Puntini di "pensiero" */
+  .dots {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+    height: 1em;
+    vertical-align: -0.05em;
+  }
+  .dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.3;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.15s; }
+  .dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.25; transform: scale(0.8); }
+    50%      { opacity: 1;    transform: scale(1.15); }
+  }
+
+  /* Parola digitata */
+  .typer-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    white-space: nowrap;
+    min-height: 1.2em;
+  }
+  .typer {
+    display: inline-block;
+    min-height: 1.1em;
+  }
+
+  /* Colonna */
+  .cat-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 32px 16px;
+    position: relative;
+    justify-content: center;
+    min-height: 280px;
+  }
+
+  /* Label categoria */
+  .cat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* Dominio */
+  .cat-domain {
+    font-size: 0.72rem;
+    color: #b0b0b0;
+    margin-top: 22px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    letter-spacing: 0.02em;
+  }
+
+  /* Divisori */
+  @media (min-width: 768px) {
+    .cat-col + .cat-col {
+      border-left: 1px solid var(--line);
+    }
+  }
+  @media (max-width: 767px) {
+    .cat-col + .cat-col {
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  /* Glow colorato dietro la parola */
+  .cat-col .glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 280px;
+    height: 140px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+    background: var(--cat-color, #666);
+  }
+  .cat-col .content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Colore testo dinamico */
+  .typer-wrap { color: var(--cat-color, #0a0a0a); }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+
+
+  <!-- 3 COLONNE -->
+  <main class="max-w-6xl w-full mx-auto px-6 flex-1 flex items-center">
+    <div class="grid grid-cols-1 md:grid-cols-3 w-full">
+
+      <!-- FISIOLOGIA -->
+      <section class="cat-col" data-cat="fisiologia">
+        <div class="glow"></div>
+        <div class="content">
+          <div class="cat-label" data-field="label">—</div>
+          <div class="typer-wrap">
+            <span class="typer" data-field="typer"></span>
+          </div>
+          <div class="cat-domain" data-field="domain">—</div>
+        </div>
+      </section>
+
+      <!-- STILE DI VITA -->
+      <section class="cat-col" data-cat="stile">
+        <div class="glow"></div>
+        <div class="content">
+          <div class="cat-label" data-field="label">—</div>
+          <div class="typer-wrap">
+            <span class="typer" data-field="typer"></span>
+          </div>
+          <div class="cat-domain" data-field="domain">—</div>
+        </div>
+      </section>
+
+      <!-- TECH -->
+      <section class="cat-col" data-cat="tech">
+        <div class="glow"></div>
+        <div class="content">
+          <div class="cat-label" data-field="label">—</div>
+          <div class="typer-wrap">
+            <span class="typer" data-field="typer"></span>
+          </div>
+          <div class="cat-domain" data-field="domain">—</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="max-w-6xl w-full mx-auto px-6 py-10 text-center text-xs text-neutral-400">
+    <p>
+      <a href="https://posturacorretta.org" class="hover:text-neutral-800 transition">posturacorretta.org</a>
+      <span class="mx-2">·</span>
+      <a href="https://percorsointegrato.it" class="hover:text-neutral-800 transition">percorsointegrato.it</a>
+      <span class="mx-2">·</span>
+      <a href="https://ilgiardinodelcorpo.it" class="hover:text-neutral-800 transition">ilgiardinodelcorpo.it</a>
+      <span class="mx-2">·</span>
+      <a href="https://rails4b.com" class="hover:text-neutral-800 transition">rails4b.com</a>
+    </p>
+  </footer>
+
+<script>
+(function() {
+  // ===== JSON INLINE =====
+  // I 3 JSON sono qui dentro, niente fetch, niente errori CORS.
+  // Funziona anche aprendo il file con doppio click.
+  const DATA = {
+    fisiologia: {
+      label: "Fisiologia",
+      domain: "posturacorretta.org",
+      color: "#2563eb",
+      words: [
+        "postura",
+        "fisiologia",
+        "salute",
+        "movimento",
+        "corpo",
+        "respirazione",
+        "equilibrio",
+        "prevenzione",
+        "formazione",
+        "professionisti"
+      ]
+    },
+    stile: {
+      label: "Stile di vita",
+      domain: "ilgiardinodelcorpo.it",
+      color: "#7c3aed",
+      words: [
+        "evoluzione",
+        "armonia",
+        "natura",
+        "ritmo",
+        "vita",
+        "filosofia",
+        "lettura",
+        "musica",
+        "meditazione",
+        "giardino"
+      ]
+    },
+    tech: {
+      label: "Tech",
+      domain: "rails4b.com",
+      color: "#ea580c",
+      words: [
+        "tecnologia",
+        "business",
+        "digital",
+        "marketing",
+        "social",
+        "economia",
+        "codice",
+        "processi",
+        "automazione",
+        "rails"
+      ]
+    }
+  };
+
+  // ===== TYPEWRITER CON PUNTINI =====
+  // Fasi: thinking → typing → holding → deleting → gap → (riparte)
+  function typewriter(el, words, options) {
+    const opt = Object.assign({
+      typeSpeed:   65,
+      deleteSpeed: 30,
+      holdTime:    1500,
+      gapTime:     350,
+      thinkMin:    400,
+      thinkMax:    900,
+      startDelay:  0
+    }, options || {});
+
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+
+    let wordIndex = 0;
+    let charIndex = 0;
+
+    function makeDots() {
+      const wrap = document.createElement('span');
+      wrap.className = 'dots';
+      for (let i = 0; i < 3; i++) wrap.appendChild(document.createElement('span'));
+      return wrap;
+    }
+    function makeText(txt) {
+      return document.createTextNode(txt);
+    }
+    function updateCaret(show) {
+      if (show && !el.contains(caret)) el.appendChild(caret);
+      if (!show && el.contains(caret)) el.removeChild(caret);
+    }
+
+    function startThinking() {
+      el.innerHTML = '';
+      el.appendChild(makeDots());
+      const delay = opt.thinkMin + Math.random() * (opt.thinkMax - opt.thinkMin);
+      setTimeout(() => {
+        charIndex = 0;
+        el.textContent = '';
+        updateCaret(true);
+        tickTyping();
+      }, delay);
+    }
+
+    function tickTyping() {
+      const word = words[wordIndex];
+      charIndex++;
+      el.textContent = word.slice(0, charIndex);
+      updateCaret(true);
+      if (charIndex >= word.length) {
+        updateCaret(false);
+        setTimeout(() => {
+          updateCaret(true);
+          tickDeleting();
+        }, opt.holdTime);
+        return;
+      }
+      setTimeout(tickTyping, opt.typeSpeed);
+    }
+
+    function tickDeleting() {
+      const word = words[wordIndex];
+      charIndex--;
+      el.textContent = word.slice(0, charIndex);
+      updateCaret(true);
+      if (charIndex <= 0) {
+        updateCaret(false);
+        wordIndex = (wordIndex + 1) % words.length;
+        setTimeout(startThinking, opt.gapTime);
+        return;
+      }
+      setTimeout(tickDeleting, opt.deleteSpeed);
+    }
+
+    setTimeout(startThinking, opt.startDelay);
+  }
+
+  // ===== INIT =====
+  const cols = document.querySelectorAll('.cat-col');
+
+  cols.forEach((col, i) => {
+    const cat = col.dataset.cat;
+    const data = DATA[cat];
+    if (!data) return;
+
+    // Colore via CSS var
+    col.style.setProperty('--cat-color', data.color);
+
+    // Label e dominio
+    col.querySelector('[data-field="label"]').textContent = data.label;
+    col.querySelector('[data-field="domain"]').textContent = data.domain;
+
+    // Typewriter
+    const typerEl = col.querySelector('[data-field="typer"]');
+    typewriter(typerEl, data.words, {
+      typeSpeed:   60 + Math.random() * 20,
+      deleteSpeed: 28 + Math.random() * 10,
+      holdTime:    1300 + Math.random() * 400,
+      gapTime:     300,
+      thinkMin:    400,
+      thinkMax:    1000,
+      startDelay:  i * 600
+    });
+  });
+})();
+</script>
+</body>
+</html>

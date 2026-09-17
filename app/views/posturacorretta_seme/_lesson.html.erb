@@ -16,16 +16,17 @@
 
     <article class="pc-course-main-enter min-w-0 rounded-xl border border-slate-200 bg-white px-5 py-10 shadow-sm sm:px-8 lg:px-12 lg:py-14 xl:px-16">
       <div class="mx-auto max-w-4xl">
-        <p class="text-xs font-semibold uppercase tracking-[.16em] text-indigo-600">Capitolo del corso</p>
-        <%= render "posturacorretta/shared/rich_text", rendered_content: markdown(@base_content), class_name: "mt-4 min-w-0" %>
-
-        <% if @advanced_access && @advanced_defined %>
-          <section class="mt-12 border-t border-indigo-200 pt-10">
-            <p class="text-xs font-semibold uppercase tracking-[.16em] text-indigo-600">Approfondimento avanzato · Anteprima superadmin</p>
-            <%= render "posturacorretta/shared/rich_text", rendered_content: markdown(@advanced_content), class_name: "mt-4 min-w-0" %>
-          </section>
+        <div class="flex flex-wrap items-center gap-2">
+          <p class="text-xs font-semibold uppercase tracking-[.16em] text-indigo-600">Capitolo del corso</p>
+          <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700"><%= @lesson.fetch("access", "free") == "free" ? "Libero" : "A pagamento" %></span>
+        </div>
+        <% if @lesson_access_allowed %>
+          <%= render "posturacorretta/shared/rich_text", rendered_content: markdown(@lesson_content), class_name: "mt-4 min-w-0" %>
         <% else %>
-          <%= render "posturacorretta_seme/advanced_locked", advanced_defined: @advanced_defined %>
+          <section class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-6">
+            <h2 class="text-xl font-semibold text-amber-950">Capitolo a pagamento</h2>
+            <p class="mt-2 text-sm leading-6 text-amber-900">L'acquisto non è ancora attivo. Il contenuto resterà protetto finché non saranno definite offerta e modalità di accesso.</p>
+          </section>
         <% end %>
       </div>
     </article>

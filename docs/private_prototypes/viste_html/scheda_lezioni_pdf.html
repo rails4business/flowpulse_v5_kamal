@@ -1,0 +1,2483 @@
+<html lang="en">
+
+<head>
+  <script src="chrome-extension://jcacnejopjdphbnjgfaaobbfafkihpep/hive_keychain.js"></script>
+  <style type="text/css">
+    .turbo-progress-bar {
+      position: fixed;
+      display: block;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: #0076ff;
+      z-index: 2147483647;
+      transition:
+        width 300ms ease-out,
+        opacity 150ms 150ms ease-in;
+      transform: translate3d(0, 0, 0);
+    }
+  </style>
+
+
+
+
+  <meta property="og:type" content="website">
+
+
+
+
+
+  <meta name="twitter:card" content="summary">
+
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="csrf-param" content="authenticity_token">
+
+
+
+
+
+
+  <link rel="icon" type="image/png"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23dc2626'/%3E%3C/svg%3E">
+  <link rel="shortcut icon" type="image/png"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23dc2626'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23dc2626'/%3E%3C/svg%3E">
+
+  <link rel="stylesheet" href="/assets/normalize-551238af.css" data-turbo-track="reload">
+  <link rel="stylesheet" href="/assets/tailwind-87dc0335.css" data-turbo-track="reload">
+  <link rel="stylesheet" href="/assets/application-50c10e92.css" data-turbo-track="reload">
+  <link rel="stylesheet" href="/assets/posturacorretta-67147f65.css" data-turbo-track="reload">
+  <script type="importmap" data-turbo-track="reload">{
+  "imports": {
+    "application": "/assets/application-aa72f8dd.js",
+    "@hotwired/turbo-rails": "/assets/turbo.min-9fd88cd5.js",
+    "@hotwired/stimulus": "/assets/stimulus.min-4b1e420e.js",
+    "@hotwired/stimulus-loading": "/assets/stimulus-loading-1fc53fe7.js",
+    "sortablejs": "/assets/sortablejs-764cc38c.js",
+    "controllers/application": "/assets/controllers/application-3affb389.js",
+    "controllers/autocomplete_controller": "/assets/controllers/autocomplete_controller-142d7c05.js",
+    "controllers/clipboard_controller": "/assets/controllers/clipboard_controller-d04348fe.js",
+    "controllers/commitment_form_controller": "/assets/controllers/commitment_form_controller-97bd5f1a.js",
+    "controllers/commitment_schedule_controller": "/assets/controllers/commitment_schedule_controller-ebb02fec.js",
+    "controllers/filter_controller": "/assets/controllers/filter_controller-fe3413a4.js",
+    "controllers/generaimpresa_project_controller": "/assets/controllers/generaimpresa_project_controller-7841884e.js",
+    "controllers/hello_controller": "/assets/controllers/hello_controller-708796bd.js",
+    "controllers/home_carousel_controller": "/assets/controllers/home_carousel_controller-1d891b8d.js",
+    "controllers": "/assets/controllers/index-02ea851b.js",
+    "controllers/markdown_editor_controller": "/assets/controllers/markdown_editor_controller-3be1adba.js",
+    "controllers/mobile_aside_controller": "/assets/controllers/mobile_aside_controller-9f9a59cd.js",
+    "controllers/modal_controller": "/assets/controllers/modal_controller-fd3c61e6.js",
+    "controllers/operational_composer_controller": "/assets/controllers/operational_composer_controller-ea8a8e76.js",
+    "controllers/posturacorrettastart_controller": "/assets/controllers/posturacorrettastart_controller-0f51707b.js",
+    "controllers/scroll_selected_controller": "/assets/controllers/scroll_selected_controller-d84ab328.js",
+    "controllers/sortable_controller": "/assets/controllers/sortable_controller-582dff8f.js",
+    "controllers/timer_controller": "/assets/controllers/timer_controller-eec30517.js",
+    "controllers/toc_controller": "/assets/controllers/toc_controller-977df594.js",
+    "controllers/tree_controller": "/assets/controllers/tree_controller-cf5f4457.js"
+  }
+}</script>
+  <link rel="modulepreload" href="/assets/application-aa72f8dd.js">
+  <link rel="modulepreload" href="/assets/turbo.min-9fd88cd5.js">
+  <link rel="modulepreload" href="/assets/stimulus.min-4b1e420e.js">
+  <link rel="modulepreload" href="/assets/stimulus-loading-1fc53fe7.js">
+  <link rel="modulepreload" href="/assets/sortablejs-764cc38c.js">
+  <script type="module">import "application"</script>
+  <meta name="description"
+    content="Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati.">
+  <meta property="og:description"
+    content="Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati.">
+  <meta name="twitter:description"
+    content="Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati.">
+  <title>Dashboard studente · PosturaCorretta</title>
+  <link rel="canonical" href="http://localhost:3000/posturacorretta/lezioni">
+  <meta property="og:site_name" content="Dashboard studente · PosturaCorretta">
+  <meta property="og:title" content="Dashboard studente · PosturaCorretta">
+  <meta property="og:url" content="http://localhost:3000/posturacorretta/lezioni">
+  <meta name="twitter:title" content="Dashboard studente · PosturaCorretta">
+  <meta name="application-name" content="Dashboard studente · PosturaCorretta">
+  <meta name="csrf-token"
+    content="YWkiqpaMNBlPSOlkIM1JBEFJ3LPawO86qU9lbz3fZDFo_L60Uq-sKXii0k4OvSl4_UJy8mIZ1S78va9twiWCQw">
+</head>
+
+<body class="min-h-screen bg-white text-slate-950 posturacorretta-ui" cz-shortcut-listen="true">
+
+  <!-- BEGIN app/views/posturacorretta_seme/_student_dashboard_header.html.erb
+--><!-- BEGIN app/views/posturacorretta/_header.html.erb
+-->
+  <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+    <div
+      class="mx-auto grid h-16 max-w-screen-xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 lg:px-8">
+      <a class="flex shrink-0 items-center" aria-label="PosturaCorretta home" href="/posturacorretta">
+        <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766"
+          alt="PosturaCorretta" class="hidden h-7 w-auto sm:block">
+        <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt=""
+          class="size-9 rounded-full bg-blue-600 object-cover sm:hidden">
+      </a>
+      <nav class="flex min-w-0 items-center justify-center gap-2 sm:gap-4"
+        aria-label="Navigazione principale PosturaCorretta">
+        <a class="border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950"
+          href="/posturacorretta">Home</a>
+        <a aria-current="page"
+          class="border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm border-blue-600 text-slate-950"
+          href="/posturacorretta/lezioni">Lezioni</a>
+        <details class="group relative [&amp;_summary::-webkit-details-marker]:hidden" data-close-on-outside="">
+          <summary
+            class="flex cursor-pointer list-none items-center gap-1 border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950"
+            aria-label="Apri Esplora">Esplora <span class="text-[9px] transition group-open:rotate-180">▼</span>
+          </summary>
+          <div
+            class="absolute left-1/2 z-[80] mt-2 max-h-[calc(100vh-5rem)] w-64 -translate-x-1/2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-xl"
+            aria-label="Esplora PosturaCorretta">
+            <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"
+              href="/posturacorretta/guida?capitolo=educazione&amp;sezione=accademia">Come funziona</a>
+            <div class="my-1 border-t border-slate-100"></div>
+            <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"
+              href="/posturacorretta/insegnanti">Insegnanti</a>
+            <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"
+              href="/posturacorretta/percorsi-sul-territorio?tab=places">Centri</a>
+            <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"
+              href="/posturacorretta/metodiche">Metodiche</a>
+            <div class="my-1 border-t border-slate-100"></div>
+            <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"
+              href="/posturacorretta/contenuti">Contenuti</a>
+            <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"
+              href="/posturacorretta/eventi">Eventi</a>
+            <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"
+              href="/posturacorretta/libri">Libri</a>
+            <div class="my-2 border-t border-slate-200"></div>
+            <p class="px-3 pb-1 pt-0.5 text-[10px] font-black uppercase tracking-[.14em] text-amber-700">Strumenti
+              interni</p>
+            <a class="block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+              href="/posturacorretta/accademia">Accademia</a>
+            <a class="block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+              href="/posturacorretta/tre-progetti">I tre progetti</a>
+            <a class="mt-1 block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+              href="/posturacorretta/collabora">Collabora</a>
+            <a class="block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+              href="/posturacorretta/lezioni">Area corsi</a>
+            <a class="mt-1 block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+              href="/posturacorretta/seme/dashboard/insegnante">Dashboard insegnante</a>
+            <a class="mt-1 block rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+              href="/posturacorretta/guida?sezione=progetto">Visione e progetto · Bozza</a>
+          </div>
+        </details>
+      </nav>
+
+      <div class="shrink-0"><!-- BEGIN app/views/posturacorretta/_account_nav.html.erb
+-->
+        <div class="flex shrink-0 items-center">
+          <details class="group relative [&amp;_summary::-webkit-details-marker]:hidden" data-close-on-outside="">
+            <summary
+              class="profile-menu-toggle cursor-pointer list-none gap-2 rounded-full border border-slate-200 bg-white p-1 pr-3 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              aria-label="Apri menu profilo">
+              <span
+                class="flex size-8 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">M</span>
+              <svg aria-hidden="true" class="size-4 text-slate-400 transition group-open:rotate-180" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </summary>
+            <div class="absolute right-0 z-[80] mt-2 w-60 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+              <div class="px-3 py-2">
+                <p class="truncate text-sm font-bold text-slate-950">Mark Postura</p>
+                <p class="truncate text-xs text-slate-500">markpostura@gmail.com</p>
+              </div>
+              <div class="my-1 border-t border-slate-100"></div>
+              <a class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                href="/posturacorretta/lezioni">Lezioni</a>
+              <a class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                href="/posturacorretta/lezioni/appuntamenti">Appuntamenti</a>
+              <a class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                href="/posturacorretta/profilo">Profilo</a>
+              <div class="my-1 border-t border-slate-100"></div>
+              <a class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                href="/profile">Profilo Flowpulse</a>
+              <a class="block rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50"
+                href="/admin/dashboard">Superadmin</a>
+              <form class="button_to" method="post" action="/session"><input type="hidden" name="_method"
+                  value="delete"><button
+                  class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+                  type="submit">Esci</button><input type="hidden" name="authenticity_token"
+                  value="T0Rdvl1Pz7YHQAwdzjV0sgY79uRWJNW2HawAjKdT5NYI6Yeam8LFdkAyFs5FGGjf5JFVjWM8zZueHSsdOAS1ag"></form>
+            </div>
+          </details>
+        </div>
+        <!-- END app/views/posturacorretta/_account_nav.html.erb -->
+      </div>
+    </div>
+  </header>
+  <!-- END app/views/posturacorretta/_header.html.erb -->
+  <!-- END app/views/posturacorretta_seme/_student_dashboard_header.html.erb -->
+
+
+
+
+
+  <main class="">
+    <!-- BEGIN app/views/posturacorretta_seme/show.html.erb
+-->
+    <div class="min-h-screen bg-[#F6F7F4] text-slate-800">
+      <!-- BEGIN app/views/posturacorretta_seme/_student_dashboard.html.erb
+-->
+      <main class="bg-white min-h-screen">
+        <div class="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 lg:py-10">
+
+          <!-- Modalità selezionata -->
+
+          <!-- BEGIN app/views/posturacorretta_seme/_student_lessons_program.html.erb
+-->
+          <style>
+            .student-lessons-program {
+              --ink: #17212b;
+              --muted: #6b7280;
+              --line: #dbe3e8;
+              --paper: #fff;
+              --teal: #0f766e;
+              max-width: 850px;
+              margin: auto;
+              color: var(--ink);
+              font: 13px/1.35 Inter, ui-sans-serif, system-ui
+            }
+
+            .student-lessons-program * {
+              box-sizing: border-box
+            }
+
+            .student-lessons-program .brand {
+              color: var(--teal);
+              font-size: 11px;
+              text-transform: uppercase;
+              letter-spacing: .11em;
+              font-weight: 800
+            }
+
+            .student-lessons-program h1 {
+              margin: 5px 0 3px;
+              font-size: 27px;
+              letter-spacing: -.045em
+            }
+
+            .student-lessons-program .intro {
+              margin: 0;
+              color: var(--muted)
+            }
+
+            .student-lessons-program .course {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 7px;
+              margin: 20px 0 24px
+            }
+
+            .student-lessons-program .course span {
+              padding: 5px 8px;
+              border: 1px solid var(--line);
+              border-radius: 7px;
+              background: #fff;
+              color: #475569;
+              font-size: 11px;
+              font-weight: 700
+            }
+
+            .student-lessons-program ol {
+              list-style: none;
+              margin: 0;
+              padding: 0
+            }
+
+            .student-lessons-program li {
+              display: flex;
+              gap: 12px
+            }
+
+            .student-lessons-program .rail {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 30px;
+              flex-shrink: 0
+            }
+
+            .student-lessons-program .number {
+              display: grid;
+              place-items: center;
+              width: 29px;
+              height: 29px;
+              border: 1px solid #b7c6cf;
+              border-radius: 50%;
+              background: #fff;
+              color: #334155;
+              font-size: 11px;
+              font-weight: 800
+            }
+
+            .student-lessons-program .line {
+              width: 1px;
+              min-height: 22px;
+              flex: 1;
+              margin-top: 5px;
+              background: #cad5dc
+            }
+
+            .student-lessons-program li:last-child .line {
+              display: none
+            }
+
+            .student-lessons-program .lesson {
+              flex: 1;
+              min-width: 0;
+              padding: 0 0 18px
+            }
+
+            .student-lessons-program .session {
+              display: grid;
+              grid-template-columns: 84px 1fr 1fr;
+              gap: 10px;
+              padding: 10px 12px;
+              border: 1px solid var(--line);
+              border-radius: 9px 9px 0 0;
+              background: #fff
+            }
+
+            .student-lessons-program .field label {
+              display: block;
+              color: var(--muted);
+              font-size: 9px;
+              text-transform: uppercase;
+              letter-spacing: .06em;
+              font-weight: 800
+            }
+
+            .student-lessons-program .blank {
+              display: block;
+              min-height: 18px;
+              padding-top: 3px;
+              border-bottom: 1px solid #dbe3e8;
+              color: #94a3b8;
+              font-size: 11px
+            }
+
+            .student-lessons-program .time {
+              display: flex;
+              gap: 6px
+            }
+
+            .student-lessons-program .time .blank {
+              flex: 1
+            }
+
+            .student-lessons-program .where {
+              grid-column: span 2
+            }
+
+            .student-lessons-program .choices {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+              padding-top: 3px;
+              color: #475569;
+              font-size: 11px;
+              font-weight: 700
+            }
+
+            .student-lessons-program .box {
+              display: inline-block;
+              width: 12px;
+              height: 12px;
+              border: 1px solid #94a3b8;
+              margin-right: 3px;
+              vertical-align: -2px;
+              border-radius: 2px
+            }
+
+            .student-lessons-program .sheets {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 8px;
+              padding: 9px 12px 11px;
+              border: 1px solid var(--line);
+              border-top: 0;
+              border-radius: 0 0 9px 9px;
+              background: #fbfdfe
+            }
+
+            .student-lessons-program .sheet {
+              display: grid;
+              grid-template-columns: 32px 1fr;
+              gap: 7px;
+              align-items: center;
+              min-width: 0;
+              padding: 6px;
+              border: 1px solid var(--line);
+              border-radius: 7px;
+              background: var(--paper)
+            }
+
+            .student-lessons-program .sheet-icon {
+              display: grid;
+              place-items: center;
+              width: 31px;
+              height: 31px;
+              border-radius: 50%
+            }
+
+            .student-lessons-program .sheet-icon img {
+              width: 23px;
+              height: 23px;
+              object-fit: contain
+            }
+
+            .student-lessons-program .massaggio .sheet-icon {
+              background: #e9def5
+            }
+
+            .student-lessons-program .movimento .sheet-icon {
+              background: #ccfbf1
+            }
+
+            .student-lessons-program .meditazione .sheet-icon {
+              background: #fee4e2
+            }
+
+            .student-lessons-program .sheet b {
+              display: block;
+              font-size: 10px
+            }
+
+            .student-lessons-program .massaggio b {
+              color: #2b193d
+            }
+
+            .student-lessons-program .movimento b {
+              color: #0f766e
+            }
+
+            .student-lessons-program .meditazione b {
+              color: #b42318
+            }
+
+            .student-lessons-program .sheet .blank {
+              font-size: 10px;
+              min-height: 15px
+            }
+
+            .student-lessons-program .sheet-number {
+              color: #94a3b8;
+              font-size: 9px
+            }
+
+            .student-lessons-program .training .number {
+              color: #6d28d9;
+              border-color: #a78bfa
+            }
+
+            .student-lessons-program .training .session {
+              background: #fcfaff
+            }
+
+            .student-lessons-program .hint {
+              margin: 14px 0 0 42px;
+              padding: 9px 11px;
+              border-left: 2px solid var(--teal);
+              background: #ecfdf9;
+              color: #115e59;
+              font-size: 11px
+            }
+
+            @media(max-width:580px) {
+              .student-lessons-program .sheets {
+                grid-template-columns: 1fr
+              }
+
+              .student-lessons-program .session {
+                grid-template-columns: 1fr 1fr
+              }
+
+              .student-lessons-program .where {
+                grid-column: span 2
+              }
+            }
+          </style>
+          <section class="student-lessons-program" aria-labelledby="programma-lezioni-title">
+            <div class="brand">PosturaCorretta</div>
+            <h1 id="programma-lezioni-title">Programma lezioni</h1>
+            <p class="intro">Ogni incontro è una riga con tre schede: massaggio, movimento e meditazione.</p>
+            <div class="course"><span>Programma studenti · lezioni</span><span>Studente:
+                ____________________</span><span>Insegnante responsabile: ____________________</span></div>
+            <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20richiedere%20un%20primo%20incontro%20PosturaCorretta."
+              target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700">Richiedi
+              un primo incontro su WhatsApp</a>
+            <ol aria-label="Lezioni del programma studenti">
+              <li class="">
+                <div class="rail"><span class="number">01</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-001</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-001</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-001</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">02</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-002</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-002</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-002</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">03</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-003</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-003</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-003</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">04</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-004</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-004</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-004</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">05</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-005</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-005</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-005</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">06</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-006</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-006</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-006</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">07</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-007</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-007</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-007</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">08</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-008</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-008</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-008</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">09</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-009</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-009</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-009</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">10</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-010</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-010</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-010</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">11</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-011</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-011</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-011</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">12</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-012</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-012</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-012</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">13</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-013</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-013</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-013</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">14</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-014</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-014</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-014</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">15</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-015</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-015</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-015</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">16</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-016</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-016</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-016</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">17</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-017</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-017</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-017</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">18</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-018</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-018</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-018</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">19</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-019</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-019</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-019</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">20</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-020</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-020</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-020</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">21</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-021</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-021</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-021</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">22</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-022</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-022</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-022</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">23</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-023</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-023</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-023</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">24</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-024</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-024</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-024</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">25</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-025</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-025</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-025</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">26</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-026</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-026</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-026</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">27</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-027</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-027</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-027</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">28</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-028</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-028</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-028</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">29</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-029</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-029</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-029</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">30</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-030</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-030</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-030</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">31</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-031</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-031</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-031</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">32</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-032</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-032</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-032</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">33</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-033</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-033</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-033</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">34</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-034</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-034</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-034</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">35</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-035</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-035</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-035</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">36</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-036</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-036</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-036</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">37</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-037</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-037</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-037</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="">
+                <div class="rail"><span class="number">38</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-038</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-038</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-038</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="training">
+                <div class="rail"><span class="number">39</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-039</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-039</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-039</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="training">
+                <div class="rail"><span class="number">40</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-040</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-040</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-040</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="training">
+                <div class="rail"><span class="number">41</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-041</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-041</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-041</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="training">
+                <div class="rail"><span class="number">42</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-042</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-042</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-042</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+              <li class="training">
+                <div class="rail"><span class="number">43</span><span class="line"></span></div>
+                <div class="lesson">
+                  <div class="session">
+                    <div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div>
+                    <div class="field"><label>Ora</label>
+                      <div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div>
+                    </div>
+                    <div class="field"><label>Modalità</label>
+                      <div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span>
+                      </div>
+                    </div>
+                    <div class="field where"><label>Luogo</label>
+                      <div class="choices"><span><i class="box"></i>Centro</span><span><i
+                            class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span
+                        class="blank">Nome del luogo / indirizzo / collegamento online</span>
+                    </div>
+                    <div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div>
+                    <div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div>
+                  </div>
+                  <div class="sheets">
+                    <article class="sheet massaggio"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png"
+                          alt=""></span>
+                      <div><b>Massaggio</b><span class="sheet-number">N. scheda: MS-043</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet movimento"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png"
+                          alt=""></span>
+                      <div><b>Movimento</b><span class="sheet-number">N. scheda: MV-043</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                    <article class="sheet meditazione"><span class="sheet-icon"><img
+                          src="https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png"
+                          alt=""></span>
+                      <div><b>Meditazione</b><span class="sheet-number">N. scheda: MD-043</span><span class="blank">Da
+                          definire</span></div>
+                    </article>
+                  </div>
+                </div>
+              </li>
+            </ol>
+            <p class="hint">Il programma non assegna date da solo. Data, orario, luogo, modalità e insegnante vengono
+              compilati quando l’incontro è programmato per un gruppo, un domicilio, online o una lezione singola.</p>
+          </section>
+          <!-- END app/views/posturacorretta_seme/_student_lessons_program.html.erb -->
+        </div>
+      </main>
+
+      <!-- BEGIN app/views/posturacorretta/_footer.html.erb
+-->
+      <footer class="border-t border-slate-200 bg-white py-16">
+        <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-5 md:grid-cols-4">
+          <div class="space-y-4">
+            <img alt="PosturaCorretta" class="h-7 w-auto"
+              srcset="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766&amp;tr=w-168,c-at_max,q-80,f-auto 168w, https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766&amp;tr=w-336,c-at_max,q-80,f-auto 336w"
+              sizes="168px" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');" width="168"
+              height="28" decoding="async"
+              src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766&amp;tr=w-336,c-at_max,q-80,f-auto">
+            <span class="hidden text-base font-extrabold tracking-tight text-blue-700">PosturaCorretta</span>
+            <p class="text-sm leading-6 text-slate-500">
+              Educazione posturale, salute del corpo e percorsi di consapevolezza.
+            </p>
+            <a href="/posturacorretta/dash"
+              class="group inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:border-[#008de4]/40 hover:bg-[#008de4]/5"
+              aria-label="Pagamenti opzionali in DASH">
+              <img src="https://media.dash.org/wp-content/uploads/dash-d-circle.svg" alt="" class="size-9 shrink-0"
+                loading="lazy">
+              <span>
+                <span class="block text-[10px] font-bold uppercase tracking-[0.14em] text-slate-600">Pagamenti
+                  opzionali</span>
+                <span
+                  class="block text-sm font-black tracking-wide text-[#0074bc] group-hover:text-[#005f9b]">DASH</span>
+              </span>
+            </a>
+          </div>
+
+          <div>
+            <h2 class="mb-4 font-semibold text-slate-950">Accademia</h2>
+            <ul class="space-y-2 text-sm text-slate-500">
+              <li><a class="hover:text-blue-700" href="/percorso-integrato">Percorso Integrato</a></li>
+              <li><a class="hover:text-blue-700" href="/posturacorretta/contenuti?subtab=benessere">Benessere
+                  Integrato</a></li>
+              <li><a class="hover:text-blue-700" href="/posturacorretta">Postura e Fisiologia</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="mb-4 font-semibold text-slate-950">Progetto</h2>
+            <ul class="space-y-2 text-sm text-slate-500">
+              <li><a class="hover:text-violet-750" href="/posturacorretta/eventi">Eventi e Community</a></li>
+              <li><a class="hover:text-emerald-700" href="/posturacorretta/presentazione-posturacorretta"
+                  target="_blank" rel="noopener">Presentazione PosturaCorretta (PDF)</a></li>
+              <li><a class="hover:text-orange-700" href="/posturacorretta/collabora">Collabora</a></li>
+              <li><a class="hover:text-blue-700" href="/posturacorretta/visione">Visione</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="mb-4 font-semibold text-slate-950">Community</h2>
+            <ul class="space-y-2 text-sm text-slate-500">
+              <li><a class="hover:text-blue-700" href="https://youtube.com/@posturacorretta" target="_blank"
+                  rel="noopener noreferrer">YouTube</a></li>
+              <li><a class="hover:text-blue-700" href="https://instagram.com/posturacorretta" target="_blank"
+                  rel="noopener noreferrer">Instagram</a></li>
+              <li><a class="hover:text-blue-700" href="/contatti">Contatti</a></li>
+              <li class="pt-2 border-t border-slate-100">
+                <a class="font-semibold text-amber-600 hover:text-amber-700 inline-flex items-center gap-1.5"
+                  href="/admin/prototipi/quadrangolazione_instagram.html"
+                  title="Strategia Instagram Ecosistema Flowpulse">
+                  <span>⚡ Strategy @markpostura</span>
+                  <span
+                    class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-mono uppercase">Superadmin</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mx-auto mt-12 max-w-6xl px-5">
+          <div class="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span
+                  class="rounded-md bg-amber-200/80 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-900">Riservato
+                  Superadmin</span>
+                <span class="text-xs font-bold text-amber-950">Bozze &amp; Presentazioni Canva</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-amber-900">
+                <a href="https://benessereintegrato.my.canva.site/postura-sito-4-ante-presentazione-servizi-centri-sito-web"
+                  target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1 hover:text-amber-950 hover:underline">
+                  <span>Canva 4 Ante (Servizi &amp; Centri)</span>
+                  <svg class="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </a>
+                <span class="text-amber-300">·</span>
+                <a href="https://benessereintegrato.my.canva.site/home" target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1 hover:text-amber-950 hover:underline">
+                  <span>Canva Benessere Integrato Home</span>
+                  <svg class="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </a>
+                <span class="text-amber-300">·</span>
+                <a href="/admin/prototipi/quadrangolazione_instagram.html"
+                  class="inline-flex items-center gap-1 hover:text-amber-950 hover:underline">
+                  <span>Strategy @markpostura</span>
+                  <svg class="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- END app/views/posturacorretta/_footer.html.erb -->
+      <!-- END app/views/posturacorretta_seme/_student_dashboard.html.erb -->
+    </div>
+    <!--div class="chat chat-start">
+  <div class="chat-bubble chat-bubble-primary">What kind of nonsense is this</div>
+</div>
+<div class="chat chat-start">
+  <div class="chat-bubble chat-bubble-secondary">
+    Put me on the Council and not make me a Master!??
+  </div>
+</div>
+<div class="chat chat-start">
+  <div class="chat-bubble chat-bubble-accent">
+    That's never been done in the history of the Jedi.
+  </div>
+</div>
+<div class="chat chat-start">
+  <div class="chat-bubble chat-bubble-neutral">It's insulting!</div>
+</div>
+<div class="chat chat-end">
+  <div class="chat-bubble chat-bubble-info">Calm down, Anakin.</div>
+</div>
+<div class="chat chat-end">
+  <div class="chat-bubble chat-bubble-success">You have been given a great honor.</div>
+</div>
+<div class="chat chat-end">
+  <div class="chat-bubble chat-bubble-warning">To be on the Council at your age.</div>
+</div>
+<div class="chat chat-end">
+  <div class="chat-bubble chat-bubble-error">It's never happened before.</div>
+</div-->
+    <!-- END app/views/posturacorretta_seme/show.html.erb -->
+  </main>
+
+
+</body>
+
+</html>

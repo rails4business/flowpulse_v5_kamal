@@ -9,7 +9,6 @@
   academy_summary = (@academy_curriculum || {}).fetch("summary", {})
   academy_lesson_count = academy_modules.sum { |academy_module| academy_module.fetch("lessons").size }
   active_area_slug = academy_areas.first&.fetch("slug", nil)
-  active_main_tab = params[:tab] == "guide" ? "guide" : "curriculum"
 %>
 
 
@@ -225,21 +224,8 @@
     </div>
   </section>
 
-  <div class="bg-slate-50/50 pt-16 pb-8 border-t border-slate-200">
-    <div class="mx-auto max-w-[1600px] px-5 lg:px-16 xl:px-24 text-center">
-      <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
-        <button type="button" onclick="switchAcademyTab('curriculum')" id="btn-tab-curriculum" class="rounded-lg <%= active_main_tab == 'curriculum' ? 'bg-slate-100 text-slate-900 shadow-sm ring-1 ring-slate-900/5' : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50' %> px-6 py-2.5 text-sm font-semibold transition-all">
-          🎓 Il Programma dell'Accademia
-        </button>
-        <button type="button" onclick="switchAcademyTab('guide')" id="btn-tab-guide" class="rounded-lg <%= active_main_tab == 'guide' ? 'bg-slate-100 text-slate-900 shadow-sm ring-1 ring-slate-900/5' : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50' %> px-6 py-2.5 text-sm font-medium transition-all">
-          📖 Come funziona?
-        </button>
-      </div>
-    </div>
-  </div>
-
   <div class="bg-slate-100 pb-20">
-    <div id="content-tab-curriculum" class="<%= 'hidden ' if active_main_tab == 'guide' %> pt-8">
+    <div id="content-tab-curriculum" class="pt-8">
       
       <!-- Area linguette su sfondo grigio -->
       <div class="mx-auto max-w-[1600px] px-2 sm:px-5 lg:px-16 xl:px-24">
@@ -860,40 +846,6 @@
     document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
   })();
 
-  function switchAcademyTab(tabId) {
-    const btnCurriculum = document.getElementById('btn-tab-curriculum');
-    const btnGuide = document.getElementById('btn-tab-guide');
-    const contentCurriculum = document.getElementById('content-tab-curriculum');
-    const contentGuide = document.getElementById('content-tab-guide');
-
-    const activeBtnClass = ['bg-slate-100', 'text-slate-900', 'shadow-sm', 'ring-1', 'ring-slate-900/5'];
-    const inactiveBtnClass = ['bg-transparent', 'text-slate-500', 'hover:text-slate-700', 'hover:bg-slate-50'];
-
-    if (tabId === 'curriculum') {
-      contentCurriculum.classList.remove('hidden');
-      contentGuide.classList.add('hidden');
-      
-      btnCurriculum.classList.add(...activeBtnClass);
-      btnCurriculum.classList.remove(...inactiveBtnClass);
-      
-      btnGuide.classList.remove(...activeBtnClass);
-      btnGuide.classList.add(...inactiveBtnClass);
-    } else {
-      contentCurriculum.classList.add('hidden');
-      contentGuide.classList.remove('hidden');
-      
-      btnGuide.classList.add(...activeBtnClass);
-      btnGuide.classList.remove(...inactiveBtnClass);
-      
-      btnCurriculum.classList.remove(...activeBtnClass);
-      btnCurriculum.classList.add(...inactiveBtnClass);
-    }
-    
-    const url = new URL(window.location);
-    url.searchParams.set('tab', tabId);
-    window.history.pushState({}, '', url);
-  }
-
   function switchAreaTab(tabId) {
     // Nascondi tutti i contenuti
     document.querySelectorAll('.area-content').forEach(el => {
@@ -931,7 +883,7 @@
       </div> <!-- chiusura sfondo bianco bg-white -->
     </div> <!-- chiusura tab curriculum -->
 
-<div id="content-tab-guide" class="<%= 'hidden ' if active_main_tab == 'curriculum' %>">
+<div id="content-tab-guide" class="hidden">
   <div class="bg-white pb-20 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] border-t border-slate-200">
     <div class="mx-auto max-w-[1600px] px-5 lg:px-16 xl:px-24 py-12 lg:py-16">
       <!-- Mobile Toggle Guide (NEW) -->

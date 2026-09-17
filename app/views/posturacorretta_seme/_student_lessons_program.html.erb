@@ -1,11 +1,85 @@
-<% icons = { "massaggio" => "https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/massaggio.png", "movimento" => "https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/movimento.png", "meditazione" => "https://ik.imagekit.io/posturacorretta/immagini_brand/5%20aree/meditazione.png" } %>
-<style>
-  .student-lessons-program{--ink:#17212b;--muted:#6b7280;--line:#dbe3e8;--paper:#fff;--teal:#0f766e;max-width:850px;margin:auto;color:var(--ink);font:13px/1.35 Inter,ui-sans-serif,system-ui}.student-lessons-program *{box-sizing:border-box}.student-lessons-program .brand{color:var(--teal);font-size:11px;text-transform:uppercase;letter-spacing:.11em;font-weight:800}.student-lessons-program h1{margin:5px 0 3px;font-size:27px;letter-spacing:-.045em}.student-lessons-program .intro{margin:0;color:var(--muted)}.student-lessons-program .course{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0 24px}.student-lessons-program .course span{padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#475569;font-size:11px;font-weight:700}.student-lessons-program ol{list-style:none;margin:0;padding:0}.student-lessons-program li{display:flex;gap:12px}.student-lessons-program .rail{display:flex;flex-direction:column;align-items:center;width:30px;flex-shrink:0}.student-lessons-program .number{display:grid;place-items:center;width:29px;height:29px;border:1px solid #b7c6cf;border-radius:50%;background:#fff;color:#334155;font-size:11px;font-weight:800}.student-lessons-program .line{width:1px;min-height:22px;flex:1;margin-top:5px;background:#cad5dc}.student-lessons-program li:last-child .line{display:none}.student-lessons-program .lesson{flex:1;min-width:0;padding:0 0 18px}.student-lessons-program .session{display:grid;grid-template-columns:84px 1fr 1fr;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px 9px 0 0;background:#fff}.student-lessons-program .field label{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.06em;font-weight:800}.student-lessons-program .blank{display:block;min-height:18px;padding-top:3px;border-bottom:1px solid #dbe3e8;color:#94a3b8;font-size:11px}.student-lessons-program .time{display:flex;gap:6px}.student-lessons-program .time .blank{flex:1}.student-lessons-program .where{grid-column:span 2}.student-lessons-program .choices{display:flex;flex-wrap:wrap;gap:8px;padding-top:3px;color:#475569;font-size:11px;font-weight:700}.student-lessons-program .box{display:inline-block;width:12px;height:12px;border:1px solid #94a3b8;margin-right:3px;vertical-align:-2px;border-radius:2px}.student-lessons-program .sheets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:9px 12px 11px;border:1px solid var(--line);border-top:0;border-radius:0 0 9px 9px;background:#fbfdfe}.student-lessons-program .sheet{display:grid;grid-template-columns:32px 1fr;gap:7px;align-items:center;min-width:0;padding:6px;border:1px solid var(--line);border-radius:7px;background:var(--paper)}.student-lessons-program .sheet-icon{display:grid;place-items:center;width:31px;height:31px;border-radius:50%}.student-lessons-program .sheet-icon img{width:23px;height:23px;object-fit:contain}.student-lessons-program .massaggio .sheet-icon{background:#e9def5}.student-lessons-program .movimento .sheet-icon{background:#ccfbf1}.student-lessons-program .meditazione .sheet-icon{background:#fee4e2}.student-lessons-program .sheet b{display:block;font-size:10px}.student-lessons-program .massaggio b{color:#2b193d}.student-lessons-program .movimento b{color:#0f766e}.student-lessons-program .meditazione b{color:#b42318}.student-lessons-program .sheet .blank{font-size:10px;min-height:15px}.student-lessons-program .sheet-number{color:#94a3b8;font-size:9px}.student-lessons-program .training .number{color:#6d28d9;border-color:#a78bfa}.student-lessons-program .training .session{background:#fcfaff}.student-lessons-program .hint{margin:14px 0 0 42px;padding:9px 11px;border-left:2px solid var(--teal);background:#ecfdf9;color:#115e59;font-size:11px}@media(max-width:580px){.student-lessons-program .sheets{grid-template-columns:1fr}.student-lessons-program .session{grid-template-columns:1fr 1fr}.student-lessons-program .where{grid-column:span 2}}
-</style>
-<section class="student-lessons-program" aria-labelledby="programma-lezioni-title">
-  <div class="brand">PosturaCorretta</div><h1 id="programma-lezioni-title">Programma lezioni</h1><p class="intro">Ogni incontro è una riga con tre schede: massaggio, movimento e meditazione.</p>
-  <div class="course"><span><%= @student_lessons_program_title %></span><span>Studente: ____________________</span><span>Insegnante responsabile: ____________________</span></div>
-  <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20richiedere%20un%20primo%20incontro%20PosturaCorretta." target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700">Richiedi un primo incontro su WhatsApp</a>
-  <ol aria-label="Lezioni del programma studenti"><% @student_lessons_program.each do |lesson| %><li class="<%= "training" if lesson.fetch("kind") == "tirocinio" %>"><div class="rail"><span class="number"><%= format("%02d", lesson.fetch("number")) %></span><span class="line"></span></div><div class="lesson"><div class="session"><div class="field"><label>Data</label><span class="blank">___ / ___ / ____</span></div><div class="field"><label>Ora</label><div class="time"><span class="blank">inizio</span><span class="blank">fine</span></div></div><div class="field"><label>Modalità</label><div class="choices"><span><i class="box"></i>Gruppo</span><span><i class="box"></i>Singolo</span></div></div><div class="field where"><label>Luogo</label><div class="choices"><span><i class="box"></i>Centro</span><span><i class="box"></i>Domicilio</span><span><i class="box"></i>Online</span></div><span class="blank">Nome del luogo / indirizzo / collegamento online</span></div><div class="field"><label>Insegnante</label><span class="blank">Nome e cognome</span></div><div class="field"><label>N. scheda insegnante</label><span class="blank">__________</span></div></div><div class="sheets"><% lesson.fetch("sheets").each do |sheet| %><% area = sheet.fetch("area") %><article class="sheet <%= area %>"><span class="sheet-icon"><img src="<%= sheet["image"].presence || icons.fetch(area) %>" alt=""></span><div><b><%= area.humanize %></b><span class="sheet-number">N. scheda: <%= sheet.fetch("number") %></span><span class="blank"><%= sheet.fetch("title") %></span></div></article><% end %></div></div></li><% end %></ol>
-  <p class="hint">Il programma non assegna date da solo. Data, orario, luogo, modalità e insegnante vengono compilati quando l’incontro è programmato per un gruppo, un domicilio, online o una lezione singola.</p>
+<section class="mx-auto max-w-4xl" aria-labelledby="programma-lezioni-title">
+  <header class="border-b border-slate-200 pb-5">
+    <p class="text-xs font-bold uppercase tracking-[.16em] text-blue-700">Percorso PosturaCorretta</p>
+    <h1 id="programma-lezioni-title" class="mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= @student_lessons_program_title %></h1>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Il programma è unico: ogni lezione può essere svolta individualmente o in gruppo. Date, luogo e insegnante vengono aggiunti quando viene fissato l'incontro.</p>
+  </header>
+
+  <% if @active_lesson_programs.present? %>
+    <section class="mt-6" aria-labelledby="programmi-attivi-title">
+      <h2 id="programmi-attivi-title" class="text-xl font-bold text-slate-950">Programmi attivi</h2>
+      <p class="mt-1 text-sm text-slate-600">Professionisti che hanno attivato il programma PosturaCorretta, con giorni, orari e luogo delle lezioni.</p>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        <% @active_lesson_programs.each do |active_program| %>
+          <article class="rounded-2xl border border-blue-200 bg-blue-50/50 p-5">
+            <p class="text-xs font-bold uppercase tracking-[.13em] text-blue-700">Programma attivo</p>
+            <h3 class="mt-1 text-lg font-bold text-slate-950"><%= active_program.fetch("professional_name") %></h3>
+            <p class="mt-2 text-sm leading-6 text-slate-700"><%= active_program.fetch("day") %> · <%= active_program.fetch("start") %>–<%= active_program.fetch("end") %></p>
+            <p class="text-sm text-slate-600"><%= active_program.fetch("location") %></p>
+            <%= link_to "Profilo e sedi →", posturacorretta_insegnante_path(active_program.fetch("professional_slug")), class: "mt-3 inline-flex text-sm font-bold text-blue-800 hover:underline" %>
+          </article>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <ol class="mt-6 space-y-3" aria-label="Lezioni del programma studenti">
+    <% @student_lessons_program.each do |lesson| %>
+      <li class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <div class="flex gap-4">
+          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-blue-700 text-sm font-black text-white"><%= lesson.fetch("number") %></span>
+          <div class="min-w-0 flex-1">
+            <p class="text-[11px] font-bold uppercase tracking-[.13em] text-slate-500"><%= lesson.dig("course", "title") || "Programma" %></p>
+            <h2 class="mt-0.5 text-lg font-bold text-slate-950"><%= lesson.fetch("title") %></h2>
+            <% if lesson.fetch("release_locked", false) %><p class="mt-1 text-xs font-bold text-slate-500">🔒 Disponibile dal <%= l(Time.zone.parse(lesson.fetch("release_at")).to_date, format: :long) %></p><% end %>
+
+            <% if lesson.fetch("items", []).any? %>
+              <ul class="mt-3 space-y-1.5 text-sm leading-6 text-slate-700">
+                <% lesson.fetch("items").each do |item| %>
+                  <li class="flex gap-2"><span class="mt-2 size-1.5 shrink-0 rounded-full bg-blue-500"></span><span><%= item %></span></li>
+                <% end %>
+              </ul>
+            <% end %>
+
+            <% if lesson.fetch("chapter_links", []).any? %>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <% lesson.fetch("chapter_links").each do |chapter| %>
+                  <% practical = chapter.fetch("chapter_type", "theory") == "practical" %>
+                  <% if lesson.fetch("release_locked", false) %>
+                    <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-400"><span aria-hidden="true">🔒</span><%= chapter.fetch("title") %></span>
+                  <% else %>
+                    <%= link_to chapter.fetch("path"), class: "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold transition #{practical ? 'border-red-200 bg-red-50 text-red-800 hover:bg-red-100' : 'border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100'}" do %>
+                      <span aria-hidden="true"><%= practical ? "◆" : "▤" %></span>
+                      <span><%= chapter.fetch("title") %></span>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if lesson.fetch("practical_chapters", []).any? %>
+              <div class="mt-3 flex flex-wrap gap-2" aria-label="Schede pratiche">
+                <% lesson.fetch("practical_chapters").each do |sheet| %>
+                  <span class="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-800"><span aria-hidden="true">◆</span><%= sheet.fetch("title", sheet.fetch("area").humanize) %></span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </li>
+    <% end %>
+  </ol>
+
+  <% if Current.user&.superadmin_user? %>
+    <aside class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5" aria-label="Sorgenti YAML del programma">
+      <p class="text-xs font-black uppercase tracking-[.14em] text-amber-800">Solo superadmin</p>
+      <h2 class="mt-1 text-base font-bold text-slate-950">File che costruiscono percorso e lezioni</h2>
+      <div class="mt-3 flex flex-col gap-2 text-sm">
+        <%= link_to "Percorso · percorso.yml", admin_didactic_source_path(path: "contenuti/percorso.yml"), class: "font-bold text-blue-800 hover:underline" %>
+        <%= link_to "Corsi e capitoli · contents.yml", admin_didactic_source_path(path: "contenuti/contents.yml"), class: "font-bold text-blue-800 hover:underline" %>
+        <%= link_to "Programma lezioni · programma_lezioni_posturacorretta.yml", admin_didactic_source_path(path: "programmi/programma_lezioni_posturacorretta.yml"), class: "font-bold text-blue-800 hover:underline" %>
+        <%= link_to "Calendario di gruppo · calendario_lezioni_gruppo.yml", admin_didactic_source_path(path: "programmi/calendario_lezioni_gruppo.yml"), class: "font-bold text-blue-800 hover:underline" %>
+      </div>
+    </aside>
+  <% end %>
 </section>

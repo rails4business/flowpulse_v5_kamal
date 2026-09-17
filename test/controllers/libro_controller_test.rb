@@ -2,6 +2,7 @@ require "test_helper"
 
 class LibroControllerTest < ActionDispatch::IntegrationTest
   BOOK_SLUG = "il-corpo-un-mondo-da-scoprire"
+  POSTURA_BOOK_SLUG = "postura-corretta-in-un-mese"
   HIDDEN_BOOK_SLUG = "test-hidden-book"
 
   setup do
@@ -31,6 +32,21 @@ class LibroControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Il corpo, un mondo da scoprire"
     assert_includes response.body, "Inizia a leggere"
+  end
+
+  test "PosturaCorretta in un mese is a published book backed by existing markdown sources" do
+    get book_chapter_url(book_slug: POSTURA_BOOK_SLUG, id: "copertina")
+
+    assert_response :success
+    assert_includes response.body, "PosturaCorretta in un mese"
+    assert_includes response.body, "Inizia a leggere"
+    assert_select "nav a", text: /1\. L'incontro con la salute e con le metodiche posturali/
+
+    get book_chapter_url(book_slug: POSTURA_BOOK_SLUG, id: "benefici-postura-corretta")
+
+    assert_response :success
+    assert_includes response.body, "I benefici di una postura corretta"
+    assert_includes response.body, "Partiamo dall'allineamento"
   end
 
   test "show should render draft chapter placeholder for guests" do
@@ -103,7 +119,7 @@ class LibroControllerTest < ActionDispatch::IntegrationTest
   test "guida requires authenticated superadmin" do
     # Guest redirection
     get book_guida_url(book_slug: BOOK_SLUG)
-    assert_redirected_to new_session_url
+    assert_redirected_to new_session_url(return_to: book_guida_path(book_slug: BOOK_SLUG))
 
     # Traveler redirection
     post session_url, params: { email_address: @traveler.email_address, password: "password123" }

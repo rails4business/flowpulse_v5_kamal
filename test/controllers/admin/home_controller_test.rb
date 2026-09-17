@@ -57,6 +57,18 @@ module Admin
       assert_response :success
       assert_select "h1", text: "Lezione pratica PosturaCorretta in un mese"
       assert_includes response.body, "levels:"
+
+      get admin_didactic_source_path(path: "contenuti/percorso.yml")
+      assert_response :success
+      assert_includes response.body, "percorso-educativo-posturacorretta"
+
+      get admin_didactic_source_path(path: "contenuti/contents.yml")
+      assert_response :success
+      assert_includes response.body, "inizia-con-posturacorretta"
+
+      get admin_didactic_source_path(path: "programmi/programma_lezioni_posturacorretta.yml")
+      assert_response :success
+      assert_includes response.body, "lesson_count_planned: 40"
     end
 
     test "traveler cannot see dashboard" do

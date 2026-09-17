@@ -1,13 +1,16 @@
 require "test_helper"
 
 class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
-  test "keeps course titles program activities and learning chapters in separate yaml files" do
+  test "keeps path references content tree program activities and legacy learning sources separate" do
     titles = YAML.safe_load_file(PosturacorrettaSemeController::DIDACTIC_PATH, permitted_classes: [], aliases: false)
+    contents = YAML.safe_load_file(PosturacorrettaSemeController::CONTENT_CATALOG_PATH, permitted_classes: [], aliases: false)
     program = YAML.safe_load_file(PosturacorrettaSemeController::GUIDED_PATH, permitted_classes: [], aliases: false)
     learning = YAML.safe_load_file(PosturacorrettaSemeController::LEARNING_PATH, permitted_classes: [], aliases: false)
 
-    assert titles.dig("path", "courses", 0, "title").present?
-    assert_nil titles.dig("path", "courses", 0, "chapters")
+    assert_equal({ "content_id" => "inizia-con-posturacorretta" }, titles.dig("path", "courses", 0))
+    assert_equal "course", contents.dig("contents", 0, "format")
+    assert_equal "inizia-con-posturacorretta", contents.dig("contents", 1, "parent_id")
+    assert_equal "chapter", contents.dig("contents", 1, "format")
     assert_equal ["course_slug", "activities"], program.fetch("courses").first.keys
     assert_equal ["source"], program.dig("courses", 0, "activities", 0).keys
     assert_equal ["course_slug", "modules"], learning.fetch("courses").first.keys
@@ -26,43 +29,32 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_equal "insegnamenti-metodiche-posturali", base_lesson.dig("modules", 0, "module_slug")
   end
 
-  test "shows practical sheets and chapters as tabs in the course overview main" do
-    get posturacorretta_course_path(corso: "postura-corretta-in-un-mese")
+  test "shows chapters as the single course content structure" do
+    travel_to Time.zone.parse("2026-09-21 09:01") do
+      get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
 
     assert_response :success
     assert_select "header"
     assert_select "header img[src*='posturacorretta_home.png']", count: 1
-    assert_select "header h1", text: "PosturaCorretta in un mese"
-    assert_select "header", text: /2 attività guidate · 11 capitoli/
-    assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")}']", text: "Inizia"
+    assert_select "header h1", text: "Inizia con PosturaCorretta"
+    assert_select "header", text: /7 capitoli/
+    assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", text: "Inizia"
     assert_not_includes response.body, 'header class="border-b border-slate-200 bg-[#F6F7F4] p-4 sm:p-6 lg:p-8"'
     assert_select "nav[aria-label='Navigazione del corso']", count: 0
-    assert_select "h2", text: "Schede pratiche"
-    assert_select "p", text: "Pratica"
-    assert_select "nav[aria-label='Contenuti del corso'] a[aria-current='page']", text: /Schede pratiche/
-    assert_select "nav[aria-label='Contenuti del corso'][role='tablist'] a[role='tab'][aria-selected='true']", count: 1
-    assert_select "nav[aria-label='Contenuti del corso'] a", text: /Corso online/
-    assert_select "nav[aria-label='Contenuti del corso'] a:first-child", text: /Corso online/
-    assert_select "#schede-pratiche h3", text: "Da definire", count: 12
-    assert_select "#schede-pratiche ol[aria-label='Schede pratiche del corso'] li", count: 12
-    assert_select "#schede-pratiche span", text: "Apri scheda", count: 12
-    assert_select "#schede-pratiche a[href='#{new_session_path(return_to: posturacorretta_seme_student_dashboard_path)}']", text: /Vedi tutti i corsi nella dashboard/
-    assert_select "#capitoli", count: 0
-    assert_select "nav[aria-label='Indice percorso'] a[aria-current='page']", text: /PosturaCorretta in un mese/
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Home"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
-
-    get posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")
-    assert_response :success
-    assert_select "nav[aria-label='Contenuti del corso'] a[aria-current='page']", text: /Corso online/
-    assert_select "#capitoli.rounded-b-2xl", count: 1
+    assert_select "nav[aria-label='Contenuti del corso']", count: 0
+    assert_select "#schede-pratiche", count: 0
+    assert_select "#capitoli.rounded-2xl", count: 1
     assert_select "h2", text: "Corso online"
     assert_select "p", text: "Studio in autonomia"
     assert_select "#capitoli a", text: /L'incontro con la salute e con le metodiche posturali/
+    assert_select "#capitoli a", text: /Prima scheda esercizi e video/
     assert_select "#capitoli span", text: "Capitolo 01"
     assert_select "#capitoli ol.divide-y", count: 1
-    assert_select "#schede-pratiche", count: 0
+    assert_select "nav[aria-label='Indice percorso'] a[aria-current='page']", text: /Inizia con PosturaCorretta/
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Home"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
+      assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
+    end
   end
 
   test "keeps program activities sequential and redirects a locked activity" do
@@ -75,8 +67,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "header a[aria-label^='Torna all']", text: /PosturaCorretta in un mese/
-    assert_select "nav[aria-label='Navigazione del corso'] [role='tab'][aria-current='page']", text: /Schede pratiche/
-    assert_select "nav[aria-label='Navigazione del corso'] a[href='#{posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")}']", text: /Corso online/
+    assert_select "nav[aria-label='Navigazione del corso']", count: 0
     assert_select "#programma-aside #course-aside-title", count: 0
     assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
     assert_select "nav[aria-label='Indice del corso'] a[aria-current='page']", text: /Presentazione del metodo/
@@ -105,10 +96,10 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "L'incontro con la salute e con le metodiche posturali"
   end
 
-  test "redirects the former chapters index to the course chapters section" do
+  test "redirects the former course chapters index to the book" do
     get posturacorretta_course_chapters_path(corso: "postura-corretta-in-un-mese")
 
-    assert_redirected_to posturacorretta_course_url(corso: "postura-corretta-in-un-mese", vista: "capitoli")
+    assert_redirected_to book_chapter_url(book_slug: "postura-corretta-in-un-mese", id: "copertina")
   end
 
   test "shows courses grouped into the educational path" do
@@ -119,14 +110,45 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "nav[aria-label='Indice generale']", count: 0
     assert_select "h1", text: "Percorso educativo PosturaCorretta"
-    assert_select "h3", text: "PosturaCorretta in un mese"
+    assert_select "h3", text: "Inizia con PosturaCorretta"
     assert_select "h3", text: "Postura e Fisiologia"
-    assert_select "h2", text: "Postura e Recupero"
+    assert_select "h2", text: "Recupera con la terapia manuale"
+    assert_select "h2", text: "Muoviti ed esplora"
+    assert_select "h2", text: "Ascolta gli aspetti vitali"
+    assert_select "h2", text: "Nutri il corpo"
+    assert_select "h2", text: "Regola con le piante officinali"
     assert_select "h3", text: "Igiene Posturale"
     assert_includes response.body, "Scopri come funziona il tuo corpo, e riattiva i tuoi sistemi!"
     assert_select "span", text: "Corso 01", minimum: 1
-    assert_select "a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "capitoli")}'][aria-label='Apri il corso PosturaCorretta in un mese']"
-    assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale", vista: "capitoli")}'][aria-label='Apri il corso Igiene Posturale']"
+    assert_select "a[href='#{posturacorretta_course_path(corso: "inizia-con-posturacorretta")}'][aria-label='Apri il corso Inizia con PosturaCorretta']", count: 0
+    assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale")}'][aria-label='Apri il corso Igiene Posturale']", count: 0
+    assert_select "details > summary", text: /Inizia con PosturaCorretta/, minimum: 1
+    assert_select "h3", text: "Intro: basi e fondamenti", count: 0
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", text: /L'incontro con la salute/
+    assert_select "div", text: /I benefici di una postura corretta.*Uscita/m
+    assert_includes response.body, "Demo disponibile"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Come funziona", count: 0
+    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
+  end
+
+  test "keeps academy as a backup without duplicating the how it works tabs" do
+    get posturacorretta_accademia_path
+
+    assert_response :success
+    assert_select "#btn-tab-curriculum", count: 0
+    assert_select "#btn-tab-guide", count: 0
+    assert_not_includes response.body, "🎓 Il Programma dell'Accademia"
+    assert_not_includes response.body, "📖 Come funziona?"
+  end
+
+  test "opens how it works for a signed in user without a tutor role" do
+    sign_in(create_test_user("posturacorretta-guide-reader@example.com"))
+
+    get posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")
+
+    assert_response :success
+    assert_select "h1", text: /Educazione al corpo e alla salute/
   end
 
   test "serves the triathlon handout as a PDF" do
@@ -136,30 +158,43 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_equal "application/pdf", response.media_type
   end
 
-  test "shows a base lesson and keeps its advanced content out of the public response" do
-    get posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: "incontro-salute-metodiche")
+  test "shows a free chapter as one content without an isolated advanced block" do
+    travel_to Time.zone.parse("2026-09-21 09:01") do
+      get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "prima-scheda-esercizi-video")
 
-    assert_response :success
-    assert_select "h1", text: "PosturaCorretta in un mese"
-    assert_select "#advanced-title", text: "Approfondimento avanzato"
-    assert_includes response.body, "Il mio incontro con la salute"
-    assert_select "p", text: "Capitolo del corso"
-    assert_select "header a[aria-label^='Torna all']", text: /PosturaCorretta in un mese/
-    assert_select "nav[aria-label='Navigazione del corso'] [role='tab'][aria-current='page']", text: /Corso online/
-    assert_select "nav[aria-label='Navigazione del corso'] a[href='#{posturacorretta_course_path(corso: "postura-corretta-in-un-mese", vista: "schede")}']", text: /Schede pratiche/
-    assert_select "#seme-aside #course-aside-title", count: 0
-    assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
-    assert_select "nav[aria-label='Indice del corso'] h2", text: "Indice dei capitoli"
-    assert_select "nav[aria-label='Indice del corso'] a[aria-current='page'] span", text: "Capitolo 01"
-    assert_select "#participation-title", count: 0
-    assert_select "nav[aria-label='Incontri, lezioni e capitoli']", count: 0
-    assert_not_includes response.body, "Preparare e condurre la lezione"
-    assert_not_includes response.body, "Obiettivi per chi si prepara a insegnare"
+      assert_response :success
+      assert_select "h1", text: "Inizia con PosturaCorretta"
+      assert_select "span", text: "Libero"
+      assert_includes response.body, "Prima scheda esercizi e video"
+      assert_select "p", text: "Capitolo del corso"
+      assert_select "header a[aria-label^='Torna all']", text: /Inizia con PosturaCorretta/
+      assert_select "nav[aria-label='Navigazione del corso']", count: 0
+      assert_select "#seme-aside #course-aside-title", count: 0
+      assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
+      assert_select "nav[aria-label='Indice del corso'] h2", text: "Indice dei capitoli"
+      assert_select "nav[aria-label='Indice del corso'] a[aria-current='page'] span", text: "Capitolo 06"
+      assert_select "#participation-title", count: 0
+      assert_select "nav[aria-label='Incontri, lezioni e capitoli']", count: 0
+      assert_includes response.body, "Scheda pratica in preparazione"
+      assert_includes response.body, "Da collegare"
+      assert_not_includes response.body, "Approfondimento avanzato"
+    end
+  end
+
+  test "does not let superadmin bypass a chapter publication date" do
+    superadmin = create_test_user("posturacorretta-preview@example.com")
+    superadmin.update!(superadmin: true, active_role: :superadmin)
+    sign_in(superadmin)
+
+    get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "benefici-postura-corretta")
+
+    assert_redirected_to posturacorretta_url(anchor: "inizia-con-posturacorretta")
   end
 
   test "shows the student dashboard frontend" do
     get posturacorretta_seme_student_dashboard_path
-    assert_redirected_to new_session_url(return_to: posturacorretta_seme_student_dashboard_path)
+    assert_response :success
+    assert_select "h2", text: "Programmi attivi"
 
     user = create_test_user("seme-student@example.com")
     sign_in(user)
@@ -172,12 +207,16 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Lezioni"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Home"
     assert_select "h1", text: "Programma lezioni", count: 1
-    assert_select "ol[aria-label='Lezioni del programma studenti'] > li", count: 43
-    assert_select ".sheet-number", text: /MS-001/
-    assert_select ".sheet-number", text: /MV-001/
-    assert_select ".sheet-number", text: /MD-001/
-    assert_select "a[href^='https://wa.me/393792891488']", text: "Richiedi un primo incontro su WhatsApp"
+    assert_select "ol[aria-label='Lezioni del programma studenti'] > li", count: 40
+    assert_select "h2", text: "Inizia con PosturaCorretta"
+    assert_select "h2", text: "Postura e Fisiologia"
+    assert_select "h2", text: "Rinforzo muscolare"
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'igiene-posturale', capitolo: 'punti-di-tensione')}']", count: 0
+    assert_select "span", text: /Punti di tensione/
+    assert_includes response.body, "Prima scheda esercizi e video"
+    assert_includes response.body, "Disponibile dal"
     assert_select "a", text: "Apri il corso online", count: 0
+    assert_select "aside[aria-label='Sorgenti YAML del programma']", count: 0
 
     other_domain = Domain.find_or_create_by!(hostname: "agenda-esterna.test") do |domain|
       domain.target_controller = "brands/impegno/home"
@@ -227,7 +266,8 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get posturacorretta_student_dashboard_path
 
-    assert_redirected_to new_session_url(site: "posturacorretta", return_to: posturacorretta_student_dashboard_path)
+    assert_response :success
+    assert_select "h2", text: "Programmi attivi"
   end
 
   test "shows the teacher dashboard frontend preview" do
@@ -244,12 +284,15 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "loads academy modules and markdown from the existing academy source" do
-    get posturacorretta_course_chapter_path(corso: "igiene-posturale", capitolo: "mobilita-articolare")
+    travel_to Time.zone.parse("2026-10-05 09:01") do
+      get posturacorretta_course_chapter_path(corso: "igiene-posturale", capitolo: "mobilita-articolare")
 
-    assert_response :success
-    assert_select "h1", text: "Igiene Posturale"
-    assert_includes response.body, "Mobilità articolare"
-    assert_select "#advanced-title", text: "Approfondimento avanzato"
+      assert_response :success
+      assert_select "h1", text: "Igiene Posturale"
+      assert_includes response.body, "Mobilità articolare"
+      assert_select "span", text: "Libero"
+      assert_select "#advanced-title", count: 0
+    end
   end
 
   test "redirects the former seme lesson url to the new educational path" do
@@ -267,24 +310,20 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "opens every course through its course overview" do
-    get posturacorretta_course_path(corso: "postura-e-fisiologia")
+    travel_to Time.zone.parse("2026-09-28 09:01") do
+      get posturacorretta_course_path(corso: "postura-e-fisiologia")
 
     assert_response :success
     assert_select "h1", text: "Postura e Fisiologia"
-    assert_select "h2", text: "Schede pratiche"
-    assert_select "p", text: "Le schede pratiche di questo corso sono in preparazione."
-    assert_select "nav[aria-label='Contenuti del corso'] a", text: /Corso online/
+    assert_select "h2", text: "Corso online"
+    assert_select "nav[aria-label='Contenuti del corso']", count: 0
+    assert_select "#capitoli a", text: /Le basi delle 5 aree e il programma settimanale/
+    assert_select "#capitoli a", text: /Professionisti della salute, del benessere e insegnanti blu/
 
-    get posturacorretta_course_path(corso: "postura-e-fisiologia", vista: "capitoli")
-    assert_response :success
-    assert_select "#capitoli a", text: /Matrice, ambiti, aree e paradigmi/
-    assert_select "#capitoli a", text: /Tre possibilità per continuare/
-
-    get posturacorretta_course_chapter_path(corso: "postura-e-fisiologia", capitolo: "tre-possibilita-per-continuare")
-    assert_response :success
-    assert_select "article", text: /Continuare nel percorso educativo/
-    assert_select "article", text: /Costruire un percorso integrato/
-    assert_select "article", text: /Giardino del Corpo/
+      get posturacorretta_course_chapter_path(corso: "postura-e-fisiologia", capitolo: "professionisti-salute-benessere-insegnanti-blu")
+      assert_response :success
+      assert_select "article", text: /Professionisti della salute, del benessere e insegnanti blu/
+    end
   end
 
   test "redirects legacy program and chapter urls to canonical course routes" do

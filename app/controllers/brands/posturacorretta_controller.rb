@@ -32,7 +32,7 @@ module Brands
     def load_home_index
       data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/guide/indice.yml"), permitted_classes: [], aliases: false) || {}
       @guide_editor = Current.user&.superadmin_user? || false
-      @guide_tutor = Current.user&.tutor_user? || false
+      @guide_tutor = current_user_posturacorretta_tutor?
       all_sections = data.fetch("sections", []).map { |section| decorate_guide_section(section) }
       @home_sections = if @guide_editor
         all_sections
@@ -68,6 +68,19 @@ module Brands
 
         section.merge("items" => published_guide_items(section.fetch("items", [])))
       end
+    end
+
+    def current_user_posturacorretta_tutor?
+      return false unless Current.user&.profile
+
+      brand_node = Domain.find_by(hostname: "posturacorretta.org")&.node
+      return false unless brand_node
+
+      Current.user.role_assignments.where(
+        role: :operator,
+        role_operator: "tutor",
+        context: brand_node
+      ).exists?
     end
 
     def tutor_accessible_sections(sections)

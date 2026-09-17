@@ -1,0 +1,359 @@
+schema_version: 1
+
+# Corso e capitolo sono Content dello stesso albero. Le schede del programma
+# sono capitoli pratici e possono quindi essere aperte sia dalla home sia dalle
+# singole lezioni.
+contents:
+  - id: inizia-con-posturacorretta
+    format: course
+    slug: inizia-con-posturacorretta
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    title: Inizia con PosturaCorretta
+    description: Le prime schede per capire il percorso e iniziare a osservare il corpo.
+    image: https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777
+    level: base
+
+  - id: inizia-prima-scheda-esercizi-video
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: practical
+    slug: prima-scheda-esercizi-video
+    position: 6
+    status: published
+    visibility: public
+    access: free
+    title: Prima scheda esercizi e video
+    content_path: contenuti/schede/inizia-con-posturacorretta/01_esercizi_e_video.md
+
+  - id: inizia-ambiti-percorsi-chakra
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: practical
+    slug: ambiti-percorsi-chakra
+    position: 7
+    status: published
+    visibility: public
+    access: free
+    title: Ambiti, percorsi e schema dei chakra
+    description: Percorso Integrato per i professionisti, PosturaCorretta per la struttura e Il Giardino del Corpo per l'ambiente.
+    content_path: contenuti/schede/inizia-con-posturacorretta/02_ambiti_percorsi_chakra.md
+
+  - id: inizia-incontro-salute-metodiche
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: incontro-salute-metodiche
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    demo: true
+    title: L'incontro con la salute e con le metodiche posturali
+    content_path: guide/01_primo_mese/00_incontro_salute_metodiche.md
+
+  - id: inizia-benefici-postura-corretta
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: benefici-postura-corretta
+    position: 2
+    status: published
+    visibility: public
+    access: free
+    title: I benefici di una postura corretta
+    content_path: guide/01_primo_mese/02_benefici.md
+
+  - id: inizia-postura-strumento-lettura
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: postura-strumento-lettura
+    position: 3
+    status: published
+    visibility: public
+    access: free
+    title: La postura come strumento per leggere il corpo
+    content_path: guide/01_primo_mese/04_disallineamento.md
+
+  - id: inizia-errori-percorso-posturale
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: tre-errori-percorso-posturale
+    position: 4
+    status: published
+    visibility: public
+    access: free
+    title: I 3 errori che tutti fanno quando iniziano un percorso posturale
+    content_path: guide/01_primo_mese/01_errori.md
+
+  - id: inizia-prossimo-passo
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: prossimo-passo
+    position: 5
+    status: published
+    visibility: public
+    access: free
+    title: Scegli il prossimo passo
+    content_path: guide/01_primo_mese/00_da_dove_iniziare.md
+
+  - id: postura-e-fisiologia
+    format: course
+    slug: postura-e-fisiologia
+    position: 2
+    status: published
+    visibility: public
+    access: free
+    title: Postura e Fisiologia
+    description: Le cinque aree della salute, le metodiche e i ruoli che accompagnano il percorso.
+    image: https://ik.imagekit.io/posturacorretta/postura-e-fisiologia-5-m.png
+    level: base
+
+  - id: fisiologia-cinque-aree-programma
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: practical
+    slug: cinque-aree-programma-settimanale
+    position: 9
+    status: published
+    visibility: public
+    access: free
+    title: Le basi delle 5 aree e il programma settimanale
+    content_path: contenuti/schede/postura-e-fisiologia/01_cinque_aree_programma_settimanale.md
+
+  - id: fisiologia-informati-pratica-insegna
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: practical
+    slug: informati-pratica-insegna
+    position: 10
+    status: published
+    visibility: public
+    access: free
+    title: Informati, pratica, insegna
+    content_path: contenuti/schede/postura-e-fisiologia/02_informati_pratica_insegna.md
+
+  - id: fisiologia-metodiche-paradigmi-esperienza
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: practical
+    slug: metodiche-paradigmi-esperienza
+    position: 11
+    status: published
+    visibility: public
+    access: free
+    title: Le metodiche posturali, paradigmi ed esperienza
+    content_path: contenuti/schede/postura-e-fisiologia/03_metodiche_paradigmi_esperienza.md
+
+  - id: fisiologia-professionisti-insegnanti-blu
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: practical
+    slug: professionisti-salute-benessere-insegnanti-blu
+    position: 12
+    status: published
+    visibility: public
+    access: free
+    title: Professionisti della salute, del benessere e insegnanti blu
+    content_path: contenuti/schede/postura-e-fisiologia/04_professionisti_e_insegnanti_blu.md
+
+  - id: fisiologia-postura
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: fisiologia-e-postura
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    title: La fisiologia e la postura
+    content_path: accademia/postura-e-fisiologia/01_fisiologia_e_postura.md
+
+  - id: fisiologia-massaggio
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: fisiologia-e-massaggio
+    position: 2
+    status: published
+    visibility: public
+    access: free
+    title: Fisiologia e Massaggio
+    content_path: accademia/postura-e-fisiologia/02_fisiologia_e_massaggio.md
+
+  - id: fisiologia-movimento
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: fisiologia-e-movimento
+    position: 3
+    status: published
+    visibility: public
+    access: free
+    title: Fisiologia e Movimento
+    content_path: accademia/postura-e-fisiologia/03_fisiologia_e_movimento.md
+
+  - id: fisiologia-meditazione
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: fisiologia-e-meditazione
+    position: 4
+    status: published
+    visibility: public
+    access: free
+    title: Fisiologia e Meditazione
+    content_path: accademia/postura-e-fisiologia/04_fisiologia_e_meditazione.md
+
+  - id: fisiologia-alimentazione
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: fisiologia-e-alimentazione
+    position: 5
+    status: published
+    visibility: public
+    access: free
+    title: Fisiologia e Alimentazione
+    content_path: accademia/postura-e-fisiologia/05_fisiologia_e_alimentazione.md
+
+  - id: fisiologia-farmaci
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: fisiologia-e-farmaci
+    position: 6
+    status: published
+    visibility: public
+    access: free
+    title: Fisiologia e Farmaci
+    content_path: accademia/postura-e-fisiologia/06_fisiologia_e_farmaci.md
+
+  - id: fisiologia-matrice-ambiti
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: matrice-ambiti-aree-paradigmi
+    position: 7
+    status: published
+    visibility: public
+    access: free
+    title: Matrice, ambiti, aree e paradigmi
+    content_path: accademia/postura-e-fisiologia/07_matrice_ambiti_aree_paradigmi.md
+
+  - id: fisiologia-tre-possibilita
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: tre-possibilita-per-continuare
+    position: 8
+    status: published
+    visibility: public
+    access: free
+    title: Tre possibilità per continuare
+    content_path: accademia/postura-e-fisiologia/08_tre_possibilita_per_continuare.md
+
+  - id: muoviti-ed-esplora
+    format: course
+    slug: muoviti-ed-esplora
+    position: 3
+    status: published
+    published_at: "2026-09-21T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Muoviti ed esplora
+    description: Movimento, coordinazione ed esplorazione progressiva delle possibilità del corpo.
+    level: base
+
+  - id: muoviti-prima-esplorazione
+    parent_id: muoviti-ed-esplora
+    format: chapter
+    chapter_type: practical
+    slug: prima-esplorazione-del-movimento
+    position: 1
+    status: published
+    published_at: "2026-09-21T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Prima esplorazione del movimento
+    content_path: contenuti/schede/muoviti-ed-esplora/01_prima_esplorazione.md
+
+  - id: ascolta-gli-aspetti-vitali
+    format: course
+    slug: ascolta-gli-aspetti-vitali
+    position: 4
+    status: published
+    published_at: "2026-09-28T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Ascolta gli aspetti vitali
+    description: Ascolto, consapevolezza e relazione tra corpo, emozioni e mente.
+    level: base
+
+  - id: ascolta-prima-pratica
+    parent_id: ascolta-gli-aspetti-vitali
+    format: chapter
+    chapter_type: practical
+    slug: prima-pratica-di-ascolto
+    position: 1
+    status: published
+    published_at: "2026-09-28T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Prima pratica di ascolto
+    content_path: contenuti/schede/ascolta-gli-aspetti-vitali/01_prima_pratica.md
+
+  - id: nutri-il-corpo
+    format: course
+    slug: nutri-il-corpo
+    position: 5
+    status: published
+    published_at: "2026-10-05T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Nutri il corpo
+    description: Alimentazione, nutrizione e rapporto consapevole con ciò che sostiene il corpo.
+    level: base
+
+  - id: nutri-prima-osservazione
+    parent_id: nutri-il-corpo
+    format: chapter
+    chapter_type: practical
+    slug: prima-osservazione-della-nutrizione
+    position: 1
+    status: published
+    published_at: "2026-10-05T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Prima osservazione della nutrizione
+    content_path: contenuti/schede/nutri-il-corpo/01_prima_osservazione.md
+
+  - id: regola-con-le-piante-officinali
+    format: course
+    slug: regola-con-le-piante-officinali
+    position: 6
+    status: published
+    published_at: "2026-10-12T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Regola con le piante officinali
+    description: Conoscenze introduttive dedicate alle piante officinali e alla regolazione fisiologica.
+    level: base
+
+  - id: piante-prima-scheda
+    parent_id: regola-con-le-piante-officinali
+    format: chapter
+    chapter_type: practical
+    slug: prima-scheda-sulle-piante-officinali
+    position: 1
+    status: published
+    published_at: "2026-10-12T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Prima scheda sulle piante officinali
+    content_path: contenuti/schede/regola-con-le-piante-officinali/01_prima_scheda.md

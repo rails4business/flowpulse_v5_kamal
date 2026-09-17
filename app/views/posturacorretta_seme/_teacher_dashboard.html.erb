@@ -1,4 +1,5 @@
 <main class="bg-[#F6F7F4]">
+  <% legacy_course = @all_didactic_courses.find { |course| course.fetch("slug") == "postura-corretta-in-un-mese" } %>
   <section class="border-b border-slate-200 bg-white">
     <div class="mx-auto max-w-[1280px] px-4 py-10 sm:px-6 lg:py-14">
       <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -24,8 +25,9 @@
         <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-semibold uppercase tracking-[.15em] text-indigo-600">Programma</p><h2 class="mt-2 text-2xl font-semibold text-slate-950">Lezioni da preparare</h2></div><span class="text-sm text-slate-500"><%= @base_stage.fetch("lessons").size %> lezioni</span></div>
         <div class="mt-6 divide-y divide-slate-100">
           <% @base_stage.fetch("lessons").first(5).each_with_index do |lesson, index| %>
-            <% chapter = @didactic_courses.first.fetch("chapters").find { |item| item["content_ref"] == lesson.fetch("slug") } %>
-            <div class="flex items-center gap-4 py-4"><span class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-bold text-slate-600"><%= format("%02d", index + 1) %></span><div class="min-w-0 flex-1"><p class="truncate text-sm font-semibold text-slate-900"><%= lesson.fetch("title") %></p><p class="mt-1 text-xs text-slate-500">Base pubblicata · avanzato da verificare</p></div><%= link_to "Apri", posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: chapter&.fetch("slug", nil)), class: "text-sm font-semibold text-indigo-700" %></div>
+            <% chapter = legacy_course&.fetch("chapters", [])&.find { |item| item["content_ref"] == lesson.fetch("slug") } %>
+            <% chapter_path = chapter ? posturacorretta_course_chapter_path(corso: "postura-corretta-in-un-mese", capitolo: chapter.fetch("slug")) : posturacorretta_course_path(corso: "inizia-con-posturacorretta") %>
+            <div class="flex items-center gap-4 py-4"><span class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-bold text-slate-600"><%= format("%02d", index + 1) %></span><div class="min-w-0 flex-1"><p class="truncate text-sm font-semibold text-slate-900"><%= lesson.fetch("title") %></p><p class="mt-1 text-xs text-slate-500">Base pubblicata · avanzato da verificare</p></div><%= link_to "Apri", chapter_path, class: "text-sm font-semibold text-indigo-700" %></div>
           <% end %>
         </div>
         <%= link_to "Apri tutto l’indice", posturacorretta_course_chapters_path(corso: "postura-corretta-in-un-mese"), class: "mt-5 inline-flex text-sm font-semibold text-indigo-700" %>

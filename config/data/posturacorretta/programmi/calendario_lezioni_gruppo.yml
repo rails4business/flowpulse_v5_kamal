@@ -1,0 +1,75 @@
+schema_version: 1
+
+# Una settimana corrisponde a un corso completo. I capitoli e le schede del
+# corso vengono svolti nella stessa lezione settimanale: non occupano settimane
+# separate.
+calendar:
+  key: calendario-lezioni-gruppo-posturacorretta
+  title: Calendario lezioni di gruppo PosturaCorretta
+  starts_on: "2026-09-21"
+  publication_time: "09:00"
+  preparation:
+    day: Lunedì
+    start: "14:00"
+    end: "17:00"
+    visibility: private
+  group_lesson:
+    day: Mercoledì
+    start: "15:00"
+    end: "16:00"
+    location: Da definire
+  youtube_live:
+    # La diretta entra nel calendario pubblico appena vengono scelti giorno e
+    # orario. I campi vuoti evitano di pubblicare un appuntamento inventato.
+    day:
+    start:
+    end:
+    location: YouTube · Mark Postura
+  active_programs:
+    - professional_slug: markpostura
+      professional_name: Mark Postura
+      day: Mercoledì
+      start: "15:00"
+      end: "16:00"
+      location: Da definire
+  courses:
+    - { number: 1, area_key: primi-corsi, content_id: inizia-con-posturacorretta, title: "Inizia con PosturaCorretta" }
+    - { number: 2, area_key: primi-corsi, content_id: postura-e-fisiologia, title: "Postura e Fisiologia" }
+    - { number: 3, area_key: recupera-con-la-terapia-manuale, content_id: igiene-posturale, title: "Igiene Posturale" }
+    - { number: 4, area_key: recupera-con-la-terapia-manuale, content_id: principi-di-fisioterapia, title: "Principi di Fisioterapia" }
+    - { number: 5, area_key: recupera-con-la-terapia-manuale, content_id: biomeccanica-comportamentale-gds, title: "Introduzione alla biomeccanica comportamentale (GDS)" }
+    - { number: 6, area_key: recupera-con-la-terapia-manuale, content_id: principi-di-osteopatia, title: "Principi di Osteopatia" }
+    - { number: 7, area_key: recupera-con-la-terapia-manuale, content_id: introduzione-al-metodo-corpo-e-coscienza, title: "Introduzione al metodo Corpo e Coscienza" }
+    - { number: 8, area_key: recupera-con-la-terapia-manuale, content_id: altre-metodiche-posturali, title: "Altre metodiche posturali" }
+    - { number: 9, area_key: muoviti-ed-esplora, content_id: rinforzo-muscolare, title: "Rinforzo muscolare" }
+    - { number: 10, area_key: muoviti-ed-esplora, content_id: sequenza-kinesiologia, title: "Una sequenza dalla kinesiologia" }
+    - { number: 11, area_key: muoviti-ed-esplora, content_id: cinque-tibetani, title: "I cinque tibetani" }
+    - { number: 12, area_key: muoviti-ed-esplora, content_id: otto-pezzi-di-brocato, title: "Gli 8 pezzi di brocato" }
+    - { number: 13, area_key: muoviti-ed-esplora, content_id: sequenza-yoga, title: "Una sequenza dello yoga" }
+    - { number: 14, area_key: muoviti-ed-esplora, content_id: sviluppo-movimento-bambini-dns, title: "Lo sviluppo del movimento dei bambini DNS" }
+    - { number: 15, area_key: muoviti-ed-esplora, content_id: animal-flow, title: "Animal Flow" }
+    - { number: 16, area_key: muoviti-ed-esplora, content_id: movimenti-arcaici, title: "Movimenti arcaici" }
+    - { number: 17, area_key: muoviti-ed-esplora, content_id: capoeira, title: "La capoeira" }
+    - { number: 18, area_key: muoviti-ed-esplora, content_id: tai-chi, title: "Il tai chi" }
+    - { number: 19, area_key: ascolta-gli-aspetti-vitali, content_id: morfopsicologia, title: "La morfopsicologia" }
+    - { number: 20, area_key: ascolta-gli-aspetti-vitali, content_id: human-design, title: "Human design" }
+    - { number: 21, area_key: ascolta-gli-aspetti-vitali, content_id: caisedo-sofrologia, title: "Caisedo Sofrologia" }
+    - { number: 22, area_key: ascolta-gli-aspetti-vitali, content_id: corpo-e-coscienza, title: "Corpo e coscienza" }
+    - { number: 23, area_key: ascolta-gli-aspetti-vitali, content_id: yoga-nozioni-avanzate, title: "Yoga nozioni avanzate" }
+    - { number: 24, area_key: ascolta-gli-aspetti-vitali, content_id: su-wen-medicina-cinese-fenomenologia, title: "Su wen medicina cinese fenomenologia" }
+    - { number: 25, area_key: ascolta-gli-aspetti-vitali, content_id: siamo-fatti-di-parole, title: "Siamo fatti di parole" }
+    - { number: 26, area_key: ascolta-gli-aspetti-vitali, content_id: potere-delle-storie, title: "Il potere delle storie" }
+    - { number: 27, area_key: ascolta-gli-aspetti-vitali, content_id: efficacia-personale, title: "Efficacia personale" }
+    - { number: 28, area_key: ascolta-gli-aspetti-vitali, content_id: viaggio-dell-eroe, title: "Il viaggio dell'eroe" }
+    - { number: 29, area_key: ascolta-gli-aspetti-vitali, content_id: medicina-del-suono, title: "La medicina del Suono" }
+    - { number: 30, area_key: ascolta-gli-aspetti-vitali, content_id: teatro, title: "Il teatro" }
+    - { number: 31, area_key: ascolta-gli-aspetti-vitali, content_id: giardino-del-corpo, title: "Il giardino del corpo" }
+    - { number: 32, area_key: nutri-il-corpo, content_id: cosa-stiamo-mangiando, title: "Cosa stiamo mangiando?" }
+    - { number: 33, area_key: nutri-il-corpo, content_id: cos-e-il-cibo, title: "Cos'è il cibo?" }
+    - { number: 34, area_key: nutri-il-corpo, content_id: cibo-viene-dalla-terra, title: "Il cibo viene dalla terra" }
+    - { number: 35, area_key: nutri-il-corpo, content_id: cibo-e-industrializzazione, title: "Cibo e industrializzazione" }
+    - { number: 36, area_key: nutri-il-corpo, content_id: cibo-trasmette-energia, title: "Cibo un mezzo per trasmettere energia" }
+    - { number: 37, area_key: regola-con-le-piante-officinali, content_id: medicina-dei-semplici-abbiati, title: "La medicina dei semplici Dr. Abbiati" }
+    - { number: 38, area_key: regola-con-le-piante-officinali, content_id: medicina-mediterranea, title: "Medicina mediterranea" }
+    - { number: 39, area_key: regola-con-le-piante-officinali, content_id: medicina-cinese, title: "Medicina cinese" }
+    - { number: 40, area_key: regola-con-le-piante-officinali, content_id: ayurveda, title: "Ayurveda" }

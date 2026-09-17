@@ -5,7 +5,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_url
 
     assert_response :success
-    assert_select "h1", text: "Tre progetti, una visione."
+    assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
     assert_select "#progetti a", count: 3
     assert_select "#ingresso li", count: 4
   end
@@ -17,8 +17,42 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "#weekplan"
     assert_select "button[data-space]", count: 5
     assert_select "dialog#wp-modal"
+    assert_select "#mark-week-reminders-title", count: 0
+    assert_select "#mark-private-program-title", count: 0
+    assert_not_includes response.body, "Registrazione con Fabrizio"
     assert_includes response.body, "2026-W38"
     assert_includes response.body, "postura-gruppo,postura-app"
+  end
+
+  test "MarkPostura shows reminders and detailed program only to superadmin" do
+    superadmin = User.create!(
+      email_address: "mark-weekplan-superadmin@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      superadmin: true,
+      active_role: :superadmin
+    )
+    post session_url, params: { email_address: superadmin.email_address, password: "password123" }
+
+    get markpostura_weekplan_url(week: "2026-W38")
+
+    assert_response :success
+    assert_select "#mark-week-reminders-title", text: "Promemoria da collocare"
+    assert_select "#mark-private-program-title", text: "Programma operativo dettagliato"
+    assert_includes response.body, "Registrazione con Fabrizio"
+    assert_includes response.body, "Dirette YouTube"
+    assert_includes response.body, "PosturaCorretta"
+    assert_includes response.body, "Il Giardino del Corpo"
+    assert_includes response.body, "Tempo di produzione e scrittura"
+  end
+
+  test "MarkPostura publishes group lessons but not private writing time" do
+    get markpostura_weekplan_url(week: "2026-W39")
+
+    assert_response :success
+    assert_includes response.body, "Lezione di gruppo · Inizia con PosturaCorretta"
+    assert_includes response.body, "Pubblicazione corso · Inizia con PosturaCorretta"
+    assert_not_includes response.body, "Preparazione · Inizia con PosturaCorretta"
   end
 
   test "Rails4Business landing renders both current logo assets" do

@@ -1,21 +1,21 @@
 class PosturacorrettaSemeController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
-  before_action :require_authentication, only: [:dashboard_student, :dashboard_appointments, :dashboard_teacher, :profile]
+  before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher, :profile]
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
   ACADEMY_PATH = Rails.root.join("config/data/posturacorretta/accademia/academy.yml").freeze
-  DIDACTIC_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_titoli_sezioni_e_corsi.yml").freeze
+  DIDACTIC_PATH = Rails.root.join("config/data/posturacorretta/contenuti/percorso.yml").freeze
   GUIDED_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso_guidato.yml").freeze
-  LESSON_PROGRAM_PATH = Rails.root.join("config/data/posturacorretta/accademia/programma_lezioni_posturacorretta.yml").freeze
+  LESSON_PROGRAM_PATH = Rails.root.join("config/data/posturacorretta/programmi/programma_lezioni_posturacorretta.yml").freeze
+  GROUP_LESSON_CALENDAR_PATH = Rails.root.join("config/data/posturacorretta/programmi/calendario_lezioni_gruppo.yml").freeze
   SCHEDULED_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/lezioni_programmate.yml").freeze
   PRACTICAL_SHEETS_ROOT = Rails.root.join("config/data/posturacorretta/accademia/schede_pratiche").freeze
-  STUDENT_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/programma_studenti_lezioni.yml").freeze
   TRIATHLON_HANDOUT_PATH = Rails.root.join("docs/handouts/Presentazione PosturaCorretta.pdf").freeze
   GUIDED_ACTIVITIES_ROOT = Rails.root.join("config/data/posturacorretta/accademia/attivita_percorso_guidato").freeze
   LEARNING_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso.yml").freeze
+  CONTENT_CATALOG_PATH = Rails.root.join("config/data/posturacorretta/contenuti/contents.yml").freeze
   CONTENT_ROOT = Rails.root.join("config/data/posturacorretta").cleanpath.freeze
-  ADVANCED_SEPARATOR = /\n<!--\s*advanced\s*-->\s*\n/i
 
   def index
     load_curriculum_sources
@@ -41,12 +41,18 @@ class PosturacorrettaSemeController < ApplicationController
   end
 
   def course
+    if params[:corso] == "postura-corretta-in-un-mese"
+      return redirect_to(book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: "copertina"), status: :moved_permanently)
+    end
+
     load_curriculum_sources
     course_slug = params[:corso].presence_in(@all_didactic_courses.map { |item| item.fetch("slug") })
     return redirect_to(posturacorretta_path, alert: "Corso non trovato") unless course_slug
-    return redirect_to(posturacorretta_course_path(corso: course_slug, vista: "schede"), status: :moved_permanently) if params[:vista] == "incontri"
+    return redirect_to(posturacorretta_course_path(corso: course_slug), status: :moved_permanently) if params[:vista].present?
 
     load_course_overview(course_slug)
+    return if performed?
+
     render :show
   end
 
@@ -71,11 +77,22 @@ class PosturacorrettaSemeController < ApplicationController
   end
 
   def percorso_educativo
+    if params[:corso] == "postura-corretta-in-un-mese"
+      destination = if params[:capitolo].present?
+        book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: params[:capitolo])
+      else
+        book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: "copertina")
+      end
+      return redirect_to(destination, status: :moved_permanently)
+    end
+
     load_curriculum_sources
     @courses = build_courses
     load_learning_course
+    return if performed?
+
     if params[:capitolo].blank?
-      return redirect_to posturacorretta_course_path(corso: @reader_course_slug, vista: "capitoli")
+      return redirect_to posturacorretta_course_path(corso: @reader_course_slug)
     end
     render :show
   end
@@ -105,7 +122,7 @@ class PosturacorrettaSemeController < ApplicationController
   end
 
   def dashboard_student
-    ensure_current_user_site_access!(authentication_context_domain) if authentication_context?
+    ensure_current_user_site_access!(authentication_context_domain) if authentication_context? && authenticated?
     return redirect_to(posturacorretta_student_appointments_path) if params[:vista] == "calendario"
 
     load_dashboard_data
@@ -124,7 +141,9 @@ class PosturacorrettaSemeController < ApplicationController
     ensure_current_user_site_access!(authentication_context_domain) if authentication_context?
     load_dashboard_data
     @dashboard_kind = "teacher"
-    @teacher_access = Current.user&.teacher_user? || Current.user&.superadmin_user? || false
+    @teacher_access = Current.user&.superadmin_user? ||
+      Current.user&.role_assignments&.where(role: :operator, role_operator: "insegnante")&.exists? ||
+      false
     render :show
   end
 
@@ -143,15 +162,25 @@ class PosturacorrettaSemeController < ApplicationController
     academy_data = YAML.safe_load_file(ACADEMY_PATH, permitted_classes: [], aliases: false)
     didactic_data = YAML.safe_load_file(DIDACTIC_PATH, permitted_classes: [], aliases: false)
     learning_data = YAML.safe_load_file(LEARNING_PATH, permitted_classes: [], aliases: false)
+    @content_repository = Posturacorretta::ContentRepository.new(
+      path: CONTENT_CATALOG_PATH,
+      include_scheduled: true
+    )
+    calendar_data = YAML.safe_load_file(GROUP_LESSON_CALENDAR_PATH, permitted_classes: [], aliases: false).fetch("calendar")
+    first_release = Time.zone.parse("#{calendar_data.fetch('starts_on')} #{calendar_data.fetch('publication_time')}")
+    @course_release_schedule = calendar_data.fetch("courses").each_with_index.to_h do |scheduled_course, index|
+      [scheduled_course.fetch("content_id"), first_release + index.weeks]
+    end
+    @scheduled_courses_by_id = calendar_data.fetch("courses").index_by { |scheduled_course| scheduled_course.fetch("content_id") }
     program_data = YAML.safe_load_file(GUIDED_PATH, permitted_classes: [], aliases: false)
     @program_by_course = hydrate_program_courses(program_data).index_by { |course| course.fetch("course_slug") }
     @program_course_slugs = @program_by_course.keys
     learning_by_course = learning_data.fetch("courses").index_by { |course| course.fetch("course_slug") }
     @didactic_path = didactic_data.fetch("path")
-    @didactic_courses = @didactic_path.fetch("courses").map { |course| decorate_didactic_course(course, learning_by_course) }
+    @didactic_courses = @didactic_path.fetch("courses").filter_map { |course| decorate_path_course(course, learning_by_course) }
     @didactic_sections = @didactic_path.fetch("sections", []).map do |section|
       section.merge(
-        "courses" => section.fetch("courses", []).map { |course| decorate_didactic_course(course, learning_by_course) }
+      "courses" => section.fetch("courses", []).filter_map { |course| decorate_path_course(course, learning_by_course) }
       )
     end
     section_courses = @didactic_sections.flat_map do |section|
@@ -163,7 +192,6 @@ class PosturacorrettaSemeController < ApplicationController
         )
       end
     end
-    @all_didactic_courses = @didactic_courses + section_courses
     first_month = guide_data.fetch("sections").find { |section| section.fetch("id") == "primo_mese" }
 
     @base_stage = {
@@ -197,6 +225,16 @@ class PosturacorrettaSemeController < ApplicationController
         )
       end
     }
+    legacy_first_month_course = decorate_didactic_course(
+      {
+        "slug" => "postura-corretta-in-un-mese",
+        "title" => first_month.fetch("title"),
+        "description" => "Archivio interno del precedente corso, mantenuto per il programma lezioni.",
+        "status" => "legacy"
+      },
+      learning_by_course
+    )
+    @all_didactic_courses = @didactic_courses + section_courses + [legacy_first_month_course]
     @stages = [@base_stage, @academy_stage]
   end
 
@@ -241,33 +279,16 @@ class PosturacorrettaSemeController < ApplicationController
   end
 
   def load_course_overview(course_slug)
-    program_data = YAML.safe_load_file(GUIDED_PATH, permitted_classes: [], aliases: false)
-    program_by_course = hydrate_program_courses(program_data).index_by { |course| course.fetch("course_slug") }
     didactic_course = @all_didactic_courses.find { |course| course.fetch("slug") == course_slug }
+    if didactic_course&.fetch("release_locked", false)
+      release_date = Time.zone.parse(didactic_course.fetch("release_at")).to_date
+      return redirect_to(posturacorretta_path(anchor: didactic_course.fetch("slug")), alert: "Il corso sarà disponibile dal #{I18n.l(release_date, format: :long)}.")
+    end
 
     @course_overview = true
-    @course_overview_tab = params[:vista].presence_in(%w[schede capitoli]) || "schede"
     @reader_course_slug = course_slug
     @selected_course = didactic_course
-    @course_program_steps = decorate_program_steps(program_by_course.fetch(course_slug, { "program" => [] }).fetch("program", []))
-    @course_practical_sheets = practical_sheets_for(course_slug)
-    selected_activity_slug = params[:attivita].presence_in(@course_program_steps.map { |step| step.fetch("slug") })
-    @selected_course_program_step = @course_program_steps.find { |step| step.fetch("slug") == selected_activity_slug } ||
-      @course_program_steps.find { |step| step.fetch("progress_state") == "available" } ||
-      @course_program_steps.first
     @course_lessons = didactic_course.fetch("chapters", []).map { |chapter| learning_lesson(chapter) }
-  end
-
-  def practical_sheets_for(course_slug)
-    course_directory = PRACTICAL_SHEETS_ROOT.join(course_slug).cleanpath
-    return [] unless course_directory.directory? && course_directory.to_s.start_with?("#{PRACTICAL_SHEETS_ROOT}/")
-
-    Dir.children(course_directory).grep(/\.yml\z/).sort.filter_map do |filename|
-      sheet = YAML.safe_load_file(course_directory.join(filename), permitted_classes: [], aliases: false)
-      next unless sheet.is_a?(Hash)
-
-      sheet.merge("file" => "#{course_slug}/#{filename}")
-    end.sort_by { |sheet| sheet.fetch("number", "") }
   end
 
   def decorate_program_steps(steps)
@@ -312,6 +333,38 @@ class PosturacorrettaSemeController < ApplicationController
     course.merge("modules" => modules, "chapters" => chapters)
   end
 
+  def decorate_path_course(course, learning_by_course)
+    decorated = if course["content_id"].present?
+      @content_repository.course_by_id(course.fetch("content_id")) || scheduled_course_placeholder(course.fetch("content_id"))
+    else
+      decorate_didactic_course(course, learning_by_course)
+    end
+    return unless decorated
+
+    release_at = @course_release_schedule[decorated.fetch("id", decorated.fetch("slug"))]
+    release_locked = release_at.present? && release_at > Time.current
+    chapters = decorated.fetch("chapters", []).map do |chapter|
+      chapter.merge("release_at" => release_at&.iso8601, "release_locked" => release_locked && !chapter.fetch("demo", false))
+    end
+    decorated.merge("release_at" => release_at&.iso8601, "release_locked" => release_locked, "chapters" => chapters)
+  end
+
+  def scheduled_course_placeholder(content_id)
+    scheduled = @scheduled_courses_by_id[content_id]
+    return unless scheduled
+
+    {
+      "id" => content_id,
+      "slug" => content_id,
+      "format" => "course",
+      "title" => scheduled.fetch("title"),
+      "description" => "Corso in preparazione: sarà pubblicato nella settimana programmata.",
+      "status" => "draft",
+      "access" => "free",
+      "chapters" => []
+    }
+  end
+
   def hydrate_program_step(step)
     return step unless step["source"].present?
 
@@ -329,6 +382,12 @@ class PosturacorrettaSemeController < ApplicationController
   def load_learning_course
     requested_slug = params[:corso].presence_in(@all_didactic_courses.map { |course| course.fetch("slug") })
     didactic_course = @all_didactic_courses.find { |course| course.fetch("slug") == requested_slug } || @all_didactic_courses.first
+    requested_chapter = didactic_course.fetch("chapters", []).find { |chapter| chapter.fetch("slug") == params[:capitolo] }
+    demo_chapter = requested_chapter&.fetch("demo", false)
+    if didactic_course.fetch("release_locked", false) && !demo_chapter
+      release_date = Time.zone.parse(didactic_course.fetch("release_at")).to_date
+      return redirect_to(posturacorretta_path(anchor: didactic_course.fetch("slug")), alert: "Il corso sarà disponibile dal #{I18n.l(release_date, format: :long)}.")
+    end
     @reader_course_slug = didactic_course.fetch("slug")
     @selected_stage = { "slug" => "percorso-educativo", "title" => @didactic_path.fetch("title") }
     @course_lessons = didactic_course.fetch("chapters", []).map { |chapter| learning_lesson(chapter) }
@@ -398,13 +457,10 @@ class PosturacorrettaSemeController < ApplicationController
 
   def load_dashboard_data(view: nil)
     load_curriculum_sources
-    lesson_program_data = YAML.safe_load_file(LESSON_PROGRAM_PATH, permitted_classes: [], aliases: false)
-    lesson_program_by_course = lesson_program_data.fetch("courses").index_by { |course| course.fetch("course_slug") }
     @courses = @all_didactic_courses
     @dashboard_courses = @courses.map do |course|
       configured_program = @program_by_course.fetch(course.fetch("slug"), { "program" => [] }).fetch("program", [])
-      program = configured_program.presence || lesson_program_by_course.fetch(course.fetch("slug"), { "program" => [] }).fetch("program", [])
-      activities = decorate_program_steps(program)
+      activities = decorate_program_steps(configured_program)
       course.merge(
         "program" => activities,
         "chapter_count" => course.fetch("chapters", []).size,
@@ -413,7 +469,7 @@ class PosturacorrettaSemeController < ApplicationController
     end
     @lesson_count = @dashboard_courses.sum { |course| course.fetch("program").size }
     @chapter_count = @dashboard_courses.sum { |course| course.fetch("chapter_count") }
-    @starting_course = @dashboard_courses.find { |course| course.fetch("slug") == "postura-corretta-in-un-mese" } || @dashboard_courses.first
+    @starting_course = @dashboard_courses.find { |course| course.fetch("slug") == "inizia-con-posturacorretta" } || @dashboard_courses.first
     @dashboard_view = view.presence_in(%w[programma calendario]) || params[:vista].presence_in(%w[programma calendario]) || "programma"
     dashboard_courses_by_slug = @dashboard_courses.index_by { |course| course.fetch("slug") }
     @dashboard_sections = []
@@ -428,26 +484,56 @@ class PosturacorrettaSemeController < ApplicationController
       )
     end)
     load_student_lessons_program
+    calendar = YAML.safe_load_file(GROUP_LESSON_CALENDAR_PATH, permitted_classes: [], aliases: false).fetch("calendar")
+    @active_lesson_programs = calendar.fetch("active_programs", [])
     load_dashboard_agenda
     @selected_participation = params[:participation].presence_in(%w[group individual])
   end
 
   def load_student_lessons_program
-    program = YAML.safe_load_file(STUDENT_LESSONS_PATH, permitted_classes: [], aliases: false).fetch("programma")
+    program = YAML.safe_load_file(LESSON_PROGRAM_PATH, permitted_classes: [], aliases: false).fetch("program")
     @student_lessons_program_title = program.fetch("title")
-    @student_lessons_program = program.fetch("lessons").map do |lesson|
-      sheets = lesson.fetch("sheets", {}).filter_map do |area, reference|
-        relative_path = reference.fetch("file")
-        sheet_path = PRACTICAL_SHEETS_ROOT.join(relative_path).cleanpath
-        next unless sheet_path.file? && sheet_path.to_s.start_with?("#{PRACTICAL_SHEETS_ROOT}/")
-
-        sheet = YAML.safe_load_file(sheet_path, permitted_classes: [], aliases: false)
-        next unless sheet.is_a?(Hash)
-
-        sheet.merge("area" => area, "file" => relative_path)
+    sheet_type = program.fetch("sheet_type", "practical")
+    # Nel file sorgente ogni capitolo mantiene i propri metadati, ma nella
+    # pagina Lezioni l'unità didattica è il corso: un corso completo occupa una
+    # sola settimana e mostra insieme tutti i suoi capitoli/schede.
+    grouped_lessons = program.fetch("lessons").group_by { |lesson| lesson.dig("course", "key") }
+    authored_lessons = grouped_lessons.values.each_with_index.map do |course_lessons, index|
+      first_lesson = course_lessons.first
+      chapter_links = course_lessons.flat_map do |lesson|
+        [lesson["theory_chapter"], *lesson.fetch("additional_chapters", [])].compact
+      end.map do |chapter|
+        chapter.merge(
+          "chapter_type" => sheet_type,
+          "path" => posturacorretta_course_chapter_path(
+            corso: chapter.fetch("course_key"),
+            capitolo: chapter.fetch("chapter_key")
+          )
+        )
       end
+      first_lesson.merge(
+        "number" => index + 1,
+        "title" => first_lesson.dig("course", "title"),
+        "chapter_links" => chapter_links,
+        "practical_chapters" => course_lessons.flat_map { |lesson| lesson.fetch("practical_chapters", []) }
+      )
+    end
 
-      lesson.merge("sheets" => sheets)
+    authored_by_course = authored_lessons.index_by { |lesson| lesson.dig("course", "key") }
+    planned_courses = YAML.safe_load_file(GROUP_LESSON_CALENDAR_PATH, permitted_classes: [], aliases: false)
+      .dig("calendar", "courses")
+    @student_lessons_program = planned_courses.map do |course|
+      lesson = authored_by_course[course.fetch("content_id")] || {
+        "number" => course.fetch("number"),
+        "key" => course.fetch("content_id"),
+        "title" => course.fetch("title"),
+        "course" => { "key" => course.fetch("content_id"), "title" => course.fetch("title") },
+        "chapter_links" => [],
+        "practical_chapters" => [],
+        "items" => ["Capitoli e schede in preparazione"]
+      }
+      release_at = @course_release_schedule[course.fetch("content_id")]
+      lesson.merge("release_at" => release_at&.iso8601, "release_locked" => release_at.present? && release_at > Time.current)
     end
   end
 
@@ -476,8 +562,8 @@ class PosturacorrettaSemeController < ApplicationController
     end
 
 
-    profile = Current.user.profile
-    commitments = if Current.user.superadmin_user?
+    profile = Current.user&.profile
+    commitments = if Current.user&.superadmin_user?
       DataCommitment.includes(:domain).where.not(status: "cancelled")
     elsif profile
       profile.data_commitments.includes(:domain).where.not(status: "cancelled")
@@ -511,18 +597,14 @@ class PosturacorrettaSemeController < ApplicationController
 
   def load_lesson_content
     content_path = @lesson["content_path"]
-    @base_content = ""
-    @advanced_content = nil
-    @advanced_defined = false
-    @advanced_access = Current.user&.superadmin_user? || false
+    @lesson_content = ""
+    @lesson_access_allowed = @lesson.fetch("access", "free") == "free" || Current.user&.superadmin_user?
+    return unless @lesson_access_allowed
     return if content_path.blank?
 
     lesson_path = CONTENT_ROOT.join(content_path).cleanpath
     return unless lesson_path.to_s.start_with?(CONTENT_ROOT.to_s) && lesson_path.file?
 
-    base, advanced = lesson_path.read.split(ADVANCED_SEPARATOR, 2)
-    @base_content = base.to_s
-    @advanced_defined = advanced.present?
-    @advanced_content = advanced if @advanced_access && @advanced_defined
+    @lesson_content = lesson_path.read.sub(/\n<!--\s*advanced\s*-->\s*\n/i, "\n")
   end
 end

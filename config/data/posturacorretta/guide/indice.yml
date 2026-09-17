@@ -93,13 +93,13 @@ sections:
   - id: accademia
     directory: 04_accademia
     title: Come funziona l'Accademia
-    status: draft
+    status: published
     intro: { type: markdown, source: guide/04_accademia/00_intro.md }
     items:
-      - { slug: educazione, title: "Educazione al corpo e alla salute", type: partial, source: posturacorretta/guide/sections/04_accademia/educazione }
-      - { slug: ruoli, title: "Professionisti e insegnanti", type: vision, section: roles }
-      - { slug: fasi, title: "Informati, Pratica, Insegna", type: partial, source: posturacorretta/guide/sections/04_accademia/fasi }
-      - { slug: ambiti, title: "Operare nei tre ambiti", type: partial, source: posturacorretta/guide/sections/04_accademia/ambiti }
+      - { slug: educazione, title: "Educazione al corpo e alla salute", status: published, type: partial, source: posturacorretta/guide/sections/04_accademia/educazione }
+      - { slug: ruoli, title: "Professionisti e insegnanti", status: draft, type: vision, section: roles }
+      - { slug: fasi, title: "Informati, Pratica, Insegna", status: draft, type: partial, source: posturacorretta/guide/sections/04_accademia/fasi }
+      - { slug: ambiti, title: "Operare nei tre ambiti", status: draft, type: partial, source: posturacorretta/guide/sections/04_accademia/ambiti }
 
   - id: eventi
     directory: 05_eventi

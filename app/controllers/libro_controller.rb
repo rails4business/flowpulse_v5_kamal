@@ -5,6 +5,7 @@ class LibroController < ApplicationController
 
   DEFAULT_BOOK_SLUG = "il-corpo-un-mondo-da-scoprire"
   BOOKS_ROOT = Rails.root.join("config", "data", "books")
+  POSTURACORRETTA_CONTENT_ROOT = Rails.root.join("config", "data", "posturacorretta").cleanpath
 
   before_action :set_book_paths
   before_action :ensure_book_exists, only: %i[index show guida]
@@ -43,20 +44,21 @@ class LibroController < ApplicationController
       @next_chapter = chapters_only.find { |c| c[:slug] != "copertina" }
     else
       @is_cover = false
-      file_path = find_book_file(@book_md_dir, @chapter_slug)
+      chapter_meta = @toc.find { |chapter| chapter[:slug] == @chapter_slug }
+      file_path = chapter_meta&.dig(:source).present? ? book_source_path(chapter_meta.fetch(:source)) : find_book_file(@book_md_dir, @chapter_slug)
 
       if file_path && File.exist?(file_path)
         raw = File.read(file_path)
         frontmatter, body = extract_frontmatter(raw)
         file_meta = book_file_metadata(file_path)
-        chapter_meta = @toc.find { |c| c[:slug] == @chapter_slug || c[:slug] == file_meta[:slug] }
+        chapter_meta ||= @toc.find { |c| c[:slug] == @chapter_slug || c[:slug] == file_meta[:slug] }
 
-        @chapter_slug = file_meta[:slug].presence || @chapter_slug
+        @chapter_slug = chapter_meta&.dig(:slug).presence || file_meta[:slug].presence || @chapter_slug
         @chapter_title = frontmatter["title"].presence || chapter_meta&.dig(:title) || @chapter_slug.titleize
         @chapter_description = frontmatter["description"].presence || chapter_meta&.dig(:description)
         
         # Access level check
-        access = (frontmatter["access"] || "draft").to_s.strip.downcase
+        access = (frontmatter["access"].presence || chapter_meta&.dig(:access).presence || "draft").to_s.strip.downcase
         is_superadmin = Current.user&.superadmin_user?
 
         if hidden_access?(access) && !is_superadmin
@@ -180,6 +182,7 @@ class LibroController < ApplicationController
         type: type,
         header: is_header,
         description: item["description"],
+        source: item["source"],
         color: item["color"],
         chapter_number: chapter_num,
         outline_number: outline_number,
@@ -209,6 +212,15 @@ class LibroController < ApplicationController
 
   def hidden_access?(access)
     access.to_s.strip.downcase.in?(%w[hide hidden])
+  end
+
+  def book_source_path(relative_source)
+    source_path = POSTURACORRETTA_CONTENT_ROOT.join(relative_source).cleanpath
+    root_prefix = "#{POSTURACORRETTA_CONTENT_ROOT}/"
+    return unless source_path.to_s.start_with?(root_prefix)
+    return unless source_path.extname == ".md"
+
+    source_path
   end
 
   def find_book_file(dir, safe_slug_base)
