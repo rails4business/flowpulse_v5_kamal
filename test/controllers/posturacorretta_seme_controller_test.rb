@@ -110,9 +110,10 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "nav[aria-label='Indice generale']", count: 0
     assert_select "h1", text: "Percorso educativo PosturaCorretta"
-    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 3
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 2
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details summary", text: /Esplora/
-    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] a[href='#{posturacorretta_profile_path}']", text: /Profilo/
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details.pc-app-account summary", text: /Profilo/
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] .pc-app-account-menu a[href*='session/new']", text: "Accedi"
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] a.pc-app-logo img", count: 1
     assert_select "#pc-week-focus-title", text: "Inizia con PosturaCorretta"
     assert_select "link[rel='manifest'][href='#{posturacorretta_pwa_manifest_path}']"

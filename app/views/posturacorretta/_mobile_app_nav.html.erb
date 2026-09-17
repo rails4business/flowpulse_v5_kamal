@@ -1,6 +1,6 @@
 <% home_active = request.path == posturacorretta_path || request.path.start_with?("/posturacorretta/corsi/") %>
 <% lessons_active = request.path == posturacorretta_student_dashboard_path %>
-<% profile_active = request.path.start_with?(posturacorretta_profile_path) %>
+<% profile_active = request.path.start_with?(posturacorretta_profile_path) || request.path.start_with?(posturacorretta_student_appointments_path) %>
 <nav class="pc-mobile-app-nav sm:hidden" aria-label="Navigazione app PosturaCorretta">
   <%= link_to posturacorretta_path, aria: { label: "PosturaCorretta home", current: ("page" if home_active) }, class: "pc-app-logo #{'is-active' if home_active}" do %>
     <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="">
@@ -13,5 +13,35 @@
       <%= render "posturacorretta/explore_links" %>
     </div>
   </details>
-  <%= link_to posturacorretta_profile_path, aria: { current: ("page" if profile_active) }, class: (profile_active ? "is-active" : nil) do %><span aria-hidden="true">●</span><small>Profilo</small><% end %>
+  <details class="pc-app-account group [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
+    <summary aria-label="Apri menu profilo" class="<%= 'is-active' if profile_active %>">
+      <% if authenticated? %>
+        <span class="pc-app-avatar" aria-hidden="true"><%= (Current.user.profile&.display_name.presence || Current.user.email_address).first.upcase %></span>
+      <% else %>
+        <span class="pc-app-avatar" aria-hidden="true">?</span>
+      <% end %>
+      <small>Profilo</small>
+    </summary>
+    <div class="pc-app-account-menu">
+      <% if authenticated? %>
+        <div class="px-3 py-2">
+          <p class="truncate text-sm font-bold text-slate-950"><%= Current.user.profile&.display_name.presence || "Profilo" %></p>
+          <p class="truncate text-xs text-slate-500"><%= Current.user.email_address %></p>
+        </div>
+        <div class="my-1 border-t border-slate-100"></div>
+        <%= link_to "Profilo", posturacorretta_profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+        <%= link_to "Appuntamenti", posturacorretta_student_appointments_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
+        <% if Current.user.superadmin_user? %>
+          <div class="my-1 border-t border-slate-100"></div>
+          <%= link_to "Profilo Flowpulse", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" %>
+          <%= link_to "Superadmin", admin_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %>
+        <% end %>
+        <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
+      <% else %>
+        <% auth_params = authentication_context? ? authentication_context_link_params : authentication_context_link_params(return_to: request.fullpath) %>
+        <%= link_to "Accedi", new_session_path(auth_params), class: "block rounded-lg px-3 py-2 text-sm font-bold text-slate-700 hover:bg-blue-50" %>
+        <%= link_to "Registrati", new_user_path(auth_params), class: "mt-1 block rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
+      <% end %>
+    </div>
+  </details>
 </nav>

@@ -191,12 +191,14 @@
 .pc-mobile-app-nav > a > small,
 .pc-mobile-app-nav > details > summary > small { font-size: .62rem; font-weight: 800; }
 .pc-mobile-app-nav > a.is-active,
+.pc-mobile-app-nav > details > summary.is-active,
 .pc-mobile-app-nav > details[open] > summary { background: #eff6ff; color: #1d4ed8; }
 .pc-mobile-app-nav .pc-app-logo img { width: 1.5rem; height: 1.5rem; border-radius: 999px; object-fit: cover; }
-.pc-app-explore { position: relative; min-width: 0; }
-.pc-app-explore-menu {
+.pc-app-explore,
+.pc-app-account { position: relative; min-width: 0; }
+.pc-app-explore-menu,
+.pc-app-account-menu {
   position: absolute;
-  right: -4.5rem;
   bottom: calc(100% + .75rem);
   width: min(18rem, calc(100vw - 1.5rem));
   max-height: min(32rem, calc(100vh - 6rem));
@@ -208,12 +210,31 @@
   box-shadow: 0 -12px 36px rgb(15 23 42 / .18);
   text-align: left;
 }
+.pc-app-explore-menu { right: -4.5rem; }
+.pc-app-account-menu { right: .25rem; }
+.pc-app-avatar {
+  display: grid;
+  width: 1.55rem;
+  height: 1.55rem;
+  place-items: center;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #fff;
+  font-size: .7rem !important;
+  font-weight: 900;
+}
 
 @media (display-mode: standalone) {
-  .posturacorretta-ui .pc-site-header { display: none; }
+  .posturacorretta-ui .pwa-hide-navigation,
+  .posturacorretta-ui .pc-site-header { display: none !important; }
   .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
   .posturacorretta-ui .pc-mobile-app-nav { display: grid !important; }
 }
+
+.pwa-standalone .posturacorretta-ui .pwa-hide-navigation,
+.pwa-standalone .posturacorretta-ui .pc-site-header { display: none !important; }
+.pwa-standalone .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+.pwa-standalone .posturacorretta-ui .pc-mobile-app-nav { display: grid !important; }
 
 @media (max-width: 639px) {
   .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }

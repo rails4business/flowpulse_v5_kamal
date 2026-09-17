@@ -39,6 +39,11 @@
     <% if (pwa = pwa_site_config) %>
       <meta name="theme-color" content="<%= pwa.theme_color %>">
       <%= tag.link rel: "manifest", href: pwa.manifest_url %>
+      <script>
+        if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) {
+          document.documentElement.classList.add("pwa-standalone")
+        }
+      </script>
     <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -56,10 +61,11 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if (content_for?(:landing_header) || content_for?(:landing_nav)) && (request.path.start_with?("/posturacorretta") || controller_name.in?(%w[domains landing])) %>">
+  <% posturacorretta_site = pwa_site_config&.site_key == "posturacorretta_it" || request.path.start_with?("/posturacorretta") %>
+  <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if (content_for?(:landing_header) || content_for?(:landing_nav)) && (posturacorretta_site || controller_name.in?(%w[domains landing])) %>">
     <%= yield :landing_header if content_for?(:landing_header) %>
-    <%= yield :landing_nav if content_for?(:landing_nav) %>
-    <%= render "posturacorretta/mobile_app_nav" if request.path.start_with?("/posturacorretta") %>
+    <% if content_for?(:landing_nav) %><div class="pwa-hide-navigation"><%= yield :landing_nav %></div><% end %>
+    <%= render "posturacorretta/mobile_app_nav" if posturacorretta_site %>
     <%= render "shared/active_commitment", commitment: active_data_commitment if (content_for?(:landing_nav) || controller_path.start_with?("brands/impegno/")) && active_data_commitment %>
 
     <% if notice = flash[:notice] %>
