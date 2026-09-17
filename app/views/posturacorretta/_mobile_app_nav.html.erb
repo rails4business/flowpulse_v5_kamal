@@ -1,9 +1,17 @@
 <% home_active = request.path == posturacorretta_path || request.path.start_with?("/posturacorretta/corsi/") %>
 <% lessons_active = request.path == posturacorretta_student_dashboard_path %>
-<% contents_active = request.path.start_with?(posturacorretta_contenuti_path) || request.path.start_with?(posturacorretta_eventi_path) %>
+<% profile_active = request.path.start_with?(posturacorretta_profile_path) %>
 <nav class="pc-mobile-app-nav sm:hidden" aria-label="Navigazione app PosturaCorretta">
-  <%= link_to posturacorretta_path, aria: { current: ("page" if home_active) }, class: (home_active ? "is-active" : nil) do %><span aria-hidden="true">⌂</span><small>Home</small><% end %>
+  <%= link_to posturacorretta_path, aria: { label: "PosturaCorretta home", current: ("page" if home_active) }, class: "pc-app-logo #{'is-active' if home_active}" do %>
+    <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="">
+    <small>Home</small>
+  <% end %>
   <%= link_to posturacorretta_student_dashboard_path, aria: { current: ("page" if lessons_active) }, class: (lessons_active ? "is-active" : nil) do %><span aria-hidden="true">▤</span><small>Lezioni</small><% end %>
-  <%= link_to posturacorretta_contenuti_path, aria: { current: ("page" if contents_active) }, class: (contents_active ? "is-active" : nil) do %><span aria-hidden="true">◫</span><small>Contenuti</small><% end %>
-  <%= link_to posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione") do %><span aria-hidden="true">•••</span><small>Esplora</small><% end %>
+  <details class="pc-app-explore group [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
+    <summary aria-label="Apri Esplora"><span aria-hidden="true">•••</span><small>Esplora</small></summary>
+    <div class="pc-app-explore-menu" aria-label="Esplora PosturaCorretta">
+      <%= render "posturacorretta/explore_links" %>
+    </div>
+  </details>
+  <%= link_to posturacorretta_profile_path, aria: { current: ("page" if profile_active) }, class: (profile_active ? "is-active" : nil) do %><span aria-hidden="true">●</span><small>Profilo</small><% end %>
 </nav>
