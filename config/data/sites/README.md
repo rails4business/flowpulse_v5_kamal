@@ -39,6 +39,19 @@ Site. I domini e i loro alias restano definiti in `config/domains.yml`.
 I file in `documents/` e le fonti in `tracks/` e `shared/` vengono richiamati
 tramite chiavi locali al Site, mai tramite percorsi liberi del filesystem.
 
+## PWA per dominio
+
+La sezione opzionale `site.pwa` di `site.yml` abilita manifest, service worker
+e pagina offline per il Site. La stessa infrastruttura viene servita su ogni
+dominio, ma configurazione, icona, colori, scope e cache restano separati.
+In locale `local_prefix` identifica il prefisso del Site; sul dominio dedicato
+lo scope diventa `/`. Se `enabled` non è `true`, il sito resta un normale sito
+web e gli endpoint PWA rispondono `404`.
+
+Le pagine personali non devono entrare nella cache: vanno elencate in
+`excluded_paths`. Il service worker condiviso salva soltanto la pagina offline,
+l'icona e gli asset pubblici; le navigazioni HTML non vengono conservate.
+
 Non spostare qui cataloghi Content, eventi, settimane, Accademia o dati
 operativi. Queste fonti potranno essere incorporate in futuro attraverso
 componenti e sorgenti registrate.

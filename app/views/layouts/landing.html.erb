@@ -36,6 +36,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="<%= page_domain&.site_title.presence || page_title %>">
     <meta name="mobile-web-app-capable" content="yes">
+    <% if (pwa = pwa_site_config) %>
+      <meta name="theme-color" content="<%= pwa.theme_color %>">
+      <%= tag.link rel: "manifest", href: pwa.manifest_url %>
+    <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -55,6 +59,7 @@
   <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if (content_for?(:landing_header) || content_for?(:landing_nav)) && (request.path.start_with?("/posturacorretta") || controller_name.in?(%w[domains landing])) %>">
     <%= yield :landing_header if content_for?(:landing_header) %>
     <%= yield :landing_nav if content_for?(:landing_nav) %>
+    <%= render "posturacorretta/mobile_app_nav" if request.path.start_with?("/posturacorretta") %>
     <%= render "shared/active_commitment", commitment: active_data_commitment if (content_for?(:landing_nav) || controller_path.start_with?("brands/impegno/")) && active_data_commitment %>
 
     <% if notice = flash[:notice] %>
@@ -72,5 +77,12 @@
     <main class="<%#= full_width_layout? ? "w-full" : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8" %>">
       <%= yield %>
     </main>
+    <% if (pwa = pwa_site_config) %>
+      <script>
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", () => navigator.serviceWorker.register(<%= raw pwa.service_worker_url.to_json %>, { scope: <%= raw pwa.service_worker_scope.to_json %> }))
+        }
+      </script>
+    <% end %>
   </body>
 </html>

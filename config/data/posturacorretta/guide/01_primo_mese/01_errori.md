@@ -6,6 +6,19 @@ Molte cercano di considerare la persona nella sua globalità, ma non sempre è f
 
 Per orientarsi è utile partire da tre errori frequenti. Possono comparire quando si inizia un percorso posturale o fisioterapico, ma anche quando ci si avvicina a discipline corporee come lo yoga.
 
+## Educazione, benessere e intervento professionale
+
+I confini dipendono dalla situazione. In presenza di patologia o pericolo la
+responsabilità appartiene ai professionisti sanitari; quando esistono rischio
+o difficoltà quotidiane servono valutazione e prevenzione appropriate; la
+formazione offre strumenti per conoscere il corpo; il benessere coltiva
+equilibrio e armonia. Possiamo ricordare questi passaggi come una scala dal
+rosso all'arancione, al giallo e al verde.
+
+Autonomia e professionisti non sono alternative. La persona impara a
+partecipare al proprio percorso, mentre ogni professionista conserva
+competenze e responsabilità specifiche.
+
 ## 1. Ridurre la postura a muscoli, articolazioni e allineamento
 
 Avere una **PosturaCorretta** non significa soltanto stare dritti con la schiena. L’allineamento può essere un risultato, ma la postura è anche uno strumento per osservare come il corpo si adatta e come i suoi sistemi collaborano.

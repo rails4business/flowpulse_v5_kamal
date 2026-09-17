@@ -158,6 +158,68 @@
   }
 }
 
+.pc-mobile-app-nav {
+  position: fixed;
+  z-index: 90;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid #dbe3ef;
+  background: rgb(255 255 255 / .96);
+  padding: .35rem max(.35rem, env(safe-area-inset-right)) calc(.35rem + env(safe-area-inset-bottom)) max(.35rem, env(safe-area-inset-left));
+  box-shadow: 0 -8px 24px rgb(15 23 42 / .08);
+  backdrop-filter: blur(14px);
+}
+
+.pc-mobile-app-nav a {
+  display: grid;
+  min-height: 3.15rem;
+  place-items: center;
+  align-content: center;
+  gap: .12rem;
+  border-radius: .75rem;
+  color: #64748b;
+  text-decoration: none;
+}
+
+.pc-mobile-app-nav a > span { font-size: 1.05rem; font-weight: 900; line-height: 1; }
+.pc-mobile-app-nav a > small { font-size: .62rem; font-weight: 800; }
+.pc-mobile-app-nav a.is-active { background: #eff6ff; color: #1d4ed8; }
+
+@media (max-width: 639px) {
+  .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+  .posturacorretta-ui header.sticky { box-shadow: none; }
+
+  .posturacorretta-ui main section[id="primi-corsi"] > header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .posturacorretta-ui main section[id="primi-corsi"] > header h1,
+  .posturacorretta-ui main section[id] > header h2 { font-size: 1.45rem; line-height: 1.2; }
+
+  .posturacorretta-ui article[id] > details > summary > div {
+    min-height: 0;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+  }
+
+  .posturacorretta-ui article[id] > details > summary > div > div:first-child { min-height: 7rem; }
+  .posturacorretta-ui article[id] > details > summary > div > div:first-child > span:last-child {
+    bottom: .5rem;
+    left: .5rem;
+    padding: .2rem .45rem;
+    font-size: .55rem;
+  }
+
+  .posturacorretta-ui article[id] > details > summary > div > div:last-child { padding: .85rem; }
+  .posturacorretta-ui article[id] > details > summary h3 { margin-top: .4rem; font-size: 1rem; line-height: 1.25; }
+  .posturacorretta-ui article[id] > details > summary p { display: none; }
+  .posturacorretta-ui article[id] > details > summary .mt-auto { padding-top: .6rem; }
+  .posturacorretta-ui article[id] > details > summary .mt-auto > span:first-child { display: none; }
+}
+
 @keyframes pc-course-aside-enter {
   from { opacity: 0; transform: translateX(-1.25rem); }
   to { opacity: 1; transform: translateX(0); }

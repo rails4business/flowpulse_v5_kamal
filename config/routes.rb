@@ -8,6 +8,12 @@ Rails.application.routes.draw do
   resources :users, only: %i[new create]
   resources :passwords, param: :token
   get "sitemap.xml", to: "sitemaps#show", defaults: { format: :xml }
+  get "manifest.json" => "pwa#manifest", as: :pwa_manifest
+  get "service-worker.js" => "pwa#service_worker", as: :pwa_service_worker
+  get "offline" => "pwa#offline", as: :pwa_offline
+  get "posturacorretta/manifest.json" => "pwa#manifest", as: :posturacorretta_pwa_manifest
+  get "posturacorretta/service-worker.js" => "pwa#service_worker", as: :posturacorretta_pwa_service_worker
+  get "posturacorretta/offline" => "pwa#offline", as: :posturacorretta_pwa_offline
 
   # Public Routes
   constraints ->(request) { request.host == "posturacorretta.org" } do

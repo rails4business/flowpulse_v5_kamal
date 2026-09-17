@@ -24,3 +24,18 @@ Qui rimane un primo accenno: non un ulteriore trattamento, ma una filosofia con 
 - esercizio finale di orientamento;
 - domande per scegliere il passo successivo;
 - rimando a tutor, insegnanti, professionisti ed eventi.
+
+## Come è organizzato il percorso
+
+Il percorso utilizza una struttura semplice:
+
+```text
+Percorso → Sezione → Corso → Capitolo
+```
+
+Dopo i corsi iniziali si entra nella sezione dedicata al recupero. Il primo
+corso è **Igiene Posturale** e uno dei suoi primi capitoli pratici è
+**Mobilità articolare**. In quel capitolo verranno approfonditi funzionamento
+delle articolazioni, liquido sinoviale, recettori articolari e propriocezione:
+qui li anticipiamo soltanto come esempio del collegamento tra esperienza,
+fisiologia e postura.

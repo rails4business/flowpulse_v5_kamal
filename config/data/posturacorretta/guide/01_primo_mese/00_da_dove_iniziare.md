@@ -34,6 +34,12 @@ Le tre possibilità non si escludono:
 
 La matrice di PosturaCorretta aiuta inoltre a orientarsi tra ambiti, aree e paradigmi e a capire quale punto di partenza sia più adatto.
 
+## Dal primo orientamento alla fisiologia
+
+Dopo avere iniziato a osservare e sperimentare il corpo, il passo successivo è
+comprendere meglio la relazione tra postura, fisiologia e cinque aree della
+salute. È il tema del corso **Postura e Fisiologia**.
+
 - [Vai all’indice di PosturaCorretta in un mese →](/posturacorretta/guida?sezione=primo_mese)
 - [Inizia il Percorso Integrato →](/posturacorretta/guida?sezione=percorso&capitolo=inizia)
 - [Partecipa agli eventi e scopri la nostra filosofia →](/posturacorretta/eventi)

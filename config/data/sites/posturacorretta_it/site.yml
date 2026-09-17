@@ -1,0 +1,33 @@
+schema_version: 1
+
+site:
+  key: posturacorretta_it
+  node_slug: posturacorretta
+  locale: it
+  theme: posturacorretta
+
+  # La home continua a usare PosturacorrettaSemeController. Questo file
+  # raccoglie anche le caratteristiche condivise del sito, senza obbligare
+  # la migrazione immediata al Page Builder.
+  pwa:
+    enabled: true
+    version: 1
+    hosts:
+      - posturacorretta.org
+      - www.posturacorretta.org
+    local_prefix: /posturacorretta
+    name: PosturaCorretta
+    short_name: PosturaCorretta
+    description: Percorso educativo per conoscere, ascoltare e praticare con il corpo.
+    theme_color: "#1d4ed8"
+    background_color: "#f8fafc"
+    display: standalone
+    icon: /images/posturacorretta-pwa.png
+    excluded_paths:
+      - /admin
+      - /dashboard
+      - /profilo
+      - /appuntamenti
+      - /session
+      - /passwords
+

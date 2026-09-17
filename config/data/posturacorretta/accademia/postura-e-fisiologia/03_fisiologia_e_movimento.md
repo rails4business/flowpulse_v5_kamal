@@ -4,9 +4,16 @@
 
 Il movimento mette in relazione respirazione, appoggi, equilibrio, coordinazione, forza e percezione. Per questo è uno degli strumenti più immediati per conoscere il funzionamento del corpo.
 
+Nel nostro schema rappresenta la **via efferente**: dopo avere ricevuto ed
+elaborato informazioni, il sistema nervoso organizza una risposta e il corpo
+agisce.
+
 ## Dall'esercizio all'esperienza
 
 La stessa forma esterna può produrre esperienze differenti. Nel percorso educativo non conta soltanto eseguire un esercizio, ma osservare carico, ritmo, respiro, facilità e compensi.
+
+Il movimento permette anche di verificare ciò che è cambiato: muovo, sento,
+riconosco e torno ad agire con nuove informazioni.
 
 ## Domande da sviluppare
 

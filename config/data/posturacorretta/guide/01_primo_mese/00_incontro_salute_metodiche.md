@@ -1,5 +1,22 @@
 # L'incontro con la salute e con le metodiche posturali
 
+## Che cos'è la postura?
+
+La postura non è soltanto la posizione che assumiamo quando siamo fermi. Esiste
+una postura statica, ma esiste anche una postura dinamica: il corpo continua a
+organizzarsi mentre respiriamo, camminiamo, lavoriamo e reagiamo a ciò che ci
+accade.
+
+Questa organizzazione dipende da molti fattori: struttura, movimento, respiro,
+percezione, abitudini, ambiente e capacità di adattamento. Per questo non
+cerchiamo una posizione perfetta e identica per tutti. Prima di voler
+correggere una postura dobbiamo imparare a leggerla e a osservare come il corpo
+funziona e cambia.
+
+PosturaCorretta nasce come percorso educativo: non impone una forma al corpo,
+ma offre strumenti per conoscerlo, ascoltarlo e interagire più consapevolmente
+con la propria fisiologia.
+
 Il mio incontro con la salute non è avvenuto attraverso una sola disciplina. Negli anni ho praticato yoga, Tai Chi e altre attività corporee, mentre lo studio della fisioterapia mi permetteva di osservare il corpo con strumenti differenti.
 
 Nello yoga e nel Tai Chi una delle prime indicazioni era **creare spazio**. All'inizio, però, non comprendevo fino in fondo che cosa significasse. Che cosa produceva le tensioni? Dove si accumulavano? Perché potevano condizionare muscoli, articolazioni, respiro e movimento?

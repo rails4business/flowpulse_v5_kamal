@@ -172,6 +172,17 @@ class PosturacorrettaSemeController < ApplicationController
       [scheduled_course.fetch("content_id"), first_release + index.weeks]
     end
     @scheduled_courses_by_id = calendar_data.fetch("courses").index_by { |scheduled_course| scheduled_course.fetch("content_id") }
+    current_release = @course_release_schedule.select { |_content_id, release_at| release_at <= Time.current }.max_by { |_content_id, release_at| release_at }
+    focus_content_id = current_release&.first || calendar_data.fetch("courses").first.fetch("content_id")
+    focus_course = @scheduled_courses_by_id.fetch(focus_content_id)
+    @home_week_focus = focus_course.merge(
+      "release_at" => @course_release_schedule.fetch(focus_content_id).iso8601,
+      "locked" => @course_release_schedule.fetch(focus_content_id) > Time.current,
+      "lesson_day" => calendar_data.dig("group_lesson", "day"),
+      "lesson_start" => calendar_data.dig("group_lesson", "start"),
+      "lesson_end" => calendar_data.dig("group_lesson", "end"),
+      "lesson_location" => calendar_data.dig("group_lesson", "location")
+    )
     program_data = YAML.safe_load_file(GUIDED_PATH, permitted_classes: [], aliases: false)
     @program_by_course = hydrate_program_courses(program_data).index_by { |course| course.fetch("course_slug") }
     @program_course_slugs = @program_by_course.keys

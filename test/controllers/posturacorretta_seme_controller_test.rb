@@ -110,6 +110,9 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "nav[aria-label='Indice generale']", count: 0
     assert_select "h1", text: "Percorso educativo PosturaCorretta"
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] a", count: 4
+    assert_select "#pc-week-focus-title", text: "Inizia con PosturaCorretta"
+    assert_select "link[rel='manifest'][href='#{posturacorretta_pwa_manifest_path}']"
     assert_select "h3", text: "Inizia con PosturaCorretta"
     assert_select "h3", text: "Postura e Fisiologia"
     assert_select "h2", text: "Recupera con la terapia manuale"
@@ -130,6 +133,48 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Come funziona", count: 0
     assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
+  end
+
+  test "serves the installable PosturaCorretta PWA files" do
+    get posturacorretta_pwa_manifest_path
+
+    assert_response :success
+    assert_equal "application/manifest+json", response.media_type
+    manifest = JSON.parse(response.body)
+    assert_equal "PosturaCorretta", manifest.fetch("name")
+    assert_equal "/posturacorretta", manifest.fetch("start_url")
+    assert_equal "/posturacorretta", manifest.fetch("scope")
+
+    get posturacorretta_pwa_service_worker_path
+
+    assert_response :success
+    assert_equal "text/javascript", response.media_type
+    assert_includes response.body, "posturacorretta-it-shell-v1"
+    assert_includes response.body, "/appuntamenti"
+    assert_includes response.body, "OFFLINE_URL"
+    assert_not_includes response.body, "cache.put(request, copy)"
+
+    get posturacorretta_pwa_offline_path
+
+    assert_response :success
+    assert_select "h1", text: "Connessione non disponibile"
+  end
+
+  test "serves the PWA from the root of the dedicated domain" do
+    host! "posturacorretta.org"
+
+    get pwa_manifest_path
+
+    assert_response :success
+    manifest = JSON.parse(response.body)
+    assert_equal "/", manifest.fetch("start_url")
+    assert_equal "/", manifest.fetch("scope")
+
+    get pwa_service_worker_path
+
+    assert_response :success
+    assert_equal "/", response.headers.fetch("Service-Worker-Allowed")
+    assert_includes response.body, 'const APP_SCOPE = "/"'
   end
 
   test "keeps academy as a backup without duplicating the how it works tabs" do
@@ -172,11 +217,11 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
       assert_select "#seme-aside #course-aside-title", count: 0
       assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
       assert_select "nav[aria-label='Indice del corso'] h2", text: "Indice dei capitoli"
-      assert_select "nav[aria-label='Indice del corso'] a[aria-current='page'] span", text: "Capitolo 06"
+      assert_select "nav[aria-label='Indice del corso'] a[aria-current='page'] span", text: "Capitolo 05"
       assert_select "#participation-title", count: 0
       assert_select "nav[aria-label='Incontri, lezioni e capitoli']", count: 0
-      assert_includes response.body, "Scheda pratica in preparazione"
-      assert_includes response.body, "Da collegare"
+      assert_includes response.body, "Ricevere — massaggio e automassaggio"
+      assert_includes response.body, "movimento globale — da collegare"
       assert_not_includes response.body, "Approfondimento avanzato"
     end
   end
