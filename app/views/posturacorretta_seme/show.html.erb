@@ -11,8 +11,8 @@
     <%= render "posturacorretta_seme/header" %>
   <% end %>
 <% end %>
-<% content_for :title, @lesson ? "#{@lesson.fetch("title")} · PosturaCorretta Seme" : (@dashboard_kind ? "Dashboard #{@dashboard_kind == 'teacher' ? 'insegnante' : 'studente'} · PosturaCorretta" : (@integrated_paths_page ? "Percorsi integrati · PosturaCorretta" : (@direct_courses ? "Percorso · PosturaCorretta Seme" : "PosturaCorretta Seme"))) %>
-<% content_for :description, "Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati." %>
+<% content_for :title, @lesson ? "#{@lesson.fetch("title")} · PosturaCorretta" : (@dashboard_kind ? "#{@dashboard_kind == 'teacher' ? 'Insegnante' : 'Lezioni'} · PosturaCorretta" : (@integrated_paths_page ? "Percorsi integrati · PosturaCorretta" : (@direct_courses ? "Percorso PosturaCorretta · Educazione alla salute" : "Percorso PosturaCorretta · Educazione alla salute"))) %>
+<% content_for :description, "Il percorso educativo alla salute grazie alle metodiche posturali. Scopri come funziona il tuo corpo e riattiva i tuoi sistemi." %>
 
 <div class="min-h-screen bg-[#F6F7F4] text-slate-800">
   <% if @dashboard_kind == "student" %>

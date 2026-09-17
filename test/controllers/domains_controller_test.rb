@@ -51,11 +51,11 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "PosturaCorretta"
-    assert_select "title", text: "Percorso · PosturaCorretta Seme"
-    assert_select "meta[name='description'][content='Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati.']"
+    assert_select "title", text: "Percorso PosturaCorretta · Educazione alla salute"
+    assert_select "meta[name='description'][content='Il percorso educativo alla salute grazie alle metodiche posturali. Scopri come funziona il tuo corpo e riattiva i tuoi sistemi.']"
     assert_select "link[rel='icon'][href='https://cdn.example.com/posturacorretta-icon.png']"
-    assert_select "meta[property='og:title'][content='Percorso · PosturaCorretta Seme']"
-    assert_select "meta[property='og:description'][content='Il percorso educativo PosturaCorretta: primo mese, lezioni, pratica e approfondimenti avanzati.']"
+    assert_select "meta[property='og:title'][content='Percorso PosturaCorretta · Educazione alla salute']"
+    assert_select "meta[property='og:description'][content='Il percorso educativo alla salute grazie alle metodiche posturali. Scopri come funziona il tuo corpo e riattiva i tuoi sistemi.']"
     assert_select "meta[property='og:image'][content='https://cdn.example.com/posturacorretta-social.png']"
     assert_select "meta[name='twitter:image'][content='https://cdn.example.com/posturacorretta-social.png']"
   end

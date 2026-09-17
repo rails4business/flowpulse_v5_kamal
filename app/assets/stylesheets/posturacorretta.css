@@ -238,6 +238,9 @@
 
 @media (max-width: 639px) {
   .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+  /* Su mobile PosturaCorretta usa la barra app in basso: il nav desktop non
+     deve restare visibile né nel browser né nella PWA installata. */
+  .posturacorretta-ui .pwa-hide-navigation { display: none !important; }
   .posturacorretta-ui header.sticky { box-shadow: none; }
 
   .posturacorretta-ui main section[id="primi-corsi"] > header {
