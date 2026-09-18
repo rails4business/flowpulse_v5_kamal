@@ -3,7 +3,8 @@ require "yaml"
 class AcademyCurriculum
   CONFIG_PATH = Rails.root.join("config/data/posturacorretta/accademia/academy.yml")
   CONTENT_ROOT = Rails.root.join("config/data/posturacorretta/accademia")
-  TEACHERS_FILENAME = "teachers.yml"
+  TEACHERS_DIRECTORY = "teachers"
+  TEACHERS_INDEX_FILENAME = "index.yml"
   CENTERS_FILENAME = "centers.yml"
   METHODOLOGIES_PATH = Rails.root.join("config/data/posturacorretta/metodiche/metodiche.yml")
 
@@ -27,7 +28,7 @@ class AcademyCurriculum
 
   def load
     data = load_yaml(@path)
-    data["teachers"] = load_yaml(@directory.join(TEACHERS_FILENAME)).fetch("teachers", {})
+    data["teachers"] = load_teachers
     data["locations"] = load_yaml(@directory.join(CENTERS_FILENAME)).fetch("centers", {})
     data["methodologies"] = load_yaml(METHODOLOGIES_PATH).fetch("methodologies", []).index_by { |methodology| methodology.fetch("slug") }
     attach_module_relations!(data)
@@ -40,6 +41,18 @@ class AcademyCurriculum
 
   def load_yaml(path)
     YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
+  end
+
+  def load_teachers
+    teachers_root = @directory.join(TEACHERS_DIRECTORY)
+    index = load_yaml(teachers_root.join(TEACHERS_INDEX_FILENAME))
+
+    index.fetch("teachers", []).each_with_object({}) do |slug, teachers|
+      teacher_path = teachers_root.join("#{slug}.yml")
+      raise ArgumentError, "File insegnante academy mancante: #{slug}" unless teacher_path.file?
+
+      teachers[slug] = load_yaml(teacher_path)
+    end
   end
 
   def validate!(data)

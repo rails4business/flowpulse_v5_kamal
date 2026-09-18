@@ -1,0 +1,61 @@
+<section id="<%= component.fetch("id") %>" class="mark-three-languages mx-auto max-w-6xl px-5 py-12 sm:py-16" data-three-languages>
+  <div class="mx-auto max-w-2xl text-center">
+    <% if data["eyebrow"].present? %><p class="text-xs font-black uppercase tracking-[.22em] text-amber-700"><%= data["eyebrow"] %></p><% end %>
+    <% if data["title"].present? %><h2 class="mt-3 text-3xl font-black tracking-[-0.04em] text-slate-950 sm:text-4xl"><%= editorial_inline_markdown(data["title"]) %></h2><% end %>
+    <% if data["description"].present? %><p class="mt-4 text-sm leading-6 text-slate-600 sm:text-base"><%= data["description"] %></p><% end %>
+  </div>
+
+  <div class="mt-9 grid overflow-hidden rounded-3xl border border-slate-200 bg-white md:grid-cols-3">
+    <% items.each do |item| %>
+      <a href="<%= item.fetch("href") %>" class="mark-language-card group relative flex min-h-64 flex-col items-center justify-center px-5 py-8 text-center transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-600" style="--language-color: <%= item.fetch("color") %>" data-language-card data-words="<%= item.fetch("words", []).to_json %>">
+        <span class="mark-language-glow" aria-hidden="true"></span>
+        <span class="relative z-10 text-[0.7rem] font-bold uppercase tracking-[0.3em] text-slate-400"><%= item.fetch("label") %></span>
+        <span class="relative z-10 mt-5 flex min-h-12 items-center text-3xl font-bold tracking-[-0.03em] sm:text-4xl" style="color: var(--language-color)"><span data-language-word></span><span class="mark-language-caret" aria-hidden="true"></span></span>
+        <span class="relative z-10 mt-5 font-mono text-xs text-slate-400"><%= item.fetch("domain") %></span>
+      </a>
+    <% end %>
+  </div>
+</section>
+
+<style>
+  .mark-language-card + .mark-language-card { border-top: 1px solid rgb(226 232 240); }
+  .mark-language-glow { position:absolute; inset:50% auto auto 50%; width:17rem; height:9rem; transform:translate(-50%,-50%); border-radius:9999px; background:var(--language-color); filter:blur(5rem); opacity:.13; pointer-events:none; }
+  .mark-language-caret { width:2px; height:1em; margin-left:4px; background:currentColor; animation:mark-language-blink 1s steps(2,end) infinite; }
+  @keyframes mark-language-blink { 50% { opacity:0; } }
+  @media (min-width:768px) { .mark-language-card + .mark-language-card { border-top:0; border-left:1px solid rgb(226 232 240); } }
+  @media (prefers-reduced-motion:reduce) { .mark-language-caret { animation:none; } }
+</style>
+
+<script>
+  (() => {
+    const initialize = () => document.querySelectorAll("[data-three-languages]").forEach((container) => {
+      if (container.dataset.initialized) return;
+      container.dataset.initialized = "true";
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      container.querySelectorAll("[data-language-card]").forEach((card, index) => {
+        const word = card.querySelector("[data-language-word]");
+        const words = JSON.parse(card.dataset.words || "[]");
+        if (!word || words.length === 0) return;
+        if (reducedMotion) { word.textContent = words[0]; return; }
+
+        let wordIndex = index % words.length;
+        let characterIndex = 0;
+        let deleting = false;
+        const tick = () => {
+          const current = words[wordIndex];
+          characterIndex += deleting ? -1 : 1;
+          word.textContent = current.slice(0, characterIndex);
+          let delay = deleting ? 35 : 65;
+          if (!deleting && characterIndex === current.length) { deleting = true; delay = 1500; }
+          else if (deleting && characterIndex === 0) { deleting = false; wordIndex = (wordIndex + 1) % words.length; delay = 350; }
+          window.setTimeout(tick, delay);
+        };
+        window.setTimeout(tick, index * 450 + 250);
+      });
+    });
+    document.addEventListener("turbo:load", initialize);
+    document.addEventListener("DOMContentLoaded", initialize);
+    initialize();
+  })();
+</script>

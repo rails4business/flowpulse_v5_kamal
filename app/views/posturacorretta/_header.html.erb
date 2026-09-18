@@ -14,7 +14,7 @@
     <% end %>
 
     <nav class="flex min-w-0 items-center justify-center gap-2 sm:gap-4" aria-label="Navigazione principale PosturaCorretta">
-      <%= link_to "Home", posturacorretta_path, aria: { current: ("page" if is_path) }, class: "border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm #{is_path ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950'}" %>
+      <%= link_to "Percorso", posturacorretta_path, aria: { current: ("page" if is_path) }, class: "border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm #{is_path ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950'}" %>
       <%= link_to "Lezioni", posturacorretta_student_dashboard_path, aria: { current: ("page" if is_program) }, class: "border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm #{is_program ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950'}" %>
       <details class="group relative [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
         <summary class="flex cursor-pointer list-none items-center gap-1 border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm <%= explore_active ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950' %>" aria-label="Apri Esplora">Esplora <span class="text-[9px] transition group-open:rotate-180">▼</span></summary>

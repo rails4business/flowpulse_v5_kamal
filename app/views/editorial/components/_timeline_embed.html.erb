@@ -1,0 +1,16 @@
+<% spreadsheet_id = data.fetch("source").to_s %>
+<% height = data.fetch("height", 650).to_i.clamp(360, 1_200) %>
+<% timeline_url = "https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=#{ERB::Util.url_encode(spreadsheet_id)}&lang=it&initial_zoom=2&height=#{height}" %>
+
+<section id="<%= component.fetch("id") %>" class="mx-auto max-w-6xl px-5 pb-16">
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <iframe
+      src="<%= timeline_url %>"
+      title="Timeline del percorso di Mark Postura"
+      width="100%"
+      height="<%= height %>"
+      allowfullscreen
+      frameborder="0"
+      class="block w-full"></iframe>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+<% active = local_assigns.fetch(:active, nil) %>
+<nav class="flex gap-1 overflow-x-auto border-b border-slate-200" aria-label="Lezioni PosturaCorretta">
+  <%= link_to "Programma", posturacorretta_student_dashboard_path,
+        class: "shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold transition #{active == :program ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-600 hover:border-blue-300 hover:text-blue-700'}",
+        aria: { current: ("page" if active == :program) } %>
+  <%= link_to "Insegnanti", posturacorretta_insegnanti_path,
+        class: "shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold transition #{active == :teachers ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-600 hover:border-blue-300 hover:text-blue-700'}",
+        aria: { current: ("page" if active == :teachers) } %>
+  <%= link_to "Centri", posturacorretta_lesson_centres_path,
+        class: "shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold transition #{active == :centres ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-600 hover:border-blue-300 hover:text-blue-700'}",
+        aria: { current: ("page" if active == :centres) } %>
+</nav>

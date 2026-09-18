@@ -75,6 +75,34 @@ class PosturacorrettaController < ApplicationController
     end
   end
 
+  # A dedicated lessons view: it deliberately does not inherit the old
+  # territory-directory page so Programma, Insegnanti and Centri stay coherent.
+  def lesson_centres
+    curriculum = AcademyCurriculum.load
+    @posturacorretta_centres = curriculum.fetch("locations", {}).values.select do |centre|
+      centre["city"] != "Online" && Array(centre["projects"]).include?("posturacorretta")
+    end
+    build_centres_map(@posturacorretta_centres)
+
+    render "posturacorretta/lesson_centres"
+  end
+
+  def centre
+    curriculum = AcademyCurriculum.load
+    @centre = curriculum.fetch("locations", {}).fetch(params[:slug], nil)
+    return redirect_to(posturacorretta_lesson_centres_path, alert: "Centro non trovato") unless @centre && Array(@centre["projects"]).include?("posturacorretta")
+
+    @centre_modules = curriculum.fetch("modules", []).select { |academy_module| @centre.fetch("active_modules", []).include?(academy_module.fetch("slug")) }
+    @centre_teachers = curriculum.fetch("teachers", {}).values.select do |teacher|
+      teacher.fetch("public", true) && (teacher.fetch("active_modules", []) & @centre.fetch("active_modules", [])).any?
+    end
+    @centre_tab = params[:tab].presence_in(%w[teachers schedule info]) || "teachers"
+    @centre_info_source = @centre["info_source"]
+    calendar_path = Rails.root.join("config/data/posturacorretta/programmi/calendario_lezioni_gruppo.yml")
+    calendar = calendar_path.file? ? YAML.safe_load_file(calendar_path, permitted_classes: [], aliases: false).to_h.fetch("calendar", {}) : {}
+    @centre_group_lessons = Array(calendar["group_lessons"]).select { |lesson| lesson["location"] == @centre.fetch("name") }
+  end
+
   def insegnanti
     curriculum = AcademyCurriculum.load
     @teachers = curriculum.fetch("teachers", {}).values.select { |teacher| teacher.fetch("public", true) }
@@ -89,9 +117,18 @@ class PosturacorrettaController < ApplicationController
     modules_by_slug = curriculum.fetch("modules", []).index_by { |mod| mod.fetch("slug") }
     @teacher_modules = @teacher.fetch("active_modules", []).filter_map { |slug| modules_by_slug[slug] }
     @teacher_centers = curriculum.fetch("locations", {}).values.select do |center|
-      Array(center["projects"]).include?("posturacorretta") &&
+      center["city"] != "Online" && Array(center["projects"]).include?("posturacorretta") &&
         (Array(center["active_modules"]) & @teacher.fetch("active_modules", [])).any?
     end
+    @teacher_tab = params[:tab].presence_in(%w[schedule centres bio training]) || "schedule"
+    @teacher_training = build_teacher_training(@teacher, teachers: curriculum.fetch("teachers", {}))
+    @teacher_founder_formation = build_founder_formation(@teacher, methodologies: curriculum.fetch("methodologies", {}))
+    @teacher_training_professional_access = Current.user&.superadmin_user? ||
+      Current.user&.role_assignments&.where(role: :operator, role_operator: "professionista")&.exists? || false
+    @teacher_bio = academy_markdown_source(@teacher["bio_source"])
+    calendar_path = Rails.root.join("config/data/posturacorretta/programmi/calendario_lezioni_gruppo.yml")
+    calendar = calendar_path.file? ? YAML.safe_load_file(calendar_path, permitted_classes: [], aliases: false).to_h.fetch("calendar", {}) : {}
+    @teacher_group_lessons = calendar["group_lessons"] || [calendar["group_lesson"]].compact
   end
 
   def professionisti
@@ -275,6 +312,50 @@ class PosturacorrettaController < ApplicationController
 
   private
 
+  def academy_markdown_source(source)
+    return "" if source.blank?
+
+    root = Rails.root.join("config/data/posturacorretta/accademia").cleanpath
+    path = root.join(source.to_s).cleanpath
+    return "" unless path.to_s.start_with?("#{root}/") && path.file?
+
+    path.read
+  end
+
+  def build_teacher_training(teacher, teachers:)
+    training = teacher.fetch("teacher_training", {})
+    program_path = Rails.root.join("config/data/posturacorretta/programmi/programma_lezioni_posturacorretta.yml")
+    program = program_path.file? ? YAML.safe_load_file(program_path, permitted_classes: [], aliases: false).to_h.dig("program") || {} : {}
+    lessons_by_course = Array(program["lessons"]).group_by { |lesson| lesson.dig("course", "key") }
+
+    training.merge(
+      "sections" => Array(training["sections"]).map do |section|
+        section.merge(
+          "courses" => Array(section["courses"]).map do |course|
+            course_key = course.fetch("course_key")
+            lessons = lessons_by_course.fetch(course_key, [])
+            course_teacher = teachers[course.fetch("teacher_slug", teacher.fetch("slug"))] || teacher
+            course.merge(
+              "title" => lessons.first&.dig("course", "title") || course_key.humanize,
+              "lessons" => lessons,
+              "teacher_name" => course_teacher.fetch("name")
+            )
+          end
+        )
+      end
+    )
+  end
+
+  def build_founder_formation(teacher, methodologies:)
+    formation = teacher.fetch("founder_formation", {})
+    formation.merge(
+      "entries" => Array(formation["entries"]).map do |entry|
+        methodology = methodologies[entry["methodology_slug"]]
+        entry.merge("methodology" => methodology)
+      end
+    )
+  end
+
   def throttled_public_listing
     payload = {
       event: "public_listing_throttled",
@@ -327,13 +408,31 @@ class PosturacorrettaController < ApplicationController
       professionals.each { |professional| sections[professional["slug"]] << "metodiche" }
     end
 
-    teachers_path = Rails.root.join("config/data/posturacorretta/accademia/teachers.yml")
-    if teachers_path.file?
-      teachers = YAML.safe_load_file(teachers_path, permitted_classes: [], aliases: false).to_h.fetch("teachers", {})
-      teachers.each_key { |slug| sections[slug] << "accademia" }
-    end
+    AcademyCurriculum.load.fetch("teachers", {}).each_key { |slug| sections[slug] << "accademia" }
 
     sections.transform_values(&:uniq)
+  end
+
+  def build_centres_map(centres)
+    points = centres.select { |centre| centre["latitude"].present? && centre["longitude"].present? }
+    return @centres_map_points = [] if points.empty?
+
+    latitudes = points.map { |centre| centre.fetch("latitude").to_f }
+    longitudes = points.map { |centre| centre.fetch("longitude").to_f }
+    latitude_padding = [((latitudes.max - latitudes.min) * 0.2), 0.02].max
+    longitude_padding = [((longitudes.max - longitudes.min) * 0.2), 0.02].max
+    @centres_map_bounds = {
+      south: latitudes.min - latitude_padding,
+      west: longitudes.min - longitude_padding,
+      north: latitudes.max + latitude_padding,
+      east: longitudes.max + longitude_padding
+    }
+    @centres_map_points = points.map do |centre|
+      centre.merge(
+        "map_left" => ((centre.fetch("longitude").to_f - @centres_map_bounds[:west]) / (@centres_map_bounds[:east] - @centres_map_bounds[:west]) * 100).round(2),
+        "map_top" => ((@centres_map_bounds[:north] - centre.fetch("latitude").to_f) / (@centres_map_bounds[:north] - @centres_map_bounds[:south]) * 100).round(2)
+      )
+    end
   end
 
   def append_professional_section(sections, relative_path, collection_key, slug_key, section)

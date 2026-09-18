@@ -46,7 +46,7 @@ class MarkposturaWeekPlan
     def group_lesson_weeks(include_private:)
       calendar = YAML.safe_load_file(GROUP_LESSONS_PATH, permitted_classes: [], aliases: false).fetch("calendar")
       first_monday = Date.iso8601(calendar.fetch("starts_on"))
-      lesson = calendar.fetch("group_lesson")
+      lessons = calendar["group_lessons"] || [calendar.fetch("group_lesson")]
 
       calendar.fetch("courses").each_with_index.to_h do |course, index|
         monday = first_monday + index.weeks
@@ -56,13 +56,15 @@ class MarkposturaWeekPlan
             "day" => "Lunedì", "start" => calendar.fetch("publication_time"), "end" => "09:30",
             "space" => "postura-gruppo", "title" => "Pubblicazione corso · #{course.fetch('title')}",
             "location" => "Online", "related_course" => course.fetch("content_id")
-          },
+          }
+        ]
+        entries.concat(lessons.map do |lesson|
           {
             "day" => lesson.fetch("day"), "start" => lesson.fetch("start"), "end" => lesson.fetch("end"),
             "space" => "postura-gruppo", "title" => "Lezione di gruppo · #{course.fetch('title')}",
             "location" => lesson.fetch("location"), "related_course" => course.fetch("content_id")
           }
-        ]
+        end)
         if include_private
           preparation = calendar.fetch("preparation")
           entries << {

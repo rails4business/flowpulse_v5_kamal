@@ -1,0 +1,27 @@
+schema_version: 1
+
+page:
+  key: timeline
+  owner_node_slug: markpostura
+  kind: page
+  renderer: builder
+  title: Timeline · Mark Postura
+  description: Il percorso di ricerca, formazione e progetti di Mark Postura.
+  status: published
+  visibility: public
+
+components:
+  - id: introduzione
+    type: section_header
+    variant: compact
+    data:
+      eyebrow: Mark Postura
+      title: Il percorso nel tempo
+      description: Formazione, esperienze e progetti che hanno contribuito a dare forma a PosturaCorretta.
+
+  - id: timeline
+    type: timeline_embed
+    variant: default
+    data:
+      source: 15u53Qb9xAY-6MeT_YC1Daevb8XTSeJGSPpg8Wyj9LuY
+      height: 650

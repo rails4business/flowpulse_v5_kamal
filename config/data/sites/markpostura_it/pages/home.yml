@@ -35,6 +35,33 @@ components:
       title: Prima l'essere umani
       body: "Sono Mark Postura. La mia ricerca attraversa postura, movimento, fisiologia, crescita personale, esoterismo, filosofia, capacità cognitive, natura, musica e tecnologia. Da questa ricerca nascono tre spazi distinti che condividono una stessa direzione: comprendere, l'essere umano per costruire strategie per la salute."
 
+  - id: tre-linguaggi
+    type: three_languages
+    variant: default
+    items:
+      - label: Fisiologia
+        domain: posturacorretta.org
+        color: "#2563eb"
+        href: /posturacorretta
+        words: [postura, fisiologia, salute, movimento, corpo, respirazione, equilibrio, prevenzione, formazione, professionisti]
+      - label: Stile di vita
+        domain: ilgiardinodelcorpo.it
+        color: "#7c3aed"
+        href: /il-giardino-del-corpo
+        words: [evoluzione, armonia, natura, ritmo, vita, filosofia, lettura, musica, meditazione, giardino]
+      - label: Tech
+        domain: rails4b.com
+        color: "#ea580c"
+        href: /rails4b
+        words: [tecnologia, business, digital, marketing, social, economia, codice, processi, automazione, rails]
+
+  - id: timeline
+    type: timeline_embed
+    variant: default
+    data:
+      source: 15u53Qb9xAY-6MeT_YC1Daevb8XTSeJGSPpg8Wyj9LuY
+      height: 650
+
   - id: progetti
     type: feature_grid
     variant: projects

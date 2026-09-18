@@ -50,7 +50,7 @@ module Admin
       assert_select "a[href='#{admin_didactic_source_path(path: "posturacorretta_titoli_sezioni_e_corsi.yml")}']"
       assert_select "a[href='#{admin_didactic_source_path(path: "posturacorretta_percorso.yml")}']"
       assert_select "a[href='#{admin_didactic_source_path(path: "posturacorretta_percorso_guidato.yml")}']"
-      assert_select "a[href='#{admin_didactic_source_path(path: "teachers.yml")}']"
+      assert_select "a[href='#{admin_didactic_source_path(path: "teachers/index.yml")}']"
       assert_select "a", text: /Lezione pratica PosturaCorretta in un mese/
 
       get admin_didactic_source_path(path: "attivita_percorso_guidato/lezione_pratica_primo_mese.yml")

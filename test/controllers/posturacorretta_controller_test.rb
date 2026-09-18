@@ -40,14 +40,35 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Insegnanti PosturaCorretta"
     assert_select "h2", text: "Mark Postura"
     assert_select "h2", text: "Davide Cattaneo", count: 0
-    assert_select "a[href='#{posturacorretta_insegnante_path("markpostura")}']", text: "Apri profilo insegnante →"
+    assert_select "a[href='#{posturacorretta_insegnante_path("markpostura")}'] img[alt='Foto profilo di Mark Postura']"
 
     get posturacorretta_insegnante_path("markpostura")
     assert_response :success
     assert_select "h1", text: "Mark Postura"
-    assert_select "h2", text: "Dove insegna"
-    assert_select "h2", text: "Scheda insegnante"
-    assert_select "h2", text: "Fondatore di PosturaCorretta e insegnante maestro"
+    assert_select "nav[aria-label='Profilo insegnante'] a:first-child", text: "Orario"
+    assert_select "h2", text: "Gruppi e appuntamenti"
+    assert_select "a[href='#{markpostura_weekplan_path}']", text: "Apri il Week Plan di MarkPostura →"
+
+    get posturacorretta_insegnante_path("markpostura", tab: "training")
+    assert_response :success
+    assert_select "h2", text: "Formazione insegnante PosturaCorretta"
+    assert_select "table[aria-label='Formazione del fondatore'] td", text: "2004–2007"
+    assert_select "a[href='#{posturacorretta_metodica_path("osteopatia")}']", text: "Osteopatia"
+    assert_select "h3", text: "Fondamenti"
+    assert_select "h3", text: "Recupero"
+    assert_select "table[aria-label='Inizia con PosturaCorretta'] th", text: "Insegnante"
+    assert_select "table[aria-label='Inizia con PosturaCorretta'] td", text: "Mark Postura"
+    assert_select "table[aria-label='Principi di Fisioterapia']"
+    assert_select "table[aria-label='Biomeccanica comportamentale (GDS)']"
+    assert_select "table[aria-label='Principi di Osteopatia']"
+    assert_select "table[aria-label='Corpo e Coscienza']"
+    assert_select "table[aria-label='Altre metodiche posturali']"
+    assert_select "h3", text: "Riconoscere il percorso svolto"
+    assert_select "[data-teacher-internship]", count: 0
+
+    get posturacorretta_insegnante_path("markpostura", tab: "centres")
+    assert_response :success
+    assert_select "a[href='#{posturacorretta_centre_path("centro-posturacorretta")}']", text: /Apri centro/
 
     get posturacorretta_insegnante_path("insegnante-inesistente")
     assert_redirected_to posturacorretta_insegnanti_path
@@ -62,15 +83,51 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows only PosturaCorretta places in its directory" do
-    get posturacorretta_percorsi_sul_territorio_path(tab: "places")
+    get posturacorretta_lesson_centres_path
     assert_response :success
-    assert_select "h2", text: "Centro PosturaCorretta"
-    assert_select "h2", text: "Studio Movimento"
+    assert_select "h1", text: "Centri PosturaCorretta"
+    assert_select "nav[aria-label='Lezioni PosturaCorretta']"
+    assert_select "section[aria-label='Modalità delle lezioni']", text: /Singolo/
+    assert_select "section[aria-label='Modalità delle lezioni']", text: /Gruppo/
+    assert_select "section[aria-label='Modalità delle lezioni']", text: /Online/
+    assert_select "section[aria-label='Mappa dei centri PosturaCorretta'] #posturacorretta-centres-map[data-centres]"
+    assert_select "iframe", count: 0
+    assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala"
+    assert_select "h2", text: "Studio Movimento", count: 0
+    assert_select "a[href='#{posturacorretta_centre_path("centro-posturacorretta")}']"
     assert_select "h2", text: "Giardino del Corpo", count: 0
+
+    get posturacorretta_centre_path("centro-posturacorretta")
+    assert_response :success
+    assert_select "h1", text: "Sede PosturaCorretta · Cascina Bordonala"
+    assert_select "nav[aria-label='Centro PosturaCorretta'] a", text: "Insegnanti"
+    assert_select "nav[aria-label='Centro PosturaCorretta'] a", text: "Orari"
+    assert_select "nav[aria-label='Centro PosturaCorretta'] a", text: "Info"
+    assert_select "h2", text: "Chi insegna qui"
+
+    get posturacorretta_centre_path("centro-posturacorretta", tab: "info")
+    assert_select "h2", text: "Come partecipare"
+    assert_select "section[aria-label='Mappa della sede'] #posturacorretta-centre-map[data-latitude][data-longitude]"
 
     get posturacorretta_percorsi_sul_territorio_path(tab: "people")
     assert_redirected_to posturacorretta_insegnanti_path
     assert_response :moved_permanently
+  end
+
+  test "shows the teacher YAML source only to a superadmin" do
+    get posturacorretta_insegnante_path("markpostura")
+    assert_select "aside[aria-label='Sorgente profilo insegnante']", count: 0
+
+    superadmin = User.create!(email_address: "teacher-source-superadmin@example.com", password: "password123", password_confirmation: "password123", superadmin: true, active_role: :superadmin)
+    post session_path, params: { email_address: superadmin.email_address, password: "password123" }
+    get posturacorretta_insegnante_path("markpostura")
+
+    assert_select "a[href='#{admin_didactic_source_path(path: "teachers/markpostura.yml")}']", text: "Dati insegnante · markpostura.yml"
+    assert_select "a[href='#{admin_didactic_source_path(path: "teachers/markpostura.md")}']", text: "Bio · markpostura.md"
+
+    get posturacorretta_insegnante_path("markpostura", tab: "training")
+    assert_select "[data-teacher-internship]", minimum: 1
+    assert_includes response.body, "Condurre una lezione individuale con un paziente, con supervisione."
   end
 
   test "renders professional collaboration guides from markdown" do

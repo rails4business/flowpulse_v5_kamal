@@ -30,7 +30,7 @@ module Admin
         {
           title: "Insegnanti e abilitazioni",
           description: "Insegnanti pubblici, candidati, corsi autorizzati, livelli e possibilità di supervisione.",
-          path: "teachers.yml",
+          path: "teachers/index.yml",
           kind: "YAML persone"
         }
       ]

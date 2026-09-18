@@ -4,8 +4,15 @@
 
 <div id="top" class="min-h-screen bg-white text-slate-900 antialiased">
   <main class="pb-16">
-    <div class="mx-auto mt-8 max-w-[1200px] px-6">
-      <section id="territorio" class="mx-auto max-w-[800px] scroll-mt-24">
+    <div class="mx-auto <%= @territory_tab == 'places' ? 'max-w-4xl px-4 py-8 sm:px-6 sm:py-10' : 'mt-8 max-w-[1200px] px-6' %>">
+      <section id="territorio" class="<%= @territory_tab == 'places' ? 'scroll-mt-24' : 'mx-auto max-w-[800px] scroll-mt-24' %>">
+        <% if @territory_tab == "places" %>
+          <%= render "posturacorretta/lessons_page_intro",
+                     active: :centres,
+                     title: "Centri",
+                     description: "I luoghi in cui possono partire le lezioni e i percorsi PosturaCorretta." %>
+        <% end %>
+        <% unless @territory_tab == "places" %>
         <div class="mb-8 border-b border-slate-200">
           <nav class="flex gap-1 overflow-x-auto" aria-label="Accesso al percorso">
             <%= link_to "Inizia", posturacorretta_percorso_path,
@@ -21,7 +28,9 @@
             <% end %>
           </nav>
         </div>
+        <% end %>
 
+        <% unless @territory_tab == "places" %>
         <div class="max-w-2xl">
           <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Il tuo percorso</p>
           <h1 class="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl"><%= @territory_tab == "people" ? "Scopri i professionisti" : "Centri e luoghi" %></h1>
@@ -35,6 +44,7 @@
             <% end %>
           </nav>
         </div>
+        <% end %>
 
         <% if @territory_tab == "people" %>
           <nav class="mt-5 flex gap-2 overflow-x-auto pb-1" aria-label="Filtra i professionisti">
@@ -90,12 +100,12 @@
             <% end %>
           </div>
         <% else %>
-          <div class="mt-8 grid gap-4 md:grid-cols-2">
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
             <% @territory_places.each do |place| %>
-              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= place.city.presence || "PosturaCorretta" %></p><h2 class="mt-2 text-xl font-black text-slate-950"><%= place.name %></h2><p class="mt-3 text-sm leading-6 text-slate-600"><%= place.summary %></p><p class="mt-4 text-sm font-medium text-slate-700"><%= place.address %></p></article>
+              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-300 hover:shadow-md sm:p-7"><p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= place.city.presence || "PosturaCorretta" %></p><h2 class="mt-2 text-xl font-black text-slate-950"><%= place.name %></h2><p class="mt-3 text-sm leading-6 text-slate-600"><%= place.summary %></p><p class="mt-4 text-sm font-medium text-slate-700"><%= place.address %></p></article>
             <% end %>
             <% @territory_catalog_places.each do |place| %>
-              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-300 hover:shadow-md sm:p-7">
                 <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= place["type"] == "Eventi" ? "Luogo ed esperienze" : "Centro e struttura" %></p>
                 <h2 class="mt-2 text-xl font-black text-slate-950"><%= place["name"] %></h2>
                 <p class="mt-3 text-sm font-semibold text-slate-700"><%= place["city"] %></p>

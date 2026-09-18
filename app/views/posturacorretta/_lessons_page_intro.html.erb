@@ -1,0 +1,12 @@
+<% active = local_assigns.fetch(:active) %>
+<% title = local_assigns.fetch(:title) %>
+<% description = local_assigns.fetch(:description) %>
+<section class="mx-auto max-w-4xl" aria-labelledby="lessons-page-title">
+  <%= render "posturacorretta/lessons_nav", active: active %>
+  <header class="border-b border-slate-200 py-7 sm:py-9">
+    <p class="text-xs font-bold uppercase tracking-[.16em] text-blue-700">Lezioni PosturaCorretta</p>
+    <h1 id="lessons-page-title" class="mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= title %></h1>
+    <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600"><%= description %></p>
+  </header>
+</section>
+

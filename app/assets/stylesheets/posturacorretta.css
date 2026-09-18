@@ -224,23 +224,19 @@
   font-weight: 900;
 }
 
-@media (display-mode: standalone) {
+@media (display-mode: standalone) and (max-width: 639px) {
   .posturacorretta-ui .pwa-hide-navigation,
   .posturacorretta-ui .pc-site-header { display: none !important; }
   .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
   .posturacorretta-ui .pc-mobile-app-nav { display: grid !important; }
 }
 
-.pwa-standalone .posturacorretta-ui .pwa-hide-navigation,
-.pwa-standalone .posturacorretta-ui .pc-site-header { display: none !important; }
-.pwa-standalone .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
-.pwa-standalone .posturacorretta-ui .pc-mobile-app-nav { display: grid !important; }
-
 @media (max-width: 639px) {
   .posturacorretta-ui { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
   /* Su mobile PosturaCorretta usa la barra app in basso: il nav desktop non
      deve restare visibile né nel browser né nella PWA installata. */
   .posturacorretta-ui .pwa-hide-navigation { display: none !important; }
+  .pwa-standalone .posturacorretta-ui .pc-mobile-app-nav { display: grid !important; }
   .posturacorretta-ui header.sticky { box-shadow: none; }
 
   .posturacorretta-ui main section[id="primi-corsi"] > header {
@@ -269,6 +265,11 @@
   .posturacorretta-ui article[id] > details > summary p { display: none; }
   .posturacorretta-ui article[id] > details > summary .mt-auto { padding-top: .6rem; }
   .posturacorretta-ui article[id] > details > summary .mt-auto > span:first-child { display: none; }
+}
+
+/* La barra app è un controllo mobile: sul desktop resta soltanto il nav alto. */
+@media (min-width: 640px) {
+  .posturacorretta-ui .pc-mobile-app-nav { display: none !important; }
 }
 
 @keyframes pc-course-aside-enter {

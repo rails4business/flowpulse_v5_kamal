@@ -167,6 +167,7 @@ class PosturacorrettaSemeController < ApplicationController
       include_scheduled: true
     )
     calendar_data = YAML.safe_load_file(GROUP_LESSON_CALENDAR_PATH, permitted_classes: [], aliases: false).fetch("calendar")
+    group_lesson = (calendar_data["group_lessons"] || [calendar_data.fetch("group_lesson")]).first
     first_release = Time.zone.parse("#{calendar_data.fetch('starts_on')} #{calendar_data.fetch('publication_time')}")
     @course_release_schedule = calendar_data.fetch("courses").each_with_index.to_h do |scheduled_course, index|
       [scheduled_course.fetch("content_id"), first_release + index.weeks]
@@ -178,10 +179,10 @@ class PosturacorrettaSemeController < ApplicationController
     @home_week_focus = focus_course.merge(
       "release_at" => @course_release_schedule.fetch(focus_content_id).iso8601,
       "locked" => @course_release_schedule.fetch(focus_content_id) > Time.current,
-      "lesson_day" => calendar_data.dig("group_lesson", "day"),
-      "lesson_start" => calendar_data.dig("group_lesson", "start"),
-      "lesson_end" => calendar_data.dig("group_lesson", "end"),
-      "lesson_location" => calendar_data.dig("group_lesson", "location")
+      "lesson_day" => group_lesson.fetch("day"),
+      "lesson_start" => group_lesson.fetch("start"),
+      "lesson_end" => group_lesson.fetch("end"),
+      "lesson_location" => group_lesson.fetch("location")
     )
     program_data = YAML.safe_load_file(GUIDED_PATH, permitted_classes: [], aliases: false)
     @program_by_course = hydrate_program_courses(program_data).index_by { |course| course.fetch("course_slug") }
@@ -505,15 +506,11 @@ class PosturacorrettaSemeController < ApplicationController
     program = YAML.safe_load_file(LESSON_PROGRAM_PATH, permitted_classes: [], aliases: false).fetch("program")
     @student_lessons_program_title = program.fetch("title")
     sheet_type = program.fetch("sheet_type", "practical")
-    # Nel file sorgente ogni capitolo mantiene i propri metadati, ma nella
-    # pagina Lezioni l'unità didattica è il corso: un corso completo occupa una
-    # sola settimana e mostra insieme tutti i suoi capitoli/schede.
-    grouped_lessons = program.fetch("lessons").group_by { |lesson| lesson.dig("course", "key") }
-    authored_lessons = grouped_lessons.values.each_with_index.map do |course_lessons, index|
-      first_lesson = course_lessons.first
-      chapter_links = course_lessons.flat_map do |lesson|
-        [lesson["theory_chapter"], *lesson.fetch("additional_chapters", [])].compact
-      end.map do |chapter|
+    # L'unità del programma è la lezione: dopo le prime due introduzioni,
+    # ciascuna riga corrisponde a un singolo capitolo/scheda, non al corso
+    # intero. Il corso resta come contesto editoriale della scheda.
+    @student_lessons_program = program.fetch("lessons").map do |lesson|
+      chapter_links = [lesson["theory_chapter"], *lesson.fetch("additional_chapters", [])].compact.map do |chapter|
         chapter.merge(
           "chapter_type" => sheet_type,
           "path" => posturacorretta_course_chapter_path(
@@ -522,29 +519,12 @@ class PosturacorrettaSemeController < ApplicationController
           )
         )
       end
-      first_lesson.merge(
-        "number" => index + 1,
-        "title" => first_lesson.dig("course", "title"),
+      release_at = @course_release_schedule[lesson.dig("course", "key")]
+      lesson.merge(
         "chapter_links" => chapter_links,
-        "practical_chapters" => course_lessons.flat_map { |lesson| lesson.fetch("practical_chapters", []) }
+        "release_at" => release_at&.iso8601,
+        "release_locked" => release_at.present? && release_at > Time.current
       )
-    end
-
-    authored_by_course = authored_lessons.index_by { |lesson| lesson.dig("course", "key") }
-    planned_courses = YAML.safe_load_file(GROUP_LESSON_CALENDAR_PATH, permitted_classes: [], aliases: false)
-      .dig("calendar", "courses")
-    @student_lessons_program = planned_courses.map do |course|
-      lesson = authored_by_course[course.fetch("content_id")] || {
-        "number" => course.fetch("number"),
-        "key" => course.fetch("content_id"),
-        "title" => course.fetch("title"),
-        "course" => { "key" => course.fetch("content_id"), "title" => course.fetch("title") },
-        "chapter_links" => [],
-        "practical_chapters" => [],
-        "items" => ["Capitoli e schede in preparazione"]
-      }
-      release_at = @course_release_schedule[course.fetch("content_id")]
-      lesson.merge("release_at" => release_at&.iso8601, "release_locked" => release_at.present? && release_at > Time.current)
     end
   end
 

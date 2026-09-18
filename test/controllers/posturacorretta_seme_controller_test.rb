@@ -51,7 +51,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "#capitoli span", text: "Capitolo 01"
     assert_select "#capitoli ol.divide-y", count: 1
     assert_select "nav[aria-label='Indice percorso'] a[aria-current='page']", text: /Inizia con PosturaCorretta/
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Home"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Percorso"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
       assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     end
@@ -115,7 +115,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details.pc-app-account summary", text: /Profilo/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] .pc-app-account-menu a[href*='session/new']", text: "Accedi"
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] a.pc-app-logo img", count: 1
-    assert_select "#pc-week-focus-title", text: "Inizia con PosturaCorretta"
+    assert_select "#pc-week-focus-title", count: 0
     assert_select "link[rel='manifest'][href='#{posturacorretta_pwa_manifest_path}']"
     assert_select "h3", text: "Inizia con PosturaCorretta"
     assert_select "h3", text: "Postura e Fisiologia"
@@ -212,7 +212,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
       get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "prima-scheda-esercizi-video")
 
       assert_response :success
-      assert_select "h1", text: "Inizia con PosturaCorretta"
+      assert_select "h1", text: "Prima scheda esercizi e video"
       assert_select "span", text: "Libero"
       assert_includes response.body, "Prima scheda esercizi e video"
       assert_select "p", text: "Capitolo del corso"
@@ -220,7 +220,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
       assert_select "nav[aria-label='Navigazione del corso']", count: 0
       assert_select "#seme-aside #course-aside-title", count: 0
       assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
-      assert_select "nav[aria-label='Indice del corso'] h2", text: "Indice dei capitoli"
+      assert_select "button[data-mobile-aside-target='toggle']", count: 0
       assert_select "nav[aria-label='Indice del corso'] a[aria-current='page'] span", text: "Capitolo 05"
       assert_select "#participation-title", count: 0
       assert_select "nav[aria-label='Incontri, lezioni e capitoli']", count: 0
@@ -243,7 +243,9 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
   test "shows the student dashboard frontend" do
     get posturacorretta_seme_student_dashboard_path
     assert_response :success
-    assert_select "h2", text: "Programmi attivi"
+    assert_select "nav[aria-label='Lezioni PosturaCorretta'] a", text: "Programma"
+    assert_select "nav[aria-label='Lezioni PosturaCorretta'] a[href='#{posturacorretta_insegnanti_path}']", text: "Insegnanti"
+    assert_select "h2", text: "Programmi attivi", count: 0
 
     user = create_test_user("seme-student@example.com")
     sign_in(user)
@@ -254,12 +256,12 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "p", text: "Gruppo"
     assert_select "[role='progressbar']", count: 0
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Lezioni"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Home"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Percorso"
     assert_select "h1", text: "Programma lezioni", count: 1
-    assert_select "ol[aria-label='Lezioni del programma studenti'] > li", count: 40
+    assert_select "ol[aria-label='Lezioni del programma studenti'] > li", count: 36
     assert_select "h2", text: "Inizia con PosturaCorretta"
     assert_select "h2", text: "Postura e Fisiologia"
-    assert_select "h2", text: "Rinforzo muscolare"
+    assert_select "h2", text: "Igiene Posturale · Punti di tensione"
     assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'igiene-posturale', capitolo: 'punti-di-tensione')}']", count: 0
     assert_select "span", text: /Punti di tensione/
     assert_includes response.body, "Prima scheda esercizi e video"
@@ -316,7 +318,8 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_student_dashboard_path
 
     assert_response :success
-    assert_select "h2", text: "Programmi attivi"
+    assert_select "nav[aria-label='Lezioni PosturaCorretta'] a[href='#{posturacorretta_lesson_centres_path}']", text: "Centri"
+    assert_select "h2", text: "Programmi attivi", count: 0
   end
 
   test "shows the teacher dashboard frontend preview" do
@@ -337,7 +340,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
       get posturacorretta_course_chapter_path(corso: "igiene-posturale", capitolo: "mobilita-articolare")
 
       assert_response :success
-      assert_select "h1", text: "Igiene Posturale"
+      assert_select "h1", text: "Mobilità articolare"
       assert_includes response.body, "Mobilità articolare"
       assert_select "span", text: "Libero"
       assert_select "#advanced-title", count: 0

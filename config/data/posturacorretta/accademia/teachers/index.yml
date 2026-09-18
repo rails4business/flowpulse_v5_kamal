@@ -1,0 +1,21 @@
+# Indice degli insegnanti PosturaCorretta. Ogni profilo vive nel proprio file.
+teachers:
+  - markpostura
+
+# Persone già in possesso di un attestato, ma non ancora pubblicate come
+# insegnanti prenotabili. Il loro profilo verrà creato al momento dell'attivazione.
+teacher_candidates:
+  davide-cattaneo:
+    slug: davide-cattaneo
+    name: Davide Cattaneo
+    status: profile_pending
+    certifications:
+      - course_slug: igiene-posturale
+        level: base
+  antonio-ventura:
+    slug: antonio-ventura
+    name: Antonio Ventura
+    status: profile_pending
+    certifications:
+      - course_slug: igiene-posturale
+        level: base

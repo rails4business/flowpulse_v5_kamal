@@ -21,6 +21,18 @@ module Editorial
         required_data: %w[body],
         items: false
       ),
+      "timeline_embed" => Definition.new(
+        partial: "editorial/components/timeline_embed",
+        variants: %w[default],
+        required_data: %w[source],
+        items: false
+      ),
+      "three_languages" => Definition.new(
+        partial: "editorial/components/three_languages",
+        variants: %w[default],
+        required_data: [],
+        items: true
+      ),
       "image" => Definition.new(
         partial: "editorial/components/image",
         variants: %w[default portrait cover],

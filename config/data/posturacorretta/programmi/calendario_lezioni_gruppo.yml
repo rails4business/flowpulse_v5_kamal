@@ -1,8 +1,9 @@
 schema_version: 1
 
-# Una settimana corrisponde a un corso completo. I capitoli e le schede del
-# corso vengono svolti nella stessa lezione settimanale: non occupano settimane
-# separate.
+# Le lezioni di gruppo si svolgono il venerdì. Il mercoledì resta libero per
+# dirette, registrazioni, preparazione dei contenuti, domiciliari e percorsi
+# individuali. Le pause del calendario scolastico saranno aggiunte qui prima
+# della pubblicazione definitiva delle date.
 calendar:
   key: calendario-lezioni-gruppo-posturacorretta
   title: Calendario lezioni di gruppo PosturaCorretta
@@ -13,11 +14,15 @@ calendar:
     start: "14:00"
     end: "17:00"
     visibility: private
-  group_lesson:
-    day: Mercoledì
-    start: "15:00"
-    end: "16:00"
-    location: Da definire
+  group_lessons:
+    - day: Venerdì
+      start: "15:00"
+      end: "16:00"
+      location: Da definire
+    - day: Venerdì
+      start: "20:00"
+      end: "21:00"
+      location: Da definire
   youtube_live:
     # La diretta entra nel calendario pubblico appena vengono scelti giorno e
     # orario. I campi vuoti evitano di pubblicare un appuntamento inventato.
@@ -28,9 +33,15 @@ calendar:
   active_programs:
     - professional_slug: markpostura
       professional_name: Mark Postura
-      day: Mercoledì
+      day: Venerdì
       start: "15:00"
       end: "16:00"
+      location: Da definire
+    - professional_slug: markpostura
+      professional_name: Mark Postura
+      day: Venerdì
+      start: "20:00"
+      end: "21:00"
       location: Da definire
   courses:
     - { number: 1, area_key: primi-corsi, content_id: inizia-con-posturacorretta, title: "Inizia con PosturaCorretta" }

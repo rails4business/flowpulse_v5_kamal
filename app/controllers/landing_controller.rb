@@ -89,6 +89,10 @@ class LandingController < ApplicationController
     render_editorial_site("markpostura_it")
   end
 
+  def markpostura_timeline
+    render_editorial_site("markpostura_it", path: "/timeline")
+  end
+
   def markpostura_weekplan
     @markpostura = MarkposturaWeekPlan.load(include_private: Current.user&.superadmin_user? || false)
   end

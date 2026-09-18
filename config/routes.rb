@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional
   get "percorso-integrato/luoghi" => "brands/percorso_integrato#places", as: :percorso_integrato_places
   get "markpostura" => "landing#markpostura", as: :markpostura
+  get "markpostura/timeline" => "landing#markpostura_timeline", as: :markpostura_timeline
   get "markpostura/weekplan" => "landing#markpostura_weekplan", as: :markpostura_weekplan
   get "markpostura/eventi" => "landing#markpostura_events", as: :markpostura_events
   get "markpostura/contenuti" => "landing#markpostura_contents", as: :markpostura_contents
@@ -71,6 +72,8 @@ Rails.application.routes.draw do
   get "posturacorretta/seme/percorsi-integrati" => "posturacorretta_seme#integrated_paths", as: :posturacorretta_seme_integrated_paths
   get "posturacorretta/seme/dashboard/studente" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_seme_student_dashboard
   get "posturacorretta/lezioni" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_student_dashboard
+  get "posturacorretta/lezioni/centri" => "brands/posturacorretta#lesson_centres", as: :posturacorretta_lesson_centres
+  get "posturacorretta/centri/:slug" => "brands/posturacorretta#centre", as: :posturacorretta_centre
   get "posturacorretta/lezioni/appuntamenti" => "posturacorretta_seme#dashboard_appointments", as: :posturacorretta_student_appointments
   get "posturacorretta/dashboard" => redirect("/posturacorretta/lezioni", status: 301)
   get "posturacorretta/dashboard/appuntamenti" => redirect("/posturacorretta/lezioni/appuntamenti", status: 301)

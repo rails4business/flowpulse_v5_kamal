@@ -8,11 +8,16 @@ program:
     sia individualmente. Date, orari, luoghi, insegnanti e prenotazioni vengono
     aggiunti soltanto quando viene programmato l'incontro reale.
   status: pilot
-  # La lezione visibile coincide con il corso settimanale. Le righe sottostanti
-  # conservano ancora i collegamenti dettagliati ai capitoli e vengono
-  # raggruppate per course.key dalla pagina Lezioni.
+  # Ogni riga è una lezione. Le prime due sono introduttive e possono avere più
+  # schede; dalle successive, ogni lezione corrisponde a un capitolo/scheda.
+  # course.key conserva solo il contesto editoriale del capitolo.
   lesson_count_planned: 40
   sheet_type: practical
+  introductory_lessons:
+    - number: 1
+      reusable: true
+    - number: 2
+      reusable: true
 
   lessons:
     - number: 1

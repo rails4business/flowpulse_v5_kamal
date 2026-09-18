@@ -1,9 +1,15 @@
 centers:
   centro-posturacorretta:
     slug: centro-posturacorretta
-    name: "Centro PosturaCorretta"
-    city: "Brescia"
+    name: "Sede PosturaCorretta · Cascina Bordonala"
+    city: "Viadana di Calvisano · Brescia"
+    address: "Cascina Bordonala, Via A. Vespucci n. 18, 25012 Viadana di Calvisano BS"
+    # Coordinate verificate dell'ingresso della sede.
+    latitude: 45.370258325631326
+    longitude: 10.3439998397135
+    directions_url: "https://www.google.com/maps/search/?api=1&query=Cascina+Bordonala%2C+Via+A.+Vespucci+18%2C+Viadana+di+Calvisano%2C+25012+BS"
     type: "In presenza"
+    info_source: centers/centro-posturacorretta.md
     projects: [posturacorretta]
     active_modules:
       - introduzione
@@ -16,8 +22,10 @@ centers:
     slug: studio-movimento
     name: "Studio Movimento"
     city: "Calvisano"
+    latitude: 45.3489
+    longitude: 10.3458
     type: "In presenza"
-    projects: [posturacorretta, percorso-integrato]
+    projects: [percorso-integrato]
     active_modules:
       - igiene-posturale
       - biomeccanica-comportamentale-gds

@@ -1,0 +1,116 @@
+<% content_for :title, "#{@centre.fetch("name")} · PosturaCorretta" %>
+<% content_for :description, "Centro PosturaCorretta a #{@centre.fetch("city")}." %>
+<% content_for :landing_nav do %><%= render "posturacorretta/header" %><% end %>
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<% end %>
+
+<% tabs = [["teachers", "Insegnanti"], ["schedule", "Orari"], ["info", "Info"]] %>
+<main class="min-h-screen bg-white px-4 py-8 sm:px-6 sm:py-10">
+  <div class="mx-auto max-w-4xl">
+    <%= link_to "← Tutti i centri", posturacorretta_lesson_centres_path, class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
+
+    <section class="mt-5 border-b border-slate-200 pb-7 sm:pb-9">
+      <p class="text-xs font-black uppercase tracking-[.15em] text-blue-700"><%= @centre.fetch("type") %></p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl"><%= @centre.fetch("name") %></h1>
+      <p class="mt-3 text-base text-slate-600"><%= @centre.fetch("city") %></p>
+      <% if @centre["address"].present? %><p class="mt-1 text-sm text-slate-600"><%= @centre.fetch("address") %></p><% end %>
+      <% if @centre["directions_url"].present? || (@centre["latitude"].present? && @centre["longitude"].present?) %>
+        <% directions_url = @centre["directions_url"].presence || "https://www.openstreetmap.org/?mlat=#{@centre.fetch("latitude")}&mlon=#{@centre.fetch("longitude")}#map=15/#{@centre.fetch("latitude")}/#{@centre.fetch("longitude")}" %>
+        <%= link_to "Apri indicazioni sulla mappa →", directions_url, target: "_blank", rel: "noopener noreferrer", class: "mt-4 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900 hover:underline" %>
+      <% end %>
+    </section>
+
+    <nav class="flex gap-1 overflow-x-auto border-b border-slate-200" aria-label="Centro PosturaCorretta">
+      <% tabs.each do |key, label| %>
+        <%= link_to label, posturacorretta_centre_path(@centre.fetch("slug"), tab: key), class: "shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold transition #{@centre_tab == key ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-600 hover:border-blue-300 hover:text-blue-700'}", aria: { current: ("page" if @centre_tab == key) } %>
+      <% end %>
+    </nav>
+
+    <% case @centre_tab %>
+    <% when "teachers" %>
+      <section class="mt-6" aria-labelledby="centre-teachers-title">
+        <p class="text-xs font-black uppercase tracking-[.15em] text-blue-700">Insegnanti</p>
+        <h2 id="centre-teachers-title" class="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Chi insegna qui</h2>
+        <% if @centre_teachers.any? %>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+            <% @centre_teachers.each do |teacher| %>
+              <%= link_to posturacorretta_insegnante_path(teacher.fetch("slug")), class: "flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md" do %>
+                <img src="<%= teacher.fetch("img") %>" alt="Foto profilo di <%= teacher.fetch("name") %>" class="size-14 rounded-full border border-blue-100 object-cover">
+                <span><span class="block font-bold text-slate-950"><%= teacher.fetch("name") %></span><span class="mt-1 block text-sm text-slate-600"><%= teacher.fetch("role") %></span></span>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-600">Gli insegnanti attivi saranno pubblicati qui.</p>
+        <% end %>
+      </section>
+    <% when "schedule" %>
+      <section class="mt-6" aria-labelledby="centre-schedule-title">
+        <p class="text-xs font-black uppercase tracking-[.15em] text-blue-700">Orari</p>
+        <h2 id="centre-schedule-title" class="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Gruppi e appuntamenti</h2>
+        <% if @centre_group_lessons.any? %>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2"><% @centre_group_lessons.each do |lesson| %><article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p class="text-xs font-black uppercase tracking-[.14em] text-blue-700">Lezione di gruppo</p><p class="mt-2 text-lg font-bold text-slate-950"><%= lesson.fetch("day") %> · <%= lesson.fetch("start") %>–<%= lesson.fetch("end") %></p></article><% end %></div>
+        <% else %>
+          <p class="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm leading-6 text-slate-600">I prossimi gruppi saranno pubblicati qui quando verranno fissati per questa sede.</p>
+        <% end %>
+        <article class="mt-4 rounded-2xl border border-slate-200 bg-white p-5"><p class="text-xs font-black uppercase tracking-[.14em] text-slate-500">Appuntamenti individuali</p><p class="mt-2 text-sm leading-6 text-slate-600">Gli appuntamenti individuali si definiscono insieme alla persona.</p></article>
+      </section>
+    <% when "info" %>
+      <section class="mt-6" aria-labelledby="centre-info-title">
+        <p class="text-xs font-black uppercase tracking-[.15em] text-blue-700">Info</p>
+        <h2 id="centre-info-title" class="mt-1 text-2xl font-semibold tracking-tight text-slate-950">La sede</h2>
+        <% if @centre_info_source.present? %><div class="mt-5 max-w-3xl text-base leading-7 text-slate-600 [&_h2]:mt-7 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-slate-950 [&_p+p]:mt-4"><%= academy_markdown(@centre_info_source) %></div><% end %>
+        <% if @centre["latitude"].present? && @centre["longitude"].present? %>
+          <section class="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm" aria-label="Mappa della sede">
+            <div id="posturacorretta-centre-map" class="h-72 w-full sm:h-80" data-latitude="<%= @centre.fetch("latitude") %>" data-longitude="<%= @centre.fetch("longitude") %>" data-name="<%= @centre.fetch("name") %>" data-turbo-cache="false"></div>
+          </section>
+        <% end %>
+      </section>
+    <% end %>
+
+    <% if Current.user&.superadmin_user? && @centre_info_source.present? %>
+      <aside class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5" aria-label="Sorgente informazioni centro">
+        <p class="text-xs font-black uppercase tracking-[.14em] text-amber-800">Solo superadmin</p>
+        <%= link_to "Info centro · #{@centre_info_source.split('/').last}", admin_didactic_source_path(path: @centre_info_source), class: "mt-2 inline-flex text-sm font-bold text-blue-800 hover:underline" %>
+      </aside>
+    <% end %>
+  </div>
+</main>
+
+<%= render "posturacorretta/footer" %>
+
+<script>
+  (() => {
+    let leafletAttempts = 0
+    const initialiseCentreMap = () => {
+      const element = document.getElementById("posturacorretta-centre-map")
+      if (!element) return
+      if (!window.L) {
+        leafletAttempts += 1
+        if (leafletAttempts < 30) window.setTimeout(initialiseCentreMap, 100)
+        return
+      }
+      if (element._posturacorrettaCentreMap) { element._posturacorrettaCentreMap.invalidateSize(); return }
+
+      const coordinates = [Number(element.dataset.latitude), Number(element.dataset.longitude)]
+      const map = L.map(element, { scrollWheelZoom: false }).setView(coordinates, 15)
+      element._posturacorrettaCentreMap = map
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors", maxZoom: 19 }).addTo(map)
+      L.marker(coordinates).addTo(map).bindPopup(element.dataset.name).openPopup()
+      window.requestAnimationFrame(() => map.invalidateSize())
+    }
+
+    const destroyCentreMap = () => {
+      const element = document.getElementById("posturacorretta-centre-map")
+      if (!element?._posturacorrettaCentreMap) return
+      element._posturacorrettaCentreMap.remove()
+      delete element._posturacorrettaCentreMap
+    }
+
+    document.addEventListener("turbo:load", initialiseCentreMap)
+    document.addEventListener("turbo:before-cache", destroyCentreMap)
+    document.addEventListener("DOMContentLoaded", initialiseCentreMap)
+  })()
+</script>

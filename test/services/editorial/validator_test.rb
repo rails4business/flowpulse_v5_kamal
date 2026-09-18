@@ -8,8 +8,8 @@ module Editorial
       assert result.valid?, result.errors.join("\n")
       assert_empty result.errors
       assert_equal 1, result.counts.fetch(:sites)
-      assert_equal 1, result.counts.fetch(:pages)
-      assert_equal 1, result.counts.fetch(:mounts)
+      assert_equal 2, result.counts.fetch(:pages)
+      assert_equal 2, result.counts.fetch(:mounts)
     end
 
     test "component registry rejects unknown component types" do

@@ -8,6 +8,18 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
     assert_select "#progetti a", count: 3
     assert_select "#ingresso li", count: 4
+    assert_select "#tre-linguaggi [data-language-card]", count: 3
+    assert_select "#tre-linguaggi", text: /Fisiologia/
+    assert_select "#timeline iframe[src*='cdn.knightlab.com/libs/timeline3']"
+  end
+
+  test "MarkPostura exposes its TimelineJS page" do
+    get markpostura_timeline_url
+
+    assert_response :success
+    assert_select "h2", text: "Il percorso nel tempo"
+    assert_select "iframe[src*='cdn.knightlab.com/libs/timeline3']"
+    assert_includes response.body, "15u53Qb9xAY-6MeT_YC1Daevb8XTSeJGSPpg8Wyj9LuY"
   end
 
   test "MarkPostura exposes a dedicated shareable Week Plan" do
