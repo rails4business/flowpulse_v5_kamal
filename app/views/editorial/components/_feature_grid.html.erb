@@ -4,7 +4,11 @@
   <div class="mt-10 grid gap-5 <%= variant == 'hierarchy' ? 'lg:grid-cols-1' : 'lg:grid-cols-3' %>">
     <% items.each_with_index do |item, index| %>
       <% card = capture do %>
-        <% if item["image"].present? %><div class="aspect-video overflow-hidden bg-slate-100"><%= image_tag item.dig("image", "url"), alt: item.dig("image", "alt"), class: "h-full w-full object-cover transition duration-500 group-hover:scale-105", loading: "lazy" %></div><% end %>
+        <% if item["image"].present? %>
+          <% image = item.fetch("image") %>
+          <% srcset = Array(image["srcset"]).filter_map { |source| "#{asset_path(source.fetch("url"))} #{source.fetch("width")}w" }.join(", ") %>
+          <div class="aspect-video overflow-hidden bg-slate-100"><%= image_tag image.fetch("url"), alt: image["alt"], class: "h-full w-full object-cover transition duration-500 group-hover:scale-105", loading: "lazy", srcset: srcset.presence, sizes: image["sizes"] %></div>
+        <% end %>
         <div class="p-6 <%= 'text-center' if variant == 'hierarchy' %>">
           <% if item["eyebrow"].present? %><p class="text-xs font-black uppercase tracking-[0.18em] text-amber-700"><%= item["eyebrow"] %></p><% end %>
           <h3 class="mt-3 text-xl font-black"><%= editorial_inline_markdown(item.fetch("title")) %></h3>

@@ -10,8 +10,10 @@
     <% end %>
   </div>
   <% if data["image"].present? %>
+    <% image = data.fetch("image") %>
+    <% srcset = Array(image["srcset"]).filter_map { |source| "#{asset_path(source.fetch("url"))} #{source.fetch("width")}w" }.join(", ") %>
     <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 p-2 shadow-lg <%= compact ? 'lg:order-1' : '' %>">
-      <%= image_tag data.dig("image", "url"), alt: data.dig("image", "alt"), class: "aspect-[4/5] h-full w-full rounded-[1.6rem] object-cover", loading: compact ? "lazy" : "eager" %>
+      <%= image_tag image.fetch("url"), alt: image["alt"], class: "aspect-[4/5] h-full w-full rounded-[1.6rem] object-cover", loading: compact ? "lazy" : "eager", srcset: srcset.presence, sizes: image["sizes"] %>
     </div>
   <% end %>
 </section>

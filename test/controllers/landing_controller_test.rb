@@ -10,7 +10,9 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "#ingresso li", count: 4
     assert_select "#tre-linguaggi [data-language-card]", count: 3
     assert_select "#tre-linguaggi", text: /Fisiologia/
-    assert_select "#timeline iframe[src*='cdn.knightlab.com/libs/timeline3']"
+    assert_select "#timeline iframe", count: 0
+    assert_select "#timeline [data-timeline-deferred]"
+    assert_select "#timeline button[data-timeline-trigger]", text: "Carica ora"
   end
 
   test "MarkPostura exposes its TimelineJS page" do

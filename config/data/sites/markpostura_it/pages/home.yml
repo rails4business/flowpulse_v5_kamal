@@ -22,8 +22,14 @@ components:
               - Si studia poi l'essere umano nel suo insieme per scoprire che il nostro corpo può essere visto come un giardino, possiamo coltivare abilità inserendo piccole abitudini nel nostro ambiente e costruendo il nostro stile di vita. 
               - Usando gli strumenti digitali che servono per trasformare le idee in processi e progetti!
       image:
-        url: markpostura/hero_mark_psotura.webp
+        url: markpostura/hero_markpostura-720.webp
         alt: Mark Postura
+        sizes: "(min-width: 1024px) 42vw, 100vw"
+        srcset:
+          - url: markpostura/hero_markpostura-480.webp
+            width: 480
+          - url: markpostura/hero_markpostura-720.webp
+            width: 720
       action:
         label: Cosa ti interessa di più?
         href: "#progetti"
@@ -55,13 +61,6 @@ components:
         href: /rails4b
         words: [tecnologia, business, digital, marketing, social, economia, codice, processi, automazione, rails]
 
-  - id: timeline
-    type: timeline_embed
-    variant: default
-    data:
-      source: 15u53Qb9xAY-6MeT_YC1Daevb8XTSeJGSPpg8Wyj9LuY
-      height: 650
-
   - id: progetti
     type: feature_grid
     variant: projects
@@ -74,8 +73,14 @@ components:
         title: PosturaCorretta
         description: come funziona il tuo corpo? Percorsi individuali e di gruppo, appuntamenti e formazione per professionisti.
         image:
-          url: markpostura/percorso_salute.webp
+          url: markpostura/percorso-salute-768.webp
           alt: Percorso PosturaCorretta
+          sizes: "(min-width: 1024px) 33vw, 100vw"
+          srcset:
+            - url: markpostura/percorso-salute-480.webp
+              width: 480
+            - url: markpostura/percorso-salute-768.webp
+              width: 768
         href: /posturacorretta
       - id: ilgiardinodelcorpo
         eyebrow: 02 · Natura, musica e Spontaneità
@@ -166,3 +171,11 @@ components:
           href: https://wa.me/393792891488
         - label: Invia una email
           href: mailto:markpostura@gmail.com
+
+  - id: timeline
+    type: timeline_embed
+    variant: default
+    data:
+      source: 15u53Qb9xAY-6MeT_YC1Daevb8XTSeJGSPpg8Wyj9LuY
+      height: 650
+      deferred: true

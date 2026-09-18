@@ -9,9 +9,9 @@
     <% items.each do |item| %>
       <a href="<%= item.fetch("href") %>" class="mark-language-card group relative flex min-h-64 flex-col items-center justify-center px-5 py-8 text-center transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-600" style="--language-color: <%= item.fetch("color") %>" data-language-card data-words="<%= item.fetch("words", []).to_json %>">
         <span class="mark-language-glow" aria-hidden="true"></span>
-        <span class="relative z-10 text-[0.7rem] font-bold uppercase tracking-[0.3em] text-slate-400"><%= item.fetch("label") %></span>
+        <span class="relative z-10 text-[0.7rem] font-bold uppercase tracking-[0.3em] text-slate-700"><%= item.fetch("label") %></span>
         <span class="relative z-10 mt-5 flex min-h-12 items-center text-3xl font-bold tracking-[-0.03em] sm:text-4xl" style="color: var(--language-color)"><span data-language-word></span><span class="mark-language-caret" aria-hidden="true"></span></span>
-        <span class="relative z-10 mt-5 font-mono text-xs text-slate-400"><%= item.fetch("domain") %></span>
+        <span class="relative z-10 mt-5 font-mono text-xs text-slate-700"><%= item.fetch("domain") %></span>
       </a>
     <% end %>
   </div>
