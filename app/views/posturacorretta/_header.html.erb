@@ -1,7 +1,7 @@
 <% 
   is_path = request.path == posturacorretta_path || request.path.start_with?("/posturacorretta/corsi/")
   is_contents = request.path.start_with?(posturacorretta_contenuti_path)
-  is_program = request.path.start_with?(posturacorretta_student_dashboard_path) || request.path.start_with?(posturacorretta_seme_student_dashboard_path)
+  is_program = request.path.start_with?(posturacorretta_student_dashboard_path)
   is_appointments = request.path.start_with?(posturacorretta_student_appointments_path)
   explore_active = !is_path && !is_program && !is_appointments
 %>

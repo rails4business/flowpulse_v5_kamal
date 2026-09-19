@@ -2,7 +2,7 @@
   <div class="mx-auto max-w-screen-xl px-4 py-6 sm:px-6 lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-8 lg:px-8 lg:py-8">
     <aside id="seme-aside" class="pc-course-aside-enter hidden overflow-y-auto border-r border-slate-200 bg-white p-5 shadow-2xl lg:sticky lg:top-24 lg:block lg:h-auto lg:max-h-[calc(100vh-7rem)] lg:w-auto lg:max-w-none lg:overscroll-contain lg:rounded-xl lg:border lg:shadow-sm [scrollbar-color:rgb(203_213_225)_transparent] [scrollbar-width:thin]">
       <div data-action="click->mobile-aside#closeFromNavigation">
-        <%= render "posturacorretta_seme/curriculum_aside", active: :path, course: @selected_course, lesson: @lesson %>
+        <%= render "posturacorretta/learning/curriculum_aside", active: :path, course: @selected_course, lesson: @lesson %>
       </div>
     </aside>
 

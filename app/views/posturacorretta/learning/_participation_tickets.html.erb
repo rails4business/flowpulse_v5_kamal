@@ -16,7 +16,7 @@
         </div>
         <h3 class="mt-5 text-lg font-semibold text-slate-950"><%= ticket.fetch(:title) %></h3>
         <p class="mt-2 text-sm leading-6 text-slate-600"><%= ticket.fetch(:description) %></p>
-        <%= link_to "Seleziona modalità", posturacorretta_seme_student_dashboard_path(participation: ticket.fetch(:key)), class: "mt-6 inline-flex justify-center rounded-xl #{ticket[:featured] ? "bg-indigo-700 text-white hover:bg-indigo-800" : "border border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:text-indigo-700"} px-4 py-2.5 text-sm font-semibold" %>
+        <%= link_to "Seleziona modalità", posturacorretta_student_dashboard_path(participation: ticket.fetch(:key)), class: "mt-6 inline-flex justify-center rounded-xl #{ticket[:featured] ? "bg-indigo-700 text-white hover:bg-indigo-800" : "border border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:text-indigo-700"} px-4 py-2.5 text-sm font-semibold" %>
       </article>
     <% end %>
   </div>

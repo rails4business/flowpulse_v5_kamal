@@ -2,6 +2,8 @@ class PosturacorrettaController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
 
+  TRIATHLON_HANDOUT_PATH = Rails.root.join("docs/handouts/Presentazione PosturaCorretta.pdf").freeze
+
   # These listings load and filter a sizeable YAML catalog. Keep abusive crawls from
   # occupying every Puma thread before the expensive callbacks below are reached.
   rate_limit to: 24, within: 1.minute, only: %i[contenuti metodiche], by: -> { request.remote_ip }, with: -> { throttled_public_listing }
@@ -11,8 +13,17 @@ class PosturacorrettaController < ApplicationController
   before_action :load_methodologies, only: %i[metodiche metodica]
   before_action :load_projects, only: %i[progetti progetto]
   before_action :load_catalog, only: %i[contenuti corsi articolo]
+  before_action :require_authentication, only: :profile
   after_action :log_public_listing_request, only: %i[contenuti metodiche]
   helper_method :posturacorretta_public_professionals
+
+  def triathlon_handout
+    send_file TRIATHLON_HANDOUT_PATH, type: "application/pdf", disposition: "inline"
+  end
+
+  def profile
+    @posturacorretta_profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
+  end
 
   def accademia
     return unless params[:tab] == "guide"

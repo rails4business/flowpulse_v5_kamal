@@ -41,37 +41,18 @@ components:
       title: Prima l'essere umani
       body: "Sono Mark Postura. La mia ricerca attraversa postura, movimento, fisiologia, crescita personale, esoterismo, filosofia, capacità cognitive, natura, musica e tecnologia. Da questa ricerca nascono tre spazi distinti che condividono una stessa direzione: comprendere, l'essere umano per costruire strategie per la salute."
 
-  - id: tre-linguaggi
+  - id: progetti
     type: three_languages
     variant: default
+    data:
+      title: 3 spazi per crescere
+      description: Nuove idee richiedono nuove conoscenze e abilità.
     items:
       - label: Fisiologia
         domain: posturacorretta.org
         color: "#2563eb"
         href: /posturacorretta
-        words: [postura, fisiologia, salute, movimento, corpo, respirazione, equilibrio, prevenzione, formazione, professionisti]
-      - label: Stile di vita
-        domain: ilgiardinodelcorpo.it
-        color: "#7c3aed"
-        href: /il-giardino-del-corpo
-        words: [evoluzione, armonia, natura, ritmo, vita, filosofia, lettura, musica, meditazione, giardino]
-      - label: Tech
-        domain: rails4b.com
-        color: "#ea580c"
-        href: /rails4b
-        words: [tecnologia, business, digital, marketing, social, economia, codice, processi, automazione, rails]
-
-  - id: progetti
-    type: feature_grid
-    variant: projects
-    data:
-      title: 3 spazi per crescere
-      description: Nuove idee richiedono nuove conoscenze e abilità 
-    items:
-      - id: posturacorretta
-        eyebrow: 01 · Corpo e formazione
-        title: PosturaCorretta
-        description: come funziona il tuo corpo? Percorsi individuali e di gruppo, appuntamenti e formazione per professionisti.
+        description: Come funziona il tuo corpo? Percorsi individuali e di gruppo, appuntamenti e formazione per professionisti.
         image:
           url: markpostura/percorso-salute-768.webp
           alt: Percorso PosturaCorretta
@@ -81,23 +62,38 @@ components:
               width: 480
             - url: markpostura/percorso-salute-768.webp
               width: 768
-        href: /posturacorretta
-      - id: ilgiardinodelcorpo
-        eyebrow: 02 · Natura, musica e Spontaneità
-        title: Il Giardino del Corpo
-        description: Come l'ambiente e le relazioni in cui viviamo impattano il nostro stile di vita? Incontri ed esperienze sul valore, la ricchezza, la spiritualità e il mondo in cui viviamo.
-        image:
-          url: markpostura/eventi_esperienze.webp
-          alt: Eventi ed esperienze nella natura
+        words: [postura, fisiologia, salute, movimento, corpo, respirazione, equilibrio, prevenzione, formazione, professionisti]
+      - label: Stile di vita
+        domain: ilgiardinodelcorpo.it
+        color: "#7c3aed"
         href: /il-giardino-del-corpo
-      - id: rails4business
-        eyebrow: 03 · Software e processi
-        title: Rails4Business
-        description: Come posso trasformare le idee in processi e progetti? La software house che costruisce Flowpulse e aiuta i progetti a organizzare processi, contenuti e strumenti digitali.
+        description: Incontri ed esperienze su ambiente, relazioni, natura, valore, ricchezza e spiritualità.
         image:
-          url: markpostura/progetti_e_software.webp
-          alt: Progetti e software Rails4Business
+          url: markpostura/eventi-esperienze-768.webp
+          alt: Eventi ed esperienze nella natura
+          sizes: "(min-width: 1024px) 33vw, 100vw"
+          srcset:
+            - url: markpostura/eventi-esperienze-480.webp
+              width: 480
+            - url: markpostura/eventi-esperienze-768.webp
+              width: 768
+        words: [evoluzione, armonia, natura, ritmo, vita, filosofia, lettura, musica, meditazione, giardino]
+      - label: Tech
+        domain: rails4b.com
+        color: "#ea580c"
         href: /rails4b
+
+        description: La software house che costruisce Flowpulse e aiuta a organizzare processi, contenuti e strumenti digitali.
+        image:
+          url: markpostura/progetti-software-768.webp
+          alt: Progetti e software Rails4Business
+          sizes: "(min-width: 1024px) 33vw, 100vw"
+          srcset:
+            - url: markpostura/progetti-software-480.webp
+              width: 480
+            - url: markpostura/progetti-software-768.webp
+              width: 768
+        words: [tecnologia, business, digital, marketing, social, economia, codice, processi, automazione, rails]
 
   - id: organizzazione
     type: feature_grid

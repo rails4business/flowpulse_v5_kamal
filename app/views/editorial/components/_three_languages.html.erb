@@ -7,11 +7,20 @@
 
   <div class="mt-9 grid overflow-hidden rounded-3xl border border-slate-200 bg-white md:grid-cols-3">
     <% items.each do |item| %>
-      <a href="<%= item.fetch("href") %>" class="mark-language-card group relative flex min-h-64 flex-col items-center justify-center px-5 py-8 text-center transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-600" style="--language-color: <%= item.fetch("color") %>" data-language-card data-words="<%= item.fetch("words", []).to_json %>">
+      <a href="<%= item.fetch("href") %>" class="mark-language-card group relative flex min-h-64 flex-col overflow-hidden transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-600" style="--language-color: <%= item.fetch("color") %>" data-language-card data-words="<%= item.fetch("words", []).to_json %>">
+        <% if item["image"].present? %>
+          <% image = item.fetch("image") %>
+          <% srcset = Array(image["srcset"]).filter_map { |source| "#{asset_path(source.fetch("url"))} #{source.fetch("width")}w" }.join(", ") %>
+          <div class="relative z-10 aspect-video overflow-hidden bg-slate-100"><%= image_tag image.fetch("url"), alt: image["alt"], class: "h-full w-full object-cover transition duration-500 group-hover:scale-105", loading: "lazy", srcset: srcset.presence, sizes: image["sizes"] %></div>
+        <% end %>
+        <div class="relative z-10 flex flex-1 flex-col px-6 py-7">
         <span class="mark-language-glow" aria-hidden="true"></span>
-        <span class="relative z-10 text-[0.7rem] font-bold uppercase tracking-[0.3em] text-slate-700"><%= item.fetch("label") %></span>
-        <span class="relative z-10 mt-5 flex min-h-12 items-center text-3xl font-bold tracking-[-0.03em] sm:text-4xl" style="color: var(--language-color)"><span data-language-word></span><span class="mark-language-caret" aria-hidden="true"></span></span>
-        <span class="relative z-10 mt-5 font-mono text-xs text-slate-700"><%= item.fetch("domain") %></span>
+          <span class="relative z-10 text-[0.7rem] font-bold uppercase tracking-[0.22em] text-slate-700"><%= item.fetch("label") %></span>
+          <span class="mark-language-dots relative z-10 mt-4 flex gap-1.5" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="relative z-10 mt-3 flex min-h-9 items-center text-2xl font-bold tracking-[-0.03em]" style="color: var(--language-color)"><span data-language-word></span><span class="mark-language-caret" aria-hidden="true"></span></span>
+          <% if item["description"].present? %><p class="relative z-10 mt-4 text-sm leading-6 text-slate-700"><%= item["description"] %></p><% end %>
+          <span class="relative z-10 mt-auto pt-6 font-mono text-xs text-slate-700"><%= item.fetch("domain") %> →</span>
+        </div>
       </a>
     <% end %>
   </div>
@@ -20,10 +29,14 @@
 <style>
   .mark-language-card + .mark-language-card { border-top: 1px solid rgb(226 232 240); }
   .mark-language-glow { position:absolute; inset:50% auto auto 50%; width:17rem; height:9rem; transform:translate(-50%,-50%); border-radius:9999px; background:var(--language-color); filter:blur(5rem); opacity:.13; pointer-events:none; }
+  .mark-language-dots i { display:block; width:.38rem; height:.38rem; border-radius:9999px; background:var(--language-color); animation:mark-language-dot 1.2s ease-in-out infinite; }
+  .mark-language-dots i:nth-child(2) { animation-delay:.16s; }
+  .mark-language-dots i:nth-child(3) { animation-delay:.32s; }
   .mark-language-caret { width:2px; height:1em; margin-left:4px; background:currentColor; animation:mark-language-blink 1s steps(2,end) infinite; }
   @keyframes mark-language-blink { 50% { opacity:0; } }
+  @keyframes mark-language-dot { 50% { transform:translateY(-.2rem); opacity:.4; } }
   @media (min-width:768px) { .mark-language-card + .mark-language-card { border-top:0; border-left:1px solid rgb(226 232 240); } }
-  @media (prefers-reduced-motion:reduce) { .mark-language-caret { animation:none; } }
+  @media (prefers-reduced-motion:reduce) { .mark-language-caret, .mark-language-dots i { animation:none; } }
 </style>
 
 <script>

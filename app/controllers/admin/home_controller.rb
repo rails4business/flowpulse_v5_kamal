@@ -7,7 +7,7 @@ module Admin
     before_action :require_superadmin!, only: [:elenco_pagine, :percorso_insegnanti, :set_override]
 
     def percorso_insegnanti
-      sheets_root = PosturacorrettaSemeController::GUIDED_ACTIVITIES_ROOT
+      sheets_root = Posturacorretta::LearningController::GUIDED_ACTIVITIES_ROOT
       @didactic_sources = [
         {
           title: "Sezioni e corsi",

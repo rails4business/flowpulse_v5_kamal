@@ -78,8 +78,8 @@ sequenceDiagram
 
 ### 1. Controller e Action che generano la Homepage
 - **File coinvolti**:
-  - [`config/routes.rb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/config/routes.rb#L11-L18): per `posturacorretta.org` la rotta principale è vincolata all'host e punta a `posturacorretta_seme#index`. Per `flowpulse.net` e altri domini punta a `domains#show`.
-  - [`app/controllers/posturacorretta_seme_controller.rb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/controllers/posturacorretta_seme_controller.rb#L17-L22):
+  - [`config/routes.rb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/config/routes.rb): per `posturacorretta.org` la rotta principale è vincolata all'host e punta al controller didattico `posturacorretta/learning#index`. Per `flowpulse.net` e altri domini punta a `domains#show`.
+  - [`app/controllers/posturacorretta/learning_controller.rb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/controllers/posturacorretta/learning_controller.rb):
     ```ruby
     def index
       load_curriculum_sources
@@ -105,7 +105,7 @@ sequenceDiagram
 ### 3. Callback, Helper e Partial durante il Rendering
 - **File coinvolti**:
   - [`app/views/layouts/landing.html.erb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/views/layouts/landing.html.erb#L4-L10): Calcolo dei metadati OpenGraph, favicon e titoli. Tutto eseguito in memoria.
-  - [`app/views/posturacorretta_seme/_percorso.html.erb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/views/posturacorretta_seme/_percorso.html.erb#L8-L51): Generazione di 4-6 schede corso tramite lambda e loop.
+  - [`app/views/posturacorretta/learning/_percorso.html.erb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/views/posturacorretta/learning/_percorso.html.erb): Generazione di 4-6 schede corso tramite lambda e loop.
 - **Verifica**: Nessun partial esegue query remote o script bloccanti. Il rendering ERB completo impiega circa 10-15 ms.
 
 ---
@@ -118,14 +118,14 @@ sequenceDiagram
 
 ### 5. Accesso a Filesystem, Storage e Parsing YAML
 - **File coinvolti**:
-  - [`app/controllers/posturacorretta_seme_controller.rb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/controllers/posturacorretta_seme_controller.rb#L129-L155):
+  - [`app/controllers/posturacorretta/learning_controller.rb`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/controllers/posturacorretta/learning_controller.rb):
     - `load_curriculum_sources` legge 5 file YAML a ogni richiesta:
       - `config/data/posturacorretta/guide/indice.yml`
       - `config/data/posturacorretta/accademia/academy.yml`
       - `config/data/posturacorretta/accademia/posturacorretta_titoli_sezioni_e_corsi.yml`
       - `config/data/posturacorretta/accademia/posturacorretta_percorso.yml`
       - `config/data/posturacorretta/accademia/posturacorretta_percorso_guidato.yml`
-    - [`app/controllers/posturacorretta_seme_controller.rb:L290-L302`](file:///Users/hselectronics/Documents/Code/flowpulse_v_5/app/controllers/posturacorretta_seme_controller.rb#L290-L302): all'interno di `hydrate_program_step`, carica a runtime ulteriori file YAML da `attivita_percorso_guidato/`.
+    - `Posturacorretta::LearningController#hydrate_program_step`: carica a runtime ulteriori file YAML da `attivita_percorso_guidato/`.
 - **Impatto misurato**:
   - Su macchina locale il parsing YAML di `load_curriculum_sources` impiega **~69 ms**.
   - Su un VPS Hetzner condiviso con I/O virtualizzato, questo impiega tra i **70 ms e i 180 ms** di tempo CPU.
@@ -267,9 +267,9 @@ Ecco la tabella operativa ordinata per impatto decrescente sul TTFB:
   ```
 
 ### Priorità 3 (MEDIA): Memoizzare o Cacciare le Fonti Dati YAML
-- **PROBLEMA**: `PosturacorrettaSemeController#load_curriculum_sources` ricarica e deserializza da disco 5-10 file YAML su ogni singola richiesta HTTP (~70ms sprecati).
+- **PROBLEMA**: `Posturacorretta::LearningController#load_curriculum_sources` ricarica e deserializza da disco 5-10 file YAML su ogni singola richiesta HTTP (~70ms sprecati).
 - **COME VERIFICARLO**:
-  `bin/rails runner "t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC); PosturacorrettaSemeController.new.send(:load_curriculum_sources); puts (Process.clock_gettime(Process::CLOCK_MONOTONIC)-t0)*1000"`
+  `bin/rails runner "t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC); Posturacorretta::LearningController.new.send(:load_curriculum_sources); puts (Process.clock_gettime(Process::CLOCK_MONOTONIC)-t0)*1000"`
 - **RISULTATO ATTESO**: Tempo di esecuzione action < 2 ms invece di 70 ms.
 - **EVENTUALE SOLUZIONE**:
   In ambiente `production` (dove il codice non viene ricaricato: `config.enable_reloading = false`), caricare i dati YAML una sola volta all'avvio in costanti o tramite `Rails.cache.fetch("curriculum_sources")` invece di invocare `YAML.safe_load_file` ad ogni GET.
@@ -285,7 +285,7 @@ Ecco la tabella operativa ordinata per impatto decrescente sul TTFB:
 ### Priorità 5 (OTTIMIZZAZIONE): Introdurre Fragment Caching sull'HTML della Homepage
 - **PROBLEMA**: La homepage genera decine di blocchi HTML identici per ogni visitatore senza sfruttare `solid_cache_store`.
 - **COME VERIFICARLO**:
-  Verificare che in `app/views/posturacorretta_seme/_percorso.html.erb` non ci sono direttive di cache.
+  Verificare che in `app/views/posturacorretta/learning/_percorso.html.erb` non ci sono direttive di cache.
 - **RISULTATO ATTESO**: Rendering della view istantaneo (< 1 ms).
 - **EVENTUALE SOLUZIONE**:
   Inserire il blocco `<% cache ["home_percorso", @didactic_courses.map { |c| c["slug"] }] do %>` attorno alla sezione principale dei corsi.

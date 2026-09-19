@@ -8,8 +8,8 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
     assert_select "#progetti a", count: 3
     assert_select "#ingresso li", count: 4
-    assert_select "#tre-linguaggi [data-language-card]", count: 3
-    assert_select "#tre-linguaggi", text: /Fisiologia/
+    assert_select "#progetti [data-language-card]", count: 3
+    assert_select "#progetti", text: /Fisiologia/
     assert_select "#timeline iframe", count: 0
     assert_select "#timeline [data-timeline-deferred]"
     assert_select "#timeline button[data-timeline-trigger]", text: "Carica ora"

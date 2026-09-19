@@ -1,12 +1,48 @@
 <% navigation = site.fetch("navigation", {}) %>
+<% navigation_items = Array(navigation["items"]) %>
 <nav class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur" aria-label="Navigazione principale">
   <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
     <a href="#inizio" class="text-sm font-black uppercase tracking-[0.2em] text-amber-700"><%= navigation.fetch("label", site.fetch("key")) %></a>
-    <div class="flex items-center gap-4 text-sm font-semibold text-slate-600">
-      <% Array(navigation["items"]).each do |item| %>
+    <div class="editorial-desktop-nav items-center gap-4 text-sm font-semibold text-slate-600">
+      <% navigation_items.each do |item| %>
         <% href = item["anchor"].present? ? "##{item['anchor']}" : item.fetch("route", "#") %>
         <a href="<%= href %>" class="hover:text-slate-950"><%= item.fetch("label") %></a>
       <% end %>
     </div>
+    <details class="editorial-mobile-nav relative" data-editorial-mobile-nav>
+      <summary class="cursor-pointer list-none rounded-full border border-slate-300 px-4 py-2 text-sm font-bold text-slate-800 marker:content-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600">
+        Menu <span aria-hidden="true">⌄</span>
+      </summary>
+      <div class="absolute right-0 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white py-2 shadow-lg">
+        <% navigation_items.each do |item| %>
+          <% href = item["anchor"].present? ? "##{item['anchor']}" : item.fetch("route", "#") %>
+          <a href="<%= href %>" class="block px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-950"><%= item.fetch("label") %></a>
+        <% end %>
+      </div>
+    </details>
   </div>
 </nav>
+
+<style>
+  .editorial-desktop-nav { display: flex; }
+  .editorial-mobile-nav { display: none; }
+  @media (max-width: 767px) {
+    .editorial-desktop-nav { display: none; }
+    .editorial-mobile-nav { display: block; }
+  }
+</style>
+
+<script>
+  (() => {
+    if (window.__editorialMobileNavigation) return;
+    window.__editorialMobileNavigation = true;
+    document.addEventListener("click", (event) => {
+      document.querySelectorAll("[data-editorial-mobile-nav][open]").forEach((menu) => {
+        if (!menu.contains(event.target)) menu.removeAttribute("open");
+      });
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") document.querySelectorAll("[data-editorial-mobile-nav][open]").forEach((menu) => menu.removeAttribute("open"));
+    });
+  })();
+</script>

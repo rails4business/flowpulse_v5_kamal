@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   # Public Routes
   constraints ->(request) { request.host == "posturacorretta.org" } do
-    get "/", to: "posturacorretta_seme#index", as: :posturacorretta_domain_root
+    get "/", to: "posturacorretta/learning#index", as: :posturacorretta_domain_root
   end
   constraints ->(request) { %w[ilgiardinodelcorpo.it www.ilgiardinodelcorpo.it].include?(request.host) } do
     get "/", to: "landing#giardino_del_corpo", as: :giardino_del_corpo_domain_root
@@ -55,29 +55,30 @@ Rails.application.routes.draw do
   get "markpostura/contenuti/:slug" => "landing#markpostura_content", as: :markpostura_content
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
-  get "posturacorretta" => "posturacorretta_seme#index", as: :posturacorretta
-  get "posturacorretta/profilo" => "posturacorretta_seme#profile", as: :posturacorretta_profile
-  get "posturacorretta/presentazione-posturacorretta" => "posturacorretta_seme#triathlon_handout", as: :posturacorretta_presentation
+  get "posturacorretta" => "posturacorretta/learning#index", as: :posturacorretta
+  get "posturacorretta/profilo" => "posturacorretta#profile", as: :posturacorretta_profile
+  get "posturacorretta/presentazione-posturacorretta" => "posturacorretta#triathlon_handout", as: :posturacorretta_presentation
   get "posturacorretta/guida-triatlon" => redirect("/posturacorretta/presentazione-posturacorretta", status: 301)
-  get "posturacorretta/corsi/:corso" => "posturacorretta_seme#course", as: :posturacorretta_course
-  get "posturacorretta/corsi/:corso/lezioni" => "posturacorretta_seme#programma", as: :posturacorretta_course_lessons
-  get "posturacorretta/corsi/:corso/lezioni/:attivita" => "posturacorretta_seme#programma", as: :posturacorretta_course_lesson
-  get "posturacorretta/corsi/:corso/capitoli" => "posturacorretta_seme#percorso_educativo", as: :posturacorretta_course_chapters
-  get "posturacorretta/corsi/:corso/capitoli/:capitolo" => "posturacorretta_seme#percorso_educativo", as: :posturacorretta_course_chapter
-  get "posturacorretta/programma" => "posturacorretta_seme#legacy_programma", as: :posturacorretta_programma
-  get "posturacorretta/percorso-educativo" => "posturacorretta_seme#legacy_percorso_educativo", as: :posturacorretta_percorso_educativo
+  get "posturacorretta/corsi/:corso" => "posturacorretta/learning#course", as: :posturacorretta_course
+  get "posturacorretta/corsi/:corso/lezioni" => "posturacorretta/learning#programma", as: :posturacorretta_course_lessons
+  get "posturacorretta/corsi/:corso/lezioni/:attivita" => "posturacorretta/learning#programma", as: :posturacorretta_course_lesson
+  get "posturacorretta/corsi/:corso/capitoli" => "posturacorretta/learning#percorso_educativo", as: :posturacorretta_course_chapters
+  get "posturacorretta/corsi/:corso/capitoli/:capitolo" => "posturacorretta/learning#percorso_educativo", as: :posturacorretta_course_chapter
+  get "posturacorretta/programma" => "posturacorretta/learning#legacy_programma", as: :posturacorretta_programma
+  get "posturacorretta/percorso-educativo" => "posturacorretta/learning#legacy_percorso_educativo", as: :posturacorretta_percorso_educativo
   get "posturacorretta/tre-progetti" => "brands/posturacorretta#three_projects", as: :posturacorretta_three_projects
-  get "posturacorretta/seme" => "posturacorretta_seme#show", as: :posturacorretta_seme
-  get "posturacorretta/seme/percorso" => "posturacorretta_seme#percorso", as: :posturacorretta_seme_percorso
-  get "posturacorretta/seme/percorsi-integrati" => "posturacorretta_seme#integrated_paths", as: :posturacorretta_seme_integrated_paths
-  get "posturacorretta/seme/dashboard/studente" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_seme_student_dashboard
-  get "posturacorretta/lezioni" => "posturacorretta_seme#dashboard_student", as: :posturacorretta_student_dashboard
+  get "posturacorretta/seme" => "posturacorretta/learning#show", as: :posturacorretta_seme
+  get "posturacorretta/seme/percorso" => "posturacorretta/learning#percorso", as: :posturacorretta_seme_percorso
+  get "posturacorretta/seme/percorsi-integrati" => redirect("/posturacorretta", status: 301), as: :posturacorretta_seme_integrated_paths
+  get "posturacorretta/seme/dashboard/studente" => redirect("/posturacorretta/lezioni", status: 301), as: :posturacorretta_seme_student_dashboard
+  get "posturacorretta/lezioni" => "posturacorretta/learning#dashboard_student", as: :posturacorretta_student_dashboard
   get "posturacorretta/lezioni/centri" => "brands/posturacorretta#lesson_centres", as: :posturacorretta_lesson_centres
   get "posturacorretta/centri/:slug" => "brands/posturacorretta#centre", as: :posturacorretta_centre
-  get "posturacorretta/lezioni/appuntamenti" => "posturacorretta_seme#dashboard_appointments", as: :posturacorretta_student_appointments
+  get "posturacorretta/lezioni/appuntamenti" => "posturacorretta/learning#dashboard_appointments", as: :posturacorretta_student_appointments
   get "posturacorretta/dashboard" => redirect("/posturacorretta/lezioni", status: 301)
   get "posturacorretta/dashboard/appuntamenti" => redirect("/posturacorretta/lezioni/appuntamenti", status: 301)
-  get "posturacorretta/seme/dashboard/insegnante" => "posturacorretta_seme#dashboard_teacher", as: :posturacorretta_seme_teacher_dashboard
+  get "posturacorretta/area-insegnanti" => "posturacorretta/learning#dashboard_teacher", as: :posturacorretta_teacher_dashboard
+  get "posturacorretta/seme/dashboard/insegnante" => redirect("/posturacorretta/area-insegnanti", status: 301), as: :posturacorretta_seme_teacher_dashboard
   get "posturacorretta/primo-mese" => "brands/posturacorretta#primo_mese", as: :posturacorretta_primo_mese
   get "posturacorretta/guida" => "brands/posturacorretta#guide", as: :posturacorretta_guida
   get "posturacorretta/accademia" => "brands/posturacorretta#accademia", as: :posturacorretta_accademia

@@ -2,13 +2,13 @@
 <% context_mode = @lesson ? "capitoli" : (@selected_program_step ? "programma" : nil) %>
 <% content_for :landing_nav do %>
   <% if @dashboard_kind == "student" %>
-    <%= render "posturacorretta_seme/student_dashboard_header" %>
+    <%= render "posturacorretta/learning/student_dashboard_header" %>
   <% elsif @course_overview %>
-    <%= render "posturacorretta_seme/student_dashboard_header", active_item: :percorso %>
+    <%= render "posturacorretta/learning/student_dashboard_header", active_item: :percorso %>
   <% elsif context_course && context_mode %>
-    <%= render "posturacorretta_seme/course_reader_header", course: context_course, active: context_mode %>
+    <%= render "posturacorretta/learning/course_reader_header", course: context_course, active: context_mode %>
   <% else %>
-    <%= render "posturacorretta_seme/header" %>
+    <%= render "posturacorretta/learning/header" %>
   <% end %>
 <% end %>
 <% content_for :title, @lesson ? "#{@lesson.fetch("title")} · PosturaCorretta" : (@dashboard_kind ? "#{@dashboard_kind == 'teacher' ? 'Insegnante' : 'Lezioni'} · PosturaCorretta" : (@integrated_paths_page ? "Percorsi integrati · PosturaCorretta" : (@direct_courses ? "Percorso PosturaCorretta · Educazione alla salute" : "Percorso PosturaCorretta · Educazione alla salute"))) %>
@@ -16,21 +16,21 @@
 
 <div class="min-h-screen bg-[#F6F7F4] text-slate-800">
   <% if @dashboard_kind == "student" %>
-    <%= render "posturacorretta_seme/student_dashboard" %>
+    <%= render "posturacorretta/learning/student_dashboard" %>
   <% elsif @dashboard_kind == "teacher" %>
-    <%= render "posturacorretta_seme/teacher_dashboard" %>
+    <%= render "posturacorretta/learning/teacher_dashboard" %>
   <% elsif @lesson %>
-    <%= render "posturacorretta_seme/lesson" %>
+    <%= render "posturacorretta/learning/lesson" %>
   <% elsif @course_overview %>
-    <%= render "posturacorretta_seme/course_overview" %>
+    <%= render "posturacorretta/learning/course_overview" %>
   <% elsif @selected_course %>
-    <%= render "posturacorretta_seme/course_index" %>
+    <%= render "posturacorretta/learning/course_index" %>
   <% elsif @integrated_paths_page %>
-    <%= render "posturacorretta_seme/integrated_paths" %>
+    <%= render "posturacorretta/learning/integrated_paths" %>
   <% elsif @direct_courses %>
-    <%= render "posturacorretta_seme/percorso" %>
+    <%= render "posturacorretta/learning/percorso" %>
   <% else %>
-    <%= render "posturacorretta_seme/home" %>
+    <%= render "posturacorretta/learning/home" %>
   <% end %>
 </div>
 <!--div class="chat chat-start">

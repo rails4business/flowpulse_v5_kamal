@@ -1,7 +1,8 @@
-class PosturacorrettaSemeController < ApplicationController
+module Posturacorretta
+  class LearningController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
-  before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher, :profile]
+  before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher]
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
   ACADEMY_PATH = Rails.root.join("config/data/posturacorretta/accademia/academy.yml").freeze
@@ -11,7 +12,6 @@ class PosturacorrettaSemeController < ApplicationController
   GROUP_LESSON_CALENDAR_PATH = Rails.root.join("config/data/posturacorretta/programmi/calendario_lezioni_gruppo.yml").freeze
   SCHEDULED_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/accademia/lezioni_programmate.yml").freeze
   PRACTICAL_SHEETS_ROOT = Rails.root.join("config/data/posturacorretta/accademia/schede_pratiche").freeze
-  TRIATHLON_HANDOUT_PATH = Rails.root.join("docs/handouts/Presentazione PosturaCorretta.pdf").freeze
   GUIDED_ACTIVITIES_ROOT = Rails.root.join("config/data/posturacorretta/accademia/attivita_percorso_guidato").freeze
   LEARNING_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso.yml").freeze
   CONTENT_CATALOG_PATH = Rails.root.join("config/data/posturacorretta/contenuti/contents.yml").freeze
@@ -22,10 +22,6 @@ class PosturacorrettaSemeController < ApplicationController
     @courses = build_courses
     @direct_courses = @didactic_courses
     render :show
-  end
-
-  def triathlon_handout
-    send_file TRIATHLON_HANDOUT_PATH, type: "application/pdf", disposition: "inline"
   end
 
   def programma
@@ -145,10 +141,6 @@ class PosturacorrettaSemeController < ApplicationController
       Current.user&.role_assignments&.where(role: :operator, role_operator: "insegnante")&.exists? ||
       false
     render :show
-  end
-
-  def profile
-    @posturacorretta_profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
   end
 
   private
@@ -597,5 +589,6 @@ class PosturacorrettaSemeController < ApplicationController
     return unless lesson_path.to_s.start_with?(CONTENT_ROOT.to_s) && lesson_path.file?
 
     @lesson_content = lesson_path.read.sub(/\n<!--\s*advanced\s*-->\s*\n/i, "\n")
+  end
   end
 end

@@ -1,11 +1,11 @@
 require "test_helper"
 
-class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
+class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   test "keeps path references content tree program activities and legacy learning sources separate" do
-    titles = YAML.safe_load_file(PosturacorrettaSemeController::DIDACTIC_PATH, permitted_classes: [], aliases: false)
-    contents = YAML.safe_load_file(PosturacorrettaSemeController::CONTENT_CATALOG_PATH, permitted_classes: [], aliases: false)
-    program = YAML.safe_load_file(PosturacorrettaSemeController::GUIDED_PATH, permitted_classes: [], aliases: false)
-    learning = YAML.safe_load_file(PosturacorrettaSemeController::LEARNING_PATH, permitted_classes: [], aliases: false)
+    titles = YAML.safe_load_file(Posturacorretta::LearningController::DIDACTIC_PATH, permitted_classes: [], aliases: false)
+    contents = YAML.safe_load_file(Posturacorretta::LearningController::CONTENT_CATALOG_PATH, permitted_classes: [], aliases: false)
+    program = YAML.safe_load_file(Posturacorretta::LearningController::GUIDED_PATH, permitted_classes: [], aliases: false)
+    learning = YAML.safe_load_file(Posturacorretta::LearningController::LEARNING_PATH, permitted_classes: [], aliases: false)
 
     assert_equal({ "content_id" => "inizia-con-posturacorretta" }, titles.dig("path", "courses", 0))
     assert_equal "course", contents.dig("contents", 0, "format")
@@ -15,7 +15,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["source"], program.dig("courses", 0, "activities", 0).keys
     assert_equal ["course_slug", "modules"], learning.fetch("courses").first.keys
     assert_equal ["slug", "title", "chapters"], learning.dig("courses", 0, "modules", 0).keys
-    base_lesson = YAML.safe_load_file(PosturacorrettaSemeController::GUIDED_ACTIVITIES_ROOT.join("lezione_pratica_primo_mese.yml"), permitted_classes: [], aliases: false)
+    base_lesson = YAML.safe_load_file(Posturacorretta::LearningController::GUIDED_ACTIVITIES_ROOT.join("lezione_pratica_primo_mese.yml"), permitted_classes: [], aliases: false)
     assert_equal "lesson", base_lesson.fetch("type")
     assert_equal %w[base advanced], base_lesson.fetch("levels").keys
     assert_equal %w[student teacher_trainee], base_lesson.dig("participation", "roles").keys
@@ -88,12 +88,11 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
     assert_select "#ecosystem-map-title", text: "I tre progetti intorno alla persona"
   end
 
-  test "keeps the previous visual home as integrated paths" do
+  test "redirects the former integrated paths visual to PosturaCorretta" do
     get posturacorretta_seme_integrated_paths_path
 
-    assert_response :success
-    assert_select "h1", text: "Costruisci il percorso partendo dalla postura"
-    assert_select "h2", text: "L'incontro con la salute e con le metodiche posturali"
+    assert_redirected_to posturacorretta_url
+    assert_response :moved_permanently
   end
 
   test "redirects the former course chapters index to the book" do
@@ -242,6 +241,11 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
   test "shows the student dashboard frontend" do
     get posturacorretta_seme_student_dashboard_path
+
+    assert_redirected_to posturacorretta_student_dashboard_url
+    assert_response :moved_permanently
+
+    get posturacorretta_student_dashboard_path
     assert_response :success
     assert_select "nav[aria-label='Lezioni PosturaCorretta'] a", text: "Programma"
     assert_select "nav[aria-label='Lezioni PosturaCorretta'] a[href='#{posturacorretta_insegnanti_path}']", text: "Insegnanti"
@@ -249,7 +253,7 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
     user = create_test_user("seme-student@example.com")
     sign_in(user)
-    get posturacorretta_seme_student_dashboard_path(participation: "group")
+    get posturacorretta_student_dashboard_path(participation: "group")
 
     assert_response :success
     assert_select "h1", text: "Il tuo percorso", count: 0
@@ -324,10 +328,14 @@ class PosturacorrettaSemeControllerTest < ActionDispatch::IntegrationTest
 
   test "shows the teacher dashboard frontend preview" do
     get posturacorretta_seme_teacher_dashboard_path
-    assert_redirected_to new_session_url(return_to: posturacorretta_seme_teacher_dashboard_path)
+    assert_redirected_to posturacorretta_teacher_dashboard_url
+    assert_response :moved_permanently
+
+    get posturacorretta_teacher_dashboard_path
+    assert_redirected_to new_session_url(return_to: posturacorretta_teacher_dashboard_path)
 
     sign_in(create_test_user("seme-teacher-preview@example.com"))
-    get posturacorretta_seme_teacher_dashboard_path
+    get posturacorretta_teacher_dashboard_path
 
     assert_response :success
     assert_select "h1", text: "Dashboard insegnante"
