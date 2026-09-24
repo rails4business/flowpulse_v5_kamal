@@ -90,6 +90,23 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Flowpulse"
   end
 
+  test "renders Rails4Business home on its domain" do
+    Domain.create!(
+      hostname: "rails4b.com",
+      target_controller: "landing",
+      target_action: "rails4b",
+      locale: "it"
+    )
+    host! "rails4b.com"
+
+    get root_url
+
+    assert_response :success
+    assert_select "h1", text: "Costruisci il tuo progetto. O aiutaci a costruire i nostri."
+    assert_select "a", text: /Voglio collaborare/
+    assert_select "a", text: /Ho un progetto/
+  end
+
   test "renders markpostura domain from its editorial Site" do
     Domain.create!(hostname: "markpostura.it", site_key: "markpostura_it", locale: "it")
     host! "markpostura.it"
@@ -97,12 +114,12 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Tre progetti, una visione."
+    assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
     assert_select "#progetti"
-    assert_select "nav a[href='#{markpostura_weekplan_path}']", text: "Week Plan"
+    assert_select "nav a[href='#{markpostura_weekplan_path}']", text: "Orario"
     assert_select "aside", count: 0
     assert_select "#weekplan", count: 0
-    assert_select "img[src*='hero_mark_psotura']"
+    assert_select "img[src*='hero_markpostura-720']"
     assert_select "meta[name='robots'][content='noindex,nofollow']", count: 0
   end
 

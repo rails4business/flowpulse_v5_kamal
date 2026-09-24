@@ -96,6 +96,10 @@ class DomainsController < ApplicationController
     end
 
     def prepare_landing_target(target_action)
+      if target_action == "rails4b"
+        prepare_rails4b_landing
+        return
+      end
       if target_action == "flowpulse"
         prepare_flowpulse_landing
         return
@@ -117,6 +121,29 @@ class DomainsController < ApplicationController
         aliases: false
       ) || {}
       @posturacorretta_taxonomies = PosturacorrettaTaxonomies.load
+    end
+
+    def prepare_rails4b_landing
+      @rails4b = YAML.safe_load_file(
+        Rails.root.join("config/data/rails4b/landing.yml"),
+        permitted_classes: [],
+        aliases: false
+      ) || {}
+      @rails4b_path = YAML.safe_load_file(
+        Rails.root.join("config/data/rails4b/percorso.yml"),
+        permitted_classes: [],
+        aliases: false
+      ) || {}
+      content_catalog = YAML.safe_load_file(
+        Rails.root.join("config/data/rails4b/contenuti/catalog.yml"),
+        permitted_classes: [],
+        aliases: false
+      ) || {}
+      contents_by_slug = content_catalog.fetch("items", []).index_by { |content| content.fetch("slug") }
+      @rails4b_track = @rails4b_path.fetch("tracks").find { |track| track.fetch("slug") == params[:percorso] } || @rails4b_path.fetch("tracks").first
+      @rails4b_track_steps = @rails4b_track.fetch("steps").map do |step|
+        contents_by_slug.fetch(step.fetch("content_slug")).merge("number" => step.fetch("number"))
+      end
     end
 
     def prepare_flowpulse_landing
