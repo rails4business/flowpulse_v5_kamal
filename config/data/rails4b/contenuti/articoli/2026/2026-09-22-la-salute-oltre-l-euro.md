@@ -55,6 +55,8 @@ La salute è probabilmente uno dei luoghi migliori nei quali sperimentare questo
 
 Oggi queste persone collaborano spesso tra loro, ma economicamente rimangono quasi sempre **isole separate**. Rails4Business potrebbe trasformarle in una rete.
 
+Il rapporto tra educazione alla salute, stile di vita e lavoro è approfondito nell'articolo di PosturaCorretta [**La salute non è un lusso: un percorso integrato per tutti**](https://posturacorretta.org/posturacorretta/contenuti/la-salute-non-e-un-lusso). Qui partiamo da quella visione per chiederci quali strumenti economici e digitali potrebbero renderla concretamente sostenibile.
+
 ## 1. Checkout Euro / Dash
 
 Ogni servizio può essere pagato in euro oppure DASH. Rails4Business potrebbe generare la richiesta di pagamento e collegare automaticamente la transazione al servizio.
@@ -298,28 +300,6 @@ Se riusciamo a far compiere al valore il primo giro completo, abbiamo costruito 
 Non dobbiamo necessariamente conquistare il sistema precedente. Forse dobbiamo semplicemente costruire qualcosa di sufficientemente utile perché le persone desiderino parteciparvi.
 
 È qui che **Rails4Business** può trovare il proprio significato: utilizzare Rails per costruire **infrastrutture digitali al servizio di economie reali, distribuite e partecipate**.
-
-## Gli ingressi dell'ecosistema
-
-### Strumenti comuni
-
-- [Flowpulse](https://flowpulse.net) — la visione comune e la piattaforma che collega l'ecosistema.
-- [Rails4Business](https://rails4b.com) — software, processi e collaborazione digitale.
-- [GeneraImpresa](https://generaimpresa.it) — Brand, progetti, professionisti, servizi e sostenibilità.
-- [1Impegno](https://1impegno.it) — calendari professionali, Esperienze, Session, Slot e Commitment.
-
-### Persone, salute ed esperienze
-
-- [MarkPostura](https://markpostura.it) — il profilo professionale, gli articoli, gli appuntamenti e l'orario pubblico.
-- [PosturaCorretta](https://posturacorretta.org) — educazione alla salute, corsi, lezioni e insegnanti.
-- [Percorso Integrato](https://percorsointegrato.it) — programmi personalizzati e reti di professionisti.
-- [Il Giardino del Corpo](https://ilgiardinodelcorpo.it) — natura, musica, filosofia, eventi e comunità.
-
-### Metodiche e altri progetti
-
-- [Igiene Posturale](https://igieneposturale.it) — la metodica e il relativo percorso educativo.
-- [Canta che ti passa](https://cantachetipassa.it) — musica, canto, apprendimento e territorio.
-- [SvuotaMente](https://svuotamente.it) — recupero del valore, riuso e liberazione degli spazi.
 
 ## Possibili proseguimenti
 
