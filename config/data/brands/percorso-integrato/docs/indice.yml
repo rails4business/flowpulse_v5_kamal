@@ -1,0 +1,63 @@
+schema_version: 1
+
+sections:
+  - id: come-funziona
+    title: Come funziona il Percorso Integrato
+    items:
+      - slug: introduzione
+        title: Inizia dal bisogno della persona
+        source: 01_come-funziona/00_intro.md
+
+  - id: persone
+    title: Per le persone
+    items:
+      - { slug: da-dove-comincio, title: "Da dove comincio?", source: 02_persone/01_da_dove_comincio.md }
+      - { slug: senza-diagnosi, title: "Posso iniziare senza una diagnosi?", source: 02_persone/02_senza_diagnosi.md }
+      - { slug: insegnante-professionista, title: "Che differenza c'è tra insegnante e professionista?", source: 02_persone/03_insegnante_professionista.md }
+      - { slug: coinvolgere-professionista, title: "Posso coinvolgere il mio professionista?", source: 02_persone/04_coinvolgere_professionista.md }
+      - { slug: durata-programma, title: "Quanto dura un programma?", source: 02_persone/05_durata_programma.md }
+
+  - id: tutor
+    title: Per il tutor
+    visibility: internal_tutor
+    items:
+      - { slug: valutare-richiesta, title: "Valutare una richiesta e preparare la proposta", source: 03_tutor/01_valutare_richiesta.md }
+      - { slug: scheda-chiamata, title: "Scheda della chiamata", source: 03_tutor/02_scheda_chiamata.md }
+      - { slug: modello-proposta, title: "Modello della proposta", source: 03_tutor/03_modello_proposta.md }
+
+  - id: professionisti
+    title: Per i professionisti
+    items:
+      - { slug: iniziare-percorso, title: "Inizia da qui", source: 04_professionisti/01_iniziare_percorso.md }
+      - { slug: responsabile-percorso, title: "Responsabile del percorso", source: 04_professionisti/02_responsabile_percorso.md }
+      - { slug: aprire-programma, title: "Aprire un programma", source: 04_professionisti/03_aprire_programma.md }
+      - { slug: definire-proposta, title: "Definire la proposta", source: 04_professionisti/04_definire_proposta.md }
+      - { slug: invitare-professionista, title: "Invitare un professionista", source: 04_professionisti/05_invitare_professionista.md }
+      - { slug: usare-diario, title: "Usare il diario", source: 04_professionisti/06_usare_diario.md }
+      - { slug: ragionamento-fisiologico, title: "Spiegare il ragionamento fisiologico", source: 04_professionisti/07_ragionamento_fisiologico.md }
+      - { slug: misurare-risultati, title: "Misurare i risultati", source: 04_professionisti/08_misurare_risultati.md }
+      - { slug: chiudere-programma, title: "Chiudere un programma", source: 04_professionisti/09_chiudere_programma.md }
+      - { slug: chiudere-percorso, title: "Chiudere il percorso", source: 04_professionisti/10_chiudere_percorso.md }
+      - { slug: aderire-linee-guida, title: "Aderisci alle Linee guida", source: 04_professionisti/11_aderire_linee_guida.md }
+
+  - id: programmi
+    title: Programmi e ambiti
+    items:
+      - { slug: stop-al-dolore, title: "Stop al dolore", source: 05_programmi/01_stop_al_dolore.md }
+      - { slug: prevenzione, title: "Prevenzione", source: 05_programmi/02_prevenzione.md }
+      - { slug: performance, title: "Performance", source: 05_programmi/03_performance.md }
+      - { slug: benessere-integrato, title: "Benessere integrato", source: 05_programmi/04_benessere_integrato.md }
+      - { slug: attivita-corporee, title: "Attività corporee", source: 05_programmi/05_attivita_corporee.md }
+      - { slug: postura-fisiologia, title: "Postura e fisiologia", source: 05_programmi/06_postura_fisiologia.md }
+      - { slug: corpo-ambiente, title: "Corpo e ambiente", source: 05_programmi/07_corpo_ambiente.md }
+      - { slug: potenziale-umano, title: "Potenziale umano", source: 05_programmi/08_potenziale_umano.md }
+
+  - id: orientamento
+    title: Orientamento
+    items:
+      - { slug: inizia, title: "Inizia un percorso", type: component, component: inizia }
+      - { slug: scegli-programma, title: "Scegli un programma", type: component, component: scegli_programma }
+      - { slug: quale-percorso, title: "Quale percorso scegliere?", type: component, component: linee_guida }
+      - { slug: orientamento, title: "Chi può accompagnarti?", type: component, component: orientamento }
+      - { slug: professionisti, title: "Professionisti", type: component, component: professionisti }
+      - { slug: prossimo-passo, title: "Prossimo passo", type: component, component: prossimo_passo }

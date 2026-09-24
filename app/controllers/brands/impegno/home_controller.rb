@@ -46,9 +46,12 @@ module Brands
         @impegno_default_domain = default_domain_for(@impegno_brand)
         @impegno_domain_roles = available_domain_roles(@impegno_default_domain)
         @impegno_domain_role_labels = DOMAIN_ROLE_LABELS
-        @impegno_professional_access = Current.user.professional_user?
+        # "professional" non è più un ruolo User globale: l'accesso operativo
+        # deriva da un RoleAssignment `operator` nel contesto di un Brand.
+        @impegno_professional_access = Current.user.superadmin_user? ||
+          Current.user.role_assignments.where(role: :operator).exists?
         requested_area = params[:area].presence_in(AREAS) || "agenda"
-        @impegno_has_domain_roles = Current.user.superadmin_user?
+        @impegno_has_domain_roles = @impegno_professional_access
         fallback_domain = @impegno_domains.find { |domain| available_domain_roles(domain).any? } || @impegno_domains.first
         if requested_area == "domain_roles" && @impegno_has_domain_roles && @impegno_domain_roles.empty? && fallback_domain
           @impegno_default_domain = fallback_domain

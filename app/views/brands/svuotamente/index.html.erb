@@ -279,6 +279,10 @@
     </form>
   </div>
 
+  <footer style="border-top:1px solid var(--sand);padding:24px;text-align:center;background:var(--paper);font-size:14px">
+    <%= render "shared/changelog_footer_link", brand: "svuotamente", class_name: "" %>
+  </footer>
+
   <script>
     // Navigation: replace showPage() with normal Rails links when converting to ERB.
     const pages = [...document.querySelectorAll(".page")];

@@ -1,0 +1,18 @@
+<div class="overflow-x-auto">
+  <table class="w-full min-w-[580px] text-left text-sm">
+    <thead class="border-b border-gray-200 bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
+      <tr><th class="px-3 py-2">Tipo</th><th class="px-3 py-2">Nome</th><th class="px-3 py-2">Inizio</th><th class="px-3 py-2">Fine</th></tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      <% items.sort_by { |kind, record| [record.starts_at.present? ? 0 : 1, record.starts_at || Time.zone.at(0), record.position, { session: 0, slot: 1, commitment: 2 }.fetch(kind), record.created_at] }.each do |kind, record| %>
+        <tr data-edit-kind="<%= kind %>" data-edit-url="<%= edit_url.call(kind, record) %>" data-edit-title="<%= record.title %>" data-edit-starts-at="<%= record.starts_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-ends-at="<%= record.ends_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-status="<%= record.status if kind == :commitment %>" data-edit-calendar-id="<%= record.professional_calendar_id if kind == :session %>" data-edit-service-id="<%= record.service_id if kind == :session %>" data-edit-visibility="<%= record.visibility if kind == :session %>" class="hover:bg-gray-50 data-[edit-kind]:cursor-pointer">
+          <td class="whitespace-nowrap px-3 py-2 text-gray-600"><span class="mr-1 text-gray-500"><%= icon.call(kind) %></span><%= type_label.call(kind) %></td>
+          <td class="px-3 py-2 font-medium text-gray-900"><%= record.title %></td>
+          <td class="whitespace-nowrap px-3 py-2 text-gray-600"><%= record.starts_at&.strftime("%d/%m/%Y %H:%M") || "—" %></td>
+          <td class="whitespace-nowrap px-3 py-2 text-gray-600"><% if record.ends_at.present? %><%= record.starts_at.present? && record.ends_at.to_date == record.starts_at.to_date ? record.ends_at.strftime("%H:%M") : record.ends_at.strftime("%d/%m/%Y %H:%M") %><% else %>—<% end %></td>
+        </tr>
+      <% end %>
+      <% if items.empty? %><tr><td colspan="4" class="px-3 py-4 text-center text-sm text-gray-400"><%= empty_message %></td></tr><% end %>
+    </tbody>
+  </table>
+</div>

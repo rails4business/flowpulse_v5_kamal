@@ -1,0 +1,6 @@
+<main class="min-h-screen bg-slate-50 py-8">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6">
+    <div class="flex items-end justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-[0.16em] text-blue-700">1Impegno</p><h1 class="mt-1 text-3xl font-black text-slate-950">Esperienze</h1></div><%= link_to "+ Nuova esperienza", new_impegno_experience_path, class: "rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white hover:bg-blue-700" %></div>
+    <div class="mt-6 space-y-3"><% @experiences.each do |experience| %><%= link_to impegno_experience_path(experience), class: "block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-blue-300" do %><% if experience.brand_process %><p class="mb-1 text-[11px] font-black uppercase tracking-wider text-violet-600"><%= experience.brand_process.node.title %> · <%= experience.brand_process.title %></p><% end %><p class="font-black text-slate-900"><%= experience.title %></p><p class="mt-1 text-sm text-slate-500"><%= experience.description.presence || "Senza descrizione" %></p><% end %><% end %><% if @experiences.empty? %><div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">Ancora nessuna esperienza.</div><% end %></div>
+  </div>
+</main>

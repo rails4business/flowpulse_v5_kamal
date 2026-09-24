@@ -1,0 +1,125 @@
+schema_version: 1
+
+# Registro editoriale del Brand, non del singolo dominio.
+# Le sorgenti rimangono inizialmente nelle loro cartelle storiche: qui le
+# censiamo per poterle migrare una alla volta, senza cambiare URL o contenuti.
+editorial:
+  owner_node_slug: posturacorretta
+  locale: it
+  entries:
+    - id: percorso-educativo
+      kind: posturacorretta_path
+      label: Percorso educativo PosturaCorretta
+      source: posturacorretta/contenuti/percorso.yml
+      status: published
+      visibility: public
+      migration_state: brand_specific
+      notes: Indice della home; ordina le Section e i corsi del Brand. Non è ancora un modulo comune.
+
+    - id: corsi-e-capitoli
+      kind: course_catalog
+      label: Corsi online e capitoli
+      source: posturacorretta/contenuti/contents.yml
+      status: published
+      visibility: public
+      migration_state: compatibility_index
+      notes: Indice storico di compatibilità. I sei course.yml del Brand sono la sorgente canonica di corsi, teoria e schede pratiche.
+
+    - id: corso-inizia-con-posturacorretta
+      kind: course
+      label: Corso · Inizia con PosturaCorretta
+      source: brands/posturacorretta/courses/inizia-con-posturacorretta/course.yml
+      status: published
+      visibility: public
+      migration_state: canonical
+      notes: Primo corso migrato con indice e Markdown autonomi; non riusa i capitoli del libro.
+
+    - id: contenuti-pubblici
+      kind: content_catalog
+      label: Contenuti
+      source: posturacorretta/contenuti/catalog.yml
+      status: published
+      visibility: public
+      migration_state: partial_migration
+      notes: Il catalogo storico mantiene l'indice e gli URL; ogni content.yml sotto contents/ sostituisce in modo incrementale i dati e la sorgente Markdown.
+
+    - id: contenuto-consapevolezza-coscienza-corporea
+      kind: content
+      label: Contenuto · Consapevolezza e coscienza corporea
+      source: brands/posturacorretta/contents/consapevolezza-e-coscienza-corporea/content.yml
+      status: published
+      visibility: public
+      migration_state: canonical
+      notes: "Primo articolo migrato: il catalogo pubblico conserva slug e categoria, il Brand possiede metadata e Markdown."
+
+    - id: guida-posturacorretta
+      kind: document_collection
+      label: Docs
+      source: posturacorretta/guide
+      status: published
+      visibility: public
+      migration_state: canonical
+      notes: Documentazione e linee guida ordinate per sezioni. Nell'interfaccia pubblica può mantenere l'etichetta Guida.
+
+    - id: libri-posturacorretta
+      kind: book_collection
+      label: Libri
+      source: brands/posturacorretta/books
+      status: published
+      visibility: public
+      migration_state: inventory
+      notes: Raccolta dei libri posseduti dal Brand; ogni libro dichiara il proprio owner_node_slug.
+
+    - id: libro-posturacorretta-un-mese
+      kind: book
+      label: Libro · PosturaCorretta in un mese
+      source: brands/posturacorretta/books/postura-corretta-in-un-mese/book.yml
+      status: published
+      visibility: public
+      migration_state: canonical
+      notes: Primo libro già migrato nella struttura del Brand.
+
+    - id: programma-lezioni
+      kind: lesson_program
+      label: Programma lezioni in presenza
+      source: posturacorretta/programmi/programma_lezioni_posturacorretta.yml
+      status: published
+      visibility: public
+      migration_state: separated
+      notes: Dima delle lezioni con insegnante, in gruppo o individuali; evolverà in Cycle, DataSession e DataSlot.
+
+    - id: insegnanti-e-centri
+      kind: posturacorretta_operations
+      label: Insegnanti e centri
+      source: posturacorretta/accademia
+      status: published
+      visibility: public
+      migration_state: brand_specific
+      notes: Operatività specifica PosturaCorretta, volutamente fuori dal nucleo editoriale comune.
+
+    - id: archivio-storico-libro
+      kind: archive
+      label: Archivio storico libro
+      source: books/old-il-corpo-un-mondo-da-scoprire
+      status: archived
+      visibility: internal
+      migration_state: audit_required
+      notes: Da confrontare e migrare solo dopo verifica dei capitoli non presenti nel libro attuale.
+
+    - id: primo-mese-storico
+      kind: archive
+      label: Moduli storici del primo mese
+      source: posturacorretta/accademia/percorso_didattico_full.yml
+      status: archived
+      visibility: internal
+      migration_state: audit_required
+      notes: Undici moduli storici; confrontati con i capitoli di Inizia con PosturaCorretta, non con il Programma lezioni.
+
+    - id: mappa-percorsi-storica
+      kind: document_collection
+      label: Mappa percorsi salute
+      source: posturacorretta/percorso/percorso.yml
+      status: published
+      visibility: internal
+      migration_state: separated
+      notes: Alimenta ancora una guida di orientamento; non è il Percorso educativo della home.

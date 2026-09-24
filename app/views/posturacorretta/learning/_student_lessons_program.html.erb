@@ -5,7 +5,22 @@
              description: "Un percorso pratico per conoscere il corpo, muoverti con più consapevolezza e costruire abitudini che restano. Puoi iniziare in gruppo o individualmente." %>
 
   <ol class="mt-6 space-y-3" aria-label="Lezioni del programma studenti">
+    <% previous_stage_key = nil %>
     <% @student_lessons_program.each do |lesson| %>
+      <% stage_key = lesson.dig("stage", "key") %>
+      <% stage_changed = stage_key.present? && stage_key != previous_stage_key %>
+      <% if stage_changed %>
+        <li class="py-3 first:pt-0" aria-label="Sezione <%= lesson.dig("stage", "title") %>">
+          <div class="flex items-center gap-3">
+            <span class="h-px flex-1 bg-blue-200"></span>
+            <div class="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-center">
+              <p class="text-sm font-bold text-slate-950"><%= lesson.dig("stage", "title") %></p>
+            </div>
+            <span class="h-px flex-1 bg-blue-200"></span>
+          </div>
+          <% if lesson.dig("stage", "description").present? %><p class="mx-auto mt-2 max-w-xl text-center text-sm text-slate-500"><%= lesson.dig("stage", "description") %></p><% end %>
+        </li>
+      <% end %>
       <li class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
         <div class="flex gap-4">
           <span class="grid size-10 shrink-0 place-items-center rounded-full bg-blue-700 text-sm font-black text-white"><%= lesson.fetch("number") %></span>
@@ -48,8 +63,25 @@
           </div>
         </div>
       </li>
+      <% previous_stage_key = stage_key %>
     <% end %>
   </ol>
+
+  <% if @student_internship_stages.present? %>
+    <aside class="mt-8 rounded-2xl border border-violet-200 bg-violet-50 p-5" aria-label="Tirocinio insegnanti">
+      <p class="text-xs font-black uppercase tracking-[.14em] text-violet-800">Riservato tirocinanti</p>
+      <h2 class="mt-1 text-xl font-bold text-slate-950">Tirocinio e abilitazioni progressive</h2>
+      <div class="mt-4 space-y-4">
+        <% @student_internship_stages.each do |stage| %>
+          <section class="rounded-xl border border-violet-100 bg-white p-4">
+            <h3 class="font-bold text-slate-950"><%= stage.fetch("title") %></h3>
+            <% if stage["qualification"].present? %><p class="mt-1 text-sm font-semibold text-violet-800"><%= stage.fetch("qualification") %></p><% end %>
+            <% if stage.dig("internship", "requirements").present? %><ul class="mt-2 space-y-1 text-sm leading-6 text-slate-700"><% stage.dig("internship", "requirements").each do |requirement| %><li>• <%= requirement %></li><% end %></ul><% else %><p class="mt-1 text-sm text-slate-600">Requisiti di tirocinio da definire con il responsabile del percorso.</p><% end %>
+          </section>
+        <% end %>
+      </div>
+    </aside>
+  <% end %>
 
   <% if Current.user&.superadmin_user? %>
     <aside class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5" aria-label="Sorgenti YAML del programma">

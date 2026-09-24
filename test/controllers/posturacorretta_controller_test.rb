@@ -1,12 +1,41 @@
 require "test_helper"
 
 class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
+  test "publishes the health is not a luxury article as PosturaCorretta content" do
+    get posturacorretta_articolo_path("la-salute-non-e-un-lusso")
+
+    assert_response :success
+    assert_select "h1", text: "La salute non è un lusso: un percorso integrato per tutti"
+  end
+
+  test "redirects former first-month guide URLs to the book" do
+    get posturacorretta_guida_url(sezione: "primo_mese", capitolo: "02-benefici")
+
+    assert_response :moved_permanently
+    assert_redirected_to book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: "benefici-postura-corretta")
+  end
+
+  test "redirects the former first-month landing to the book cover" do
+    get posturacorretta_primo_mese_url
+
+    assert_response :moved_permanently
+    assert_redirected_to book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: "copertina")
+  end
+
   test "does not index filtered content listings" do
     get posturacorretta_contenuti_path(ambito: "dolore", area: "cura")
 
     assert_response :success
     assert_select 'link[rel="canonical"][href$="/posturacorretta/contenuti"]'
     assert_select 'meta[name="robots"][content="noindex, follow"]'
+  end
+
+  test "keeps its own how-it-works guide distinct from the Percorso Integrato docs" do
+    get posturacorretta_path
+
+    assert_response :success
+    assert_select "a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
+    assert_select "a[href='#{percorso_integrato_docs_path}']", count: 0
   end
 
   test "shows dated events alongside contents with compact period controls" do
@@ -249,6 +278,14 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select ".macro-tab", count: 0
     assert_select ".blog-section[data-category='tutti']", count: 1
     assert_select ".blog-section[data-category='corsi']", count: 0
+  end
+
+  test "renders a content migrated into the canonical Brand directory" do
+    get posturacorretta_articolo_url("consapevolezza-e-coscienza-corporea")
+
+    assert_response :success
+    assert_includes response.body, "Consapevolezza e coscienza corporea: due percorsi diversi"
+    assert_includes response.body, "fisiologia → sensazione → percezione diretta"
   end
 
   test "should get corsi as a separate catalog" do

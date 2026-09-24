@@ -1,0 +1,50 @@
+schema_version: 1
+brand:
+  key: flowpulse
+  label: Flowpulse
+  kind: platform
+  canonical_host: flowpulse.net
+  public_path: /flowpulse
+  hosts: [flowpulse.net, www.flowpulse.net]
+  description: Evoluzione della piattaforma comune e delle regole che collegano l’ecosistema.
+entries:
+  - slug: responsabilita-tra-gli-strumenti
+    date: "2026-09-24"
+    title: Responsabilità più chiare tra gli strumenti
+    summary: "Flowpulse collega le funzioni comuni senza confonderne la gestione: processi in Rails4Business, organizzazione di Brand e servizi in GeneraImpresa, calendari e lavoro quotidiano in 1Impegno."
+    kind: architecture
+    visibility: public
+    tags: [ecosistema, processi, servizi, calendari]
+    source: entries/2026-09-24-responsabilita-tra-gli-strumenti.md
+  - slug: indici-progetti-e-professionisti
+    date: "2026-09-24"
+    title: Indici separati per progetti e professionisti
+    summary: Il nav Flowpulse porta a due directory essenziali, distinguendo i progetti dell’ecosistema dai Brand professionali senza affollare la navigazione.
+    kind: feature
+    visibility: public
+    tags: [navigazione, progetti, professionisti, node]
+    source: entries/2026-09-24-indici-progetti-e-professionisti.md
+  - slug: interfaccia-changelog-condivisa
+    date: "2026-09-24"
+    title: Una timeline comune per tutti i changelog
+    summary: Tutti i Brand usano ora lo stesso indice cronologico, con navigazione coerente, collegamento alla propria home e contenuti mantenuti separati per dominio.
+    kind: feature
+    visibility: public
+    tags: [changelog, interfaccia, brand, navigazione]
+    source: entries/2026-09-24-interfaccia-changelog-condivisa.md
+  - slug: changelog-autonomi-per-dominio
+    date: "2026-09-24"
+    title: Changelog autonomi per ogni dominio
+    summary: Ogni Brand conserva ora il proprio registro YAML e Markdown; Flowpulse mostra soltanto le modifiche della piattaforma e collega gli altri changelog.
+    kind: architecture
+    visibility: public
+    tags: [changelog, brand, domini, markdown]
+    source: entries/2026-09-24-changelog-autonomi-per-dominio.md
+  - slug: stato-pilota-ecosistema
+    date: "2026-09-20"
+    title: Stato del pilota dell’ecosistema
+    summary: Flowpulse presenta la piattaforma; Rails4Business costruisce processi e software; 1Impegno organizza il lavoro; i Brand mantengono contenuti, percorsi ed esperienze propri.
+    kind: platform
+    visibility: public
+    tags: [ecosistema, architettura]
+    source: entries/2026-09-20-stato-pilota-ecosistema.md

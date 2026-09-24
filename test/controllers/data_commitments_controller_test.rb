@@ -209,6 +209,29 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_url(return_to: impegno_agenda_path(workspace: "1"))
   end
 
+  test "agenda shows an undated commitment as unplanned" do
+    experience = DataExperience.create!(created_by_user: @user, title: "Esperienza da organizzare")
+    commitment = DataCommitment.create!(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      data_experience: experience,
+      title: "Impegno ancora senza data",
+      kind: "personal",
+      status: "draft",
+      pricing_type: "none",
+      contribution_type: "unpaid"
+    )
+
+    get impegno_agenda_url(workspace: "1")
+
+    assert_response :success
+    assert_select "h2", text: "Da programmare"
+    assert_select "article#commitment-#{commitment.id}", text: /Impegno ancora senza data/ do
+      assert_select "strong", text: "Da programmare"
+    end
+  end
+
   test "agenda distinguishes organizer participation and a represented contact" do
     contact = Brands::Impegno::Contact.create!(profile: @profile, name: "Maria Assistita", kind: "person")
     DataCommitment.create!(profile: @profile, created_by_profile: @profile, participant_contact: contact, domain: @domain, title: "Visita assistita", kind: "appointment", status: "confirmed", starts_at: 1.day.from_now.change(hour: 10), ends_at: 1.day.from_now.change(hour: 11), blocks_calendar: true, participation_role: "participant", pricing_type: "none", contribution_type: "unpaid", calendar_key: "contact:#{contact.id}", calendar_label: contact.name)

@@ -261,8 +261,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "[role='progressbar']", count: 0
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Lezioni"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Percorso"
-    assert_select "h1", text: "Programma lezioni", count: 1
-    assert_select "ol[aria-label='Lezioni del programma studenti'] > li", count: 36
+    assert_select "h1", text: "Programma lezioni PosturaCorretta", count: 1
+    assert_select "ol[aria-label='Lezioni del programma studenti'] > li.rounded-2xl", count: 36
+    assert_select "ol[aria-label='Lezioni del programma studenti'] > li[aria-label^='Sezione']", count: 7
     assert_select "h2", text: "Inizia con PosturaCorretta"
     assert_select "h2", text: "Postura e Fisiologia"
     assert_select "h2", text: "Igiene Posturale · Punti di tensione"

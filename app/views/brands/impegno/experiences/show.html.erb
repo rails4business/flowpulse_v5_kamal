@@ -1,0 +1,6 @@
+<main class="min-h-screen bg-gray-50 p-6 font-sans md:p-10">
+  <div class="mx-auto max-w-xl">
+    <div class="mb-5 flex items-center justify-between gap-3"><%= link_to "← Esperienze", impegno_experiences_path, class: "text-sm font-semibold text-gray-500 hover:text-gray-900" %><%= link_to "Apri agenda", impegno_path, class: "text-sm font-semibold text-blue-700 hover:text-blue-900" %></div>
+    <%= render "workbench", experience: @experience, sessions: @sessions %>
+  </div>
+</main>

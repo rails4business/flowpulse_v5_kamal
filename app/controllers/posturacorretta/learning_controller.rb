@@ -16,6 +16,7 @@ module Posturacorretta
   LEARNING_PATH = Rails.root.join("config/data/posturacorretta/accademia/posturacorretta_percorso.yml").freeze
   CONTENT_CATALOG_PATH = Rails.root.join("config/data/posturacorretta/contenuti/contents.yml").freeze
   CONTENT_ROOT = Rails.root.join("config/data/posturacorretta").cleanpath.freeze
+  DATA_ROOT = Rails.root.join("config/data").cleanpath.freeze
 
   def index
     load_curriculum_sources
@@ -150,7 +151,6 @@ module Posturacorretta
   end
 
   def load_curriculum_sources
-    guide_data = YAML.safe_load_file(GUIDE_INDEX_PATH, permitted_classes: [], aliases: false)
     academy_data = YAML.safe_load_file(ACADEMY_PATH, permitted_classes: [], aliases: false)
     didactic_data = YAML.safe_load_file(DIDACTIC_PATH, permitted_classes: [], aliases: false)
     learning_data = YAML.safe_load_file(LEARNING_PATH, permitted_classes: [], aliases: false)
@@ -196,20 +196,20 @@ module Posturacorretta
         )
       end
     end
-    first_month = guide_data.fetch("sections").find { |section| section.fetch("id") == "primo_mese" }
+    first_month_book_directory = BrandEditorial::BookLocator.new.find("postura-corretta-in-un-mese")
+    first_month_book = YAML.safe_load_file(first_month_book_directory.join("book.yml"), permitted_classes: [], aliases: false) || {}
+    first_month_chapters = YAML.safe_load_file(first_month_book_directory.join("index.yml"), permitted_classes: [], aliases: false) || []
 
     @base_stage = {
       "number" => "01",
       "slug" => "primo-mese",
-      "title" => first_month.fetch("title"),
+      "title" => first_month_book.fetch("title"),
       "description" => "Introduzione al metodo, prima osservazione del corpo e prima applicazione pratica.",
-      "lessons" => first_month.fetch("items").filter_map do |item|
-        next unless item.fetch("type") == "markdown"
-
+      "lessons" => first_month_chapters.map do |item|
         {
           "slug" => item.fetch("slug"),
           "title" => item.fetch("title"),
-          "content_path" => item.fetch("source")
+          "book_chapter_path" => book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: item.fetch("slug"))
         }
       end
     }
@@ -232,7 +232,7 @@ module Posturacorretta
     legacy_first_month_course = decorate_didactic_course(
       {
         "slug" => "postura-corretta-in-un-mese",
-        "title" => first_month.fetch("title"),
+        "title" => first_month_book.fetch("title"),
         "description" => "Archivio interno del precedente corso, mantenuto per il programma lezioni.",
         "status" => "legacy"
       },
@@ -497,6 +497,8 @@ module Posturacorretta
   def load_student_lessons_program
     program = YAML.safe_load_file(LESSON_PROGRAM_PATH, permitted_classes: [], aliases: false).fetch("program")
     @student_lessons_program_title = program.fetch("title")
+    stages = program.fetch("stages", [])
+    @student_internship_stages = stages.select { |stage| stage.dig("internship", "visibility") == "trainee" } if posturacorretta_trainee?
     sheet_type = program.fetch("sheet_type", "practical")
     # L'unità del programma è la lezione: dopo le prime due introduzioni,
     # ciascuna riga corrisponde a un singolo capitolo/scheda, non al corso
@@ -513,11 +515,22 @@ module Posturacorretta
       end
       release_at = @course_release_schedule[lesson.dig("course", "key")]
       lesson.merge(
+        "stage" => stages.find { |stage| stage.fetch("lesson_numbers", []).include?(lesson.fetch("number")) },
         "chapter_links" => chapter_links,
         "release_at" => release_at&.iso8601,
         "release_locked" => release_at.present? && release_at > Time.current
       )
     end
+  end
+
+  def posturacorretta_trainee?
+    return true if Current.user&.superadmin_user?
+    return false unless Current.user&.profile
+
+    brand_node = Domain.find_by(hostname: "posturacorretta.org")&.node
+    return false unless brand_node
+
+    Current.user.role_assignments.where(role: :operator, role_operator: "tirocinante", context: brand_node).exists?
   end
 
   def load_dashboard_agenda
@@ -585,10 +598,18 @@ module Posturacorretta
     return unless @lesson_access_allowed
     return if content_path.blank?
 
-    lesson_path = CONTENT_ROOT.join(content_path).cleanpath
-    return unless lesson_path.to_s.start_with?(CONTENT_ROOT.to_s) && lesson_path.file?
+    lesson_path = resolve_content_path(content_path)
+    return unless lesson_path
 
     @lesson_content = lesson_path.read.sub(/\n<!--\s*advanced\s*-->\s*\n/i, "\n")
+  end
+
+  def resolve_content_path(content_path)
+    relative = content_path.to_s
+    candidates = [CONTENT_ROOT.join(relative).cleanpath, DATA_ROOT.join(relative).cleanpath]
+    candidates.find do |candidate|
+      candidate.to_s.start_with?("#{DATA_ROOT}/") && candidate.extname == ".md" && candidate.file?
+    end
   end
   end
 end

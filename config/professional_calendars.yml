@@ -1,0 +1,46 @@
+default: &default
+  calendars:
+    postura-gruppo:
+      context_node_slug: posturacorretta
+      professional_node_slug: markpostura
+      title: Gruppo
+      short_label: Postura gr.
+      description: Percorsi di gruppo, sessioni collettive e formazione.
+      color: sky
+    postura-app:
+      context_node_slug: posturacorretta
+      professional_node_slug: markpostura
+      title: Appuntamenti
+      short_label: Postura app.
+      description: Sessioni individuali, consulenze e appuntamenti.
+      color: blue
+    giardino:
+      context_node_slug: ilgiardinodelcorpo
+      professional_node_slug: markpostura
+      title: Il Giardino del Corpo
+      short_label: Giardino
+      description: Natura, musica, filosofia e incontri a tema.
+      color: rose
+    rails-aperti:
+      context_node_slug: rails4business
+      professional_node_slug: markpostura
+      title: Incontri aperti
+      short_label: Rails4B ap.
+      description: Incontri pubblici su business, tecnologia e progetti.
+      color: amber
+    rails-processi:
+      context_node_slug: rails4business
+      professional_node_slug: markpostura
+      title: Processi
+      short_label: Rails4B pr.
+      description: Processi, digital, contenuti e automazioni.
+      color: amber
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

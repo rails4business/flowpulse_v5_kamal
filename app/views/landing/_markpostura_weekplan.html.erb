@@ -7,7 +7,7 @@
       <div>
         <p class="text-xs font-black uppercase tracking-[0.18em] text-amber-700">Piano settimanale</p>
         <h2 class="mt-3 text-3xl font-black tracking-tight">Week Plan</h2>
-        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Gli impegni arrivano dal file YAML della settimana. Tocca un blocco per vedere tutti i dettagli.</p>
+        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">La struttura arriva dallo YAML; le attività programmate possono arrivare anche dalle DataSession. Tocca un blocco per vedere tutti i dettagli.</p>
       </div>
       <div class="wp-nav">
         <button type="button" id="wp-prev" aria-label="Settimana precedente">←</button>
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="wp-legend" aria-label="Filtra le attività">
+    <div class="wp-legend" aria-label="Filtra i calendari">
       <% week.fetch("spaces").each do |space| %>
         <button type="button" data-space="<%= space.fetch("slug") %>"><i class="wp-dot wp-<%= space.fetch("color") %>"></i><%= space.fetch("label") %></button>
       <% end %>
@@ -27,7 +27,7 @@
       <p class="mt-3 text-right"><a id="wp-yaml-link" href="#" class="text-xs font-bold text-amber-700 hover:text-amber-900">Apri il file YAML →</a></p>
     <% end %>
 
-    <div class="wp-empty" id="wp-empty" hidden>Nessun impegno inserito nel file YAML di questa settimana.</div>
+    <div class="wp-empty" id="wp-empty" hidden>Nessun impegno programmato in questa settimana.</div>
     <div class="wp-scroll">
       <div class="wp-calendar" aria-label="Vista settimanale">
         <div class="wp-hours" id="wp-hours"></div>
@@ -68,7 +68,7 @@
       </section>
     <% end %>
 
-    <p class="mt-4 text-xs leading-5 text-slate-500">Questa è una vista di pianificazione: non crea ancora DataSession o DataSlot e non modifica il database.</p>
+    <p class="mt-4 text-xs leading-5 text-slate-500">Questa vista unisce la pianificazione YAML e le DataSession pubbliche del calendario professionale.</p>
   </div>
 
   <dialog id="wp-modal" class="wp-modal">
@@ -132,7 +132,7 @@
   const spaces = <%= raw json_escape(spaces.transform_values { |space| { label: space.fetch("label"), color: space.fetch("color") } }.to_json) %>;
   const yamlWeeks = <%= raw json_escape(week.fetch("weeks", {}).to_json) %>;
   const requestedWeek = <%= raw json_escape(params[:week].to_s.to_json) %>;
-  const requestedSpaces = <%= raw json_escape(params[:spaces].to_s.to_json) %>;
+  const requestedSpaces = <%= raw json_escape((params[:calendars].presence || params[:spaces]).to_s.to_json) %>;
   const days = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
   const dayNames = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
   const startMinute = 8 * 60;
@@ -150,7 +150,7 @@
   function spanFor(start,end){ return Math.max(1,Math.ceil((minutes(end)-minutes(start))/step)); }
   function weekKey(value){ const date=new Date(Date.UTC(value.getFullYear(),value.getMonth(),value.getDate())); const day=date.getUTCDay()||7; date.setUTCDate(date.getUTCDate()+4-day); const yearStart=new Date(Date.UTC(date.getUTCFullYear(),0,1)); return date.getUTCFullYear()+"-W"+String(Math.ceil((((date-yearStart)/86400000)+1)/7)).padStart(2,"0"); }
   function updateUrl(){
-    const url=new URL(window.location.href); url.searchParams.set("week",weekKey(monday)); url.searchParams.set("spaces",Array.from(selectedSpaces).join(",")); history.replaceState({},"",url);
+    const url=new URL(window.location.href); url.searchParams.set("week",weekKey(monday)); url.searchParams.set("calendars",Array.from(selectedSpaces).join(",")); url.searchParams.delete("spaces"); history.replaceState({},"",url);
     const yamlLink=root.querySelector("#wp-yaml-link"); if(yamlLink)yamlLink.href="/admin/markpostura/settimane/"+weekKey(monday);
   }
   function renderFilters(){ root.querySelectorAll("[data-space]").forEach(button=>button.classList.toggle("active",selectedSpaces.has(button.dataset.space))); }

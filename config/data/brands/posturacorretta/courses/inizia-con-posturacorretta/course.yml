@@ -1,0 +1,105 @@
+schema_version: 1
+
+# Questa sorgente sostituisce nel catalogo storico soltanto il corso con gli
+# stessi id. Il libro mantiene il proprio indice e i propri capitoli: qui ci
+# sono testi didattici autonomi, piu' brevi e pensati per iniziare.
+contents:
+  - id: inizia-con-posturacorretta
+    format: course
+    slug: inizia-con-posturacorretta
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    title: Inizia con PosturaCorretta
+    description: Le prime schede per capire il percorso e iniziare a osservare il corpo.
+    image: https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777
+    level: base
+    author_node_slug: markpostura
+    publisher_node_slug: posturacorretta
+
+  - id: inizia-incontro-salute-metodiche
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: incontro-salute-metodiche
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    demo: true
+    title: L'incontro con la salute e con le metodiche posturali
+    content_path: brands/posturacorretta/courses/inizia-con-posturacorretta/chapters/incontro-salute-metodiche.md
+
+  - id: inizia-postura-strumento-lettura
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: postura-strumento-lettura
+    position: 2
+    status: published
+    visibility: public
+    access: free
+    title: La postura come strumento per leggere il corpo
+    content_path: brands/posturacorretta/courses/inizia-con-posturacorretta/chapters/postura-strumento-lettura.md
+
+  - id: inizia-benefici-postura-corretta
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: benefici-postura-corretta
+    position: 3
+    status: published
+    visibility: public
+    access: free
+    title: I benefici di una postura corretta
+    content_path: brands/posturacorretta/courses/inizia-con-posturacorretta/chapters/benefici-postura-corretta.md
+
+  - id: inizia-errori-percorso-posturale
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: tre-errori-percorso-posturale
+    position: 4
+    status: published
+    visibility: public
+    access: free
+    title: I 3 errori che tutti fanno quando iniziano un percorso posturale
+    content_path: brands/posturacorretta/courses/inizia-con-posturacorretta/chapters/tre-errori-percorso-posturale.md
+
+  - id: inizia-prima-scheda-esercizi-video
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: practical
+    slug: prima-scheda-esercizi-video
+    position: 5
+    status: published
+    visibility: public
+    access: free
+    title: Prima scheda esercizi e video
+    content_path: brands/posturacorretta/courses/inizia-con-posturacorretta/chapters/prima-scheda-esercizi-video.md
+
+  - id: inizia-ambiti-percorsi-chakra
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: practical
+    slug: ambiti-percorsi-chakra
+    position: 6
+    status: published
+    visibility: public
+    access: free
+    title: Ambiti della salute e percorsi
+    description: Percorso Integrato per i professionisti, PosturaCorretta per la struttura e Il Giardino del Corpo per l'ambiente.
+    content_path: brands/posturacorretta/courses/inizia-con-posturacorretta/chapters/ambiti-percorsi-chakra.md
+
+  - id: inizia-prossimo-passo
+    parent_id: inizia-con-posturacorretta
+    format: chapter
+    chapter_type: theory
+    slug: prossimo-passo
+    position: 7
+    status: published
+    visibility: public
+    access: free
+    title: Scegli il prossimo passo
+    content_path: brands/posturacorretta/courses/inizia-con-posturacorretta/chapters/prossimo-passo.md

@@ -1,0 +1,84 @@
+<% colors = %w[bg-pink-500 bg-purple-500 bg-orange-500 bg-teal-500] %>
+<% selected_view = params[:vista] == "lista" ? "list" : "day" %>
+<% icon = ->(symbol) { { session: "◷", slot: "□", commitment: "●", calendar: "▣" }.fetch(symbol) } %>
+<% type_label = ->(symbol) { { session: "Sessione", slot: "Slot", commitment: "Impegno" }.fetch(symbol) } %>
+<% edit_url = ->(kind, record) do
+  case kind
+  when :experience then impegno_experience_path(record)
+  when :session then impegno_experience_session_path(experience, record)
+  when :slot then record.data_session.present? ? impegno_session_slot_path(record.data_session, record) : impegno_experience_slot_path(experience, record)
+  when :commitment
+    if record.data_slot.present?
+      impegno_slot_commitment_path(record.data_slot, record)
+    elsif record.data_session.present?
+      impegno_session_commitment_path(record.data_session, record)
+    else
+      impegno_experience_commitment_path(experience, record)
+    end
+  end
+end %>
+<% avatars = ->(items) do %>
+  <% if items.any? %><div class="flex -space-x-2" aria-label="Partecipanti"><% items.first(4).each_with_index do |item, index| %><span class="inline-flex size-7 items-center justify-center rounded-full border-2 border-white text-xs text-white <%= colors[index % colors.size] %>"><%= item.profile&.display_name.to_s.split.map(&:first).join.first(2).presence || "•" %></span><% end %></div><% end %>
+<% end %>
+
+<%= turbo_frame_tag "experience_workbench" do %>
+  <div data-controller="experience-add experience-edit experience-item-edit" data-action="click->experience-item-edit#open" class="mx-auto max-w-xl rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <header class="mb-6 flex items-start justify-between gap-4 border-b border-gray-100 pb-4">
+      <div data-edit-kind="experience" data-edit-url="<%= edit_url.call(:experience, experience) %>" data-edit-title="<%= experience.title %>" data-edit-description="<%= experience.description %>" data-edit-process-id="<%= experience.brand_process_id %>"><% if experience.brand_process %><p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-violet-600"><%= experience.brand_process.node.title %> · <%= experience.brand_process.title %></p><% end %><h1 class="text-lg font-semibold text-gray-900"><%= experience.title %></h1><% if experience.description.present? %><p class="mt-1 text-sm text-gray-500"><%= experience.description %></p><% end %></div>
+      <button type="button" data-experience-edit-target="button" data-action="experience-edit#toggle" aria-pressed="false" class="rounded-md px-2 py-1 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900">Modifica</button>
+    </header>
+
+    <%= render "brands/impegno/experiences/add_dialog", experience: experience %>
+    <%= render "brands/impegno/experiences/edit_dialog" %>
+    <% planned_days = (@scheduled_slots_by_day.keys | @scheduled_sessions_by_day.keys | @scheduled_direct_commitments_by_day.keys).sort %>
+    <div data-controller="experience-planned" class="mt-1">
+      <div class="mb-3 flex border-b border-gray-200" role="tablist" aria-label="Vista programmata">
+        <button type="button" role="tab" data-experience-planned-target="tab" data-experience-planned-kind-param="day" data-action="experience-planned#select" aria-selected="<%= selected_view == "day" %>" class="border-b-2 px-3 py-2 text-sm font-medium <%= selected_view == "day" ? "border-blue-600 text-blue-700" : "border-transparent text-gray-500" %>">Giorni</button>
+        <button type="button" role="tab" data-experience-planned-target="tab" data-experience-planned-kind-param="list" data-action="experience-planned#select" aria-selected="<%= selected_view == "list" %>" class="border-b-2 px-3 py-2 text-sm font-medium <%= selected_view == "list" ? "border-blue-600 text-blue-700" : "border-transparent text-gray-500" %>">Lista</button>
+      </div>
+    <div data-experience-planned-target="panel" data-experience-planned-kind-param="day" class="space-y-1 <%= "hidden" if selected_view == "list" %>" role="tree">
+      <% planned_days.each_with_index do |day, day_index| %>
+        <% slots = @scheduled_slots_by_day.fetch(day, []) %>
+        <div data-controller="experience-accordion" role="treeitem">
+          <div class="flex w-full items-center gap-x-0.5 py-0.5">
+            <button type="button" data-experience-accordion-target="button" data-action="experience-accordion#toggle" aria-expanded="true" class="flex size-6 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-gray-100 focus:bg-gray-200 focus:outline-none"><svg data-experience-accordion-target="arrow" class="size-2.5 rotate-90 text-gray-400 transition duration-300" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg></button>
+            <div class="grow cursor-pointer rounded-md px-1.5 transition-colors hover:bg-gray-100"><div class="flex items-center gap-x-3"><svg class="size-4 shrink-0 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div class="grow"><span class="text-sm font-medium text-gray-900">Giorno <%= day_index + 1 %></span><span class="ml-2 text-xs font-normal text-gray-500"><%= l(day, format: "%A %d %B", locale: :it) %></span></div></div></div>
+          </div>
+          <div data-experience-accordion-target="panel" class="relative ml-7 space-y-1 border-l border-gray-200 pl-5">
+            <div data-experience-edit-target="control" class="hidden px-1.5 py-1"><button type="button" data-action="experience-add#open" data-experience-add-kind-param="session" data-experience-add-url-param="<%= impegno_experience_sessions_path(experience) %>" data-experience-add-context-param="Nel Giorno <%= day_index + 1 %>: <%= l(day, format: "%d/%m/%Y", locale: :it) %>" class="text-xs font-medium text-blue-700 hover:text-blue-900">+ Sessione</button></div>
+            <% slots.select { |slot| slot.data_session.present? }.group_by(&:data_session).each do |session, session_slots| %>
+              <% start_time = session_slots.filter_map(&:starts_at).min; end_time = session_slots.filter_map(&:ends_at).max || start_time %>
+              <% next_slot_start = session_slots.filter_map(&:ends_at).max || session.starts_at || start_time %>
+              <% next_slot_end = session.ends_at.present? && next_slot_start.present? && session.ends_at > next_slot_start ? session.ends_at : nil %>
+              <div data-controller="experience-accordion" role="treeitem">
+                <div class="flex w-full items-center gap-x-0.5 py-0.5">
+                  <button type="button" data-experience-accordion-target="button" data-action="experience-accordion#toggle" aria-expanded="true" class="flex size-6 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-gray-100 focus:bg-gray-200 focus:outline-none"><svg data-experience-accordion-target="arrow" class="size-2.5 rotate-90 text-gray-400 transition duration-300" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg></button>
+                  <div data-edit-kind="session" data-edit-url="<%= edit_url.call(:session, session) %>" data-edit-title="<%= session.title %>" data-edit-starts-at="<%= session.starts_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-ends-at="<%= session.ends_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-calendar-id="<%= session.professional_calendar_id %>" data-edit-service-id="<%= session.service_id %>" data-edit-visibility="<%= session.visibility %>" class="min-w-0 grow cursor-pointer rounded-md px-1.5 hover:bg-gray-100"><div class="flex min-w-0 items-center gap-x-3"><span class="shrink-0 text-gray-500"><%= icon.call(:session) %></span><div class="min-w-0 grow"><span class="text-sm text-gray-900"><%= session.title %></span><span class="ml-2 whitespace-nowrap text-xs text-gray-500"><%= start_time.strftime("%H:%M") %><%= " – #{end_time.strftime('%H:%M')}" if end_time != start_time %></span></div></div></div>
+                </div>
+                <div data-experience-accordion-target="panel" class="relative ml-7 space-y-1 border-l border-gray-200 pb-2 pl-3 pt-1">
+                  <div data-experience-edit-target="control" class="hidden px-1.5 py-1"><button type="button" data-action="experience-add#open" data-experience-add-kind-param="slot" data-experience-add-url-param="<%= impegno_session_slots_path(session) %>" data-experience-add-context-param="Nella Sessione: <%= session.title %>" data-experience-add-starts-at-param="<%= next_slot_start&.strftime("%Y-%m-%dT%H:%M") %>" data-experience-add-ends-at-param="<%= next_slot_end&.strftime("%Y-%m-%dT%H:%M") %>" class="text-xs font-medium text-blue-700 hover:text-blue-900">+ Slot</button></div>
+                  <% session_slots.each do |slot| %>
+                    <div>
+                      <div data-edit-kind="slot" data-edit-url="<%= edit_url.call(:slot, slot) %>" data-edit-title="<%= slot.title %>" data-edit-starts-at="<%= slot.starts_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-ends-at="<%= slot.ends_at&.strftime("%Y-%m-%dT%H:%M") %>" class="flex items-center gap-x-3 rounded-md px-2 py-1.5 hover:bg-gray-100"><div class="flex min-w-0 grow items-center gap-x-3"><span class="text-gray-500"><%= icon.call(:slot) %></span><div class="grow"><span class="text-sm text-gray-900"><%= slot.title %></span><span class="ml-2 text-xs text-gray-500"><%= slot.starts_at.strftime("%H:%M") %><%= " – #{slot.ends_at.strftime('%H:%M')}" if slot.ends_at.present? %></span></div></div><%= avatars.call(slot.data_commitments.to_a) %></div>
+                      <div data-experience-edit-target="control" class="hidden px-8 pb-1"><button type="button" data-action="experience-add#open" data-experience-add-kind-param="commitment" data-experience-add-url-param="<%= impegno_slot_commitments_path(slot) %>" data-experience-add-context-param="Nello Slot: <%= slot.title %>" class="text-xs font-medium text-blue-700 hover:text-blue-900">+ Commitment</button></div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            <% @scheduled_sessions_by_day.fetch(day, []).reject { |session| slots.any? { |slot| slot.data_session_id == session.id } }.each do |session| %><div><div data-edit-kind="session" data-edit-url="<%= edit_url.call(:session, session) %>" data-edit-title="<%= session.title %>" data-edit-starts-at="<%= session.starts_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-ends-at="<%= session.ends_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-calendar-id="<%= session.professional_calendar_id %>" data-edit-service-id="<%= session.service_id %>" data-edit-visibility="<%= session.visibility %>" class="flex items-center gap-x-3 rounded-md px-1.5 py-1 hover:bg-gray-100"><span class="text-gray-500"><%= icon.call(:session) %></span><span class="grow text-sm text-gray-900"><%= session.title %></span><span class="text-xs text-gray-500"><%= session.starts_at.strftime("%H:%M") %><%= " – #{session.ends_at.strftime('%H:%M')}" if session.ends_at.present? %></span></div><div data-experience-edit-target="control" class="hidden px-8 pb-1"><button type="button" data-action="experience-add#open" data-experience-add-kind-param="slot" data-experience-add-url-param="<%= impegno_session_slots_path(session) %>" data-experience-add-context-param="Nella Sessione: <%= session.title %>" data-experience-add-starts-at-param="<%= session.starts_at&.strftime("%Y-%m-%dT%H:%M") %>" data-experience-add-ends-at-param="<%= session.ends_at&.strftime("%Y-%m-%dT%H:%M") %>" class="text-xs font-medium text-blue-700 hover:text-blue-900">+ Slot</button></div></div><% end %>
+            <% slots.select { |slot| slot.data_session.blank? }.each do |slot| %><div><div data-edit-kind="slot" data-edit-url="<%= edit_url.call(:slot, slot) %>" data-edit-title="<%= slot.title %>" data-edit-starts-at="<%= slot.starts_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-ends-at="<%= slot.ends_at&.strftime("%Y-%m-%dT%H:%M") %>" class="flex items-center gap-x-3 rounded-md px-2 py-1.5 hover:bg-gray-100"><div class="flex grow items-center gap-x-3"><span class="text-gray-500"><%= icon.call(:slot) %></span><span class="text-sm text-gray-900"><%= slot.title %></span></div><span class="text-xs text-gray-500"><%= slot.starts_at.strftime("%H:%M") %><%= " – #{slot.ends_at.strftime('%H:%M')}" if slot.ends_at.present? %></span><%= avatars.call(slot.data_commitments.to_a) %></div><div data-experience-edit-target="control" class="hidden px-8 pb-1"><button type="button" data-action="experience-add#open" data-experience-add-kind-param="commitment" data-experience-add-url-param="<%= impegno_slot_commitments_path(slot) %>" data-experience-add-context-param="Nello Slot: <%= slot.title %>" class="text-xs font-medium text-blue-700 hover:text-blue-900">+ Commitment</button></div></div><% end %>
+            <% @scheduled_direct_commitments_by_day.fetch(day, []).each do |commitment| %><div data-edit-kind="commitment" data-edit-url="<%= edit_url.call(:commitment, commitment) %>" data-edit-title="<%= commitment.title %>" data-edit-starts-at="<%= commitment.starts_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-ends-at="<%= commitment.ends_at&.strftime("%Y-%m-%dT%H:%M") %>" data-edit-status="<%= commitment.status %>" class="flex items-center gap-x-3 rounded-md px-1.5 py-1 hover:bg-gray-100"><span class="size-2 rounded-full bg-blue-500"></span><span class="text-gray-500"><%= icon.call(:commitment) %></span><span class="grow text-sm text-gray-900"><%= commitment.title %></span><span class="text-xs text-gray-500"><%= commitment.starts_at.strftime("%H:%M") %><%= " – #{commitment.ends_at.strftime('%H:%M')}" if commitment.ends_at.present? %></span></div><% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div data-experience-planned-target="panel" data-experience-planned-kind-param="list" class="border-y border-gray-100 <%= "hidden" unless selected_view == "list" %>">
+      <div data-experience-edit-target="control" class="hidden px-2 py-2"><button type="button" data-action="experience-add#open" data-experience-add-kind-param="session" data-experience-add-url-param="<%= impegno_experience_sessions_path(experience) %>" data-experience-add-context-param="Nuova Sessione programmata nell’esperienza" class="mr-3 text-xs font-medium text-blue-700 hover:text-blue-900">+ Sessione</button><button type="button" data-action="experience-add#open" data-experience-add-kind-param="slot" data-experience-add-url-param="<%= impegno_experience_slots_path(experience) %>" data-experience-add-context-param="Nuovo Slot diretto nell’esperienza" class="mr-3 text-xs font-medium text-blue-700 hover:text-blue-900">+ Slot</button><button type="button" data-action="experience-add#open" data-experience-add-kind-param="commitment" data-experience-add-url-param="<%= impegno_experience_commitments_path(experience) %>" data-experience-add-context-param="Nuovo Impegno diretto nell’esperienza" class="text-xs font-medium text-blue-700 hover:text-blue-900">+ Impegno</button></div>
+      <% list_items = @sessions.map { |record| [:session, record] } + @all_slots.map { |record| [:slot, record] } + @all_commitments.map { |record| [:commitment, record] } %>
+      <%= render "brands/impegno/experiences/register_table", items: list_items, empty_message: "Nessun elemento nell’esperienza.", icon: icon, type_label: type_label, edit_url: edit_url %>
+    </div>
+    </div>
+
+    </div>
+<% end %>

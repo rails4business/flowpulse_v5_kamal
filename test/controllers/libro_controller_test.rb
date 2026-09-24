@@ -40,13 +40,15 @@ class LibroControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "PosturaCorretta in un mese"
     assert_includes response.body, "Inizia a leggere"
+    assert_select "a[href='/markpostura']", text: "Mark Postura"
+    assert_select "a[href='/posturacorretta']", text: "PosturaCorretta"
     assert_select "nav a", text: /1\. L'incontro con la salute e con le metodiche posturali/
 
     get book_chapter_url(book_slug: POSTURA_BOOK_SLUG, id: "benefici-postura-corretta")
 
     assert_response :success
     assert_includes response.body, "I benefici di una postura corretta"
-    assert_includes response.body, "Partiamo dall'allineamento"
+    assert_includes response.body, "Avere una PosturaCorretta non significa soltanto stare dritti"
   end
 
   test "show should render draft chapter placeholder for guests" do

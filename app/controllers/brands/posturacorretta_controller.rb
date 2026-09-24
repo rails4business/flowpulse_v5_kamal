@@ -1,15 +1,63 @@
 module Brands
   class PosturacorrettaController < ::PosturacorrettaController
+    FIRST_MONTH_BOOK_SLUG = "postura-corretta-in-un-mese".freeze
+    FIRST_MONTH_BOOK_CHAPTERS = {
+      "00-incontro-salute-metodiche" => "incontro-salute-metodiche",
+      "02-benefici" => "benefici-postura-corretta",
+      "04-disallineamento" => "postura-strumento-lettura",
+      "05-metodiche" => "insegnamenti-metodiche-posturali",
+      "01-errori" => "tre-errori-percorso-posturale",
+      "00-postura-punto-incontro" => "postura-punto-incontro",
+      "00-percorso-o-interventi-separati" => "percorso-o-interventi-separati",
+      "rosso-verde-blu" => "rosso-verde-blu",
+      "00-trovare-il-giusto-punto-di-vista" => "giusto-punto-di-vista",
+      "00-ultima-sconfitta" => "giusto-punto-di-vista",
+      "06-visione" => "nuovo-punto-di-vista",
+      "00-da-dove-iniziare" => "prossimo-passo",
+      "03-da-dove-iniziare" => "prossimo-passo"
+    }.freeze
+    PERCORSO_INTEGRATO_DOCS = {
+      "domanda-da-dove-comincio" => "da-dove-comincio",
+      "domanda-senza-diagnosi" => "senza-diagnosi",
+      "domanda-insegnante-professionista" => "insegnante-professionista",
+      "domanda-coinvolgere-professionista" => "coinvolgere-professionista",
+      "domanda-durata-programma" => "durata-programma",
+      "tutor-valutare-richiesta" => "valutare-richiesta",
+      "tutor-scheda-chiamata" => "scheda-chiamata",
+      "tutor-proposta-percorso" => "modello-proposta",
+      "professionisti-iniziare-percorso" => "iniziare-percorso",
+      "professionisti-responsabile-percorso" => "responsabile-percorso",
+      "professionisti-aprire-programma" => "aprire-programma",
+      "professionisti-definire-proposta" => "definire-proposta",
+      "professionisti-invitare-professionista" => "invitare-professionista",
+      "professionisti-usare-diario" => "usare-diario",
+      "professionisti-ragionamento-fisiologico" => "ragionamento-fisiologico",
+      "professionisti-misurare-risultati" => "misurare-risultati",
+      "professionisti-chiudere-programma" => "chiudere-programma",
+      "professionisti-chiudere-percorso" => "chiudere-percorso",
+      "professionisti-aderisci-linee-guida" => "aderire-linee-guida",
+      "stop-al-dolore" => "stop-al-dolore",
+      "prevenzione" => "prevenzione",
+      "performance" => "performance",
+      "espressione" => "attivita-corporee",
+      "consapevolezza" => "postura-fisiologia",
+      "connessione" => "corpo-ambiente"
+    }.freeze
+
     def three_projects
       render "brands/posturacorretta/three_projects"
     end
 
     def guide
+      return redirect_first_month_to_book if first_month_guide_request?
+      return redirect_percorso_integrato_docs if params[:sezione] == "percorso"
+
       load_home_index
       requested_section = params[:sezione].presence || section_for_legacy_chapter(params[:chapter])
       requested_chapter = params[:capitolo].presence || params[:chapter]
       @current_section = @home_sections.find { |section| section.fetch("id") == requested_section }
-      @current_section ||= @home_sections.find { |section| section.fetch("id") == "primo_mese" }
+      @current_section ||= @home_sections.first
+      return redirect_to(posturacorretta_path, alert: "La documentazione è in preparazione.") unless @current_section
       @section_chapters = flatten_guide_items(@current_section.fetch("items", []))
       @current_chapter = @section_chapters.find do |item|
         [item.fetch("slug"), item["legacy_slug"]].compact.include?(requested_chapter)
@@ -33,7 +81,7 @@ module Brands
       data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/guide/indice.yml"), permitted_classes: [], aliases: false) || {}
       @guide_editor = Current.user&.superadmin_user? || false
       @guide_tutor = current_user_posturacorretta_tutor?
-      all_sections = data.fetch("sections", []).map { |section| decorate_guide_section(section) }
+      all_sections = data.fetch("sections", []).reject { |section| section["id"] == "percorso" }.map { |section| decorate_guide_section(section) }
       @home_sections = if @guide_editor
         all_sections
       elsif @guide_tutor
@@ -142,7 +190,26 @@ module Brands
 
     def section_for_legacy_chapter(chapter)
       return "progetto" if chapter.to_s.match?(/\A(?:07|08|09|10|11)-/)
-      "primo_mese"
+      "accademia"
+    end
+
+    def first_month_guide_request?
+      return true if params[:sezione] == "primo_mese"
+
+      FIRST_MONTH_BOOK_CHAPTERS.key?(params[:chapter].to_s) ||
+        FIRST_MONTH_BOOK_CHAPTERS.key?(params[:capitolo].to_s)
+    end
+
+    def redirect_first_month_to_book
+      requested_chapter = params[:capitolo].presence || params[:chapter]
+      chapter = FIRST_MONTH_BOOK_CHAPTERS[requested_chapter] || "copertina"
+      redirect_to book_chapter_path(book_slug: FIRST_MONTH_BOOK_SLUG, id: chapter), status: :moved_permanently
+    end
+
+    def redirect_percorso_integrato_docs
+      legacy_doc = params[:capitolo].presence || params[:chapter]
+      destination = PERCORSO_INTEGRATO_DOCS[legacy_doc]
+      redirect_to(percorso_integrato_docs_path(doc: destination), status: :moved_permanently)
     end
 
     def chapter_has_own_title?(chapter)

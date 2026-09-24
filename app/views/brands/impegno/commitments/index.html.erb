@@ -106,7 +106,7 @@
     <% if @active_view == "agenda" %>
       <!-- INIZIO AGENDA -->
       <div class="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
-        <% if @active_area == "agenda" && Current.user.professional_user? %>
+        <% if @active_area == "agenda" && @impegno_professional_access %>
           <nav class="flex items-center gap-1" aria-label="Filtro agenda professionista">
             <% { "all" => "Tutti", "events" => "I miei eventi", "booking_slots" => "Slot prenotazione" }.each do |filter, label| %>
               <%= link_to label,
@@ -130,7 +130,7 @@
         <% @commitments_by_day.each do |date, commitments_for_day| %>
           <div class="col-span-full mb-8">
             <div class="mb-3 flex items-baseline gap-2.5">
-              <h2 class="m-0 text-[15px] font-black uppercase tracking-wide text-slate-900"><%= l(date, format: "%A %d %B").titleize %></h2>
+              <h2 class="m-0 text-[15px] font-black uppercase tracking-wide text-slate-900"><%= date.present? ? l(date, format: "%A %d %B").titleize : "Da programmare" %></h2>
               <% if date == Date.today %>
                 <span class="text-[11px] font-extrabold uppercase text-blue-600">Oggi</span>
               <% elsif date == Date.tomorrow %>
@@ -155,8 +155,14 @@
                 %>
                 
                 <article id="commitment-<%= commitment.id %>" class="relative grid grid-cols-[112px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-3 transition hover:z-10 hover:bg-slate-50 lg:grid-cols-[112px_minmax(230px,1fr)_minmax(170px,.72fr)_auto] lg:gap-x-4 <%= border_top %>">
-                  <div class="inline-flex items-center gap-2 whitespace-nowrap text-xs text-slate-400" aria-label="Dalle <%= displayed_start.strftime('%H:%M') %> alle <%= displayed_end&.strftime('%H:%M') || 'ora da definire' %>">
-                    <strong class="text-sm font-semibold text-slate-900"><%= commitment.all_day? ? "Tutto il giorno" : displayed_start.strftime("%H:%M") %></strong><span aria-hidden="true">→</span><strong class="text-sm font-semibold text-slate-900"><%= commitment.all_day? ? "" : (displayed_end&.strftime("%H:%M") || "—") %></strong>
+                  <div class="inline-flex items-center gap-2 whitespace-nowrap text-xs text-slate-400" aria-label="<%= if commitment.all_day? then 'Tutto il giorno' elsif displayed_start.present? then "Dalle #{displayed_start.strftime('%H:%M')} alle #{displayed_end&.strftime('%H:%M') || 'ora da definire'}" else 'Orario da definire' end %>">
+                    <% if commitment.all_day? %>
+                      <strong class="text-sm font-semibold text-slate-900">Tutto il giorno</strong>
+                    <% elsif displayed_start.present? %>
+                      <strong class="text-sm font-semibold text-slate-900"><%= displayed_start.strftime("%H:%M") %></strong><span aria-hidden="true">→</span><strong class="text-sm font-semibold text-slate-900"><%= displayed_end&.strftime("%H:%M") || "—" %></strong>
+                    <% else %>
+                      <strong class="text-sm font-semibold text-slate-500">Da programmare</strong>
+                    <% end %>
                   </div>
                   <div class="min-w-0">
                     <div class="flex flex-wrap items-center gap-2"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider <%= kind_classes[commitment.kind] || kind_classes['personal'] %>"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span><% if participation_label %><span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-700"><%= participation_label %></span><% end %><% if represented_contact %><span class="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-extrabold text-violet-700">Per <%= represented_contact.name %></span><% end %><strong class="min-w-0 truncate text-base text-slate-900"><%= commitment.title %></strong></div>
@@ -191,7 +197,7 @@
                     </div>
                     <div><%= form.label :context_label, "Contesto", class: "text-xs font-bold text-slate-700" %><%= form.text_field :context_label, value: commitment.metadata["context_label"], class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
                     <div><%= form.label :calendar_label, "Calendario di", class: "text-xs font-bold text-slate-700" %><%= form.text_field :calendar_label, value: commitment.calendar_label, required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div>
-                    <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :starts_at, "Inizio previsto", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, value: commitment.starts_at&.strftime("%Y-%m-%dT%H:%M"), required: true, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div><div><%= form.label :ends_at, "Fine prevista", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, value: commitment.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div></div>
+                    <div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :starts_at, "Inizio previsto", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :starts_at, value: commitment.starts_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div><div><%= form.label :ends_at, "Fine prevista", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :ends_at, value: commitment.ends_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div></div>
                     <% if commitment.actual_started_at.present? %>
                       <fieldset class="rounded-xl border border-slate-200 bg-slate-50 p-4"><legend class="px-1 text-xs font-black uppercase tracking-wider text-slate-500">Tempo reale</legend><div class="grid gap-4 sm:grid-cols-2"><div><%= form.label :actual_started_at, "Inizio effettivo", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :actual_started_at, value: commitment.actual_started_at&.strftime("%Y-%m-%dT%H:%M"), required: true, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div><div><%= form.label :actual_ended_at, "Fine effettiva", class: "text-xs font-bold text-slate-700" %><%= form.datetime_local_field :actual_ended_at, value: commitment.actual_ended_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" %></div></div></fieldset>
                     <% end %>

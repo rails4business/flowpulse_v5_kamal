@@ -1,3 +1,4 @@
 <footer class="border-t border-slate-200 px-5 py-8 text-center text-sm text-slate-500">
-  <%= site.dig("footer", "tagline") %>
+  <p><%= site.dig("footer", "tagline") %></p>
+  <% if site["node_slug"] == "markpostura" %><p class="mt-3"><%= render "shared/changelog_footer_link", brand: "markpostura" %></p><% end %>
 </footer>

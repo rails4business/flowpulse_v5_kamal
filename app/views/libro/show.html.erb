@@ -297,6 +297,17 @@
         </a>
         <h1 class="mt-8 text-2xl font-semibold text-slate-800 italic font-serif"><%= @chapter_title %></h1>
         <p class="mt-2 text-sm text-slate-500 font-sans max-w-xs leading-relaxed"><%= @chapter_description %></p>
+        <% if @author_name.present? || @publisher_name.present? %>
+          <p class="mt-4 text-xs font-sans leading-5 text-slate-500">
+            <% if @author_name.present? %>
+              Scritto da <%= @author_path ? link_to(@author_name, @author_path, class: "font-semibold text-blue-700 hover:text-blue-900") : @author_name %>
+            <% end %>
+            <% if @author_name.present? && @publisher_name.present? %> · <% end %>
+            <% if @publisher_name.present? %>
+              pubblicato su <%= @publisher_path ? link_to(@publisher_name, @publisher_path, class: "font-semibold text-blue-700 hover:text-blue-900") : @publisher_name %>
+            <% end %>
+          </p>
+        <% end %>
         
         <a href="<%= book_reader_chapter_path(first_chapter_slug) %>" class="mt-8 inline-flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 px-8 py-3.5 text-sm font-bold text-white transition duration-200 shadow-sm shadow-blue-500/20 active:scale-[0.98] animate-fade-in">
           Inizia a leggere →
@@ -396,6 +407,17 @@
                     <h1 class="text-3xl lg:text-4xl italic text-slate-800 leading-tight font-serif tracking-tight"><%= @chapter_title %></h1>
                     <% if @chapter_description.present? %>
                       <p class="mt-3 text-slate-500 font-sans text-sm leading-relaxed"><%= @chapter_description %></p>
+                    <% end %>
+                    <% if @author_name.present? || @publisher_name.present? %>
+                      <p class="mt-3 text-xs font-sans leading-5 text-slate-500">
+                        <% if @author_name.present? %>
+                          Scritto da <%= @author_path ? link_to(@author_name, @author_path, class: "font-semibold text-blue-700 hover:text-blue-900") : @author_name %>
+                        <% end %>
+                        <% if @author_name.present? && @publisher_name.present? %> · <% end %>
+                        <% if @publisher_name.present? %>
+                          pubblicato su <%= @publisher_path ? link_to(@publisher_name, @publisher_path, class: "font-semibold text-blue-700 hover:text-blue-900") : @publisher_name %>
+                        <% end %>
+                      </p>
                     <% end %>
                   </div>
 

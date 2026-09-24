@@ -7,6 +7,28 @@ class LandingController < ApplicationController
   def flowpulse
   end
 
+  def flowpulse_projects
+    projects = FlowpulseProjectRegistry.load.fetch("projects", [])
+    @flowpulse_projects = projects.select do |project|
+      project.fetch("visibility", "internal") == "public" || Current.user&.superadmin_user?
+    end
+  end
+
+  def flowpulse_professionals
+    professional_nodes = Node.published_public
+      .where(professional: true)
+      .includes(:domains, :primary_professional_profile)
+      .order(:title)
+      .to_a
+
+    configured_professionals = ChangelogRepository.catalog.values
+      .select { |brand| brand.fetch("kind") == "professional" }
+      .reject { |brand| professional_nodes.any? { |node| node.slug == brand.fetch("key") } }
+      .sort_by { |brand| brand.fetch("label").downcase }
+
+    @flowpulse_professionals = professional_nodes + configured_professionals
+  end
+
   def flowpulse_contents
     redirect_to rails4b_contents_path, status: :moved_permanently
   end
@@ -42,6 +64,10 @@ class LandingController < ApplicationController
   end
 
   def rails4b_content
+    if params[:slug] == "la-salute-non-e-un-lusso"
+      return redirect_to posturacorretta_articolo_path(params[:slug]), status: :moved_permanently
+    end
+
     load_rails4b
     @rails4b_track = @rails4b_path.fetch("tracks").find { |track| track.fetch("steps").any? { |step| step.fetch("content_slug") == params[:slug] } }
     @rails4b_article = @rails4b_contents_by_slug[params[:slug]]

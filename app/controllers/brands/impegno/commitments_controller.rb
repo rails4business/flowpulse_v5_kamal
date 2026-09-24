@@ -21,7 +21,9 @@ module Brands
     @active_area = %w[agenda user professional places contacts].include?(params[:area]) ? params[:area] : "agenda"
     requested_view = params[:view] == "programs" ? "practices" : params[:view]
     @active_view = %w[agenda practices recurring value reports].include?(requested_view) ? requested_view : "agenda"
-    @agenda_filter = @active_area == "agenda" && @active_view == "agenda" && Current.user.professional_user? ? params[:agenda_filter].presence_in(%w[all events booking_slots]) || "all" : nil
+    @impegno_professional_access = Current.user&.superadmin_user? ||
+      Current.user&.role_assignments&.where(role: :operator)&.exists? || false
+    @agenda_filter = @active_area == "agenda" && @active_view == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(%w[all events booking_slots]) || "all" : nil
     
     # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
     @default_brand = params[:default_brand].presence_in(%w[impegno posturacorretta generaimpresa personale]) || "impegno"
@@ -42,9 +44,15 @@ module Brands
         (commitment.actual_started_at || commitment.starts_at)&.in_time_zone&.to_date == @agenda_date
       end
     elsif params[:period] == "upcoming"
-      @commitments = @commitments.select { |commitment| (commitment.actual_started_at || commitment.starts_at) >= Time.current }
+      @commitments = @commitments.select do |commitment|
+        starts_at = commitment.actual_started_at || commitment.starts_at
+        starts_at.present? && starts_at >= Time.current
+      end
     elsif params[:period] == "past"
-      @commitments = @commitments.select { |commitment| (commitment.actual_started_at || commitment.starts_at) < Time.current }
+      @commitments = @commitments.select do |commitment|
+        starts_at = commitment.actual_started_at || commitment.starts_at
+        starts_at.present? && starts_at < Time.current
+      end
     end
     if @agenda_filter == "events"
       @commitments = @commitments.select { |commitment| commitment.kind == "event" }
@@ -54,7 +62,9 @@ module Brands
     @commitments = @commitments.reject { |commitment| commitment.status == "cancelled" } if params[:view_mode] == "weekplan"
     
     # Raggruppa i commitment per giorno
-    @commitments_by_day = @commitments.group_by { |c| (c.actual_started_at || c.starts_at || Time.current).to_date }
+    @commitments_by_day = @commitments.group_by do |commitment|
+      (commitment.actual_started_at || commitment.starts_at)&.in_time_zone&.to_date
+    end
   end
 
   def create

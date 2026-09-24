@@ -4,7 +4,7 @@ class LibroController < ApplicationController
   allow_unauthenticated_access only: %i[index show legacy_index legacy_show] if respond_to?(:allow_unauthenticated_access)
 
   DEFAULT_BOOK_SLUG = "il-corpo-un-mondo-da-scoprire"
-  BOOKS_ROOT = Rails.root.join("config", "data", "books")
+  BOOKS_ROOT = Rails.root.join("config", "data", "books") # compatibilità temporanea
   POSTURACORRETTA_CONTENT_ROOT = Rails.root.join("config", "data", "posturacorretta").cleanpath
 
   before_action :set_book_paths
@@ -37,6 +37,7 @@ class LibroController < ApplicationController
       @is_cover = true
       @chapter_title = @book_metadata["title"].presence || @book_slug.titleize
       @chapter_description = @book_metadata["subtitle"].presence
+      set_attribution
       @chapter_markdown = ""
 
       chapters_only = @toc.reject { |item| item[:header] || item[:type] == "head" }
@@ -51,6 +52,7 @@ class LibroController < ApplicationController
         raw = File.read(file_path)
         frontmatter, body = extract_frontmatter(raw)
         file_meta = book_file_metadata(file_path)
+        set_attribution(frontmatter)
         chapter_meta ||= @toc.find { |c| c[:slug] == @chapter_slug || c[:slug] == file_meta[:slug] }
 
         @chapter_slug = chapter_meta&.dig(:slug).presence || file_meta[:slug].presence || @chapter_slug
@@ -108,7 +110,7 @@ class LibroController < ApplicationController
   def set_book_paths
     @book_slug = params[:book_slug].presence || DEFAULT_BOOK_SLUG
     @book_slug = @book_slug.to_s.gsub(/[^a-zA-Z0-9\-_]/, "")
-    @book_dir = BOOKS_ROOT.join(@book_slug)
+    @book_dir = BrandEditorial::BookLocator.new.find(@book_slug) || BOOKS_ROOT.join(@book_slug)
     @book_md_dir = @book_dir.join("chapters")
     @book_yaml_path = @book_dir.join("index.yml")
     @book_metadata_path = @book_dir.join("book.yml")
@@ -133,6 +135,26 @@ class LibroController < ApplicationController
     YAML.safe_load_file(@book_metadata_path, permitted_classes: [], aliases: false) || {}
   rescue StandardError
     {}
+  end
+
+  # L'autore e il Brand che pubblica restano distinti. Il frontmatter di un
+  # capitolo puo' ridefinire i dati del libro quando il testo e' firmato o
+  # pubblicato da un soggetto diverso.
+  def set_attribution(frontmatter = {})
+    metadata = @book_metadata.merge(frontmatter.slice("author", "author_node_slug", "author_path", "publisher_node_slug", "publisher_name", "publisher_path"))
+    @author_name = metadata["author"].presence
+    @author_node_slug = metadata["author_node_slug"].presence
+    @author_path = safe_editorial_path(metadata["author_path"])
+    @publisher_name = metadata["publisher_name"].presence || metadata["publisher_node_slug"].presence&.titleize
+    @publisher_node_slug = metadata["publisher_node_slug"].presence
+    @publisher_path = safe_editorial_path(metadata["publisher_path"])
+  end
+
+  def safe_editorial_path(path)
+    value = path.to_s
+    return if value.blank? || !value.start_with?("/") || value.start_with?("//")
+
+    value
   end
 
   def load_toc
@@ -215,10 +237,14 @@ class LibroController < ApplicationController
   end
 
   def book_source_path(relative_source)
+    book_source = @book_dir.join(relative_source).cleanpath
+    book_prefix = "#{@book_dir}/"
+    return book_source if book_source.to_s.start_with?(book_prefix) && book_source.extname == ".md" && book_source.file?
+
     source_path = POSTURACORRETTA_CONTENT_ROOT.join(relative_source).cleanpath
     root_prefix = "#{POSTURACORRETTA_CONTENT_ROOT}/"
     return unless source_path.to_s.start_with?(root_prefix)
-    return unless source_path.extname == ".md"
+    return unless source_path.extname == ".md" && source_path.file?
 
     source_path
   end

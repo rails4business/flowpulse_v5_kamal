@@ -2,6 +2,7 @@ module Posturacorretta
   class ContentRepository
     ALLOWED_FORMATS = %w[course chapter].freeze
     ALLOWED_ACCESS = %w[free paid].freeze
+    CANONICAL_COURSES_ROOT = Rails.root.join("config/data/brands/posturacorretta/courses").freeze
 
     def initialize(path: Rails.root.join("config/data/posturacorretta/contenuti/contents.yml"), include_scheduled: false)
       @path = path
@@ -36,7 +37,7 @@ module Posturacorretta
 
     def contents
       @contents ||= begin
-        items = data.fetch("contents")
+        items = merge_canonical_courses(data.fetch("contents"))
         validate!(items)
         items.map(&:deep_stringify_keys).select { |content| visible?(content) }
       end
@@ -48,6 +49,18 @@ module Posturacorretta
       return true if content["published_at"].blank?
 
       Time.zone.parse(content.fetch("published_at")) <= Time.current
+    end
+
+    # Durante la migrazione il catalogo storico continua a contenere tutti i
+    # corsi. Un course.yml sotto il Brand sostituisce soltanto le voci con gli
+    # stessi id, permettendo di migrare un corso alla volta senza duplicarlo.
+    def merge_canonical_courses(legacy_items)
+      canonical_items = Dir.glob(CANONICAL_COURSES_ROOT.join("*", "course.yml")).sort.flat_map do |course_path|
+        YAML.safe_load_file(course_path, permitted_classes: [], aliases: false).to_h.fetch("contents", [])
+      end
+      overrides = canonical_items.index_by { |item| item.fetch("id") }
+
+      legacy_items.map { |item| overrides.delete(item.fetch("id")) || item } + overrides.values
     end
 
     def by_id

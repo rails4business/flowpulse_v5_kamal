@@ -2,7 +2,10 @@
 
 > **Fonte di verità corrente.** Sostituisce per le decisioni future i modelli
 > `DataEvent`, `EventFormat`, `Occurrence` e `Slot` precedenti. Non vengono
-> create nuove tabelle finché YAML e viste non sono stati usati davvero.
+> reintrodotti modelli soltanto dopo la validazione nella vista. Il
+> primo nucleo confermato è `DataExperience → DataSession → DataSlot →
+> DataCommitment`, affiancato da `ProfessionalCalendar`, `Service` e
+> `BrandProcess`.
 
 Questo è il **documento tecnico principale che tiene le fila dello sviluppo**.
 Le nuove decisioni operative vengono prima riportate qui e poi implementate un
@@ -18,9 +21,10 @@ separatamente in
 ## Scopo
 
 Tutti i brand possono usare la stessa struttura, mantenendo nav, CSS e parole
-pubbliche proprie. Per ora si sviluppano solo due funzioni: contenuti gestiti
-dai Creator e Session/Slot gestiti dagli Operator. Cycle e Service restano in
-standby.
+pubbliche proprie. Durante il pilota la creazione e la modifica di servizi,
+processi, Esperienze, Session e Slot sono riservate al `superadmin`. I permessi
+di Ideatore, Creator e Operator verranno aperti soltanto dopo casi reali;
+Cycle e le regole commerciali avanzate dei Service restano in standby.
 
 Il contenitore comune è `Node`: può essere dichiarato professional anche prima
 dell'iscrizione e viene collegato successivamente al profilo tramite
@@ -43,9 +47,10 @@ Percorso                           DataSession
 L'editoriale risponde a **che cosa si legge, apprende o pratica**. La Session
 risponde a **che cosa si svolge e come si colloca una persona**.
 
-Il Week Plan viene prima dei due alberi: assegna spazi reali della settimana e
-permette di verificare il ritmo di lavoro. Non è ancora una DataSession e non è
-un contenuto, ma prepara il luogo in cui entrambi potranno essere programmati.
+Il Week Plan assegna spazi reali della settimana e permette di verificare il
+ritmo di lavoro. La struttura e le ricorrenze possono ancora arrivare da YAML;
+gli appuntamenti concreti possono ora arrivare dalle DataSession pubbliche del
+calendario professionale.
 
 ## 0. Week Plan YAML — prototipo in uso
 
@@ -58,7 +63,9 @@ config/data/markpostura/settimane/YYYY-Www.yml
 Ogni voce richiede giorno, ora iniziale, ora finale e uno dei cinque `space`
 ammessi dal catalogo MarkPostura. `title` e `location` specificano cosa si fa e
 dove; se manca il titolo viene mostrato il nome dello spazio. Questa struttura
-resta distinta dal futuro database di 1Impegno.
+resta il livello editoriale facilmente modificabile. La vista unisce le sue
+voci alle DataSession presenti nel database senza duplicarle nel file
+settimanale.
 
 La vista è un calendario settimanale dalle 08:00 alle 22:00, ispirato al
 prototipo `docs/private_prototypes/viste_html/6_weekplan.html`. Non presenta una
@@ -68,12 +75,30 @@ blocco apre un dettaglio in modale senza cambiare pagina.
 La pagina dedicata usa parametri condivisibili:
 
 ```text
-/markpostura/weekplan?week=2026-W38&spaces=postura-gruppo,postura-app
+/markpostura/weekplan?week=2026-W38&calendars=postura-gruppo,postura-app
 ```
 
-`week` identifica il file settimanale; `spaces` contiene una o più delle cinque
-categorie selezionate. Soltanto il superadmin può aprire la sorgente YAML da
+`week` identifica il file settimanale; `calendars` contiene uno o più calendari
+selezionati. Il vecchio parametro `spaces` resta temporaneamente accettato per
+non rompere i link già condivisi. Soltanto il superadmin può aprire la sorgente YAML da
 `/admin/markpostura/settimane/YYYY-Www`.
+
+I cinque calendari iniziali sono dichiarati nel registro
+`config/professional_calendars.yml` e si importano in modo idempotente con
+`bin/rails professional_calendars:import`. Ogni record collega il Node
+professionale, qualsiasi Node di contesto, lo slug usato da `calendars=`, l'etichetta e
+il colore. Una DataSession può indicare `professional_calendar_id`,
+`service_id` facoltativo e `visibility: private | public`. Una Session
+pubblica deve avere un calendario; una bozza privata può ancora esserne priva.
+Il Week Plan pubblico di MarkPostura legge soltanto le Session pubbliche dei
+suoi calendari; il superadmin può vedere anche quelle private.
+
+Calendari, servizi e processi si amministrano nelle rispettive tab dello show
+del Node. Il calendario appartiene al professionista e punta al Node preciso
+per cui viene usato. Brand e Domain si ricavano risalendo `parent_node_id`
+fino al primo antenato dotato di dominio. Un Service appartiene direttamente a
+un Node e resta facoltativo sulla Session. Un `BrandProcess` appartiene a un Node e può raccogliere più
+`DataExperience`; eliminare il processo conserva le Esperienze scollegandole.
 
 La pagina MarkPostura mantiene due livelli distinti:
 
@@ -179,8 +204,9 @@ JavaScript, ma dal repository che filtra i dati prima del rendering.
 
 Il precedente corso **PosturaCorretta in un mese** è stato trasformato in libro
 pubblicato. Il suo indice si trova in
-`config/data/books/postura-corretta-in-un-mese/index.yml` e riusa i Markdown
-esistenti tramite riferimenti `source`, senza duplicare i testi. Il nuovo corso
+`config/data/brands/posturacorretta/books/postura-corretta-in-un-mese/index.yml`
+e i suoi capitoli vivono nella stessa cartella del Brand, senza duplicare i
+testi. Il nuovo corso
 breve **Inizia con PosturaCorretta** resta invece il primo pilota dell'albero
 `Content course → chapter`.
 
@@ -188,7 +214,8 @@ breve **Inizia con PosturaCorretta** resta invece il primo pilota dell'albero
 
 La fase corrente usa:
 
-- file Markdown per articoli, capitoli, video descritti e schede;
+- file Markdown per articoli, capitoli e schede; i video sono metadati/media
+  del rispettivo file e non una categoria autonoma;
 - `course.yml` o il catalogo equivalente per ordinare i capitoli;
 - `percorso.yml` per ordinare Section e corsi;
 - una `content_key` stabile per ogni contenuto.
@@ -197,7 +224,7 @@ Esempio:
 
 ```yaml
 content_key: benefici-postura-corretta
-source: guide/01_primo_mese/02_benefici.md
+source: brands/posturacorretta/books/postura-corretta-in-un-mese/chapters/benefici-postura-corretta.md
 ```
 
 La prima interfaccia editoriale dell'app dovrà poter creare titolo, formato,
@@ -248,9 +275,9 @@ Restano separati e saranno modellati in seguito nei file MarkPostura:
 - lezioni di musica;
 - letture e meditazioni.
 
-Il programma didattico diventerà in seguito la dima di un Cycle. Le date reali
-genereranno o istanzieranno DataSession; le schede della lezione saranno
-DataSlot collegati ai rispettivi contenuti.
+Il programma didattico può diventare una dima `DataCycle` con `mode: template`.
+Le date reali generano un `DataCycle` con `mode: instance`; le schede della
+lezione sono DataSlot collegati ai rispettivi contenuti.
 
 ```text
 Cycle
@@ -264,8 +291,9 @@ Cycle
 ### Regola fondamentale di DataCommitment
 
 `DataCommitment` registra l'impegno di una persona. Quando l'impegno nasce da
-un processo organizzato deve appartenere a **uno e uno solo** fra `Cycle`,
-`DataSession` e `DataSlot`.
+un processo organizzato appartiene a una `DataActivity` e può conservare il
+ramo completo `DataCycle → DataSession → DataSlot`. Il livello operativo è il
+collegamento più specifico presente: Slot, altrimenti Session, altrimenti Cycle.
 
 - sul **Cycle** descrive un impegno valido per l'intero processo: coordinare un
   corso, produrre una serie di video o seguire tutto il percorso di una persona;
@@ -281,10 +309,9 @@ video per conto proprio. Questo caso dovrà essere dichiarato esplicitamente
 come `kind: self_directed` e collegato al contenuto tramite `content_key`; non
 va creata una Session artificiale soltanto per registrare l'avanzamento.
 
-Nel primo prototipo Cycle resta in standby. I Commitment operativi o di
-partecipazione saranno quindi collegati a DataSession oppure DataSlot; quelli
-autonomi verranno affrontati successivamente insieme a login, iscrizione al
-Domain e avanzamento dei capitoli.
+DataActivity, DataCycle, DataSession e DataSlot sono una proposta da validare
+prima con una vista/YAML. Nessuna migrazione di questa gerarchia è mantenuta
+finché non avremo verificato casi reali e vocabolario.
 
 Uno Slot è una posizione dentro una Session, non un task per definizione:
 
@@ -339,27 +366,86 @@ I professionisti che conducono e i partecipanti iscritti hanno Commitment
 sulla Session. Creator del materiale, operatori delle singole parti e
 responsabili della revisione possono avere Commitment sugli Slot.
 
-### Schema database raccomandato, non ancora da migrare
+### Ipotesi di schema database — da validare
 
-Quando passeremo al database, `data_commitments` avrà chiavi esterne esplicite:
+Quando verrà implementata, `data_commitments` potrà usare chiavi esterne
+esplicite:
 
 ```text
-cycle_id
+data_activity_id
+data_cycle_id
 data_session_id
 data_slot_id
-service_id
+content_key
 ```
 
-Per i Commitment operativi o di partecipazione, un vincolo dovrà imporre che
-sia presente esattamente una fra `cycle_id`, `data_session_id` e
-`data_slot_id`. Per `kind: self_directed` le tre chiavi potranno invece essere
-vuote, mentre `content_key` sarà obbligatoria. La validazione deve anche
-impedire di usare `self_directed` per aggirare il collegamento strutturale di un
-impegno organizzato. Le chiavi esplicite restano preferibili a un'associazione
-polimorfica perché mantengono foreign key reali e controllabili. `service_id`
-sarà opzionale e non sostituirà il collegamento strutturale.
+Slot, Session e Cycle possono essere memorizzati insieme per mantenere il
+contesto completo e interrogabile. Le validazioni verificano che appartengano
+alla stessa DataActivity. Per `kind: self_directed` il ramo può essere vuoto e
+`content_key` identifica il capitolo o contenuto svolto. Le chiavi esplicite
+restano preferibili a un'associazione polimorfica perché mantengono foreign key
+reali e controllabili. Il futuro `service_id` sarà opzionale e non sostituirà
+il collegamento strutturale.
 
-## 3. Operator e funzione nel Brand
+### Avanzamento utente: tre usi di DataCommitment
+
+`DataCommitment` non serve soltanto per prenotare: è il registro personale di
+ciò che una persona ha scelto, svolto o completato.
+
+1. **Contenuto online svolto in autonomia**
+
+   ```text
+   kind: self_directed
+   content_key: corso/capitolo o scheda
+   data_cycle_id, data_session_id, data_slot_id: vuoti
+   status: completed
+   ```
+
+   Permette all'utente di marcare un capitolo letto, una scheda praticata o un
+   video visto. Non inventa una Session fittizia.
+
+2. **Lezione con insegnante prenotata o svolta**
+
+   ```text
+   data_session_id: lezione singola o gruppo
+   profile/contact: partecipante
+   status: requested | confirmed | completed | cancelled
+   ```
+
+   Nella sua area l'utente vede prossime lezioni, storico, insegnante, sede e
+   avanzamento del Programma lezioni. Un eventuale DataSlot identifica una
+   parte specifica o una prenotazione individuale dentro una Session.
+
+3. **Tirocinio insegnante**
+
+   ```text
+   data_session_id oppure data_slot_id
+   role: trainee
+   status: completed | approved
+   evidence/notes: da definire
+   ```
+
+   Il tirocinante vede soltanto le attività richieste dal proprio scaglione:
+   presenze, affiancamenti, compresenze e autorizzazioni. L'abilitazione non
+   deriva dalla sola spunta dell'utente: richiede la conferma dell'insegnante
+   responsabile.
+
+## 3. Permessi del pilota e futuro Operator
+
+Nel pilota soltanto il `superadmin` può creare o modificare
+`ProfessionalCalendar`, `Service`, `BrandProcess`, `DataExperience`,
+`DataSession` e `DataSlot`. Le pagine
+pubbliche hanno accesso esclusivamente alle DataSession con `visibility:
+public`. Il ruolo `operator` non riceve ancora permessi operativi.
+
+La matrice futura, ancora da verificare, distingue:
+
+- **Ideatore**: governa servizi e processi del proprio Node;
+- **Creator**: propone Session editoriali e lavora sui contenuti assegnati;
+- **Operator**: organizza o conduce Session operative autorizzate;
+- **Utente**: visualizza, richiede o partecipa tramite DataCommitment.
+
+### Operator e funzione nel Brand
 
 `operator` abilita una persona a lavorare in Impegno nel contesto di un Brand.
 `role_operator` ne definisce la funzione concreta.
@@ -377,9 +463,149 @@ roles deve far scegliere: Brand → utente → operator → role_operator.
 La stessa persona può avere più funzioni nello stesso Brand; l'unicità deve
 includere `role_operator`.
 
-Per il primo prototipo ogni DataSession/DataSlot ha un operatore responsabile e
-eredita il Brand. In seguito si potranno aggiungere tutor, segreteria,
-responsabile del luogo e altri operatori come assegnazioni multiple.
+In seguito si potranno aggiungere tutor, segreteria, responsabile del luogo e
+altri operatori come assegnazioni multiple. Non vengono anticipati ora campi o
+permessi specifici.
+
+## 3.1 1Impegno: motore comune, non un Brand
+
+La struttura `DataSession → DataSlot → DataCommitment` è il nucleo operativo
+di **1Impegno**. Non appartiene a PosturaCorretta: ogni Brand, Project o
+professionista la può usare per pianificare e tracciare il proprio lavoro.
+
+`ProfessionalCalendar` organizza le Session nel tempo di un professionista e
+nel contesto esatto di un Node, che può essere Brand, Project o nodo interno.
+`Service` descrive facoltativamente ciò che quel Node offre. Non è un calendario
+e non è un quarto livello della gerarchia. `DataExperience`
+rimane il contenitore operativo, mentre `BrandProcess` descrive il processo
+ripetibile a cui un'Esperienza può appartenere.
+
+```text
+Node professionale
+└── ProfessionalCalendar  # calendario del professionista per un Node
+    └── DataSession       # occorrenza concreta
+        ├── DataCommitment
+        └── DataSlot
+            └── DataCommitment
+
+Node
+├── Service               # offerta facoltativa collegata alla Session
+└── BrandProcess          # processo organizzativo ripetibile
+    └── DataExperience    # applicazione concreta del processo
+```
+
+Regole di contesto:
+
+- un **Brand** può avere un dominio, ma non è obbligatorio per usare
+  Session/Slot/Commitment;
+- un **Project** è un Node senza dominio e usa esattamente lo stesso flusso;
+- un **professionista** può avere un Node professionale proprio, con o senza
+  dominio. `markpostura` è un esempio: può creare attività personali o
+  lavorare come operatore per PosturaCorretta;
+- se una persona non ha ancora un Node professionale, l'attività resta privata
+  con `created_by_user`; quando verrà creato il Node personale potrà diventare
+  il `context_node`, senza cambiare gli impegni già registrati.
+
+Esempi:
+
+```text
+Lezione di gruppo PosturaCorretta
+creator_node: markpostura
+content_owner_node: posturacorretta
+responsible_operator: insegnante
+content_key: corso/igiene-posturale/capitolo/punti-di-tensione
+
+Video di MarkPostura
+creator_node: markpostura (Node professionale)
+responsible_operator: creator
+content_key: contenuto editoriale di MarkPostura
+
+Sessione privata di un nuovo professionista
+creator_node: assente inizialmente
+created_by_user: utente proprietario
+visibility: private
+```
+
+Se verrà confermato, `DataCycle` terrà insieme più Session. Una dima potrà
+essere un altro `DataCycle` con `mode: template`; un ciclo reale userà
+`mode: instance` e potrà indicare `template_cycle_id`. Del Service sono ora
+presenti soltanto identità e appartenenza; prezzo, capienza, luogo, ruoli e
+regole di partecipazione restano futuri.
+
+## 3.2 Basi comuni: Impegno, calendari, servizi, contenuto e Node
+
+`ProfessionalCalendar` non sostituisce `Node`: collega il calendario di un
+professionista al Node preciso per cui viene usato. Il Node continua a
+rappresentare Brand, progetto o professionista. Il relativo Brand/sito viene
+ricavato automaticamente dal primo antenato con Domain. `Service` descrive
+invece un'offerta facoltativa appartenente esattamente a un Node.
+
+```text
+1Impegno (motore operativo comune)
+  DataSession → DataSlot → DataCommitment
+
+ProfessionalCalendar
+  appartiene a un Node professionale e punta a un context Node
+  colloca una DataSession nel Week Plan del professionista
+
+Service
+  appartiene a un Node
+  descrive facoltativamente l'offerta associata a una DataSession
+
+Contenuto (editoriale)
+  Markdown + YAML oggi; content_key stabile per i legami futuri
+
+Brand (Node organizzativo/editoriale)
+  può avere domini, contenuti, operatori, servizi e attività figlie
+```
+
+### Ruoli delle basi
+
+| Base | Responsabilità | Esempio |
+| --- | --- | --- |
+| **1Impegno** | Organizza ciò che accade, le sue parti e chi è coinvolto. | Lezione, video, riunione, pubblicazione. |
+| **ProfessionalCalendar** | Colloca la Session nel calendario del professionista per uno specifico Node. | PosturaCorretta · Gruppo, progetto YouTube · Produzione. |
+| **Service** | Descrive facoltativamente ciò che il Node offre attraverso la Session. | Lezione individuale, gruppo, masterclass. |
+| **Node professionale** | Identifica il professionista proprietario dei suoi calendari. | MarkPostura. |
+| **Contenuto** | È il materiale editoriale leggibile o guardabile. | Capitolo, scheda, articolo, video associato. |
+| **Brand** | È il contesto organizzativo e di pubblicazione; il dominio è soltanto una sua possibile porta d'ingresso. | PosturaCorretta, Percorso Integrato, Il Giardino del Corpo. |
+
+Un professionista può avere un proprio Node anche senza dominio. Quando il
+Node è il suo riferimento può essere `professional`; quando pubblica o
+organizza per un Brand o un suo Project, la DataSession collega il
+`ProfessionalCalendar` e può aggiungere un `Service`, senza duplicare persone
+o contenuti.
+
+**MarkPostura** è l'esempio: è il Node professionale principale di Mark; può
+avere o non avere un dominio e coordina le attività personali. I contenuti o le
+lezioni pubblicati per PosturaCorretta restano del Brand PosturaCorretta, ma
+possono dichiarare MarkPostura come autore, creatore o operatore responsabile.
+
+`Cycle` resta un livello successivo e raggruppa più Session. Il Service minimo
+è già presente; le sue regole commerciali e di partecipazione verranno
+aggiunte dopo la validazione del pilota. Non sostituisce né un Contenuto né un
+Node.
+
+## Base comune di 1Impegno e dei Brand
+
+La struttura minima di **1Impegno** è comune e non contiene parole specifiche
+di PosturaCorretta:
+
+```text
+DataSession  → cosa succede e quando
+DataSlot     → parte opzionale della Session
+DataCommitment → chi partecipa, svolge o completa un'azione
+```
+
+PosturaCorretta la userà per lezioni, schede, presenze e tirocinio; Percorso
+Integrato per appuntamenti e percorsi personali; Il Giardino del Corpo per
+eventi e attività; Rails4Business per riunioni, produzioni e pubblicazioni.
+
+Ogni record dovrà avere un contesto `brand/node` ereditato dalla Session, senza
+duplicare modelli diversi per ogni progetto. Il Brand decide soltanto le
+etichette, i ruoli operativi consentiti e quali Session rendere pubbliche.
+Così 1Impegno resta lo strumento operativo condiviso e i Brand restano liberi
+di presentare la stessa struttura nel loro linguaggio.
 
 ## 4. Catalogo e calendario pubblico
 
@@ -406,11 +632,85 @@ cosa accade, quando accade e quando diventa visibile. Il calendario personale
 può mostrare subito il lavoro interno, mentre quello pubblico del Brand richiede
 l'approvazione del responsabile.
 
-## 5. Cycle e Service — esplicitamente in standby
+### DataCommitment: significato operativo unico
 
-**Cycle** sarà una dima composta da Session e Slot, ad esempio un corso di
-quattro lezioni, una formazione insegnanti o una produzione video. Si valuta
-solo dopo il test delle Session YAML.
+`DataCommitment` non significa solo prenotazione. Esprime il rapporto fra una
+persona e un'azione concreta: **partecipazione, attività autonoma o incarico**.
+
+| Caso | Session / Slot | DataCommitment |
+| --- | --- | --- |
+| Capitolo online letto o completato | Non obbligatorio | `kind: self_directed`, persona + `content_key` + stato/completato il |
+| Lezione con insegnante prenotata | DataSession della lezione | partecipante + stato richiesta/confermata/svolta |
+| Parte di una lezione | DataSlot, se serve distinguere una fase | insegnante, partecipante o operatore assegnato a quella parte |
+| Tirocinio insegnante | Session o Slot della pratica assistita | tirocinante + attività svolta + conferma del supervisore |
+| Articolo/video editoriale | DataSession della pubblicazione; Slot opzionali scrittura/revisione/pubblicazione | creator, revisore o responsabile con il proprio incarico |
+
+Questa regola permette alla pagina personale di mostrare nello stesso posto:
+
+- capitoli online avanzati in autonomia;
+- lezioni con insegnante richieste, prenotate e svolte;
+- tirocinio completato e, in futuro, validato dal supervisore.
+
+`DataCommitment` non sostituisce la data editoriale: la data della pubblicazione
+appartiene alla DataSession. I Commitment editoriali indicano invece chi ha
+scritto, revisionato o pubblicato e con quale stato.
+
+Per il futuro profilo utente serviranno almeno un'iscrizione al Brand e una
+vista personale che raggruppa i Commitment per **online**, **lezioni con
+insegnante** e **formazione insegnante**. Per il tirocinio sarà necessario
+aggiungere una conferma del supervisore (`verified_by`, `verified_at`) prima di
+calcolare un'abilitazione.
+
+### 1Impegno: nucleo comune e contesti
+
+`DataSession → DataSlot → DataCommitment` è il nucleo operativo di **1Impegno**
+e deve poter essere usato da tutti i Brand, non soltanto da PosturaCorretta.
+1Impegno è la vista e lo strumento che organizza il lavoro; non è il
+proprietario editoriale o commerciale dell'attività.
+
+```text
+Attività di un Brand / professionista / utente
+        │
+        ├── DataSession  cosa accade e quando
+        │     ├── DataSlot  parti eventuali
+        │     │     └── DataCommitment  chi fa/partecipa
+        │     └── DataCommitment  partecipazione o incarico sulla Session
+        │
+        ├── contenuto collegato (opzionale, oggi content_key)
+        └── Brand/Node collegato (opzionale secondo il contesto)
+```
+
+Ogni Session dovrà distinguere quattro riferimenti, senza trasformarli subito
+in quattro modelli rigidi:
+
+| Riferimento | Funzione |
+| --- | --- |
+| `owner_profile_id` | Chi crea e gestisce l'attività: MarkPostura, un altro professionista o un utente normale. È il riferimento sempre presente. |
+| `node_id` | Brand, progetto o nodo professionale nel cui contesto si svolge. È facoltativo: un utente senza dominio può avere un'attività personale. |
+| `content_key` | Articolo, capitolo, scheda o video collegato alla Session. È facoltativo e oggi punta ai file Markdown/YAML. |
+| `brand/domain` derivato dal Node | Serve per calendario, tema, permessi e pubblicazione; non va duplicato se il Node lo determina già. |
+
+Esempi:
+
+- **Lezione PosturaCorretta**: owner Mark, Node PosturaCorretta, Session
+  pubblica; insegnante e partecipanti sono Commitment.
+- **Video di MarkPostura**: owner Mark, Node MarkPostura o progetto YouTube,
+  `content_key` dell'articolo/video; Slot scrittura, registrazione e
+  pubblicazione.
+- **Impegno personale di un utente senza dominio**: owner dell'utente, senza
+  Node, visibilità privata; può avere Slot e Commitment personali.
+- **Articolo per Rails4Business**: owner creator, Node Rails4Business,
+  `content_key` dell'articolo; la Session reca la data editoriale pubblica.
+
+`Cycle` e `Service` verranno sopra questo nucleo solo dopo il pilota: Cycle
+raggruppa Session ripetibili; Service aggiunge prezzo, capienza e regole di
+accesso. Non sono necessari per iniziare a usare 1Impegno.
+
+## 5. Cycle e Service
+
+**DataCycle** è un'ipotesi per l'insieme reale di Session, ad esempio un gruppo
+di quattro lezioni, una formazione insegnanti o una produzione video. Una dima
+potrà usare lo stesso modello con `mode: template`.
 
 **Service** sarà la configurazione commerciale/organizzativa: prezzo,
 capienza, luogo/online, operatori e prenotazione. Un prezzo su un contenuto
@@ -422,7 +722,7 @@ prezzo, capienza, ruoli richiesti, modalità di partecipazione e luogo/online.
 Applicato al Cycle potrà valere per tutto il ramo, salvo configurazioni più
 specifiche su Session o Slot.
 
-Quando verrà introdotto, Cycle descriverà anche i processi Rails4Business
+DataCycle descriverà anche i processi Rails4Business
 applicati a un Brand: per esempio la produzione dei contenuti PosturaCorretta.
 Il responsabile del processo e il responsabile editoriale del Brand possono
 coincidere nella fase pilota, ma restano concetti distinti.
@@ -431,11 +731,13 @@ coincidere nella fase pilota, ma restano concetti distinti.
 
 1. **Operator — completato**: aggiunti `operator`, `role_operator` e
    `operator_roles` al Brand e aggiornati gli Assigned roles.
-2. **Programma lezioni PosturaCorretta — priorità corrente**: completare
-   `programma_lezioni_posturacorretta.yml` come ordine didattico unico, valido
-   sia per lezioni individuali sia per lezioni di gruppo. Ogni riga visibile è
-   un corso completo e raccoglie tutti i suoi capitoli e le sue schede. Le date
-   delle lezioni di gruppo restano nel file separato
+2. **Programma lezioni PosturaCorretta — completato come struttura YAML**:
+   `programma_lezioni_posturacorretta.yml` è l'ordine didattico unico, valido
+   sia per lezioni individuali sia per lezioni di gruppo. Ogni riga è una
+   lezione e, dopo le due introduzioni, corrisponde a un capitolo/scheda.
+   Le sezioni visibili raggruppano le lezioni per corso; il tirocinio resta
+   riservato ai tirocinanti e abilita progressivamente a condurre le lezioni.
+   Le date effettive restano nel file separato
    `calendario_lezioni_gruppo.yml`.
 3. **MarkPostura e Week Plan — subito dopo**: completare le cose già annotate
    per MarkPostura e usare i file settimanali YAML per correggere le cinque
@@ -447,17 +749,48 @@ coincidere nella fase pilota, ma restano concetti distinti.
    capitoli.
 5. **Percorso PosturaCorretta**: completare `percorso.yml` con Section e
    riferimenti `content_id` ai corsi, come indice ordinato della home.
-6. **1Impegno, soltanto dopo programma e Week Plan**: creare una single
-   page/prototipo alimentata da YAML per `DataSession → DataSlot`, senza ancora
-   costruire i model. Il programma sarà la dima; l'orario settimanale aiuterà a
-   collocare le istanze reali.
-7. **Cycle**: introdurlo solo dopo aver verificato programma, orario, Session e
-   Slot; dovrà poter descrivere anche il ciclo di produzione di un video e il
-   percorso di un paziente.
+6. **Pilota 1Impegno — implementato localmente**: la prima single page usa
+   esclusivamente `DataExperience → DataSession → DataSlot → DataCommitment`.
+   Esperienza ha nome, descrizione e creatore; Session e Slot hanno nome e
+   ordine; DataCommitment appartiene per ora soltanto a uno Slot e mostra nome
+   più stato `planned/completed`. La pagina consente aggiunta e modifica inline
+   tramite Turbo/Stimulus. Restano fuori date, Brand, contenuti, ruoli, luoghi,
+   Service, pagamenti e prenotazioni.
+7. **Dima**: valutare se una dima debba essere un Cycle `mode: template` o una
+   struttura YAML separata, dopo avere provato la vista.
 8. **Catalogo pubblico**: una vista datata Contenuti ed eventi con
    prossimi/passati, visibilità pubblica e privata.
 9. **Test reale**: usare YAML e correggere il vocabolario.
 10. **Solo dopo**: scegliere schema database, modelli, controller e migrazioni.
+
+## Piano pilota PosturaCorretta — ordine confermato
+
+1. **Completare solo le migrazioni editoriali necessarie al pilota**: corsi,
+   capitoli/schede, Programma lezioni e contenuti pubblici imminenti. Lo
+   storico rimane censito e si migra in seguito, senza bloccare l'avvio.
+2. **Prototipo YAML DataSession → DataSlot → DataCommitment** su tre casi
+   reali: lezione singola, gruppo settimanale e pubblicazione editoriale.
+3. **Calendari**: il Week Plan di MarkPostura resta il riferimento della
+   disponibilità; il calendario del Brand mostra soltanto lezioni e contenuti
+   pubblicati.
+4. **Tariffe in YAML, senza checkout**: lezione singola, gruppo settimanale e
+   pacchetto di quattro lezioni di Igiene Posturale. Il gruppo settimanale è
+   una DataSession pubblicata di settimana in settimana, non un abbonamento
+   imposto dalla struttura tecnica.
+5. **Dopo il test reale**: prenotazione, capienza, conferma e pagamento.
+6. **Formazione insegnanti**: per ora candidatura/invito e registro di
+   presenze, tirocinio e abilitazioni; non vendere un diploma prima che il
+   registro sia verificabile.
+7. **Area personale**: dopo il prototipo, mostrare a ogni utente contenuti
+   completati, prossime lezioni con insegnante e avanzamento; per i tirocinanti
+   aggiungere il registro verificato del tirocinio.
+
+### Confini commerciali dei Brand
+
+- **PosturaCorretta**: persone, Percorso educativo online, lezioni e
+  insegnanti.
+- **Percorso Integrato**: professionisti e percorsi personali.
+- **Il Giardino del Corpo**: eventi e comunità.
 
 ## Decisioni ancora aperte
 

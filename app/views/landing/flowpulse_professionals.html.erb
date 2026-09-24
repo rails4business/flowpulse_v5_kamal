@@ -1,0 +1,39 @@
+<% content_for :title, "Professionisti — Flowpulse" %>
+<% content_for :description, "Brand professionali e persone che sviluppano attività nell’ecosistema Flowpulse." %>
+
+<main class="min-h-screen bg-white text-slate-950">
+  <%= render "landing/flowpulse_nav" %>
+
+  <header class="border-b border-slate-200 bg-slate-50">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Persone e Brand professionali</p>
+      <h1 class="mt-3 text-4xl font-black tracking-[-0.04em] sm:text-5xl">Professionisti</h1>
+      <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">I professionisti hanno un proprio spazio pubblico e possono contribuire a uno o più progetti dell’ecosistema.</p>
+    </div>
+  </header>
+
+  <section class="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14" aria-label="Elenco dei professionisti">
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <% @flowpulse_professionals.each do |professional| %>
+        <% if professional.is_a?(Node) %>
+          <% domain = professional.domains.find { |item| item.primary? } || professional.domains.first %>
+          <% label = professional.title %>
+          <% description = professional.description.presence || "Profilo professionale e progetti collegati all’ecosistema Flowpulse." %>
+          <% url = if local_request? && professional.slug == "markpostura" then markpostura_path elsif domain.present? then "https://#{domain.canonical_host.presence || domain.hostname}/" else node_path(professional) end %>
+        <% else %>
+          <% label = professional.fetch("label") %>
+          <% description = professional.fetch("description") %>
+          <% url = local_request? ? professional.fetch("public_path") : "https://#{professional.fetch("canonical_host")}/" %>
+        <% end %>
+        <%= link_to url, class: "group flex min-h-52 flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-blue-300 hover:bg-blue-50/40" do %>
+          <span class="text-[11px] font-black uppercase tracking-[0.14em] text-blue-700">Brand professionale</span>
+          <h2 class="mt-4 text-2xl font-black tracking-tight group-hover:text-blue-700"><%= label %></h2>
+          <p class="mt-3 grow text-sm leading-6 text-slate-600"><%= description %></p>
+          <span class="mt-5 text-sm font-black text-blue-700">Apri il profilo →</span>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <footer class="border-t border-slate-200 px-5 py-6 text-center text-sm"><%= link_to "Torna a Flowpulse", flowpulse_path, class: "font-bold text-slate-600 hover:text-blue-700" %></footer>
+</main>

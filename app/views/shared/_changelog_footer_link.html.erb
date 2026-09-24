@@ -1,0 +1,3 @@
+<% brand_key = local_assigns[:brand].presence || local_assigns[:scope].presence %>
+<% changelog_path_for_brand = brand_key.present? && local_request? ? brand_changelog_path(brand_key) : changelog_path %>
+<%= link_to local_assigns.fetch(:label, "Changelog"), changelog_path_for_brand, class: local_assigns.fetch(:class_name, "font-bold text-blue-700 hover:text-blue-900") %>

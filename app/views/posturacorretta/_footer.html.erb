@@ -26,7 +26,7 @@
     </div>
 
     <div>
-      <h2 class="mb-4 font-semibold text-slate-950">Accademia</h2>
+      <h2 class="mb-4 font-semibold text-slate-950">Percorso educativo online</h2>
       <ul class="space-y-2 text-sm text-slate-500">
         <li><a class="hover:text-blue-700" href="<%= percorso_integrato_path %>">Percorso Integrato</a></li>
         <li><a class="hover:text-blue-700" href="<%= posturacorretta_contenuti_path %>?subtab=benessere">Benessere Integrato</a></li>
@@ -41,6 +41,8 @@
         <li><a class="hover:text-emerald-700" href="<%= posturacorretta_presentation_path %>" target="_blank" rel="noopener">Presentazione PosturaCorretta (PDF)</a></li>
         <li><a class="hover:text-orange-700" href="<%= posturacorretta_collabora_path %>">Collabora</a></li>
         <li><a class="hover:text-blue-700" href="<%= posturacorretta_visione_path %>">Visione</a></li>
+        <% footer_changelog_scope = request.path.start_with?("/percorso-integrato") ? "percorso-integrato" : "posturacorretta" %>
+        <li><%= render "shared/changelog_footer_link", brand: footer_changelog_scope, class_name: "hover:text-blue-700" %></li>
       </ul>
     </div>
 

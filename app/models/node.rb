@@ -15,6 +15,18 @@ class Node < ApplicationRecord
   has_closure_tree order: "position", dependent: :destroy
 
   has_many :domains, dependent: :nullify
+  has_many :services, dependent: :restrict_with_error
+  has_many :brand_processes, dependent: :restrict_with_error
+  has_many :context_professional_calendars,
+    class_name: "ProfessionalCalendar",
+    foreign_key: :context_node_id,
+    dependent: :restrict_with_error,
+    inverse_of: :context_node
+  has_many :professional_calendars,
+    class_name: "ProfessionalCalendar",
+    foreign_key: :professional_node_id,
+    dependent: :restrict_with_error,
+    inverse_of: :professional_node
   has_many :traveler_subscriptions, dependent: :destroy
   has_many :professionally_owned_nodes,
     class_name: "Node",
@@ -80,6 +92,17 @@ class Node < ApplicationRecord
 
   def operator_role?(role_code)
     operator_roles.include?(role_code.to_s)
+  end
+
+  # Il contesto preciso può essere un progetto interno. Il sito/Brand si ricava
+  # risalendo fino al primo Node che possiede almeno un Domain.
+  def site_node
+    current = self
+    while current.present?
+      return current if current.domains.exists?
+
+      current = current.parent
+    end
   end
 
   private

@@ -21,10 +21,15 @@ module Brands
   belongs_to :participant_contact, class_name: "Brands::Impegno::Contact", optional: true,
              inverse_of: :participant_data_commitments
   belongs_to :parent, class_name: "Brands::Impegno::Commitment", optional: true, inverse_of: :children
+  belongs_to :data_experience, optional: true
+  belongs_to :data_session, optional: true
+  belongs_to :data_slot, optional: true
   has_many :children, class_name: "Brands::Impegno::Commitment", foreign_key: :parent_id,
            inverse_of: :parent, dependent: :restrict_with_error
 
-  validates :title, :starts_at, presence: true
+  validates :title, presence: true
+  validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :starts_at, presence: true, unless: :experience_tree_draft?
   validates :calendar_key, :calendar_label, presence: true
   validates :kind, inclusion: { in: KINDS }
   validates :status, inclusion: { in: STATUSES }
@@ -114,6 +119,10 @@ module Brands
       return if participant_contact.blank? || participant_contact.kind == "person"
 
       errors.add(:participant_contact, "deve essere una persona")
+    end
+
+    def experience_tree_draft?
+      data_experience_id.present? && starts_at.blank?
     end
     end
   end

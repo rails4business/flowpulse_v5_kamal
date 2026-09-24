@@ -17,3 +17,4 @@
     <div class="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3"><% @brand.fetch("projects", []).each do |project| %><%= render "brands/genera_impresa/project_card", project: project %><% end %></div>
   </section>
 </main>
+<footer class="border-t border-slate-200 bg-white px-5 py-6 text-center text-sm"><%= render "shared/changelog_footer_link", brand: "generaimpresa", class_name: "font-bold text-red-700 hover:text-red-900" %></footer>

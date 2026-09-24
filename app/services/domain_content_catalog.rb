@@ -1,5 +1,6 @@
 class DomainContentCatalog
   CONTENT_ROOT = Rails.root.join("config/data").freeze
+  BRAND_CONTENT_ROOT = CONTENT_ROOT.join("brands").freeze
 
   DOMAIN_SETTINGS = {
     "flowpulse" => {
@@ -81,6 +82,7 @@ class DomainContentCatalog
       def decorate_article(article, domain_key, category_key, category, include_scheduled:)
         return unless article.is_a?(Hash) && article["slug"].present?
 
+        article = article.merge(canonical_content_metadata(domain_key, article.fetch("slug")))
         source = article["source"].presence || discover_dated_source(domain_key, article.fetch("slug")) || "articoli/#{article.fetch('slug')}.md"
         publication_date = parse_date(article["publication_at"]) || publication_date_from_source(source)
         scheduled = publication_date.present? && publication_date > Date.current
@@ -89,8 +91,9 @@ class DomainContentCatalog
         settings = DOMAIN_SETTINGS.fetch(domain_key, default_domain_settings(domain_key))
         article_path = format(settings.fetch("article_path"), slug: article.fetch("slug"))
         article_url = article["url"].presence || "https://#{settings.fetch('host')}#{article_path}"
-        content_path = CONTENT_ROOT.join(domain_key, "contenuti", source).cleanpath
-        content_root = CONTENT_ROOT.join(domain_key, "contenuti").cleanpath
+        brand_source = article["brand_source"].presence
+        content_root = brand_source ? BRAND_CONTENT_ROOT.join(domain_key, "contents").cleanpath : CONTENT_ROOT.join(domain_key, "contenuti").cleanpath
+        content_path = brand_source ? content_root.join(brand_source).cleanpath : content_root.join(source).cleanpath
         content_path = nil unless content_path.to_s.start_with?("#{content_root}/")
 
         article.merge(
@@ -134,6 +137,26 @@ class DomainContentCatalog
         return unless path
 
         Pathname(path).relative_path_from(CONTENT_ROOT.join(domain_key, "contenuti")).to_s
+      end
+
+      def canonical_content_metadata(domain_key, slug)
+        root = BRAND_CONTENT_ROOT.join(domain_key, "contents")
+        return {} unless root.directory?
+
+        path = Dir.glob(root.join("*/content.yml")).sort.find do |candidate|
+          data = YAML.safe_load_file(candidate, permitted_classes: [], aliases: false) || {}
+          data["slug"].to_s == slug.to_s
+        rescue Psych::SyntaxError
+          false
+        end
+        return {} unless path
+
+        data = YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
+        data["brand_source"] ||= Pathname(path).dirname.join("content.md").relative_path_from(root).to_s
+        data
+      rescue Psych::SyntaxError => error
+        Rails.logger.error("Contenuto canonico non valido #{domain_key}/#{slug}: #{error.message}")
+        {}
       end
 
       def article_sort_key(article)

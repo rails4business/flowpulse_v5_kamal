@@ -12,7 +12,7 @@
           <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600"><%= @site.fetch("description") %></p>
           <div class="mt-9 flex flex-col gap-3 sm:flex-row">
             <a href="#inizia" class="inline-flex justify-center rounded-xl bg-emerald-700 px-6 py-3.5 font-bold text-white shadow-lg shadow-emerald-900/10 hover:bg-emerald-800">Racconta la tua richiesta</a>
-            <a href="#come-funziona" class="inline-flex justify-center rounded-xl border border-emerald-200 bg-white px-6 py-3.5 font-bold text-emerald-900 hover:border-emerald-400">Scopri come funziona</a>
+            <%= link_to "Apri le Docs", percorso_integrato_docs_path, class: "inline-flex justify-center rounded-xl border border-emerald-200 bg-white px-6 py-3.5 font-bold text-emerald-900 hover:border-emerald-400" %>
           </div>
         </div>
         <div class="rounded-[2rem] border border-emerald-200 bg-emerald-950 p-8 text-white shadow-xl shadow-emerald-950/10 sm:p-10">

@@ -36,15 +36,19 @@ module FlowRoles
       end
 
       def teacher_user?
-        Current.user&.teacher_user? || false
+        operator_access?("teacher", "insegnante")
       end
 
       def tutor_user?
-        Current.user&.tutor_user? || false
+        operator_access?("tutor")
       end
 
       def professional_user?
-        Current.user&.professional_user? || false
+        operator_access?("professional", "professionista")
+      end
+
+      def operator_access?(*operator_roles)
+        Current.user&.role_assignments&.where(role: :operator, role_operator: operator_roles).exists? || false
       end
 
       def active_dashboard_role

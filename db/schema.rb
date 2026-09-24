@@ -10,9 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_090100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "brand_processes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "created_by_user_id", null: false
+    t.text "description"
+    t.bigint "node_id", null: false
+    t.string "slug", null: false
+    t.string "status", default: "draft", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_brand_processes_on_created_by_user_id"
+    t.index ["node_id", "slug"], name: "index_brand_processes_on_node_id_and_slug", unique: true
+    t.index ["node_id", "status"], name: "index_brand_processes_on_node_id_and_status"
+    t.index ["node_id"], name: "index_brand_processes_on_node_id"
+  end
 
   create_table "data_commitment_imports", force: :cascade do |t|
     t.datetime "applied_at"
@@ -46,6 +61,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
     t.string "contribution_type", default: "time_investment", null: false
     t.datetime "created_at", null: false
     t.bigint "created_by_profile_id", null: false
+    t.bigint "data_experience_id"
+    t.bigint "data_session_id"
+    t.bigint "data_slot_id"
     t.text "description"
     t.bigint "domain_id", null: false
     t.datetime "ends_at"
@@ -59,10 +77,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
     t.bigint "parent_id"
     t.bigint "participant_contact_id"
     t.string "participation_role"
+    t.integer "position", default: 0, null: false
     t.string "pricing_type", default: "hourly", null: false
     t.bigint "profile_id", null: false
     t.bigint "responsible_profile_id"
-    t.datetime "starts_at", null: false
+    t.datetime "starts_at"
     t.string "status", default: "completed", null: false
     t.bigint "subject_id"
     t.string "subject_type"
@@ -73,6 +92,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
     t.index ["created_by_profile_id"], name: "index_data_commitments_on_created_by_profile_id"
+    t.index ["data_experience_id", "position"], name: "index_data_commitments_on_data_experience_id_and_position"
+    t.index ["data_experience_id", "starts_at"], name: "index_data_commitments_on_data_experience_id_and_starts_at"
+    t.index ["data_experience_id"], name: "index_data_commitments_on_data_experience_id"
+    t.index ["data_session_id", "position"], name: "index_data_commitments_on_data_session_id_and_position"
+    t.index ["data_session_id", "starts_at"], name: "index_data_commitments_on_data_session_id_and_starts_at"
+    t.index ["data_session_id"], name: "index_data_commitments_on_data_session_id"
+    t.index ["data_slot_id", "position"], name: "index_data_commitments_on_data_slot_id_and_position"
+    t.index ["data_slot_id", "status"], name: "index_data_commitments_on_data_slot_id_and_status"
+    t.index ["data_slot_id"], name: "index_data_commitments_on_data_slot_id"
     t.index ["domain_id"], name: "index_data_commitments_on_domain_id"
     t.index ["genera_impresa"], name: "index_data_commitments_on_genera_impresa", using: :gin
     t.index ["kind"], name: "index_data_commitments_on_kind"
@@ -86,6 +114,50 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
     t.index ["status"], name: "index_data_commitments_on_status"
     t.index ["subject_type", "subject_id"], name: "index_data_commitments_on_subject"
     t.index ["sync_key"], name: "index_data_commitments_on_sync_key", unique: true
+  end
+
+  create_table "data_experiences", force: :cascade do |t|
+    t.bigint "brand_process_id"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_user_id", null: false
+    t.text "description"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_process_id"], name: "index_data_experiences_on_brand_process_id"
+    t.index ["created_by_user_id"], name: "index_data_experiences_on_created_by_user_id"
+  end
+
+  create_table "data_sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "data_experience_id", null: false
+    t.datetime "ends_at"
+    t.integer "position", default: 0, null: false
+    t.bigint "professional_calendar_id"
+    t.bigint "service_id"
+    t.datetime "starts_at"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "visibility", default: "private", null: false
+    t.index ["data_experience_id", "position"], name: "index_data_sessions_on_data_experience_id_and_position"
+    t.index ["data_experience_id", "starts_at"], name: "index_data_sessions_on_data_experience_id_and_starts_at"
+    t.index ["data_experience_id"], name: "index_data_sessions_on_data_experience_id"
+    t.index ["professional_calendar_id", "starts_at"], name: "index_data_sessions_on_calendar_and_start"
+    t.index ["service_id"], name: "index_data_sessions_on_service_id"
+  end
+
+  create_table "data_slots", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "data_experience_id", null: false
+    t.bigint "data_session_id"
+    t.datetime "ends_at"
+    t.integer "position", default: 0, null: false
+    t.datetime "starts_at"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_experience_id", "starts_at"], name: "index_data_slots_on_data_experience_id_and_starts_at"
+    t.index ["data_experience_id"], name: "index_data_slots_on_data_experience_id"
+    t.index ["data_session_id", "position"], name: "index_data_slots_on_data_session_id_and_position"
+    t.index ["data_session_id"], name: "index_data_slots_on_data_session_id"
   end
 
   create_table "domain_memberships", force: :cascade do |t|
@@ -252,6 +324,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
     t.index ["domain_id"], name: "index_posturacorretta_directory_places_on_domain_id"
   end
 
+  create_table "professional_calendars", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "color", default: "slate", null: false
+    t.bigint "context_node_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_user_id", null: false
+    t.text "description"
+    t.bigint "professional_node_id"
+    t.string "short_label"
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["context_node_id", "title"], name: "index_professional_calendars_on_context_node_id_and_title"
+    t.index ["context_node_id"], name: "index_professional_calendars_on_context_node_id"
+    t.index ["created_by_user_id"], name: "index_professional_calendars_on_created_by_user_id"
+    t.index ["professional_node_id", "active"], name: "index_professional_calendars_on_owner_and_active"
+    t.index ["professional_node_id"], name: "index_professional_calendars_on_professional_node_id"
+    t.index ["slug"], name: "index_professional_calendars_on_slug", unique: true
+  end
+
   create_table "profiles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "display_name"
@@ -284,6 +376,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
     t.index ["profile_id"], name: "index_role_assignments_on_profile_id"
     t.index ["role"], name: "index_role_assignments_on_role"
     t.check_constraint "context_type IS NULL AND context_id IS NULL OR context_type IS NOT NULL AND context_id IS NOT NULL", name: "role_assignments_context_presence"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_user_id", null: false
+    t.text "description"
+    t.bigint "node_id", null: false
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_services_on_created_by_user_id"
+    t.index ["node_id", "slug"], name: "index_services_on_node_id_and_slug", unique: true
+    t.index ["node_id", "title"], name: "index_services_on_node_id_and_title"
+    t.index ["node_id"], name: "index_services_on_node_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -325,15 +432,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "brand_processes", "nodes"
+  add_foreign_key "brand_processes", "users", column: "created_by_user_id"
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "data_commitments", column: "parent_id"
+  add_foreign_key "data_commitments", "data_experiences"
+  add_foreign_key "data_commitments", "data_sessions"
+  add_foreign_key "data_commitments", "data_slots"
   add_foreign_key "data_commitments", "domains"
   add_foreign_key "data_commitments", "impegno_contacts", column: "participant_contact_id"
   add_foreign_key "data_commitments", "profiles"
   add_foreign_key "data_commitments", "profiles", column: "assignee_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "created_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
+  add_foreign_key "data_experiences", "brand_processes"
+  add_foreign_key "data_experiences", "users", column: "created_by_user_id"
+  add_foreign_key "data_sessions", "data_experiences"
+  add_foreign_key "data_sessions", "professional_calendars"
+  add_foreign_key "data_sessions", "services", name: "fk_data_sessions_service"
+  add_foreign_key "data_slots", "data_experiences"
+  add_foreign_key "data_slots", "data_sessions"
   add_foreign_key "domain_memberships", "domains"
   add_foreign_key "domain_memberships", "profiles"
   add_foreign_key "domains", "nodes"
@@ -350,10 +469,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
   add_foreign_key "posturacorretta_directory_people", "domains"
   add_foreign_key "posturacorretta_directory_people", "profiles"
   add_foreign_key "posturacorretta_directory_places", "domains"
+  add_foreign_key "professional_calendars", "nodes", column: "context_node_id"
+  add_foreign_key "professional_calendars", "nodes", column: "professional_node_id"
+  add_foreign_key "professional_calendars", "users", column: "created_by_user_id"
   add_foreign_key "profiles", "nodes", column: "primary_node_id"
   add_foreign_key "profiles", "users"
   add_foreign_key "role_assignments", "profiles"
   add_foreign_key "role_assignments", "role_assignments", column: "parent_id"
+  add_foreign_key "services", "nodes"
+  add_foreign_key "services", "users", column: "created_by_user_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "traveler_subscriptions", "domains"
   add_foreign_key "traveler_subscriptions", "nodes"

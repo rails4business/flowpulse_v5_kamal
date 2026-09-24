@@ -2,6 +2,7 @@ class MarkposturaWeekPlan
   CONFIG_PATH = Rails.root.join("config/data/sites/markpostura_it/shared/week_plan.yml").freeze
   WEEKS_PATH = Rails.root.join("config/data/markpostura/settimane").freeze
   GROUP_LESSONS_PATH = Rails.root.join("config/data/posturacorretta/programmi/calendario_lezioni_gruppo.yml").freeze
+  DAY_NAMES = %w[Lunedì Martedì Mercoledì Giovedì Venerdì Sabato Domenica].freeze
 
   class << self
     def load(include_private: false)
@@ -40,7 +41,42 @@ class MarkposturaWeekPlan
         end
         [key, week]
       end
-      static_weeks.merge(group_lesson_weeks(include_private: include_private))
+      weeks = static_weeks.merge(group_lesson_weeks(include_private: include_private))
+      merge_database_sessions!(weeks, allowed_spaces, include_private: include_private)
+      weeks
+    end
+
+    def merge_database_sessions!(weeks, allowed_spaces, include_private:)
+      professional = Node.find_by(slug: "markpostura", professional: true)
+      return unless professional
+
+      sessions = DataSession.includes(:professional_calendar)
+        .joins(:professional_calendar)
+        .where(professional_calendars: { professional_node_id: professional.id, active: true })
+        .where.not(starts_at: nil)
+      sessions = sessions.where(visibility: "public") unless include_private
+
+      sessions.find_each do |data_session|
+        calendar = data_session.professional_calendar
+        next unless calendar && allowed_spaces.include?(calendar.slug)
+
+        starts_at = data_session.starts_at.in_time_zone
+        ends_at = (data_session.ends_at || data_session.starts_at + 1.hour).in_time_zone
+        monday = starts_at.to_date.beginning_of_week
+        week_key = format("%<year>d-W%<week>02d", year: monday.cwyear, week: monday.cweek)
+        week = weeks[week_key] ||= { "week" => week_key, "starts_on" => monday.iso8601, "entries" => [] }
+        entry = {
+          "day" => DAY_NAMES.fetch(starts_at.to_date.cwday - 1),
+          "start" => starts_at.strftime("%H:%M"),
+          "end" => ends_at.strftime("%H:%M"),
+          "space" => calendar.slug,
+          "title" => data_session.title,
+          "location" => "Da definire",
+          "source" => "database",
+          "data_session_id" => data_session.id
+        }
+        week["entries"] << entry unless week.fetch("entries").any? { |existing| existing["data_session_id"] == data_session.id }
+      end
     end
 
     def group_lesson_weeks(include_private:)

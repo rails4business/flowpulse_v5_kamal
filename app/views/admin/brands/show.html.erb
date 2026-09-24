@@ -28,6 +28,12 @@
   <nav class="mt-6 flex gap-1 border-b border-slate-200" aria-label="Vista del brand">
     <%= link_to "Albero", admin_brand_path(@node), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'tree' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
     <%= link_to "Informazioni", admin_brand_path(@node, tab: "info"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'info' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <%= link_to "Calendari", admin_brand_path(@node, tab: "calendars"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'calendars' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <%= link_to "Servizi", admin_brand_path(@node, tab: "services"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'services' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <%= link_to "Processi", admin_brand_path(@node, tab: "processes"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'processes' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <% if @node.slug.in?(BrandEditorial::Repository.new.keys) %>
+      <%= link_to "Materiale", admin_brand_path(@node, tab: "material"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'material' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <% end %>
   </nav>
 
   <% if @active_tab == "tree" %>
@@ -37,7 +43,7 @@
         <%= render "tree_node", node: @node, nodes_by_parent_id: @tree_nodes_by_parent_id %>
       </ul>
     </section>
-  <% else %>
+  <% elsif @active_tab == "info" %>
     <div class="mt-6 grid gap-6 lg:grid-cols-2">
       <section class="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 class="text-base font-extrabold text-slate-950">Domini collegati</h2>
@@ -64,5 +70,104 @@
         <% end %>
       </section>
     </div>
+  <% elsif @active_tab == "calendars" %>
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div><p class="text-xs font-extrabold uppercase tracking-[.14em] text-amber-700">Calendari · solo superadmin</p><h2 class="mt-1 text-xl font-extrabold text-slate-950"><%= @node.professional? ? "Calendari di #{@node.title}" : "Calendari collegati a #{@node.title}" %></h2><p class="mt-2 text-sm leading-6 text-slate-600"><%= @node.professional? ? "Ogni calendario appartiene a questo professionista e può usare qualsiasi Node come contesto. Brand e dominio si ricavano automaticamente dall’albero." : "Questi calendari usano questo Node come contesto preciso; il sito viene ricavato dai suoi antenati." %></p></div>
+      <div class="mt-6 space-y-3">
+        <% @professional_calendars.each do |calendar| %>
+          <% editable = calendar.professional_node_id == @node.id %>
+          <%= form_with model: calendar, url: admin_brand_calendar_path(@node, calendar), class: "grid gap-3 rounded-xl border border-slate-200 p-4 lg:grid-cols-[1fr_1fr_8rem_7rem_auto] lg:items-end" do |form| %>
+            <div><%= form.label :title, "Calendario", class: "text-xs font-bold text-slate-600" %><%= form.text_field :title, disabled: !editable, class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %><p class="mt-1 text-xs text-slate-400"><%= editable ? "Contesto: #{calendar.context_node.title}" : "Professionista: #{calendar.professional_node.title}" %></p></div>
+            <div><%= form.label :slug, "Codice condivisibile", class: "text-xs font-bold text-slate-600" %><%= form.text_field :slug, disabled: !editable, class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
+            <div><%= form.label :color, "Colore", class: "text-xs font-bold text-slate-600" %><%= form.select :color, ProfessionalCalendar::COLORS.map { |color| [color, color] }, {}, disabled: !editable, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
+            <label class="flex items-center gap-2 pb-2 text-sm font-semibold text-slate-700"><%= form.check_box :active, disabled: !editable %> Attivo</label>
+            <% if editable %><div class="flex gap-2"><%= form.submit "Salva", class: "cursor-pointer rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white" %><%= link_to "Elimina", admin_brand_calendar_path(@node, calendar), data: { turbo_method: :delete, turbo_confirm: "Eliminare questo calendario?" }, class: "rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50" %></div><% else %><%= link_to "Apri professionista →", admin_brand_path(calendar.professional_node, tab: "calendars"), class: "text-sm font-bold text-blue-700" %><% end %>
+          <% end %>
+        <% end %>
+        <% if @professional_calendars.empty? %><p class="rounded-xl border border-dashed border-slate-300 p-5 text-sm text-slate-500">Nessun calendario collegato.</p><% end %>
+      </div>
+      <% if @node.professional? %>
+        <%= form_with model: ProfessionalCalendar.new, url: admin_brand_calendars_path(@node), class: "mt-6 grid gap-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-4 lg:grid-cols-[1fr_1fr_1fr_8rem_auto] lg:items-end" do |form| %>
+          <div><%= form.label :context_node_id, "Node di contesto", class: "text-xs font-bold text-slate-700" %><%= form.collection_select :context_node_id, @calendar_context_nodes, :id, :title, { prompt: "Scegli Node" }, required: true, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
+          <div><%= form.label :title, "Nuovo calendario", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Gruppo", class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %></div>
+          <div><%= form.label :slug, "Codice condivisibile", class: "text-xs font-bold text-slate-700" %><%= form.text_field :slug, required: true, placeholder: "postura-gruppo", class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
+          <div><%= form.label :color, "Colore", class: "text-xs font-bold text-slate-700" %><%= form.select :color, ProfessionalCalendar::COLORS.map { |color| [color, color] }, {}, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
+          <%= form.submit "+ Aggiungi", class: "cursor-pointer rounded-lg bg-amber-600 px-4 py-2 text-sm font-bold text-white" %>
+        <% end %>
+      <% end %>
+    </section>
+  <% elsif @active_tab == "services" %>
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div><p class="text-xs font-extrabold uppercase tracking-[.14em] text-blue-600">Offerta · solo superadmin</p><h2 class="mt-1 text-xl font-extrabold text-slate-950">Servizi del Node</h2><p class="mt-2 text-sm leading-6 text-slate-600">Un servizio appartiene esattamente a questo Brand, Project o Node interno. Prezzi, capienza e regole commerciali verranno aggiunti dopo il pilota.</p></div>
+      <div class="mt-6 space-y-3">
+        <% @services.each do |service| %>
+          <%= form_with model: service, url: admin_brand_service_path(@node, service), class: "grid gap-3 rounded-xl border border-slate-200 p-4 lg:grid-cols-[1fr_1fr_7rem_auto] lg:items-end" do |form| %>
+            <div><%= form.label :title, "Servizio", class: "text-xs font-bold text-slate-600" %><%= form.text_field :title, class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %></div>
+            <div><%= form.label :slug, "Codice", class: "text-xs font-bold text-slate-600" %><%= form.text_field :slug, class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
+            <label class="flex items-center gap-2 pb-2 text-sm font-semibold text-slate-700"><%= form.check_box :active %> Attivo</label>
+            <div class="flex gap-2"><%= form.submit "Salva", class: "cursor-pointer rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white" %><%= link_to "Elimina", admin_brand_service_path(@node, service), data: { turbo_method: :delete, turbo_confirm: "Eliminare questo servizio?" }, class: "rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50" %></div>
+          <% end %>
+        <% end %>
+      </div>
+      <%= form_with model: Service.new, url: admin_brand_services_path(@node), class: "mt-6 grid gap-3 rounded-xl border border-dashed border-blue-300 bg-blue-50/50 p-4 lg:grid-cols-[1fr_1fr_auto] lg:items-end" do |form| %>
+        <div><%= form.label :title, "Nuovo servizio", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Lezione individuale", class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %></div>
+        <div><%= form.label :slug, "Codice", class: "text-xs font-bold text-slate-700" %><%= form.text_field :slug, required: true, placeholder: "registrazione-video", class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
+        <%= form.submit "+ Aggiungi", class: "cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white" %>
+      <% end %>
+    </section>
+  <% elsif @active_tab == "processes" %>
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div><p class="text-xs font-extrabold uppercase tracking-[.14em] text-violet-600">Organizzazione · solo superadmin</p><h2 class="mt-1 text-xl font-extrabold text-slate-950">Processi del Brand</h2><p class="mt-2 text-sm leading-6 text-slate-600">Un Processo può raccogliere più Esperienze concrete senza entrare direttamente nel calendario.</p></div>
+      <div class="mt-6 space-y-3">
+        <% @brand_processes.each do |process_record| %>
+          <%= form_with model: process_record, url: admin_brand_process_path(@node, process_record), class: "grid gap-3 rounded-xl border border-slate-200 p-4 lg:grid-cols-[1fr_1fr_8rem_auto] lg:items-end" do |form| %>
+            <div><%= form.label :title, "Processo", class: "text-xs font-bold text-slate-600" %><%= form.text_field :title, class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %><p class="mt-1 text-xs text-slate-400"><%= pluralize(process_record.data_experiences.size, "esperienza") %></p></div>
+            <div><%= form.label :slug, "Codice", class: "text-xs font-bold text-slate-600" %><%= form.text_field :slug, class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
+            <div><%= form.label :status, "Stato", class: "text-xs font-bold text-slate-600" %><%= form.select :status, BrandProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
+            <div class="flex gap-2"><%= form.submit "Salva", class: "cursor-pointer rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white" %><%= link_to "Elimina", admin_brand_process_path(@node, process_record), data: { turbo_method: :delete, turbo_confirm: "Eliminare il processo conservando le Esperienze?" }, class: "rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50" %></div>
+          <% end %>
+        <% end %>
+      </div>
+      <%= form_with model: BrandProcess.new, url: admin_brand_processes_path(@node), class: "mt-6 grid gap-3 rounded-xl border border-dashed border-violet-300 bg-violet-50/50 p-4 lg:grid-cols-[1fr_1fr_8rem_auto] lg:items-end" do |form| %>
+        <div><%= form.label :title, "Nuovo processo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Produzione video", class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %></div>
+        <div><%= form.label :slug, "Codice", class: "text-xs font-bold text-slate-700" %><%= form.text_field :slug, placeholder: "Si genera dal titolo", class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
+        <div><%= form.label :status, "Stato", class: "text-xs font-bold text-slate-700" %><%= form.select :status, BrandProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
+        <%= form.submit "+ Aggiungi", class: "cursor-pointer rounded-lg bg-violet-600 px-4 py-2 text-sm font-bold text-white" %>
+      <% end %>
+    </section>
+  <% else %>
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-blue-600">Registro editoriale · sola lettura</p>
+          <h2 class="mt-1 text-xl font-extrabold tracking-tight text-slate-950">Materiale di <%= @node.title %></h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Distingue le sorgenti comuni, le strutture specifiche del Brand e gli archivi da verificare. Le pagine pubbliche non vengono modificate da qui.</p>
+        </div>
+        <span class="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-800">Superadmin</span>
+      </div>
+
+      <% if @editorial_entries.present? %>
+        <div class="mt-6 overflow-x-auto">
+          <table class="min-w-full text-left text-sm">
+            <thead class="border-b border-slate-200 text-xs font-extrabold uppercase tracking-wide text-slate-500">
+              <tr><th class="pb-3 pr-5">Materiale</th><th class="pb-3 pr-5">Tipo</th><th class="pb-3 pr-5">Stato</th><th class="pb-3 pr-5">Visibilità</th><th class="pb-3">Sorgente</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% @editorial_entries.each do |entry| %>
+                <tr class="align-top">
+                  <td class="py-4 pr-5"><div class="font-extrabold text-slate-900"><%= entry.fetch("label") %></div><p class="mt-1 max-w-md text-xs leading-5 text-slate-500"><%= entry["notes"] %></p></td>
+                  <td class="py-4 pr-5 font-mono text-xs text-slate-600"><%= entry.fetch("kind") %></td>
+                  <td class="py-4 pr-5"><span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-700"><%= entry.fetch("status") %></span></td>
+                  <td class="py-4 pr-5"><span class="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700"><%= entry.fetch("visibility") %></span></td>
+                  <td class="py-4"><%= link_to entry.fetch("source"), admin_brand_editorial_material_path(@node, entry_id: entry.fetch("id")), class: "font-mono text-xs font-semibold text-blue-700 hover:text-blue-500 hover:underline" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="mt-5 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">Questo Brand non ha ancora un registro editoriale associato.</p>
+      <% end %>
+    </section>
   <% end %>
 </main>

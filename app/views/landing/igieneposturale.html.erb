@@ -1,0 +1,18 @@
+<% content_for :title, "Igiene Posturale" %>
+<% content_for :description, "La metodica Igiene Posturale nel percorso educativo PosturaCorretta." %>
+
+<main class="min-h-[70vh] bg-white text-slate-950">
+  <section class="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
+    <p class="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Metodica posturale</p>
+    <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-6xl">Igiene Posturale</h1>
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">Corsi, capitoli teorici e schede pratiche sono organizzati nel percorso educativo PosturaCorretta.</p>
+    <%= link_to "Apri il corso →", posturacorretta_course_path("igiene-posturale"), class: "mt-8 inline-flex rounded-full bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-700" %>
+  </section>
+</main>
+
+<footer class="border-t border-slate-200 bg-slate-50 px-5 py-6 text-center text-sm">
+  <div class="flex flex-wrap items-center justify-center gap-5">
+    <%= link_to "PosturaCorretta", posturacorretta_path, class: "font-bold text-slate-600 hover:text-blue-700" %>
+    <%= render "shared/changelog_footer_link", brand: "igieneposturale" %>
+  </div>
+</footer>

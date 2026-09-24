@@ -154,13 +154,7 @@ class PosturacorrettaController < ApplicationController
   end
 
   def primo_mese
-    guide_data = YAML.safe_load_file(
-      Rails.root.join("config/data/posturacorretta/guide/indice.yml"),
-      permitted_classes: [],
-      aliases: false
-    ) || {}
-    first_month = guide_data.fetch("sections", []).find { |section| section["id"] == "primo_mese" }
-    @first_month_chapters = first_month&.fetch("items", []) || []
+    redirect_to book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: "copertina"), status: :moved_permanently
   end
 
   def metodiche
@@ -455,15 +449,13 @@ class PosturacorrettaController < ApplicationController
   end
 
   def load_owned_books
-    Dir.glob(Rails.root.join("config/data/books/*/book.yml")).sort.filter_map do |path|
-      metadata_path = Pathname(path)
-      metadata = YAML.safe_load_file(metadata_path, permitted_classes: [], aliases: false) || {}
-      slug = metadata_path.dirname.basename.to_s
+    BrandEditorial::BookLocator.new.all.sort.filter_map do |slug, book_directory|
+      metadata = YAML.safe_load_file(book_directory.join("book.yml"), permitted_classes: [], aliases: false) || {}
       status = metadata.fetch("status", "draft")
       next unless @books_editor || status == "published"
       next if slug.start_with?("old-") || slug.start_with?("test-")
 
-      metadata.merge("slug" => slug, "status" => status)
+      metadata.merge("slug" => slug, "status" => status, "source_directory" => book_directory.relative_path_from(Rails.root).to_s)
     rescue StandardError
       nil
     end
@@ -505,10 +497,12 @@ class PosturacorrettaController < ApplicationController
   def load_catalog
     catalog_path = Rails.root.join("config/data/posturacorretta/contenuti/catalog.yml")
     raw_catalog = File.exist?(catalog_path) ? YAML.safe_load_file(catalog_path, permitted_classes: [], aliases: false, symbolize_names: true) || {} : {}
+    canonical_contents = load_canonical_contents
     catalog_editor = Current.user&.superadmin_user? || false
 
     processed_catalog = raw_catalog.transform_values do |category|
       indexed_articles = category.fetch(:articles, []).each_with_index.filter_map do |article, index|
+        article = article.merge(canonical_contents.fetch(article[:slug].to_s, {}))
         publication_date = catalog_publication_date(article) || catalog_date(article, :data_pubblicazione_video)
         video_recording_date = catalog_date(article, :data_registrazione_video)
         video_publication_date = catalog_date(article, :data_pubblicazione_video)
@@ -595,6 +589,9 @@ class PosturacorrettaController < ApplicationController
   end
 
   def catalog_publication_date(article)
+    explicit_date = catalog_date(article, :publication_at)
+    return explicit_date if explicit_date
+
     source = article[:source].presence || posturacorretta_article_source(article[:slug])
     match = File.basename(source.to_s).match(/\A(\d{4}-\d{2}-\d{2})-/)
     Date.iso8601(match[1]) if match
@@ -603,8 +600,27 @@ class PosturacorrettaController < ApplicationController
   end
 
   def posturacorretta_article_file(article)
+    brand_source = article[:brand_source].presence
+    return Rails.root.join("config/data/brands/posturacorretta", brand_source) if brand_source
+
     source = article[:source].presence || posturacorretta_article_source(article[:slug]) || "articoli/#{article[:slug]}.md"
     Rails.root.join("config/data/posturacorretta/contenuti", source)
+  end
+
+  def load_canonical_contents
+    root = Rails.root.join("config/data/brands/posturacorretta/contents")
+    return {} unless root.directory?
+
+    Dir.glob(root.join("*/content.yml")).sort.each_with_object({}) do |path, contents|
+      content = YAML.safe_load_file(path, permitted_classes: [], aliases: false, symbolize_names: true) || {}
+      slug = content[:slug].to_s
+      next if slug.blank?
+
+      content[:brand_source] ||= Pathname(path).dirname.join("content.md").relative_path_from(root.parent).to_s
+      contents[slug] = content
+    rescue Psych::SyntaxError => error
+      Rails.logger.error("Contenuto canonico PosturaCorretta non valido #{path}: #{error.message}")
+    end
   end
 
   def posturacorretta_article_source(slug)

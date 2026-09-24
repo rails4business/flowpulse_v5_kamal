@@ -48,8 +48,16 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Contenuti"
     assert_select "a[href*='posturacorretta.org/posturacorretta/contenuti/']", minimum: 1
+    assert_select "a[href='https://posturacorretta.org/posturacorretta/contenuti/la-salute-non-e-un-lusso']", count: 1
     assert_select "a[href='https://rails4b.com/rails4b/contenuti/costruire-un-sistema-economico-nuovo']", count: 1
     assert_match "@markpostura", response.body
+  end
+
+  test "redirects the former Rails4Business health article to PosturaCorretta" do
+    get rails4b_content_path("la-salute-non-e-un-lusso")
+
+    assert_response :moved_permanently
+    assert_redirected_to posturacorretta_articolo_path("la-salute-non-e-un-lusso")
   end
 
   test "redirects a legacy Flowpulse article to Rails4Business" do

@@ -31,7 +31,7 @@ projects:
     ownership: flowpulse
     status: queued
     visibility: public
-    public_path: /posturacorretta/tre-progetti
+    public_path: /percorso-integrato
     summary: Accompagnamento personalizzato che collega bisogni, tutor, professionisti e pratiche.
     areas: [salute, sovranita_personale]
     current_goal: Da definire dopo il primo pilota PosturaCorretta.
@@ -43,7 +43,7 @@ projects:
     ownership: flowpulse
     status: queued
     visibility: public
-    public_path: /posturacorretta/tre-progetti
+    public_path: /il-giardino-del-corpo
     summary: Filosofia, eventi e comunità per collegare salute, risorse e apprendimento nel territorio.
     areas: [salute, risorse, apprendimento, territorio]
     current_goal: Da definire dopo il primo pilota PosturaCorretta.
@@ -54,7 +54,7 @@ projects:
     kind: strumento_rete
     ownership: flowpulse
     status: queued
-    visibility: internal
+    visibility: public
     domain: 1impegno.it
     public_path: /impegno
     summary: Strumento per impegni, luoghi, contatti e organizzazione personale o di progetto.
@@ -79,7 +79,8 @@ projects:
     kind: servizio_rete
     ownership: flowpulse
     status: queued
-    visibility: internal
+    visibility: public
+    public_path: /rails4b
     summary: Competenze digitali e sviluppo degli strumenti che servono ai progetti della rete.
     areas: [apprendimento, risorse]
     current_goal: Supportare soltanto ciò che serve al pilota attivo.
@@ -90,10 +91,37 @@ projects:
     kind: progetto_sostenuto
     ownership: da_confermare
     status: review
-    visibility: internal
+    visibility: public
+    public_path: /svuotamente
     summary: Proposta di webapp per destinare, vendere o donare oggetti entro una scadenza.
     areas: [risorse, territorio]
     current_goal: Valutare soltanto dopo il pilota PosturaCorretta.
     next_step: Verificare proprietario, primi utenti e bisogno concreto prima di riaprire lo sviluppo.
     legacy_sources:
       - generaimpresa/projects.yml#webapp-svuotamente
+
+  - slug: cantachetipassa
+    title: Canta che ti passa
+    kind: progetto_rete
+    ownership: flowpulse
+    status: queued
+    visibility: public
+    domain: cantachetipassa.it
+    public_path: /cantachetipassa
+    summary: Musica, canto e territorio come strumenti di educazione, espressione e relazione.
+    areas: [apprendimento, musica, territorio]
+    current_goal: Consolidare una prima proposta di lezioni e incontri.
+    next_step: Verificare il programma con casi reali prima di estenderlo.
+
+  - slug: igieneposturale
+    title: Igiene Posturale
+    kind: metodica
+    ownership: flowpulse
+    status: queued
+    visibility: public
+    domain: igieneposturale.it
+    public_path: /igieneposturale
+    summary: Metodica educativa collegata ai corsi, ai capitoli e alle schede pratiche PosturaCorretta.
+    areas: [salute, apprendimento]
+    current_goal: Ordinare i materiali nel percorso educativo PosturaCorretta.
+    next_step: Completare e verificare progressivamente capitoli e schede.

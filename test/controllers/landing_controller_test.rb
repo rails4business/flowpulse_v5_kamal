@@ -1,6 +1,35 @@
 require "test_helper"
 
 class LandingControllerTest < ActionDispatch::IntegrationTest
+  test "Flowpulse navigation exposes projects professionals and changelog" do
+    get flowpulse_url
+
+    assert_response :success
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_projects_path}']", text: "Progetti"
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_professionals_path}']", text: "Professionisti"
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{changelog_path}']", text: "Changelog"
+  end
+
+  test "Flowpulse projects index renders public registry entries" do
+    get flowpulse_projects_url
+
+    assert_response :success
+    assert_select "h1", text: "Progetti"
+    assert_select "a[href='/posturacorretta']", text: /PosturaCorretta/
+    assert_select "a[href='/impegno']", text: /1Impegno/
+    assert_select "a[href='/rails4b']", text: /Rails4Business/
+    assert_select "a[href='/cantachetipassa']", text: /Canta che ti passa/
+  end
+
+  test "Flowpulse professionals index has a safe YAML fallback" do
+    host! "localhost"
+    get flowpulse_professionals_url
+
+    assert_response :success
+    assert_select "h1", text: "Professionisti"
+    assert_select "a[href='/markpostura']", text: /MarkPostura/
+  end
+
   test "MarkPostura local route renders the editorial YAML home" do
     get markpostura_url
 
@@ -67,6 +96,30 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Lezione di gruppo · Inizia con PosturaCorretta"
     assert_includes response.body, "Pubblicazione corso · Inizia con PosturaCorretta"
     assert_not_includes response.body, "Preparazione · Inizia con PosturaCorretta"
+  end
+
+  test "MarkPostura Week Plan includes public database sessions from its professional calendar" do
+    user = User.create!(email_address: "weekplan-database@example.com", password: "password123", password_confirmation: "password123")
+    profile = user.create_profile!(display_name: "Mark Week Plan", username: "mark_week_plan")
+    assignment = RoleAssignment.create!(profile: profile, role: :ideatore)
+    professional = Node.create!(title: "Mark Postura", slug: "markpostura", professional: true, role_assignment: assignment)
+    brand = Node.create!(title: "PosturaCorretta", slug: "posturacorretta-weekplan", parent: professional, professional_owner_node: professional, role_assignment: assignment)
+    calendar = ProfessionalCalendar.create!(context_node: brand, professional_node: professional, created_by_user: user, title: "Appuntamenti", slug: "postura-app", color: "blue")
+    experience = DataExperience.create!(created_by_user: user, title: "Percorsi individuali")
+    DataSession.create!(
+      data_experience: experience,
+      professional_calendar: calendar,
+      visibility: "public",
+      title: "Appuntamento dal database",
+      starts_at: Time.zone.parse("2026-09-22 16:00"),
+      ends_at: Time.zone.parse("2026-09-22 17:00")
+    )
+
+    get markpostura_weekplan_url(week: "2026-W39", calendars: "postura-app")
+
+    assert_response :success
+    assert_includes response.body, "Appuntamento dal database"
+    assert_includes response.body, 'data_session_id'
   end
 
   test "Rails4Business landing renders both current logo assets" do

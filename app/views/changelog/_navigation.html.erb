@@ -1,0 +1,13 @@
+<nav class="border-b border-slate-200 bg-white" aria-label="Navigazione changelog">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+    <%= link_to changelog_brand.fetch("label"), changelog_brand.fetch("home_url"), class: "min-w-0 truncate text-sm font-black tracking-tight text-slate-950 hover:text-blue-700" %>
+    <div class="flex shrink-0 items-center gap-1 text-sm font-bold">
+      <%= link_to "Home", changelog_brand.fetch("home_url"), class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+      <% if changelog_brand.fetch("key") == "flowpulse" %>
+        <%= link_to "Progetti", flowpulse_projects_path, class: "hidden rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:inline-flex" %>
+        <%= link_to "Professionisti", flowpulse_professionals_path, class: "hidden rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:inline-flex" %>
+      <% end %>
+      <%= link_to "Changelog", changelog_index_path, aria: { current: "page" }, class: "rounded-full bg-blue-50 px-3 py-2 text-blue-700" %>
+    </div>
+  </div>
+</nav>

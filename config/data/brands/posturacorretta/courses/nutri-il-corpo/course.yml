@@ -1,0 +1,27 @@
+schema_version: 1
+contents:
+  - id: nutri-il-corpo
+    format: course
+    slug: nutri-il-corpo
+    position: 5
+    status: published
+    published_at: "2026-10-05T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Nutri il corpo
+    description: Alimentazione, nutrizione e rapporto consapevole con ciò che sostiene il corpo.
+    level: base
+    author_node_slug: markpostura
+    publisher_node_slug: posturacorretta
+  - id: nutri-prima-osservazione
+    parent_id: nutri-il-corpo
+    format: chapter
+    chapter_type: practical
+    slug: prima-osservazione-della-nutrizione
+    position: 1
+    status: published
+    published_at: "2026-10-05T09:00:00+02:00"
+    visibility: public
+    access: free
+    title: Prima osservazione della nutrizione
+    content_path: brands/posturacorretta/courses/nutri-il-corpo/chapters/prima-osservazione-della-nutrizione.md

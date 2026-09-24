@@ -29,8 +29,16 @@ Rails.application.routes.draw do
   get "esperienze" => redirect("/eventi", status: 301), as: :esperienze
   get "esperienze/:id" => redirect("/eventi/%{id}", status: 301), as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
+  get "flowpulse/progetti" => "landing#flowpulse_projects", as: :flowpulse_projects
+  get "flowpulse/professionisti" => "landing#flowpulse_professionals", as: :flowpulse_professionals
   get "flowpulse/contenuti" => "landing#flowpulse_contents", as: :flowpulse_contents
   get "flowpulse/contenuti/:slug" => "landing#flowpulse_content", as: :flowpulse_content
+  get "changelog" => "changelog#index", as: :changelog
+  get "changelog/aggiornamenti/:slug" => "changelog#show", as: :changelog_entry
+  get "changelog/:brand/aggiornamenti/:slug" => "changelog#show", as: :brand_changelog_entry,
+      constraints: { brand: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+  get "changelog/:brand" => "changelog#index", as: :brand_changelog,
+      constraints: { brand: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
   get "rails4b" => "landing#rails4b", as: :rails4b
   get "rails4b/percorsi/:slug" => "landing#rails4b_track", as: :rails4b_track
   get "rails4b/contenuti" => "landing#rails4b_contents", as: :rails4b_contents
@@ -40,10 +48,12 @@ Rails.application.routes.draw do
   get "posturacorretta/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,
       constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
+  get "igieneposturale" => "landing#igieneposturale", as: :igieneposturale
   get "il-giardino-del-corpo" => "landing#giardino_del_corpo", as: :giardino_del_corpo
   get "giardino-del-corpo" => redirect("/il-giardino-del-corpo", status: 301)
   direct(:il_giardino_del_corpo) { "/il-giardino-del-corpo" }
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
+  get "percorso-integrato/docs" => "brands/percorso_integrato#docs", as: :percorso_integrato_docs
   get "percorso-integrato/professionisti" => "brands/percorso_integrato#professionals", as: :percorso_integrato_professionals
   get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional
   get "percorso-integrato/luoghi" => "brands/percorso_integrato#places", as: :percorso_integrato_places
@@ -85,7 +95,7 @@ Rails.application.routes.draw do
   get "posturacorretta/accademia/recensioni" => "brands/posturacorretta#accademia_recensioni", as: :posturacorretta_accademia_recensioni
   get "posturacorretta/accademia/:slug" => "brands/posturacorretta#accademia_modulo", as: :posturacorretta_accademia_modulo
   get "posturacorretta/percorso" => redirect("/percorso-integrato", status: 301), as: :posturacorretta_percorso
-  get "posturacorretta/percorso/come-funziona" => "brands/posturacorretta#percorso_come_funziona", as: :posturacorretta_percorso_come_funziona
+  get "posturacorretta/percorso/come-funziona" => redirect("/percorso-integrato/docs", status: 301), as: :posturacorretta_percorso_come_funziona
   get "posturacorretta/percorsi-sul-territorio" => "brands/posturacorretta#percorsi_sul_territorio", as: :posturacorretta_percorsi_sul_territorio
   get "posturacorretta/metodiche" => "brands/posturacorretta#metodiche", as: :posturacorretta_metodiche
   get "posturacorretta/metodiche/:slug" => "brands/posturacorretta#metodica", as: :posturacorretta_metodica
@@ -125,6 +135,21 @@ Rails.application.routes.draw do
   get "brands/svuotamente" => "brands/svuotamente#index", as: :svuotamente
   get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
   get "impegno" => "brands/impegno/home#index", as: :impegno
+  scope path: "impegno", as: :impegno do
+    resources :experiences, path: "esperienze", controller: "brands/impegno/experiences", only: %i[index new create show update]
+    resources :experiences, path: "esperienze", controller: "brands/impegno/experiences", only: [] do
+      resources :sessions, path: "sessioni", controller: "brands/impegno/experience_sessions", only: %i[create update destroy]
+      resources :slots, path: "slot", controller: "brands/impegno/experience_slots", only: %i[create update destroy]
+      resources :commitments, path: "impegni", controller: "brands/impegno/experience_commitments", only: %i[create update destroy]
+    end
+    resources :sessions, path: "sessioni", controller: "brands/impegno/experience_sessions", only: [] do
+      resources :slots, path: "slot", controller: "brands/impegno/experience_slots", only: %i[create update destroy]
+      resources :commitments, path: "impegni", controller: "brands/impegno/experience_commitments", only: %i[create update destroy]
+    end
+    resources :slots, path: "slot", controller: "brands/impegno/experience_slots", only: [] do
+      resources :commitments, path: "impegni", controller: "brands/impegno/experience_commitments", only: %i[create update destroy]
+    end
+  end
   get "impegno/composer" => "brands/impegno/composer#show", as: :impegno_composer
   get "impegno/agenda" => "brands/impegno/commitments#index", as: :impegno_agenda
   resources :impegno_contacts, path: "impegno/contacts", controller: "brands/impegno/contacts", as: :impegno_contacts, only: %i[index create edit update destroy]
@@ -191,7 +216,12 @@ Rails.application.routes.draw do
         post :import
       end
     end
-    resources :brands, controller: :brands, only: %i[index show]
+    resources :brands, controller: :brands, only: %i[index show] do
+      resources :services, controller: :services, only: %i[create update destroy]
+      resources :calendars, controller: :professional_calendars, only: %i[create update destroy]
+      resources :processes, controller: :brand_processes, only: %i[create update destroy]
+    end
+    get "brands/:brand_id/materiale/:entry_id", to: "brand_editorial_materials#show", as: :brand_editorial_material
     get "sites/:site_key", to: "editorial_sites#show", as: :editorial_site
     get "sites/:site_key/*path", to: "editorial_sites#show", as: :editorial_site_page, format: false
     get "markpostura/settimane/:week" => "markpostura_weeks#show", as: :markpostura_week
