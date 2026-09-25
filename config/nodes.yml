@@ -2,7 +2,7 @@ default: &default
   nodes:
     markpostura:
       title: MarkPostura
-      professional: true
+      node_type: professional
       owner_username: markpostura
       primary_profile_username: markpostura
       status: published
@@ -10,6 +10,7 @@ default: &default
 
     rails4business:
       title: Rails4Business
+      node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
       status: published
@@ -17,6 +18,7 @@ default: &default
 
     posturacorretta:
       title: PosturaCorretta
+      node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
       status: published
@@ -27,10 +29,33 @@ default: &default
 
     ilgiardinodelcorpo:
       title: Il Giardino del Corpo
+      node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
       status: published
       visibility: public
+
+    generaimpresa:
+      title: GeneraImpresa
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    brand-in-costruzione:
+      title: Brand in costruzione
+      node_type: project
+      parent_slug: generaimpresa
+      status: draft
+      visibility: private
+
+    radioestesia:
+      title: Radioestesia e Benessere
+      node_type: professional
+      parent_slug: brand-in-costruzione
+      status: draft
+      visibility: private
 
 development:
   <<: *default

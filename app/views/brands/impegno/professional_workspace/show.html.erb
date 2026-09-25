@@ -1,0 +1,73 @@
+<% workspace = turbo_frame_tag "impegno_workspace" do %>
+  <% calendar_color_classes = { "slate" => "bg-slate-500", "sky" => "bg-sky-500", "blue" => "bg-blue-500", "rose" => "bg-rose-500", "amber" => "bg-amber-500", "emerald" => "bg-emerald-500", "violet" => "bg-violet-500" } %>
+  <div class="space-y-5">
+    <header class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-black uppercase tracking-wider text-violet-600">1Impegno professionale</p>
+          <h1 class="mt-1 text-2xl font-black text-slate-950"><%= @profile.display_name.presence || @profile.username %></h1>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Ruoli, calendari e servizi disponibili nei contesti in cui lavori.</p>
+        </div>
+        <% if @professional_node %>
+          <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Node professionale attivo</span>
+        <% else %>
+          <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-black text-amber-700">Node professionale non collegato</span>
+        <% end %>
+      </div>
+      <% if @professional_node %>
+        <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Profilo professionale</p>
+          <p class="mt-1 text-lg font-black text-slate-950"><%= @professional_node.title %></p>
+          <% if @professional_node.description.present? %><p class="mt-2 text-sm leading-6 text-slate-600"><%= @professional_node.description %></p><% end %>
+          <% if Current.user.superadmin_user? %><%= link_to "Apri scheda Node →", admin_brand_path(@professional_node, tab: "info"), data: { turbo_frame: "_top" }, class: "mt-3 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900" %><% end %>
+        </div>
+      <% else %>
+        <p class="mt-5 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-900">I ruoli operativi sono attivi, ma il profilo non è ancora collegato a un Node professionale. L’attivazione resta controllata dal superadmin durante il pilota.</p>
+      <% end %>
+    </header>
+
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="professional-roles-title">
+      <div class="flex items-center justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wider text-violet-600">Accessi</p><h2 id="professional-roles-title" class="mt-1 text-xl font-black text-slate-950">Ruoli assegnati</h2></div><span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-black text-slate-600"><%= @role_assignments.size %></span></div>
+      <div class="mt-5 grid gap-3 sm:grid-cols-2">
+        <% @role_assignments.each do |assignment| %>
+          <article class="rounded-xl border border-slate-200 p-4">
+            <p class="font-black text-slate-950"><%= assignment.operator? ? assignment.role_operator.to_s.humanize : assignment.role.to_s.humanize %></p>
+            <p class="mt-1 text-sm text-slate-500"><%= assignment.context.is_a?(Node) ? assignment.context.title : "Ruolo generale" %></p>
+          </article>
+        <% end %>
+        <% if @role_assignments.empty? %><p class="text-sm text-slate-500">Nessun ruolo assegnato.</p><% end %>
+      </div>
+      <% if Current.user.superadmin_user? %><%= link_to "Gestisci ruoli →", admin_assigned_role_map_path, data: { turbo_frame: "_top" }, class: "mt-4 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900" %><% end %>
+    </section>
+
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="professional-calendars-title">
+      <div class="flex items-center justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Organizzazione</p><h2 id="professional-calendars-title" class="mt-1 text-xl font-black text-slate-950">Calendari</h2></div><span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-black text-slate-600"><%= @calendars.size %></span></div>
+      <div class="mt-5 space-y-3">
+        <% @calendars.each do |calendar| %>
+          <article class="flex items-start gap-3 rounded-xl border border-slate-200 p-4">
+            <span class="mt-1 size-3 shrink-0 rounded-full <%= calendar_color_classes.fetch(calendar.color, "bg-slate-500") %>"></span>
+            <div><p class="font-black text-slate-950"><%= calendar.title %></p><p class="mt-1 text-sm text-slate-500"><%= calendar.context_node.title %><%= " · #{calendar.short_label}" if calendar.short_label.present? %></p></div>
+          </article>
+        <% end %>
+        <% if @calendars.empty? %><p class="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500"><%= @professional_node ? "Nessun calendario professionale attivo." : "Per creare calendari occorre prima collegare un Node professionale." %></p><% end %>
+      </div>
+      <% if Current.user.superadmin_user? && @professional_node %><%= link_to "Gestisci calendari →", admin_brand_path(@professional_node, tab: "calendars"), data: { turbo_frame: "_top" }, class: "mt-4 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900" %><% end %>
+    </section>
+
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="professional-services-title">
+      <div class="flex flex-wrap items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wider text-emerald-600">Offerta utilizzabile</p><h2 id="professional-services-title" class="mt-1 text-xl font-black text-slate-950">Servizi attivi</h2><p class="mt-2 text-sm leading-6 text-slate-500">1Impegno li utilizza nelle Esperienze e nelle Sessioni; la loro configurazione appartiene a GeneraImpresa.</p></div><%= link_to "Apri GeneraImpresa →", genera_impresa_path, data: { turbo_frame: "_top" }, class: "text-sm font-bold text-blue-700 hover:text-blue-900" %></div>
+      <div class="mt-5 grid gap-3 sm:grid-cols-2">
+        <% @services.each do |service| %>
+          <article class="rounded-xl border border-slate-200 p-4">
+            <p class="text-xs font-black uppercase tracking-wider text-slate-400"><%= service.node.title %></p>
+            <h3 class="mt-1 font-black text-slate-950"><%= service.title %></h3>
+            <% if service.description.present? %><p class="mt-2 text-sm leading-6 text-slate-500"><%= service.description %></p><% end %>
+            <% if Current.user.superadmin_user? %><%= link_to "Configura servizio →", admin_brand_path(service.node, tab: "services"), data: { turbo_frame: "_top" }, class: "mt-3 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900" %><% end %>
+          </article>
+        <% end %>
+        <% if @services.empty? %><p class="text-sm text-slate-500">Nessun servizio attivo nei contesti assegnati.</p><% end %>
+      </div>
+    </section>
+  </div>
+<% end %>
+<%= workspace %>

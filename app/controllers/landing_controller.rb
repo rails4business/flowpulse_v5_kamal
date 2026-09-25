@@ -16,7 +16,7 @@ class LandingController < ApplicationController
 
   def flowpulse_professionals
     professional_nodes = Node.published_public
-      .where(professional: true)
+      .professional
       .includes(:domains, :primary_professional_profile)
       .order(:title)
       .to_a

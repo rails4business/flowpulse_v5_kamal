@@ -5,7 +5,7 @@ class ProfessionalCalendarTest < ActiveSupport::TestCase
     user = User.create!(email_address: "professional-calendar@example.com", password: "password123", password_confirmation: "password123")
     profile = user.create_profile!(display_name: "Calendar Owner")
     assignment = RoleAssignment.create!(profile: profile, role: :ideatore)
-    professional = Node.create!(title: "Calendar Professional", slug: "calendar-professional", professional: true, role_assignment: assignment)
+    professional = Node.create!(title: "Calendar Professional", slug: "calendar-professional", node_type: :professional, role_assignment: assignment)
     brand = Node.create!(title: "Calendar Brand", slug: "calendar-brand", parent: professional, professional_owner_node: professional, role_assignment: assignment)
     project = Node.create!(title: "Calendar Project", slug: "calendar-project", parent: brand, role_assignment: assignment)
 

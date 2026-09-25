@@ -1,4 +1,6 @@
 class Node < ApplicationRecord
+  enum :node_type, { professional: 0, project: 1 }, default: :project
+
   STATUSES = %w[draft published archived].freeze
   VISIBILITIES = %w[public subscription member private].freeze
   VISIBILITY_LABELS = {
@@ -105,6 +107,10 @@ class Node < ApplicationRecord
     end
   end
 
+  def brand?
+    domains.exists?
+  end
+
   private
 
   def set_slug
@@ -112,7 +118,7 @@ class Node < ApplicationRecord
   end
 
   def set_node_defaults
-    self.node_type = content_type.presence || "node" if node_type.blank?
+    self.node_type = "project" if node_type.blank?
     self.view_type = "default" if view_type.blank?
     self.status = "draft" if status.blank?
     self.visibility = "public" if visibility.blank?

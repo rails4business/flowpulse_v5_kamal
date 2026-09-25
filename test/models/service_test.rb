@@ -5,7 +5,7 @@ class ServiceTest < ActiveSupport::TestCase
     @user = User.create!(email_address: "service@example.com", password: "password123", password_confirmation: "password123")
     profile = @user.create_profile!(display_name: "Service Owner")
     assignment = RoleAssignment.create!(profile: profile, role: :ideatore)
-    @professional = Node.create!(title: "Test Professional", slug: "test-professional-service", professional: true, role_assignment: assignment)
+    @professional = Node.create!(title: "Test Professional", slug: "test-professional-service", node_type: :professional, role_assignment: assignment)
     @brand = Node.create!(title: "Test Brand", slug: "test-brand-service", parent: @professional, professional_owner_node: @professional, role_assignment: assignment)
     @project = Node.create!(title: "Test Project", slug: "test-project-service", parent: @brand, role_assignment: assignment)
   end

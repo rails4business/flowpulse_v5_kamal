@@ -27,7 +27,7 @@ class ProfessionalCalendarCatalog
     ActiveRecord::Base.transaction do
       @definitions.each do |slug, attributes|
         context_node = Node.find_by!(slug: attributes.fetch("context_node_slug"))
-        professional_node = Node.find_by!(slug: attributes.fetch("professional_node_slug"), professional: true)
+        professional_node = Node.professional.find_by!(slug: attributes.fetch("professional_node_slug"))
         calendar = ProfessionalCalendar.find_or_initialize_by(slug: slug)
         calendar.assign_attributes(
           context_node: context_node,

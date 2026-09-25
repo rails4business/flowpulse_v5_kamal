@@ -29,6 +29,8 @@ module Brands
         assert_select "select[name=brand]", count: 0
         assert_select "select[name=area]", count: 0
         assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Settimana"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Esperienze"
         assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Luoghi"
         assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Contatti"
         assert_select "section[aria-label='Contesti dell’agenda'], section[aria-label=\"Contesti dell'agenda\"]", text: /La mia agenda/
@@ -37,8 +39,7 @@ module Brands
         assert_select "nav[aria-label='Navigazione 1impegno'] a[href='#{profile_path}']", text: "Profilo"
         assert_select "button[data-modal-dialog-id-value='start-commitment-dialog'][data-action='click->modal#open'][onclick*='start-commitment-dialog']", text: /Registra/
         assert_select "button[data-modal-dialog-id-value='new-commitment-dialog'][data-action='click->modal#open'][onclick*='new-commitment-dialog']", text: /Nuovo impegno/
-        assert_select "nav[aria-label='Vista agenda'] a", text: "Settimana"
-        assert_select "nav[aria-label='Vista agenda'] a", text: "Esperienze"
+        assert_select "nav[aria-label='Vista agenda']", count: 0
         assert_select "turbo-frame#impegno_workspace[src]", count: 1 do |frames|
           assert_includes frames.first["src"], impegno_agenda_path
           assert_includes frames.first["src"], "workspace=1"
@@ -51,22 +52,23 @@ module Brands
 
         get impegno_url(brand: "impegno", area: "agenda", view: "agenda", view_mode: "weekplan")
         assert_response :success
-        assert_select "nav[aria-label='Vista agenda'] a[aria-current=page][style*='background-color:#2563eb']", text: "Settimana"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Settimana"
         assert_select "turbo-frame#impegno_workspace[src*='view_mode=weekplan']", count: 1
 
         get impegno_url(brand: "impegno", area: "agenda", view: "agenda")
         assert_response :success
-        assert_select "nav[aria-label='Vista agenda'] a[aria-current=page][style*='background-color:#0f172a']", text: "Elenco"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Elenco", count: 0
         assert_select "turbo-frame#impegno_workspace[src*='view_mode=weekplan']", count: 0
 
         get impegno_url(brand: "impegno", area: "agenda", view: "agenda", view_mode: "structure")
         assert_response :success
-        assert_select "nav[aria-label='Vista agenda'] a[aria-current=page][style*='background-color:#4f46e5']", text: "Struttura & Calendari"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Struttura & Calendari", count: 0
         assert_select "turbo-frame#impegno_workspace[src*='view_mode=structure']", count: 1
 
         get impegno_url(brand: "impegno", area: "agenda", view: "agenda", view_mode: "experiences")
         assert_response :success
-        assert_select "nav[aria-label='Vista agenda'] a[aria-current=page]", text: "Esperienze"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Esperienze"
         assert_select "turbo-frame#impegno_workspace[src*='/impegno/esperienze'][src*='workspace=1']", count: 1
 
         get impegno_agenda_url(workspace: "1", view_mode: "structure")
@@ -156,15 +158,19 @@ module Brands
         assert_select "span", text: "Professionista", count: 0
       end
 
-      test "redirects the legacy professional area to domain roles" do
+      test "loads the professional workspace for an operator" do
         user = User.create!(email_address: "impegno-legacy-professional@example.com", password: "password123", password_confirmation: "password123")
         user.create_profile!(display_name: "Legacy Professional", username: "legacy_professional")
+        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
+        node = Node.create!(title: "Professional Context", slug: "professional-context", role_assignment: creator_assignment, operator_roles: %w[professional])
+        RoleAssignment.create!(profile: user.profile, role: :operator, role_operator: "professional", context: node, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
-        get impegno_url(brand: "posturacorretta", area: "professional", view: "offering")
+        get impegno_url(area: "professional")
 
-        assert_redirected_to impegno_url(brand: "posturacorretta", area: "domain_roles", view: "offering")
-        assert_response :moved_permanently
+        assert_response :success
+        assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Professionista"
+        assert_select "turbo-frame#impegno_workspace[src*='/impegno/professionista'][src*='workspace=1']", count: 1
       end
 
       test "loads the professional agenda with event and booking-slot filters" do

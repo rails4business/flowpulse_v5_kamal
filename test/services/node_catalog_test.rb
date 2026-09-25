@@ -20,9 +20,9 @@ class NodeCatalogTest < ActiveSupport::TestCase
     mark = Node.find_by!(slug: "markpostura")
     postura = Node.find_by!(slug: "posturacorretta")
 
-    assert_equal 4, first.nodes
-    assert_equal 4, second.nodes
-    assert_equal 4, Node.where(slug: %w[markpostura rails4business posturacorretta ilgiardinodelcorpo]).count
+    assert_equal 7, first.nodes
+    assert_equal 7, second.nodes
+    assert_equal 7, Node.where(slug: %w[markpostura rails4business posturacorretta ilgiardinodelcorpo generaimpresa brand-in-costruzione radioestesia]).count
     assert mark.professional?
     assert_equal mark, user_profile.primary_node
     assert_equal mark, postura.parent
@@ -35,7 +35,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
       "nodes" => {
         "demo-professional" => {
           "title" => "Professionista non iscritto",
-          "professional" => true,
+          "node_type" => "professional",
           "owner_username" => "markpostura"
         }
       }

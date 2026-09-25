@@ -136,8 +136,9 @@ strumenti digitali.
 
 ## 5. Node, professionista, Brand e progetto
 
-`Node` è l'elemento organizzativo comune. Professional, Brand e progetto non
-richiedono tre alberi o tre tabelle separate.
+`Node` è l'elemento organizzativo comune. Professionista, Brand e progetto non
+richiedono tre alberi o tre tabelle separate. `node_type` è un enum con due
+valori: `professional` e `project`.
 
 - un Node è **professional** quando è dichiarato esplicitamente tale, anche se
   il professionista non si è ancora iscritto;
@@ -146,6 +147,19 @@ richiedono tre alberi o tre tabelle separate.
 - un Node figlio privo di Domain è un progetto o processo interno;
 - un Node figlio che acquisisce un Domain diventa anche un sub-brand, senza
   dover essere ricreato.
+
+Il tipo e la presenza del dominio rispondono quindi a domande diverse:
+
+```text
+node_type → che cosa rappresenta il Node
+Domain    → se il Node è pubblicato anche come Brand
+```
+
+Radioestesia viene inizialmente registrata come Node `professional`, senza
+Domain, sotto il contenitore gestionale temporaneo
+`GeneraImpresa → Brand in costruzione`. Quando sarà pronta, l'eliminazione del
+`parent_id` la renderà indipendente senza modificarne il tipo; l'aggiunta del
+Domain la renderà anche un Brand.
 
 Le due relazioni tra Node hanno significati distinti:
 

@@ -4,7 +4,7 @@ module Brands
       layout "landing"
       allow_unauthenticated_access
 
-      AREAS = %w[agenda user domain_roles places contacts].freeze
+      AREAS = %w[agenda user domain_roles places contacts professional].freeze
       VIEWS = {
         "agenda" => %w[agenda],
         "user" => %w[practices recurring],
@@ -38,8 +38,6 @@ module Brands
 
       def index
         return unless authenticated?
-        return redirect_legacy_professional_area if params[:area] == "professional"
-
         @impegno_brand = params[:brand].presence_in(%w[impegno posturacorretta percorso_integrato generaimpresa cantachetipassa personale]) || "impegno"
         @impegno_domains = available_impegno_domains
         @impegno_domain_options = domain_options
@@ -49,6 +47,7 @@ module Brands
         # "professional" non è più un ruolo User globale: l'accesso operativo
         # deriva da un RoleAssignment `operator` nel contesto di un Brand.
         @impegno_professional_access = Current.user.superadmin_user? ||
+          Current.user.profile.primary_node&.professional? ||
           Current.user.role_assignments.where(role: :operator).exists?
         requested_area = params[:area].presence_in(AREAS) || "agenda"
         @impegno_has_domain_roles = @impegno_professional_access
@@ -62,7 +61,8 @@ module Brands
         requested_view = params[:view] == "programs" ? "practices" : params[:view]
         @impegno_legacy_area = requested_area if %w[user domain_roles].include?(requested_area)
         @impegno_legacy_view = requested_view.presence
-        @impegno_area = requested_area.presence_in(%w[places contacts]) || "agenda"
+        @impegno_area = requested_area.presence_in(%w[places contacts professional]) || "agenda"
+        @impegno_area = "agenda" if @impegno_area == "professional" && !@impegno_professional_access
         @impegno_view = @impegno_area == "agenda" ? "agenda" : nil
         @impegno_period = @impegno_area == "agenda" ? params[:period].presence_in(AGENDA_PERIODS) : nil
         @impegno_agenda_filter = @impegno_area == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(PROFESSIONAL_AGENDA_FILTERS) || "all" : nil
@@ -73,12 +73,6 @@ module Brands
       end
 
       private
-
-        def redirect_legacy_professional_area
-          redirect_params = request.query_parameters.except("area", "role").merge(area: "domain_roles")
-          redirect_params[:brand] = params[:brand] if params[:brand].present?
-          redirect_to impegno_path(redirect_params), status: :moved_permanently
-        end
 
         def views_for_area(area)
           return DOMAIN_ROLE_VIEWS.fetch(@impegno_role, DEFAULT_DOMAIN_ROLE_VIEWS) if area == "domain_roles"
@@ -105,6 +99,7 @@ module Brands
         def workspace_src
           return impegno_contacts_path(workspace: "1") if @impegno_area == "contacts"
           return impegno_places_path(workspace: "1") if @impegno_area == "places"
+          return impegno_professional_path(workspace: "1") if @impegno_area == "professional"
           return unless @impegno_area == "agenda" && @impegno_view == "agenda"
           return impegno_experiences_path(workspace: "1") if params[:view_mode] == "experiences" && Current.user.superadmin_user?
 

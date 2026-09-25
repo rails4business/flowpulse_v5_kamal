@@ -15,14 +15,14 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     @root_node = Node.create!(
       role_assignment: @role_assignment,
       title: "Creator Home Node",
-      node_type: "node",
+      node_type: "project",
       status: "published"
     )
     # create a second node to test specific domain node vs creator home node
     @other_node = Node.create!(
       role_assignment: @role_assignment,
       title: "Specific Target Node",
-      node_type: "node",
+      node_type: "project",
       status: "published"
     )
   end

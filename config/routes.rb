@@ -155,6 +155,7 @@ Rails.application.routes.draw do
   end
   get "impegno/composer" => "brands/impegno/composer#show", as: :impegno_composer
   get "impegno/agenda" => "brands/impegno/commitments#index", as: :impegno_agenda
+  get "impegno/professionista" => "brands/impegno/professional_workspace#show", as: :impegno_professional
   resources :impegno_contacts, path: "impegno/contacts", controller: "brands/impegno/contacts", as: :impegno_contacts, only: %i[index create edit update destroy]
   resources :impegno_places, path: "impegno/places", controller: "brands/impegno/places", as: :impegno_places, only: %i[index create edit update destroy]
 

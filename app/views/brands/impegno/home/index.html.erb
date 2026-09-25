@@ -26,10 +26,18 @@
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto grid min-h-16 max-w-7xl grid-cols-1 items-center gap-3 px-4 py-3 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-5">
       <div class="flex min-w-0 flex-wrap items-center gap-2">
-        <nav class="flex items-center gap-1" aria-label="Sezioni di Impegno">
-          <%= link_to "Agenda", state_path.call(area: "agenda", view: "agenda", tab: nil), aria: { current: ("page" if @impegno_area == "agenda") }, class: "rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'agenda' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
-          <%= link_to "Luoghi", state_path.call(area: "places", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "places") }, class: "rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'places' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
-          <%= link_to "Contatti", state_path.call(area: "contacts", view: nil, tab: nil), aria: { current: ("page" if @impegno_area == "contacts") }, class: "rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'contacts' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+        <nav class="flex max-w-full items-center gap-1 overflow-x-auto" aria-label="Sezioni di Impegno">
+          <% agenda_active = @impegno_area == "agenda" && !%w[weekplan experiences structure].include?(params[:view_mode]) %>
+          <%= link_to "Agenda", state_path.call(area: "agenda", view: "agenda", tab: nil, view_mode: nil), aria: { current: ("page" if agenda_active) }, class: "shrink-0 rounded-lg px-3 py-2 text-sm font-bold #{agenda_active ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+          <% week_active = @impegno_area == "agenda" && params[:view_mode] == "weekplan" %>
+          <%= link_to "Settimana", state_path.call(area: "agenda", view: "agenda", tab: nil, view_mode: "weekplan"), aria: { current: ("page" if week_active) }, class: "shrink-0 rounded-lg px-3 py-2 text-sm font-bold #{week_active ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+          <% if Current.user.superadmin_user? %>
+            <% experiences_active = @impegno_area == "agenda" && params[:view_mode] == "experiences" %>
+            <%= link_to "Esperienze", state_path.call(area: "agenda", view: "agenda", tab: nil, view_mode: "experiences", date: nil, period: nil), aria: { current: ("page" if experiences_active) }, class: "shrink-0 rounded-lg px-3 py-2 text-sm font-bold #{experiences_active ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+          <% end %>
+          <%= link_to "Luoghi", state_path.call(area: "places", view: nil, tab: nil, view_mode: nil, date: nil, period: nil), aria: { current: ("page" if @impegno_area == "places") }, class: "shrink-0 rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'places' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+          <%= link_to "Contatti", state_path.call(area: "contacts", view: nil, tab: nil, view_mode: nil, date: nil, period: nil), aria: { current: ("page" if @impegno_area == "contacts") }, class: "shrink-0 rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'contacts' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+          <% if @impegno_professional_access %><%= link_to "Professionista", state_path.call(area: "professional", view: nil, tab: nil, view_mode: nil, date: nil, period: nil), aria: { current: ("page" if @impegno_area == "professional") }, class: "shrink-0 rounded-lg px-3 py-2 text-sm font-bold #{@impegno_area == 'professional' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %><% end %>
         </nav>
 
         <% if @impegno_area == "agenda" && @impegno_has_domain_roles %>
@@ -138,20 +146,6 @@
       <% end %>
 
       <% if @workspace_src %>
-        <% if @impegno_area == "agenda" && @impegno_view == "agenda" %>
-          <nav class="mb-4 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm" aria-label="Vista agenda">
-            <% list_active = !%w[weekplan structure experiences].include?(params[:view_mode]) %>
-            <%= link_to "Elenco", state_path.call(view_mode: nil), aria: { current: ("page" if list_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{list_active ? 'border-slate-900 bg-slate-900 text-white shadow-sm' : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50'}", style: ("background-color:#0f172a;color:#fff;border-color:#0f172a" if list_active) %>
-            <% week_active = params[:view_mode] == "weekplan" %>
-            <%= link_to "Settimana", state_path.call(view_mode: "weekplan"), aria: { current: ("page" if week_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{week_active ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-transparent bg-white text-blue-700 hover:border-blue-200 hover:bg-blue-50'}", style: ("background-color:#2563eb;color:#fff;border-color:#2563eb" if week_active) %>
-            <% if Current.user.superadmin_user? %>
-              <% experiences_active = params[:view_mode] == "experiences" %>
-              <%= link_to "Esperienze", state_path.call(view_mode: "experiences", date: nil, period: nil), aria: { current: ("page" if experiences_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{experiences_active ? 'border-violet-600 bg-violet-600 text-white shadow-sm' : 'border-transparent bg-white text-violet-700 hover:border-violet-200 hover:bg-violet-50'}", style: ("background-color:#7c3aed;color:#fff;border-color:#7c3aed" if experiences_active) %>
-            <% end %>
-            <% structure_active = params[:view_mode] == "structure" %>
-            <%= link_to "Struttura & Calendari", state_path.call(view_mode: "structure"), aria: { current: ("page" if structure_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{structure_active ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm' : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50'}", style: ("background-color:#4f46e5;color:#fff;border-color:#4f46e5" if structure_active) %>
-          </nav>
-        <% end %>
         <% workspace_frame = turbo_frame_tag "impegno_workspace", src: @workspace_src, loading: :eager do %>
           <div class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">Caricamento dell’Agenda…</div>
         <% end %>

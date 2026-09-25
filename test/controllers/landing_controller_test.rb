@@ -103,7 +103,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     user = User.create!(email_address: "weekplan-database@example.com", password: "password123", password_confirmation: "password123")
     profile = user.create_profile!(display_name: "Mark Week Plan", username: "mark_week_plan")
     assignment = RoleAssignment.create!(profile: profile, role: :ideatore)
-    professional = Node.create!(title: "Mark Postura", slug: "markpostura", professional: true, role_assignment: assignment)
+    professional = Node.create!(title: "Mark Postura", slug: "markpostura", node_type: :professional, role_assignment: assignment)
     brand = Node.create!(title: "PosturaCorretta", slug: "posturacorretta-weekplan", parent: professional, professional_owner_node: professional, role_assignment: assignment)
     calendar = ProfessionalCalendar.create!(context_node: brand, professional_node: professional, created_by_user: user, title: "Appuntamenti", slug: "postura-app", color: "blue")
     experience = DataExperience.create!(created_by_user: user, title: "Percorsi individuali")

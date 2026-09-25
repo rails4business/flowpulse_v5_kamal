@@ -146,7 +146,7 @@ class NodeTest < ActiveSupport::TestCase
     node = Node.create!(
       title: "Professionista demo",
       role_assignment: @role_assignment,
-      professional: true
+      node_type: :professional
     )
 
     assert node.professional?
@@ -163,7 +163,7 @@ class NodeTest < ActiveSupport::TestCase
     assert_not child.valid?
     assert_includes child.errors[:professional_owner_node], "deve essere un nodo professionale"
 
-    @node_a.update!(professional: true)
+    @node_a.update!(node_type: :professional)
     assert child.valid?
   end
 
@@ -171,7 +171,7 @@ class NodeTest < ActiveSupport::TestCase
     @user.profile.primary_node = @node_a
     assert_not @user.profile.valid?
 
-    @node_a.update!(professional: true)
+    @node_a.update!(node_type: :professional)
     assert @user.profile.valid?
   end
 end

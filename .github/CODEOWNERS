@@ -1,0 +1,19 @@
+# CODEOWNERS
+# Critical files and folders that should require review before merging/deploy.
+# Replace owners below with the appropriate GitHub usernames or teams for your org.
+# Format: <pattern> <owner>
+
+# CI workflows and actions
+/.github/workflows/* @marcobeffa
+
+# Deployment and infra
+/config/deploy.yml @marcobeffa
+/Dockerfile @marcobeffa
+
+# Config and scripts
+/config/** @marcobeffa
+/bin/** @marcobeffa
+
+# Gemfile and lock
+/Gemfile @marcobeffa
+/Gemfile.lock @marcobeffa

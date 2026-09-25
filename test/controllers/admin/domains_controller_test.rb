@@ -45,7 +45,7 @@ module Admin
       @node = Node.create!(
         role_assignment: @role_assignment,
         title: "Creator Root Node",
-        node_type: "node",
+        node_type: "project",
         status: "published"
       )
 

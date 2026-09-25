@@ -7,7 +7,7 @@ module Brands
         @user = User.create!(email_address: "experience-tree@example.com", password: "password123", password_confirmation: "password123", superadmin: true, active_role: :superadmin)
         profile = @user.create_profile!(display_name: "Experience Tree", username: "experience_tree")
         assignment = RoleAssignment.create!(profile: profile, role: :ideatore)
-        @professional_node = Node.create!(title: "Experience Professional", slug: "experience-professional", professional: true, role_assignment: assignment)
+        @professional_node = Node.create!(title: "Experience Professional", slug: "experience-professional", node_type: :professional, role_assignment: assignment)
         @brand = Node.create!(title: "Experience Brand", slug: "experience-brand", parent: @professional_node, professional_owner_node: @professional_node, role_assignment: assignment)
         @calendar = ProfessionalCalendar.create!(context_node: @brand, professional_node: @professional_node, created_by_user: @user, title: "Gruppo", slug: "experience-gruppo", color: "sky")
         @service = Service.create!(node: @brand, created_by_user: @user, title: "Lezione", slug: "lezione")

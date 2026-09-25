@@ -17,9 +17,8 @@ namespace :nodes do
 
     print_node = lambda do |node, depth|
       labels = []
-      labels << "professional" if node.professional?
       labels << "brand" if node.domains.any?
-      labels << node.node_type unless node.node_type == "node"
+      labels << node.node_type
       puts "#{'  ' * depth}#{node.title}#{labels.any? ? " [#{labels.join(', ')}]" : ''}"
       node.children.includes(:domains, :professional_owner_node).order(:position, :title).each do |child|
         print_node.call(child, depth + 1)

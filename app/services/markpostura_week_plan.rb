@@ -47,7 +47,7 @@ class MarkposturaWeekPlan
     end
 
     def merge_database_sessions!(weeks, allowed_spaces, include_private:)
-      professional = Node.find_by(slug: "markpostura", professional: true)
+      professional = Node.professional.find_by(slug: "markpostura")
       return unless professional
 
       sessions = DataSession.includes(:professional_calendar)
