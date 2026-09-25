@@ -32,19 +32,20 @@ class Profile < ApplicationRecord
       return if username.present?
 
       base = if user&.email_address.present?
-               user.email_address.split('@').first.downcase.gsub(/[^a-z0-9_]/, '_')[0...30]
-             elsif display_name.present?
-               display_name.downcase.gsub(/[^a-z0-9_]/, '_')[0...30]
-             else
+               user.email_address.split("@").first.downcase.gsub(/[^a-z0-9_]/, "_")[0...30]
+      elsif display_name.present?
+               display_name.downcase.gsub(/[^a-z0-9_]/, "_")[0...30]
+      else
                "user"
-             end
+      end
 
       base = "user" if base.blank?
 
       username_val = base
       counter = 1
       while Profile.exists?(username: username_val)
-        username_val = "#{base}_#{counter}"[0...30]
+        suffix = "_#{counter}"
+        username_val = "#{base[0...(30 - suffix.length)]}#{suffix}"
         counter += 1
       end
       self.username = username_val

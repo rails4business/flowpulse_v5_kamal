@@ -127,7 +127,7 @@ class NodesController < ApplicationController
 
   def creator_owner_for_node?
     return false unless Current.user.present?
-    return false unless FlowRoles.active_role_for(Current.user) == "creator"
+    return false unless FlowRoles.active_role_for(Current.user) == "ideatore"
 
     Current.user.role_assignments.exists?(id: @node.role_assignment_id, role: :ideatore)
   end

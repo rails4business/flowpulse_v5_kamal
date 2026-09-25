@@ -11,14 +11,14 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_includes response.body, eventi_path
+    assert_includes response.body, flowpulse_projects_path
     assert_includes response.body, root_path
     assert_not_includes response.body, 'data-layout="dashboard"'
     assert_not_includes response.body, "data-dashboard-sidebar"
   end
 
-  test "demo user should get progetti page" do
-    sign_in(create_user("demo-progetti@example.com", demo_access: true, active_role: :demo))
+  test "superadmin should get demo progetti page" do
+    sign_in(create_user("demo-progetti@example.com", superadmin: true, active_role: :superadmin))
 
     get demo_progetti_url
 
@@ -27,8 +27,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Accademia Postura Corretta"
   end
 
-  test "demo user should get lavoro dashboard page" do
-    sign_in(create_user("demo-lavoro@example.com", demo_access: true, active_role: :demo))
+  test "superadmin should get demo lavoro dashboard page" do
+    sign_in(create_user("demo-lavoro@example.com", superadmin: true, active_role: :superadmin))
 
     get demo_lavoro_url
 
@@ -39,8 +39,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Ruolo"
   end
 
-  test "demo user should get salute dashboard" do
-    sign_in(create_user("demo-salute@example.com", demo_access: true, active_role: :demo))
+  test "superadmin should get demo salute dashboard" do
+    sign_in(create_user("demo-salute@example.com", superadmin: true, active_role: :superadmin))
 
     get demo_salute_url
 
@@ -53,11 +53,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test "registered demo view page requires demo access" do
     get demo_view_page_url("evento-costi-ruoli")
 
-    assert_redirected_to new_session_url
+    assert_redirected_to new_session_url(return_to: demo_view_page_path("evento-costi-ruoli"))
   end
 
-  test "demo user should get registered view page" do
-    sign_in(create_user("demo-view-page@example.com", demo_access: true, active_role: :demo))
+  test "superadmin should get registered demo view page" do
+    sign_in(create_user("demo-view-page@example.com", superadmin: true, active_role: :superadmin))
 
     get demo_view_page_url("evento-costi-ruoli")
 
@@ -68,7 +68,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test "should redirect dashboard when not authenticated" do
     get dashboard_url
-    assert_redirected_to new_session_url
+    assert_redirected_to new_session_url(return_to: dashboard_path)
   end
 
   test "should get dashboard for authenticated non superadmin" do
@@ -133,7 +133,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   private
 
     def create_user(email, **attributes)
-      demo_val = attributes.delete(:demo_access)
       user = User.create!(
         {
           email_address: email,
@@ -142,7 +141,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
         }.merge(attributes)
       )
       user.create_profile!(display_name: email.split("@").first.capitalize)
-      RoleAssignment.create!(profile: user.profile, role: :demo) if demo_val
       user
     end
 

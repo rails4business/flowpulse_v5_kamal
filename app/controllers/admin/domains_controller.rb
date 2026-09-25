@@ -44,7 +44,7 @@ module Admin
 
     def export
       if yaml_export_request?
-        timestamp = Time.current.strftime('%Y%m%d_%H%M%S')
+        timestamp = Time.current.strftime("%Y%m%d_%H%M%S")
         send_data Domain.export_to_yaml,
           filename: "flowpulse_domains_#{timestamp}.yml",
           type: "application/x-yaml; charset=utf-8",

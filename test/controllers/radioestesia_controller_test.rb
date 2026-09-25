@@ -27,34 +27,38 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows item purchase and annual options for a future masterclass" do
-    get "/posturacorretta/radioestesia/contenuti/incontro-di-approfondimento"
+    travel_to Time.zone.parse("2026-09-10 09:00") do
+      get "/posturacorretta/radioestesia/contenuti/incontro-di-approfondimento"
 
-    assert_response :success
-    assert_select "#acquista", /Partecipa alla masterclass/
-    assert_select "#acquista", /€111/
-    assert_select "#acquista", /€79/
-    assert_select "#acquista", /€88,80/
-    assert_select "#acquista", /€167,80/
-    assert_select "#acquista", /20% di sconto/
+      assert_response :success
+      assert_select "#acquista", /Partecipa alla masterclass/
+      assert_select "#acquista", /€111/
+      assert_select "#acquista", /€79/
+      assert_select "#acquista", /€88,80/
+      assert_select "#acquista", /€167,80/
+      assert_select "#acquista", /20% di sconto/
+    end
   end
 
   test "lists independent entries through shareable upcoming and past tabs" do
-    get "/posturacorretta/radioestesia/contenuti?tab=prossimi"
+    travel_to Time.zone.parse("2026-09-10 09:00") do
+      get "/posturacorretta/radioestesia/contenuti?tab=prossimi"
 
-    assert_response :success
-    assert_select "a", /Prepara la tua energia all’Autunno/
-    assert_select "a", /Online · 09:00–11:00/
-    assert_select "a[href*='tab=passati']", /Passati/
-    assert_select "a", text: /Scopri l'accesso annuale/, count: 0
-    assert_select "p", text: /L'ascolto di sé è il primo passo/, count: 0
-    assert_select "a", text: /Mappa energetica degli alimenti/, count: 0
-    assert_select "a", text: /Materiali di conferenze/, count: 0
+      assert_response :success
+      assert_select "a", /Prepara la tua energia all’Autunno/
+      assert_select "a", /Online · 09:00–11:00/
+      assert_select "a[href*='tab=passati']", /Passati/
+      assert_select "a", text: /Scopri l'accesso annuale/, count: 0
+      assert_select "p", text: /L'ascolto di sé è il primo passo/, count: 0
+      assert_select "a", text: /Mappa energetica degli alimenti/, count: 0
+      assert_select "a", text: /Materiali di conferenze/, count: 0
 
-    get "/posturacorretta/radioestesia/contenuti?tab=passati"
+      get "/posturacorretta/radioestesia/contenuti?tab=passati"
 
-    assert_response :success
-    assert_select "a", /Introduzione alla radiestesia/
-    assert_select "a", /Pratiche di ascolto quotidiano/
-    assert_select "a", text: /Prepara la tua energia all’Autunno/, count: 0
+      assert_response :success
+      assert_select "a", /Introduzione alla radiestesia/
+      assert_select "a", /Pratiche di ascolto quotidiano/
+      assert_select "a", text: /Prepara la tua energia all’Autunno/, count: 0
+    end
   end
 end

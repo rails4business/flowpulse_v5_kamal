@@ -23,6 +23,10 @@ Per ogni punto annotare una riga nel formato: `pagina / vista / cosa si vede / c
 - [x] La modalità modifica viene conservata nell'URL con `?modifica=1` e ripristinata dopo refresh o salvataggio.
 - [x] Rimossa la struttura nativa `details/summary`: freccia e titolo della Sessione condividono ora una riga `flex`, identica a quella del Giorno e al prototipo.
 - [x] Sessione, Slot e Commitment hanno `position`: con le date prevale `starts_at`, senza date prevale l'ordine manuale. Il riordino drag & drop resta successivo.
+- [x] Esperienze è una sottovista dell’Agenda di 1Impegno, senza diventare una quarta area principale accanto ad Agenda, Luoghi e Contatti.
+- [x] Il Weekplan legge anche le Sessioni programmate delle Esperienze, oltre ai Commitment personali.
+- [x] Il pulsante `Registra` può creare un Commitment diretto nell’Esperienza e avviarne subito il tempo effettivo.
+- [x] Sessioni e Commitment collegati presenti nel Weekplan aprono lo show dell’Esperienza.
 
 ## Struttura decisa
 
@@ -102,7 +106,7 @@ DataExperience (Esperienza)
 
 ### 6. Calendario e uso futuro
 
-- Il Day deriva dagli Slot: il calendario settimanale dovrà leggere gli stessi Slot.
+- Il Weekplan legge già le Sessioni programmate e i Commitment personali. L’eventuale rappresentazione autonoma degli Slot resta da decidere dopo l’uso del pilota.
 - Una Sessione editoriale, una lezione, una masterclass e una registrazione video useranno la stessa struttura.
 - Cycle e Service restano fuori da questa fase; saranno aggiunti solo dopo aver validato questo flusso.
 

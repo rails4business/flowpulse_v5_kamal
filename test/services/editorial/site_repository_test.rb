@@ -12,7 +12,7 @@ module Editorial
       assert_equal "/", site.mount("home").fetch("path")
       assert_equal "home", page.fetch("page").fetch("key")
       assert_equal "public", page.fetch("page").fetch("visibility")
-      assert_equal ["home"], repository.page_keys(site)
+      assert_equal %w[home timeline], repository.page_keys(site)
     end
 
     test "rejects unsafe keys" do

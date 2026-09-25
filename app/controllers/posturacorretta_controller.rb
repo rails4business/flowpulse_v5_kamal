@@ -33,7 +33,7 @@ class PosturacorrettaController < ApplicationController
   def accademia_recensioni; end
   def accademia_modulo
     @module = @academy_modules.find { |m| m["slug"] == params[:slug] }
-    return redirect_to posturacorretta_accademia_path, alert: "Modulo non trovato" unless @module
+    redirect_to posturacorretta_accademia_path, alert: "Modulo non trovato" unless @module
   end
   def percorso
     return redirect_to(posturacorretta_percorsi_sul_territorio_path) if params[:page] == "territorio"
@@ -145,7 +145,7 @@ class PosturacorrettaController < ApplicationController
   def professionisti
     redirect_to percorso_integrato_professionals_path, status: :moved_permanently
   end
-  
+
   def professionista
     redirect_to percorso_integrato_professional_path(params[:slug]), status: :moved_permanently
   end
@@ -164,7 +164,7 @@ class PosturacorrettaController < ApplicationController
   end
   def metodica
     @methodology = @methodologies_by_slug[params.fetch(:slug)]
-    return redirect_to posturacorretta_metodiche_path, alert: "Metodica non trovata" unless @methodology
+    redirect_to posturacorretta_metodiche_path, alert: "Metodica non trovata" unless @methodology
   end
   def contenuti
     if params[:categoria] == "corsi"
@@ -569,7 +569,7 @@ class PosturacorrettaController < ApplicationController
       }
     end
     all_articles = (category_articles + video_archive + event_items).uniq { |art| art[:slug] }
-    
+
     sorted_all_articles = all_articles.sort_by do |art|
       pub_date = art[:_publication_date]
       pub_date ? [0, -pub_date.jd, art[:title].to_s] : [1, 0, art[:title].to_s]

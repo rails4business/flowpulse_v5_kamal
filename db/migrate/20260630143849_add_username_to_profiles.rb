@@ -7,11 +7,11 @@ class AddUsernameToProfiles < ActiveRecord::Migration[8.1]
     Profile.includes(:user).find_each do |profile|
       base_username = if profile.user&.email_address.present?
                         profile.user.email_address.split('@').first.downcase.gsub(/[^a-z0-9_]/, '_')
-                      elsif profile.display_name.present?
+      elsif profile.display_name.present?
                         profile.display_name.downcase.gsub(/[^a-z0-9_]/, '_')
-                      else
+      else
                         "user_#{profile.id}"
-                      end
+      end
 
       base_username = "user" if base_username.blank?
 

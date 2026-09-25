@@ -4,16 +4,16 @@ class PagesController < ApplicationController
   layout :pages_layout
   dashboard_section :traveler, only: :viaggiatori
   def markpostura
-  end 
+  end
 
   def markpostura_old
-  end 
+  end
 
   def markposturastory
-  end 
+  end
 
   def posturacorretta
-  end 
+  end
 
   def flowpulse
     @flowpulse_articles = DomainContentCatalog.for_domain(

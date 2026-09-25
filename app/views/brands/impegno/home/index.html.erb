@@ -52,7 +52,7 @@
         <% end %>
       </div>
 
-      <% if @impegno_area == "agenda" && @impegno_view == "agenda" %>
+      <% if @impegno_area == "agenda" && @impegno_view == "agenda" && !%w[experiences structure].include?(params[:view_mode]) %>
         <div class="grid justify-center gap-2">
           <nav class="flex items-center justify-center gap-1.5" aria-label="Navigazione del calendario">
             <%= link_to "‹", state_path.call(date: (@workspace_date - 1.day).iso8601, period: nil), class: "flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-bold text-slate-700 hover:bg-slate-50", aria: { label: "Giorno precedente" } %>
@@ -76,9 +76,8 @@
       <% end %>
 
       <div class="flex items-center justify-start gap-2 lg:justify-end">
-        <%= link_to "Esperienze", impegno_experiences_path, class: "rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-sm font-bold text-violet-700 hover:bg-violet-100" %>
         <button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="click->modal#open" onclick="document.getElementById('start-commitment-dialog')?.showModal()" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">● Registra</button>
-        <button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="click->modal#open" onclick="document.getElementById('new-commitment-dialog')?.showModal()" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700">+ Nuovo impegno</button>
+        <% unless %w[experiences structure].include?(params[:view_mode]) || @impegno_area != "agenda" %><button type="button" data-controller="modal" data-modal-dialog-id-value="new-commitment-dialog" data-action="click->modal#open" onclick="document.getElementById('new-commitment-dialog')?.showModal()" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700">+ Nuovo impegno</button><% end %>
       </div>
     </div>
   </header>
@@ -99,6 +98,13 @@
       <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Preparare il programma dell'evento", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
       <div><%= form.label :description, "Cosa fai in questo momento?", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 3, placeholder: "Descrivi brevemente l'attività.", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
       <div><%= form.label :kind, "Tipo", class: "text-xs font-bold text-slate-700" %><%= form.select :kind, [["Attività", "work"], ["Personale", "personal"], ["Contenuto", "content"], ["Progetto", "project"]], {}, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %></div>
+      <% if @impegno_experiences.any? %>
+        <div>
+          <%= form.label :data_experience_id, "Esperienza (facoltativa)", class: "text-xs font-bold text-slate-700" %>
+          <%= form.collection_select :data_experience_id, @impegno_experiences, :id, :title, { include_blank: "Attività indipendente" }, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
+          <p class="mt-1 text-xs text-slate-400">Se la selezioni, la registrazione comparirà anche dentro l’Esperienza.</p>
+        </div>
+      <% end %>
       <%= form.hidden_field :calendar_label, value: Current.user.profile.display_name.presence || Current.user.profile.username %>
       <div class="flex justify-end gap-2 border-t border-slate-100 pt-4">
         <button type="button" data-controller="modal" data-modal-dialog-id-value="start-commitment-dialog" data-action="click->modal#close" onclick="this.closest('dialog')?.close()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button>
@@ -134,10 +140,14 @@
       <% if @workspace_src %>
         <% if @impegno_area == "agenda" && @impegno_view == "agenda" %>
           <nav class="mb-4 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm" aria-label="Vista agenda">
-            <% list_active = params[:view_mode] != "weekplan" && params[:view_mode] != "structure" %>
+            <% list_active = !%w[weekplan structure experiences].include?(params[:view_mode]) %>
             <%= link_to "Elenco", state_path.call(view_mode: nil), aria: { current: ("page" if list_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{list_active ? 'border-slate-900 bg-slate-900 text-white shadow-sm' : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50'}", style: ("background-color:#0f172a;color:#fff;border-color:#0f172a" if list_active) %>
             <% week_active = params[:view_mode] == "weekplan" %>
             <%= link_to "Settimana", state_path.call(view_mode: "weekplan"), aria: { current: ("page" if week_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{week_active ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-transparent bg-white text-blue-700 hover:border-blue-200 hover:bg-blue-50'}", style: ("background-color:#2563eb;color:#fff;border-color:#2563eb" if week_active) %>
+            <% if Current.user.superadmin_user? %>
+              <% experiences_active = params[:view_mode] == "experiences" %>
+              <%= link_to "Esperienze", state_path.call(view_mode: "experiences", date: nil, period: nil), aria: { current: ("page" if experiences_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{experiences_active ? 'border-violet-600 bg-violet-600 text-white shadow-sm' : 'border-transparent bg-white text-violet-700 hover:border-violet-200 hover:bg-violet-50'}", style: ("background-color:#7c3aed;color:#fff;border-color:#7c3aed" if experiences_active) %>
+            <% end %>
             <% structure_active = params[:view_mode] == "structure" %>
             <%= link_to "Struttura & Calendari", state_path.call(view_mode: "structure"), aria: { current: ("page" if structure_active) }, class: "rounded-lg border px-3 py-2 text-sm font-bold transition #{structure_active ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm' : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50'}", style: ("background-color:#4f46e5;color:#fff;border-color:#4f46e5" if structure_active) %>
           </nav>

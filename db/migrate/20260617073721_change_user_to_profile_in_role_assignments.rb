@@ -13,11 +13,11 @@ class ChangeUserToProfileInRoleAssignments < ActiveRecord::Migration[8.1]
     execute <<-SQL.squish
       SELECT id, user_id FROM role_assignments
     SQL
-    
+
     # We do data migration using ActiveRecord models temporarily
     # but to prevent model class loading issues, we use native SQL or raw DB connections.
     RoleAssignment.reset_column_information if defined?(RoleAssignment)
-    
+
     # Ensure every user with a role assignment has a profile
     User.all.each do |user|
       if user.role_assignments.any? && user.profile.nil?
@@ -38,14 +38,14 @@ class ChangeUserToProfileInRoleAssignments < ActiveRecord::Migration[8.1]
     remove_column :role_assignments, :user_id
 
     # 6. Add the new unique indexes using profile_id
-    add_index :role_assignments, [:profile_id, :role, :context_type, :context_id], 
-              unique: true, 
-              name: "index_role_assignments_on_context_role", 
+    add_index :role_assignments, [:profile_id, :role, :context_type, :context_id],
+              unique: true,
+              name: "index_role_assignments_on_context_role",
               where: "((context_type IS NOT NULL) AND (context_id IS NOT NULL))"
-              
-    add_index :role_assignments, [:profile_id, :role], 
-              unique: true, 
-              name: "index_role_assignments_on_global_role", 
+
+    add_index :role_assignments, [:profile_id, :role],
+              unique: true,
+              name: "index_role_assignments_on_global_role",
               where: "((context_type IS NULL) AND (context_id IS NULL))"
   end
 
@@ -65,14 +65,14 @@ class ChangeUserToProfileInRoleAssignments < ActiveRecord::Migration[8.1]
 
     remove_column :role_assignments, :profile_id
 
-    add_index :role_assignments, [:user_id, :role, :context_type, :context_id], 
-              unique: true, 
-              name: "index_role_assignments_on_context_role", 
+    add_index :role_assignments, [:user_id, :role, :context_type, :context_id],
+              unique: true,
+              name: "index_role_assignments_on_context_role",
               where: "((context_type IS NOT NULL) AND (context_id IS NOT NULL))"
-              
-    add_index :role_assignments, [:user_id, :role], 
-              unique: true, 
-              name: "index_role_assignments_on_global_role", 
+
+    add_index :role_assignments, [:user_id, :role],
+              unique: true,
+              name: "index_role_assignments_on_global_role",
               where: "((context_type IS NULL) AND (context_id IS NULL))"
   end
 end

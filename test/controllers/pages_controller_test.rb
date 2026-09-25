@@ -36,11 +36,14 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     get viaggiatori_path
 
     assert_response :success
-    assert_no_match "flowpulse.example", response.body
-    assert_includes response.body, "postura.example"
-    assert_includes response.body, "igiene.example"
-    assert_no_match "outside.example", response.body
-    assert_operator response.body.index("postura.example"), :<, response.body.index("igiene.example")
+    assert_select "section[aria-label='Iscrizioni ai domini']" do |section|
+      section_html = section.to_s
+      assert_no_match "flowpulse.example", section_html
+      assert_includes section_html, "postura.example"
+      assert_includes section_html, "igiene.example"
+      assert_no_match "outside.example", section_html
+      assert_operator section_html.index("postura.example"), :<, section_html.index("igiene.example")
+    end
     assert_select "nav[aria-label='Navigazione dashboard']" do
       assert_select "h3", text: "Domini iscritti"
       assert_select "a[href=?]", node_path(posture), text: /postura\.example/

@@ -186,7 +186,7 @@ content = <<~HTML
 %>
 
 <div id="top" class="bg-white text-slate-900 antialiased">
-  
+#{'  '}
   <section class="bg-gradient-to-b from-blue-50/70 via-white to-slate-50/70 px-5 py-12 md:py-16 xl:py-20" aria-labelledby="human-areas-title" data-chakra-container>
     <div class="mx-auto max-w-6xl">
       <header class="mx-auto max-w-3xl text-center">
@@ -202,7 +202,7 @@ content = <<~HTML
       </header>
 
       <div class="mt-10 lg:mt-16 lg:grid lg:grid-cols-[140px_1fr] lg:gap-12 xl:gap-20 lg:items-start">
-        
+#{'        '}
         <!-- Colonna Spine (solo Desktop) -->
         <div class="hidden lg:flex chakra-spine relative flex-col items-center gap-5 pb-8" role="tablist">
           <% human_areas.each_with_index do |area, index| %>
@@ -223,11 +223,11 @@ content = <<~HTML
         <!-- Colonna Pannelli (e Accordion Mobile) -->
         <div class="relative w-full lg:min-h-[40rem] flex flex-col gap-3 lg:block">
           <% human_areas.each_with_index do |area, index| %>
-            
+#{'            '}
             <!-- MOBILE BUTTON (Accordion Header) -->
-            <button 
+            <button#{' '}
               type="button"
-              data-chakra-tab="<%= area.fetch(:slug) %>" 
+              data-chakra-tab="<%= area.fetch(:slug) %>"#{' '}
               class="mobile-chakra-btn lg:hidden w-full flex items-center gap-4 text-left p-3 rounded-2xl border border-slate-200 bg-white shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 transition-all <%= 'is-active border-indigo-200 ring-2 ring-indigo-50' if index.zero? %>"
               aria-expanded="<%= index.zero? %>"
             >
@@ -240,7 +240,7 @@ content = <<~HTML
               </div>
               <div class="chevron flex-shrink-0 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 text-[10px] transition-transform duration-300">▼</div>
             </button>
-            
+#{'            '}
             <!-- PANNELLO DETTAGLIO -->
             <article
               id="panel-<%= area.fetch(:slug) %>"
@@ -272,11 +272,11 @@ content = <<~HTML
                 </div>
               </div>
             </article>
-            
+#{'            '}
           <% end %>
         </div>
       </div>
-      
+#{'      '}
       <p class="mt-5 text-center text-sm leading-6 text-slate-500">
         I sette ambiti costituiscono una <strong class="font-semibold text-slate-700">mappa simbolica e interdisciplinare</strong> della persona, non una classificazione clinica.
       </p>

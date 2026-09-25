@@ -110,6 +110,47 @@ module Brands
         assert_equal ["Scaletta aggiornata", "draft"], [direct_commitment.reload.title, direct_commitment.status]
       end
 
+      test "registers a running activity directly inside the experience" do
+        experience = DataExperience.create!(created_by_user: @user, title: "Corso da preparare")
+
+        get impegno_experience_url(experience)
+        assert_response :success
+        assert_select "button", text: /Registra/
+        assert_select "dialog#register-experience-dialog form[action='#{data_commitments_path}']" do
+          assert_select "input[name='data_commitment[data_experience_id]'][value='#{experience.id}']"
+        end
+
+        assert_difference -> { experience.data_commitments.count }, 1 do
+          post data_commitments_url, params: {
+            start_now: "1",
+            return_to: impegno_experience_path(experience),
+            data_commitment: {
+              data_experience_id: experience.id,
+              domain_id: @domain.id,
+              calendar_label: @user.profile.display_name,
+              title: "Preparare il programma",
+              description: "Ordino Sessioni e Slot.",
+              kind: "work"
+            }
+          }
+        end
+
+        commitment = experience.data_commitments.order(:created_at).last
+        assert_redirected_to impegno_experience_url(experience)
+        assert_equal "in_progress", commitment.status
+        assert commitment.actual_started_at.present?
+      end
+
+      test "renders the experiences index inside the Impegno workspace" do
+        DataExperience.create!(created_by_user: @user, title: "Esperienza nel workspace")
+
+        get impegno_experiences_url(workspace: "1")
+
+        assert_response :success
+        assert_select "turbo-frame#impegno_workspace", text: /Esperienza nel workspace/
+        assert_select "turbo-frame#impegno_workspace section", count: 1
+      end
+
       test "keeps Experience management restricted to superadmin during the pilot" do
         delete session_url
         regular_user = User.create!(email_address: "experience-regular@example.com", password: "password123", password_confirmation: "password123")

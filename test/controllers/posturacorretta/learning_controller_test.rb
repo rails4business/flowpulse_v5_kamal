@@ -230,13 +230,15 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "does not let superadmin bypass a chapter publication date" do
-    superadmin = create_test_user("posturacorretta-preview@example.com")
-    superadmin.update!(superadmin: true, active_role: :superadmin)
-    sign_in(superadmin)
+    travel_to Time.zone.parse("2026-09-20 09:00") do
+      superadmin = create_test_user("posturacorretta-preview@example.com")
+      superadmin.update!(superadmin: true, active_role: :superadmin)
+      sign_in(superadmin)
 
-    get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "benefici-postura-corretta")
+      get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "benefici-postura-corretta")
 
-    assert_redirected_to posturacorretta_url(anchor: "inizia-con-posturacorretta")
+      assert_redirected_to posturacorretta_url(anchor: "inizia-con-posturacorretta")
+    end
   end
 
   test "shows the student dashboard frontend" do

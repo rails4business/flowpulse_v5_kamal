@@ -123,7 +123,7 @@ module Admin
 
     test "superadmin can create domain linked to creator node" do
       post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
-      
+
       assert_difference "Domain.count", 1 do
         post admin_domains_url, params: {
           domain: {
@@ -172,7 +172,7 @@ module Admin
 
     test "superadmin can update domain and change linked node" do
       post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
-      
+
       patch admin_domain_url(@domain), params: {
         domain: {
           hostname: "updated-hostname.com",
@@ -204,7 +204,7 @@ module Admin
 
     test "standard admin cannot access domain actions" do
       post session_url, params: { email_address: @admin.email_address, password: "password123" }
-      
+
       # cannot view list
       get admin_domains_url
       assert_redirected_to admin_dashboard_url

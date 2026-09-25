@@ -4,8 +4,8 @@ module CreatorWorld
   class NodesControllerTest < ActionDispatch::IntegrationTest
     setup do
       @user = create_user("creator-nodes@example.com")
-      @assignment = RoleAssignment.create!(profile: @user.profile, role: :creator_of_worlds)
-      @user.update!(active_role: :creator, current_role_assignment: @assignment)
+      @assignment = RoleAssignment.create!(profile: @user.profile, role: :ideatore)
+      @user.update!(active_role: :ideatore, current_role_assignment: @assignment)
       @node = Node.create!(title: "Existing Node", role_assignment: @assignment)
     end
 

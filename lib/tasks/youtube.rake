@@ -11,7 +11,7 @@ namespace :youtube do
 
     puts "Caricamento del catalogo attuale..."
     catalog = YAML.load_file(catalog_path, permitted_classes: [], aliases: false) || {}
-    
+
     # Raccogli tutti gli slug (video ID) esistenti
     existing_slugs = catalog.values.flat_map { |category| category["articles"].map { |a| a["slug"] } }
 
@@ -20,12 +20,12 @@ namespace :youtube do
     doc = REXML::Document.new(xml_data)
 
     new_videos = []
-    
+
     # Analizza i video nell'RSS
     REXML::XPath.each(doc, "//entry") do |entry|
       video_id = REXML::XPath.first(entry, "yt:videoId").text
       title = REXML::XPath.first(entry, "title").text
-      
+
       unless existing_slugs.include?(video_id)
         new_videos << {
           "title" => title,
@@ -43,10 +43,10 @@ namespace :youtube do
       puts "Nessun nuovo video trovato. Il catalogo è già aggiornato."
     else
       puts "Trovati #{new_videos.size} nuovi video. Aggiunta alla categoria 'fisiologia' (di default)..."
-      
+
       # Inserisci nella prima categoria che ha senso, per esempio 'fisiologia' (o una nuova)
       target_category = "fisiologia"
-      
+
       if catalog[target_category] && catalog[target_category]["articles"]
         # Metti i nuovi video all'inizio della lista
         catalog[target_category]["articles"] = new_videos + catalog[target_category]["articles"]
@@ -67,7 +67,7 @@ namespace :youtube do
       File.open(catalog_path, "w") do |file|
         file.write(catalog.to_yaml)
       end
-      
+
       puts "Fatto! #{new_videos.size} video salvati in config/data/posturacorretta/contenuti/catalog.yml"
     end
   end

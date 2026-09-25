@@ -8,6 +8,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_projects_path}']", text: "Progetti"
     assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_professionals_path}']", text: "Professionisti"
     assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{changelog_path}']", text: "Changelog"
+    assert_select "footer a[href='https://github.com/rails4business/flowpulse_v5_kamal'][target='_blank']", text: /GitHub/
   end
 
   test "Flowpulse projects index renders public registry entries" do
@@ -119,7 +120,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "Appuntamento dal database"
-    assert_includes response.body, 'data_session_id'
+    assert_includes response.body, "data_session_id"
   end
 
   test "Rails4Business landing renders both current logo assets" do

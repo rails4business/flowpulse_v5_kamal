@@ -1,0 +1,17 @@
+<% content_for :title, "#{@development_entry.fetch("title")} — Sviluppo Flowpulse" %>
+<% status_labels = { "proposed" => "Proposta", "approved" => "Approvata", "in_progress" => "In sviluppo", "verified" => "Verificata", "deployed" => "Distribuita", "paused" => "In pausa" } %>
+
+<main class="min-h-screen bg-white text-slate-950">
+  <%= render "landing/flowpulse_nav" %>
+  <article class="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
+    <%= link_to "← Registro sviluppo", flowpulse_development_path, class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>
+    <div class="mt-8 flex flex-wrap items-center gap-2 text-xs font-bold text-slate-500"><span><%= @development_entry.fetch("owner_brand_label") %></span><span>·</span><span class="rounded-full bg-amber-50 px-2.5 py-1 text-amber-800"><%= status_labels.fetch(@development_entry.fetch("status")) %></span><span>·</span><time datetime="<%= @development_entry.fetch("updated_on") %>">Aggiornata <%= I18n.l(@development_entry.fetch("updated_on_value"), format: :long) %></time></div>
+    <h1 class="mt-4 text-4xl font-black tracking-[-0.045em] sm:text-6xl"><%= @development_entry.fetch("title") %></h1>
+    <p class="mt-5 text-xl leading-8 text-slate-600"><%= @development_entry.fetch("summary") %></p>
+    <% if @development_entry["changelog"].present? %>
+      <%= link_to "Apri il changelog della funzione →", brand_changelog_entry_path(@development_entry.dig("changelog", "brand"), @development_entry.dig("changelog", "slug")), class: "mt-6 inline-flex rounded-xl bg-blue-50 px-4 py-2.5 text-sm font-black text-blue-700 hover:bg-blue-100" %>
+    <% end %>
+    <div class="editorial-rich-text mt-10 border-t border-slate-200 pt-10 text-lg leading-8 text-slate-700"><%= markdown(@development_entry.fetch("body")) %></div>
+    <p class="mt-10 rounded-xl bg-amber-50 px-4 py-3 font-mono text-xs text-amber-900">Sorgente: <%= @development_entry.fetch("source_path") %></p>
+  </article>
+</main>

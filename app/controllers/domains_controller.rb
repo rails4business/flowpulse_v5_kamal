@@ -159,5 +159,4 @@ class DomainsController < ApplicationController
         Array(place["projects"]).include?("giardino-del-corpo")
       end
     end
-
 end

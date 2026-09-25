@@ -144,7 +144,7 @@
                   displayed_start = commitment.actual_started_at || commitment.starts_at
                   displayed_end = commitment.actual_ended_at || commitment.ends_at
                   border_top = index > 0 ? "border-t border-slate-200" : ""
-                  context_label = commitment.metadata["context_label"].presence || commitment.description.presence
+                  context_label = commitment.data_experience&.title.presence || commitment.metadata["context_label"].presence || commitment.description.presence
                   place_label = commitment.location_name.presence || commitment.location_address.presence || commitment.online_url.presence
                   value_label = commitment.total_price.present? ? number_to_currency(commitment.total_price, unit: "€", format: "%n %u") : nil
                   status_label = commitment.tracking? ? "In corso" : status_labels.fetch(commitment.status, commitment.status.humanize)
@@ -166,7 +166,7 @@
                   </div>
                   <div class="min-w-0">
                     <div class="flex flex-wrap items-center gap-2"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider <%= kind_classes[commitment.kind] || kind_classes['personal'] %>"><%= kind_labels.fetch(commitment.kind, commitment.kind.humanize) %></span><% if participation_label %><span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-700"><%= participation_label %></span><% end %><% if represented_contact %><span class="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-extrabold text-violet-700">Per <%= represented_contact.name %></span><% end %><strong class="min-w-0 truncate text-base text-slate-900"><%= commitment.title %></strong></div>
-                    <p class="mt-1 truncate text-[13px] text-slate-500"><%= [commitment.domain.display_hostname, context_label, place_label, ("Gestito da #{managed_by_label}" if managed_by_label)].compact.join(" · ") %></p>
+                    <p class="mt-1 truncate text-[13px] text-slate-500"><%= [commitment.domain.display_hostname, context_label, place_label, ("Gestito da #{managed_by_label}" if managed_by_label)].compact.join(" · ") %><% if commitment.data_experience.present? %> · <%= link_to "Apri esperienza", impegno_experience_path(commitment.data_experience), data: { turbo_frame: "_top" }, class: "font-bold text-violet-700 hover:underline" %><% end %></p>
                   </div>
                   <div class="hidden min-w-0 lg:grid lg:gap-1"><span class="truncate text-xs font-bold text-slate-600">Calendario di <%= commitment.calendar_label %></span><span class="inline-flex w-fit rounded-full px-2 py-0.5 text-[10px] font-extrabold <%= status_class %>"><%= status_label %></span></div>
                   <div class="col-span-3 flex items-center justify-end gap-2 border-t border-slate-100 pt-2 lg:col-span-1 lg:border-0 lg:pt-0">

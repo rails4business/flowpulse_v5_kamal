@@ -26,7 +26,7 @@ module Admin
       assert_response :success
       assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
       assert_select "h1", count: 1
-      assert_select "h1", text: "Tre progetti, una visione."
+      assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
       assert_select "#progetti article, #progetti a", count: 3
       assert_select "#ingresso li", count: 4
       assert_includes response.body, "Una sola webapp per sostenere i progetti."

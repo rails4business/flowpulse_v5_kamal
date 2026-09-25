@@ -54,9 +54,9 @@ module CreatorWorld
         if @active_channel.nil? || !@active_channel.ideatore?
           fallback_channel = if superadmin_user?
                                RoleAssignment.ideatore.first
-                             else
+          else
                                Current.user.role_assignments.ideatore.first
-                             end
+          end
 
           if fallback_channel
             Current.user.update!(current_role_assignment: fallback_channel)

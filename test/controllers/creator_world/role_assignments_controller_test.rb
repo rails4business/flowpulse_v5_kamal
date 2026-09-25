@@ -4,17 +4,17 @@ module CreatorWorld
   class RoleAssignmentsControllerTest < ActionDispatch::IntegrationTest
     setup do
       @creator = create_user("creator-role-mgmt@example.com")
-      @creator_ra = RoleAssignment.create!(profile: @creator.profile, role: :creator_of_worlds)
-      @creator.update!(active_role: :creator)
+      @creator_ra = RoleAssignment.create!(profile: @creator.profile, role: :ideatore)
+      @creator.update!(active_role: :ideatore)
 
       @other_creator = create_user("other-creator-role-mgmt@example.com")
-      @other_creator_ra = RoleAssignment.create!(profile: @other_creator.profile, role: :creator_of_worlds)
+      @other_creator_ra = RoleAssignment.create!(profile: @other_creator.profile, role: :ideatore)
 
       @target = create_user("target-role-mgmt@example.com")
     end
 
     test "creator can view role assignments index" do
-      child_ra = RoleAssignment.create!(profile: @target.profile, role: :teacher, parent: @creator_ra)
+      child_ra = RoleAssignment.create!(profile: @target.profile, role: :creator, parent: @creator_ra)
 
       post session_url, params: { email_address: @creator.email_address, password: "password123" }
       get creator_world_role_assignments_url
@@ -22,7 +22,7 @@ module CreatorWorld
       assert_response :success
       assert_includes response.body, "Gestione Ruoli"
       assert_includes response.body, @target.profile.username
-      assert_includes response.body, "Teacher"
+      assert_includes response.body, "Creator"
     end
 
     test "creator can access new role assignment form" do
@@ -41,14 +41,14 @@ module CreatorWorld
         post creator_world_role_assignments_url, params: {
           role_assignment: {
             username: @target.profile.username,
-            role: "teacher",
+            role: "creator",
             parent_id: @creator_ra.id
           }
         }
       end
 
       assert_redirected_to creator_world_role_assignments_url
-      assert @target.role_assignments.exists?(role: "teacher", parent_id: @creator_ra.id)
+      assert @target.role_assignments.exists?(role: "creator", parent_id: @creator_ra.id)
     end
 
     test "creator cannot assign child role to another creator's parent assignment by passing parent_id" do
@@ -58,7 +58,7 @@ module CreatorWorld
         post creator_world_role_assignments_url, params: {
           role_assignment: {
             username: @target.profile.username,
-            role: "teacher",
+            role: "creator",
             parent_id: @other_creator_ra.id
           }
         }
@@ -78,7 +78,7 @@ module CreatorWorld
         post creator_world_role_assignments_url, params: {
           role_assignment: {
             username: @target.profile.username,
-            role: "creator_of_worlds",
+            role: "ideatore",
             parent_id: @creator_ra.id
           }
         }
@@ -88,7 +88,7 @@ module CreatorWorld
     end
 
     test "creator can revoke child role assignment" do
-      child_ra = RoleAssignment.create!(profile: @target.profile, role: :teacher, parent: @creator_ra)
+      child_ra = RoleAssignment.create!(profile: @target.profile, role: :creator, parent: @creator_ra)
 
       post session_url, params: { email_address: @creator.email_address, password: "password123" }
 
@@ -100,7 +100,7 @@ module CreatorWorld
     end
 
     test "creator cannot revoke role assignment from another creator channel" do
-      child_ra = RoleAssignment.create!(profile: @target.profile, role: :teacher, parent: @other_creator_ra)
+      child_ra = RoleAssignment.create!(profile: @target.profile, role: :creator, parent: @other_creator_ra)
 
       post session_url, params: { email_address: @creator.email_address, password: "password123" }
 
@@ -128,8 +128,8 @@ module CreatorWorld
             password_confirmation: "password123"
           }.merge(attributes)
         )
-        username = email.split('@').first.downcase.gsub(/[^a-z0-9_]/, '_')[0...30]
-        user.create_profile!(display_name: email.split('@').first, username: username)
+        username = email.split("@").first.downcase.gsub(/[^a-z0-9_]/, "_")[0...30]
+        user.create_profile!(display_name: email.split("@").first, username: username)
         user
       end
   end

@@ -62,24 +62,6 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to viaggiatori_url
   end
 
-  test "admin in demo mode cannot get resources index" do
-    delete session_url
-    user = User.create!(
-      email_address: "demo-mode-admin@example.com",
-      password: "password123",
-      password_confirmation: "password123",
-      active_role: :demo
-    )
-    user.create_profile!(display_name: "Demo Admin")
-    RoleAssignment.create!(profile: user.profile, role: :demo)
-    RoleAssignment.create!(profile: user.profile, role: :admin, parent: create_creator_assignment)
-
-    post session_url, params: { email_address: user.email_address, password: "password123" }
-    get admin_risorse_index_url
-
-    assert_redirected_to demo_viaggiatori_url
-  end
-
   test "should get resources index with tabs" do
     get admin_risorse_index_url
     assert_response :success

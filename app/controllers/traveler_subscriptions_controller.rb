@@ -17,5 +17,4 @@ class TravelerSubscriptionsController < ApplicationController
   end
 
   private
-
 end

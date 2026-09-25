@@ -74,7 +74,7 @@ class ApplicationController < ActionController::Base
     end
 
     def creator_can_manage_node?(node)
-      return false unless Current.user&.creator_user?
+      return false unless Current.user&.ideatore_user?
 
       Current.user.role_assignment_ids.include?(node.role_assignment_id)
     end

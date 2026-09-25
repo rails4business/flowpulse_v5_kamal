@@ -5,13 +5,11 @@ class PosturacorrettaHomeEcosystemTest < ActionDispatch::IntegrationTest
     get "/posturacorretta/tre-progetti"
 
     assert_response :success
-    assert_select "h1", text: /Tre modi per conoscere, curare e coltivare l’essere umano/
+    assert_select "h1", text: /Postura Salute e Stile di vita!/
     assert_select "article", count: 3
-    assert_select "a[href='/posturacorretta/primo-mese']", text: /Inizia PosturaCorretta in un mese/
-    assert_select "a[href='/percorso-integrato']", text: /Scopri il Percorso Integrato/
-    assert_select "a[href='/giardino-del-corpo']", text: /Scopri Il Giardino del Corpo/
-    assert_select "p", text: "La persona"
-    assert_select "#three-projects-title", text: "Tre progetti, una persona."
+    assert_select "a[href='/posturacorretta']", text: /Scopri PosturaCorretta/
+    assert_select "a[href='/percorso-integrato']", text: /Crea il tuo percorso su misura/
+    assert_select "a[href='/il-giardino-del-corpo']", text: /Scopri la filosofia e gli eventi/
   end
 
   test "standalone integrated path ends with the shared three projects chapter" do
@@ -23,10 +21,10 @@ class PosturacorrettaHomeEcosystemTest < ActionDispatch::IntegrationTest
   end
 
   test "garden ends with the shared three projects chapter" do
-    get "/giardino-del-corpo"
+    get "/il-giardino-del-corpo"
 
     assert_response :success
     assert_select "#three-projects-title", text: "Tre progetti, una persona."
-    assert_select "a[aria-current='page'][href='/giardino-del-corpo']", text: /Il Giardino del Corpo/
+    assert_select "a[aria-current='page'][href='/il-giardino-del-corpo']", text: /Il Giardino del Corpo/
   end
 end

@@ -8,8 +8,8 @@ module BrandEditorial
 
       assert_equal "posturacorretta", brand.editorial.fetch("owner_node_slug")
       assert_includes repository.keys, "posturacorretta"
-      assert_equal 9, repository.entries("posturacorretta").size
-      assert_equal 12, repository.entries("posturacorretta", include_non_public: true).size
+      assert_equal 10, repository.entries("posturacorretta").size
+      assert_equal 13, repository.entries("posturacorretta", include_non_public: true).size
       assert_equal "mappa-percorsi-storica", repository.entries("posturacorretta", include_non_public: true).last.fetch("id")
     end
 

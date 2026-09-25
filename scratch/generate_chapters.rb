@@ -129,15 +129,15 @@ item_counter = 8
 data.each do |part_data|
   part_title = part_data[:part]
   part_color = part_data[:color]
-  
+
   # Format section number
   section_num_str = format('%03d', item_counter)
   section_slug = sluggify(part_title)
-  
+
   # 1. Create section markdown file
   section_filename = "#{section_num_str}-section-#{section_slug}.md"
   section_file_path = File.join(CHAPTERS_DIR, section_filename)
-  
+
   section_content = <<~MARKDOWN
     ---
     title: #{part_title.inspect}
@@ -151,10 +151,10 @@ data.each do |part_data|
 
     Contenuto della sezione in fase di redazione.
   MARKDOWN
-  
+
   File.write(section_file_path, section_content)
   puts "Created section file: #{section_filename}"
-  
+
   # Add section to index.yml list
   new_entries << {
     "header" => false,
@@ -166,16 +166,16 @@ data.each do |part_data|
     "color" => "neutro",
     "access" => "hidden"
   }
-  
+
   item_counter += 1
-  
+
   # 2. Create chapters markdown files
   part_data[:chapters].each do |ch_num, ch_title|
     ch_num_str = format('%03d', item_counter)
     ch_slug = sluggify(ch_title)
     ch_filename = "#{ch_num_str}-chapter-#{ch_slug}.md"
     ch_file_path = File.join(CHAPTERS_DIR, ch_filename)
-    
+
     ch_content = <<~MARKDOWN
       ---
       title: #{ch_title.inspect}
@@ -189,10 +189,10 @@ data.each do |part_data|
 
       Contenuto del capitolo in fase di redazione.
     MARKDOWN
-    
+
     File.write(ch_file_path, ch_content)
     puts "Created chapter file: #{ch_filename}"
-    
+
     new_entries << {
       "header" => false,
       "number" => ch_num_str,
@@ -203,7 +203,7 @@ data.each do |part_data|
       "color" => part_color,
       "access" => "hidden"
     }
-    
+
     item_counter += 1
   end
 end

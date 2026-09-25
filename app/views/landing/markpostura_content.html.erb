@@ -28,7 +28,7 @@
 
     <% if @content.present? %>
       <article class="editorial-rich-text editorial-rich-text--sky mt-10">
-        <%= raw markdown(@content) %>
+        <%= markdown(@content) %>
       </article>
     <% elsif @article["excerpt"].present? %>
       <p class="mt-10 text-lg leading-8 text-slate-600"><%= @article["excerpt"] %></p>

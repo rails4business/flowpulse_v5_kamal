@@ -268,6 +268,23 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "Annullato"
   end
 
+  test "week view also shows a scheduled Experience Session without commitments" do
+    week_day = Date.new(2026, 9, 18)
+    experience = DataExperience.create!(created_by_user: @user, title: "Percorso del venerdì")
+    data_session = experience.data_sessions.create!(
+      title: "Lezione di gruppo",
+      starts_at: week_day.in_time_zone.change(hour: 15),
+      ends_at: week_day.in_time_zone.change(hour: 16),
+      visibility: "private"
+    )
+
+    get impegno_agenda_url(workspace: "1", view_mode: "weekplan", date: week_day.iso8601)
+
+    assert_response :success
+    assert_select "a[href='#{impegno_experience_path(experience)}']", text: /#{data_session.title}/
+    assert_includes response.body, "15:00–16:00"
+  end
+
   test "PosturaCorretta exposes its dedicated calendar path" do
     get posturacorretta_impegno_url
 

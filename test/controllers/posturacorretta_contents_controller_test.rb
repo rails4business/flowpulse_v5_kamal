@@ -6,7 +6,7 @@ class PosturacorrettaContentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Inizia con PosturaCorretta"
-    assert_select "#capitoli a", count: 5
+    assert_select "#capitoli a", count: 7
     assert_select "#capitoli", text: /I 3 errori che tutti fanno/
     assert_select "nav[aria-label='Contenuti del corso']", count: 0
     assert_select "#schede-pratiche", count: 0
@@ -17,7 +17,7 @@ class PosturacorrettaContentsControllerTest < ActionDispatch::IntegrationTest
     )
 
     assert_response :success
-    assert_select "h1", text: "Inizia con PosturaCorretta"
+    assert_select "h1", text: "I benefici di una postura corretta"
     assert_includes response.body, "I benefici di una postura corretta"
   end
 

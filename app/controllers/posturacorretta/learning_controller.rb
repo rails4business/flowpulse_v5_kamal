@@ -274,12 +274,11 @@ module Posturacorretta
 
     if @selected_program_step&.fetch("progress_state", nil) == "locked"
       available_step = @learning_program_steps.find { |step| step.fetch("progress_state") == "available" }
-      return redirect_to(
+      redirect_to(
         posturacorretta_course_lesson_path(corso: @learning_course.fetch("slug"), attivita: available_step.fetch("slug")),
         alert: "Completa prima l’attività precedente."
       ) if available_step
     end
-
   end
 
   def load_course_overview(course_slug)

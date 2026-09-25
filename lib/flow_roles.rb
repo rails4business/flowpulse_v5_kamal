@@ -51,7 +51,7 @@ module FlowRoles
     when "ideatore"
       routes.creator_world_root_path
     when "creator", "digital"
-      routes.dashboard_path
+      routes.viaggiatori_path
     else
       routes.viaggiatori_path
     end

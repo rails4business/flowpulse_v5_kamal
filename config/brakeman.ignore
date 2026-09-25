@@ -1,0 +1,33 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "3061bbe55fb1e70157b8d7bb245050806b39ae8e6e283ada07e316743032c3dd",
+      "note": "DomainContentCatalog costruisce content_path sotto config/data e verifica che il percorso risolto rimanga nella radice editoriale consentita."
+    },
+    {
+      "fingerprint": "367df97cb25dc3e868507ab7cf76b2370e0a196c85b16e540818244da1b514f7",
+      "note": "Il redirect canonico usa esclusivamente canonical_host salvato nel record Domain amministrato, non un parametro della richiesta."
+    },
+    {
+      "fingerprint": "5f244ae32c5c01c9ad538dcba0c9d9f79de9211b63afdaee888802d6fe4f6e01",
+      "note": "Il ruolo e' intenzionalmente assegnabile tramite strong parameters in un controller protetto dalle autorizzazioni Creator World."
+    },
+    {
+      "fingerprint": "86f3d1069f9920b10c585815da58a8621ee7507668c286d9395d619ab1deab17",
+      "note": "Il ruolo e' intenzionalmente assegnabile tramite strong parameters nel controller amministrativo riservato."
+    },
+    {
+      "fingerprint": "90ecb8ef4c18d5544ff87e7950a051a73bd0e0b6727334f1a2d27173191a98c3",
+      "note": "Lo slug del libro viene ristretto a caratteri sicuri e il file viene risolto dall'indice del libro o dalla cartella chapters prevista."
+    },
+    {
+      "fingerprint": "99745d502fe6fb84ba18b1571d073063bdddbad228341e079c7ede394dc7fcc0",
+      "note": "La pagina e' riservata al superadmin e rifiuta ogni file che, dopo cleanpath, non rimane sotto docs/private_prototypes."
+    },
+    {
+      "fingerprint": "ef8d737925962c0ba021ff7e001fb018b3d7671b01726aa5474122f549a95c2d",
+      "note": "Il book slug viene ristretto a caratteri sicuri e index.yml viene letto soltanto dalla radice libro risolta dal catalogo editoriale."
+    }
+  ],
+  "updated": "2026-09-25"
+}

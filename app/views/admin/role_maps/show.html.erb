@@ -22,7 +22,17 @@
           </thead>
           <tbody class="divide-y divide-slate-100">
             <% @roles.each do |role| %>
-              <% FlowRoles::MenuRegistry.items_for_role(role).each do |item| %>
+              <% role_items = FlowRoles::MenuRegistry.items_for_role(role) %>
+              <% if role_items.empty? %>
+                <tr class="align-top">
+                  <td class="whitespace-nowrap px-4 py-3 font-bold text-slate-950"><%= ruolo_label(role) %></td>
+                  <td class="px-4 py-3 text-slate-500" colspan="5">Nessun link configurato</td>
+                  <td class="whitespace-nowrap px-4 py-3">
+                    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">vuoto</span>
+                  </td>
+                </tr>
+              <% end %>
+              <% role_items.each do |item| %>
                 <% resolved_path = resolve_dashboard_menu_path(item.path) %>
                 <tr class="align-top">
                   <td class="whitespace-nowrap px-4 py-3 font-bold text-slate-950"><%= ruolo_label(role) %></td>

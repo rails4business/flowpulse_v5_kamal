@@ -10,7 +10,7 @@ driver = Selenium::WebDriver.for :chrome, options: options
 begin
   driver.navigate.to 'http://localhost:3000/posturacorretta/percorso'
   puts "Page title: #{driver.title}"
-  
+
   # Print any console logs on load
   puts "--- Console logs on load ---"
   driver.logs.get(:browser).each do |log|
@@ -20,7 +20,7 @@ begin
   # Find the card with data-choice="Cura e Riabilitazione"
   card = driver.find_element(css: '[data-choice="Cura e Riabilitazione"]')
   puts "Found card: #{card.text.gsub("\n", ' ')}"
-  
+
   card.click
   puts "Clicked card!"
   sleep 1
@@ -29,7 +29,7 @@ begin
   modal = driver.find_element(css: '#path-modal')
   puts "Modal class list: #{modal.attribute('class')}"
   puts "Modal displayed?: #{modal.displayed?}"
-  
+
   # Print any console logs after click
   puts "--- Console logs after click ---"
   driver.logs.get(:browser).each do |log|

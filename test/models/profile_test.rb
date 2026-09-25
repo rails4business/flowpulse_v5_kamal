@@ -23,6 +23,15 @@ class ProfileTest < ActiveSupport::TestCase
     assert_equal "profile_test_1", profile2.username
   end
 
+  test "adds the uniqueness suffix inside the username length limit" do
+    prefix = "a" * 35
+    first_user = User.create!(email_address: "#{prefix}@example.com", password: "password123", password_confirmation: "password123")
+    second_user = User.create!(email_address: "#{prefix}@example.org", password: "password123", password_confirmation: "password123")
+
+    assert_equal "a" * 30, first_user.create_profile!(display_name: "First").username
+    assert_equal "#{"a" * 28}_1", second_user.create_profile!(display_name: "Second").username
+  end
+
   test "validates username format" do
     profile = @user.build_profile(display_name: "Test", username: "invalid-username")
     assert_not profile.valid?

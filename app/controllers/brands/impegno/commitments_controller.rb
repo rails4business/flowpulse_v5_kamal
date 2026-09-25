@@ -24,17 +24,18 @@ module Brands
     @impegno_professional_access = Current.user&.superadmin_user? ||
       Current.user&.role_assignments&.where(role: :operator)&.exists? || false
     @agenda_filter = @active_area == "agenda" && @active_view == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(%w[all events booking_slots]) || "all" : nil
-    
+
     # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
     @default_brand = params[:default_brand].presence_in(%w[impegno posturacorretta generaimpresa personale]) || "impegno"
     @default_domain = default_domain_for(@default_brand)
 
     @profile = current_profile
-    @commitments = @profile.data_commitments.includes(:domain, :participant_contact, :assignee_profile, :created_by_profile).order(:starts_at)
+    @commitments = @profile.data_commitments.includes(:domain, :participant_contact, :assignee_profile, :created_by_profile, :data_experience, :data_session, :data_slot).order(:starts_at)
     @agenda_date = parse_agenda_date
     if params[:view_mode] == "weekplan"
       @week_start = (@agenda_date || Date.current).beginning_of_week
       @week_end = @week_start + 6.days
+      @data_sessions = visible_week_sessions(@week_start, @week_end)
       @commitments = @commitments.select do |commitment|
         date = (commitment.actual_started_at || commitment.starts_at)&.in_time_zone&.to_date
         date && date.between?(@week_start, @week_end)
@@ -60,7 +61,7 @@ module Brands
       @commitments = @commitments.select { |commitment| ActiveModel::Type::Boolean.new.cast(commitment.metadata.to_h["booking_slot"]) }
     end
     @commitments = @commitments.reject { |commitment| commitment.status == "cancelled" } if params[:view_mode] == "weekplan"
-    
+
     # Raggruppa i commitment per giorno
     @commitments_by_day = @commitments.group_by do |commitment|
       (commitment.actual_started_at || commitment.starts_at)&.in_time_zone&.to_date
@@ -272,6 +273,7 @@ module Brands
       else
         commitment.status = "planned"
       end
+      commitment.data_experience = selected_experience
       commitment.pricing_type = "none"
       commitment.contribution_type = "unpaid"
       commitment.metadata = { "context_label" => params.dig(:data_commitment, :context_label).to_s.strip.presence }.compact
@@ -286,6 +288,22 @@ module Brands
 
     def current_profile
       Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
+    end
+
+    def selected_experience
+      experience_id = params.dig(:data_commitment, :data_experience_id).presence
+      return if experience_id.blank?
+      return DataExperience.find(experience_id) if Current.user&.superadmin_user?
+
+      nil
+    end
+
+    def visible_week_sessions(week_start, week_end)
+      return DataSession.none unless Current.user&.superadmin_user?
+
+      DataSession.includes(:data_experience, professional_calendar: :context_node)
+        .where(starts_at: week_start.in_time_zone.beginning_of_day..week_end.in_time_zone.end_of_day)
+        .order(:starts_at, :position)
     end
 
     def personal_commitment_return_path
@@ -409,7 +427,7 @@ module Brands
       params.require(:data_commitment).permit(
         :title, :description, :kind, :starts_at, :ends_at, :all_day,
         :actual_started_at, :actual_ended_at, :calendar_label, :domain_id,
-        :context_label
+        :context_label, :data_experience_id
       ).except(:domain_id, :context_label)
     end
 

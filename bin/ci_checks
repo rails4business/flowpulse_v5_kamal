@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Simple helper to run the same checks the GitHub Actions CI runs locally.
+# Usage: bin/ci_checks [--quick]
+#    --quick : run only scans and lint (fast)
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT_DIR"
+
+QUICK=false
+for arg in "$@"; do
+  case "$arg" in
+    --quick) QUICK=true ;;
+    -h|--help)
+      echo "Usage: $0 [--quick]" && exit 0 ;;
+  esac
+done
+
+echo "Running CI checks in $ROOT_DIR"
+
+echo "==> scan_ruby: brakeman"
+bin/brakeman --no-pager || { echo "brakeman failed"; exit 1; }
+
+echo "==> scan_ruby: bundler-audit"
+bin/bundler-audit || { echo "bundler-audit failed"; exit 1; }
+
+echo "==> scan_js: importmap audit"
+bin/importmap audit || { echo "importmap audit failed"; exit 1; }
+
+echo "==> lint: rubocop"
+bin/rubocop -f simple || { echo "rubocop failed"; exit 1; }
+
+if [ "$QUICK" = true ]; then
+  echo "--quick used: skipping tests"
+  exit 0
+fi
+
+echo "==> test: rails test"
+RAILS_ENV=test bin/rails db:test:prepare test || { echo "tests failed"; exit 1; }
+
+echo "==> system-test: rails test:system"
+RAILS_ENV=test bin/rails db:test:prepare test:system || { echo "system tests failed"; exit 1; }
+
+echo "All checks passed"

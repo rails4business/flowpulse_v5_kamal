@@ -38,6 +38,7 @@ module Brands
         assert_select "button[data-modal-dialog-id-value='start-commitment-dialog'][data-action='click->modal#open'][onclick*='start-commitment-dialog']", text: /Registra/
         assert_select "button[data-modal-dialog-id-value='new-commitment-dialog'][data-action='click->modal#open'][onclick*='new-commitment-dialog']", text: /Nuovo impegno/
         assert_select "nav[aria-label='Vista agenda'] a", text: "Settimana"
+        assert_select "nav[aria-label='Vista agenda'] a", text: "Esperienze"
         assert_select "turbo-frame#impegno_workspace[src]", count: 1 do |frames|
           assert_includes frames.first["src"], impegno_agenda_path
           assert_includes frames.first["src"], "workspace=1"
@@ -62,6 +63,11 @@ module Brands
         assert_response :success
         assert_select "nav[aria-label='Vista agenda'] a[aria-current=page][style*='background-color:#4f46e5']", text: "Struttura & Calendari"
         assert_select "turbo-frame#impegno_workspace[src*='view_mode=structure']", count: 1
+
+        get impegno_url(brand: "impegno", area: "agenda", view: "agenda", view_mode: "experiences")
+        assert_response :success
+        assert_select "nav[aria-label='Vista agenda'] a[aria-current=page]", text: "Esperienze"
+        assert_select "turbo-frame#impegno_workspace[src*='/impegno/esperienze'][src*='workspace=1']", count: 1
 
         get impegno_agenda_url(workspace: "1", view_mode: "structure")
         assert_response :success
@@ -135,10 +141,11 @@ module Brands
           password_confirmation: "password123"
         )
         user.create_profile!(display_name: "Professional User", username: "professional_user")
-        domain = Domain.create!(hostname: "percorsointegrato.it", locale: "it", target_controller: "brands/percorso_integrato", target_action: "index", primary: true, active: true, settings: { operational_roles: ["professional", "tutor"] })
+        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
+        node = Node.create!(title: "Percorso Integrato", slug: "percorso-integrato-test", role_assignment: creator_assignment, operator_roles: %w[professional tutor])
+        domain = Domain.create!(hostname: "percorsointegrato.it", locale: "it", target_controller: "brands/percorso_integrato", target_action: "index", primary: true, active: true, node: node, settings: { operational_roles: ["professional", "tutor"] })
         user.profile.domain_memberships.create!(domain: domain)
-        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :creator_of_worlds)
-        RoleAssignment.create!(profile: user.profile, role: :professional, context: domain, parent: creator_assignment)
+        RoleAssignment.create!(profile: user.profile, role: :operator, role_operator: "professional", context: node, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
         get impegno_url(brand: "percorso_integrato", area: "domain_roles", role: "professional", view: "offering", tab: "events")
@@ -163,8 +170,9 @@ module Brands
       test "loads the professional agenda with event and booking-slot filters" do
         user = User.create!(email_address: "impegno-professional-agenda@example.com", password: "password123", password_confirmation: "password123")
         user.create_profile!(display_name: "Professional Agenda", username: "professional_agenda")
-        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :creator_of_worlds)
-        RoleAssignment.create!(profile: user.profile, role: :professional, parent: creator_assignment)
+        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
+        node = Node.create!(title: "Professional Agenda", slug: "professional-agenda-test", role_assignment: creator_assignment, operator_roles: %w[professional])
+        RoleAssignment.create!(profile: user.profile, role: :operator, role_operator: "professional", context: node, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
         get impegno_url(area: "agenda", view: "agenda", agenda_filter: "events", date: "2026-08-02")
@@ -202,10 +210,11 @@ module Brands
       test "does not expose operational roles to a teacher" do
         user = User.create!(email_address: "posturacorretta-teacher@example.com", password: "password123", password_confirmation: "password123")
         user.create_profile!(display_name: "Postura Teacher", username: "postura_teacher")
-        domain = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, settings: { operational_roles: ["teacher", "tutor", "segreteria_clienti"] })
+        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
+        node = Node.create!(title: "Postura Teacher", slug: "postura-teacher-test", role_assignment: creator_assignment, operator_roles: %w[teacher tutor segreteria_clienti])
+        domain = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, node: node, settings: { operational_roles: ["teacher", "tutor", "segreteria_clienti"] })
         user.profile.domain_memberships.create!(domain: domain)
-        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :creator_of_worlds)
-        RoleAssignment.create!(profile: user.profile, role: :teacher, context: domain, parent: creator_assignment)
+        RoleAssignment.create!(profile: user.profile, role: :operator, role_operator: "teacher", context: node, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
         get impegno_url(brand: "posturacorretta", area: "domain_roles", role: "teacher")
@@ -224,8 +233,6 @@ module Brands
         Domain.create!(hostname: "unrelated.test", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true, site_title: "Non iscritto")
         user.profile.domain_memberships.create!(domain: postura)
         user.profile.domain_memberships.create!(domain: genera)
-        creator_assignment = RoleAssignment.create!(profile: user.profile, role: :creator_of_worlds)
-        RoleAssignment.create!(profile: user.profile, role: :teacher, context: postura, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
         get impegno_url(brand: "posturacorretta")

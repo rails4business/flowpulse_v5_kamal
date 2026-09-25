@@ -37,6 +37,7 @@ module Brands
           @brand_processes = BrandProcess.includes(:node).where(status: %w[draft active]).order("nodes.title", :title)
           @professional_calendars = ProfessionalCalendar.active.includes(:context_node, :professional_node).to_a
             .sort_by { |calendar| [calendar.professional_node.title, calendar.context_node.title, calendar.title] }
+          @registration_domain = Domain.active.where(primary: true).order(:id).first || Domain.active.order(:id).first
           @sessions = workbench_sessions
           @all_slots = @experience.data_slots.includes(:data_session, data_commitments: :profile)
             .order(Arel.sql("starts_at ASC NULLS LAST"), :position, :created_at).to_a

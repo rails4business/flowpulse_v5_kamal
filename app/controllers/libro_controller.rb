@@ -58,7 +58,7 @@ class LibroController < ApplicationController
         @chapter_slug = chapter_meta&.dig(:slug).presence || file_meta[:slug].presence || @chapter_slug
         @chapter_title = frontmatter["title"].presence || chapter_meta&.dig(:title) || @chapter_slug.titleize
         @chapter_description = frontmatter["description"].presence || chapter_meta&.dig(:description)
-        
+
         # Access level check
         access = (frontmatter["access"].presence || chapter_meta&.dig(:access).presence || "draft").to_s.strip.downcase
         is_superadmin = Current.user&.superadmin_user?
@@ -76,7 +76,7 @@ class LibroController < ApplicationController
 
         # Determine pagination from TOC
         chapters_only = @toc.reject { |item| item[:header] || item[:type] == "head" }
-        
+
         # Let's normalize slugs for matching
         normalize = ->(s) { s.to_s.sub(/\.md\z/, "") }
         current_index = chapters_only.index { |c| normalize.call(c[:slug]) == normalize.call(@chapter_slug) }
@@ -92,7 +92,7 @@ class LibroController < ApplicationController
         end
       else
         render plain: "Contenuto non trovato per #{@chapter_slug}", status: :not_found
-        return
+        nil
       end
     end
   end
@@ -101,7 +101,7 @@ class LibroController < ApplicationController
     @is_superadmin = Current.user&.superadmin_user?
     unless @is_superadmin
       redirect_to root_path, alert: "Non sei autorizzato ad accedere a questa pagina."
-      return
+      nil
     end
   end
 

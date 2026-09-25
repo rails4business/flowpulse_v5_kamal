@@ -14,7 +14,7 @@
     <%
       mapped_role = Current.user.active_role
       role_assignment_role = case mapped_role
-      when "ideatore", "creator", "digital" then active_role.to_sym
+      when "ideatore", "creator", "digital" then mapped_role.to_sym
       else mapped_role.to_sym
       end
 

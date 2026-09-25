@@ -1,6 +1,21 @@
 <main class="min-h-screen bg-gray-50 p-6 font-sans md:p-10">
   <div class="mx-auto max-w-xl">
-    <div class="mb-5 flex items-center justify-between gap-3"><%= link_to "← Esperienze", impegno_experiences_path, class: "text-sm font-semibold text-gray-500 hover:text-gray-900" %><%= link_to "Apri agenda", impegno_path, class: "text-sm font-semibold text-blue-700 hover:text-blue-900" %></div>
+    <div class="mb-5 flex items-center justify-between gap-3"><%= link_to "← Esperienze", impegno_path(area: "agenda", view: "agenda", view_mode: "experiences"), class: "text-sm font-semibold text-gray-500 hover:text-gray-900" %><div class="flex items-center gap-2"><button type="button" data-controller="modal" data-modal-dialog-id-value="register-experience-dialog" data-action="click->modal#open" onclick="document.getElementById('register-experience-dialog')?.showModal()" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-100">● Registra</button><%= link_to "Apri agenda", impegno_path(area: "agenda", view: "agenda"), class: "text-sm font-semibold text-blue-700 hover:text-blue-900" %></div></div>
     <%= render "workbench", experience: @experience, sessions: @sessions %>
   </div>
 </main>
+
+<dialog id="register-experience-dialog" data-controller="modal" data-action="click->modal#backdropClose" onclick="if (event.target === this) this.close()" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border-0 bg-white p-0 shadow-2xl backdrop:bg-slate-950/50">
+  <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4"><div><p class="text-xs font-black uppercase tracking-wider text-emerald-600">Registra nell’Esperienza</p><h2 class="mt-1 text-xl font-black text-slate-950"><%= @experience.title %></h2></div><button type="button" data-controller="modal" data-modal-dialog-id-value="register-experience-dialog" data-action="click->modal#close" onclick="this.closest('dialog')?.close()" class="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Chiudi">✕</button></div>
+  <%= form_with url: data_commitments_path, scope: :data_commitment, class: "space-y-4 p-5" do |form| %>
+    <%= hidden_field_tag :start_now, "1" %>
+    <%= hidden_field_tag :return_to, impegno_experience_path(@experience) %>
+    <%= form.hidden_field :data_experience_id, value: @experience.id %>
+    <%= form.hidden_field :domain_id, value: @registration_domain&.id %>
+    <%= form.hidden_field :calendar_label, value: Current.user.profile.display_name.presence || Current.user.profile.username %>
+    <div><%= form.label :title, "Titolo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Preparare la prima Sessione", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+    <div><%= form.label :description, "Cosa stai facendo?", class: "text-xs font-bold text-slate-700" %><%= form.text_area :description, rows: 3, placeholder: "Descrivi brevemente l’attività.", class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %></div>
+    <%= form.hidden_field :kind, value: "work" %>
+    <div class="flex justify-end gap-2 border-t border-slate-100 pt-4"><button type="button" data-controller="modal" data-modal-dialog-id-value="register-experience-dialog" data-action="click->modal#close" onclick="this.closest('dialog')?.close()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Annulla</button><%= form.submit "▶ Avvia attività", class: "cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700" %></div>
+  <% end %>
+</dialog>

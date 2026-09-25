@@ -31,6 +31,9 @@ Rails.application.routes.draw do
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
   get "flowpulse/progetti" => "landing#flowpulse_projects", as: :flowpulse_projects
   get "flowpulse/professionisti" => "landing#flowpulse_professionals", as: :flowpulse_professionals
+  get "flowpulse/sviluppo" => "flowpulse/development#index", as: :flowpulse_development
+  get "flowpulse/sviluppo/:slug" => "flowpulse/development#show", as: :flowpulse_development_entry,
+      constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
   get "flowpulse/contenuti" => "landing#flowpulse_contents", as: :flowpulse_contents
   get "flowpulse/contenuti/:slug" => "landing#flowpulse_content", as: :flowpulse_content
   get "changelog" => "changelog#index", as: :changelog

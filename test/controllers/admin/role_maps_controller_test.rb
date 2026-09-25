@@ -16,8 +16,9 @@ module Admin
 
       assert_response :success
       assert_includes response.body, "Role map"
-      assert_includes response.body, "Teacher"
-      assert_includes response.body, "Tutor"
+      assert_includes response.body, "Ideatore"
+      assert_includes response.body, "Creator"
+      assert_includes response.body, "Digital"
       assert_includes response.body, "Risorse"
     end
 

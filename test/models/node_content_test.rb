@@ -21,10 +21,10 @@ class NodeContentTest < ActiveSupport::TestCase
     # When creating a node, Node builds a default content on initialize.
     # Let's clean the existing content to test uniqueness
     @node.content&.destroy!
-    
+
     content1 = NodeContent.create!(node: @node)
     content2 = NodeContent.new(node: @node)
-    
+
     assert_not content2.valid?
     assert_includes content2.errors[:node_id], "has already been taken"
   end

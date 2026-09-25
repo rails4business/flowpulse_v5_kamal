@@ -68,6 +68,7 @@ module Brands
         @impegno_agenda_filter = @impegno_area == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(PROFESSIONAL_AGENDA_FILTERS) || "all" : nil
         @impegno_tab = params[:tab].to_s.presence
         @workspace_date = parse_workspace_date
+        @impegno_experiences = Current.user.superadmin_user? ? DataExperience.order(updated_at: :desc) : DataExperience.none
         @workspace_src = workspace_src
       end
 
@@ -105,6 +106,7 @@ module Brands
           return impegno_contacts_path(workspace: "1") if @impegno_area == "contacts"
           return impegno_places_path(workspace: "1") if @impegno_area == "places"
           return unless @impegno_area == "agenda" && @impegno_view == "agenda"
+          return impegno_experiences_path(workspace: "1") if params[:view_mode] == "experiences" && Current.user.superadmin_user?
 
           options = {
             workspace: "1",

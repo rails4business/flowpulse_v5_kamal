@@ -21,9 +21,9 @@ module Admin
       profile = if identifier.to_s.include?("@")
                   user = User.find_by(email_address: identifier.to_s.strip.downcase)
                   user&.profile
-                else
+      else
                   Profile.find_by(username: identifier.to_s.strip.downcase)
-                end
+      end
 
       assignment_attributes = role_assignment_params.merge(profile_id: profile&.id)
       if assignment_attributes[:role] == "operator"

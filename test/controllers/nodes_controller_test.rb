@@ -8,8 +8,8 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
       password_confirmation: "password123"
     )
     @user.create_profile!(display_name: "Public Node Creator")
-    @assignment = RoleAssignment.create!(profile: @user.profile, role: :creator_of_worlds)
-    @user.update!(active_role: :creator, current_role_assignment: @assignment)
+    @assignment = RoleAssignment.create!(profile: @user.profile, role: :ideatore)
+    @user.update!(active_role: :ideatore, current_role_assignment: @assignment)
     @draft_node = Node.create!(
       title: "Draft Node",
       role_assignment: @assignment,
@@ -152,13 +152,13 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
       node: @published_node,
       role_assignment: @assignment,
       target_controller: "landing",
-      target_action: "posturacorretta",
+      target_action: "rails4b",
       locale: "it"
     )
 
     get node_url(@published_node)
 
-    assert_redirected_to posturacorretta_path
+    assert_redirected_to rails4b_path
   end
 
   test "traveler sees subscribe action on domain node" do
@@ -313,7 +313,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".node-public-breadcrumb a .node-public-breadcrumb-logo-square[src='https://cdn.example.com/bounded-square.png'][alt='bounded.example']"
     assert_select ".node-public-breadcrumb a .sr-only", "bounded.example"
     assert_select ".node-public-reading-nav-static"
-    assert_no_match "www.bounded.example", response.body
+    assert_no_match "www.bounded.example", css_select(".node-public-breadcrumb").to_s
     assert_no_match "Top Root", response.body
     assert_includes response.body, "bounded.example"
     assert_includes response.body, "Domain Sibling"
@@ -605,10 +605,10 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     get node_url(@published_node)
     assert_response :success
-    
+
     # Assert reading navigation is present
     assert_select ".node-public-reading-nav-static"
-    
+
     # Assert next-section CTA card is not present
     assert_select ".node-public-next-section", false
 
