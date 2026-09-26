@@ -46,9 +46,16 @@ Rails.application.routes.draw do
   get "rails4b/percorsi/:slug" => "landing#rails4b_track", as: :rails4b_track
   get "rails4b/contenuti" => "landing#rails4b_contents", as: :rails4b_contents
   get "rails4b/contenuti/:slug" => "landing#rails4b_content", as: :rails4b_content
-  get "posturacorretta/radioestesia" => "landing#radioestesia", as: :radioestesia
-  get "posturacorretta/radioestesia/contenuti/:slug" => "landing#radioestesia_content", as: :radioestesia_content
-  get "posturacorretta/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,
+  get "flowpulse/radioestesia" => "landing#radioestesia", as: :radioestesia
+  get "flowpulse/radioestesia/changelog" => "changelog#index", defaults: { brand: "radioestesia", brand_preview: "1" }, as: :radioestesia_changelog
+  get "flowpulse/radioestesia/changelog/:slug" => "changelog#show", defaults: { brand: "radioestesia", brand_preview: "1" }, as: :radioestesia_changelog_entry,
+      constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+  get "flowpulse/radioestesia/contenuti/:slug" => "landing#radioestesia_content", as: :radioestesia_content
+  get "flowpulse/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,
+      constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
+  get "posturacorretta/radioestesia" => redirect("/flowpulse/radioestesia", status: 301)
+  get "posturacorretta/radioestesia/contenuti/:slug" => redirect("/flowpulse/radioestesia/contenuti/%{slug}", status: 301)
+  get "posturacorretta/radioestesia/:page" => redirect("/flowpulse/radioestesia/%{page}", status: 301),
       constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "igieneposturale" => "landing#igieneposturale", as: :igieneposturale
@@ -68,6 +75,13 @@ Rails.application.routes.draw do
   get "markpostura/contenuti/:slug" => "landing#markpostura_content", as: :markpostura_content
   get "markposturaold" => "landing#markpostura_old", as: :markposturaold
   get "markposturastory" => "landing#markposturastory", as: :markposturastory
+  get "posturacorretta/changelog" => "changelog#index",
+      defaults: { brand: "posturacorretta", brand_path: "posturacorretta" },
+      as: :posturacorretta_changelog
+  get "posturacorretta/changelog/aggiornamenti/:slug" => "changelog#show",
+      defaults: { brand: "posturacorretta", brand_path: "posturacorretta" },
+      as: :posturacorretta_changelog_entry,
+      constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
   get "posturacorretta" => "posturacorretta/learning#index", as: :posturacorretta
   get "posturacorretta/profilo" => "posturacorretta#profile", as: :posturacorretta_profile
   get "posturacorretta/presentazione-posturacorretta" => "posturacorretta#triathlon_handout", as: :posturacorretta_presentation

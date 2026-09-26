@@ -25,7 +25,7 @@ class ChangelogRepositoryTest < ActiveSupport::TestCase
     assert_equal 2, catalog.fetch("impegno").fetch("entry_count")
     assert_equal 4, catalog.fetch("posturacorretta").fetch("entry_count")
     assert catalog.values.all? { |brand| brand.fetch("entry_count").positive? }
-    assert_equal %w[cantachetipassa flowpulse generaimpresa igieneposturale ilgiardinodelcorpo impegno markpostura percorso-integrato posturacorretta rails4business svuotamente], catalog.keys
+    assert_equal %w[cantachetipassa flowpulse generaimpresa igieneposturale ilgiardinodelcorpo impegno markpostura percorso-integrato posturacorretta radioestesia rails4business svuotamente], catalog.keys
   end
 
   test "rejects an unknown Brand" do

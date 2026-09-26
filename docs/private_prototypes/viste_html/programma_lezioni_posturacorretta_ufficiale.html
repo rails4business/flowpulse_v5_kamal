@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Percorso PosturaCorretta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1d4ed8; --blue-dark: #1e3a8a; --blue-tint: #eff4ff; --blue-line: #bfdbfe;
+    --violet: #6d28d9; --violet-tint: #f5f3ff; --violet-line: #ddd6fe;
+    --green: #047857; --green-tint: #ecfdf5; --green-line: #a7f3d0;
+    --red: #b91c1c; --red-tint: #fef2f2; --red-line: #fecaca;
+    --orange: #c2410c; --orange-tint: #fff7ed; --orange-line: #fed7aa;
+    --gray-single: #64748b; --gray-single-tint: #f1f5f9; --gray-single-line: #cbd5e1;
+    --ink: #0f172a; --ink-soft: #52607a; --line: #e2e8f0;
+    --paper: #ffffff; --bg: #f6f8fc; --gray: #e5e7eb; --gray-ink: #9ca3af;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; }
+  button { font-family: inherit; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  header.top { margin-bottom: 26px; }
+  header.top .eyebrow { font-size: 13px; color: var(--blue); font-weight: 600; margin-bottom: 6px; }
+  header.top h1 { font-size: 24px; margin: 0 0 8px; font-weight: 700; letter-spacing: -0.01em; }
+  header.top p { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.55; max-width: 60ch; }
+
+  /* ================= STEPPER UNICO ORIZZONTALE ================= */
+  .stepper-shell {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 18px;
+    padding: 22px 20px 18px; overflow-x: auto; margin-bottom: 14px;
+  }
+  .stepper-track {
+    display: flex; align-items: stretch; gap: 18px; min-width: max-content;
+  }
+
+  /* --- corso singolo (introduttivo) --- */
+  .single-course {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 14px; border-radius: 14px;
+    border: 1px dashed var(--gray-single-line);
+    background: var(--gray-single-tint);
+  }
+  .single-course .label-single {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--gray-single); margin: 0 0 10px;
+  }
+
+  /* --- contenitore sezione --- */
+  .section-box {
+    display: flex; flex-direction: column;
+    padding: 12px 16px 14px; border-radius: 16px;
+    border: 1.5px solid;
+    min-width: 0;
+  }
+  .section-box .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    margin: 0 0 12px;
+  }
+  .section-box .section-steps { display: flex; gap: 10px; align-items: flex-start; }
+
+  /* colori contenitori */
+  .section-box[data-color="blue"]   { border-color: var(--blue-line);   background: #fafcff; }
+  .section-box[data-color="blue"]   .section-label { color: var(--blue); }
+  .section-box[data-color="violet"] { border-color: var(--violet-line); background: #fbfaff; }
+  .section-box[data-color="violet"] .section-label { color: var(--violet); }
+  .section-box[data-color="green"]  { border-color: var(--green-line);  background: #f9fdfb; }
+  .section-box[data-color="green"]  .section-label { color: var(--green); }
+  .section-box[data-color="red"]    { border-color: var(--red-line);    background: #fffbfb; }
+  .section-box[data-color="red"]    .section-label { color: var(--red); }
+  .section-box[data-color="orange"] { border-color: var(--orange-line); background: #fffcf8; }
+  .section-box[data-color="orange"] .section-label { color: var(--orange); }
+
+  /* --- step (corso) --- */
+  .step { display: flex; flex-direction: column; align-items: center; position: relative; }
+  .box {
+    position: relative; width: 100px; height: 84px; border-radius: 12px; border: 2px solid var(--gray);
+    background: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px; margin-bottom: 18px; cursor: pointer; transition: border-color .15s ease, transform .15s ease, background .15s ease;
+  }
+  .box:hover { transform: translateY(-1px); }
+  .step.is-active .box { border-color: var(--blue); background: var(--blue-tint); }
+  .step.is-done .box { border-color: var(--blue); }
+  .step.is-locked .box { cursor: default; }
+  .step.is-locked .box:hover { transform: none; }
+  .step.has-tirocinio .box { border-color: var(--violet); }
+  .step.has-tirocinio.is-active .box { background: var(--violet-tint); }
+
+  /* corso singolo grigio: bordo grigio */
+  .single-course .box { border-color: var(--gray-single-line); background: var(--paper); }
+  .single-course .step.is-active .box { background: var(--gray-single-tint); border-color: var(--gray-single); }
+
+  .box .icon { color: var(--gray-ink); margin-bottom: 6px; }
+  .box .icon svg { width: 24px; height: 24px; }
+  .step.is-done .box .icon, .step.is-active .box .icon { color: var(--blue); }
+  .step.has-tirocinio .box .icon { color: var(--violet); }
+  .single-course .step.is-active .box .icon,
+  .single-course .step.is-done .box .icon { color: var(--gray-single); }
+
+  .box .badge-corner {
+    position: absolute; top: 5px;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; border: 1.5px solid;
+  }
+  .box .badge-corner svg { width: 11px; height: 11px; }
+  .box .badge-corner.left  { left: 5px;  border-color: var(--green);  color: var(--green);  background: var(--green-tint); }
+  .box .badge-corner.right { right: 5px; border-color: var(--violet); color: var(--violet); background: var(--violet-tint); }
+
+  .box .lbl { font-size: 10.5px; text-align: center; line-height: 1.25; color: var(--ink-soft); }
+  .step.is-done .box .lbl, .step.is-active .box .lbl { color: var(--ink); font-weight: 600; }
+
+  .connector-row { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; }
+  .connector-row .line { position: absolute; top: 15px; left: -50%; width: 100%; height: 2px; background: var(--gray); z-index: 0; }
+  .step:first-child .connector-row .line { display: none; }
+  .step.is-done .connector-row .line { background: var(--blue); }
+  .step.has-tirocinio.is-done .connector-row .line { background: var(--violet); }
+  .single-course .step.is-done .connector-row .line { background: var(--gray-single); }
+
+  .num { position: relative; z-index: 1; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--gray); background: var(--paper); font-size: 12.5px; font-weight: 700; color: var(--gray-ink); }
+  .step.is-active .num, .step.is-done .num { border-color: var(--blue); background: var(--blue); color: #fff; }
+  .step.has-tirocinio.is-active .num, .step.has-tirocinio.is-done .num { border-color: var(--violet); background: var(--violet); }
+  .single-course .step.is-active .num, .single-course .step.is-done .num { border-color: var(--gray-single); background: var(--gray-single); }
+
+  /* --- step vuoto (sezione futura) --- */
+  .step-empty .box {
+    border-style: dashed; border-color: var(--line); background: #fafbfd; cursor: default;
+  }
+  .step-empty .box .icon { color: var(--gray-ink); }
+  .step-empty .box .lbl { color: var(--gray-ink); font-style: italic; }
+  .step-empty .box:hover { transform: none; }
+
+  /* ================= PANNELLO ================= */
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 30px 2px 6px; flex-wrap: wrap; }
+  .panel-head h2 { font-size: 19px; margin: 0; font-weight: 700; }
+  .panel-head .badges { display: flex; align-items: center; gap: 8px; }
+  .badge { font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 100px; white-space: nowrap; }
+  .badge.done { background: var(--blue-tint); color: var(--blue-dark); }
+  .badge.wait { background: var(--violet-tint); color: var(--violet); }
+  .badge.progress { background: #eef1f6; color: var(--ink-soft); }
+  .panel-desc { color: var(--ink-soft); font-size: 13.5px; line-height: 1.6; margin: 0 0 18px; max-width: 68ch; }
+
+  .lesson-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .lesson { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .lesson .lrow { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; }
+  .lesson .mark { flex: none; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--line); color: #b6c0d4; }
+  .lesson.done .mark { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .lesson.locked .mark { color: var(--violet); border-color: var(--violet-line); background: var(--violet-tint); }
+  .lesson .mark svg { width: 12px; height: 12px; }
+  .lesson .txt { flex: 1; min-width: 0; }
+  .lesson .txt .name { font-size: 13.5px; font-weight: 600; }
+  .lesson .txt .meta { font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
+  .lesson .chevron { flex: none; color: var(--ink-soft); transition: transform .15s ease; }
+  .lesson .chevron svg { width: 15px; height: 15px; }
+  .lesson.open .chevron { transform: rotate(90deg); }
+  .schede { list-style: none; margin: 0; padding: 0 14px 14px 52px; display: none; flex-direction: column; gap: 5px; }
+  .lesson.open .schede { display: flex; }
+  .schede li { font-size: 12.5px; color: var(--ink-soft); display: flex; align-items: center; gap: 8px; }
+  .schede li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .5; flex: none; }
+
+  .lesson.attest {
+    border-style: dashed; border-color: var(--green-line);
+    background: linear-gradient(180deg, var(--paper), var(--green-tint));
+  }
+  .lesson.attest .lrow { cursor: default; }
+  .lesson.attest .mark { background: var(--green-tint); border-color: var(--green-line); color: var(--green); }
+  .lesson.attest.done .mark { background: var(--green); border-color: var(--green); color: #fff; }
+  .lesson.attest .mark svg { width: 14px; height: 14px; }
+
+  .lesson.cert { border-style: dashed; border-color: var(--violet-line); }
+  .lesson.cert .lrow { cursor: default; }
+  .lesson.cert .mark { background: var(--violet-tint); border-color: var(--violet-line); color: var(--violet); }
+  .lesson.cert.done .mark { background: var(--violet); border-color: var(--violet); color: #fff; }
+  .lesson.cert .mark svg { width: 14px; height: 14px; }
+
+  .teacher-block { margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--violet-line); }
+  .teacher-block .section-title {
+    font-size: 12px; font-weight: 700; color: var(--violet);
+    margin: 0 0 12px; text-transform: uppercase; letter-spacing: .05em;
+  }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .btn { border: none; border-radius: 11px; padding: 11px 17px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn svg { width: 14px; height: 14px; }
+  .btn.primary { background: var(--blue); color: #fff; }
+  .btn.violet { background: var(--violet); color: #fff; }
+  .btn:disabled { opacity: .4; cursor: default; }
+
+  .cert-panel { text-align: center; padding: 30px 20px; }
+  .cert-panel .medal { width: 54px; height: 54px; border-radius: 50%; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; }
+  .cert-panel .medal svg { width: 26px; height: 26px; }
+  .cert-panel.student .medal { background: var(--blue-tint); color: var(--blue); }
+  .cert-panel h2 { font-size: 18px; margin: 0 0 8px; }
+  .cert-panel p { font-size: 13px; color: var(--ink-soft); max-width: 46ch; margin: 0 auto; line-height: 1.6; }
+
+  footer.note { margin-top: 30px; font-size: 12.5px; color: #94a3b8; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">Programma PosturaCorretta</div>
+    <h1>Le lezioni del percorso educativo </h1>
+    <p>Per imparare, come funziona il corpo, per riattivare i tui sistemi fisioligici  iniziando dalle metodiche posturali, e poi inserendo le altre aree della salute.</p>
+  </header>
+
+  <div class="stepper-shell"><div class="stepper-track" id="stepperMain"></div></div>
+  <div id="panel"></div>
+
+  <footer class="note">Mockup di lavoro &middot; dati di esempio</footer>
+</div>
+
+<script>
+const ICON_CHECK   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const ICON_LOCK    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>';
+const ICON_BOOK    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>';
+const ICON_CAP     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg>';
+const ICON_MEDAL   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5 7 22l5-3 5 3-2-8.5"/></svg>';
+const ICON_ARROW   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const ICON_CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+
+// ============================================================
+// STRUTTURA
+// Il primo elemento è un corso singolo (fuori da ogni sezione).
+// Le sezioni successive sono contenitori con corsi dentro.
+// `sessionIndexes` punta agli indici di `sessions`.
+// ============================================================
+const layout = [
+  {
+    kind: "single",
+    title: "-",
+    sessionIndex: 0,
+  },
+  {
+    kind: "section",
+    id: "postura-recupero-coscienza",
+    title: "Postura, recupero e Coscienza corporea",
+    color: "blue",
+    sessionIndexes: [1, 2, 3, 4, 5, 6],
+  },
+  {
+    kind: "section",
+    id: "postura-movimento",
+    title: "Postura e movimento",
+    color: "violet",
+    sessionIndexes: [],
+  },
+  {
+    kind: "section",
+    id: "postura-emotivi-mentali",
+    title: "Postura e aspetti emotivi e mentali",
+    color: "green",
+    sessionIndexes: [],
+  },
+  {
+    kind: "section",
+    id: "postura-piante-officinali",
+    title: "Postura e piante officinali",
+    color: "red",
+    sessionIndexes: [],
+  },
+  {
+    kind: "section",
+    id: "postura-nutrimento-alimentazione",
+    title: "Postura, nutrimento e alimentazione",
+    color: "orange",
+    sessionIndexes: [],
+  },
+];
+
+// ============================================================
+// CORSI
+// ============================================================
+const sessions = [
+  {
+    name: "Introduzione PosturaCorretta",
+    desc: "La lezione introduttiva: presentazione del percorso e basi di postura.",
+    lezioni: [
+      { name: "Introduzione PosturaCorretta", done: true,
+        schede: ["Prima scheda esercizi e video", "I 7 Ambiti della salute e percorsi"] },
+    ],
+    tirocinio: {
+      name: "Tirocinio · Impara a presentare il progetto",
+      lezioni: [
+        { name: "Conoscere il progetto: materiali e video introduttivi" },
+        { name: "Affiancare una presentazione con un insegnante" },
+        { name: "Presentare una parte in compresenza" },
+        { name: "Condurre una presentazione in autonomia su un piccolo gruppo" },
+      ],
+    },
+  },
+  {
+    name: "Igiene Posturale", unlock: "5 ottobre 2026",
+    desc: "Mobilità articolare, punti di tensione, vie di discesa e recettori sensoriali.",
+    lezioni: [
+      { name: "Mobilità articolare", unlock: "5 ottobre 2026", schede: ["Mobilità articolare"] },
+      { name: "Punti di tensione", unlock: "5 ottobre 2026", schede: ["Punti di tensione"] },
+      { name: "Vie di discesa", unlock: "5 ottobre 2026", schede: ["Vie di discesa"] },
+      { name: "Recettori sensoriali", unlock: "5 ottobre 2026", schede: ["Recettori sensoriali"] },
+    ],
+    tirocinio: {
+      name: "Tirocinio · Igiene Posturale",
+      lezioni: [
+        { name: "Affianca una lezione di gruppo con un insegnante" },
+        { name: "Condurre una parte di lezione di gruppo in compresenza" },
+        { name: "Affiancare un incontro individuale con l'insegnante" },
+        { name: "Svolgere una pratica sull'insegnante" },
+        { name: "Pratica in compresenza con una persona" },
+      ],
+    },
+  },
+  {
+    name: "Principi di Fisioterapia", unlock: "12 ottobre 2026",
+    desc: "Sistema respiratorio, nervoso e urogenitale, muscolo-scheletrico, cardiocircolatorio, linfatico e digerente.",
+    lezioni: [
+      { name: "Sistema respiratorio", unlock: "12 ottobre 2026", schede: ["Sistema respiratorio"] },
+      { name: "Sistema nervoso e urogenitale", unlock: "12 ottobre 2026", schede: ["Sistema nervoso e urogenitale"] },
+      { name: "Sistema muscolo-scheletrico", unlock: "12 ottobre 2026", schede: ["Sistema muscolo-scheletrico"] },
+      { name: "Sistema cardiocircolatorio", unlock: "12 ottobre 2026", schede: ["Sistema cardiocircolatorio"] },
+      { name: "Sistema linfatico e digerente", unlock: "12 ottobre 2026", schede: ["Sistema linfatico e digerente", "Scopri di più sulla metodica"] },
+    ],
+    tirocinio: {
+      name: "Tirocinio · Principi di Fisioterapia",
+      lezioni: [
+        { name: "Affiancare una lezione sui principi fisioterapici" },
+        { name: "Condurre in compresenza una pratica sui sistemi corporei" },
+      ],
+    },
+  },
+  {
+    name: "Biomeccanica comportamentale (GDS)", unlock: "19 ottobre 2026",
+    desc: "Le 5 direzioni di movimento e le catene muscolari AM, AL, PM, PL, PA/AP.",
+    lezioni: [
+      { name: "Le 5 direzioni di movimento", unlock: "19 ottobre 2026", schede: ["Le 5 direzioni di movimento"] },
+      { name: "Catena AM", unlock: "19 ottobre 2026", schede: ["Catena AM"] },
+      { name: "Catena AL", unlock: "19 ottobre 2026", schede: ["Catena AL"] },
+      { name: "Catena PM", unlock: "19 ottobre 2026", schede: ["Catena PM"] },
+      { name: "Catena PL", unlock: "19 ottobre 2026", schede: ["Catena PL"] },
+      { name: "Catene PA/AP", unlock: "19 ottobre 2026", schede: ["Catene PA/AP", "Scopri di più sulla metodica"] },
+    ],
+    tirocinio: {
+      name: "Tirocinio · Biomeccanica GDS",
+      lezioni: [
+        { name: "Affiancare una lezione sulle catene muscolari" },
+        { name: "Condurre in compresenza un'analisi del movimento" },
+      ],
+    },
+  },
+  {
+    name: "Principi di Osteopatia", unlock: "26 ottobre 2026",
+    desc: "Il sistema fasciale, viscerale, cranio-sacrale e neurovegetativo.",
+    lezioni: [
+      { name: "Eliminare le disfunzioni", unlock: "26 ottobre 2026", schede: ["Eliminare le disfunzioni"] },
+      { name: "Il sistema fasciale", unlock: "26 ottobre 2026", schede: ["Il sistema fasciale"] },
+      { name: "Il sistema viscerale", unlock: "26 ottobre 2026", schede: ["Il sistema viscerale"] },
+      { name: "Il sistema cranio-sacrale", unlock: "26 ottobre 2026", schede: ["Il sistema cranio-sacrale"] },
+      { name: "Il sistema neurovegetativo", unlock: "26 ottobre 2026", schede: ["Il sistema neurovegetativo", "Scopri di più sulla metodica"] },
+    ],
+    tirocinio: {
+      name: "Tirocinio · Principi di Osteopatia",
+      lezioni: [
+        { name: "Affiancare una lezione sui principi osteopatici" },
+        { name: "Condurre in compresenza una pratica sul sistema fasciale" },
+      ],
+    },
+  },
+  {
+    name: "Corpo e Coscienza", unlock: "2 novembre 2026",
+    desc: "Le 2 circolazioni, i 3 centri di gravità, i 4 tipi di movimento, i 5 elementi, le 6 coppie di meridiani, i 7 centri neurolinfatici.",
+    lezioni: [
+      { name: "Le 2 circolazioni", unlock: "2 novembre 2026", schede: ["Le 2 circolazioni"] },
+      { name: "I 3 centri di gravità", unlock: "2 novembre 2026", schede: ["I 3 centri di gravità"] },
+      { name: "I 4 tipi di movimento", unlock: "2 novembre 2026", schede: ["I 4 tipi di movimento"] },
+      { name: "I 5 elementi", unlock: "2 novembre 2026", schede: ["I 5 elementi"] },
+      { name: "Le 6 coppie di meridiani", unlock: "2 novembre 2026", schede: ["Le 6 coppie di meridiani"] },
+      { name: "I 7 centri neurolinfatici", unlock: "2 novembre 2026", schede: ["I 7 centri neurolinfatici", "Scopri di più sulla metodica"] },
+    ],
+    tirocinio: {
+      name: "Tirocinio · Corpo e Coscienza",
+      lezioni: [
+        { name: "Affiancare una lezione sul metodo Corpo e Coscienza" },
+        { name: "Condurre in compresenza una pratica sui centri di gravità" },
+      ],
+    },
+  },
+  {
+    name: "Altre metodiche posturali", unlock: "9 novembre 2026",
+    desc: "Kinesiologia applicata, Feldenkrais, Alexander e consapevolezza, sintesi del percorso.",
+    lezioni: [
+      { name: "Sequenza di Kinesiologia Applicata", unlock: "9 novembre 2026", schede: ["Sequenza di Kinesiologia Applicata"] },
+      { name: "Feldenkrais", unlock: "9 novembre 2026", schede: ["Feldenkrais"] },
+      { name: "Alexander e consapevolezza", unlock: "9 novembre 2026", schede: ["Alexander e consapevolezza"] },
+      { name: "Sintesi del percorso", unlock: "9 novembre 2026", schede: ["Sintesi del percorso"] },
+    ],
+    tirocinio: {
+      name: "Tirocinio · Altre metodiche",
+      lezioni: [
+        { name: "Affiancare una lezione di sintesi del percorso" },
+        { name: "Condurre in autonomia una lezione introduttiva completa" },
+      ],
+    },
+  },
+];
+
+// ============================================================
+// STATO
+// ============================================================
+let mainActive = 0;
+let mainCompleted = new Set();
+let teacherProgress = {};
+let teacherModePerSession = {};
+let openLesson = null;
+let view = 'main';
+
+// ============================================================
+// HELPERS
+// ============================================================
+function tirocinioDoneSteps(i) { return teacherProgress[i] || new Set(); }
+function tirocinioCompleted(i) {
+  const s = sessions[i];
+  if (!s.tirocinio) return false;
+  const done = tirocinioDoneSteps(i);
+  return s.tirocinio.lezioni.every((_, j) => done.has(j));
+}
+function sessionePartecipata(i) {
+  return sessions[i].lezioni.every(l => l.done) || mainCompleted.has(i);
+}
+
+// ============================================================
+// STEPPER UNICO
+// ============================================================
+function renderStep(i, opts = {}) {
+  const s = sessions[i];
+  const hasTir = !!teacherModePerSession[i];
+  const studenteOk = sessionePartecipata(i);
+  const insegnanteOk = tirocinioCompleted(i);
+
+  const cls = ['step'];
+  if (hasTir) cls.push('has-tirocinio');
+  if (view === 'main' && i === mainActive) cls.push('is-active');
+  if (mainCompleted.has(i)) cls.push('is-done');
+  else if (i !== mainActive) cls.push('is-locked');
+
+  const medal = studenteOk
+    ? `<span class="badge-corner left" title="Attestato utente conseguito">${ICON_MEDAL}</span>` : '';
+  const cap = insegnanteOk
+    ? `<span class="badge-corner right" title="Attestato insegnante conseguito">${ICON_CAP}</span>` : '';
+
+  return `<div class="${cls.join(' ')}">
+    <div class="box" data-i="${i}">
+      ${medal}
+      ${cap}
+      <span class="icon">${ICON_BOOK}</span>
+      <span class="lbl">${s.name}</span>
+    </div>
+    <div class="connector-row">
+      <span class="line"></span>
+      <span class="num">${mainCompleted.has(i) ? ICON_CHECK : (i + 1)}</span>
+    </div>
+  </div>`;
+}
+
+function renderStepEmpty() {
+  return `<div class="step step-empty">
+    <div class="box">
+      <span class="icon">${ICON_LOCK}</span>
+      <span class="lbl">In arrivo</span>
+    </div>
+  </div>`;
+}
+
+function renderMainStepper() {
+  const el = document.getElementById('stepperMain');
+
+  el.innerHTML = layout.map(item => {
+    // --- corso singolo (grigio, senza contenitore) ---
+    if (item.kind === "single") {
+      return `<div class="single-course">
+        <p class="label-single">${item.title}</p>
+        <div>${renderStep(item.sessionIndex)}</div>
+      </div>`;
+    }
+
+    // --- sezione contenitore ---
+    const stepsHtml = item.sessionIndexes.length > 0
+      ? item.sessionIndexes.map(i => renderStep(i)).join('')
+      : renderStepEmpty();
+
+    return `<div class="section-box" data-color="${item.color}">
+      <p class="section-label">${item.title}</p>
+      <div class="section-steps">${stepsHtml}</div>
+    </div>`;
+  }).join('');
+
+  el.querySelectorAll('.box[data-i]').forEach(box => {
+    box.addEventListener('click', () => {
+      const i = parseInt(box.dataset.i, 10);
+      if (mainCompleted.has(i) || i === mainActive) {
+        mainActive = i; view = 'main'; openLesson = null; render();
+      }
+    });
+  });
+}
+
+// ============================================================
+// ATTESTATO UTENTE
+// ============================================================
+function renderAttestUtente(sessionIndex) {
+  const ok = sessionePartecipata(sessionIndex);
+  const cls = ['lesson', 'attest'];
+  if (ok) cls.push('done');
+  return `<div class="${cls.join(' ')}">
+    <div class="lrow">
+      <span class="mark">${ok ? ICON_MEDAL : ICON_LOCK}</span>
+      <span class="txt">
+        <div class="name">Attestato utente · ${sessions[sessionIndex].name}</div>
+        <div class="meta">${ok ? 'Conseguito' : 'Completa tutte le lezioni per conseguirlo'}</div>
+      </span>
+    </div>
+  </div>`;
+}
+
+// ============================================================
+// BLOCCO INSEGNANTE
+// ============================================================
+function renderTirocinio(sessionIndex) {
+  const s = sessions[sessionIndex];
+  if (!s.tirocinio) return '';
+  const done = tirocinioDoneSteps(sessionIndex);
+
+  const lessonsHtml = s.tirocinio.lezioni.map((l, i) => {
+    const isDone = done.has(i);
+    const cls = ['lesson'];
+    if (isDone) cls.push('done'); else cls.push('locked');
+    return `<div class="${cls.join(' ')}">
+      <div class="lrow">
+        <span class="mark">${isDone ? ICON_CHECK : ICON_LOCK}</span>
+        <span class="txt">
+          <div class="name">${l.name}</div>
+          <div class="meta">${isDone ? 'Completata' : 'Da completare'}</div>
+        </span>
+      </div>
+    </div>`;
+  }).join('');
+
+  const allDone = s.tirocinio.lezioni.every((_, i) => done.has(i));
+  const certCls = ['lesson', 'cert', allDone ? 'done' : 'locked'];
+  const certHtml = `<div class="${certCls.join(' ')}">
+    <div class="lrow">
+      <span class="mark">${allDone ? ICON_CAP : ICON_LOCK}</span>
+      <span class="txt">
+        <div class="name">Attestato insegnante · ${s.name}</div>
+        <div class="meta">${allDone ? 'Conseguito' : 'Completa tutte le tappe del tirocinio per conseguirlo'}</div>
+      </span>
+    </div>
+  </div>`;
+
+  const nextIdx = s.tirocinio.lezioni.findIndex((_, i) => !done.has(i));
+  const actionHtml = nextIdx !== -1
+    ? `<div class="actions">
+         <button class="btn violet" id="btnTirocinioNext" type="button">
+           ${ICON_CAP} Segna tappa: ${s.tirocinio.lezioni[nextIdx].name}
+         </button>
+       </div>`
+    : '';
+
+  return `
+    <div class="teacher-block">
+      <h3 class="section-title">Lezioni insegnante · ${s.tirocinio.name}</h3>
+      <div class="lesson-list">
+        ${lessonsHtml}
+        ${certHtml}
+      </div>
+      ${actionHtml}
+    </div>`;
+}
+
+// ============================================================
+// LISTA LEZIONI STUDENTE
+// ============================================================
+function renderLessons(s) {
+  return `<div class="lesson-list">${s.lezioni.map((l, li) => {
+    const key = 'm' + mainActive + '-' + li;
+    const isOpen = openLesson === key;
+    return `<div class="lesson ${l.done ? 'done' : 'locked'} ${isOpen ? 'open' : ''}">
+      <div class="lrow" data-key="${key}">
+        <span class="mark">${l.done ? ICON_CHECK : ICON_LOCK}</span>
+        <span class="txt">
+          <div class="name">${l.name}</div>
+          <div class="meta">${l.done ? 'Completata' : (l.unlock ? 'Disponibile dal ' + l.unlock : 'Da completare')}</div>
+        </span>
+        <span class="chevron">${ICON_CHEVRON}</span>
+      </div>
+      <ul class="schede">${l.schede.map(sc => `<li>${sc}</li>`).join('')}</ul>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function progressBadge(s) {
+  const total = s.lezioni.length;
+  const done = s.lezioni.filter(l => l.done).length;
+  return `<span class="badge progress">${done} di ${total} lezioni completate</span>`;
+}
+
+// ============================================================
+// PANNELLO
+// ============================================================
+function renderPanel() {
+  const panel = document.getElementById('panel');
+
+  if (view === 'cert') {
+    panel.innerHTML = `<div class="cert-panel student">
+      <div class="medal">${ICON_MEDAL}</div>
+      <h2>Attestato di percorso</h2>
+      <p>Hai completato tutte le sessioni del percorso studente.</p>
+    </div>`;
+    return;
+  }
+
+  const s = sessions[mainActive];
+  const isFirst = mainActive === 0;
+  const badge = isFirst
+    ? `<span class="badge done">In corso</span>`
+    : (s.unlock ? `<span class="badge wait">Disponibile dal ${s.unlock}</span>` : '');
+  const hasNext = mainActive < sessions.length - 1;
+  const nextLabel = hasNext ? sessions[mainActive + 1].name : 'Attestato di percorso';
+
+  const teacherActive = !!teacherModePerSession[mainActive];
+  const tirocinioHtml = (teacherActive && s.tirocinio) ? renderTirocinio(mainActive) : '';
+  const becomeTeacherHtml = (!teacherActive && s.tirocinio)
+    ? `<button class="btn violet" id="btnBecomeTeacher" type="button">${ICON_CAP} Diventa insegnante</button>`
+    : '';
+
+  panel.innerHTML = `
+    <div class="panel-head">
+      <h2>${s.name}</h2>
+      <div class="badges">${badge}${progressBadge(s)}</div>
+    </div>
+    <p class="panel-desc">${s.desc}</p>
+    ${renderLessons(s)}
+    ${renderAttestUtente(mainActive)}
+    <div class="actions">
+      ${becomeTeacherHtml}
+      <button class="btn primary" id="btnNext" type="button">
+        ${hasNext ? 'Vai al corso successivo' : 'Fine del percorso'}: ${nextLabel} ${ICON_ARROW}
+      </button>
+    </div>
+    ${tirocinioHtml}`;
+
+  document.getElementById('btnBecomeTeacher')?.addEventListener('click', () => {
+    teacherModePerSession[mainActive] = true;
+    render();
+  });
+
+  document.getElementById('btnTirocinioNext')?.addEventListener('click', () => {
+    const done = tirocinioDoneSteps(mainActive);
+    const idx = s.tirocinio.lezioni.findIndex((_, i) => !done.has(i));
+    if (idx !== -1) {
+      done.add(idx);
+      teacherProgress[mainActive] = done;
+      render();
+    }
+  });
+
+  document.getElementById('btnNext')?.addEventListener('click', () => {
+    mainCompleted.add(mainActive);
+    if (hasNext) { mainActive += 1; openLesson = null; }
+    else { view = 'cert'; }
+    render();
+  });
+
+  attachLessonToggles();
+}
+
+function attachLessonToggles() {
+  document.querySelectorAll('.lrow[data-key]').forEach(row => {
+    row.addEventListener('click', () => {
+      const key = row.dataset.key;
+      openLesson = openLesson === key ? null : key;
+      renderPanel();
+    });
+  });
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  renderMainStepper();
+  renderPanel();
+}
+
+render();
+</script>
+</body>
+</html>

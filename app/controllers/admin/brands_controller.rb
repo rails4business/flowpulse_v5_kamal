@@ -6,10 +6,14 @@ module Admin
     before_action :set_node, only: :show
 
     def index
-      @active_tab = params[:tab].presence_in(%w[brands domains]) || "brands"
+      @active_tab = params[:tab].presence_in(%w[brands domains building]) || "brands"
 
       if @active_tab == "domains"
         @domains = Domain.includes(:node, :role_assignment).order(:hostname)
+      elsif @active_tab == "building"
+        container = Node.find_by(slug: "brand-in-costruzione")
+        @brands = container ? container.children.preload(:domains, :role_assignment, :parent).order(:title, :id) : Node.none
+        @brand_previews = load_building_previews
       else
         @brands = Node.joins(:domains)
           .distinct
@@ -51,6 +55,12 @@ module Admin
       @editorial_entries = BrandEditorial::Repository.new.entries(@node.slug, include_non_public: true)
     rescue Editorial::SourceNotFoundError
       @editorial_entries = nil
+    end
+
+    def load_building_previews
+      path = Rails.root.join("config/data/generaimpresa/brands_in_costruzione.yml")
+      data = YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
+      data.fetch("brands", {}).each_value.index_by { |entry| entry.fetch("node_slug") }
     end
   end
 end

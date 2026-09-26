@@ -32,6 +32,18 @@ class Admin::BrandsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a", { text: "Canale YouTube", count: 0 }
   end
 
+  test "superadmin sees nodes collected under brand in costruzione" do
+    container = Node.create!(role_assignment: @professional.role_assignment, parent: @professional, title: "Brand in costruzione", slug: "brand-in-costruzione", node_type: :project)
+    candidate = Node.create!(role_assignment: @professional.role_assignment, parent: container, title: "Radioestesia e Benessere", slug: "radioestesia", node_type: :professional)
+
+    get admin_brands_url(tab: "building")
+
+    assert_response :success
+    assert_select "h1", "Brand in costruzione"
+    assert_select "a[href='#{admin_brand_path(candidate)}']", text: "Radioestesia e Benessere"
+    assert_select "a[href='/flowpulse/radioestesia'][target='_blank']", text: "Apri anteprima"
+  end
+
   test "superadmin sees the node sheet" do
     get admin_brand_url(@brand)
 

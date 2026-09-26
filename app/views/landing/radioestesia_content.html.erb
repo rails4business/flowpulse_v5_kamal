@@ -2,12 +2,7 @@
 <% content_for :head do %><meta name="robots" content="noindex,nofollow"><% end %>
 
 <main class="min-h-screen bg-[#fbfaf7] text-[#27342d]">
-  <header class="border-b border-[#d8dfd4] bg-[#f3f5ef]">
-    <div class="mx-auto flex max-w-6xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
-      <a href="<%= radioestesia_path %>" class="flex items-center gap-3" aria-label="Armonia, home"><img src="<%= @radioestesia.dig('site', 'logo_url') %>" alt="Logo Armonia" class="size-12 rounded-full object-cover" referrerpolicy="no-referrer"><span><span class="block font-serif text-2xl italic leading-none text-[#53654b]">Armonia</span><span class="mt-1 block text-[10px] font-bold uppercase tracking-[.13em] text-[#738069]"><%= @radioestesia.dig('site', 'tagline') %></span></span></a>
-      <a href="<%= radioestesia_page_path('contenuti') %>" class="rounded-full border border-[#9caf91] px-4 py-2 text-sm font-bold" style="color: #40573c">← Tutti i contenuti</a>
-    </div>
-  </header>
+  <%= render "landing/radioestesia_nav", active: "contenuti", radioestesia: @radioestesia %>
 
   <div class="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_17rem] lg:py-20">
     <article class="min-w-0">

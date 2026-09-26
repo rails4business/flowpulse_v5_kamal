@@ -1,19 +1,21 @@
-# CODEOWNERS
-# Critical files and folders that should require review before merging/deploy.
-# Replace owners below with the appropriate GitHub usernames or teams for your org.
-# Format: <pattern> <owner>
+# File critici che richiedono la revisione del proprietario del repository.
+# GitHub applica davvero la revisione soltanto quando la branch protection o
+# il ruleset richiede l'approvazione dei Code Owner.
 
-# CI workflows and actions
-/.github/workflows/* @marcobeffa
+# Regole di collaborazione, CI e aggiornamento delle dipendenze
+/.github/CODEOWNERS @marcobeffa
+/.github/dependabot.yml @marcobeffa
+/.github/workflows/** @marcobeffa
+/CONTRIBUTING.md @marcobeffa
+/scripts/pre-push @marcobeffa
 
-# Deployment and infra
+# Deploy e immagine di produzione
 /config/deploy.yml @marcobeffa
 /Dockerfile @marcobeffa
 
-# Config and scripts
-/config/** @marcobeffa
-/bin/** @marcobeffa
+# Credenziali cifrate: il master key non deve essere versionato
+/config/credentials.yml.enc @marcobeffa
 
-# Gemfile and lock
+# Dipendenze Ruby
 /Gemfile @marcobeffa
 /Gemfile.lock @marcobeffa

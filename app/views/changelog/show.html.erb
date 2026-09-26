@@ -2,7 +2,7 @@
 <% content_for :description, @changelog_entry.fetch("summary") %>
 
 <main class="min-h-screen bg-white text-slate-950">
-  <% index_path = @changelog_preview ? brand_changelog_path(@changelog_brand.fetch("key")) : changelog_path %>
+  <% index_path = @changelog_index_path %>
   <%= render "navigation", changelog_brand: @changelog_brand, changelog_index_path: index_path %>
   <article class="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
     <%= link_to "← Changelog #{@changelog_brand.fetch("label")}", index_path, class: "text-sm font-bold text-blue-700 hover:text-blue-900" %>

@@ -27,11 +27,20 @@ La posizione sotto **Brand in costruzione** descrive il lavoro ancora in prepara
 
 L'associazione al profilo di Elisa e i relativi ruoli non vengono creati finché l'utente non è disponibile.
 
+Il nav Flowpulse mostra ai soli superadmin la voce **Brand in costruzione**.
+La pagina elenca i figli del relativo Node contenitore e permette di aprirne
+la scheda amministrativa. Un registro YAML separato conserva gli indirizzi
+provvisori delle anteprime senza aggiungere campi al modello `Node`.
+Finché Radioestesia non possiede un dominio, la sua anteprima canonica è
+`/flowpulse/radioestesia`; i precedenti URL sotto PosturaCorretta rimangono
+soltanto come redirect di compatibilità.
+
 ## Verifica
 
 - migrazione locale completata;
 - catalogo Node aggiornato;
 - accessi basati su `professional?` conservati tramite enum;
+- ruolo attivo mancante ripristinato automaticamente a `superadmin` per gli account superadmin;
 - 51 test mirati, 348 asserzioni, nessun errore;
-- suite Rails completa: 404 test, 2.878 asserzioni, nessun errore;
+- suite Rails completa: 406 test, 2.887 asserzioni, nessun errore;
 - test eseguiti con un worker per evitare un crash nativo locale di `pg 1.6.3` durante il fork parallelo con Ruby 4.0.3.

@@ -3,11 +3,11 @@ require "test_helper"
 class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
   test "renders all preview pages without indexing" do
     [
-      "/posturacorretta/radioestesia",
-      "/posturacorretta/radioestesia/chi-sono",
-      "/posturacorretta/radioestesia/percorsi",
-      "/posturacorretta/radioestesia/contatti",
-      "/posturacorretta/radioestesia/contenuti"
+      "/flowpulse/radioestesia",
+      "/flowpulse/radioestesia/chi-sono",
+      "/flowpulse/radioestesia/percorsi",
+      "/flowpulse/radioestesia/contatti",
+      "/flowpulse/radioestesia/contenuti"
     ].each do |path|
       get path
 
@@ -17,7 +17,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "renders a free chapter with the course sidebar" do
-    get "/posturacorretta/radioestesia/contenuti/mappa-energetica-alimenti"
+    get "/flowpulse/radioestesia/contenuti/mappa-energetica-alimenti"
 
     assert_response :success
     assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
@@ -28,7 +28,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
 
   test "shows item purchase and annual options for a future masterclass" do
     travel_to Time.zone.parse("2026-09-10 09:00") do
-      get "/posturacorretta/radioestesia/contenuti/incontro-di-approfondimento"
+      get "/flowpulse/radioestesia/contenuti/incontro-di-approfondimento"
 
       assert_response :success
       assert_select "#acquista", /Partecipa alla masterclass/
@@ -42,7 +42,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
 
   test "lists independent entries through shareable upcoming and past tabs" do
     travel_to Time.zone.parse("2026-09-10 09:00") do
-      get "/posturacorretta/radioestesia/contenuti?tab=prossimi"
+      get "/flowpulse/radioestesia/contenuti?tab=prossimi"
 
       assert_response :success
       assert_select "a", /Prepara la tua energia all’Autunno/
@@ -53,12 +53,20 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
       assert_select "a", text: /Mappa energetica degli alimenti/, count: 0
       assert_select "a", text: /Materiali di conferenze/, count: 0
 
-      get "/posturacorretta/radioestesia/contenuti?tab=passati"
+      get "/flowpulse/radioestesia/contenuti?tab=passati"
 
       assert_response :success
       assert_select "a", /Introduzione alla radiestesia/
       assert_select "a", /Pratiche di ascolto quotidiano/
       assert_select "a", text: /Prepara la tua energia all’Autunno/, count: 0
     end
+  end
+
+  test "redirects the old PosturaCorretta preview paths" do
+    get "/posturacorretta/radioestesia"
+    assert_redirected_to "/flowpulse/radioestesia"
+
+    get "/posturacorretta/radioestesia/contenuti/mappa-energetica-alimenti"
+    assert_redirected_to "/flowpulse/radioestesia/contenuti/mappa-energetica-alimenti"
   end
 end

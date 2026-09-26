@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Local safeguard against pushing directly to protected branches.
+# Install once with:
+#   git config core.hooksPath scripts
+#
+# This hook never stashes, cleans, resets, deletes, or edits local files.
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main|refs/heads/master)
+      cat <<'MSG'
+Push diretto al branch protetto bloccato.
+
+Apri un branch dedicato e una pull request, attendi che la CI sia verde e
+integra una modifica alla volta. Il hook non ha modificato alcun file locale.
+
+Per controllare il progetto prima della pull request:
+  bin/ci_checks
+MSG
+      exit 1
+      ;;
+  esac
+done
+
+exit 0

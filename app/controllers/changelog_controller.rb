@@ -1,6 +1,7 @@
 class ChangelogController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
+  before_action :require_preview_superadmin!
 
   def index
     load_repository
@@ -33,12 +34,18 @@ class ChangelogController < ApplicationController
         "home_url" => brand_home_url(@changelog_repository.brand)
       )
       @changelog_preview = requested_brand.present?
+      @changelog_index_path = changelog_index_url_for(@changelog_repository.brand)
+      @radioestesia = YAML.safe_load_file(Rails.root.join("config/data/radioestesia/site.yml"), permitted_classes: [], aliases: false) if @changelog_repository.brand_key == "radioestesia"
+      @markpostura_site = Editorial::SiteRepository.new.load("markpostura_it").site if @changelog_repository.brand_key == "markpostura"
     end
 
     def changelog_directory
-      ChangelogRepository.catalog.values.reject { |brand| brand.fetch("key") == "flowpulse" }.map do |brand|
-        brand.merge("url" => changelog_url_for(brand))
-      end.sort_by { |brand| brand.fetch("label").downcase }
+      ChangelogRepository.catalog.values
+        .reject { |brand| brand.fetch("key") == "flowpulse" }
+        .reject { |brand| brand.fetch("visibility", "public") == "internal" && !include_internal? }
+        .map do |brand|
+          brand.merge("url" => changelog_url_for(brand))
+        end.sort_by { |brand| brand.fetch("label").downcase }
     end
 
     def decorate_entries(repository)
@@ -53,6 +60,13 @@ class ChangelogController < ApplicationController
     end
 
     def changelog_entry_url_for(brand, entry)
+      if preview_brand?(brand)
+        return radioestesia_changelog_entry_path(entry.fetch("slug"))
+      end
+      if posturacorretta_brand_path?(brand)
+        return posturacorretta_changelog_entry_path(entry.fetch("slug"))
+      end
+
       if local_request?
         brand_changelog_entry_path(brand.fetch("key"), entry.fetch("slug"))
       elsif brand.fetch("key") == @changelog_repository.brand_key
@@ -63,12 +77,15 @@ class ChangelogController < ApplicationController
     end
 
     def changelog_url_for(brand)
+      return brand.fetch("changelog_preview_path") if brand.fetch("visibility", "public") == "internal" && brand["changelog_preview_path"].present?
+      return posturacorretta_changelog_path if local_request? && brand.fetch("key") == "posturacorretta"
       return brand_changelog_path(brand.fetch("key")) if local_request?
 
       "https://#{brand.fetch("canonical_host")}/changelog"
     end
 
     def brand_home_url(brand)
+      return brand.fetch("preview_path") if preview_brand?(brand)
       return brand.fetch("public_path") if local_request?
 
       "https://#{brand.fetch("canonical_host")}/"
@@ -76,5 +93,32 @@ class ChangelogController < ApplicationController
 
     def include_internal?
       Current.user&.superadmin_user? || false
+    end
+
+    def preview_brand?(brand)
+      params[:brand_preview] == "1" && brand.fetch("key") == "radioestesia"
+    end
+
+    def changelog_index_url_for(brand)
+      return radioestesia_changelog_path if preview_brand?(brand)
+      return posturacorretta_changelog_path if posturacorretta_brand_path?(brand)
+      return brand_changelog_path(brand.fetch("key")) if @changelog_preview
+
+      changelog_path
+    end
+
+    def posturacorretta_brand_path?(brand)
+      params[:brand_path] == "posturacorretta" && brand.fetch("key") == "posturacorretta"
+    end
+
+    def require_preview_superadmin!
+      return unless params[:brand_preview] == "1"
+      if Current.user&.superadmin_user?
+        response.set_header("X-Robots-Tag", "noindex, nofollow")
+        return
+      end
+
+      request_authentication unless Current.user
+      redirect_to flowpulse_path, alert: "Anteprima riservata al superadmin." if Current.user
     end
 end

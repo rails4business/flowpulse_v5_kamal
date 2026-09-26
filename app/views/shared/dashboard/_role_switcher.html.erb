@@ -12,7 +12,7 @@
 
   <% if Current.user %>
     <%
-      mapped_role = Current.user.active_role
+      mapped_role = FlowRoles.active_role_for(Current.user)
       role_assignment_role = case mapped_role
       when "ideatore", "creator", "digital" then mapped_role.to_sym
       else mapped_role.to_sym

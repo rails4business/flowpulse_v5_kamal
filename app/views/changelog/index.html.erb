@@ -1,6 +1,6 @@
 <% content_for :title, "#{@changelog_brand.fetch("label")} — Changelog" %>
 <% content_for :description, @changelog_brand.fetch("description") %>
-<% changelog_index_path = @changelog_preview ? brand_changelog_path(@changelog_brand.fetch("key")) : changelog_path %>
+<% changelog_index_path = @changelog_index_path %>
 <% kind_labels = { "platform" => "Piattaforma", "architecture" => "Architettura", "feature" => "Funzione", "fix" => "Correzione" } %>
 
 <main class="min-h-screen bg-white text-slate-950">

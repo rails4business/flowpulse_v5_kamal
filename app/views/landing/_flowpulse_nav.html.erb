@@ -4,7 +4,10 @@
     <div class="flex flex-wrap items-center justify-end gap-1 text-sm font-bold">
       <%= link_to "Progetti", flowpulse_projects_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_projects_path) ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <%= link_to "Professionisti", flowpulse_professionals_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_professionals_path) ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
-      <% if Current.user&.superadmin_user? %><%= link_to "Sviluppo", flowpulse_development_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/development' ? 'bg-amber-50 text-amber-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %><% end %>
+      <% if Current.user&.superadmin_user? %>
+        <%= link_to "Brand in costruzione", admin_brands_path(tab: "building"), class: "rounded-full px-3 py-2 text-amber-800 hover:bg-amber-50" %>
+        <%= link_to "Sviluppo", flowpulse_development_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/development' ? 'bg-amber-50 text-amber-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+      <% end %>
       <%= link_to "Changelog", changelog_path, class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
     </div>
   </div>

@@ -2,23 +2,7 @@
 <% content_for :description, "Esperienze tra corpo, apprendimento, espressione, territorio e natura." %>
 
 <div class="min-h-screen bg-[#fbfcf8] text-slate-900">
-  <header class="sticky top-0 z-50 border-b border-emerald-100 bg-[#fbfcf8]/95 backdrop-blur">
-    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-      <%= link_to giardino_del_corpo_path, class: "flex items-center gap-2 font-black tracking-tight text-emerald-950" do %>
-        <span aria-hidden="true" class="grid size-9 place-items-center rounded-full bg-emerald-100 text-lg">🌱</span>
-        <span>Il Giardino del Corpo</span>
-      <% end %>
-      <nav class="hidden items-center gap-5 md:flex" aria-label="Navigazione Giardino del Corpo">
-        <a href="#visione" class="text-sm font-semibold text-slate-600 hover:text-emerald-800">Visione</a>
-        <a href="#esperienze" class="text-sm font-semibold text-slate-600 hover:text-emerald-800">Esperienze</a>
-        <a href="#eventi" class="text-sm font-semibold text-slate-600 hover:text-emerald-800">Eventi</a>
-        <a href="#luoghi" class="text-sm font-semibold text-slate-600 hover:text-emerald-800">Luoghi</a>
-        <%= link_to "PosturaCorretta", posturacorretta_path, class: "text-sm font-semibold text-slate-600 hover:text-blue-700" %>
-        <%= link_to "Flowpulse", flowpulse_path, class: "text-sm font-semibold text-slate-600 hover:text-violet-700" %>
-      </nav>
-      <a href="#eventi" class="rounded-lg bg-emerald-700 px-3.5 py-2 text-sm font-bold text-white transition hover:bg-emerald-800">Partecipa</a>
-    </div>
-  </header>
+  <%= render "landing/giardino_del_corpo_nav" %>
 
   <main>
     <section class="relative overflow-hidden border-b border-emerald-100">

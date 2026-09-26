@@ -134,6 +134,11 @@ class ApplicationController < ActionController::Base
       user = Current.user
       return unless user
 
+      unless user.active_role_attivabile?
+        fallback_role = user.superadmin_user? ? "superadmin" : "traveler"
+        user.update!(active_role: fallback_role, current_role_assignment: nil)
+      end
+
       role = user.active_role.to_s
       ra = user.current_role_assignment
 

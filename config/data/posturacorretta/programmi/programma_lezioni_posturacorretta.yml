@@ -1,467 +1,468 @@
-schema_version: 1
-
+---
+schema_version: 2
 program:
   key: programma-lezioni-posturacorretta
   title: Programma lezioni PosturaCorretta
-  description: >-
-    Ordine didattico unico delle lezioni PosturaCorretta, valido sia in gruppo
-    sia individualmente. Date, orari, luoghi, insegnanti e prenotazioni vengono
+  description: Ordine didattico unico delle lezioni PosturaCorretta, valido sia in
+    gruppo sia individualmente. Date, orari, luoghi, insegnanti e prenotazioni vengono
     aggiunti soltanto quando viene programmato l'incontro reale.
   status: pilot
-  # Ogni riga è una lezione. Le prime due sono introduttive e possono avere più
-  # schede; dalle successive, ogni lezione corrisponde a un capitolo/scheda.
-  # course.key conserva solo il contesto editoriale del capitolo.
   lesson_count_planned: 40
   sheet_type: practical
   introductory_lessons:
-    - number: 1
-      reusable: true
-    - number: 2
-      reusable: true
-
-  # Il tirocinio è leggibile solo dall'operatore "tirocinante" del Brand
-  # PosturaCorretta o dal superadmin. Le date e le presenze saranno aggiunte
-  # con DataSession e DataCommitment, non in questo programma editoriale.
-  stages:
-    - key: introduzione
-      title: Lezioni introduttive
-      lesson_numbers: [1, 2]
-      reusable: true
-      description: Due lezioni autonome e ripetibili per presentare il percorso.
-    - key: igiene-posturale
-      title: Igiene Posturale
-      lesson_numbers: [3, 4, 5, 6]
-      qualification: Può condurre le lezioni di Igiene Posturale nel perimetro concordato.
-      internship:
-        visibility: trainee
-        requirements:
-          - Affiancare una lezione di gruppo con un insegnante.
-          - Condurre una parte di lezione di gruppo in compresenza.
-          - Affiancare un incontro individuale con l'insegnante.
-          - Svolgere una pratica sull'insegnante e una in compresenza con una persona.
-    - key: principi-fisioterapia
-      title: Principi di Fisioterapia
-      lesson_numbers: [7, 8, 9, 10, 11, 12]
-      internship: { visibility: trainee, requirements: [] }
-    - key: biomeccanica-comportamentale-gds
-      title: Introduzione alla biomeccanica comportamentale (GDS)
-      lesson_numbers: [13, 14, 15, 16, 17, 18, 19]
-      internship: { visibility: trainee, requirements: [] }
-    - key: principi-osteopatia
-      title: Principi di Osteopatia
-      lesson_numbers: [20, 21, 22, 23, 24, 25]
-      internship: { visibility: trainee, requirements: [] }
-    - key: corpo-e-coscienza
-      title: Introduzione al metodo Corpo e Coscienza
-      lesson_numbers: [26, 27, 28, 29, 30, 31, 32]
-      internship: { visibility: trainee, requirements: [] }
-    - key: altre-metodiche
-      title: Altre metodiche posturali
-      lesson_numbers: [33, 34, 35, 36]
-      internship: { visibility: trainee, requirements: [] }
-
-  lessons:
+  - number: 1
+    reusable: true
+  - number: 2
+    reusable: true
+  courses:
+  - key: introduzione-a-posturacorretta
+    title: Introduzione a PosturaCorretta
+    lessons:
     - number: 1
       key: inizia-con-posturacorretta
       title: Inizia con PosturaCorretta
-      course: { key: inizia-con-posturacorretta, title: Inizia con PosturaCorretta }
-      theory_chapter:
-        course_key: inizia-con-posturacorretta
+      sheets:
+      - course_key: inizia-con-posturacorretta
         chapter_key: prima-scheda-esercizi-video
         title: Prima scheda esercizi e video
-        chapter_type: practical
-      additional_chapters:
-        - course_key: inizia-con-posturacorretta
-          chapter_key: ambiti-percorsi-chakra
-          title: I 7 Ambiti della salute e percori
-          chapter_type: practical
-      practical_chapters: []
-
+        type: practical
+      - course_key: inizia-con-posturacorretta
+        chapter_key: ambiti-percorsi-chakra
+        title: I 7 ambiti della salute e i percorsi
+        type: practical
     - number: 2
       key: postura-e-fisiologia
       title: Postura e Fisiologia
-      course: { key: postura-e-fisiologia, title: Postura e Fisiologia }
-      theory_chapter:
-        course_key: postura-e-fisiologia
+      sheets:
+      - course_key: postura-e-fisiologia
         chapter_key: cinque-aree-programma-settimanale
         title: Le basi delle 5 aree e il programma settimanale
-        chapter_type: practical
-      additional_chapters:
-        - { course_key: postura-e-fisiologia, chapter_key: informati-pratica-insegna, title: "Informati, pratica, insegna", chapter_type: practical }
-        - { course_key: postura-e-fisiologia, chapter_key: metodiche-paradigmi-esperienza, title: "Le metodiche posturali, paradigmi ed esperienza", chapter_type: practical }
-        - { course_key: postura-e-fisiologia, chapter_key: professionisti-salute-benessere-insegnanti-blu, title: "Professionisti della salute, del benessere e insegnanti blu", chapter_type: practical }
-      practical_chapters: []
-
-    - number: 3
-      key: igiene-posturale-mobilita-articolare
-      title: Igiene Posturale · Mobilità articolare
-      course: { key: igiene-posturale, title: Igiene Posturale }
-      theory_chapter:
-        course_key: igiene-posturale
-        chapter_key: mobilita-articolare
-        title: Mobilità articolare
-        chapter_type: practical
-      practical_chapters: []
-
-    - number: 4
-      key: igiene-posturale-punti-di-tensione
-      title: Igiene Posturale · Punti di tensione
-      course: { key: igiene-posturale, title: Igiene Posturale }
-      theory_chapter:
-        course_key: igiene-posturale
-        chapter_key: punti-di-tensione
-        title: Punti di tensione
-        chapter_type: practical
-      practical_chapters: []
-
-    - number: 5
-      key: igiene-posturale-vie-di-discesa
-      title: Igiene Posturale · Vie di discesa
-      course: { key: igiene-posturale, title: Igiene Posturale }
-      theory_chapter:
-        course_key: igiene-posturale
-        chapter_key: vie-di-discesa
-        title: Vie di discesa
-        chapter_type: practical
-      practical_chapters: []
-
-    - number: 6
-      key: igiene-posturale-recettori-sensoriali
-      title: Igiene Posturale · Recettori sensoriali
-      course: { key: igiene-posturale, title: Igiene Posturale }
-      theory_chapter:
-        course_key: igiene-posturale
-        chapter_key: recettori-sensoriali
-        title: Recettori sensoriali
-        chapter_type: practical
-      practical_chapters: []
-
-    - number: 7
-      key: principi-di-fisioterapia-sistema-respiratorio
-      title: Principi di Fisioterapia · Sistema respiratorio
-      course: { key: principi-di-fisioterapia, title: Principi di Fisioterapia }
-      theory_chapter:
-        course_key: principi-di-fisioterapia
-        chapter_key: sistema-respiratorio
-        title: Sistema respiratorio
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 8
-      key: principi-di-fisioterapia-sistema-nervoso-urogenitale
-      title: Principi di Fisioterapia · Sistema nervoso e urogenitale
-      course: { key: principi-di-fisioterapia, title: Principi di Fisioterapia }
-      theory_chapter:
-        course_key: principi-di-fisioterapia
-        chapter_key: sistema-nervoso-urogenitale
-        title: Sistema nervoso e urogenitale
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 9
-      key: principi-di-fisioterapia-sistema-muscolo-scheletrico
-      title: Principi di Fisioterapia · Sistema muscolo-scheletrico
-      course: { key: principi-di-fisioterapia, title: Principi di Fisioterapia }
-      theory_chapter:
-        course_key: principi-di-fisioterapia
-        chapter_key: sistema-muscolo-scheletrico
-        title: Sistema muscolo-scheletrico
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 10
-      key: principi-di-fisioterapia-sistema-cardiocircolatorio
-      title: Principi di Fisioterapia · Sistema cardiocircolatorio
-      course: { key: principi-di-fisioterapia, title: Principi di Fisioterapia }
-      theory_chapter:
-        course_key: principi-di-fisioterapia
-        chapter_key: sistema-cardiocircolatorio
-        title: Sistema cardiocircolatorio
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 11
-      key: principi-di-fisioterapia-sistema-linfatico-digerente
-      title: Principi di Fisioterapia · Sistema linfatico e digerente
-      course: { key: principi-di-fisioterapia, title: Principi di Fisioterapia }
-      theory_chapter:
-        course_key: principi-di-fisioterapia
-        chapter_key: sistema-linfatico-digerente
-        title: Sistema linfatico e digerente
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 12
-      key: principi-di-fisioterapia-approfondimento-fisioterapia
-      title: Principi di Fisioterapia · Scopri di più sulla metodica
-      course: { key: principi-di-fisioterapia, title: Principi di Fisioterapia }
-      theory_chapter:
-        course_key: principi-di-fisioterapia
-        chapter_key: approfondimento-fisioterapia
-        title: Scopri di più sulla metodica
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 13
-      key: biomeccanica-comportamentale-gds-cinque-direzioni-movimento
-      title: Biomeccanica comportamentale (GDS) · Le 5 direzioni di movimento
-      course: { key: biomeccanica-comportamentale-gds, title: Biomeccanica comportamentale (GDS) }
-      theory_chapter:
-        course_key: biomeccanica-comportamentale-gds
-        chapter_key: cinque-direzioni-movimento
-        title: Le 5 direzioni di movimento
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 14
-      key: biomeccanica-comportamentale-gds-catena-am
-      title: Biomeccanica comportamentale (GDS) · Catena AM
-      course: { key: biomeccanica-comportamentale-gds, title: Biomeccanica comportamentale (GDS) }
-      theory_chapter:
-        course_key: biomeccanica-comportamentale-gds
-        chapter_key: catena-am
-        title: Catena AM
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 15
-      key: biomeccanica-comportamentale-gds-catena-al
-      title: Biomeccanica comportamentale (GDS) · Catena AL
-      course: { key: biomeccanica-comportamentale-gds, title: Biomeccanica comportamentale (GDS) }
-      theory_chapter:
-        course_key: biomeccanica-comportamentale-gds
-        chapter_key: catena-al
-        title: Catena AL
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 16
-      key: biomeccanica-comportamentale-gds-catena-pm
-      title: Biomeccanica comportamentale (GDS) · Catena PM
-      course: { key: biomeccanica-comportamentale-gds, title: Biomeccanica comportamentale (GDS) }
-      theory_chapter:
-        course_key: biomeccanica-comportamentale-gds
-        chapter_key: catena-pm
-        title: Catena PM
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 17
-      key: biomeccanica-comportamentale-gds-catena-pl
-      title: Biomeccanica comportamentale (GDS) · Catena PL
-      course: { key: biomeccanica-comportamentale-gds, title: Biomeccanica comportamentale (GDS) }
-      theory_chapter:
-        course_key: biomeccanica-comportamentale-gds
-        chapter_key: catena-pl
-        title: Catena PL
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 18
-      key: biomeccanica-comportamentale-gds-catene-pa-ap
-      title: Biomeccanica comportamentale (GDS) · Catene PA/AP
-      course: { key: biomeccanica-comportamentale-gds, title: Biomeccanica comportamentale (GDS) }
-      theory_chapter:
-        course_key: biomeccanica-comportamentale-gds
-        chapter_key: catene-pa-ap
-        title: Catene PA/AP
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 19
-      key: biomeccanica-comportamentale-gds-approfondimento-gds
-      title: Biomeccanica comportamentale (GDS) · Scopri di più sulla metodica
-      course: { key: biomeccanica-comportamentale-gds, title: Biomeccanica comportamentale (GDS) }
-      theory_chapter:
-        course_key: biomeccanica-comportamentale-gds
-        chapter_key: approfondimento-gds
-        title: Scopri di più sulla metodica
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 20
-      key: principi-di-osteopatia-eliminare-disfunzioni
-      title: Principi di Osteopatia · Eliminare le disfunzioni
-      course: { key: principi-di-osteopatia, title: Principi di Osteopatia }
-      theory_chapter:
-        course_key: principi-di-osteopatia
-        chapter_key: eliminare-disfunzioni
-        title: Eliminare le disfunzioni
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 21
-      key: principi-di-osteopatia-sistema-fasciale
-      title: Principi di Osteopatia · Il sistema fasciale
-      course: { key: principi-di-osteopatia, title: Principi di Osteopatia }
-      theory_chapter:
-        course_key: principi-di-osteopatia
-        chapter_key: sistema-fasciale
-        title: Il sistema fasciale
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 22
-      key: principi-di-osteopatia-sistema-viscerale
-      title: Principi di Osteopatia · Il sistema viscerale
-      course: { key: principi-di-osteopatia, title: Principi di Osteopatia }
-      theory_chapter:
-        course_key: principi-di-osteopatia
-        chapter_key: sistema-viscerale
-        title: Il sistema viscerale
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 23
-      key: principi-di-osteopatia-sistema-cranio-sacrale
-      title: Principi di Osteopatia · Il sistema cranio-sacrale
-      course: { key: principi-di-osteopatia, title: Principi di Osteopatia }
-      theory_chapter:
-        course_key: principi-di-osteopatia
-        chapter_key: sistema-cranio-sacrale
-        title: Il sistema cranio-sacrale
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 24
-      key: principi-di-osteopatia-sistema-neurovegetativo
-      title: Principi di Osteopatia · Il sistema neurovegetativo
-      course: { key: principi-di-osteopatia, title: Principi di Osteopatia }
-      theory_chapter:
-        course_key: principi-di-osteopatia
-        chapter_key: sistema-neurovegetativo
-        title: Il sistema neurovegetativo
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 25
-      key: principi-di-osteopatia-approfondimento-osteopatia
-      title: Principi di Osteopatia · Scopri di più sulla metodica
-      course: { key: principi-di-osteopatia, title: Principi di Osteopatia }
-      theory_chapter:
-        course_key: principi-di-osteopatia
-        chapter_key: approfondimento-osteopatia
-        title: Scopri di più sulla metodica
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 26
-      key: introduzione-al-metodo-corpo-e-coscienza-due-circolazioni
-      title: Corpo e Coscienza · Le 2 circolazioni
-      course: { key: introduzione-al-metodo-corpo-e-coscienza, title: Corpo e Coscienza }
-      theory_chapter:
-        course_key: introduzione-al-metodo-corpo-e-coscienza
-        chapter_key: due-circolazioni
-        title: Le 2 circolazioni
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 27
-      key: introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita
-      title: Corpo e Coscienza · I 3 centri di gravità
-      course: { key: introduzione-al-metodo-corpo-e-coscienza, title: Corpo e Coscienza }
-      theory_chapter:
-        course_key: introduzione-al-metodo-corpo-e-coscienza
-        chapter_key: tre-centri-gravita
-        title: I 3 centri di gravità
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 28
-      key: introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento
-      title: Corpo e Coscienza · I 4 tipi di movimento
-      course: { key: introduzione-al-metodo-corpo-e-coscienza, title: Corpo e Coscienza }
-      theory_chapter:
-        course_key: introduzione-al-metodo-corpo-e-coscienza
-        chapter_key: quattro-tipi-movimento
-        title: I 4 tipi di movimento
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 29
-      key: introduzione-al-metodo-corpo-e-coscienza-cinque-elementi
-      title: Corpo e Coscienza · I 5 elementi
-      course: { key: introduzione-al-metodo-corpo-e-coscienza, title: Corpo e Coscienza }
-      theory_chapter:
-        course_key: introduzione-al-metodo-corpo-e-coscienza
-        chapter_key: cinque-elementi
-        title: I 5 elementi
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 30
-      key: introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani
-      title: Corpo e Coscienza · Le 6 coppie di meridiani
-      course: { key: introduzione-al-metodo-corpo-e-coscienza, title: Corpo e Coscienza }
-      theory_chapter:
-        course_key: introduzione-al-metodo-corpo-e-coscienza
-        chapter_key: sei-coppie-meridiani
-        title: Le 6 coppie di meridiani
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 31
-      key: introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici
-      title: Corpo e Coscienza · I 7 centri neurolinfatici
-      course: { key: introduzione-al-metodo-corpo-e-coscienza, title: Corpo e Coscienza }
-      theory_chapter:
-        course_key: introduzione-al-metodo-corpo-e-coscienza
-        chapter_key: sette-centri-neurolinfatici
-        title: I 7 centri neurolinfatici
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 32
-      key: introduzione-al-metodo-corpo-e-coscienza-approfondimento-corpo-coscienza
-      title: Corpo e Coscienza · Scopri di più sulla metodica
-      course: { key: introduzione-al-metodo-corpo-e-coscienza, title: Corpo e Coscienza }
-      theory_chapter:
-        course_key: introduzione-al-metodo-corpo-e-coscienza
-        chapter_key: approfondimento-corpo-coscienza
-        title: Scopri di più sulla metodica
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 33
-      key: altre-metodiche-posturali-sequenza-kinesiologia-applicata
-      title: Altre metodiche posturali · Sequenza di Kinesiologia Applicata
-      course: { key: altre-metodiche-posturali, title: Altre metodiche posturali }
-      theory_chapter:
-        course_key: altre-metodiche-posturali
-        chapter_key: sequenza-kinesiologia-applicata
-        title: Sequenza di Kinesiologia Applicata
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 34
-      key: altre-metodiche-posturali-feldenkrais
-      title: Altre metodiche posturali · Feldenkrais
-      course: { key: altre-metodiche-posturali, title: Altre metodiche posturali }
-      theory_chapter:
-        course_key: altre-metodiche-posturali
-        chapter_key: feldenkrais
-        title: Feldenkrais
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 35
-      key: altre-metodiche-posturali-alexander-consapevolezza
-      title: Altre metodiche posturali · Alexander e consapevolezza
-      course: { key: altre-metodiche-posturali, title: Altre metodiche posturali }
-      theory_chapter:
-        course_key: altre-metodiche-posturali
-        chapter_key: alexander-consapevolezza
-        title: Alexander e consapevolezza
-        chapter_type: theory
-      practical_chapters: []
-
-    - number: 36
-      key: altre-metodiche-posturali-sintesi-percorso
-      title: Altre metodiche posturali · Sintesi del percorso
-      course: { key: altre-metodiche-posturali, title: Altre metodiche posturali }
-      theory_chapter:
-        course_key: altre-metodiche-posturali
-        chapter_key: sintesi-percorso
-        title: Sintesi del percorso
-        chapter_type: theory
-      practical_chapters: []
+        type: practical
+      - course_key: postura-e-fisiologia
+        chapter_key: informati-pratica-insegna
+        title: Informati, pratica, insegna
+        type: practical
+      - course_key: postura-e-fisiologia
+        chapter_key: metodiche-paradigmi-esperienza
+        title: Le metodiche posturali, paradigmi ed esperienza
+        type: practical
+      - course_key: postura-e-fisiologia
+        chapter_key: professionisti-salute-benessere-insegnanti-blu
+        title: Professionisti della salute, del benessere e insegnanti blu
+        type: practical
+    teacher_path:
+      title: Tirocinio · Inizia con PosturaCorretta
+      visibility: activated_trainee
+      lessons:
+      - key: introduzione-a-posturacorretta-tirocinio-1
+        title: Conoscere il progetto e i materiali introduttivi.
+        type: internship
+        sheets: []
+      - key: introduzione-a-posturacorretta-tirocinio-2
+        title: Affiancare una presentazione con un insegnante.
+        type: internship
+        sheets: []
+      - key: introduzione-a-posturacorretta-tirocinio-3
+        title: Presentare una parte in compresenza.
+        type: internship
+        sheets: []
+      - key: introduzione-a-posturacorretta-tirocinio-4
+        title: Condurre una presentazione in autonomia su un piccolo gruppo.
+        type: internship
+        sheets: []
+  sections:
+  - key: postura-recupero-coscienza
+    title: Postura, recupero e coscienza corporea
+    color: blue
+    courses:
+    - key: igiene-posturale
+      title: Igiene Posturale
+      lessons:
+      - number: 3
+        key: igiene-posturale-mobilita-articolare
+        title: Igiene Posturale · Mobilità articolare
+        sheets:
+        - course_key: igiene-posturale
+          chapter_key: mobilita-articolare
+          title: Mobilità articolare
+          type: practical
+      - number: 4
+        key: igiene-posturale-punti-di-tensione
+        title: Igiene Posturale · Punti di tensione
+        sheets:
+        - course_key: igiene-posturale
+          chapter_key: punti-di-tensione
+          title: Punti di tensione
+          type: practical
+      - number: 5
+        key: igiene-posturale-vie-di-discesa
+        title: Igiene Posturale · Vie di discesa
+        sheets:
+        - course_key: igiene-posturale
+          chapter_key: vie-di-discesa
+          title: Vie di discesa
+          type: practical
+      - number: 6
+        key: igiene-posturale-recettori-sensoriali
+        title: Igiene Posturale · Recettori sensoriali
+        sheets:
+        - course_key: igiene-posturale
+          chapter_key: recettori-sensoriali
+          title: Recettori sensoriali
+          type: practical
+      teacher_path:
+        title: Tirocinio · Igiene Posturale
+        visibility: activated_trainee
+        lessons:
+        - key: igiene-posturale-tirocinio-1
+          title: Affiancare una lezione di gruppo con un insegnante.
+          type: internship
+          sheets: []
+        - key: igiene-posturale-tirocinio-2
+          title: Condurre una parte di lezione di gruppo in compresenza.
+          type: internship
+          sheets: []
+        - key: igiene-posturale-tirocinio-3
+          title: Affiancare un incontro individuale con l’insegnante.
+          type: internship
+          sheets: []
+        - key: igiene-posturale-tirocinio-4
+          title: Svolgere una pratica sull’insegnante.
+          type: internship
+          sheets: []
+        - key: igiene-posturale-tirocinio-5
+          title: Svolgere una pratica in compresenza con una persona.
+          type: internship
+          sheets: []
+      qualification: Può condurre le lezioni di Igiene Posturale nel perimetro concordato.
+    - key: principi-di-fisioterapia
+      title: Principi di Fisioterapia
+      lessons:
+      - number: 7
+        key: principi-di-fisioterapia-sistema-respiratorio
+        title: Principi di Fisioterapia · Sistema respiratorio
+        sheets:
+        - course_key: principi-di-fisioterapia
+          chapter_key: sistema-respiratorio
+          title: Sistema respiratorio
+          type: practical
+      - number: 8
+        key: principi-di-fisioterapia-sistema-nervoso-urogenitale
+        title: Principi di Fisioterapia · Sistema nervoso e urogenitale
+        sheets:
+        - course_key: principi-di-fisioterapia
+          chapter_key: sistema-nervoso-urogenitale
+          title: Sistema nervoso e urogenitale
+          type: practical
+      - number: 9
+        key: principi-di-fisioterapia-sistema-muscolo-scheletrico
+        title: Principi di Fisioterapia · Sistema muscolo-scheletrico
+        sheets:
+        - course_key: principi-di-fisioterapia
+          chapter_key: sistema-muscolo-scheletrico
+          title: Sistema muscolo-scheletrico
+          type: practical
+      - number: 10
+        key: principi-di-fisioterapia-sistema-cardiocircolatorio
+        title: Principi di Fisioterapia · Sistema cardiocircolatorio
+        sheets:
+        - course_key: principi-di-fisioterapia
+          chapter_key: sistema-cardiocircolatorio
+          title: Sistema cardiocircolatorio
+          type: practical
+      - number: 11
+        key: principi-di-fisioterapia-sistema-linfatico-digerente
+        title: Principi di Fisioterapia · Sistema linfatico e digerente
+        sheets:
+        - course_key: principi-di-fisioterapia
+          chapter_key: sistema-linfatico-digerente
+          title: Sistema linfatico e digerente
+          type: practical
+      - number: 12
+        key: principi-di-fisioterapia-approfondimento-fisioterapia
+        title: Principi di Fisioterapia · Scopri di più sulla metodica
+        sheets:
+        - course_key: principi-di-fisioterapia
+          chapter_key: approfondimento-fisioterapia
+          title: Scopri di più sulla metodica
+          type: practical
+      teacher_path:
+        title: Tirocinio · Principi di Fisioterapia
+        visibility: activated_trainee
+        lessons:
+        - key: principi-di-fisioterapia-tirocinio-1
+          title: Affiancare una lezione sui principi fisioterapici.
+          type: internship
+          sheets: []
+        - key: principi-di-fisioterapia-tirocinio-2
+          title: Condurre in compresenza una pratica sui sistemi corporei.
+          type: internship
+          sheets: []
+    - key: biomeccanica-comportamentale-gds
+      title: Biomeccanica comportamentale (GDS)
+      lessons:
+      - number: 13
+        key: biomeccanica-comportamentale-gds-cinque-direzioni-movimento
+        title: Biomeccanica comportamentale (GDS) · Le 5 direzioni di movimento
+        sheets:
+        - course_key: biomeccanica-comportamentale-gds
+          chapter_key: cinque-direzioni-movimento
+          title: Le 5 direzioni di movimento
+          type: practical
+      - number: 14
+        key: biomeccanica-comportamentale-gds-catena-am
+        title: Biomeccanica comportamentale (GDS) · Catena AM
+        sheets:
+        - course_key: biomeccanica-comportamentale-gds
+          chapter_key: catena-am
+          title: Catena AM
+          type: practical
+      - number: 15
+        key: biomeccanica-comportamentale-gds-catena-al
+        title: Biomeccanica comportamentale (GDS) · Catena AL
+        sheets:
+        - course_key: biomeccanica-comportamentale-gds
+          chapter_key: catena-al
+          title: Catena AL
+          type: practical
+      - number: 16
+        key: biomeccanica-comportamentale-gds-catena-pm
+        title: Biomeccanica comportamentale (GDS) · Catena PM
+        sheets:
+        - course_key: biomeccanica-comportamentale-gds
+          chapter_key: catena-pm
+          title: Catena PM
+          type: practical
+      - number: 17
+        key: biomeccanica-comportamentale-gds-catena-pl
+        title: Biomeccanica comportamentale (GDS) · Catena PL
+        sheets:
+        - course_key: biomeccanica-comportamentale-gds
+          chapter_key: catena-pl
+          title: Catena PL
+          type: practical
+      - number: 18
+        key: biomeccanica-comportamentale-gds-catene-pa-ap
+        title: Biomeccanica comportamentale (GDS) · Catene PA/AP
+        sheets:
+        - course_key: biomeccanica-comportamentale-gds
+          chapter_key: catene-pa-ap
+          title: Catene PA/AP
+          type: practical
+      - number: 19
+        key: biomeccanica-comportamentale-gds-approfondimento-gds
+        title: Biomeccanica comportamentale (GDS) · Scopri di più sulla metodica
+        sheets:
+        - course_key: biomeccanica-comportamentale-gds
+          chapter_key: approfondimento-gds
+          title: Scopri di più sulla metodica
+          type: practical
+      teacher_path:
+        title: Tirocinio · Biomeccanica comportamentale (GDS)
+        visibility: activated_trainee
+        lessons:
+        - key: biomeccanica-comportamentale-gds-tirocinio-1
+          title: Affiancare una lezione sulle catene muscolari.
+          type: internship
+          sheets: []
+        - key: biomeccanica-comportamentale-gds-tirocinio-2
+          title: Condurre in compresenza un’analisi del movimento.
+          type: internship
+          sheets: []
+    - key: principi-di-osteopatia
+      title: Principi di Osteopatia
+      lessons:
+      - number: 20
+        key: principi-di-osteopatia-eliminare-disfunzioni
+        title: Principi di Osteopatia · Eliminare le disfunzioni
+        sheets:
+        - course_key: principi-di-osteopatia
+          chapter_key: eliminare-disfunzioni
+          title: Eliminare le disfunzioni
+          type: practical
+      - number: 21
+        key: principi-di-osteopatia-sistema-fasciale
+        title: Principi di Osteopatia · Il sistema fasciale
+        sheets:
+        - course_key: principi-di-osteopatia
+          chapter_key: sistema-fasciale
+          title: Il sistema fasciale
+          type: practical
+      - number: 22
+        key: principi-di-osteopatia-sistema-viscerale
+        title: Principi di Osteopatia · Il sistema viscerale
+        sheets:
+        - course_key: principi-di-osteopatia
+          chapter_key: sistema-viscerale
+          title: Il sistema viscerale
+          type: practical
+      - number: 23
+        key: principi-di-osteopatia-sistema-cranio-sacrale
+        title: Principi di Osteopatia · Il sistema cranio-sacrale
+        sheets:
+        - course_key: principi-di-osteopatia
+          chapter_key: sistema-cranio-sacrale
+          title: Il sistema cranio-sacrale
+          type: practical
+      - number: 24
+        key: principi-di-osteopatia-sistema-neurovegetativo
+        title: Principi di Osteopatia · Il sistema neurovegetativo
+        sheets:
+        - course_key: principi-di-osteopatia
+          chapter_key: sistema-neurovegetativo
+          title: Il sistema neurovegetativo
+          type: practical
+      - number: 25
+        key: principi-di-osteopatia-approfondimento-osteopatia
+        title: Principi di Osteopatia · Scopri di più sulla metodica
+        sheets:
+        - course_key: principi-di-osteopatia
+          chapter_key: approfondimento-osteopatia
+          title: Scopri di più sulla metodica
+          type: practical
+      teacher_path:
+        title: Tirocinio · Principi di Osteopatia
+        visibility: activated_trainee
+        lessons:
+        - key: principi-di-osteopatia-tirocinio-1
+          title: Affiancare una lezione sui principi osteopatici.
+          type: internship
+          sheets: []
+        - key: principi-di-osteopatia-tirocinio-2
+          title: Condurre in compresenza una pratica sul sistema fasciale.
+          type: internship
+          sheets: []
+    - key: introduzione-al-metodo-corpo-e-coscienza
+      title: Corpo e Coscienza
+      lessons:
+      - number: 26
+        key: introduzione-al-metodo-corpo-e-coscienza-due-circolazioni
+        title: Corpo e Coscienza · Le 2 circolazioni
+        sheets:
+        - course_key: introduzione-al-metodo-corpo-e-coscienza
+          chapter_key: due-circolazioni
+          title: Le 2 circolazioni
+          type: practical
+      - number: 27
+        key: introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita
+        title: Corpo e Coscienza · I 3 centri di gravità
+        sheets:
+        - course_key: introduzione-al-metodo-corpo-e-coscienza
+          chapter_key: tre-centri-gravita
+          title: I 3 centri di gravità
+          type: practical
+      - number: 28
+        key: introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento
+        title: Corpo e Coscienza · I 4 tipi di movimento
+        sheets:
+        - course_key: introduzione-al-metodo-corpo-e-coscienza
+          chapter_key: quattro-tipi-movimento
+          title: I 4 tipi di movimento
+          type: practical
+      - number: 29
+        key: introduzione-al-metodo-corpo-e-coscienza-cinque-elementi
+        title: Corpo e Coscienza · I 5 elementi
+        sheets:
+        - course_key: introduzione-al-metodo-corpo-e-coscienza
+          chapter_key: cinque-elementi
+          title: I 5 elementi
+          type: practical
+      - number: 30
+        key: introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani
+        title: Corpo e Coscienza · Le 6 coppie di meridiani
+        sheets:
+        - course_key: introduzione-al-metodo-corpo-e-coscienza
+          chapter_key: sei-coppie-meridiani
+          title: Le 6 coppie di meridiani
+          type: practical
+      - number: 31
+        key: introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici
+        title: Corpo e Coscienza · I 7 centri neurolinfatici
+        sheets:
+        - course_key: introduzione-al-metodo-corpo-e-coscienza
+          chapter_key: sette-centri-neurolinfatici
+          title: I 7 centri neurolinfatici
+          type: practical
+      - number: 32
+        key: introduzione-al-metodo-corpo-e-coscienza-approfondimento-corpo-coscienza
+        title: Corpo e Coscienza · Scopri di più sulla metodica
+        sheets:
+        - course_key: introduzione-al-metodo-corpo-e-coscienza
+          chapter_key: approfondimento-corpo-coscienza
+          title: Scopri di più sulla metodica
+          type: practical
+      teacher_path:
+        title: Tirocinio · Corpo e Coscienza
+        visibility: activated_trainee
+        lessons:
+        - key: introduzione-al-metodo-corpo-e-coscienza-tirocinio-1
+          title: Affiancare una lezione sul metodo Corpo e Coscienza.
+          type: internship
+          sheets: []
+        - key: introduzione-al-metodo-corpo-e-coscienza-tirocinio-2
+          title: Condurre in compresenza una pratica sui centri di gravità.
+          type: internship
+          sheets: []
+    - key: altre-metodiche-posturali
+      title: Altre metodiche posturali
+      lessons:
+      - number: 33
+        key: altre-metodiche-posturali-sequenza-kinesiologia-applicata
+        title: Altre metodiche posturali · Sequenza di Kinesiologia Applicata
+        sheets:
+        - course_key: altre-metodiche-posturali
+          chapter_key: sequenza-kinesiologia-applicata
+          title: Sequenza di Kinesiologia Applicata
+          type: practical
+      - number: 34
+        key: altre-metodiche-posturali-feldenkrais
+        title: Altre metodiche posturali · Feldenkrais
+        sheets:
+        - course_key: altre-metodiche-posturali
+          chapter_key: feldenkrais
+          title: Feldenkrais
+          type: practical
+      - number: 35
+        key: altre-metodiche-posturali-alexander-consapevolezza
+        title: Altre metodiche posturali · Alexander e consapevolezza
+        sheets:
+        - course_key: altre-metodiche-posturali
+          chapter_key: alexander-consapevolezza
+          title: Alexander e consapevolezza
+          type: practical
+      - number: 36
+        key: altre-metodiche-posturali-sintesi-percorso
+        title: Altre metodiche posturali · Sintesi del percorso
+        sheets:
+        - course_key: altre-metodiche-posturali
+          chapter_key: sintesi-percorso
+          title: Sintesi del percorso
+          type: practical
+      teacher_path:
+        title: Tirocinio · Altre metodiche posturali
+        visibility: activated_trainee
+        lessons:
+        - key: altre-metodiche-posturali-tirocinio-1
+          title: Affiancare una lezione di sintesi del percorso.
+          type: internship
+          sheets: []
+        - key: altre-metodiche-posturali-tirocinio-2
+          title: Condurre in autonomia una lezione introduttiva completa.
+          type: internship
+          sheets: []
+  - key: postura-movimento
+    title: Postura e movimento
+    color: violet
+    courses: []
+  - key: postura-aspetti-vitali
+    title: Postura e aspetti emotivi e mentali
+    color: green
+    courses: []
+  - key: postura-nutrimento
+    title: Postura, nutrimento e alimentazione
+    color: orange
+    courses: []
+  - key: postura-piante-officinali
+    title: Postura e piante officinali
+    color: red
+    courses: []

@@ -27,22 +27,21 @@ class ChangelogControllerTest < ActionDispatch::IntegrationTest
     get brand_changelog_path("impegno")
 
     assert_response :success
-    assert_select "nav a[href='/impegno']", text: "Home"
+    assert_select "a[href='/impegno']"
     assert_select "a[href='#{brand_changelog_entry_path("impegno", "esperienza-session-slot-commitment")}']"
   end
 
   test "Brand changelog navigation returns to the Brand home" do
     host! "localhost"
-    get brand_changelog_path("posturacorretta")
+    get posturacorretta_changelog_path
 
     assert_response :success
-    assert_select "nav a[href='/posturacorretta']", text: "PosturaCorretta"
-    assert_select "nav a[href='/posturacorretta']", text: "Home"
-    assert_select "a[href='#{brand_changelog_entry_path("posturacorretta", "percorso-educativo-e-programma-lezioni")}']", text: /Percorso educativo/
+    assert_select "a[href='/posturacorretta']"
+    assert_select "a[href='#{posturacorretta_changelog_entry_path("percorso-educativo-e-programma-lezioni")}']", text: /Percorso educativo/
 
-    get brand_changelog_entry_path("posturacorretta", "percorso-educativo-e-programma-lezioni")
+    get posturacorretta_changelog_entry_path("percorso-educativo-e-programma-lezioni")
     assert_response :success
-    assert_select "nav a[href='/posturacorretta']", text: "Home"
+    assert_select "a[href='/posturacorretta']"
   end
 
   test "local Flowpulse index links the separate Brand changelogs" do
@@ -50,7 +49,7 @@ class ChangelogControllerTest < ActionDispatch::IntegrationTest
     get changelog_path
 
     assert_response :success
-    assert_select "a[href='#{brand_changelog_path("posturacorretta")}']", text: /PosturaCorretta/
+    assert_select "a[href='#{posturacorretta_changelog_path}']", text: /PosturaCorretta/
     assert_select "a[href='#{brand_changelog_path("svuotamente")}']", text: /SvuotaMente/
     assert_select "a[href='#{brand_changelog_entry_path("posturacorretta", "percorso-educativo-e-programma-lezioni")}']", count: 0
   end
@@ -62,7 +61,7 @@ class ChangelogControllerTest < ActionDispatch::IntegrationTest
       get brand_changelog_path(brand.fetch("key"))
 
       assert_response :success, "Changelog non renderizzato per #{brand.fetch("key")}"
-      assert_select "nav a[href='#{brand.fetch("public_path")}']", text: brand.fetch("label")
+      assert_select "a[href='#{brand.fetch("public_path")}']"
       assert_select "h1", text: "Changelog"
       assert_select "#timeline-title", text: "Aggiornamenti"
       assert_select "ol article", minimum: 1
@@ -77,6 +76,29 @@ class ChangelogControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", "Il primo nucleo operativo di 1Impegno"
     assert_select ".editorial-rich-text h1", text: "Il primo nucleo operativo di 1Impegno"
     assert_select ".editorial-rich-text code", text: /DataExperience/
+  end
+
+  test "Radioestesia preview changelog is reserved to superadmin and uses its navigation" do
+    get radioestesia_changelog_path
+    assert_redirected_to new_session_path(return_to: radioestesia_changelog_path)
+
+    user = User.create!(
+      email_address: "radioestesia-changelog@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      superadmin: true,
+      active_role: :superadmin
+    )
+    user.create_profile!(display_name: "Radioestesia Changelog")
+    post session_url, params: { email_address: user.email_address, password: "password123" }
+
+    get radioestesia_changelog_path
+
+    assert_response :success
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+    assert_select "nav[aria-label='Navigazione Radioestesia'] a[href='#{radioestesia_path}']", text: "Home"
+    assert_select "nav[aria-label='Navigazione Radioestesia'] a[href='#{radioestesia_changelog_path}']", text: "Changelog"
+    assert_select "a[href='#{radioestesia_changelog_entry_path("anteprima-flowpulse")}']"
   end
 
   test "returns not found for an unknown local Brand" do
@@ -95,7 +117,7 @@ class ChangelogControllerTest < ActionDispatch::IntegrationTest
       impegno_url => brand_changelog_path("impegno"),
       giardino_del_corpo_url => brand_changelog_path("ilgiardinodelcorpo"),
       markpostura_url => brand_changelog_path("markpostura"),
-      posturacorretta_url => brand_changelog_path("posturacorretta"),
+      posturacorretta_url => posturacorretta_changelog_path,
       percorso_integrato_url => brand_changelog_path("percorso-integrato"),
       cantachetipassa_url => brand_changelog_path("cantachetipassa"),
       svuotamente_url => brand_changelog_path("svuotamente"),

@@ -264,17 +264,29 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Lezioni"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Percorso"
     assert_select "h1", text: "Programma lezioni PosturaCorretta", count: 1
-    assert_select "ol[aria-label='Lezioni del programma studenti'] > li.rounded-2xl", count: 36
-    assert_select "ol[aria-label='Lezioni del programma studenti'] > li[aria-label^='Sezione']", count: 7
-    assert_select "h2", text: "Inizia con PosturaCorretta"
-    assert_select "h2", text: "Postura e Fisiologia"
-    assert_select "h2", text: "Igiene Posturale · Punti di tensione"
-    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'igiene-posturale', capitolo: 'punti-di-tensione')}']", count: 0
-    assert_select "span", text: /Punti di tensione/
+    assert_select "nav[aria-label='Corsi del programma lezioni']"
+    assert_select "div[aria-label='Corso introduttivo']", count: 1
+    assert_select "section[aria-labelledby^='lesson-section-']", count: 5
+    assert_select "a[aria-current='step'][aria-label^='1. Introduzione a PosturaCorretta']", count: 1
+    assert_select "a[aria-label*='non ancora disponibile']", minimum: 1
+    assert_select "h2", text: "Introduzione a PosturaCorretta", count: 1
+    assert_select "ol[aria-label='Lezioni di Introduzione a PosturaCorretta'] > li", count: 2
     assert_includes response.body, "Prima scheda esercizi e video"
-    assert_includes response.body, "Disponibile dal"
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'inizia-con-posturacorretta', capitolo: 'prima-scheda-esercizi-video')}']", count: 1
+    assert_select "section[aria-label='Percorso insegnante del corso selezionato']", count: 0
     assert_select "a", text: "Apri il corso online", count: 0
     assert_select "aside[aria-label='Sorgenti YAML del programma']", count: 0
+
+    get posturacorretta_student_dashboard_path(corso: "igiene-posturale", participation: "group")
+
+    assert_response :success
+    assert_select "a[aria-current='step'][aria-label^='2. Igiene Posturale']", count: 1
+    assert_select "h2", text: "Igiene Posturale", count: 1
+    assert_select "ol[aria-label='Lezioni di Igiene Posturale'] > li", count: 4
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'igiene-posturale', capitolo: 'punti-di-tensione')}']", count: 0
+    assert_includes response.body, "Punti di tensione"
+    assert_includes response.body, "Disponibile dal"
+    assert_select "section[aria-label='Percorso insegnante del corso selezionato']", count: 0
 
     other_domain = Domain.find_or_create_by!(hostname: "agenda-esterna.test") do |domain|
       domain.target_controller = "brands/impegno/home"
@@ -295,6 +307,18 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       pricing_type: "none",
       contribution_type: "unpaid"
     )
+    experience = DataExperience.create!(created_by_user: user, title: "Percorso ancora da programmare")
+    DataCommitment.create!(
+      profile: profile,
+      created_by_profile: profile,
+      domain: other_domain,
+      data_experience: experience,
+      title: "Incontro senza data",
+      kind: "personal",
+      status: "draft",
+      pricing_type: "none",
+      contribution_type: "unpaid"
+    )
 
     get posturacorretta_student_appointments_path
     assert_response :success
@@ -303,6 +327,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "h3", text: "Prossimi"
     assert_select "h3", text: "Passati"
     assert_select "li.opacity-50 h4", text: "Dettaglio che resta privato"
+    assert_select "#appuntamenti-da-programmare h4", text: "Incontro senza data"
+    assert_select "#appuntamenti-da-programmare", text: /Senza data/
     assert_select "a", text: "Apri 1Impegno", count: 0
 
     get posturacorretta_student_dashboard_path(vista: "calendario")
@@ -327,6 +353,43 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "nav[aria-label='Lezioni PosturaCorretta'] a[href='#{posturacorretta_lesson_centres_path}']", text: "Centri"
     assert_select "h2", text: "Programmi attivi", count: 0
+  end
+
+  test "lesson program keeps lessons and sheets separate from the online chapter tree" do
+    program = YAML.safe_load_file(
+      Rails.root.join("config/data/posturacorretta/programmi/programma_lezioni_posturacorretta.yml"),
+      permitted_classes: [],
+      aliases: false
+    ).fetch("program")
+    courses = program.fetch("courses") + program.fetch("sections").flat_map { |section| section.fetch("courses", []) }
+    lessons = courses.flat_map { |course| course.fetch("lessons") }
+    teacher_lessons = courses.flat_map { |course| course.dig("teacher_path", "lessons") || [] }
+
+    assert_equal 7, courses.size
+    assert_equal 36, lessons.size
+    assert_equal 40, lessons.sum { |lesson| lesson.fetch("sheets").size }
+    assert_equal 19, teacher_lessons.size
+    assert_not program.key?("lessons")
+    assert_equal ["introduzione-a-posturacorretta"], program.fetch("courses").pluck("key")
+    assert lessons.all? { |lesson| lesson.fetch("sheets").all? { |sheet| sheet.key?("chapter_key") } }
+    assert lessons.none? { |lesson| lesson.key?("theory_chapter") || lesson.key?("additional_chapters") }
+    assert courses.none? { |course| course.dig("teacher_path", "requirements").present? }
+  end
+
+  test "shows the teacher path only after official activation" do
+    superadmin = create_test_user("posturacorretta-lessons-admin@example.com")
+    superadmin.update!(superadmin: true, active_role: :superadmin)
+    sign_in(superadmin)
+
+    get posturacorretta_student_dashboard_path(corso: "igiene-posturale")
+
+    assert_response :success
+    assert_select "section[aria-label='Percorso insegnante del corso selezionato']", count: 1
+    assert_select "h3", text: "Tirocinio · Igiene Posturale"
+    assert_select "ol[aria-label='Lezioni di tirocinio'] > li", count: 5
+    assert_select "aside[aria-label='Sorgenti YAML del programma']", count: 1
+    assert_select "a", text: "Percorso online · Section → Course → Chapter"
+    assert_select "a", text: "Programma lezioni · Course + Section → Course → Lesson → Schede"
   end
 
   test "shows the teacher dashboard frontend preview" do

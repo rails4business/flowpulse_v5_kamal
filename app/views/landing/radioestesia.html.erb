@@ -2,26 +2,7 @@
 <% content_for :head do %><meta name="robots" content="noindex,nofollow"><% end %>
 
 <main class="min-h-screen bg-[#fbfaf7] text-[#27342d]">
-  <header class="border-b border-[#d8dfd4] bg-[#f3f5ef]">
-    <div class="mx-auto flex max-w-6xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
-      <a href="<%= radioestesia_path %>" class="flex items-center gap-3" aria-label="Armonia, home">
-        <img src="<%= @radioestesia.dig('site', 'logo_url') %>" alt="Logo Armonia" class="size-12 rounded-full object-cover" referrerpolicy="no-referrer">
-        <span><span class="block font-serif text-2xl italic leading-none text-[#53654b]"><%= @radioestesia.dig('site', 'name') %></span><span class="mt-1 block text-[10px] font-bold uppercase tracking-[.13em] text-[#738069]"><%= @radioestesia.dig('site', 'tagline') %></span></span>
-      </a>
-      <nav class="hidden items-center gap-5 text-sm font-semibold text-[#4a594d] md:flex" aria-label="Navigazione Radiestesia">
-        <% @radioestesia.fetch('navigation').each do |item| %>
-          <% target = item.fetch('key') == 'home' ? radioestesia_path : radioestesia_page_path(item.fetch('key')) %>
-          <a href="<%= target %>" class="border-b-2 pb-1 <%= @radioestesia_page == item.fetch('key') ? 'border-[#7b946d]' : 'border-transparent hover:border-[#b8c7ad]' %>" style="color: <%= @radioestesia_page == item.fetch('key') ? '#2d412e' : '#4a594d' %>"><%= item.fetch('label') %></a>
-        <% end %>
-      </nav>
-    </div>
-    <nav class="flex gap-4 overflow-x-auto border-t border-[#dde3d9] px-5 py-3 text-sm font-semibold text-[#4a594d] md:hidden" aria-label="Navigazione mobile Radiestesia">
-      <% @radioestesia.fetch('navigation').each do |item| %>
-        <% target = item.fetch('key') == 'home' ? radioestesia_path : radioestesia_page_path(item.fetch('key')) %>
-        <a class="shrink-0" style="color: <%= @radioestesia_page == item.fetch('key') ? '#315035' : '#4a594d' %>" href="<%= target %>"><%= item.fetch('label') %></a>
-      <% end %>
-    </nav>
-  </header>
+  <%= render "landing/radioestesia_nav", active: @radioestesia_page, radioestesia: @radioestesia %>
 
   <% unless @radioestesia_page == 'contenuti' %>
     <section class="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[1.15fr_.85fr] lg:py-24">

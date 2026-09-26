@@ -4,8 +4,8 @@
   <header class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
     <div>
       <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Superadmin</p>
-      <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-950">Brand e progetti</h1>
-      <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Qui compaiono soltanto i brand che hanno almeno un dominio. Progetti, figli e nodi ponte restano nella scheda del brand.</p>
+      <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-950"><%= @active_tab == "building" ? "Brand in costruzione" : "Brand e progetti" %></h1>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"><%= @active_tab == "building" ? "Node professionali e progetti ancora in preparazione, prima dell’attivazione del proprio dominio." : "Qui compaiono soltanto i brand che hanno almeno un dominio. Progetti, figli e nodi ponte restano nella scheda del brand." %></p>
     </div>
     <% if @active_tab == "domains" %>
       <div class="flex flex-wrap gap-2">
@@ -18,6 +18,7 @@
   <nav class="mb-6 flex gap-1 border-b border-slate-200" aria-label="Amministrazione struttura">
     <%= link_to "Dashboard", admin_dashboard_path, class: "border-b-2 border-transparent px-4 py-3 text-sm font-extrabold text-slate-500 hover:text-slate-800" %>
     <%= link_to "Brand", admin_brands_path, class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'brands' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
+    <%= link_to "In costruzione", admin_brands_path(tab: "building"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'building' ? 'border-amber-600 text-amber-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
     <%= link_to "Domini", admin_brands_path(tab: "domains"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'domains' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
   </nav>
 
@@ -56,7 +57,13 @@
               </td>
               <td class="hidden px-4 py-4 text-slate-600 lg:table-cell"><%= brand.role_assignment&.display_name || "—" %></td>
               <td class="hidden px-4 py-4 sm:table-cell"><span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600"><%= brand.status %></span></td>
-              <td class="px-4 py-4 text-right"><%= link_to "Apri", admin_brand_path(brand), class: "font-bold text-blue-700 hover:text-blue-500" %></td>
+              <td class="px-4 py-4 text-right">
+                <div class="flex flex-wrap justify-end gap-3">
+                  <% preview = @brand_previews&.fetch(brand.slug, nil) %>
+                  <% if preview %><%= link_to preview.fetch("preview_label", "Anteprima"), preview.fetch("preview_path"), target: "_blank", rel: "noopener", class: "font-bold text-amber-700 hover:text-amber-500" %><% end %>
+                  <%= link_to "Apri scheda", admin_brand_path(brand), class: "font-bold text-blue-700 hover:text-blue-500" %>
+                </div>
+              </td>
             </tr>
           <% end %>
         </tbody>

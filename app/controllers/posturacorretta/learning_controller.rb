@@ -496,30 +496,46 @@ module Posturacorretta
   def load_student_lessons_program
     program = YAML.safe_load_file(LESSON_PROGRAM_PATH, permitted_classes: [], aliases: false).fetch("program")
     @student_lessons_program_title = program.fetch("title")
-    stages = program.fetch("stages", [])
-    @student_internship_stages = stages.select { |stage| stage.dig("internship", "visibility") == "trainee" } if posturacorretta_trainee?
-    sheet_type = program.fetch("sheet_type", "practical")
-    # L'unità del programma è la lezione: dopo le prime due introduzioni,
-    # ciascuna riga corrisponde a un singolo capitolo/scheda, non al corso
-    # intero. Il corso resta come contesto editoriale della scheda.
-    @student_lessons_program = program.fetch("lessons").map do |lesson|
-      chapter_links = [lesson["theory_chapter"], *lesson.fetch("additional_chapters", [])].compact.map do |chapter|
-        chapter.merge(
-          "chapter_type" => sheet_type,
-          "path" => posturacorretta_course_chapter_path(
-            corso: chapter.fetch("course_key"),
-            capitolo: chapter.fetch("chapter_key")
+    @student_teacher_path_active = posturacorretta_trainee?
+
+    decorate_course = lambda do |course|
+      release_at = @course_release_schedule[course.fetch("key")]
+      course.merge(
+        "lessons" => course.fetch("lessons", []).map do |lesson|
+          lesson.merge(
+            "sheets" => lesson.fetch("sheets", []).map do |sheet|
+              sheet.merge(
+                "path" => posturacorretta_course_chapter_path(
+                  corso: sheet.fetch("course_key"),
+                  capitolo: sheet.fetch("chapter_key")
+                )
+              )
+            end
           )
-        )
-      end
-      release_at = @course_release_schedule[lesson.dig("course", "key")]
-      lesson.merge(
-        "stage" => stages.find { |stage| stage.fetch("lesson_numbers", []).include?(lesson.fetch("number")) },
-        "chapter_links" => chapter_links,
+        end,
         "release_at" => release_at&.iso8601,
         "release_locked" => release_at.present? && release_at > Time.current
       )
     end
+
+    @student_lesson_root_courses = program.fetch("courses", []).map { |course| decorate_course.call(course) }
+    @student_lesson_sections = program.fetch("sections").map do |section|
+      section.merge(
+        "courses" => section.fetch("courses", []).map { |course| decorate_course.call(course) }
+      )
+    end
+
+    @student_lesson_courses = @student_lesson_root_courses + @student_lesson_sections.flat_map { |section| section.fetch("courses") }
+    requested_course = params[:corso].presence_in(@student_lesson_courses.map { |course| course.fetch("key") })
+    released_courses = @student_lesson_courses.reject { |course| course.fetch("release_locked") }
+    selected_key = requested_course || released_courses.last&.fetch("key") || @student_lesson_courses.first&.fetch("key")
+    @selected_student_course = @student_lesson_courses.find { |course| course.fetch("key") == selected_key }
+    @selected_student_section = @student_lesson_sections.find do |section|
+      section.fetch("courses").any? { |course| course.fetch("key") == selected_key }
+    end
+
+    # Compatibilità temporanea per le viste che leggono ancora l'elenco piatto.
+    @student_lessons_program = @student_lesson_courses.flat_map { |course| course.fetch("lessons") }
   end
 
   def posturacorretta_trainee?
@@ -585,7 +601,10 @@ module Posturacorretta
       }
     end
 
-    @dashboard_agenda_entries = (scheduled_lessons + commitment_entries).sort_by { |entry| entry.fetch(:starts_at) }
+    @dashboard_agenda_unscheduled = commitment_entries.select { |entry| entry[:starts_at].blank? }
+    @dashboard_agenda_entries = (scheduled_lessons + commitment_entries)
+      .select { |entry| entry[:starts_at].present? }
+      .sort_by { |entry| entry.fetch(:starts_at) }
     @dashboard_agenda_upcoming = @dashboard_agenda_entries.select { |entry| entry.fetch(:starts_at) >= Time.current }
     @dashboard_agenda_past = @dashboard_agenda_entries.select { |entry| entry.fetch(:starts_at) < Time.current }.reverse
   end

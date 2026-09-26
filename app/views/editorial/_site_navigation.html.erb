@@ -1,11 +1,13 @@
 <% navigation = site.fetch("navigation", {}) %>
 <% navigation_items = Array(navigation["items"]) %>
+<% home_url = local_assigns[:home_url] %>
+<% home_anchor = ->(anchor) { home_url.present? ? "#{home_url}##{anchor}" : "##{anchor}" } %>
 <nav class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur" aria-label="Navigazione principale">
   <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-    <a href="#inizio" class="text-sm font-black uppercase tracking-[0.2em] text-amber-700"><%= navigation.fetch("label", site.fetch("key")) %></a>
+    <a href="<%= home_anchor.call("inizio") %>" class="text-sm font-black uppercase tracking-[0.2em] text-amber-700"><%= navigation.fetch("label", site.fetch("key")) %></a>
     <div class="editorial-desktop-nav items-center gap-4 text-sm font-semibold text-slate-600">
       <% navigation_items.each do |item| %>
-        <% href = item["anchor"].present? ? "##{item['anchor']}" : item.fetch("route", "#") %>
+        <% href = item["anchor"].present? ? home_anchor.call(item["anchor"]) : item.fetch("route", "#") %>
         <a href="<%= href %>" class="hover:text-slate-950"><%= item.fetch("label") %></a>
       <% end %>
     </div>
@@ -15,7 +17,7 @@
       </summary>
       <div class="absolute right-0 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white py-2 shadow-lg">
         <% navigation_items.each do |item| %>
-          <% href = item["anchor"].present? ? "##{item['anchor']}" : item.fetch("route", "#") %>
+          <% href = item["anchor"].present? ? home_anchor.call(item["anchor"]) : item.fetch("route", "#") %>
           <a href="<%= href %>" class="block px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-950"><%= item.fetch("label") %></a>
         <% end %>
       </div>

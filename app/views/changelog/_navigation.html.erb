@@ -1,3 +1,26 @@
+<% if changelog_brand.fetch("key") == "radioestesia" %>
+  <%= render "landing/radioestesia_nav", active: "changelog", radioestesia: @radioestesia %>
+<% elsif changelog_brand.fetch("key") == "flowpulse" %>
+  <%= render "landing/flowpulse_nav" %>
+<% elsif changelog_brand.fetch("key") == "rails4business" %>
+  <%= render "landing/rails4b_nav", active: :changelog %>
+<% elsif changelog_brand.fetch("key") == "generaimpresa" %>
+  <%= render "brands/genera_impresa/header" %>
+<% elsif changelog_brand.fetch("key") == "impegno" %>
+  <%= render "brands/impegno/header" %>
+<% elsif changelog_brand.fetch("key") == "percorso-integrato" %>
+  <%= render "brands/percorso_integrato/header" %>
+<% elsif changelog_brand.fetch("key") == "posturacorretta" %>
+  <%= render "posturacorretta/header" %>
+<% elsif changelog_brand.fetch("key") == "markpostura" %>
+  <%= render "editorial/site_navigation", site: @markpostura_site, home_url: changelog_brand.fetch("home_url") %>
+<% elsif changelog_brand.fetch("key") == "ilgiardinodelcorpo" %>
+  <%= render "landing/giardino_del_corpo_nav", home_url: changelog_brand.fetch("home_url") %>
+<% elsif changelog_brand.fetch("key") == "cantachetipassa" %>
+  <%= render "landing/cantachetipassa_nav", home_url: changelog_brand.fetch("home_url") %>
+<% elsif changelog_brand.fetch("key") == "igieneposturale" %>
+  <%= render "landing/igieneposturale_nav", home_url: changelog_brand.fetch("home_url") %>
+<% else %>
 <nav class="border-b border-slate-200 bg-white" aria-label="Navigazione changelog">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
     <%= link_to changelog_brand.fetch("label"), changelog_brand.fetch("home_url"), class: "min-w-0 truncate text-sm font-black tracking-tight text-slate-950 hover:text-blue-700" %>
@@ -11,3 +34,4 @@
     </div>
   </div>
 </nav>
+<% end %>

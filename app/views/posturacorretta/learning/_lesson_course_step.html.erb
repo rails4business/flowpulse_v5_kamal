@@ -1,0 +1,19 @@
+<% selected = course.fetch("key") == @selected_student_course&.fetch("key") %>
+<% locked = course.fetch("release_locked") %>
+<%= link_to posturacorretta_student_dashboard_path(corso: course.fetch("key"), participation: @selected_participation),
+            class: "pc-course-step#{selected ? ' is-active' : ''}#{locked ? ' is-locked' : ''}",
+            aria: { current: (selected ? "step" : nil), label: "#{course_number}. #{course.fetch('title')}#{locked ? ', non ancora disponibile' : ''}" } do %>
+  <span class="pc-course-card">
+    <% if locked %>
+      <svg class="pc-course-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/>
+      </svg>
+    <% else %>
+      <svg class="pc-course-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
+      </svg>
+    <% end %>
+    <span class="pc-course-name"><%= course.fetch("title") %></span>
+  </span>
+  <span class="pc-course-node"><%= course_number %></span>
+<% end %>

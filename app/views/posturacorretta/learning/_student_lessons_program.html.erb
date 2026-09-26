@@ -1,97 +1,122 @@
-<section class="mx-auto max-w-4xl" aria-labelledby="programma-lezioni-title">
+<section class="pc-lessons-program mx-auto w-full min-w-0 max-w-4xl" aria-labelledby="programma-lezioni-title">
   <%= render "posturacorretta/lessons_page_intro",
              active: :program,
              title: @student_lessons_program_title,
-             description: "Un percorso pratico per conoscere il corpo, muoverti con più consapevolezza e costruire abitudini che restano. Puoi iniziare in gruppo o individualmente." %>
+             description: "Ogni corso raccoglie le lezioni da svolgere con un insegnante. Ogni lezione contiene le sue schede pratiche, collegate al percorso online." %>
 
-  <ol class="mt-6 space-y-3" aria-label="Lezioni del programma studenti">
-    <% previous_stage_key = nil %>
-    <% @student_lessons_program.each do |lesson| %>
-      <% stage_key = lesson.dig("stage", "key") %>
-      <% stage_changed = stage_key.present? && stage_key != previous_stage_key %>
-      <% if stage_changed %>
-        <li class="py-3 first:pt-0" aria-label="Sezione <%= lesson.dig("stage", "title") %>">
-          <div class="flex items-center gap-3">
-            <span class="h-px flex-1 bg-blue-200"></span>
-            <div class="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-center">
-              <p class="text-sm font-bold text-slate-950"><%= lesson.dig("stage", "title") %></p>
-            </div>
-            <span class="h-px flex-1 bg-blue-200"></span>
-          </div>
-          <% if lesson.dig("stage", "description").present? %><p class="mx-auto mt-2 max-w-xl text-center text-sm text-slate-500"><%= lesson.dig("stage", "description") %></p><% end %>
-        </li>
-      <% end %>
-      <li class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-        <div class="flex gap-4">
-          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-blue-700 text-sm font-black text-white"><%= lesson.fetch("number") %></span>
-          <div class="min-w-0 flex-1">
-            <p class="text-[11px] font-bold uppercase tracking-[.13em] text-slate-500"><%= lesson.dig("course", "title") || "Programma" %></p>
-            <h2 class="mt-0.5 text-lg font-bold text-slate-950"><%= lesson.fetch("title") %></h2>
-            <% if lesson.fetch("release_locked", false) %><p class="mt-1 text-xs font-bold text-slate-500">🔒 Disponibile dal <%= l(Time.zone.parse(lesson.fetch("release_at")).to_date, format: :long) %></p><% end %>
+  <nav class="pc-lesson-stepper" aria-label="Corsi del programma lezioni">
+    <div class="pc-lesson-stepper-track">
+      <span class="pc-lesson-stepper-line" aria-hidden="true"></span>
+      <% course_number = 0 %>
 
-            <% if lesson.fetch("items", []).any? %>
-              <ul class="mt-3 space-y-1.5 text-sm leading-6 text-slate-700">
-                <% lesson.fetch("items").each do |item| %>
-                  <li class="flex gap-2"><span class="mt-2 size-1.5 shrink-0 rounded-full bg-blue-500"></span><span><%= item %></span></li>
-                <% end %>
-              </ul>
-            <% end %>
-
-            <% if lesson.fetch("chapter_links", []).any? %>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <% lesson.fetch("chapter_links").each do |chapter| %>
-                  <% practical = chapter.fetch("chapter_type", "theory") == "practical" %>
-                  <% if lesson.fetch("release_locked", false) %>
-                    <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-400"><span aria-hidden="true">🔒</span><%= chapter.fetch("title") %></span>
-                  <% else %>
-                    <%= link_to chapter.fetch("path"), class: "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold transition #{practical ? 'border-red-200 bg-red-50 text-red-800 hover:bg-red-100' : 'border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100'}" do %>
-                      <span aria-hidden="true"><%= practical ? "◆" : "▤" %></span>
-                      <span><%= chapter.fetch("title") %></span>
-                    <% end %>
-                  <% end %>
-                <% end %>
-              </div>
-            <% end %>
-
-            <% if lesson.fetch("practical_chapters", []).any? %>
-              <div class="mt-3 flex flex-wrap gap-2" aria-label="Schede pratiche">
-                <% lesson.fetch("practical_chapters").each do |sheet| %>
-                  <span class="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-800"><span aria-hidden="true">◆</span><%= sheet.fetch("title", sheet.fetch("area").humanize) %></span>
-                <% end %>
-              </div>
+      <% if @student_lesson_root_courses.any? %>
+        <div class="pc-course-standalone" aria-label="Corso introduttivo">
+          <div class="pc-course-steps">
+            <% @student_lesson_root_courses.each do |course| %>
+              <% course_number += 1 %>
+              <%= render "posturacorretta/learning/lesson_course_step", course: course, course_number: course_number %>
             <% end %>
           </div>
         </div>
-      </li>
-      <% previous_stage_key = stage_key %>
-    <% end %>
-  </ol>
+      <% end %>
 
-  <% if @student_internship_stages.present? %>
-    <aside class="mt-8 rounded-2xl border border-violet-200 bg-violet-50 p-5" aria-label="Tirocinio insegnanti">
-      <p class="text-xs font-black uppercase tracking-[.14em] text-violet-800">Riservato tirocinanti</p>
-      <h2 class="mt-1 text-xl font-bold text-slate-950">Tirocinio e abilitazioni progressive</h2>
-      <div class="mt-4 space-y-4">
-        <% @student_internship_stages.each do |stage| %>
-          <section class="rounded-xl border border-violet-100 bg-white p-4">
-            <h3 class="font-bold text-slate-950"><%= stage.fetch("title") %></h3>
-            <% if stage["qualification"].present? %><p class="mt-1 text-sm font-semibold text-violet-800"><%= stage.fetch("qualification") %></p><% end %>
-            <% if stage.dig("internship", "requirements").present? %><ul class="mt-2 space-y-1 text-sm leading-6 text-slate-700"><% stage.dig("internship", "requirements").each do |requirement| %><li>• <%= requirement %></li><% end %></ul><% else %><p class="mt-1 text-sm text-slate-600">Requisiti di tirocinio da definire con il responsabile del percorso.</p><% end %>
-          </section>
+      <% @student_lesson_sections.each do |section| %>
+        <section class="pc-course-section" data-color="<%= section.fetch("color", "blue") %>" aria-labelledby="lesson-section-<%= section.fetch("key") %>">
+          <p id="lesson-section-<%= section.fetch("key") %>" class="pc-course-section-title"><%= section.fetch("title") %></p>
+          <div class="pc-course-steps">
+            <% if section.fetch("courses").any? %>
+              <% section.fetch("courses").each do |course| %>
+                <% course_number += 1 %>
+                <%= render "posturacorretta/learning/lesson_course_step", course: course, course_number: course_number %>
+              <% end %>
+            <% else %>
+              <div class="pc-course-empty"><span aria-hidden="true">＋</span><span>In preparazione</span></div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+  </nav>
+
+  <% if @selected_student_course.present? %>
+    <% locked = @selected_student_course.fetch("release_locked") %>
+    <section class="pc-selected-course" aria-labelledby="selected-course-title">
+      <header class="pc-selected-course-header">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.13em] text-blue-700"><%= @selected_student_section&.fetch("title") || "Corso introduttivo" %></p>
+          <h2 id="selected-course-title" class="mt-1 text-2xl font-bold tracking-tight text-slate-950"><%= @selected_student_course.fetch("title") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= pluralize(@selected_student_course.fetch("lessons").size, "lezione", "lezioni") %> · ogni lezione contiene una o più schede</p>
+        </div>
+        <% if locked && @selected_student_course["release_at"].present? %>
+          <span class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">Disponibile dal <%= Time.zone.parse(@selected_student_course.fetch("release_at")).strftime("%d/%m/%Y") %></span>
+        <% else %>
+          <span class="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-800">Disponibile</span>
         <% end %>
-      </div>
-    </aside>
+      </header>
+
+      <ol class="pc-lesson-list" aria-label="Lezioni di <%= @selected_student_course.fetch("title") %>">
+        <% @selected_student_course.fetch("lessons").each do |lesson| %>
+          <li>
+            <details class="pc-lesson-card" <%= "open" if @selected_student_course.fetch("lessons").one? %>>
+              <summary class="pc-lesson-summary">
+                <span class="pc-lesson-number"><%= lesson.fetch("number") %></span>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-sm font-bold text-slate-950"><%= lesson.fetch("title") %></span>
+                  <span class="mt-0.5 block text-xs text-slate-500"><%= pluralize(lesson.fetch("sheets").size, "scheda", "schede") %></span>
+                </span>
+                <span class="pc-lesson-chevron" aria-hidden="true">›</span>
+              </summary>
+
+              <div class="pc-lesson-sheets">
+                <p class="text-[10px] font-black uppercase tracking-[.13em] text-red-700">Schede della lezione</p>
+                <ul class="mt-2 space-y-1.5">
+                  <% lesson.fetch("sheets").each do |sheet| %>
+                    <li>
+                      <% if locked %>
+                        <span class="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-400"><span aria-hidden="true">◆</span><%= sheet.fetch("title") %></span>
+                      <% else %>
+                        <%= link_to sheet.fetch("path"), class: "flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm font-semibold text-red-900 transition hover:bg-red-100" do %>
+                          <span aria-hidden="true">◆</span><span><%= sheet.fetch("title") %></span>
+                        <% end %>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            </details>
+          </li>
+        <% end %>
+      </ol>
+
+      <% teacher_path = @selected_student_course["teacher_path"] %>
+      <% if @student_teacher_path_active && teacher_path.present? %>
+        <section class="pc-teacher-path" aria-label="Percorso insegnante del corso selezionato">
+          <p class="text-xs font-black uppercase tracking-[.14em] text-violet-800">Riservato al percorso insegnante</p>
+          <h3 class="mt-1 text-lg font-bold text-slate-950"><%= teacher_path.fetch("title") %></h3>
+          <ol class="pc-teacher-lesson-list" aria-label="Lezioni di tirocinio">
+            <% teacher_path.fetch("lessons", []).each_with_index do |lesson, index| %>
+              <li class="pc-teacher-lesson">
+                <span class="pc-lesson-number">T<%= index + 1 %></span>
+                <span class="min-w-0 flex-1 text-sm font-bold text-slate-800"><%= lesson.fetch("title") %></span>
+                <span class="text-xs font-semibold text-violet-700">Da completare</span>
+              </li>
+            <% end %>
+          </ol>
+          <% if @selected_student_course["qualification"].present? %>
+            <p class="mt-3 rounded-xl border border-violet-100 bg-violet-50 px-3 py-2 text-sm font-semibold text-violet-900"><%= @selected_student_course.fetch("qualification") %></p>
+          <% end %>
+        </section>
+      <% end %>
+    </section>
   <% end %>
 
   <% if Current.user&.superadmin_user? %>
     <aside class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5" aria-label="Sorgenti YAML del programma">
       <p class="text-xs font-black uppercase tracking-[.14em] text-amber-800">Solo superadmin</p>
-      <h2 class="mt-1 text-base font-bold text-slate-950">File che costruiscono percorso e lezioni</h2>
+      <h2 class="mt-1 text-base font-bold text-slate-950">Le due fonti didattiche</h2>
       <div class="mt-3 flex flex-col gap-2 text-sm">
-        <%= link_to "Percorso · percorso.yml", admin_didactic_source_path(path: "contenuti/percorso.yml"), class: "font-bold text-blue-800 hover:underline" %>
-        <%= link_to "Corsi e capitoli · contents.yml", admin_didactic_source_path(path: "contenuti/contents.yml"), class: "font-bold text-blue-800 hover:underline" %>
-        <%= link_to "Programma lezioni · programma_lezioni_posturacorretta.yml", admin_didactic_source_path(path: "programmi/programma_lezioni_posturacorretta.yml"), class: "font-bold text-blue-800 hover:underline" %>
-        <%= link_to "Calendario di gruppo · calendario_lezioni_gruppo.yml", admin_didactic_source_path(path: "programmi/calendario_lezioni_gruppo.yml"), class: "font-bold text-blue-800 hover:underline" %>
+        <%= link_to "Percorso online · Section → Course → Chapter", admin_didactic_source_path(path: "contenuti/percorso.yml"), class: "font-bold text-blue-800 hover:underline" %>
+        <%= link_to "Programma lezioni · Course + Section → Course → Lesson → Schede", admin_didactic_source_path(path: "programmi/programma_lezioni_posturacorretta.yml"), class: "font-bold text-blue-800 hover:underline" %>
       </div>
     </aside>
   <% end %>

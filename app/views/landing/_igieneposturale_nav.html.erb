@@ -1,0 +1,10 @@
+<% home_url = local_assigns.fetch(:home_url, igieneposturale_path) %>
+<nav class="border-b border-slate-200 bg-white" aria-label="Navigazione Igiene Posturale">
+  <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+    <%= link_to "Igiene Posturale", home_url, class: "text-sm font-black tracking-tight text-slate-950 hover:text-blue-700" %>
+    <div class="flex items-center gap-1 text-sm font-bold">
+      <%= link_to "PosturaCorretta", posturacorretta_path, class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-blue-700" %>
+      <%= link_to "Corso", posturacorretta_course_path("igiene-posturale"), class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-blue-700" %>
+    </div>
+  </div>
+</nav>
