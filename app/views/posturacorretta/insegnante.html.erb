@@ -112,12 +112,25 @@
                       <thead class="text-xs font-black uppercase tracking-[.12em] text-slate-500"><tr><th class="px-5 py-3">Lezione</th><th class="px-5 py-3">Data</th><th class="px-5 py-3">Insegnante</th><% if @teacher_training_professional_access %><th class="px-5 py-3">Tirocinio</th><% end %></tr></thead>
                       <tbody class="divide-y divide-slate-100">
                         <% course.fetch("lessons", []).each do |lesson| %>
-                          <% chapter = lesson.fetch("theory_chapter") %>
-                          <tr><td class="px-5 py-3"><%= link_to "#{lesson.fetch("number")}. #{lesson.fetch("title")}", posturacorretta_course_chapter_path(chapter.fetch("course_key"), chapter.fetch("chapter_key")), class: "font-semibold text-blue-700 hover:text-blue-900 hover:underline" %></td><td class="px-5 py-3 text-slate-600"><%= course["date"] %></td><td class="px-5 py-3 text-slate-600"><%= course.fetch("teacher_name") %></td><% if @teacher_training_professional_access %><td class="px-5 py-3"></td><% end %></tr>
+                          <% chapter = lesson["theory_chapter"] || Array(lesson["sheets"]).first %>
+                          <tr>
+                            <td class="px-5 py-3">
+                              <% lesson_label = "#{lesson.fetch("number")}. #{lesson.fetch("title")}" %>
+                              <% if chapter&.fetch("course_key", nil).present? && chapter&.fetch("chapter_key", nil).present? %>
+                                <%= link_to lesson_label, posturacorretta_course_chapter_path(chapter.fetch("course_key"), chapter.fetch("chapter_key")), class: "font-semibold text-blue-700 hover:text-blue-900 hover:underline" %>
+                              <% else %>
+                                <span class="font-semibold text-slate-900"><%= lesson_label %></span>
+                              <% end %>
+                            </td>
+                            <td class="px-5 py-3 text-slate-600"><%= Array(course["dates"]).presence&.join(" · ") || "—" %></td>
+                            <td class="px-5 py-3 text-slate-600"><%= course.fetch("teacher_name") %></td>
+                            <% if @teacher_training_professional_access %><td class="px-5 py-3"></td><% end %>
+                          </tr>
                         <% end %>
                         <% if @teacher_training_professional_access %>
                           <% course.fetch("internship", []).each do |requirement| %>
-                            <tr class="bg-blue-50/50" data-teacher-internship><td class="px-5 py-3 font-semibold text-blue-950">Tirocinio · <%= requirement %></td><td class="px-5 py-3 text-slate-600"></td><td class="px-5 py-3 text-slate-600"><%= course.fetch("teacher_name") %></td><td class="px-5 py-3"></td></tr>
+                            <% requirement_title = requirement.is_a?(Hash) ? requirement.fetch("title") : requirement %>
+                            <tr class="bg-blue-50/50" data-teacher-internship><td class="px-5 py-3 font-semibold text-blue-950">Tirocinio · <%= requirement_title %></td><td class="px-5 py-3 text-slate-600"></td><td class="px-5 py-3 text-slate-600"><%= course.fetch("teacher_name") %></td><td class="px-5 py-3"></td></tr>
                           <% end %>
                         <% end %>
                       </tbody>

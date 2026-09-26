@@ -81,8 +81,10 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{posturacorretta_metodica_path("osteopatia")}']", text: "Osteopatia"
     assert_select "h3", text: "Fondamenti"
     assert_select "h3", text: "Recupero"
-    assert_select "table[aria-label='Inizia con PosturaCorretta'] th", text: "Insegnante"
-    assert_select "table[aria-label='Inizia con PosturaCorretta'] td", text: "Mark Postura"
+    assert_select "table[aria-label='Introduzione a PosturaCorretta'] th", text: "Insegnante"
+    assert_select "table[aria-label='Introduzione a PosturaCorretta'] td", text: "Mark Postura"
+    assert_select "table[aria-label='Introduzione a PosturaCorretta'] td", text: /1\. Inizia con PosturaCorretta/
+    assert_select "table[aria-label='Introduzione a PosturaCorretta'] td", text: /2\. Postura e Fisiologia/
     assert_select "table[aria-label='Principi di Fisioterapia']"
     assert_select "table[aria-label='Biomeccanica comportamentale (GDS)']"
     assert_select "table[aria-label='Principi di Osteopatia']"
@@ -152,7 +154,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_insegnante_path("markpostura", tab: "training")
     assert_select "[data-teacher-internship]", minimum: 1
-    assert_includes response.body, "Condurre una lezione individuale con un paziente, con supervisione."
+    assert_includes response.body, "Svolgere una pratica in compresenza con una persona."
   end
 
   test "renders professional collaboration guides from markdown" do

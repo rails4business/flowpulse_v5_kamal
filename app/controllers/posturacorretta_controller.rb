@@ -331,18 +331,21 @@ class PosturacorrettaController < ApplicationController
     training = teacher.fetch("teacher_training", {})
     program_path = Rails.root.join("config/data/posturacorretta/programmi/programma_lezioni_posturacorretta.yml")
     program = program_path.file? ? YAML.safe_load_file(program_path, permitted_classes: [], aliases: false).to_h.dig("program") || {} : {}
-    lessons_by_course = Array(program["lessons"]).group_by { |lesson| lesson.dig("course", "key") }
+    program_courses = Array(program["courses"]) + Array(program["sections"]).flat_map { |section| Array(section["courses"]) }
+    courses_by_key = program_courses.index_by { |course| course.fetch("key") }
 
     training.merge(
       "sections" => Array(training["sections"]).map do |section|
         section.merge(
           "courses" => Array(section["courses"]).map do |course|
             course_key = course.fetch("course_key")
-            lessons = lessons_by_course.fetch(course_key, [])
+            program_course = courses_by_key.fetch(course_key, {})
             course_teacher = teachers[course.fetch("teacher_slug", teacher.fetch("slug"))] || teacher
+            internship_lessons = Array(program_course.dig("teacher_path", "lessons"))
             course.merge(
-              "title" => lessons.first&.dig("course", "title") || course_key.humanize,
-              "lessons" => lessons,
+              "title" => program_course["title"] || course_key.humanize,
+              "lessons" => Array(program_course["lessons"]),
+              "internship" => internship_lessons.presence || Array(course["internship"]),
               "teacher_name" => course_teacher.fetch("name")
             )
           end
