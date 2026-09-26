@@ -74,6 +74,6 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "closure_tree", "~> 9.7"
+gem "closure_tree", "~> 9.8"
 gem "acts_as_list", "~> 1.2"
 gem "redcarpet", "~> 3.6.0"
