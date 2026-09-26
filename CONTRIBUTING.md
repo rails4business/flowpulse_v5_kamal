@@ -15,12 +15,13 @@ chmod +x scripts/pre-push
 Il file deve chiamarsi esattamente `scripts/pre-push`: questo è il nome cercato
 da Git quando viene configurato `core.hooksPath`.
 
-Il hook impedisce soltanto i push diretti verso `main` e `master`. Non esegue
-`stash`, `clean`, `reset` e non modifica file locali.
+Il hook mostra un promemoria sui push diretti verso `main` e `master`, ma non
+li blocca. Non esegue `stash`, `clean`, `reset` e non modifica file locali.
 
 ## Flusso di lavoro
 
-1. Lavora in un branch dedicato.
+1. Per Dependabot e per i file critici lavora in un branch dedicato. Il lavoro
+   ordinario del proprietario può continuare sul branch principale.
 2. Non usare `git stash` o `git clean` per preparare l'integrazione.
 3. Se la cartella principale contiene lavoro non concluso, verifica la pull
    request in una `git worktree` separata.

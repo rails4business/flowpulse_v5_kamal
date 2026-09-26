@@ -84,7 +84,7 @@ devono essere aggiornate sulla nuova `main` prima di essere valutate.
 Per questo repository non usare `git stash`, `git stash -a`, `git clean` o
 comandi equivalenti come preparazione all'integrazione di una pull request.
 
-Il flusso ordinario è:
+Il flusso consigliato per le pull request Dependabot è:
 
 1. terminare e verificare il lavoro applicativo corrente;
 2. creare il relativo commit soltanto dopo approvazione esplicita;
@@ -104,6 +104,11 @@ credenziali.
 
 Non usare una pull request Dependabot per includere anche modifiche applicative
 non correlate.
+
+Il hook locale mostra soltanto un promemoria quando il proprietario esegue un
+push diretto verso `main` o `master`: non blocca il push. La richiesta di una
+pull request resta obbligatoria come regola di lavoro per Dependabot e per i
+file critici, senza impedire il normale flusso applicativo del proprietario.
 
 ## Verifiche prima di integrare una PR
 
