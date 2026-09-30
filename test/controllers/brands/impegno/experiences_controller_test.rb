@@ -11,16 +11,16 @@ module Brands
         @brand = Node.create!(title: "Experience Brand", slug: "experience-brand", parent: @professional_node, professional_owner_node: @professional_node, role_assignment: assignment)
         @calendar = ProfessionalCalendar.create!(context_node: @brand, professional_node: @professional_node, created_by_user: @user, title: "Gruppo", slug: "experience-gruppo", color: "sky")
         @service = Service.create!(node: @brand, created_by_user: @user, title: "Lezione", slug: "lezione")
-        @process = BrandProcess.create!(node: @brand, created_by_user: @user, title: "Lezioni", status: "active")
+        @process = NodeProcess.create!(node: @brand, created_by_user: @user, title: "Lezioni", status: "active")
         @domain = Domain.create!(hostname: "experience-tree.test", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true)
         post session_url, params: { email_address: @user.email_address, password: "password123" }
       end
 
       test "builds the minimal experience tree" do
-        post impegno_experiences_url, params: { data_experience: { title: "Lezioni del venerdì", description: "Gruppo", brand_process_id: @process.id } }
+        post impegno_experiences_url, params: { data_experience: { title: "Lezioni del venerdì", description: "Gruppo", node_process_id: @process.id } }
         experience = DataExperience.order(:created_at).last
         assert_redirected_to impegno_experience_url(experience)
-        assert_equal @process, experience.brand_process
+        assert_equal @process, experience.node_process
 
         post impegno_experience_sessions_url(experience), params: {
           data_session: { title: "Igiene posturale", starts_at: "2026-09-25T15:00", ends_at: "2026-09-25T16:00", professional_calendar_id: @calendar.id, service_id: @service.id, visibility: "public" }

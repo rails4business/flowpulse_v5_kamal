@@ -3,7 +3,7 @@
 <% cover_styles = ["from-blue-950 via-blue-700 to-cyan-400", "from-emerald-950 via-emerald-700 to-lime-400", "from-violet-950 via-violet-700 to-fuchsia-400", "from-slate-950 via-indigo-700 to-blue-400"] %>
 <% cover_style = cover_styles[(course_position || 0) % cover_styles.size] %>
 <% first_chapter = @course_lessons.first %>
-<% course_start_path = posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: first_chapter.fetch("slug")) if first_chapter %>
+<% course_start_path = posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: first_chapter.fetch("slug")) if first_chapter&.fetch("show_available", false) %>
 
 <main class="min-h-screen bg-slate-50" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
   <div class="border-b border-slate-200 bg-white p-4 lg:hidden">
@@ -67,16 +67,26 @@
           <p class="text-xs font-extrabold uppercase tracking-[.15em] text-indigo-700">Studio in autonomia</p>
           <h2 class="mt-1 text-2xl font-semibold text-slate-950">Corso online</h2>
           <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Testi e approfondimenti da consultare in autonomia, prima o dopo gli appuntamenti.</p>
+          <% if posturacorretta_editorial_preview? && Rails.env.development? %>
+            <div class="mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><strong>Ambiente di sviluppo.</strong> I DataCommitment creati qui restano nel database locale e non modificano la pubblicazione in produzione.</div>
+          <% end %>
           <% if @course_lessons.present? %>
             <ol class="mt-6 divide-y divide-slate-200 border-y border-slate-200">
               <% @course_lessons.each_with_index do |chapter, index| %>
                 <% practical = chapter.fetch("chapter_type", "theory") == "practical" %>
+                <% show_available = chapter.fetch("show_available", false) %>
                 <li>
-                  <%= link_to posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: chapter.fetch("slug")), class: "group grid gap-3 px-1 py-5 transition hover:bg-slate-50 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3" do %>
+                  <% chapter_body = capture do %>
                     <span class="text-[11px] font-extrabold uppercase tracking-[.12em]"><span class="text-slate-500">Capitolo <%= format("%02d", index + 1) %></span><span class="mt-1 block <%= practical ? 'text-red-700' : 'text-blue-700' %>"><%= practical ? "Pratico" : "Teorico" %></span></span>
-                    <span class="min-w-0 text-base font-bold leading-6 text-slate-900 group-hover:text-indigo-800"><%= chapter.fetch("title") %></span>
-                    <span aria-hidden="true" class="hidden text-lg text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-indigo-700 sm:block">→</span>
+                    <span class="min-w-0 text-base font-bold leading-6 <%= show_available ? 'text-slate-900 group-hover:text-indigo-800' : 'text-slate-700' %>"><%= chapter.fetch("title") %></span>
+                    <span class="text-xs font-bold <%= show_available ? 'text-emerald-700' : 'text-slate-400' %>"><%= show_available ? "Apri" : "In preparazione" %></span>
                   <% end %>
+                  <% if show_available %>
+                    <%= link_to chapter_body, posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: chapter.fetch("slug")), class: "group grid gap-3 px-1 py-5 transition hover:bg-slate-50 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3" %>
+                  <% else %>
+                    <div class="grid gap-3 px-1 py-5 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3"><%= chapter_body %></div>
+                  <% end %>
+                  <%= render "posturacorretta/learning/publication_admin_bar", chapter: chapter %>
                 </li>
               <% end %>
             </ol>

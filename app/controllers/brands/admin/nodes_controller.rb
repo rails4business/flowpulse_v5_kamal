@@ -1,14 +1,12 @@
 module Brands
   module Admin
-    class NodesController < ::Admin::BaseController
-      before_action :require_superadmin!
-      before_action :set_brand
-      before_action :set_node, only: %i[show update destroy]
+    class NodesController < BaseController
+      before_action :set_node, only: %i[show update destroy lifecycle]
 
       def index
         @active_view = params[:view] == "schema" ? "schema" : "list"
         @nodes = @brand.self_and_descendants
-          .includes(:brand_processes, :link_node)
+          .includes(:node_processes, :link_node, :node_events)
           .order(:position, :title, :id)
           .to_a
         @nodes_by_parent_id = @nodes.group_by(&:parent_id)
@@ -16,15 +14,19 @@ module Brands
       end
 
       def show
-        @processes = @node.brand_processes.order(:title)
+        @processes = @node.node_processes.order(:title)
+        @brand_development_entries = FlowpulseDevelopmentRepository.new.entries.select { |entry| entry.fetch("owner_brand") == @brand.slug }
+        @development_entries = @brand_development_entries.select { |entry| entry["node_slug"] == @node.slug }
+        @development_entries_by_slug = @brand_development_entries.index_by { |entry| entry.fetch("slug") }
         load_form_options
       end
 
       def create
-        parent = @brand.self_and_descendants.find(node_params.delete(:parent_id).presence || @brand.id)
+        parent = brand_nodes.find(node_params.delete(:parent_id).presence || @brand.id)
         node = Node.new(node_params.merge(parent: parent, role_assignment: @brand.role_assignment, node_type: :project))
 
         if node.save
+          node.node_events.create!(kind: "created", performed_by_user: Current.user)
           redirect_to brand_admin_node_path(@brand.slug, node), notice: "Nodo creato."
         else
           redirect_to brand_admin_nodes_path(@brand.slug), alert: node.errors.full_messages.to_sentence
@@ -34,12 +36,12 @@ module Brands
       def update
         attributes = node_params
         parent_id = attributes.delete(:parent_id)
-        @node.parent = @brand.self_and_descendants.where.not(id: @node.self_and_descendants.select(:id)).find(parent_id) if parent_id.present?
+        @node.parent = brand_nodes.where.not(id: @node.self_and_descendants.map(&:id)).find(parent_id) if parent_id.present?
 
         if @node.update(attributes)
           redirect_to brand_admin_node_path(@brand.slug, @node), notice: "Nodo aggiornato."
         else
-          @processes = @node.brand_processes.order(:title)
+          @processes = @node.node_processes.order(:title)
           load_form_options
           flash.now[:alert] = @node.errors.full_messages.to_sentence
           render :show, status: :unprocessable_entity
@@ -58,19 +60,49 @@ module Brands
         end
       end
 
-      private
-
-        def set_brand
-          @brand = Node.includes(:domains, :role_assignment).find_by!(slug: params[:brand_slug])
-          raise ActiveRecord::RecordNotFound, "Brand non trovato" unless @brand.brand?
+      def lifecycle
+        kind = params[:event].to_s
+        unless NodeEvent::KINDS.excluding("created").include?(kind)
+          return redirect_to brand_admin_node_path(@brand.slug, @node), alert: "Passaggio di stato non valido."
         end
 
+        event = @node.node_events.new(node_event_params.merge(kind:, performed_by_user: Current.user))
+        unless event.save
+          return redirect_to brand_admin_node_path(@brand.slug, @node), alert: event.errors.full_messages.to_sentence
+        end
+        redirect_to brand_admin_node_path(@brand.slug, @node), notice: "Stato operativo aggiornato."
+      end
+
+      def create_process
+        @node = brand_nodes.find(params[:id])
+        process_record = @node.node_processes.new(process_params.merge(created_by_user: Current.user))
+        if process_record.save
+          redirect_to brand_admin_node_path(@brand.slug, @node, anchor: "node-processes"), notice: "Processo aggiunto."
+        else
+          redirect_to brand_admin_node_path(@brand.slug, @node, anchor: "node-processes"), alert: process_record.errors.full_messages.to_sentence
+        end
+      end
+
+      private
+
         def set_node
-          @node = @brand.self_and_descendants.find(params[:id])
+          @node = brand_nodes.find(params[:id])
+        end
+
+        def brand_nodes
+          Node.where(id: @brand.self_and_descendants.map(&:id))
         end
 
         def node_params
           params.require(:node).permit(:title, :description, :parent_id, :status, :link_node_id)
+        end
+
+        def node_event_params
+          params.fetch(:node_event, {}).permit(:title, :note, :body_md, :development_entry_slug)
+        end
+
+        def process_params
+          params.require(:node_process).permit(:title, :slug, :description, :status)
         end
 
         def load_form_options

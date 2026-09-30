@@ -3,6 +3,7 @@ module Posturacorretta
   layout "landing"
   allow_unauthenticated_access
   before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher]
+  helper_method :posturacorretta_editorial_preview?, :publication_decision_time
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
   ACADEMY_PATH = Rails.root.join("config/data/posturacorretta/accademia/academy.yml").freeze
@@ -156,26 +157,10 @@ module Posturacorretta
     learning_data = YAML.safe_load_file(LEARNING_PATH, permitted_classes: [], aliases: false)
     @content_repository = Posturacorretta::ContentRepository.new(
       path: CONTENT_CATALOG_PATH,
-      include_scheduled: true
+      include_scheduled: Current.user&.superadmin_user? || false
     )
     calendar_data = YAML.safe_load_file(GROUP_LESSON_CALENDAR_PATH, permitted_classes: [], aliases: false).fetch("calendar")
-    group_lesson = (calendar_data["group_lessons"] || [calendar_data.fetch("group_lesson")]).first
-    first_release = Time.zone.parse("#{calendar_data.fetch('starts_on')} #{calendar_data.fetch('publication_time')}")
-    @course_release_schedule = calendar_data.fetch("courses").each_with_index.to_h do |scheduled_course, index|
-      [scheduled_course.fetch("content_id"), first_release + index.weeks]
-    end
     @scheduled_courses_by_id = calendar_data.fetch("courses").index_by { |scheduled_course| scheduled_course.fetch("content_id") }
-    current_release = @course_release_schedule.select { |_content_id, release_at| release_at <= Time.current }.max_by { |_content_id, release_at| release_at }
-    focus_content_id = current_release&.first || calendar_data.fetch("courses").first.fetch("content_id")
-    focus_course = @scheduled_courses_by_id.fetch(focus_content_id)
-    @home_week_focus = focus_course.merge(
-      "release_at" => @course_release_schedule.fetch(focus_content_id).iso8601,
-      "locked" => @course_release_schedule.fetch(focus_content_id) > Time.current,
-      "lesson_day" => group_lesson.fetch("day"),
-      "lesson_start" => group_lesson.fetch("start"),
-      "lesson_end" => group_lesson.fetch("end"),
-      "lesson_location" => group_lesson.fetch("location")
-    )
     program_data = YAML.safe_load_file(GUIDED_PATH, permitted_classes: [], aliases: false)
     @program_by_course = hydrate_program_courses(program_data).index_by { |course| course.fetch("course_slug") }
     @program_course_slugs = @program_by_course.keys
@@ -283,11 +268,6 @@ module Posturacorretta
 
   def load_course_overview(course_slug)
     didactic_course = @all_didactic_courses.find { |course| course.fetch("slug") == course_slug }
-    if didactic_course&.fetch("release_locked", false)
-      release_date = Time.zone.parse(didactic_course.fetch("release_at")).to_date
-      return redirect_to(posturacorretta_path(anchor: didactic_course.fetch("slug")), alert: "Il corso sarà disponibile dal #{I18n.l(release_date, format: :long)}.")
-    end
-
     @course_overview = true
     @reader_course_slug = course_slug
     @selected_course = didactic_course
@@ -344,15 +324,21 @@ module Posturacorretta
     end
     return unless decorated
 
-    release_at = @course_release_schedule[decorated.fetch("id", decorated.fetch("slug"))]
-    release_locked = release_at.present? && release_at > Time.current
     chapters = decorated.fetch("chapters", []).map do |chapter|
-      chapter.merge("release_at" => release_at&.iso8601, "release_locked" => release_locked && !chapter.fetch("demo", false))
+      publication_node_slug = chapter["node_slug"].presence || decorated["node_slug"].presence || decorated["publisher_node_slug"].presence
+      publication_node = publication_node_for_slug(publication_node_slug)
+      chapter = chapter.merge("publication_node_id" => publication_node&.id, "publication_node_slug" => publication_node_slug)
+      chapter.merge(
+        "show_available" => chapter_show_available?(chapter),
+        "publication_commitment" => chapter_publication_commitment(chapter)
+      )
     end
-    decorated.merge("release_at" => release_at&.iso8601, "release_locked" => release_locked, "chapters" => chapters)
+    decorated.merge("release_locked" => false, "chapters" => chapters)
   end
 
   def scheduled_course_placeholder(content_id)
+    return unless Current.user&.superadmin_user?
+
     scheduled = @scheduled_courses_by_id[content_id]
     return unless scheduled
 
@@ -361,7 +347,7 @@ module Posturacorretta
       "slug" => content_id,
       "format" => "course",
       "title" => scheduled.fetch("title"),
-      "description" => "Corso in preparazione: sarà pubblicato nella settimana programmata.",
+      "description" => "Corso in preparazione.",
       "status" => "draft",
       "access" => "free",
       "chapters" => []
@@ -386,11 +372,6 @@ module Posturacorretta
     requested_slug = params[:corso].presence_in(@all_didactic_courses.map { |course| course.fetch("slug") })
     didactic_course = @all_didactic_courses.find { |course| course.fetch("slug") == requested_slug } || @all_didactic_courses.first
     requested_chapter = didactic_course.fetch("chapters", []).find { |chapter| chapter.fetch("slug") == params[:capitolo] }
-    demo_chapter = requested_chapter&.fetch("demo", false)
-    if didactic_course.fetch("release_locked", false) && !demo_chapter
-      release_date = Time.zone.parse(didactic_course.fetch("release_at")).to_date
-      return redirect_to(posturacorretta_path(anchor: didactic_course.fetch("slug")), alert: "Il corso sarà disponibile dal #{I18n.l(release_date, format: :long)}.")
-    end
     @reader_course_slug = didactic_course.fetch("slug")
     @selected_stage = { "slug" => "percorso-educativo", "title" => @didactic_path.fetch("title") }
     @course_lessons = didactic_course.fetch("chapters", []).map { |chapter| learning_lesson(chapter) }
@@ -400,6 +381,12 @@ module Posturacorretta
 
     @lesson = @course_lessons.find { |lesson| lesson.fetch("slug") == params[:capitolo] }
     return redirect_to(posturacorretta_course_chapters_path(corso: @reader_course_slug), alert: "Capitolo non trovato") unless @lesson
+    unless @lesson.fetch("show_available", false)
+      return redirect_to(
+        posturacorretta_course_path(corso: @reader_course_slug),
+        alert: "Il capitolo è pubblicato nell’indice, ma il contenuto è ancora in preparazione."
+      )
+    end
 
     load_lesson_content
   end
@@ -413,6 +400,61 @@ module Posturacorretta
     end
 
     chapter.merge("content_path" => legacy_lesson&.fetch("content_path", nil) || chapter["content_path"])
+  end
+
+  def chapter_show_available?(chapter)
+    return true if posturacorretta_editorial_preview?
+
+    commitment = chapter_publication_commitment(chapter)
+    commitment&.publication_status == "published" &&
+      commitment.publication_visibility == "public" &&
+      commitment.access_modes.include?("free")
+  end
+
+  def chapter_publication_commitment(chapter)
+    [chapter["id"], chapter.fetch("slug")].compact.filter_map do |key|
+      latest_publication_commitments[[chapter["publication_node_id"], key]] ||
+        latest_publication_commitments[[nil, key]]
+    end.max_by { |commitment| publication_decision_time(commitment) }
+  end
+
+  def posturacorretta_editorial_preview?
+    return true if Current.user&.superadmin_user?
+
+    posturacorretta_brand_node&.administered_by?(Current.user) || false
+  end
+
+  def posturacorretta_brand_node
+    @posturacorretta_brand_node ||= Node.find_by(slug: "posturacorretta")
+  end
+
+  def latest_publication_commitments
+    @latest_publication_commitments ||= begin
+      domain = Domain.find_for_host("posturacorretta.org")
+      if domain
+        DataCommitment.where(
+          domain: domain,
+          kind: "content",
+          status: "completed"
+        ).where.not(content_key: [nil, ""]).group_by { |commitment| [commitment.subject_type == "Node" ? commitment.subject_id : nil, commitment.content_key] }.transform_values do |commitments|
+          commitments.max_by { |commitment| publication_decision_time(commitment) }
+        end
+      else
+        {}
+      end
+    end
+  end
+
+
+  def publication_node_for_slug(slug)
+    return if slug.blank?
+
+    @publication_nodes_by_slug ||= {}
+    @publication_nodes_by_slug[slug] ||= Node.find_by(slug: slug)
+  end
+
+  def publication_decision_time(commitment)
+    commitment.published_at || commitment.actual_ended_at || commitment.updated_at
   end
 
   def redirect_legacy_learning_path
@@ -499,22 +541,23 @@ module Posturacorretta
     @student_teacher_path_active = posturacorretta_trainee?
 
     decorate_course = lambda do |course|
-      release_at = @course_release_schedule[course.fetch("key")]
       course.merge(
         "lessons" => course.fetch("lessons", []).map do |lesson|
           lesson.merge(
             "sheets" => lesson.fetch("sheets", []).map do |sheet|
+              published_course = @content_repository.course_by_id(sheet.fetch("course_key"))
+              sheet_available = published_course&.fetch("chapters", [])&.any? { |chapter| chapter.fetch("slug") == sheet.fetch("chapter_key") }
               sheet.merge(
                 "path" => posturacorretta_course_chapter_path(
                   corso: sheet.fetch("course_key"),
                   capitolo: sheet.fetch("chapter_key")
-                )
+                ),
+                "available" => sheet_available || false
               )
             end
           )
         end,
-        "release_at" => release_at&.iso8601,
-        "release_locked" => release_at.present? && release_at > Time.current
+        "release_locked" => false
       )
     end
 
@@ -528,7 +571,7 @@ module Posturacorretta
     @student_lesson_courses = @student_lesson_root_courses + @student_lesson_sections.flat_map { |section| section.fetch("courses") }
     requested_course = params[:corso].presence_in(@student_lesson_courses.map { |course| course.fetch("key") })
     released_courses = @student_lesson_courses.reject { |course| course.fetch("release_locked") }
-    selected_key = requested_course || released_courses.last&.fetch("key") || @student_lesson_courses.first&.fetch("key")
+    selected_key = requested_course || released_courses.first&.fetch("key") || @student_lesson_courses.first&.fetch("key")
     @selected_student_course = @student_lesson_courses.find { |course| course.fetch("key") == selected_key }
     @selected_student_section = @student_lesson_sections.find do |section|
       section.fetch("courses").any? { |course| course.fetch("key") == selected_key }

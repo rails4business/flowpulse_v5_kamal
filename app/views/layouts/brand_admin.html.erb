@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= content_for(:title).presence || "Amministrazione #{@brand&.title}" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "normalize", "tailwind", "application", "brand_admin", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="brand-admin-body">
+    <header class="brand-admin-header">
+      <div class="brand-admin-header__inner">
+        <div class="min-w-0">
+          <p class="brand-admin-eyebrow">Amministrazione Brand</p>
+          <%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "brand-admin-name" %>
+        </div>
+        <div class="brand-admin-header__actions">
+          <% if brand_support_access? %><span class="brand-admin-support">Assistenza superadmin</span><% end %>
+          <%= link_to "Torna al sito", "/#{@brand.slug}", class: "brand-admin-site-link" %>
+        </div>
+      </div>
+      <nav class="brand-admin-nav" aria-label="Amministrazione del Brand">
+        <%= link_to "Nodi", brand_admin_nodes_path(@brand.slug), aria: { current: ("page" if controller_name == "nodes" && params[:view] != "schema") } %>
+        <%= link_to "Schema", brand_admin_nodes_path(@brand.slug, view: "schema"), aria: { current: ("page" if controller_name == "nodes" && params[:view] == "schema") } %>
+        <%= link_to "Sviluppo", brand_admin_development_path(@brand.slug), aria: { current: ("page" if controller_name == "development") } %>
+      </nav>
+    </header>
+
+    <% if notice %><p class="brand-admin-flash brand-admin-flash--notice"><%= notice %></p><% end %>
+    <% if alert %><p class="brand-admin-flash brand-admin-flash--alert"><%= alert %></p><% end %>
+    <%= yield %>
+  </body>
+</html>

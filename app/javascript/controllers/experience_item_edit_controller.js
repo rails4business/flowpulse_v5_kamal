@@ -28,7 +28,7 @@ export default class extends Controller {
     this.descriptionTarget.value = item.dataset.editDescription || ""
 
     this.processRowTarget.classList.toggle("hidden", kind !== "experience")
-    this.processTarget.name = `${root}[brand_process_id]`
+    this.processTarget.name = `${root}[node_process_id]`
     this.processTarget.value = item.dataset.editProcessId || ""
 
     this.sessionContextRowTarget.classList.toggle("hidden", kind !== "session")

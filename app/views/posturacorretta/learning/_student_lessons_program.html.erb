@@ -72,7 +72,7 @@
                 <ul class="mt-2 space-y-1.5">
                   <% lesson.fetch("sheets").each do |sheet| %>
                     <li>
-                      <% if locked %>
+                      <% if locked || !sheet.fetch("available", false) %>
                         <span class="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-400"><span aria-hidden="true">◆</span><%= sheet.fetch("title") %></span>
                       <% else %>
                         <%= link_to sheet.fetch("path"), class: "flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm font-semibold text-red-900 transition hover:bg-red-100" do %>

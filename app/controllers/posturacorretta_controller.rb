@@ -526,13 +526,7 @@ class PosturacorrettaController < ApplicationController
 
       sorted_articles = indexed_articles.sort_by do |article, original_index|
         publication_date = article[:_publication_date]
-        if article[:_scheduled]
-          [0, publication_date.jd, original_index]
-        elsif publication_date
-          [1, -publication_date.jd, original_index]
-        else
-          [2, 0, original_index]
-        end
+        publication_date ? [0, -publication_date.jd, original_index] : [1, 0, original_index]
       end.map(&:first)
 
       category.merge(articles: sorted_articles)

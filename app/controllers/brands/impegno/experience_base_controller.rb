@@ -34,7 +34,7 @@ module Brands
 
         def prepare_workbench_state
           @services = Service.active.includes(:node).order("nodes.title", :title)
-          @brand_processes = BrandProcess.includes(:node).where(status: %w[draft active]).order("nodes.title", :title)
+          @node_processes = NodeProcess.includes(:node).where(status: %w[draft active]).order("nodes.title", :title)
           @professional_calendars = ProfessionalCalendar.active.includes(:context_node, :professional_node).to_a
             .sort_by { |calendar| [calendar.professional_node.title, calendar.context_node.title, calendar.title] }
           @registration_domain = Domain.active.where(primary: true).order(:id).first || Domain.active.order(:id).first

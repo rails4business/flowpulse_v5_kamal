@@ -11,7 +11,7 @@
   <% program_available = @program_course_slugs.include?(course.fetch("slug")) %>
   <% course_code = format("%02d", course_number) %>
   <% first_chapter = course.fetch("chapters", []).first %>
-  <% first_chapter_available = first_chapter && (!release_locked || first_chapter.fetch("demo", false)) %>
+  <% first_chapter_available = first_chapter && (!release_locked || first_chapter.fetch("demo", false)) && first_chapter.fetch("show_available", false) %>
   <% start_path = posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: first_chapter.fetch("slug")) if first_chapter %>
   <article id="<%= course.fetch("slug") %>" class="group scroll-mt-24 overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-blue-300 hover:shadow-xl hover:shadow-slate-900/5">
     <details class="group/course">
@@ -68,7 +68,7 @@
         <ol class="divide-y divide-slate-200 border-t border-slate-200 bg-white px-5 sm:px-7">
           <% course.fetch("chapters").each_with_index do |chapter, chapter_index| %>
             <% practical = chapter.fetch("chapter_type", "theory") == "practical" %>
-            <% chapter_available = !chapter.fetch("release_locked", false) %>
+            <% chapter_available = !chapter.fetch("release_locked", false) && chapter.fetch("show_available", false) %>
             <li>
               <% chapter_body = capture do %>
                 <span class="grid size-8 shrink-0 place-items-center rounded-full border text-sm font-black <%= practical ? 'border-red-200 bg-red-50 text-red-700' : 'border-blue-200 bg-blue-50 text-blue-700' %>" aria-hidden="true"><%= practical ? "◆" : "▤" %></span>

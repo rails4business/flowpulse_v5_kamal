@@ -40,20 +40,20 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "lists independent entries through shareable upcoming and past tabs" do
+  test "lists independent entries through shareable events and contents tabs" do
     travel_to Time.zone.parse("2026-09-10 09:00") do
-      get "/flowpulse/radioestesia/contenuti?tab=prossimi"
+      get "/flowpulse/radioestesia/contenuti?tab=eventi"
 
       assert_response :success
       assert_select "a", /Prepara la tua energia all’Autunno/
       assert_select "a", /Online · 09:00–11:00/
-      assert_select "a[href*='tab=passati']", /Passati/
+      assert_select "a[href*='tab=contenuti']", /Contenuti/
       assert_select "a", text: /Scopri l'accesso annuale/, count: 0
       assert_select "p", text: /L'ascolto di sé è il primo passo/, count: 0
       assert_select "a", text: /Mappa energetica degli alimenti/, count: 0
       assert_select "a", text: /Materiali di conferenze/, count: 0
 
-      get "/flowpulse/radioestesia/contenuti?tab=passati"
+      get "/flowpulse/radioestesia/contenuti?tab=contenuti"
 
       assert_response :success
       assert_select "a", /Introduzione alla radiestesia/

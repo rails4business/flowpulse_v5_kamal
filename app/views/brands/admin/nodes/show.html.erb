@@ -1,24 +1,104 @@
 <% content_for :title, "#{@node.title} — #{@brand.title}" %>
-<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"><%= link_to @brand.title, admin_brand_path(@brand), class: "font-semibold text-blue-700" %><span>/</span><%= link_to "Nodi", brand_admin_nodes_path(@brand.slug), class: "font-semibold text-blue-700" %><span>/</span><span><%= @node.title %></span></nav>
-  <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Nodo di <%= @brand.title %></p><h1 class="mt-2 text-3xl font-extrabold"><%= @node.title %></h1>
-    <% if @node.description.present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= @node.description %></p><% end %>
-    <div class="mt-5 flex flex-wrap gap-2"><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600"><%= @node.status.humanize %></span><%= link_to "Gestione completa del nodo", admin_brand_path(@node), class: "rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700" %></div>
-  </header>
-  <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <div><p class="text-xs font-black uppercase tracking-wide text-blue-700">Configurazione</p><h2 class="mt-1 text-xl font-extrabold">Modifica nodo</h2></div>
-    <%= form_with model: @node, url: brand_admin_node_path(@brand.slug, @node), method: :patch, class: "mt-5 grid gap-4 sm:grid-cols-2" do |form| %>
+<% lifecycle_labels = { "created" => "Creato", "started" => "Avviato", "consolidated" => "Consolidato", "cut" => "Troncato", "resumed" => "Ripreso", "updated" => "Aggiornato", "fixed" => "Corretto" } %>
+<% lifecycle_icons = { "created" => "○", "started" => "▶", "consolidated" => "✓", "cut" => "■", "resumed" => "↻", "updated" => "↑", "fixed" => "◆" } %>
+<% lifecycle_styles = { "created" => "bg-slate-100 text-slate-700", "started" => "bg-blue-100 text-blue-800", "consolidated" => "bg-emerald-100 text-emerald-800", "cut" => "bg-red-100 text-red-800", "resumed" => "bg-cyan-100 text-cyan-800", "updated" => "bg-amber-100 text-amber-800", "fixed" => "bg-violet-100 text-violet-800" } %>
+<% cell_labels = { "idea" => "Idea", "active" => "In corso", "consolidated" => "Consolidato", "cut" => "Troncato" } %>
+<% cell_icons = { "idea" => "○", "active" => "▶", "consolidated" => "✓", "cut" => "■" } %>
+<% cell_styles = { "idea" => "bg-slate-100 text-slate-700", "active" => "bg-blue-100 text-blue-800", "consolidated" => "bg-emerald-100 text-emerald-800", "cut" => "bg-red-100 text-red-800" } %>
+<% action_styles = { "started" => "border-blue-700 text-blue-800 hover:bg-blue-50", "consolidated" => "border-emerald-700 text-emerald-800 hover:bg-emerald-50", "cut" => "border-red-700 text-red-800 hover:bg-red-50", "resumed" => "border-cyan-700 text-cyan-800 hover:bg-cyan-50", "updated" => "border-amber-600 text-amber-800 hover:bg-amber-50", "fixed" => "border-violet-600 text-violet-800 hover:bg-violet-50" } %>
+<% lifecycle_actions = { "idea" => [["started", "Avvia"]], "active" => [["consolidated", "Consolida"], ["cut", "Tronca"]], "consolidated" => [["cut", "Tronca"]], "cut" => [["resumed", "Riprendi"]] } %>
+<main class="brand-admin-shell max-w-5xl">
+  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"><%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><%= link_to "Nodi", brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><span><%= @node.title %></span></nav>
+  <header class="brand-admin-card p-6" data-node-identity>
+    <div data-node-identity-show>
+      <div class="flex flex-wrap items-start justify-between gap-4"><div><p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-teal-700">Nodo di <%= @brand.title %></p><h1 class="brand-admin-title mt-2 text-3xl"><%= @node.title %></h1></div><button type="button" data-node-identity-edit class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Modifica</button></div>
+      <% if @node.description.present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= @node.description %></p><% else %><p class="mt-3 text-sm italic text-slate-400">Nessuna descrizione.</p><% end %>
+      <div class="mt-5 flex flex-wrap gap-2"><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">Visibilità: <%= @node.status.humanize %></span><span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black <%= cell_styles.fetch(@node.cell_status) %>" data-cell-status-badge="<%= @node.cell_status %>"><span aria-hidden="true"><%= cell_icons.fetch(@node.cell_status) %></span><%= cell_labels.fetch(@node.cell_status) %></span></div>
+      <% unless @node == @brand %><div class="mt-4 flex flex-wrap gap-4 text-xs text-slate-500"><span><strong class="text-slate-700">Nodo padre:</strong> <%= @node.parent&.title || "—" %></span><span><strong class="text-slate-700">Ponte:</strong> <%= @node.link_node&.title || "Nessuno" %></span></div><% end %>
+    </div>
+    <%= form_with model: @node, url: brand_admin_node_path(@brand.slug, @node), method: :patch, html: { hidden: true, data: { node_identity_form: true } }, class: "grid gap-4 sm:grid-cols-2" do |form| %>
+      <div class="sm:col-span-2"><p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-teal-700">Modifica identità del nodo</p></div>
       <div><%= form.label :title, "Nome", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
       <div><%= form.label :status, "Stato", class: "text-sm font-bold text-slate-700" %><%= form.select :status, Node::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+      <div class="sm:col-span-2"><%= form.label :description, "Descrizione", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 5, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
       <% unless @node == @brand %><div><%= form.label :parent_id, "Nodo padre", class: "text-sm font-bold text-slate-700" %><%= form.collection_select :parent_id, @parent_options, :id, :title, {}, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div><% end %>
-      <div><%= form.label :link_node_id, "Nodo ponte verso", class: "text-sm font-bold text-slate-700" %><%= form.collection_select :link_node_id, @link_node_options, :id, :title, { include_blank: "Nodo normale — nessun ponte" }, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %><p class="mt-1 text-xs text-slate-500">Un nodo con figli non può diventare un nodo ponte.</p></div>
-      <div class="sm:col-span-2"><%= form.label :description, "Descrizione", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
-      <div class="sm:col-span-2 flex flex-wrap justify-between gap-3"><%= form.submit "Salva modifiche", class: "cursor-pointer rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white" %><% unless @node == @brand %><%= link_to "Elimina nodo", brand_admin_node_path(@brand.slug, @node), data: { turbo_method: :delete, turbo_confirm: "Eliminare definitivamente questo nodo?" }, class: "rounded-xl px-4 py-2.5 text-sm font-black text-red-600 hover:bg-red-50" %><% end %></div>
+      <%= render "bridge_field", form:, node: @node, options: @link_node_options, input_id: "node_bridge" %>
+      <div class="sm:col-span-2 flex flex-wrap items-center justify-between gap-3"><% unless @node == @brand %><%= link_to "Elimina nodo", brand_admin_node_path(@brand.slug, @node), data: { turbo_method: :delete, turbo_confirm: "Eliminare definitivamente questo nodo?" }, class: "rounded-xl px-4 py-2.5 text-sm font-black text-red-600 hover:bg-red-50" %><% else %><span></span><% end %><div class="flex gap-2"><button type="button" data-node-identity-cancel class="rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100">Annulla</button><%= form.submit "Salva", class: "cursor-pointer rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-black text-white" %></div></div>
     <% end %>
+  </header>
+    <section class="brand-admin-card mt-6 p-6" aria-labelledby="lifecycle-title">
+      <p class="text-xs font-black uppercase tracking-wide text-teal-700"><%= @node == @brand ? "Registro operativo" : "Ciclo operativo" %></p><h2 id="lifecycle-title" class="mt-1 text-xl font-extrabold"><%= @node == @brand ? "Aggiornamenti del Brand" : "Vita del progetto" %></h2>
+      <% available_actions = (@node == @brand ? [] : lifecycle_actions.fetch(@node.cell_status, [])) + [["updated", "Update"], ["fixed", "Fix"]] %>
+      <div class="mt-4 flex flex-wrap gap-2"><% available_actions.each do |kind, label| %><button type="button" data-node-event-open data-event-kind="<%= kind %>" data-event-label="<%= label %>" class="inline-flex items-center gap-2 rounded-xl border bg-white px-4 py-2 text-sm font-black <%= action_styles.fetch(kind) %>"><span aria-hidden="true"><%= lifecycle_icons.fetch(kind) %></span><%= label %></button><% end %></div>
+      <% events = @node.node_events.chronological.to_a %>
+      <% if events.any? %><ol class="mt-5 list-none space-y-2 p-0"><% events.reverse_each do |event| %><li class="rounded-xl border border-slate-200 px-3 py-3 text-sm" data-node-event="<%= event.kind %>"><div class="flex flex-wrap items-center gap-x-3 gap-y-2"><strong class="inline-flex w-fit items-center gap-2 rounded-full px-2.5 py-1 text-xs <%= lifecycle_styles.fetch(event.kind) %>"><span aria-hidden="true"><%= lifecycle_icons.fetch(event.kind) %></span><%= lifecycle_labels.fetch(event.kind) %></strong><%= link_to event.title.presence || event.note.presence || event.performed_by_user&.profile&.display_name || "Apri evento", brand_admin_node_event_path(@brand.slug, @node, event.public_id), class: "font-bold text-slate-800 hover:text-teal-700 hover:underline" %><time class="text-slate-500"><%= l(event.happened_at.to_date, format: :long) %></time><code class="text-xs text-slate-400"><%= event.public_id %></code><%= link_to "Apri →", brand_admin_node_event_path(@brand.slug, @node, event.public_id), class: "ml-auto text-xs font-black text-teal-700 hover:underline" %></div><% if (entry = @development_entries_by_slug[event.development_entry_slug]) %><div class="mt-2"><%= link_to "Scheda · #{entry.fetch("title")}", brand_admin_development_entry_path(@brand.slug, entry.fetch("slug")), class: "text-xs font-bold text-amber-700 hover:underline" %></div><% end %></li><% end %></ol><% else %><p class="mt-4 text-sm text-slate-500"><%= @node == @brand ? "Non sono ancora stati registrati aggiornamenti per il Brand." : "Il nodo è ancora un’idea. Avvialo quando inizia il lavoro reale." %></p><% end %>
+    </section>
+    <dialog data-node-event-dialog class="w-[min(38rem,calc(100%-2rem))] rounded-2xl border border-slate-300 p-0 shadow-2xl backdrop:bg-slate-950/40">
+      <%= form_with url: lifecycle_brand_admin_node_path(@brand.slug, @node), method: :patch, class: "space-y-4 p-6" do |form| %>
+        <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-wide text-teal-700">Evento del nodo</p><h2 class="mt-1 text-xl font-extrabold" data-node-event-title>Registra evento</h2></div><button type="button" data-node-event-close class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100" aria-label="Chiudi">×</button></div>
+        <%= hidden_field_tag :event, nil, data: { node_event_kind: true } %>
+        <div><%= form.label :title, "Titolo breve (facoltativo)", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, name: "node_event[title]", data: { node_event_name: true }, placeholder: "Es. Collegata iscrizione al percorso", class: "mt-1 w-full rounded-xl border-slate-300" %><p class="mt-1 text-xs text-slate-500">Puoi lasciarlo vuoto e inserire titolo e sezioni direttamente nel Markdown.</p></div>
+        <div><%= form.label :note, "Nota breve", class: "text-sm font-bold text-slate-700" %><%= form.text_area :note, name: "node_event[note]", rows: 2, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+        <div><%= form.label :development_entry_slug, "Scheda di sviluppo collegata", class: "text-sm font-bold text-slate-700" %><%= form.select :development_entry_slug, @brand_development_entries.map { |entry| [entry.fetch("title"), entry.fetch("slug")] }, { include_blank: "Nessuna scheda" }, name: "node_event[development_entry_slug]", class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+        <div><%= form.label :body_md, "Dettagli Markdown", class: "text-sm font-bold text-slate-700" %><%= form.text_area :body_md, name: "node_event[body_md]", rows: 8, placeholder: "## Cosa è cambiato\n\n- ...", class: "mt-1 w-full rounded-xl border-slate-300 font-mono text-sm" %><p class="mt-1 text-xs text-slate-500">Questo testo viene salvato nel database di production, non modifica i file del repository.</p></div>
+        <div class="flex justify-end gap-2"><button type="button" data-node-event-close class="rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Registra evento", class: "cursor-pointer rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-black text-white" %></div>
+      <% end %>
+    </dialog>
+  <% if @development_entries.any? %>
+    <section class="brand-admin-card mt-6 p-6" aria-labelledby="node-development-title">
+      <p class="text-xs font-black uppercase tracking-wide text-amber-700">Documentazione collegata</p><h2 id="node-development-title" class="mt-1 text-xl font-extrabold">Aggiornamenti e sviluppo</h2>
+      <div class="mt-5 grid gap-3"><% @development_entries.each do |entry| %><%= link_to brand_admin_development_entry_path(@brand.slug, entry.fetch("slug")), class: "rounded-xl border border-slate-200 p-4 hover:border-amber-300 hover:bg-amber-50/40" do %><strong class="block text-slate-900"><%= entry.fetch("title") %></strong><span class="mt-1 block text-sm text-slate-500"><%= entry.fetch("summary") %></span><span class="mt-2 block text-xs font-bold text-amber-700">Apri scheda Markdown →</span><% end %><% end %></div>
+    </section>
+  <% end %>
+  <section id="node-processes" class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Attività ripetibili</p><h2 class="mt-1 text-xl font-extrabold">Processi</h2></div><button type="button" onclick="document.getElementById('new-node-process')?.showModal()" class="rounded-xl bg-violet-700 px-4 py-2 text-sm font-black text-white hover:bg-violet-800">＋ Processo</button></div>
+    <% if @processes.any? %><div class="mt-5 grid gap-3 sm:grid-cols-2"><% @processes.each do |process_record| %><%= link_to brand_admin_node_process_path(@brand.slug, @node, process_record), class: "block rounded-xl border border-slate-200 p-4 transition hover:border-violet-300 hover:bg-violet-50/40" do %><div class="flex items-center justify-between gap-3"><h3 class="font-extrabold"><%= process_record.title %></h3><span class="text-xs font-bold text-slate-500"><%= process_record.status.humanize %></span></div><% if process_record.description.present? %><p class="mt-2 text-sm leading-6 text-slate-600"><%= process_record.description %></p><% end %><span class="mt-3 block text-xs font-black text-violet-700">Apri processo →</span><% end %><% end %></div><% else %><p class="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-500">Questo nodo non ha ancora processi. Aggiungili quando le attività diventano ripetibili.</p><% end %>
   </section>
-  <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Attività ripetibili</p><h2 class="mt-1 text-xl font-extrabold">Processi</h2></div><%= link_to "+ Gestisci processi", admin_brand_path(@node, tab: "processes"), class: "rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-black text-white" %></div>
-    <% if @processes.any? %><div class="mt-5 grid gap-3 sm:grid-cols-2"><% @processes.each do |process_record| %><article class="rounded-xl border border-slate-200 p-4"><div class="flex items-center justify-between gap-3"><h3 class="font-extrabold"><%= process_record.title %></h3><span class="text-xs font-bold text-slate-500"><%= process_record.status.humanize %></span></div><% if process_record.description.present? %><p class="mt-2 text-sm leading-6 text-slate-600"><%= process_record.description %></p><% end %></article><% end %></div><% else %><p class="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-500">Questo nodo non ha ancora processi. Aggiungili quando le attività diventano ripetibili.</p><% end %>
-  </section>
+  <dialog id="new-node-process" class="w-[min(36rem,calc(100%-2rem))] rounded-2xl border border-slate-300 p-0 shadow-2xl backdrop:bg-slate-950/40">
+    <%= form_with model: NodeProcess.new, url: processes_brand_admin_node_path(@brand.slug, @node), class: "space-y-4 p-6" do |form| %>
+      <div class="flex items-center justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Attività ripetibile</p><h2 class="mt-1 text-xl font-extrabold">Nuovo processo</h2></div><button type="button" onclick="this.closest('dialog').close()" class="rounded-lg px-2 py-1 text-slate-500">×</button></div>
+      <div><%= form.label :title, "Nome", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, required: true, autofocus: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :slug, "Slug (facoltativo)", class: "text-sm font-bold text-slate-700" %><%= form.text_field :slug, placeholder: "Generato automaticamente dal nome", class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :description, "Descrizione", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :status, "Stato", class: "text-sm font-bold text-slate-700" %><%= form.select :status, NodeProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+      <div class="flex justify-end gap-2"><button type="button" onclick="this.closest('dialog').close()" class="rounded-xl px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Crea processo", class: "cursor-pointer rounded-xl bg-violet-700 px-4 py-2 text-sm font-black text-white" %></div>
+    <% end %>
+  </dialog>
 </main>
+
+<script nonce="<%= content_security_policy_nonce %>">
+  (() => {
+    const identity = document.querySelector("[data-node-identity]");
+    const show = identity?.querySelector("[data-node-identity-show]");
+    const form = identity?.querySelector("[data-node-identity-form]");
+    const toggle = editing => { if (!show || !form) return; show.hidden = editing; form.hidden = !editing; };
+    identity?.querySelector("[data-node-identity-edit]")?.addEventListener("click", () => { toggle(true); form.querySelector("input[name='node[title]']")?.focus(); });
+    identity?.querySelector("[data-node-identity-cancel]")?.addEventListener("click", () => { form.reset(); toggle(false); });
+  })();
+  (() => {
+    const dialog = document.querySelector("[data-node-event-dialog]");
+    const kind = dialog?.querySelector("[data-node-event-kind]");
+    const name = dialog?.querySelector("[data-node-event-name]");
+    const title = dialog?.querySelector("[data-node-event-title]");
+    document.querySelectorAll("[data-node-event-open]").forEach(button => button.addEventListener("click", () => {
+      kind.value = button.dataset.eventKind;
+      title.textContent = `Registra: ${button.dataset.eventLabel}`;
+      dialog.showModal();
+      name.focus();
+    }));
+    dialog?.querySelectorAll("[data-node-event-close]").forEach(button => button.addEventListener("click", () => dialog.close()));
+  })();
+  document.querySelectorAll("[data-bridge-autocomplete]").forEach(field => {
+    const search = field.querySelector("[data-bridge-search]");
+    const value = field.querySelector("[data-bridge-value]");
+    const list = document.getElementById(search?.getAttribute("list"));
+    if (!search || !value || !list) return;
+    const synchronize = () => {
+      const option = [...list.options].find(candidate => candidate.value === search.value);
+      value.value = option?.dataset.nodeId || "";
+      search.setCustomValidity(search.value && !option ? "Scegli un nodo dall’elenco suggerito." : "");
+    };
+    search.addEventListener("input", synchronize);
+    search.addEventListener("change", synchronize);
+  });
+</script>

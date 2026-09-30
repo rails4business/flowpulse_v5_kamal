@@ -13,6 +13,8 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Coltiva il corpo, le capacità e le relazioni."
     assert_select "#esperienze"
     assert_select "#eventi"
+    assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=contenuti']", text: "Contenuti"
+    assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=eventi']", text: "Eventi"
     assert_select "#luoghi"
     assert_select "#luoghi h3", text: "Giardino del Corpo"
     assert_select "a[href='#{posturacorretta_path}']", minimum: 1

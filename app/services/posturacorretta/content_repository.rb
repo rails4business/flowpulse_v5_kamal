@@ -4,6 +4,8 @@ module Posturacorretta
     ALLOWED_ACCESS = %w[free paid].freeze
     CANONICAL_COURSES_ROOT = Rails.root.join("config/data/brands/posturacorretta/courses").freeze
 
+    ALLOWED_STATUSES = %w[draft published scheduled].freeze
+
     def initialize(path: Rails.root.join("config/data/posturacorretta/contenuti/contents.yml"), include_scheduled: false)
       @path = path
       @include_scheduled = include_scheduled
@@ -44,9 +46,10 @@ module Posturacorretta
     end
 
     def visible?(content)
+      status = content.fetch("status", "draft")
       return true if include_scheduled
-      return false unless content.fetch("status", "published") == "published"
-      return true if content["published_at"].blank?
+      return true if status == "published"
+      return false unless status == "scheduled" && content["published_at"].present?
 
       Time.zone.parse(content.fetch("published_at")) <= Time.current
     end
@@ -83,9 +86,34 @@ module Posturacorretta
       duplicate_ids = ids.tally.select { |_id, count| count > 1 }.keys
       raise KeyError, "Content id duplicati: #{duplicate_ids.join(', ')}" if duplicate_ids.any?
 
+      missing_slug_ids = normalized.filter_map { |content| content.fetch("id") if content["slug"].blank? }
+      raise KeyError, "Content senza slug: #{missing_slug_ids.join(', ')}" if missing_slug_ids.any?
+
+      duplicate_course_slugs = normalized
+        .select { |content| content["format"] == "course" }
+        .map { |content| content.fetch("slug") }
+        .tally.select { |_slug, count| count > 1 }.keys
+      if duplicate_course_slugs.any?
+        raise KeyError, "Slug course duplicati: #{duplicate_course_slugs.join(', ')}"
+      end
+
+      duplicate_chapter_slugs = normalized
+        .select { |content| content["format"] == "chapter" }
+        .group_by { |content| [content["parent_id"], content.fetch("slug")] }
+        .select { |_key, chapters| chapters.many? }.keys
+      if duplicate_chapter_slugs.any?
+        labels = duplicate_chapter_slugs.map { |parent_id, slug| "#{parent_id}/#{slug}" }
+        raise KeyError, "Slug chapter duplicati nello stesso course: #{labels.join(', ')}"
+      end
+
       normalized.each do |content|
         format = content.fetch("format")
         raise KeyError, "Content format non valido: #{format}" unless format.in?(ALLOWED_FORMATS)
+        status = content.fetch("status", "draft")
+        raise KeyError, "Content status non valido: #{status}" unless status.in?(ALLOWED_STATUSES)
+        if status == "scheduled" && content["published_at"].blank?
+          raise KeyError, "Content scheduled senza published_at: #{content.fetch('id')}"
+        end
         access = content.fetch("access")
         raise KeyError, "Content access non valido: #{access}" unless access.in?(ALLOWED_ACCESS)
 

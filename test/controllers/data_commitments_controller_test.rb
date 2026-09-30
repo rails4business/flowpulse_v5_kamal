@@ -109,6 +109,149 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Percorso personalizzato", commitment.metadata["context_label"]
   end
 
+  test "owner records publication intent for a content commitment" do
+    assert_difference -> { DataCommitment.count }, 1 do
+      post data_commitments_url, params: {
+        context_brand: "posturacorretta",
+        data_commitment: {
+          title: "Preparare il capitolo introduttivo",
+          kind: "content",
+          starts_at: "2026-10-05T09:00",
+          ends_at: "2026-10-05T11:00",
+          calendar_label: @profile.display_name,
+          content_key: "incontro-salute-metodiche",
+          publish_on_completion: "1",
+          publication_status: "draft",
+          publication_visibility: "public",
+          access_modes: %w[subscription purchase]
+        }
+      }
+    end
+
+    commitment = DataCommitment.last
+    assert_equal "content", commitment.kind
+    assert_equal "incontro-salute-metodiche", commitment.content_key
+    assert commitment.publish_on_completion?
+    assert_equal "draft", commitment.publication_status
+    assert_equal "public", commitment.publication_visibility
+    assert_equal %w[subscription purchase], commitment.access_modes
+    assert_nil commitment.published_at
+    assert_nil commitment.published_by_profile
+
+    post data_commitments_url, params: {
+      context_brand: "posturacorretta",
+      data_commitment: {
+        title: "Aggiornare il capitolo introduttivo",
+        kind: "content",
+        starts_at: "2026-10-06T09:00",
+        ends_at: "2026-10-06T10:00",
+        calendar_label: @profile.display_name,
+        content_key: "incontro-salute-metodiche",
+        publication_status: "draft",
+        publication_visibility: "public",
+        publication_change_kind: "update",
+        publication_note_md: "## Revisione\n\nAggiornare l’introduzione.",
+        access_modes: ["free"]
+      }
+    }
+
+    update_commitment = DataCommitment.last
+    assert_equal commitment, update_commitment.previous_publication_commitment
+    assert_equal "update", update_commitment.publication_change_kind
+    assert_includes update_commitment.publication_note_md, "Aggiornare l’introduzione"
+  end
+
+  test "publication intent requires the content key" do
+    commitment = DataCommitment.new(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      title: "Preparare un contenuto",
+      kind: "content",
+      status: "planned",
+      starts_at: 1.day.from_now,
+      pricing_type: "none",
+      contribution_type: "unpaid",
+      publish_on_completion: true
+    )
+
+    assert_not commitment.valid?
+    assert commitment.errors.added?(:content_key, :blank)
+
+    commitment.content_key = "contenuto-da-pubblicare"
+    assert commitment.valid?
+  end
+
+  test "editorial link opens a prefilled content commitment form" do
+    get impegno_agenda_url(
+      workspace: "1",
+      default_brand: "posturacorretta",
+      new_content: "1",
+      content_key: "inizia-incontro-salute-metodiche",
+      content_title: "L'incontro con la salute e con le metodiche posturali",
+      publication_change_kind: "publish"
+    )
+
+    assert_response :success
+    assert_select "dialog#new-commitment-dialog[data-modal-auto-open-value='true']"
+    assert_select "dialog#new-commitment-dialog h2", text: "Nuovo DataCommitment editoriale"
+    assert_select "input[name='data_commitment[title]'][value=?]", "L'incontro con la salute e con le metodiche posturali"
+    assert_select "select[name='data_commitment[kind]'] option[value='content'][selected]"
+    assert_select "input[name='data_commitment[content_key]'][value='inizia-incontro-salute-metodiche']"
+    assert_select "select[name='data_commitment[publication_change_kind]'] option[value='publish'][selected]"
+  end
+
+  test "content access supports subscription or purchase but keeps free exclusive" do
+    commitment = DataCommitment.new(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      title: "Accesso alternativo",
+      kind: "content",
+      status: "planned",
+      starts_at: 1.day.from_now,
+      pricing_type: "none",
+      contribution_type: "unpaid",
+      access_modes: %w[subscription purchase]
+    )
+
+    assert commitment.valid?
+
+    commitment.access_modes = %w[free purchase]
+    assert_not commitment.valid?
+    assert commitment.errors[:access_modes].any?
+  end
+
+  test "content commitment stores a node independently from its publication domain" do
+    creator = RoleAssignment.create!(profile: @profile, role: :ideatore)
+    brand = Node.create!(title: "PosturaCorretta editoriale", slug: "posturacorretta-editoriale-test", role_assignment: creator, node_type: :project)
+    course_node = Node.create!(title: "Percorso online", slug: "percorso-online-test", parent: brand, role_assignment: creator, node_type: :project)
+    @domain.update!(node: brand)
+
+    post data_commitments_url, params: {
+      context_brand: "posturacorretta",
+      data_commitment: {
+        title: "Preparare il percorso online",
+        kind: "content",
+        starts_at: "2026-10-07T09:00",
+        ends_at: "2026-10-07T10:00",
+        calendar_label: @profile.display_name,
+        subject_node_id: course_node.id,
+        content_key: "inizia-con-posturacorretta/incontro-salute-metodiche",
+        publication_status: "draft",
+        publication_visibility: "public",
+        publication_change_kind: "update",
+        access_modes: ["free"]
+      }
+    }
+
+    commitment = DataCommitment.last
+    assert_equal @domain, commitment.domain
+    assert_equal "Node", commitment.subject_type
+    assert_equal course_node, commitment.subject
+    assert_not_equal commitment.domain.node, commitment.subject
+  end
+
   test "superadmin starts and completes a timer from a GeneraImpresa task" do
     assert_difference -> { DataCommitment.count }, 1 do
       post data_commitments_url, params: {

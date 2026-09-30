@@ -1,4 +1,31 @@
-# La salute non è un lusso: un percorso integrato per tutti
+# La salute non è un lusso. È un percorso semplice, per tutti.
+
+Oggi abbiamo tutti gli stessi problemi: tecnologia invasiva, poco tempo, poca natura, poche relazioni.
+Si riparte da tre cose semplici: conoscere come funziona il corpo, eventi per riconnetterci con la natura e con il nostro mondo interiore con Il Giardino del Corpo — e rails4business per aiutarti nel lavoro e trovare le risorse di cui hai bisogno.
+
+
+# Cosa succede?
+
+
+Oggi viviamo tutti con gli stessi ritmi sbagliati: tecnologia invasiva, poco tempo, poca natura, poche relazioni vere.
+
+Non è una questione di soldi. È una questione di come viviamo.
+
+Si può ricominciare da tre cose semplici:
+
+Uno: capire come funziona il tuo corpo e riattivare i tuoi sistemi. Cinque minuti al giorno.
+
+Due: tornare a fare esperienze vere — musica, natura, incontri dal vivo. Il Giardino del Corpo parte proprio con degli eventi.
+
+Tre: ripensare il lavoro e le risorse che abbiamo, per aiutarci tra noi.
+
+Non serve un mondo nuovo. Basta riscoprire quello che abbiamo già sotto gli occhi.
+
+La salute non è un lusso. È per tutti.
+
+
+
+
 
 ## I ritmi che abbiamo perso
 
@@ -32,11 +59,19 @@ Un sistema che aiuta a prendere coscienza del proprio corpo e della propria stru
 
 ### 2. Lavorare sul proprio stile di vita
 
+
 Il secondo passo è lavorare sul nostro stile di vita e sulla nostra formazione, iniziando a considerarci non macchine o intelligenze artificiali, ma esseri umani. Il nostro corpo è come un giardino: con **Il Giardino del Corpo** si scopre che, come esseri umani, nasciamo per fare esperienza — siamo un piccolo mondo dentro un mondo più grande, in relazione con gli altri.
+
+
 
 Ogni persona ha attitudini, doni, talenti che può scoprire esplorando sfere che di solito nella vita non abbiamo occasione di indagare. Per questo serve guardare oltre la siepe, giocare con attività che ci fanno conoscere parti di noi altrimenti sconosciute. Altrimenti la vita passa, e ci troviamo alla fine senza aver visto quali sono davvero le possibilità dell'essere umano — solo perché tutti hanno sempre fatto così.
 
+
 La musica, l'arte, i desideri, i sogni, il corpo, i lavori manuali, la lettura, la natura, la storia, l'economia, le tradizioni: rischiano di scomparire, cancellate da una società che ci vuole sempre più omologati.
+
+Il Giardino del Corpo collabora per organizzare eventi, incontri ed esperienze dal vivo in cui si esplorano insieme musica, natura, corpo, filosofia e comunità. Gli eventi sono il primo passo per vivere esperienze e iniziare a vivere la filosofia del giardino del corpo.
+
+
 
 ### 3. Ripensare il lavoro, con Rails4Business
 
@@ -50,6 +85,8 @@ Ma job e work sono solo due strumenti concettuali per leggere il lavoro. Quello 
 
 Questa è la visione che voglio portare avanti: un percorso che non riguarda solo MarkPostura, ma che vorrei arrivasse a tutti i professionisti della salute e del benessere, ai professionisti digitali, e alle persone che ancora oggi, con un lavoro manuale, preservano tradizioni e territorio.
 
+E Il Giardino del Corpo ne è la parte viva: inizia con eventi concreti, perché è dalle esperienze condivise che nasce il cambiamento
+
 Per smettere di fare la guerra tra poveri, e iniziare a riscoprire non un mondo nuovo, ma quello che abbiamo già sotto gli occhi ogni giorno — e che abbiamo semplicemente dimenticato di guardare.
 
 ## I quattro ingressi
@@ -57,4 +94,4 @@ Per smettere di fare la guerra tra poveri, e iniziare a riscoprire non un mondo 
 - [PosturaCorretta](https://posturacorretta.org) — educazione alla salute, corsi e lezioni.
 - [MarkPostura](https://markpostura.it) — la visione personale, gli articoli e gli appuntamenti.
 - [Rails4Business](https://rails4b.com) — software, processi e collaborazione digitale.
-- [Il Giardino del Corpo](https://ilgiardinodelcorpo.it) — natura, musica, filosofia, eventi e comunità.
+- [Il Giardino del Corpo](https://ilgiardinodelcorpo.it)  — natura, musica, filosofia e comunità. Si parte con eventi dal vivo per riscoprire il corpo, le relazioni e le tradizioni.

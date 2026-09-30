@@ -1,0 +1,21 @@
+<% options = local_assigns.fetch(:options, @commitment_node_options || Node.none) %>
+<% default_node = local_assigns.fetch(:default_node, @default_commitment_node) %>
+<% selected_node = if form.object.respond_to?(:subject) && form.object.subject_type == "Node"
+  form.object.subject
+elsif defaults[:subject_node_id].present?
+  options.find { |node| node.id.to_s == defaults[:subject_node_id].to_s }
+else
+  default_node
+end %>
+<div data-controller="autocomplete" class="relative sm:col-span-2">
+  <%= label_tag nil, "Nodo responsabile", class: "text-xs font-bold text-slate-700" %>
+  <%= text_field_tag nil, selected_node ? "#{selected_node.title} · #{selected_node.slug}" : "", placeholder: "Cerca un nodo per nome o slug…", autocomplete: "off", data: { autocomplete_target: "input", action: "input->autocomplete#onInput focus->autocomplete#showResults blur->autocomplete#onBlur" }, class: "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" %>
+  <%= hidden_field_tag "data_commitment[subject_node_id]", selected_node&.id, data: { autocomplete_target: "hidden" } %>
+  <button type="button" data-autocomplete-target="clearBtn" data-action="click->autocomplete#clear" class="absolute right-2 top-7 hidden px-2 py-1 text-slate-400" aria-label="Rimuovi nodo">✕</button>
+  <div data-autocomplete-target="results" class="absolute z-30 mt-1 hidden max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white p-1 shadow-xl">
+    <% options.each do |node| %>
+      <button type="button" data-autocomplete-target="option" data-action="mousedown->autocomplete#select" data-id="<%= node.id %>" data-title="<%= node.title %> <%= node.slug %>" data-value="<%= node.title %> · <%= node.slug %>" class="block w-full rounded-md px-3 py-2 text-left text-sm hover:bg-slate-100"><strong><%= node.title %></strong><span class="ml-1 text-xs text-slate-400"><%= node.slug %></span></button>
+    <% end %>
+  </div>
+  <p class="mt-1 text-xs text-slate-500">Il dominio indica dove si pubblica; il nodo identifica il brand o progetto responsabile.</p>
+</div>

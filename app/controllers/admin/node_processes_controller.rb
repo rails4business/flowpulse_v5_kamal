@@ -1,11 +1,11 @@
 module Admin
-  class BrandProcessesController < BaseController
+  class NodeProcessesController < BaseController
     before_action :require_superadmin!
     before_action :set_brand
     before_action :set_process, only: %i[update destroy]
 
     def create
-      process_record = @brand.brand_processes.new(process_params.merge(created_by_user: Current.user))
+      process_record = @brand.node_processes.new(process_params.merge(created_by_user: Current.user))
       if process_record.save
         redirect_to admin_brand_path(@brand, tab: "processes"), notice: "Processo aggiunto."
       else
@@ -33,11 +33,11 @@ module Admin
       end
 
       def set_process
-        @process_record = @brand.brand_processes.find(params[:id])
+        @process_record = @brand.node_processes.find(params[:id])
       end
 
       def process_params
-        params.require(:brand_process).permit(:title, :slug, :description, :status)
+        params.require(:node_process).permit(:title, :slug, :description, :status)
       end
   end
 end

@@ -11,6 +11,10 @@ module Brands
   STATUSES = %w[draft requested planned confirmed in_progress completed cancelled].freeze
   PRICING_TYPES = %w[hourly fixed none].freeze
   CONTRIBUTION_TYPES = %w[time_investment money_investment paid unpaid].freeze
+  PUBLICATION_STATUSES = %w[draft published archived].freeze
+  PUBLICATION_VISIBILITIES = %w[public member private].freeze
+  ACCESS_MODES = %w[free subscription purchase].freeze
+  PUBLICATION_CHANGE_KINDS = %w[publish update fix unpublish archive].freeze
 
   belongs_to :profile
   belongs_to :created_by_profile, class_name: "Profile", inverse_of: :created_data_commitments
@@ -18,6 +22,8 @@ module Brands
   belongs_to :subject, polymorphic: true, optional: true
   belongs_to :assignee_profile, class_name: "Profile", optional: true
   belongs_to :responsible_profile, class_name: "Profile", optional: true
+  belongs_to :published_by_profile, class_name: "Profile", optional: true
+  belongs_to :previous_publication_commitment, class_name: "Brands::Impegno::Commitment", optional: true
   belongs_to :participant_contact, class_name: "Brands::Impegno::Contact", optional: true,
              inverse_of: :participant_data_commitments
   belongs_to :parent, class_name: "Brands::Impegno::Commitment", optional: true, inverse_of: :children
@@ -35,12 +41,19 @@ module Brands
   validates :status, inclusion: { in: STATUSES }
   validates :pricing_type, inclusion: { in: PRICING_TYPES }
   validates :contribution_type, inclusion: { in: CONTRIBUTION_TYPES }
+  validates :publication_status, inclusion: { in: PUBLICATION_STATUSES }
+  validates :publication_visibility, inclusion: { in: PUBLICATION_VISIBILITIES }
+  validates :publication_change_kind, inclusion: { in: PUBLICATION_CHANGE_KINDS }, allow_blank: true
+  validates :content_key, presence: true, if: :publication_requested?
   validates :hourly_rate, :total_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :ends_after_start
   validate :actual_end_after_actual_start
   validate :calendar_interval_does_not_overlap
   validate :participant_contact_is_a_person
+  validate :access_modes_are_valid
+  validate :free_access_is_exclusive
 
+  before_validation :normalize_access_modes
   before_validation :set_default_calendar_identity
   before_validation :calculate_hourly_total
 
@@ -75,7 +88,27 @@ module Brands
     end
   end
 
+  def publication_requested?
+    kind == "content" && publish_on_completion?
+  end
+
   private
+
+    def normalize_access_modes
+      self.access_modes = Array(access_modes).compact_blank.map(&:to_s).uniq
+      self.access_modes = ["free"] if kind == "content" && access_modes.empty?
+    end
+
+    def access_modes_are_valid
+      invalid_modes = access_modes - ACCESS_MODES
+      errors.add(:access_modes, "contiene modalità non valide: #{invalid_modes.join(', ')}") if invalid_modes.any?
+    end
+
+    def free_access_is_exclusive
+      return unless access_modes.include?("free") && access_modes.many?
+
+      errors.add(:access_modes, "non può combinare l’accesso libero con abbonamento o acquisto")
+    end
 
     def calculate_hourly_total
       return unless pricing_type == "hourly" && hourly_rate.present? && duration_minutes

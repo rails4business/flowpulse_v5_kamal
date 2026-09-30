@@ -38,7 +38,7 @@ module Admin
         end
         @calendar_context_nodes = Node.order(:title) if @node.professional?
       end
-      @brand_processes = @node.brand_processes.includes(:data_experiences).order(:title) if @active_tab == "processes"
+      @node_processes = @node.node_processes.includes(:data_experiences).order(:title) if @active_tab == "processes"
       load_editorial_material if @active_tab == "material"
     end
 

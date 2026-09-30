@@ -49,6 +49,14 @@ class ApplicationController < ActionController::Base
       @dashboard_current_section || :dashboard
     end
 
+    def available_commitment_nodes
+      return Node.order(:title, :id) if Current.user&.superadmin_user?
+      return Node.none unless Current.user
+
+      ids = Node.includes(:role_assignment).select { |node| node.administered_by?(Current.user) }.map(&:id)
+      Node.where(id: ids).order(:title, :id)
+    end
+
     def public_node_visible?(node)
       return false if node.blank?
       return true if Current.user&.superadmin_user?

@@ -10,24 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_30_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-
-  create_table "brand_processes", force: :cascade do |t|
-    t.bigint "node_id", null: false
-    t.bigint "created_by_user_id", null: false
-    t.string "slug", null: false
-    t.string "title", null: false
-    t.text "description"
-    t.string "status", default: "draft", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_by_user_id"], name: "index_brand_processes_on_created_by_user_id"
-    t.index ["node_id", "slug"], name: "index_brand_processes_on_node_id_and_slug", unique: true
-    t.index ["node_id", "status"], name: "index_brand_processes_on_node_id_and_status"
-    t.index ["node_id"], name: "index_brand_processes_on_node_id"
-  end
 
   create_table "data_commitment_imports", force: :cascade do |t|
     t.bigint "uploaded_by_user_id", null: false
@@ -89,6 +74,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
     t.bigint "data_experience_id"
     t.bigint "data_session_id"
     t.integer "position", default: 0, null: false
+    t.string "content_key"
+    t.boolean "publish_on_completion", default: false, null: false
+    t.string "publication_status", default: "draft", null: false
+    t.string "publication_visibility", default: "private", null: false
+    t.datetime "published_at"
+    t.bigint "published_by_profile_id"
+    t.string "access_modes", default: [], null: false, array: true
+    t.string "publication_change_kind"
+    t.text "publication_note_md"
+    t.bigint "previous_publication_commitment_id"
+    t.index ["access_modes"], name: "index_data_commitments_on_access_modes", using: :gin
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
     t.index ["created_by_profile_id"], name: "index_data_commitments_on_created_by_profile_id"
@@ -101,14 +97,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
     t.index ["data_slot_id", "position"], name: "index_data_commitments_on_data_slot_id_and_position"
     t.index ["data_slot_id", "status"], name: "index_data_commitments_on_data_slot_id_and_status"
     t.index ["data_slot_id"], name: "index_data_commitments_on_data_slot_id"
+    t.index ["domain_id", "content_key", "status"], name: "index_commitments_on_editorial_history"
+    t.index ["domain_id", "content_key"], name: "index_data_commitments_on_domain_id_and_content_key"
     t.index ["domain_id"], name: "index_data_commitments_on_domain_id"
     t.index ["genera_impresa"], name: "index_data_commitments_on_genera_impresa", using: :gin
     t.index ["kind"], name: "index_data_commitments_on_kind"
     t.index ["parent_id"], name: "index_data_commitments_on_parent_id"
     t.index ["participant_contact_id"], name: "index_data_commitments_on_participant_contact_id"
+    t.index ["previous_publication_commitment_id"], name: "index_data_commitments_on_previous_publication_commitment_id"
     t.index ["profile_id", "calendar_key", "starts_at"], name: "index_commitments_on_owner_calendar_start"
     t.index ["profile_id", "calendar_key"], name: "index_one_active_timer_per_calendar", unique: true, where: "(((status)::text = 'in_progress'::text) AND (actual_ended_at IS NULL))"
     t.index ["profile_id"], name: "index_data_commitments_on_profile_id"
+    t.index ["publication_status"], name: "index_data_commitments_on_publication_status"
+    t.index ["published_by_profile_id"], name: "index_data_commitments_on_published_by_profile_id"
     t.index ["responsible_profile_id"], name: "index_data_commitments_on_responsible_profile_id"
     t.index ["starts_at"], name: "index_data_commitments_on_starts_at"
     t.index ["status"], name: "index_data_commitments_on_status"
@@ -122,9 +123,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "brand_process_id"
-    t.index ["brand_process_id"], name: "index_data_experiences_on_brand_process_id"
+    t.bigint "node_process_id"
     t.index ["created_by_user_id"], name: "index_data_experiences_on_created_by_user_id"
+    t.index ["node_process_id"], name: "index_data_experiences_on_node_process_id"
   end
 
   create_table "data_sessions", force: :cascade do |t|
@@ -242,12 +243,46 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
     t.index ["source_checksum"], name: "index_node_contents_on_source_checksum"
   end
 
+  create_table "node_events", force: :cascade do |t|
+    t.bigint "node_id", null: false
+    t.bigint "performed_by_user_id"
+    t.string "kind", null: false
+    t.text "note"
+    t.datetime "happened_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "public_id", null: false
+    t.string "title"
+    t.text "body_md"
+    t.string "development_entry_slug"
+    t.index ["development_entry_slug"], name: "index_node_events_on_development_entry_slug"
+    t.index ["node_id", "happened_at"], name: "index_node_events_on_node_id_and_happened_at"
+    t.index ["node_id"], name: "index_node_events_on_node_id"
+    t.index ["performed_by_user_id"], name: "index_node_events_on_performed_by_user_id"
+    t.index ["public_id"], name: "index_node_events_on_public_id", unique: true
+  end
+
   create_table "node_hierarchies", id: false, force: :cascade do |t|
     t.integer "ancestor_id", null: false
     t.integer "descendant_id", null: false
     t.integer "generations", null: false
     t.index ["ancestor_id", "descendant_id", "generations"], name: "node_anc_desc_idx", unique: true
     t.index ["descendant_id"], name: "node_desc_idx"
+  end
+
+  create_table "node_processes", force: :cascade do |t|
+    t.bigint "node_id", null: false
+    t.bigint "created_by_user_id", null: false
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "status", default: "draft", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_node_processes_on_created_by_user_id"
+    t.index ["node_id", "slug"], name: "index_node_processes_on_node_id_and_slug", unique: true
+    t.index ["node_id", "status"], name: "index_node_processes_on_node_id_and_status"
+    t.index ["node_id"], name: "index_node_processes_on_node_id"
   end
 
   create_table "nodes", force: :cascade do |t|
@@ -431,11 +466,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
-  add_foreign_key "brand_processes", "nodes"
-  add_foreign_key "brand_processes", "users", column: "created_by_user_id"
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "data_commitments", column: "parent_id"
+  add_foreign_key "data_commitments", "data_commitments", column: "previous_publication_commitment_id"
   add_foreign_key "data_commitments", "data_experiences"
   add_foreign_key "data_commitments", "data_sessions"
   add_foreign_key "data_commitments", "data_slots"
@@ -444,8 +478,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
   add_foreign_key "data_commitments", "profiles"
   add_foreign_key "data_commitments", "profiles", column: "assignee_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "created_by_profile_id"
+  add_foreign_key "data_commitments", "profiles", column: "published_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
-  add_foreign_key "data_experiences", "brand_processes"
+  add_foreign_key "data_experiences", "node_processes"
   add_foreign_key "data_experiences", "users", column: "created_by_user_id"
   add_foreign_key "data_sessions", "data_experiences"
   add_foreign_key "data_sessions", "professional_calendars"
@@ -460,6 +495,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_090000) do
   add_foreign_key "impegno_places", "domains"
   add_foreign_key "impegno_places", "profiles"
   add_foreign_key "node_contents", "nodes"
+  add_foreign_key "node_events", "nodes"
+  add_foreign_key "node_events", "users", column: "performed_by_user_id"
+  add_foreign_key "node_processes", "nodes"
+  add_foreign_key "node_processes", "users", column: "created_by_user_id"
   add_foreign_key "nodes", "nodes", column: "link_node_id"
   add_foreign_key "nodes", "nodes", column: "parent_id"
   add_foreign_key "nodes", "nodes", column: "professional_owner_node_id"

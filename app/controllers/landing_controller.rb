@@ -45,13 +45,13 @@ class LandingController < ApplicationController
 
   def rails4b_contents
     load_rails4b
-    @rails4b_contents_tab = params[:tab] == "passati" ? "passati" : "prossimi"
+    @rails4b_contents_tab = %w[contenuti passati].include?(params[:tab]) ? "contenuti" : "eventi"
     visible_contents = @rails4b_content_catalog.fetch("items", []).select do |content|
       %w[published scheduled].include?(content.fetch("status")) || Current.user&.superadmin_user?
     end
     @rails4b_contents = visible_contents.select do |content|
-      @rails4b_contents_tab == "prossimi" ? content["status"] == "scheduled" : content["status"] != "scheduled"
-    end.sort_by { |content| content.fetch("publication_at") }.then { |items| @rails4b_contents_tab == "passati" ? items.reverse : items }.map do |content|
+      @rails4b_contents_tab == "eventi" ? content["status"] == "scheduled" : content["status"] != "scheduled"
+    end.sort_by { |content| content.fetch("publication_at") }.then { |items| @rails4b_contents_tab == "contenuti" ? items.reverse : items }.map do |content|
       content.merge("track_slug" => @rails4b_track_by_content_slug[content.fetch("slug")])
     end
   end
@@ -109,7 +109,11 @@ class LandingController < ApplicationController
   end
 
   def giardino_del_corpo
-    @garden_events = visible_garden_events
+    @garden_tab = %w[contenuti passati].include?(params[:tab]) ? "contenuti" : "eventi"
+    garden_entries = garden_event_catalog
+    @garden_events, @garden_contents = garden_entries.partition { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
+    @garden_events.sort_by! { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
+    @garden_contents.sort_by! { |event| event.fetch("event_date") }.reverse!
     @garden_places = AcademyCurriculum.load.fetch("locations", {}).values.select do |place|
       Array(place["projects"]).include?("giardino-del-corpo")
     end
@@ -208,7 +212,7 @@ class LandingController < ApplicationController
     end
     @radioestesia_future_contents.sort_by! { |content| content.fetch("date") }
     @radioestesia_past_contents.sort_by! { |content| content.fetch("date") }.reverse!
-    @radioestesia_timeline_tab = params[:tab].to_s == "passati" ? "passati" : "prossimi"
+    @radioestesia_timeline_tab = %w[contenuti passati].include?(params[:tab].to_s) ? "contenuti" : "eventi"
   end
 
   def radioestesia_purchase_for(content)
@@ -245,12 +249,11 @@ class LandingController < ApplicationController
     ).first(3)
   end
 
-  def visible_garden_events
+  def garden_event_catalog
     DomainEventCatalog.for_project(
       "giardino-del-corpo",
       include_drafts: Current.user&.superadmin_user? || false
-    ).select { |event| event["event_date"].blank? || event.fetch("event_date") >= Date.current }
-     .sort_by { |event| [event["event_date"] || Date.new(9999, 12, 31), event.fetch("title", "")] }
+    )
   end
 
   def visible_markpostura_events

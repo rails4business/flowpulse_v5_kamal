@@ -87,20 +87,13 @@ class MarkposturaWeekPlan
       calendar.fetch("courses").each_with_index.to_h do |course, index|
         monday = first_monday + index.weeks
         week_key = format("%<year>d-W%<week>02d", year: monday.cwyear, week: monday.cweek)
-        entries = [
-          {
-            "day" => "Lunedì", "start" => calendar.fetch("publication_time"), "end" => "09:30",
-            "space" => "postura-gruppo", "title" => "Pubblicazione corso · #{course.fetch('title')}",
-            "location" => "Online", "related_course" => course.fetch("content_id")
-          }
-        ]
-        entries.concat(lessons.map do |lesson|
+        entries = lessons.map do |lesson|
           {
             "day" => lesson.fetch("day"), "start" => lesson.fetch("start"), "end" => lesson.fetch("end"),
             "space" => "postura-gruppo", "title" => "Lezione di gruppo · #{course.fetch('title')}",
             "location" => lesson.fetch("location"), "related_course" => course.fetch("content_id")
           }
-        end)
+        end
         if include_private
           preparation = calendar.fetch("preparation")
           entries << {

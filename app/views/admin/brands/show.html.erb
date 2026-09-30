@@ -120,19 +120,19 @@
     <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div><p class="text-xs font-extrabold uppercase tracking-[.14em] text-violet-600">Organizzazione · solo superadmin</p><h2 class="mt-1 text-xl font-extrabold text-slate-950">Processi del Brand</h2><p class="mt-2 text-sm leading-6 text-slate-600">Un Processo può raccogliere più Esperienze concrete senza entrare direttamente nel calendario.</p></div>
       <div class="mt-6 space-y-3">
-        <% @brand_processes.each do |process_record| %>
+        <% @node_processes.each do |process_record| %>
           <%= form_with model: process_record, url: admin_brand_process_path(@node, process_record), class: "grid gap-3 rounded-xl border border-slate-200 p-4 lg:grid-cols-[1fr_1fr_8rem_auto] lg:items-end" do |form| %>
             <div><%= form.label :title, "Processo", class: "text-xs font-bold text-slate-600" %><%= form.text_field :title, class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %><p class="mt-1 text-xs text-slate-400"><%= pluralize(process_record.data_experiences.size, "esperienza") %></p></div>
             <div><%= form.label :slug, "Codice", class: "text-xs font-bold text-slate-600" %><%= form.text_field :slug, class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
-            <div><%= form.label :status, "Stato", class: "text-xs font-bold text-slate-600" %><%= form.select :status, BrandProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
+            <div><%= form.label :status, "Stato", class: "text-xs font-bold text-slate-600" %><%= form.select :status, NodeProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
             <div class="flex gap-2"><%= form.submit "Salva", class: "cursor-pointer rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white" %><%= link_to "Elimina", admin_brand_process_path(@node, process_record), data: { turbo_method: :delete, turbo_confirm: "Eliminare il processo conservando le Esperienze?" }, class: "rounded-lg px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50" %></div>
           <% end %>
         <% end %>
       </div>
-      <%= form_with model: BrandProcess.new, url: admin_brand_processes_path(@node), class: "mt-6 grid gap-3 rounded-xl border border-dashed border-violet-300 bg-violet-50/50 p-4 lg:grid-cols-[1fr_1fr_8rem_auto] lg:items-end" do |form| %>
+      <%= form_with model: NodeProcess.new, url: admin_brand_processes_path(@node), class: "mt-6 grid gap-3 rounded-xl border border-dashed border-violet-300 bg-violet-50/50 p-4 lg:grid-cols-[1fr_1fr_8rem_auto] lg:items-end" do |form| %>
         <div><%= form.label :title, "Nuovo processo", class: "text-xs font-bold text-slate-700" %><%= form.text_field :title, required: true, placeholder: "Es. Produzione video", class: "mt-1 w-full rounded-lg border-slate-300 text-sm" %></div>
         <div><%= form.label :slug, "Codice", class: "text-xs font-bold text-slate-700" %><%= form.text_field :slug, placeholder: "Si genera dal titolo", class: "mt-1 w-full rounded-lg border-slate-300 font-mono text-sm" %></div>
-        <div><%= form.label :status, "Stato", class: "text-xs font-bold text-slate-700" %><%= form.select :status, BrandProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
+        <div><%= form.label :status, "Stato", class: "text-xs font-bold text-slate-700" %><%= form.select :status, NodeProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-lg border-slate-300 bg-white text-sm" %></div>
         <%= form.submit "+ Aggiungi", class: "cursor-pointer rounded-lg bg-violet-600 px-4 py-2 text-sm font-bold text-white" %>
       <% end %>
     </section>

@@ -84,13 +84,13 @@ class Admin::BrandsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "superadmin creates a Brand process" do
-    assert_difference -> { BrandProcess.count }, 1 do
+    assert_difference -> { NodeProcess.count }, 1 do
       post admin_brand_processes_url(@brand), params: {
-        brand_process: { title: "Produzione video", slug: "produzione-video", status: "active" }
+        node_process: { title: "Produzione video", slug: "produzione-video", status: "active" }
       }
     end
 
-    process_record = BrandProcess.order(:created_at).last
+    process_record = NodeProcess.order(:created_at).last
     assert_equal @brand, process_record.node
     assert_equal @superadmin, process_record.created_by_user
     assert_redirected_to admin_brand_url(@brand, tab: "processes")

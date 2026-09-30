@@ -1,0 +1,14 @@
+<% content_for :title, "#{@event.title.presence || @event.kind.humanize} — #{@node.title}" %>
+<% labels = { "created" => "Creato", "started" => "Avviato", "consolidated" => "Consolidato", "cut" => "Troncato", "resumed" => "Ripreso", "updated" => "Aggiornato", "fixed" => "Corretto" } %>
+<% icons = { "created" => "○", "started" => "▶", "consolidated" => "✓", "cut" => "■", "resumed" => "↻", "updated" => "↑", "fixed" => "◆" } %>
+<main class="brand-admin-shell max-w-4xl">
+  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"><%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><%= link_to @node.title, brand_admin_node_path(@brand.slug, @node), class: "font-semibold text-teal-700" %><span>/</span><span>Evento</span></nav>
+  <article class="brand-admin-card p-6 sm:p-8">
+    <div class="flex flex-wrap items-center gap-3 text-sm"><span class="rounded-full bg-slate-100 px-3 py-1 font-black text-slate-700"><%= icons.fetch(@event.kind) %> <%= labels.fetch(@event.kind) %></span><time class="text-slate-500"><%= l(@event.happened_at, format: :long) %></time><code class="text-xs text-slate-400"><%= @event.public_id %></code></div>
+    <h1 class="brand-admin-title mt-5 text-3xl"><%= @event.title.presence || labels.fetch(@event.kind) %></h1>
+    <p class="mt-2 text-sm text-slate-500">Registrato da <%= @event.performed_by_user&.profile&.display_name || @event.performed_by_user&.email_address || "Sistema" %></p>
+    <% if @event.note.present? %><p class="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 leading-7 text-slate-700"><%= @event.note %></p><% end %>
+    <% if @development_entry %><%= link_to "Scheda di sviluppo · #{@development_entry.fetch("title")}", brand_admin_development_entry_path(@brand.slug, @development_entry.fetch("slug")), class: "mt-6 inline-flex rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800 hover:bg-amber-100" %><% end %>
+    <% if @event.body_md.present? %><div class="editorial-rich-text mt-8 border-t border-slate-200 pt-8 text-lg leading-8 text-slate-700"><%= markdown(@event.body_md) %></div><% else %><p class="mt-8 border-t border-slate-200 pt-8 text-sm text-slate-500">Questo evento non contiene ancora note di sviluppo in Markdown.</p><% end %>
+  </article>
+</main>

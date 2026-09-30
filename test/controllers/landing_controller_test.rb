@@ -95,7 +95,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "Lezione di gruppo · Inizia con PosturaCorretta"
-    assert_includes response.body, "Pubblicazione corso · Inizia con PosturaCorretta"
+    assert_not_includes response.body, "Pubblicazione corso · Inizia con PosturaCorretta"
     assert_not_includes response.body, "Preparazione · Inizia con PosturaCorretta"
   end
 
@@ -172,32 +172,17 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "Prima della soluzione", count: 0
   end
 
-  test "Rails4Business keeps working drafts private" do
-    get rails4b_content_url("dalla-banca-alla-cellula-sociale")
-
-    assert_redirected_to rails4b_url
-
-    get rails4b_contents_url(tab: "passati")
-
-    assert_response :success
-    assert_select "a[href='#{rails4b_content_path("dalla-banca-alla-cellula-sociale")}']", count: 0
-  end
-
-  test "Rails4Business lets a superadmin preview a working draft" do
-    superadmin = User.create!(
-      email_address: "rails4b-draft-superadmin@example.com",
-      password: "password123",
-      password_confirmation: "password123",
-      superadmin: true,
-      active_role: :superadmin
-    )
-    post session_url, params: { email_address: superadmin.email_address, password: "password123" }
-
+  test "Rails4Business publishes the cellula sociale article" do
     get rails4b_content_url("dalla-banca-alla-cellula-sociale")
 
     assert_response :success
     assert_select "h1", text: "Dalla banca alla cellula sociale: come rappresentare un organismo che cresce"
     assert_select "h2", text: "Come far crescere un'organizzazione dove le regole sono fatte per chi è già grande"
+
+    get rails4b_contents_url(tab: "contenuti")
+
+    assert_response :success
+    assert_select "a[href='#{rails4b_content_path("dalla-banca-alla-cellula-sociale")}']"
   end
 
   test "Rails4Business separates dated content from the permanent train" do
@@ -205,8 +190,8 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Contenuti Rails4Business"
-    assert_select "a[href='#{rails4b_contents_path(tab: "prossimi")}']", text: "Futuri"
-    assert_select "a[href='#{rails4b_contents_path(tab: "passati")}']", text: "Passati"
+    assert_select "a[href='#{rails4b_contents_path(tab: "eventi")}']", text: "Eventi"
+    assert_select "a[href='#{rails4b_contents_path(tab: "contenuti")}']", text: "Contenuti"
     assert_select "a[href='#{rails4b_track_path("collaborare", contenuto: "installa-dash-wallet")}']", text: /Installa Dash Wallet/
   end
 

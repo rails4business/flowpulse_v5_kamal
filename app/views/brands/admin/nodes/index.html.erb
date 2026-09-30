@@ -1,37 +1,14 @@
 <% content_for :title, "Nodi di #{@brand.title}" %>
-<% map_nodes = @nodes.map { |node| { id: node.id, title: node.title, parent_id: node.parent_id, status: node.status, link_node_id: node.link_node_id, process_count: node.brand_processes.size, url: brand_admin_node_path(@brand.slug, node) } } if @active_view == "schema" %>
+<% map_nodes = @nodes.map { |node| { id: node.id, title: node.title, parent_id: node.parent_id, cell_status: (node == @brand ? "active" : node.cell_status), link_node_id: node.link_node_id, process_count: node.node_processes.size, url: brand_admin_node_path(@brand.slug, node) } } if @active_view == "schema" %>
 
-<style nonce="<%= content_security_policy_nonce %>">
-  .brand-node-map { --ink:#172033; --muted:#64748b; --line:#cbd5e1; --draft:#94a3b8; --published:#16805c; --archived:#b45309; }
-  .brand-node-map__canvas { overflow:auto; border:1px solid #dbe3ee; border-radius:1rem; background:#f8fafc; }
-  .brand-node-map__canvas svg { display:block; min-width:100%; }
-  .brand-node-map__edge { fill:none; stroke:var(--line); stroke-width:2; }
-  .brand-node-map__bridge { fill:none; stroke:#7c3aed; stroke-width:2; stroke-dasharray:7 6; }
-  .brand-node-map__node { color:var(--draft); text-decoration:none; }
-  .brand-node-map__node[data-status="published"] { color:var(--published); }
-  .brand-node-map__node[data-status="archived"] { color:var(--archived); }
-  .brand-node-map__node rect { fill:white; stroke:currentColor; stroke-width:2.5; }
-  .brand-node-map__node:hover rect, .brand-node-map__node:focus rect { fill:#eff6ff; stroke-width:4; }
-  .brand-node-map__title { fill:var(--ink); font:700 14px ui-sans-serif,system-ui,sans-serif; text-anchor:middle; }
-  .brand-node-map__meta { fill:currentColor; font:800 10px ui-sans-serif,system-ui,sans-serif; letter-spacing:.05em; text-anchor:middle; text-transform:uppercase; }
-</style>
-
-<main class="brand-node-map mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<main class="brand-admin-shell brand-cell-map">
   <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Percorso">
-    <%= link_to "Brand e progetti", admin_brands_path, class: "font-semibold text-blue-700" %><span>/</span><%= link_to @brand.title, admin_brand_path(@brand), class: "font-semibold text-blue-700" %><span>/</span><span>Nodi</span>
+    <%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><span>Nodi</span>
   </nav>
 
-  <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Amministrazione del Brand · superadmin</p>
-    <div class="mt-2 flex flex-wrap items-end justify-between gap-5">
-      <div><h1 class="text-3xl font-extrabold tracking-tight"><%= @brand.title %> · Nodi</h1><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Costruisci la struttura aggiungendo un nodo alla volta. Apri un nodo per vedere i processi che gli appartengono.</p></div>
-      <button type="button" data-node-dialog-open class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white hover:bg-blue-700">+ Nodo</button>
-    </div>
-    <nav class="mt-6 flex flex-wrap gap-2 text-sm font-bold" aria-label="Amministrazione del Brand">
-      <%= link_to "Elenco", brand_admin_nodes_path(@brand.slug), aria: (@active_view == "list" ? { current: "page" } : {}), class: "rounded-full px-4 py-2 #{@active_view == "list" ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}" %>
-      <%= link_to "Schema", brand_admin_nodes_path(@brand.slug, view: "schema"), aria: (@active_view == "schema" ? { current: "page" } : {}), class: "rounded-full px-4 py-2 #{@active_view == "schema" ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}" %>
-      <%= link_to "Sviluppo", brand_admin_development_path(@brand.slug), class: "rounded-full bg-slate-100 px-4 py-2 text-slate-700 hover:bg-slate-200" %>
-    </nav>
+  <header class="brand-admin-card p-6">
+    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-teal-700"><%= brand_owner? ? "Il tuo Brand" : "Amministrazione del Brand" %></p>
+    <div class="mt-2"><h1 class="brand-admin-title text-3xl"><%= @brand.title %> · Nodi</h1><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Costruisci il Brand una cellula alla volta. Ogni nodo può raccogliere progetti, attività e processi.</p></div>
   </header>
 
   <% if @active_view == "list" %>
@@ -42,7 +19,7 @@
       </ul>
     </section>
   <% else %>
-    <section class="brand-node-map__canvas mt-6" aria-label="Schema dei nodi di <%= @brand.title %>">
+    <section class="brand-cell-map__canvas mt-6" aria-label="Schema dei nodi di <%= @brand.title %>">
       <svg id="brand-node-map-svg" role="img" aria-label="Nodi e collegamenti del Brand"></svg>
     </section>
   <% end %>
@@ -52,12 +29,27 @@
       <div class="flex items-center justify-between gap-4"><h2 class="text-xl font-extrabold">Aggiungi un nodo</h2><button type="button" data-node-dialog-close class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100" aria-label="Chiudi">×</button></div>
       <div><%= form.label :title, "Nome", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, required: true, autofocus: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
       <div><%= form.label :parent_id, "Nasce sotto", class: "text-sm font-bold text-slate-700" %><%= form.collection_select :parent_id, @parent_options, :id, :title, { selected: @brand.id }, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
-      <div><%= form.label :link_node_id, "Nodo ponte verso", class: "text-sm font-bold text-slate-700" %><%= form.collection_select :link_node_id, @link_node_options, :id, :title, { include_blank: "Nodo normale — nessun ponte" }, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %><p class="mt-1 text-xs text-slate-500">Un nodo ponte rimanda a un altro nodo dello stesso proprietario e non può avere figli.</p></div>
+      <%= render "bridge_field", form:, node: form.object, options: @link_node_options, input_id: "new_node_bridge" %>
       <div><%= form.label :description, "Descrizione iniziale", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 3, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
       <%= form.hidden_field :status, value: "draft" %>
       <div class="flex justify-end gap-2"><button type="button" data-node-dialog-close class="rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Crea nodo", class: "cursor-pointer rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white" %></div>
     <% end %>
   </dialog>
+
+  <% if Current.user&.superadmin_user? %>
+    <aside class="brand-admin-card mt-8 p-6" aria-label="Istruzioni superadmin per lo snapshot YAML">
+      <p class="text-xs font-black uppercase tracking-[0.14em] text-amber-700">Solo superadmin</p>
+      <h2 class="mt-1 text-xl font-extrabold">Snapshot YAML dei nodi</h2>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600">Lo YAML conserva la struttura ricostruibile del Brand; database, eventi, permessi e cronologia restano operativi in PostgreSQL. L’importazione crea o aggiorna per slug e non elimina automaticamente i nodi assenti.</p>
+      <dl class="mt-5 grid gap-4 text-sm">
+        <div><dt class="font-extrabold text-slate-900">File</dt><dd class="mt-1 font-mono text-xs text-slate-600">config/data/brands/<%= @brand.slug %>/nodes.yml</dd></div>
+        <div><dt class="font-extrabold text-slate-900">Esporta il database nello YAML</dt><dd class="mt-1 rounded-xl bg-slate-950 px-4 py-3 font-mono text-xs text-slate-100">bin/rails brand_nodes:export BRAND=<%= @brand.slug %></dd></div>
+        <div><dt class="font-extrabold text-slate-900">Verifica prima del deploy</dt><dd class="mt-1 rounded-xl bg-slate-950 px-4 py-3 font-mono text-xs text-slate-100">bin/rails brand_nodes:validate BRAND=<%= @brand.slug %></dd></div>
+        <div><dt class="font-extrabold text-slate-900">Importa con aggiornamento sicuro</dt><dd class="mt-1 rounded-xl bg-slate-950 px-4 py-3 font-mono text-xs text-slate-100">bin/rails brand_nodes:import BRAND=<%= @brand.slug %></dd></div>
+      </dl>
+      <p class="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950"><strong>Prima di esportare:</strong> recupera le modifiche più recenti del repository. Dopo l’export controlla il diff e committa il file. Il backup PostgreSQL rimane necessario per eventi, utenti e permessi.</p>
+    </aside>
+  <% end %>
 
   <% if @active_view == "schema" %><script type="application/json" id="brand-node-map-data"><%== json_escape(map_nodes.to_json) %></script><% end %>
 </main>
@@ -67,9 +59,14 @@
   const dialog=document.querySelector('[data-node-dialog]');
   const parentSelect=dialog?.querySelector('select[name="node[parent_id]"]');
   const openDialog=parentId => { if(parentSelect && parentId) parentSelect.value=String(parentId); dialog?.showModal(); };
-  document.querySelector('[data-node-dialog-open]')?.addEventListener('click',()=>openDialog());
   document.querySelectorAll('[data-node-add-parent]').forEach(button=>button.addEventListener('click',()=>openDialog(button.dataset.nodeAddParent)));
   document.querySelectorAll('[data-node-dialog-close]').forEach(button=>button.addEventListener('click',()=>dialog?.close()));
+  document.querySelectorAll('[data-bridge-autocomplete]').forEach(field => {
+    const search=field.querySelector('[data-bridge-search]'), value=field.querySelector('[data-bridge-value]'), list=document.getElementById(search?.getAttribute('list'));
+    if(!search||!value||!list)return;
+    const synchronize=()=>{const option=[...list.options].find(candidate=>candidate.value===search.value);value.value=option?.dataset.nodeId||'';search.setCustomValidity(search.value&&!option?'Scegli un nodo dall’elenco suggerito.':'');};
+    search.addEventListener('input',synchronize);search.addEventListener('change',synchronize);
+  });
   const svg = document.getElementById('brand-node-map-svg');
   const source = document.getElementById('brand-node-map-data');
   if (!svg || !source) return;
@@ -84,9 +81,9 @@
   keys.forEach(column => { const list=columns[column], block=list.length*h+Math.max(list.length-1,0)*gy, top=(height-block)/2; list.forEach((node,row) => positions[node.id]={x:pad+column*(w+gx),y:top+row*(h+gy)}); });
   const split = title => { const out=[]; let line=''; title.split(/\s+/).forEach(word => { const next=`${line} ${word}`.trim(); if(next.length>22&&line){out.push(line);line=word}else line=next; }); if(line)out.push(line); return out.slice(0,2); };
   let html='<defs><marker id="brand-node-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/></marker></defs>';
-  nodes.forEach(node => { const parent=byId[String(node.parent_id)]; if(!parent)return; const a=positions[parent.id],b=positions[node.id],x1=a.x+w,y1=a.y+h/2,x2=b.x,y2=b.y+h/2,m=(x1+x2)/2; html+=`<path class="brand-node-map__edge" marker-end="url(#brand-node-arrow)" d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2-7},${y2}"/>`; });
-  nodes.forEach(node => { if(!node.link_node_id||!positions[node.link_node_id])return; const a=positions[node.id],b=positions[node.link_node_id]; html+=`<path class="brand-node-map__bridge" d="M${a.x+w/2},${a.y} C${a.x+w/2},${a.y-55} ${b.x+w/2},${b.y-55} ${b.x+w/2},${b.y}"/>`; });
-  nodes.forEach(node => { const p=positions[node.id], lines=split(node.title).map((line,i)=>`<tspan x="${w/2}" dy="${i?17:0}">${esc(line)}</tspan>`).join(''), meta=node.process_count===1?'1 processo':`${node.process_count} processi`; html+=`<a class="brand-node-map__node" data-status="${esc(node.status)}" href="${esc(node.url)}" transform="translate(${p.x},${p.y})"><rect width="${w}" height="${h}" rx="14"/><text class="brand-node-map__title" x="${w/2}" y="25">${lines}</text><text class="brand-node-map__meta" x="${w/2}" y="64">${esc(meta)}</text></a>`; });
+  nodes.forEach(node => { const parent=byId[String(node.parent_id)]; if(!parent)return; const a=positions[parent.id],b=positions[node.id],x1=a.x+w,y1=a.y+h/2,x2=b.x,y2=b.y+h/2,m=(x1+x2)/2; html+=`<path class="brand-cell-map__edge" marker-end="url(#brand-node-arrow)" d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2-7},${y2}"/>`; });
+  nodes.forEach(node => { if(!node.link_node_id||!positions[node.link_node_id])return; const a=positions[node.id],b=positions[node.link_node_id]; html+=`<path class="brand-cell-map__bridge" d="M${a.x+w/2},${a.y} C${a.x+w/2},${a.y-55} ${b.x+w/2},${b.y-55} ${b.x+w/2},${b.y}"/>`; });
+  nodes.forEach(node => { const p=positions[node.id], lines=split(node.title).map((line,i)=>`<tspan x="${w/2}" dy="${i?17:0}">${esc(line)}</tspan>`).join(''), meta=node.process_count===1?'1 processo':`${node.process_count} processi`; html+=`<a class="brand-cell-map__node" data-cell-status="${esc(node.cell_status)}" href="${esc(node.url)}" transform="translate(${p.x},${p.y})"><rect width="${w}" height="${h}" rx="14"/><text class="brand-cell-map__title" x="${w/2}" y="25">${lines}</text><text class="brand-cell-map__meta" x="${w/2}" y="64">${esc(node.cell_status)} · ${esc(meta)}</text></a>`; });
   svg.setAttribute('viewBox',`0 0 ${width} ${height}`); svg.setAttribute('width',width); svg.setAttribute('height',height); svg.innerHTML=html;
 })();
 </script>

@@ -36,10 +36,8 @@ superadmin e, in futuro, dai proprietari autorizzati del Brand. Il pulsante `+`
 permette di aggiungere un nodo sotto il Brand o sotto un altro nodo; aprendolo
 si vedono i processi che gli appartengono.
 
-Questa scheda è consultabile in `/posturacorretta/admin/development`, accanto
-alla mappa. La collocazione fisica dei Markdown verrà migrata dal registro
-centrale alle cartelle dei singoli Brand in un passaggio dedicato, mantenendo
-stabili gli identificativi e i collegamenti esistenti.
+Questa scheda appartiene al Node `posturacorretta` ed è consultabile sia dalla
+sua pagina amministrativa sia da `/posturacorretta/admin/development`.
 
 ## Cose da fare adesso — percorso online
 

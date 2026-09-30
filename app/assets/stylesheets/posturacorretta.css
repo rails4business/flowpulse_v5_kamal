@@ -174,6 +174,7 @@
 }
 
 .pc-mobile-app-nav > a,
+.pc-mobile-app-nav > button,
 .pc-mobile-app-nav > details > summary {
   display: grid;
   min-height: 3.15rem;
@@ -182,15 +183,22 @@
   gap: .12rem;
   border-radius: .75rem;
   color: #64748b;
+  border: 0;
+  background: transparent;
+  font: inherit;
   text-decoration: none;
 }
 
+.pc-mobile-app-nav > button,
 .pc-mobile-app-nav > details > summary { cursor: pointer; list-style: none; }
 .pc-mobile-app-nav > a > span,
+.pc-mobile-app-nav > button > span,
 .pc-mobile-app-nav > details > summary > span { font-size: 1.05rem; font-weight: 900; line-height: 1; }
 .pc-mobile-app-nav > a > small,
+.pc-mobile-app-nav > button > small,
 .pc-mobile-app-nav > details > summary > small { font-size: .62rem; font-weight: 800; }
 .pc-mobile-app-nav > a.is-active,
+.pc-mobile-app-nav > button.is-active,
 .pc-mobile-app-nav > details > summary.is-active,
 .pc-mobile-app-nav > details[open] > summary { background: #eff6ff; color: #1d4ed8; }
 .pc-mobile-app-nav .pc-app-logo img { width: 1.5rem; height: 1.5rem; border-radius: 999px; object-fit: cover; }
@@ -1673,7 +1681,8 @@
 
 .posturacorretta-ui .pc-rich-text h1,
 .posturacorretta-ui .pc-rich-text h2,
-.posturacorretta-ui .pc-rich-text h3 {
+.posturacorretta-ui .pc-rich-text h3,
+.posturacorretta-ui .pc-rich-text h4 {
   color: #0f172a;
   font-family: inherit;
   font-weight: 700;
@@ -1683,24 +1692,53 @@
 }
 
 .posturacorretta-ui .pc-rich-text h1 {
+  border-bottom: 4px solid var(--pc-brand);
   font-size: clamp(1.875rem, 4vw, 2.25rem);
   margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
 }
 
 .posturacorretta-ui .pc-rich-text h2 {
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  background: linear-gradient(90deg, var(--pc-brand-soft), rgb(239 246 255 / 0));
+  border-left: 4px solid var(--pc-brand);
+  border-radius: 0 .75rem .75rem 0;
+  font-size: clamp(1.45rem, 3vw, 1.875rem);
   margin-top: 3rem;
+  padding: .7rem 1rem;
 }
 
 .posturacorretta-ui .pc-rich-text h3 {
-  font-size: clamp(1.3rem, 2vw, 1.6rem);
-  margin-top: 2rem;
+  border-bottom: 1px solid #cbd5e1;
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  margin-top: 2.25rem;
+  padding-bottom: .55rem;
+}
+
+.posturacorretta-ui .pc-rich-text h4 {
+  color: var(--pc-brand-dark);
+  font-size: 1.05rem;
+  letter-spacing: .01em;
+  margin-top: 1.75rem;
 }
 
 .posturacorretta-ui .pc-rich-text h1 + *,
 .posturacorretta-ui .pc-rich-text h2 + *,
-.posturacorretta-ui .pc-rich-text h3 + * {
+.posturacorretta-ui .pc-rich-text h3 + *,
+.posturacorretta-ui .pc-rich-text h4 + * {
   margin-top: .85rem;
+}
+
+@media (max-width: 639px) {
+  .posturacorretta-ui .pc-rich-text h1 {
+    border-bottom-width: 3px;
+    padding-bottom: .75rem;
+  }
+
+  .posturacorretta-ui .pc-rich-text h2 {
+    border-left-width: 3px;
+    margin-left: -.25rem;
+    padding: .6rem .75rem;
+  }
 }
 
 /* Gerarchia editoriale condivisa dal lettore delle guide. */

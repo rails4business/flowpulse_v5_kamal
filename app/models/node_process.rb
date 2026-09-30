@@ -1,4 +1,4 @@
-class BrandProcess < ApplicationRecord
+class NodeProcess < ApplicationRecord
   STATUSES = %w[draft active archived].freeze
 
   belongs_to :node

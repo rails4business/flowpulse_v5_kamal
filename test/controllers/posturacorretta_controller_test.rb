@@ -1,6 +1,20 @@
 require "test_helper"
 
 class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
+  test "shows the Brand administration link to its owner" do
+    owner = User.create!(email_address: "posturacorretta-brand-owner@example.com", password: "password123", password_confirmation: "password123")
+    profile = owner.create_profile!(display_name: "Brand Owner")
+    role = RoleAssignment.create!(profile:, role: :creator_of_worlds)
+    brand = Node.create!(role_assignment: role, title: "PosturaCorretta", slug: "posturacorretta", status: "published")
+    Domain.create!(hostname: "posturacorretta-owner.test", node: brand, role_assignment: role, active: true)
+    post session_path, params: { email_address: owner.email_address, password: "password123" }
+
+    get posturacorretta_path
+
+    assert_response :success
+    assert_select "a[href='#{brand_admin_nodes_path(brand.slug)}']", text: "Amministra Brand", minimum: 2
+  end
+
   test "publishes the health is not a luxury article as PosturaCorretta content" do
     get posturacorretta_articolo_path("la-salute-non-e-un-lusso")
 
@@ -38,13 +52,23 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{percorso_integrato_docs_path}']", count: 0
   end
 
-  test "shows dated events alongside contents with compact period controls" do
-    get posturacorretta_contenuti_path(periodo: "prossimi")
+  test "shows future events and past contents through explicit tabs" do
+    get posturacorretta_contenuti_path(tab: "eventi")
 
     assert_response :success
-    assert_select "nav[aria-label='Periodo contenuti'] a", text: "Prossimi"
+    assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=contenuti']", text: "Contenuti"
+    assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=eventi']", text: "Eventi"
     assert_select "summary", text: /Filtra/
     assert_select ".blog-article[data-kind='masterclass']", minimum: 1
+    assert_select ".blog-section[data-category='tutti'] .blog-article[data-entry-type='content']", count: 0
+    event_dates = css_select(".blog-section[data-category='tutti'] .blog-article[data-date]").map { |article| article["data-date"] }
+    assert_equal event_dates.sort.reverse, event_dates
+
+    get posturacorretta_contenuti_path(tab: "contenuti", categoria: "tutti")
+
+    assert_select ".blog-section[data-category='tutti'] .blog-article[data-entry-type='event']", count: 0
+    content_dates = css_select(".blog-section[data-category='tutti'] .blog-article[data-date]").map { |article| article["data-date"] }
+    assert_equal content_dates.sort.reverse, content_dates
   end
 
   test "should get the educational path landing page" do

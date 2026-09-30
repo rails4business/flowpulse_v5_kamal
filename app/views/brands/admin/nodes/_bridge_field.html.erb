@@ -1,0 +1,18 @@
+<% if node.persisted? && node.children.exists? %>
+  <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 sm:col-span-2" data-bridge-unavailable>
+    <p class="text-sm font-bold text-slate-700">Nodo ponte non disponibile</p>
+    <p class="mt-1 text-xs leading-5 text-slate-500">Questo nodo contiene altri nodi. Perciò resta un nodo strutturale e non può diventare un ponte.</p>
+  </div>
+<% else %>
+  <% selected = options.find { |option| option.id == node.link_node_id } %>
+  <% selected_label = selected ? "#{selected.title} · #{selected.slug}" : "" %>
+  <div data-bridge-autocomplete>
+    <%= label_tag "#{input_id}_search", "Nodo ponte verso", class: "text-sm font-bold text-slate-700" %>
+    <%= text_field_tag nil, selected_label, id: "#{input_id}_search", list: "#{input_id}_options", placeholder: "Cerca per nome o slug…", autocomplete: "off", data: { bridge_search: true }, class: "mt-1 w-full rounded-xl border-slate-300" %>
+    <%= form.hidden_field :link_node_id, data: { bridge_value: true } %>
+    <datalist id="<%= input_id %>_options">
+      <% options.each do |option| %><option value="<%= option.title %> · <%= option.slug %>" data-node-id="<%= option.id %>"></option><% end %>
+    </datalist>
+    <p class="mt-1 text-xs text-slate-500">Lascia vuoto per un nodo normale. Scrivi il nome e scegli il nodo suggerito per creare il ponte.</p>
+  </div>
+<% end %>

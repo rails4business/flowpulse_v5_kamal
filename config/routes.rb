@@ -237,7 +237,7 @@ Rails.application.routes.draw do
     resources :brands, controller: :brands, only: %i[index show] do
       resources :services, controller: :services, only: %i[create update destroy]
       resources :calendars, controller: :professional_calendars, only: %i[create update destroy]
-      resources :processes, controller: :brand_processes, only: %i[create update destroy]
+      resources :processes, controller: :node_processes, only: %i[create update destroy]
     end
     get "brands/:brand_id/materiale/:entry_id", to: "brand_editorial_materials#show", as: :brand_editorial_material
     get "sites/:site_key", to: "editorial_sites#show", as: :editorial_site
@@ -260,7 +260,16 @@ Rails.application.routes.draw do
 
   scope ":brand_slug/admin", module: "brands/admin", as: :brand_admin,
       constraints: { brand_slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ } do
-    resources :nodes, only: %i[index show create update destroy]
+      resources :nodes, only: %i[index show create update destroy] do
+        member do
+          patch :lifecycle
+          post :processes, action: :create_process
+        end
+        resources :processes, controller: "node_processes", only: %i[show update] do
+          member { post :experiences, action: :create_experience }
+        end
+        resources :events, only: :show, controller: "node_events", param: :public_id
+      end
     get "development", to: "development#index", as: :development
     get "development/:slug", to: "development#show", as: :development_entry,
         constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }

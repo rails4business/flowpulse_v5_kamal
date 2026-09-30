@@ -42,6 +42,8 @@ module Brands
         @impegno_domains = available_impegno_domains
         @impegno_domain_options = domain_options
         @impegno_default_domain = default_domain_for(@impegno_brand)
+        @commitment_node_options = available_commitment_nodes
+        @default_commitment_node = @impegno_default_domain&.node
         @impegno_domain_roles = available_domain_roles(@impegno_default_domain)
         @impegno_domain_role_labels = DOMAIN_ROLE_LABELS
         # "professional" non è più un ruolo User globale: l'accesso operativo

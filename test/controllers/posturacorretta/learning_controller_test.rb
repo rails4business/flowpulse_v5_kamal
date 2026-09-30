@@ -37,8 +37,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "header"
     assert_select "header img[src*='posturacorretta_home.png']", count: 1
     assert_select "header h1", text: "Inizia con PosturaCorretta"
-    assert_select "header", text: /7 capitoli/
-    assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", text: "Inizia"
+    assert_select "header", text: /6 capitoli/
+    assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", count: 0
     assert_not_includes response.body, 'header class="border-b border-slate-200 bg-[#F6F7F4] p-4 sm:p-6 lg:p-8"'
     assert_select "nav[aria-label='Navigazione del corso']", count: 0
     assert_select "nav[aria-label='Contenuti del corso']", count: 0
@@ -46,8 +46,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#capitoli.rounded-2xl", count: 1
     assert_select "h2", text: "Corso online"
     assert_select "p", text: "Studio in autonomia"
-    assert_select "#capitoli a", text: /L'incontro con la salute e con le metodiche posturali/
-    assert_select "#capitoli a", text: /Prima scheda esercizi e video/
+    assert_select "#capitoli", text: /L'incontro con la salute e con le metodiche posturali/
+    assert_select "#capitoli", text: /In preparazione/
+    assert_select "#capitoli a", text: /Prima scheda esercizi e video/, count: 0
     assert_select "#capitoli span", text: "Capitolo 01"
     assert_select "#capitoli ol.divide-y", count: 1
     assert_select "nav[aria-label='Indice percorso'] a[aria-current='page']", text: /Inizia con PosturaCorretta/
@@ -130,9 +131,10 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale")}'][aria-label='Apri il corso Igiene Posturale']", count: 0
     assert_select "details > summary", text: /Inizia con PosturaCorretta/, minimum: 1
     assert_select "h3", text: "Intro: basi e fondamenti", count: 0
-    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", text: /L'incontro con la salute/
-    assert_select "div", text: /I benefici di una postura corretta.*Uscita/m
-    assert_includes response.body, "Demo disponibile"
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", count: 0
+    assert_select "div", text: /L'incontro con la salute/
+    assert_select "div", text: /I benefici di una postura corretta/m
+    assert_not_includes response.body, "Uscita "
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Come funziona", count: 0
     assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
@@ -164,16 +166,21 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "course chapters keep editorial front matter out of the rendered content" do
+    publish_content!("incontro-salute-metodiche")
     get posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
 
     assert_response :success
     assert_select "h1", text: "L'incontro con la salute e con le metodiche posturali"
-    assert_includes response.body, "La postura non e' una posizione perfetta"
+    assert_includes response.body, "Il movimento è innato. Fin dalla culla"
     assert_not_includes response.body, "author_node_slug"
     assert_not_includes response.body, "publisher_node_slug"
     assert_not_includes response.body, "author: Mark Postura"
+    assert_select "p.text-blue-700", text: "Capitolo teorico"
+    assert_select "p", text: "Inizia con PosturaCorretta"
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] button[data-mobile-aside-target='toggle'][aria-controls='seme-aside']", text: /Indice/
+    assert_select "#seme-aside[data-mobile-aside-target='panel']"
     assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='theory']", count: 5
-    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", count: 2
+    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", count: 1
     assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='theory']", text: /Teoria/
     assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", text: /Pratica/
   end
@@ -221,30 +228,34 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_equal "application/pdf", response.media_type
   end
 
-  test "shows a free chapter as one content without an isolated advanced block" do
+  test "keeps an unfinished practical chapter private while allowing superadmin preview" do
     travel_to Time.zone.parse("2026-09-21 09:01") do
       get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "prima-scheda-esercizi-video")
 
+      assert_redirected_to posturacorretta_course_chapters_url(corso: "inizia-con-posturacorretta")
+
+      superadmin = create_test_user("posturacorretta-practical-preview@example.com")
+      superadmin.update!(superadmin: true, active_role: :superadmin)
+      sign_in(superadmin)
+      get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "prima-scheda-esercizi-video")
+
       assert_response :success
-      assert_select "h1", text: "Prima scheda esercizi e video"
       assert_select "span", text: "Libero"
-      assert_includes response.body, "Prima scheda esercizi e video"
-      assert_select "p", text: "Capitolo del corso"
+      assert_select "p.text-red-700", text: "Capitolo pratico"
+      assert_select "p", text: "Inizia con PosturaCorretta"
       assert_select "header a[aria-label^='Torna all']", text: /Inizia con PosturaCorretta/
       assert_select "nav[aria-label='Navigazione del corso']", count: 0
       assert_select "#seme-aside #course-aside-title", count: 0
       assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
-      assert_select "button[data-mobile-aside-target='toggle']", count: 0
+      assert_select "nav[aria-label='Navigazione app PosturaCorretta'] button[data-mobile-aside-target='toggle']", text: /Indice/
       assert_select "nav[aria-label='Indice del corso'] a[aria-current='page'] span", text: "Capitolo 05"
       assert_select "#participation-title", count: 0
       assert_select "nav[aria-label='Incontri, lezioni e capitoli']", count: 0
-      assert_includes response.body, "Ricevere — massaggio e automassaggio"
-      assert_includes response.body, "movimento globale — da collegare"
       assert_not_includes response.body, "Approfondimento avanzato"
     end
   end
 
-  test "does not let superadmin bypass a chapter publication date" do
+  test "published chapters do not depend on a publication date" do
     travel_to Time.zone.parse("2026-09-20 09:00") do
       superadmin = create_test_user("posturacorretta-preview@example.com")
       superadmin.update!(superadmin: true, active_role: :superadmin)
@@ -252,7 +263,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
       get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "benefici-postura-corretta")
 
-      assert_redirected_to posturacorretta_url(anchor: "inizia-con-posturacorretta")
+      assert_response :success
+      assert_select "h1", text: "I benefici di una postura corretta"
+      assert_select "a[href*='content_key=inizia-benefici-postura-corretta']", text: /DataCommitment/
     end
   end
 
@@ -283,11 +296,11 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "div[aria-label='Corso introduttivo']", count: 1
     assert_select "section[aria-labelledby^='lesson-section-']", count: 5
     assert_select "a[aria-current='step'][aria-label^='1. Introduzione a PosturaCorretta']", count: 1
-    assert_select "a[aria-label*='non ancora disponibile']", minimum: 1
+    assert_select "a[aria-label*='non ancora disponibile']", count: 0
     assert_select "h2", text: "Introduzione a PosturaCorretta", count: 1
     assert_select "ol[aria-label='Lezioni di Introduzione a PosturaCorretta'] > li", count: 2
     assert_includes response.body, "Prima scheda esercizi e video"
-    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'inizia-con-posturacorretta', capitolo: 'prima-scheda-esercizi-video')}']", count: 1
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'inizia-con-posturacorretta', capitolo: 'prima-scheda-esercizi-video')}']", count: 0
     assert_select "section[aria-label='Percorso insegnante del corso selezionato']", count: 0
     assert_select "a", text: "Apri il corso online", count: 0
     assert_select "aside[aria-label='Sorgenti YAML del programma']", count: 0
@@ -300,7 +313,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "ol[aria-label='Lezioni di Igiene Posturale'] > li", count: 4
     assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'igiene-posturale', capitolo: 'punti-di-tensione')}']", count: 0
     assert_includes response.body, "Punti di tensione"
-    assert_includes response.body, "Disponibile dal"
+    assert_not_includes response.body, "Disponibile dal"
     assert_select "section[aria-label='Percorso insegnante del corso selezionato']", count: 0
 
     other_domain = Domain.find_or_create_by!(hostname: "agenda-esterna.test") do |domain|
@@ -426,6 +439,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
   test "loads academy modules and markdown from the existing academy source" do
     travel_to Time.zone.parse("2026-10-05 09:01") do
+      superadmin = create_test_user("posturacorretta-academy-preview@example.com")
+      superadmin.update!(superadmin: true, active_role: :superadmin)
+      sign_in(superadmin)
       get posturacorretta_course_chapter_path(corso: "igiene-posturale", capitolo: "mobilita-articolare")
 
       assert_response :success
@@ -458,13 +474,54 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Postura e Fisiologia"
     assert_select "h2", text: "Corso online"
     assert_select "nav[aria-label='Contenuti del corso']", count: 0
-    assert_select "#capitoli a", text: /Le basi delle 5 aree e il programma settimanale/
-    assert_select "#capitoli a", text: /Professionisti della salute, del benessere e insegnanti blu/
+    assert_select "#capitoli", text: /Le basi delle 5 aree e il programma settimanale/
+    assert_select "#capitoli", text: /Professionisti della salute, del benessere e insegnanti blu/
+    assert_select "#capitoli a", count: 0
 
       get posturacorretta_course_chapter_path(corso: "postura-e-fisiologia", capitolo: "professionisti-salute-benessere-insegnanti-blu")
-      assert_response :success
-      assert_select "article", text: /Professionisti della salute, del benessere e insegnanti blu/
+      assert_redirected_to posturacorretta_course_url(corso: "postura-e-fisiologia")
     end
+  end
+
+  test "unlocks a published chapter show only through its completed publication commitment" do
+    chapter_path = posturacorretta_course_chapter_path(
+      corso: "inizia-con-posturacorretta",
+      capitolo: "incontro-salute-metodiche"
+    )
+
+    get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
+    assert_response :success
+    assert_select "#capitoli", text: /L'incontro con la salute e con le metodiche posturali/
+    assert_select "#capitoli a[href='#{chapter_path}']", count: 0
+
+    get chapter_path
+    assert_redirected_to posturacorretta_course_url(corso: "inizia-con-posturacorretta")
+
+    publish_content!("incontro-salute-metodiche")
+
+    get chapter_path
+    assert_response :success
+    assert_select "h1", text: "L'incontro con la salute e con le metodiche posturali"
+  end
+
+  test "the latest completed editorial commitment can return a chapter to draft" do
+    published = publish_content!("incontro-salute-metodiche")
+    published.update!(published_at: 2.hours.ago)
+    latest = publish_content!("incontro-salute-metodiche")
+    latest.update!(
+      publication_status: "draft",
+      publication_change_kind: "unpublish",
+      publication_note_md: "Ritirato per una nuova revisione.",
+      published_at: nil,
+      actual_ended_at: Time.current
+    )
+
+    get posturacorretta_course_chapter_path(
+      corso: "inizia-con-posturacorretta",
+      capitolo: "incontro-salute-metodiche"
+    )
+
+    assert_redirected_to posturacorretta_course_url(corso: "inizia-con-posturacorretta")
   end
 
   test "redirects legacy program and chapter urls to canonical course routes" do
@@ -493,6 +550,37 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def publish_content!(content_key)
+    domain = Domain.find_or_create_by!(hostname: "posturacorretta.org") do |record|
+      record.locale = "it"
+      record.target_controller = "brands/posturacorretta"
+      record.target_action = "home"
+      record.primary = true
+      record.active = true
+    end
+    domain.update!(active: true) unless domain.active?
+    publisher = create_test_user("publisher-#{SecureRandom.hex(6)}@example.com")
+    profile = publisher.create_profile!(display_name: "Publisher #{content_key}", username: "publisher_#{SecureRandom.hex(5)}")
+    DataCommitment.create!(
+      profile: profile,
+      created_by_profile: profile,
+      published_by_profile: profile,
+      domain: domain,
+      title: "Pubblicazione #{content_key}",
+      kind: "content",
+      status: "completed",
+      starts_at: 2.hours.ago,
+      ends_at: 1.hour.ago,
+      pricing_type: "none",
+      contribution_type: "unpaid",
+      content_key: content_key,
+      publication_status: "published",
+      publication_visibility: "public",
+      access_modes: ["free"],
+      published_at: Time.current
+    )
+  end
 
   def create_test_user(email)
     User.create!(email_address: email, password: "password123", password_confirmation: "password123")

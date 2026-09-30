@@ -5,7 +5,7 @@ module Brands
       before_action :ensure_experience_access!, only: %i[show update]
 
       def index
-        @experiences = DataExperience.includes(brand_process: :node).order(updated_at: :desc)
+        @experiences = DataExperience.includes(node_process: :node).order(updated_at: :desc)
       end
 
       def new
@@ -38,11 +38,11 @@ module Brands
       private
 
         def experience_params
-          params.require(:data_experience).permit(:title, :description, :brand_process_id)
+          params.require(:data_experience).permit(:title, :description, :node_process_id)
         end
 
         def load_processes
-          @brand_processes = BrandProcess.includes(:node).where(status: %w[draft active]).order("nodes.title", :title)
+          @node_processes = NodeProcess.includes(:node).where(status: %w[draft active]).order("nodes.title", :title)
         end
     end
   end

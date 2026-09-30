@@ -39,10 +39,13 @@
   visible_category_keys = courses_page ? ["corsi"] : blog_category_order
   initial_category = visible_category_keys.first
   initial_category_data = @catalog.fetch(initial_category.to_sym)
-  content_period = params[:periodo].presence_in(%w[prossimi passati]) || "passati"
+  content_tab = params[:tab].presence_in(%w[eventi contenuti]) || (params[:periodo] == "prossimi" ? "eventi" : "contenuti")
+  articles_for_tab = lambda do |articles|
+    articles.select { |article| content_tab == "eventi" ? article[:item_type] == "event" : article[:item_type] != "event" }
+  end
   content_type = params[:tipo].presence_in(%w[articolo video corso evento masterclass])
   content_filter_path = lambda do |updates = {}|
-    query = request.query_parameters.slice("periodo", "tipo", "categoria", "subtab", "view")
+    query = request.query_parameters.slice("tab", "tipo", "categoria", "subtab", "view")
     updates.each { |key, value| value.present? ? query[key] = value : query.delete(key) }
     posturacorretta_contenuti_path(query)
   end
@@ -62,9 +65,9 @@
             <input id="blog-search" type="search" value="<%= params[:q] %>" placeholder="<%= courses_page ? "Cerca un corso..." : "Cerca per parola..." %>" class="w-full rounded-full border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/30">
           </label>
 
-          <nav class="inline-flex w-fit rounded-xl border border-slate-200 bg-slate-100 p-1" aria-label="Periodo contenuti">
-            <%= link_to "Prossimi", content_filter_path.call(periodo: "prossimi"), class: "rounded-lg px-3 py-2 text-xs font-bold transition #{content_period == 'prossimi' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'}" %>
-            <%= link_to "Passati", content_filter_path.call(periodo: "passati"), class: "rounded-lg px-3 py-2 text-xs font-bold transition #{content_period == 'passati' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'}" %>
+          <nav class="inline-flex w-fit rounded-xl border border-slate-200 bg-slate-100 p-1" aria-label="Contenuti ed eventi">
+            <%= link_to "Contenuti", content_filter_path.call(tab: "contenuti"), class: "rounded-lg px-3 py-2 text-xs font-bold transition #{content_tab == 'contenuti' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'}" %>
+            <%= link_to "Eventi", content_filter_path.call(tab: "eventi"), class: "rounded-lg px-3 py-2 text-xs font-bold transition #{content_tab == 'eventi' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'}" %>
           </nav>
         </div>
 
@@ -87,7 +90,7 @@
             </button>
           </div>
           <span id="content-visible-count" class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500 whitespace-nowrap" aria-live="polite">
-            <%= initial_category_data[:articles].size %> <%= courses_page ? "corsi" : "contenuti" %>
+            <%= articles_for_tab.call(initial_category_data[:articles]).size %> <%= content_tab == "eventi" ? "eventi" : (courses_page ? "corsi" : "contenuti") %>
           </span>
         </div>
       </div>
@@ -96,10 +99,11 @@
       <% visible_category_keys.each_with_index do |key, category_index| %>
         <% category = @catalog.fetch(key.to_sym, nil) %>
         <% next unless category %>
+        <% category_articles = articles_for_tab.call(category[:articles]) %>
         <% colors = blog_color_classes.fetch(category[:color] || "slate", blog_color_classes["blue"]) %>
-        <section id="blog-section-<%= key %>" class="blog-section pt-6 md:pt-8 <%= 'hidden' unless category_index.zero? %>" data-category="<%= key %>" data-video-count="<%= category[:articles].size %>" data-count-singular="<%= key == 'corsi' ? 'corso' : 'video' %>" data-count-plural="<%= key == 'corsi' ? 'corsi' : 'video' %>">
+        <section id="blog-section-<%= key %>" class="blog-section pt-6 md:pt-8 <%= 'hidden' unless category_index.zero? %>" data-category="<%= key %>" data-video-count="<%= category_articles.size %>" data-count-singular="<%= content_tab == 'eventi' ? 'evento' : (key == 'corsi' ? 'corso' : 'contenuto') %>" data-count-plural="<%= content_tab == 'eventi' ? 'eventi' : (key == 'corsi' ? 'corsi' : 'contenuti') %>">
           <div class="content-article-list grid gap-4" id="article-list-<%= key %>">
-            <% category[:articles].each do |article| %>
+            <% category_articles.each do |article| %>
               <% creator = postura_creators.fetch(article[:author]) do
                    { name: article[:author].presence || "PosturaCorretta", initials: "PC", role: "Autore", color: "bg-slate-100 text-slate-700" }
                  end %>
@@ -121,7 +125,7 @@
               <% article_date = article[:_publication_date] %>
               <% article_iso_date = article_date&.strftime("%Y-%m-%d") %>
               <% article_year = article_date&.year.to_s.presence || "2026" %>
-              <a href="<%= article_href %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if external_article %> class="blog-article <%= is_video ? 'has-media' : 'no-media' %> group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-date="<%= article_iso_date %>" data-kind="<%= content_kind %>" data-year="<%= article_year %>" data-subcategory="<%= article[:subcategory] %>" data-ambito="<%= key %>" data-area="<%= article_area %>" data-paradigma="<%= article_paradigm %>" data-professionals="<%= article_people %>" data-places="<%= article_places %>" data-methodologies="<%= article_methodologies %>" data-channel="<%= article_channel %>" data-platform="<%= article_platform %>" data-zones="<%= article_zones %>" data-level="<%= article_level %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format], article_date&.strftime("%d/%m/%Y"), article_year].compact.join(' ').downcase %>">
+              <a href="<%= article_href %>" <%= 'target="_blank" rel="noopener noreferrer"'.html_safe if external_article %> class="blog-article <%= is_video ? 'has-media' : 'no-media' %> group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" data-entry-type="<%= is_event ? 'event' : 'content' %>" data-date="<%= article_iso_date %>" data-kind="<%= content_kind %>" data-year="<%= article_year %>" data-subcategory="<%= article[:subcategory] %>" data-ambito="<%= key %>" data-area="<%= article_area %>" data-paradigma="<%= article_paradigm %>" data-professionals="<%= article_people %>" data-places="<%= article_places %>" data-methodologies="<%= article_methodologies %>" data-channel="<%= article_channel %>" data-platform="<%= article_platform %>" data-zones="<%= article_zones %>" data-level="<%= article_level %>" data-search="<%= [article[:title], article[:excerpt], article[:subcategory], creator[:name], article[:format], article_date&.strftime("%d/%m/%Y"), article_year].compact.join(' ').downcase %>">
                 <% if is_video %>
                   <div class="content-article-media relative aspect-video w-full overflow-hidden bg-slate-100">
                     <img src="https://img.youtube.com/vi/<%= article[:slug] %>/hqdefault.jpg" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
@@ -356,9 +360,7 @@
     const selectedAmbiti = (params.get("ambito") || "").split(",").filter(Boolean);
     const selectedZones = (params.get("zona") || "").split(",").filter(Boolean);
     const selectedLevels = (params.get("livello") || "").split(",").filter(Boolean);
-    const selectedPeriod = params.get("periodo") || "passati";
     const selectedType = params.get("tipo") || "";
-    const today = new Date().toISOString().slice(0, 10);
     let visible = 0;
 
     const sections = selectedAmbiti.length && activeBlogCategory !== "corsi"
@@ -380,9 +382,8 @@
       const matchesPlatform = !selectedPlatforms.length || selectedPlatforms.includes(article.dataset.platform);
       const matchesZone = !selectedZones.length || selectedZones.some(key => article.dataset.zones.split(" ").includes(key));
       const matchesLevel = !selectedLevels.length || selectedLevels.includes(article.dataset.level);
-      const matchesPeriod = article.dataset.date && (selectedPeriod === "prossimi" ? article.dataset.date >= today : article.dataset.date < today);
       const matchesType = !selectedType || article.dataset.kind === selectedType;
-      const matches = matchesSearch && matchesDate && matchesYear && matchesArea && matchesParadigm && matchesProfessional && matchesPlace && matchesMethodology && matchesChannel && matchesPlatform && matchesZone && matchesLevel && matchesPeriod && matchesType;
+      const matches = matchesSearch && matchesDate && matchesYear && matchesArea && matchesParadigm && matchesProfessional && matchesPlace && matchesMethodology && matchesChannel && matchesPlatform && matchesZone && matchesLevel && matchesType;
       article.classList.toggle("hidden", !matches);
       if (matches) visible += 1;
     });

@@ -1,0 +1,57 @@
+.brand-admin-body {
+  --ba-ink: #16323b;
+  --ba-muted: #60747a;
+  --ba-line: #cbd8d6;
+  --ba-paper: #f7faf9;
+  --ba-wash: #eaf1f0;
+  --ba-green: #2a9d78;
+  --ba-green-soft: #c4e7d9;
+  --ba-blue: #1f7a8c;
+  --ba-red: #b4534b;
+  --ba-gold: #c98f0a;
+  min-height: 100vh;
+  background: var(--ba-wash);
+  color: var(--ba-ink);
+  font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+}
+
+.brand-admin-header { border-bottom: 1px solid var(--ba-line); background: rgb(247 250 249 / .96); }
+.brand-admin-header__inner { display:flex; align-items:center; justify-content:space-between; gap:1rem; max-width:90rem; margin:auto; padding:1rem clamp(1rem,4vw,3rem) .75rem; }
+.brand-admin-eyebrow { color:var(--ba-muted); font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+.brand-admin-name { color:var(--ba-ink); font-family:Georgia,serif; font-size:1.5rem; font-weight:700; text-decoration:none; }
+.brand-admin-header__actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:.65rem; }
+.brand-admin-support { border:1px solid #f4d58d; border-radius:999px; background:#fff8df; color:#8a6110; padding:.35rem .7rem; font-size:.72rem; font-weight:800; }
+.brand-admin-site-link { border:1px solid var(--ba-line); border-radius:.65rem; background:white; color:var(--ba-ink); padding:.55rem .8rem; font-size:.8rem; font-weight:800; text-decoration:none; }
+.brand-admin-nav { display:flex; gap:.25rem; max-width:90rem; margin:auto; padding:0 clamp(1rem,4vw,3rem); }
+.brand-admin-nav a { border-bottom:3px solid transparent; color:var(--ba-muted); padding:.7rem .9rem; font-size:.85rem; font-weight:800; text-decoration:none; }
+.brand-admin-nav a[aria-current="page"] { border-bottom-color:var(--ba-green); color:var(--ba-ink); }
+.brand-admin-flash { max-width:84rem; margin:1rem auto 0; border-radius:.75rem; padding:.8rem 1rem; font-size:.875rem; font-weight:700; }
+.brand-admin-flash--notice { border:1px solid #9bd5c2; background:#e8f7f1; color:#17634d; }
+.brand-admin-flash--alert { border:1px solid #e4b3ae; background:#fff0ee; color:#8d3932; }
+.brand-admin-shell { max-width:90rem; margin:auto; padding:1.5rem clamp(1rem,4vw,3rem) 4rem; }
+.brand-admin-card { border:1px solid var(--ba-line); border-radius:1rem; background:var(--ba-paper); box-shadow:0 12px 35px rgb(22 50 59 / .06); }
+.brand-admin-title { font-family:Georgia,serif; font-weight:700; letter-spacing:-.02em; }
+
+.brand-cell-map { --cell-status:#809391; }
+.brand-cell-map__canvas { overflow:auto; border:1px solid var(--ba-line); border-radius:1rem; background:var(--ba-paper); }
+.brand-cell-map__canvas svg { display:block; min-width:100%; }
+.brand-cell-map__edge { fill:none; stroke:#9fb0ae; stroke-width:1.8; }
+.brand-cell-map__bridge { fill:none; stroke:var(--ba-gold); stroke-width:2.5; stroke-dasharray:9 7; }
+.brand-cell-map__node { color:#1f7a8c; text-decoration:none; }
+.brand-cell-map__node[data-cell-status="active"] { color:var(--ba-green); }
+.brand-cell-map__node[data-cell-status="consolidated"] { color:#14596a; }
+.brand-cell-map__node[data-cell-status="cut"] { color:var(--ba-red); }
+.brand-cell-map__node rect { fill:white; stroke:currentColor; stroke-width:2.5; }
+.brand-cell-map__node[data-cell-status="idea"] rect { stroke-dasharray:7 5; }
+.brand-cell-map__node[data-cell-status="active"] rect { fill:var(--ba-green-soft); }
+.brand-cell-map__node[data-cell-status="consolidated"] rect { fill:#8cc3cf; }
+.brand-cell-map__node[data-cell-status="cut"] rect { fill:#ebd3d0; stroke-dasharray:3 5; }
+.brand-cell-map__node:hover rect, .brand-cell-map__node:focus rect { stroke-width:4; }
+.brand-cell-map__title { fill:var(--ba-ink); font:700 14px system-ui,sans-serif; text-anchor:middle; }
+.brand-cell-map__meta { fill:currentColor; font:800 10px system-ui,sans-serif; letter-spacing:.05em; text-anchor:middle; text-transform:uppercase; }
+
+@media (max-width: 640px) {
+  .brand-admin-header__inner { align-items:flex-start; }
+  .brand-admin-support { display:none; }
+  .brand-admin-name { font-size:1.25rem; }
+}

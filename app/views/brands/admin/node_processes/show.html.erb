@@ -1,0 +1,51 @@
+<% content_for :title, "#{@process.title} — #{@node.title}" %>
+<main class="brand-admin-shell max-w-5xl">
+  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"><%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><%= link_to @node.title, brand_admin_node_path(@brand.slug, @node), class: "font-semibold text-teal-700" %><span>/</span><span><%= @process.title %></span></nav>
+
+  <header class="brand-admin-card p-6">
+    <div class="flex flex-wrap items-start justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Processo del nodo <%= @node.title %></p><h1 class="brand-admin-title mt-2 text-3xl"><%= @process.title %></h1></div><div class="flex items-center gap-2"><span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-black text-violet-700"><%= @process.status.humanize %></span><button type="button" onclick="document.getElementById('edit-node-process')?.showModal()" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Modifica</button></div></div>
+    <% if @process.description.present? %><p class="mt-4 max-w-3xl text-sm leading-6 text-slate-600"><%= @process.description %></p><% end %>
+    <p class="mt-3 font-mono text-xs text-slate-400"><%= @process.slug %></p>
+  </header>
+
+  <section class="brand-admin-card mt-6 p-6" aria-labelledby="process-schema-title">
+    <p class="text-xs font-black uppercase tracking-wide text-teal-700">Schema operativo</p><h2 id="process-schema-title" class="mt-1 text-xl font-extrabold">Dal processo al lavoro reale</h2>
+    <div class="mt-5 grid gap-3 text-center text-sm font-bold sm:grid-cols-4">
+      <div class="rounded-xl border-2 border-violet-300 bg-violet-50 p-4">NodeProcess<br><span class="text-xs font-medium text-violet-700"><%= @process.title %></span></div>
+      <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">DataExperience<br><span class="text-xs font-medium text-blue-700">Applicazione concreta</span></div>
+      <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">DataSession<br><span class="text-xs font-medium text-emerald-700">Esecuzione programmata</span></div>
+      <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">Slot e Commitment<br><span class="text-xs font-medium text-amber-700">Parti e responsabilità</span></div>
+    </div>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+      <p class="rounded-xl border border-violet-100 bg-violet-50/60 p-4 text-sm leading-6 text-violet-950"><strong>Appunto 1.</strong> Il processo è la struttura ripetibile: descrive il modo di lavorare e rimane disponibile per più applicazioni.</p>
+      <p class="rounded-xl border border-blue-100 bg-blue-50/60 p-4 text-sm leading-6 text-blue-950"><strong>Appunto 2.</strong> La DataExperience è un’applicazione concreta del processo; Sessioni, Slot e Commitment descriveranno quando e da chi viene svolta.</p>
+    </div>
+  </section>
+
+  <section id="process-experiences" class="brand-admin-card mt-6 p-6">
+    <div class="flex flex-wrap items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-700">Applicazioni concrete</p><h2 class="mt-1 text-xl font-extrabold">DataExperience</h2></div><button type="button" onclick="document.getElementById('new-data-experience')?.showModal()" class="rounded-xl bg-blue-700 px-4 py-2 text-sm font-black text-white hover:bg-blue-800">＋ DataExperience</button></div>
+    <% if @experiences.any? %>
+      <div class="mt-5 space-y-4"><% @experiences.each do |experience| %><%= link_to impegno_experience_path(experience), data: { turbo_frame: "_top" }, class: "block rounded-xl border border-slate-200 p-4 transition hover:border-blue-300 hover:bg-blue-50/30" do %><div class="flex items-start justify-between gap-3"><h3 class="font-extrabold text-slate-900"><%= experience.title %></h3><span class="text-xs font-black text-blue-700">Apri show →</span></div><p class="mt-2 text-xs text-slate-500"><%= pluralize(experience.data_sessions.size, "sessione", "sessioni") %> · <%= pluralize(experience.data_slots.size, "slot", "slot") %> · <%= pluralize(experience.data_commitments.size, "commitment", "commitment") %></p><% if experience.description.present? %><p class="mt-2 text-sm text-slate-600"><%= experience.description %></p><% end %><% end %><% end %></div>
+    <% else %>
+      <div class="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6"><p class="font-bold text-slate-700">Nessuna DataExperience collegata.</p><p class="mt-2 text-sm leading-6 text-slate-500">Qui compariranno le applicazioni concrete del processo; successivamente mostreremo Session, Slot e Commitment collegati.</p></div>
+    <% end %>
+  </section>
+  <dialog id="edit-node-process" class="w-[min(36rem,calc(100%-2rem))] rounded-2xl border border-slate-300 p-0 shadow-2xl backdrop:bg-slate-950/40">
+    <%= form_with model: @process, url: brand_admin_node_process_path(@brand.slug, @node, @process), method: :patch, class: "space-y-4 p-6" do |form| %>
+      <div class="flex items-center justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Configurazione</p><h2 class="mt-1 text-xl font-extrabold">Modifica processo</h2></div><button type="button" onclick="this.closest('dialog').close()" class="rounded-lg px-2 py-1 text-slate-500">×</button></div>
+      <div><%= form.label :title, "Nome", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :slug, "Slug", class: "text-sm font-bold text-slate-700" %><%= form.text_field :slug, required: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :description, "Descrizione", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :status, "Stato", class: "text-sm font-bold text-slate-700" %><%= form.select :status, NodeProcess::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+      <div class="flex justify-end gap-2"><button type="button" onclick="this.closest('dialog').close()" class="rounded-xl px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Salva modifiche", class: "cursor-pointer rounded-xl bg-violet-700 px-4 py-2 text-sm font-black text-white" %></div>
+    <% end %>
+  </dialog>
+  <dialog id="new-data-experience" class="w-[min(36rem,calc(100%-2rem))] rounded-2xl border border-slate-300 p-0 shadow-2xl backdrop:bg-slate-950/40">
+    <%= form_with model: DataExperience.new, url: experiences_brand_admin_node_process_path(@brand.slug, @node, @process), class: "space-y-4 p-6" do |form| %>
+      <div class="flex items-center justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-blue-700">Applicazione concreta</p><h2 class="mt-1 text-xl font-extrabold">Nuova DataExperience</h2></div><button type="button" onclick="this.closest('dialog').close()" class="rounded-lg px-2 py-1 text-slate-500">×</button></div>
+      <div><%= form.label :title, "Nome", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, required: true, autofocus: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :description, "Descrizione", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div class="flex justify-end gap-2"><button type="button" onclick="this.closest('dialog').close()" class="rounded-xl px-4 py-2 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Crea DataExperience", class: "cursor-pointer rounded-xl bg-blue-700 px-4 py-2 text-sm font-black text-white" %></div>
+    <% end %>
+  </dialog>
+</main>

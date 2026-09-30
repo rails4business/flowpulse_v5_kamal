@@ -49,6 +49,13 @@ module Brands
         get impegno_agenda_url(workspace: "1", date: "2026-08-02")
         assert_response :success
         assert_select "dialog#new-commitment-dialog form[action='#{data_commitments_path}'] input[name='data_commitment[title]']", count: 1
+        assert_select "dialog#new-commitment-dialog input[name='data_commitment[content_key]']", count: 1
+        assert_select "dialog#new-commitment-dialog select[name='data_commitment[publication_status]']", count: 1
+        assert_select "dialog#new-commitment-dialog select[name='data_commitment[publication_visibility]']", count: 1
+        assert_select "dialog#new-commitment-dialog input[name='data_commitment[access_modes][]'][value='subscription']", count: 1
+        assert_select "dialog#new-commitment-dialog input[name='data_commitment[access_modes][]'][value='purchase']", count: 1
+        assert_select "dialog#new-commitment-dialog fieldset[data-controller='access-modes'] input[data-action='change->access-modes#change']", count: 3
+        assert_select "dialog#new-commitment-dialog input[name='data_commitment[publish_on_completion]'][type='checkbox']", count: 1
 
         get impegno_url(brand: "impegno", area: "agenda", view: "agenda", view_mode: "weekplan")
         assert_response :success

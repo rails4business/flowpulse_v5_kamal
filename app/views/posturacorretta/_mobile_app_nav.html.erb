@@ -8,7 +8,7 @@
       <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="">
       <small aria-hidden="true">←</small>
     <% end %>
-    <%= link_to posturacorretta_course_chapters_path(corso: params[:corso]), aria: { current: "page", label: "Indice capitoli" }, class: "is-active" do %><span aria-hidden="true">☰</span><small>Indice</small><% end %>
+    <button type="button" aria-current="page" aria-label="Apri indice capitoli" aria-controls="seme-aside" aria-expanded="false" class="is-active" data-mobile-aside-target="toggle" data-action="mobile-aside#open"><span aria-hidden="true">☰</span><small>Indice</small></button>
   <% else %>
     <%= link_to posturacorretta_path, aria: { label: "Percorso PosturaCorretta", current: ("page" if home_active) }, class: "pc-app-logo #{'is-active' if home_active}" do %>
       <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="">
@@ -40,8 +40,11 @@
         <div class="my-1 border-t border-slate-100"></div>
         <%= link_to "Profilo", posturacorretta_profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
         <%= link_to "Appuntamenti", posturacorretta_student_appointments_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-700" %>
-        <% if Current.user.superadmin_user? %>
+        <% if (admin_brand = current_brand_admin_node) %>
           <div class="my-1 border-t border-slate-100"></div>
+          <%= link_to "Amministra Brand", brand_admin_nodes_path(admin_brand.slug), class: "block rounded-lg px-3 py-2 text-sm font-bold text-teal-700 hover:bg-teal-50" %>
+        <% end %>
+        <% if Current.user.superadmin_user? %>
           <%= link_to "Profilo Flowpulse", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" %>
           <%= link_to "Superadmin", admin_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %>
         <% end %>

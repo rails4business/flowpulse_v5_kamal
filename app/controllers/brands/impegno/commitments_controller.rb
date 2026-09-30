@@ -28,6 +28,8 @@ module Brands
     # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
     @default_brand = params[:default_brand].presence_in(%w[impegno posturacorretta generaimpresa personale]) || "impegno"
     @default_domain = default_domain_for(@default_brand)
+    @commitment_node_options = available_commitment_nodes
+    @default_commitment_node = @default_domain&.node
 
     @profile = current_profile
     @commitments = @profile.data_commitments.includes(:domain, :participant_contact, :assignee_profile, :created_by_profile, :data_experience, :data_session, :data_slot).order(:starts_at)
@@ -128,8 +130,11 @@ module Brands
     domain = available_domains.find_by(id: params.dig(:data_commitment, :domain_id))
     return redirect_to(data_commitments_path, alert: "Seleziona un dominio disponibile.") unless domain
 
-    commitment.assign_attributes(personal_commitment_params)
+    attributes = personal_commitment_params
+    subject_node_id = attributes.delete(:subject_node_id)
+    commitment.assign_attributes(attributes)
     commitment.domain = domain
+    assign_subject_node(commitment, subject_node_id, domain:, preserve_if_blank: true)
     assign_calendar_identity(commitment)
     if commitment.actual_started_at.present?
       commitment.status = commitment.actual_ended_at.present? ? "completed" : "in_progress"
@@ -256,10 +261,14 @@ module Brands
       end
       return redirect_to(personal_commitment_return_path, alert: "Il dominio del contesto non è disponibile.") unless domain
 
-      commitment = Commitment.new(personal_commitment_params)
+      attributes = personal_commitment_params
+      subject_node_id = attributes.delete(:subject_node_id)
+      commitment = Commitment.new(attributes)
       commitment.profile = current_profile
       commitment.created_by_profile = current_profile
       commitment.domain = domain
+      assign_subject_node(commitment, subject_node_id, domain:)
+      assign_previous_publication_commitment(commitment)
       assign_calendar_identity(commitment)
       start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
       if start_now
@@ -427,8 +436,27 @@ module Brands
       params.require(:data_commitment).permit(
         :title, :description, :kind, :starts_at, :ends_at, :all_day,
         :actual_started_at, :actual_ended_at, :calendar_label, :domain_id,
-        :context_label, :data_experience_id
+        :context_label, :data_experience_id, :content_key, :publish_on_completion,
+        :publication_status, :publication_visibility, :publication_change_kind,
+        :publication_note_md, :subject_node_id, access_modes: []
       ).except(:domain_id, :context_label)
+    end
+
+    def assign_subject_node(commitment, requested_id, domain:, preserve_if_blank: false)
+      return if preserve_if_blank && requested_id.blank?
+
+      node_id = requested_id.presence || domain.node_id
+      commitment.subject = node_id.present? ? available_commitment_nodes.find(node_id) : nil
+    end
+
+    def assign_previous_publication_commitment(commitment)
+      return unless commitment.kind == "content" && commitment.content_key.present? && commitment.domain
+
+      commitment.previous_publication_commitment = Commitment
+        .where(domain: commitment.domain, kind: "content", content_key: commitment.content_key)
+        .where(subject: commitment.subject)
+        .order(created_at: :desc, id: :desc)
+        .first
     end
 
     def project_path(project, step, task)

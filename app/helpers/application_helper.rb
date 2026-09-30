@@ -52,4 +52,15 @@ module ApplicationHelper
     return false unless Current.user
     Current.user.superadmin_user? || (Current.user.creator_user? && Current.user.role_assignments.exists?(id: role_assignment&.id))
   end
+
+  def current_brand_admin_node
+    return @current_brand_admin_node if defined?(@current_brand_admin_node)
+    return @current_brand_admin_node = nil unless Current.user
+
+    domain_node = (Current.domain || current_domain)&.node
+    path_slug = request.path.split("/").second
+    candidate = domain_node&.brand? ? domain_node : Node.includes(:domains, role_assignment: :profile).find_by(slug: path_slug)
+
+    @current_brand_admin_node = candidate if candidate&.brand? && candidate.administered_by?(Current.user)
+  end
 end

@@ -24,11 +24,11 @@
 
   <% if @radioestesia_page == 'contenuti' %>
     <section class="mx-auto max-w-4xl px-5 py-14 sm:px-8">
-      <%= render "components/url_tabs", label: "Periodo contenuti", items: [
-        { label: "Prossimi", href: radioestesia_page_path("contenuti", tab: "prossimi"), active: @radioestesia_timeline_tab == "prossimi" },
-        { label: "Passati", href: radioestesia_page_path("contenuti", tab: "passati"), active: @radioestesia_timeline_tab == "passati" }
+      <%= render "components/url_tabs", label: "Contenuti ed eventi", items: [
+        { label: "Contenuti", href: radioestesia_page_path("contenuti", tab: "contenuti"), active: @radioestesia_timeline_tab == "contenuti" },
+        { label: "Eventi", href: radioestesia_page_path("contenuti", tab: "eventi"), active: @radioestesia_timeline_tab == "eventi" }
       ] %>
-      <% contents = @radioestesia_timeline_tab == 'passati' ? @radioestesia_past_contents : @radioestesia_future_contents %>
+      <% contents = @radioestesia_timeline_tab == 'contenuti' ? @radioestesia_past_contents : @radioestesia_future_contents %>
       <div class="mt-5" role="tabpanel">
           <% if contents.empty? %><p class="rounded-xl border border-dashed border-[#cbd8c3] bg-white p-6 text-sm text-[#647069]">Nessun contenuto in questa sezione.</p><% else %>
           <div class="divide-y divide-[#dce3d7] border-y border-[#dce3d7] bg-white">

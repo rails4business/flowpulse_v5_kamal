@@ -1,11 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = { dialogId: String }
+  static values = { dialogId: String, autoOpen: Boolean }
 
   connect() {
     if (this.element.tagName === "DIALOG") {
       this.element.addEventListener("click", this.handleBackdropClick)
+      if (this.autoOpenValue && !this.element.open) this.element.showModal()
     }
   }
 

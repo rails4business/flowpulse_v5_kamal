@@ -1,0 +1,20 @@
+---
+version: 1
+brand: posturacorretta
+nodes:
+  posturacorretta:
+    title: PosturaCorretta
+    parent_slug: markpostura
+    position: 2
+    node_type: project
+    view_type: default
+    status: published
+    visibility: public
+  prova:
+    title: Prova
+    parent_slug: posturacorretta
+    position: 1
+    node_type: project
+    view_type: default
+    status: draft
+    visibility: public

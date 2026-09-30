@@ -1,0 +1,32 @@
+<% if posturacorretta_editorial_preview? %>
+  <% commitment = chapter["publication_commitment"] %>
+  <% status_classes = if commitment.nil?
+    "border-rose-200 bg-rose-50 text-rose-900"
+  elsif commitment.publication_status == "published"
+    "border-emerald-200 bg-emerald-50 text-emerald-900"
+  else
+    "border-amber-200 bg-amber-50 text-amber-900"
+  end %>
+  <aside class="mt-3 flex flex-wrap items-center gap-2 rounded-lg border px-3 py-2 text-xs <%= status_classes %>" aria-label="Stato editoriale del capitolo">
+    <strong><%= commitment ? commitment.publication_status.humanize : "DataCommitment assente" %></strong>
+    <% if commitment %>
+      <span>· <%= commitment.publication_change_kind.presence&.humanize || "Intervento editoriale" %></span>
+      <span>· <%= commitment.publication_visibility.humanize %></span>
+      <span>· <%= commitment.access_modes.map(&:humanize).join(" + ") %></span>
+      <% if commitment.subject_type == "Node" %><span>· Nodo: <%= commitment.subject.title %></span><% end %>
+      <span>· <%= l(publication_decision_time(commitment), format: :short) %></span>
+    <% end %>
+    <%= link_to commitment ? "＋ Nuovo aggiornamento" : "＋ DataCommitment",
+      impegno_agenda_path(
+        workspace: "1",
+        default_brand: "posturacorretta",
+        new_content: "1",
+        content_key: chapter["id"].presence || chapter.fetch("slug"),
+        content_title: chapter.fetch("title"),
+        publication_change_kind: (commitment ? "update" : "publish"),
+        subject_node_id: chapter["publication_node_id"],
+        return_to: request.fullpath
+      ),
+      class: "ml-auto rounded-md bg-white px-2.5 py-1.5 font-bold text-slate-800 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50" %>
+  </aside>
+<% end %>

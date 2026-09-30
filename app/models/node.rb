@@ -18,7 +18,8 @@ class Node < ApplicationRecord
 
   has_many :domains, dependent: :nullify
   has_many :services, dependent: :restrict_with_error
-  has_many :brand_processes, dependent: :restrict_with_error
+  has_many :node_processes, dependent: :restrict_with_error
+  has_many :node_events, dependent: :destroy
   has_many :context_professional_calendars,
     class_name: "ProfessionalCalendar",
     foreign_key: :context_node_id,
@@ -109,6 +110,27 @@ class Node < ApplicationRecord
 
   def brand?
     domains.exists?
+  end
+
+  def owned_by?(user)
+    user.present? && role_assignment&.user == user
+  end
+
+  def administered_by?(user)
+    return false unless user
+    return true if user.superadmin_user? || owned_by?(user)
+    return false unless user.profile
+
+    RoleAssignment.where(profile: user.profile, context: self, role: %i[admin responsabile]).exists?
+  end
+
+  def cell_status
+    case node_events.where(kind: %w[started consolidated cut resumed]).order(happened_at: :desc, id: :desc).pick(:kind)
+    when "started", "resumed" then "active"
+    when "consolidated" then "consolidated"
+    when "cut" then "cut"
+    else "idea"
+    end
   end
 
   private
