@@ -163,6 +163,21 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Connessione non disponibile"
   end
 
+  test "course chapters keep editorial front matter out of the rendered content" do
+    get posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+
+    assert_response :success
+    assert_select "h1", text: "L'incontro con la salute e con le metodiche posturali"
+    assert_includes response.body, "La postura non e' una posizione perfetta"
+    assert_not_includes response.body, "author_node_slug"
+    assert_not_includes response.body, "publisher_node_slug"
+    assert_not_includes response.body, "author: Mark Postura"
+    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='theory']", count: 5
+    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", count: 2
+    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='theory']", text: /Teoria/
+    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", text: /Pratica/
+  end
+
   test "serves the PWA from the root of the dedicated domain" do
     host! "posturacorretta.org"
 

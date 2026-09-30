@@ -102,9 +102,9 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Costruisci il tuo progetto. O aiutaci a costruire i nostri."
-    assert_select "a", text: /Voglio collaborare/
-    assert_select "a", text: /Ho un progetto/
+    assert_select "h1", text: "Dalla persona ai processi che fanno funzionare l'impresa."
+    assert_select "h2", text: "Ogni persona può ideare o realizzare"
+    assert_select "h2", text: "Il canale YouTube come sottoprogetto"
   end
 
   test "renders markpostura domain from its editorial Site" do

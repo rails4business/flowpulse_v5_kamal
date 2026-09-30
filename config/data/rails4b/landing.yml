@@ -1,20 +1,161 @@
 site:
-  title: "Rails4Business — Costruire insieme"
-  description: "Percorsi per costruire un progetto o collaborare con l'ecosistema Flowpulse."
-  hero_title: "Costruisci il tuo progetto. O aiutaci a costruire i nostri."
-  hero_description: "Scegli un percorso, segui i passi e approfondisci ogni punto senza uscire dall'ecosistema."
-  footer: "Niente proposte standard: prima si capisce il bisogno, poi si sceglie insieme il prossimo passo."
+  title: "Rails4Business — Digitale, processi e strumenti"
+  description: "Lo spazio per professionisti digitali, processi, software e strumenti collegati all'ecosistema Flowpulse."
+  eyebrow: "Professionisti digitali · Processi · Software"
+  hero_title: "Dalla persona ai processi che fanno funzionare l'impresa."
+  hero_description: "La persona crea o realizza un'impresa con un proprio Brand. L'impresa raccoglie progetti, ogni progetto è costruito attraverso attività e le attività ripetitive vengono organizzate in processi."
+  primary_action: { label: "Esplora i contenuti", path: "/rails4b/contenuti" }
+  secondary_action: { label: "Conosci Flowpulse", path: "/flowpulse" }
+  footer: "Il digitale è utile quando sostiene persone, progetti e vita reale senza diventarne il centro."
 
-ecosystem:
-  title: "Ogni progetto ha il suo spazio"
-  description: "PosturaCorretta, Percorso Integrato e Il Giardino del Corpo sono le porte per le persone. Flowpulse le mette in relazione. Rails4Business è la porta per il lavoro digitale e dialoga con GeneraImpresa e 1Impegno."
+audiences:
+  title: "Ogni persona può ideare o realizzare"
+  description: "Una persona può proporre un progetto, contribuire con la propria professione oppure fare entrambe le cose. Può inoltre costruire un Brand personale che renda riconoscibili competenze, progetti e servizi."
   entries:
-    - title: "GeneraImpresa"
-      description: "Dare forma, priorità e sostenibilità a un progetto."
-      path: "/generaimpresa"
+    - title: "Ideatore"
+      description: "Propone la direzione, definisce il progetto e chiarisce il risultato che vuole costruire."
+    - title: "Professionista"
+      description: "Mette a disposizione competenze tecniche, creative o organizzative per realizzare attività e progetti."
+    - title: "Brand personale"
+      description: "Rende riconoscibili la persona, le sue competenze, i servizi offerti e i progetti ai quali contribuisce."
+
+pillars:
+  title: "Dall'impresa al lavoro ripetibile"
+  entries:
+    - { number: "01", title: "Organizzare i progetti", description: "L'impresa e il suo Brand danno un'identità comune ai progetti realizzati da ideatori e professionisti." }
+    - { number: "02", title: "Tracciare le attività", description: "Ogni progetto viene costruito attraverso attività concrete, persone responsabili, tempo impiegato e risultati osservabili." }
+    - { number: "03", title: "Creare i processi", description: "Quando un'attività si ripete, il modo di svolgerla viene descritto e migliorato fino a diventare un processo riutilizzabile." }
+
+tools:
+  title: "Un ecosistema, strumenti con responsabilità diverse"
+  description: "Rails4Business non prova a fare tutto: orienta verso lo spazio corretto e costruisce i collegamenti necessari."
+  entries:
+    - title: "Flowpulse"
+      label: "Piattaforma comune"
+      description: "Collega Brand, progetti e sottoprogetti; conserva il registro delle cose da fare, le implementazioni e i collegamenti ai changelog."
+      path: "/flowpulse"
     - title: "1Impegno"
-      description: "Organizzare impegni, luoghi e persone quando il progetto parte."
+      label: "Organizzazione"
+      description: "Organizza tempo, impegni, esperienze, sessioni, luoghi e persone quando il processo entra nel lavoro quotidiano."
       path: "/impegno?area=user&view=agenda"
-    - title: "Il Giardino del Corpo"
-      description: "La porta per filosofia, comunità e gli altri progetti dell'ecosistema."
-      path: "/il-giardino-del-corpo"
+    - title: "GeneraImpresa"
+      label: "Progetti e sostenibilità"
+      description: "Aiuta imprenditori e collaboratori a organizzare proposta, progetti, risorse, responsabilità e sostenibilità dell'impresa."
+      path: "/generaimpresa"
+    - title: "Dash"
+      label: "Digital cash"
+      description: "Un'infrastruttura da esplorare per pagamenti, microservizi ed economie circolari collegate a scambi reali."
+      path: "/rails4b/contenuti/dalla-moneta-alla-comunita-economia-circolare-dash"
+
+structure:
+  title: "Come si collegano persone, Brand, progetti, attività e processi"
+  description: "Ogni passaggio riprende il precedente: il Brand può rappresentare una persona o un'impresa, raccoglie i progetti, i progetti sono costruiti attraverso attività e le attività ripetitive vengono organizzate in processi."
+  levels:
+    - { title: "Persona e Brand", description: "Una persona può essere ideatrice, professionista o entrambe e rendere riconoscibile il proprio lavoro con un Brand personale." }
+    - { title: "Impresa e Brand", description: "Un'impresa riunisce persone, risorse e lavoro; il Brand esprime l'identità con cui viene riconosciuta." }
+    - { title: "Brand e progetti", description: "Un Brand può sviluppare più progetti, ciascuno con un risultato e responsabilità definiti." }
+    - { title: "Progetti e attività", description: "Ogni progetto avanza attraverso attività concrete assegnate alle persone che lo ideano o lo realizzano." }
+    - { title: "Attività e processo", description: "Quando un'attività si ripete, viene descritta e migliorata fino a diventare un processo riutilizzabile." }
+
+brand_types:
+  eyebrow: "Due forme, responsabilità diverse"
+  title: "Brand professionale e Brand progetto"
+  description: "Il Brand dice chi assume la responsabilità pubblica di ciò che viene presentato. Può partire dalla competenza di una persona oppure dall'identità autonoma di un progetto."
+  entries:
+    - title: "Brand professionale"
+      example: "Esempio: MarkPostura"
+      description: "Nasce intorno a una persona, alla sua identità professionale, alle competenze, ai servizi e ai progetti ai quali contribuisce. La persona rimane riconoscibile come responsabile."
+      path: "/markpostura"
+    - title: "Brand progetto"
+      example: "Esempio: PosturaCorretta"
+      description: "Nasce intorno a una proposta, un metodo o un progetto che può coinvolgere più persone, professionisti, contenuti, servizi e sottoprogetti."
+      path: "/posturacorretta"
+
+brand_network:
+  eyebrow: "Dall'identità alla rete"
+  title: "Costruire una propria rete di Brand"
+  description: "Una persona o un'impresa può coordinare più Brand professionali e di progetto. Ogni Brand mantiene nome, dominio, pubblico, contenuti e responsabilità, ma può condividere persone, servizi, processi e strumenti con gli altri Brand della rete."
+  principles:
+    - title: "Identità autonome"
+      description: "Ogni Brand conserva la propria voce e non diventa una semplice sezione indistinta della piattaforma."
+    - title: "Relazioni dichiarate"
+      description: "Collaborazioni, responsabilità, servizi e collegamenti fra i Brand devono essere comprensibili."
+    - title: "Reti che comunicano"
+      description: "La rete di una persona può collaborare con reti costruite da altre persone o imprese senza perdere proprietà e responsabilità."
+    - title: "Un sistema comune"
+      description: "Flowpulse collega le reti e offre una struttura condivisa; Rails4Business aiuta a costruire processi e strumenti interoperabili."
+  example: "MarkPostura può collegare il proprio Brand professionale a PosturaCorretta e ad altri Brand progetto. Un altro professionista può costruire una rete propria e collaborare su un progetto o servizio specifico."
+
+case_study:
+  eyebrow: "Primo caso concreto"
+  title: "Il canale YouTube come sottoprogetto"
+  description: "Un canale non è soltanto una raccolta di video: collega strategia, produzione, pubblicazione, distribuzione e apprendimento."
+  steps:
+    - "Scegliere tema, pubblico e obiettivo del contenuto"
+    - "Preparare scaletta, materiali e responsabilità"
+    - "Registrare e montare"
+    - "Pubblicare e distribuire"
+    - "Osservare domande, risultati e prossima revisione"
+  note: "Flowpulse registra cosa va fatto; Rails4Business descrive il processo; 1Impegno organizza il lavoro concreto."
+
+topics:
+  title: "Contenuti e strumenti da esplorare"
+  description: "Le aree vengono sviluppate progressivamente attraverso guide, casi reali, libri e fonti originali."
+  entries:
+    - { title: "Ruby on Rails e software", description: "Architettura pragmatica, sviluppo, test, deploy e manutenzione." }
+    - { title: "Shape Up e 37signals", description: "Shaping, cicli di sei settimane, Basecamp, Rework e principi per spedire lavoro utile." }
+    - { title: "Sicurezza informatica", description: "Accessi, password, backup, aggiornamenti, credenziali, privacy e continuità operativa." }
+    - { title: "Posizionamento e marketing", description: "Pubblico, problema, promessa, contenuti, canali e distribuzione." }
+    - { title: "Vendita e valore", description: "Proposte comprensibili, fiducia, verifica dell'utilità, prezzo, risorse e ricchezza." }
+    - { title: "Dash ed economie digitali", description: "Digital cash, microservizi, pagamenti e circuiti economici legati a comunità reali." }
+
+sources:
+  title: "Shape Up e 37signals — fonti originali"
+  description: "Collegamenti diretti ai libri, ai principi e agli strumenti citati. Le sintesi future di Rails4Business dovranno sempre rimandare alla fonte originale."
+  entries:
+    - title: "Shape Up: Stop Running in Circles"
+      label: "Libro online"
+      description: "Il metodo di 37signals per dare forma e spedire progetti in cicli fissi di sei settimane."
+      url: "https://basecamp.com/shapeup"
+    - title: "Shape Up PDF"
+      label: "Versione scaricabile"
+      description: "Edizione completa in PDF pubblicata da Basecamp."
+      url: "https://basecamp.com/shapeup/shape-up.pdf"
+    - title: "Libri di 37signals"
+      label: "Shape Up e REWORK"
+      description: "Pagina ufficiale dei libri di 37signals, con Shape Up, REWORK e gli altri titoli."
+      url: "https://37signals.com/books"
+    - title: "REWORK — David Heinemeier Hansson & Jason Fried"
+      label: "Libro"
+      description: "Il manifesto di 37signals contro la cultura del lavoro convenzionale."
+      url: "https://bookshop.org/p/books/rework-david-heinemeier-hansson/16cd5b1a12549f52?ean=9780307463746"
+    - title: "Basecamp"
+      label: "Strumento"
+      description: "Il sistema di gestione dei progetti costruito da 37signals."
+      url: "https://basecamp.com"
+    - title: "13. On repeat"
+      label: "Principio 37signals"
+      description: "Le idee nuove devono essere ripetute a lungo prima di essere comprese e riconosciute."
+      url: "https://37signals.com/13"
+    - title: "The REWORK Podcast"
+      label: "Podcast"
+      description: "Conversazioni di 37signals su lavoro, impresa, prodotti, Basecamp e principi di REWORK."
+      url: "https://37signals.com/podcast/"
+    - title: "Ponytail — the lazy senior dev"
+      label: "Progetto open source"
+      description: "Un insieme di regole e strumenti per spingere gli agenti AI verso soluzioni minime, riuso e meno codice, senza tagliare sicurezza, validazione o accessibilità."
+      url: "https://github.com/DietrichGebert/ponytail"
+
+wellbeing:
+  eyebrow: "Una sola vita"
+  title: "Salute, digitale e stile di vita sono collegati"
+  description: "Il modo in cui lavoriamo con gli strumenti digitali modifica attenzione, postura, sonno, relazioni, recupero e autonomia economica. Rails4Business affronta processi e strumenti; PosturaCorretta approfondisce l'educazione alla salute; Il Giardino del Corpo collega natura, territorio, comunità e qualità della vita."
+  links:
+    - { label: "PosturaCorretta", path: "/posturacorretta" }
+    - { label: "Il Giardino del Corpo", path: "/il-giardino-del-corpo" }
+
+collaboration:
+  title: "Vuoi contribuire come professionista digitale?"
+  description: "Puoi entrare come ideatore di un progetto o come professionista che contribuisce a realizzarlo. Presenta ciò che vuoi costruire oppure le competenze, i servizi e la disponibilità che puoi mettere a disposizione."
+  primary_action: { label: "Guarda Flowpulse", path: "/flowpulse" }
+  secondary_action: { label: "Leggi come collaborare", path: "/rails4b/percorsi/collaborare?contenuto=guarda-flowpulse" }

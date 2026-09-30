@@ -1,0 +1,24 @@
+<% content_for :title, "#{@node.title} — #{@brand.title}" %>
+<main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"><%= link_to @brand.title, admin_brand_path(@brand), class: "font-semibold text-blue-700" %><span>/</span><%= link_to "Nodi", brand_admin_nodes_path(@brand.slug), class: "font-semibold text-blue-700" %><span>/</span><span><%= @node.title %></span></nav>
+  <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Nodo di <%= @brand.title %></p><h1 class="mt-2 text-3xl font-extrabold"><%= @node.title %></h1>
+    <% if @node.description.present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= @node.description %></p><% end %>
+    <div class="mt-5 flex flex-wrap gap-2"><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600"><%= @node.status.humanize %></span><%= link_to "Gestione completa del nodo", admin_brand_path(@node), class: "rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700" %></div>
+  </header>
+  <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div><p class="text-xs font-black uppercase tracking-wide text-blue-700">Configurazione</p><h2 class="mt-1 text-xl font-extrabold">Modifica nodo</h2></div>
+    <%= form_with model: @node, url: brand_admin_node_path(@brand.slug, @node), method: :patch, class: "mt-5 grid gap-4 sm:grid-cols-2" do |form| %>
+      <div><%= form.label :title, "Nome", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, required: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :status, "Stato", class: "text-sm font-bold text-slate-700" %><%= form.select :status, Node::STATUSES.map { |status| [status.humanize, status] }, {}, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+      <% unless @node == @brand %><div><%= form.label :parent_id, "Nodo padre", class: "text-sm font-bold text-slate-700" %><%= form.collection_select :parent_id, @parent_options, :id, :title, {}, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div><% end %>
+      <div><%= form.label :link_node_id, "Nodo ponte verso", class: "text-sm font-bold text-slate-700" %><%= form.collection_select :link_node_id, @link_node_options, :id, :title, { include_blank: "Nodo normale — nessun ponte" }, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %><p class="mt-1 text-xs text-slate-500">Un nodo con figli non può diventare un nodo ponte.</p></div>
+      <div class="sm:col-span-2"><%= form.label :description, "Descrizione", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div class="sm:col-span-2 flex flex-wrap justify-between gap-3"><%= form.submit "Salva modifiche", class: "cursor-pointer rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white" %><% unless @node == @brand %><%= link_to "Elimina nodo", brand_admin_node_path(@brand.slug, @node), data: { turbo_method: :delete, turbo_confirm: "Eliminare definitivamente questo nodo?" }, class: "rounded-xl px-4 py-2.5 text-sm font-black text-red-600 hover:bg-red-50" %><% end %></div>
+    <% end %>
+  </section>
+  <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Attività ripetibili</p><h2 class="mt-1 text-xl font-extrabold">Processi</h2></div><%= link_to "+ Gestisci processi", admin_brand_path(@node, tab: "processes"), class: "rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-black text-white" %></div>
+    <% if @processes.any? %><div class="mt-5 grid gap-3 sm:grid-cols-2"><% @processes.each do |process_record| %><article class="rounded-xl border border-slate-200 p-4"><div class="flex items-center justify-between gap-3"><h3 class="font-extrabold"><%= process_record.title %></h3><span class="text-xs font-bold text-slate-500"><%= process_record.status.humanize %></span></div><% if process_record.description.present? %><p class="mt-2 text-sm leading-6 text-slate-600"><%= process_record.description %></p><% end %></article><% end %></div><% else %><p class="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-500">Questo nodo non ha ancora processi. Aggiungili quando le attività diventano ripetibili.</p><% end %>
+  </section>
+</main>

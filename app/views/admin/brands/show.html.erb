@@ -26,6 +26,7 @@
   </header>
 
   <nav class="mt-6 flex gap-1 border-b border-slate-200" aria-label="Vista del brand">
+    <% if @node.brand? %><%= link_to "Nodi visuali", brand_admin_nodes_path(@node.slug), class: "border-b-2 border-transparent px-4 py-3 text-sm font-extrabold text-slate-500 hover:text-slate-800" %><%= link_to "Sviluppo", brand_admin_development_path(@node.slug), class: "border-b-2 border-transparent px-4 py-3 text-sm font-extrabold text-slate-500 hover:text-slate-800" %><% end %>
     <%= link_to "Albero", admin_brand_path(@node), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'tree' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
     <%= link_to "Informazioni", admin_brand_path(@node, tab: "info"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'info' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>
     <%= link_to "Calendari", admin_brand_path(@node, tab: "calendars"), class: "border-b-2 px-4 py-3 text-sm font-extrabold #{ @active_tab == 'calendars' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800' }" %>

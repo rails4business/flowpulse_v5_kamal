@@ -1,4 +1,85 @@
-# Unificare programma studente e percorso insegnante
+# Attivare prima il percorso online PosturaCorretta
+
+## Priorità aggiornata al 29 settembre 2026
+
+Il primo obiettivo operativo non è ancora rendere prenotabili le lezioni di
+gruppo. Prima va completato il percorso online:
+
+```text
+accesso
+→ iscrizione al percorso online
+→ apertura del primo contenuto
+→ salvataggio dell'avanzamento
+→ ripresa dall'ultimo punto
+→ disponibilità del contenuto successivo
+```
+
+Le lezioni dal vivo rimangono visibili come **programma didattico**, ma
+diventeranno appuntamenti prenotabili soltanto dopo aver ordinato:
+
+- insegnanti e insegnanti maestri;
+- luoghi e centri;
+- servizi offerti;
+- calendari e disponibilità;
+- modalità individuale, gruppo, presenza e online;
+- capienza, conferme, annullamenti e responsabilità organizzative.
+
+Questo evita di costruire una prenotazione provvisoria prima di conoscere che
+cosa viene offerto, da chi, dove e secondo quali regole.
+
+## Amministrazione interna del Brand
+
+La struttura del Brand viene costruita in `/posturacorretta/admin/nodes` e,
+in generale, in `/:brand_slug/admin/nodes`.
+La mappa non precompila i passi: mostra soltanto i `Node` realmente creati dal
+superadmin e, in futuro, dai proprietari autorizzati del Brand. Il pulsante `+`
+permette di aggiungere un nodo sotto il Brand o sotto un altro nodo; aprendolo
+si vedono i processi che gli appartengono.
+
+Questa scheda è consultabile in `/posturacorretta/admin/development`, accanto
+alla mappa. La collocazione fisica dei Markdown verrà migrata dal registro
+centrale alle cartelle dei singoli Brand in un passaggio dedicato, mantenendo
+stabili gli identificativi e i collegamenti esistenti.
+
+## Cose da fare adesso — percorso online
+
+- [ ] Definire l'iscrizione persistente dell'utente al percorso o al corso.
+- [ ] Distinguere chiaramente utente autenticato, iscritto e non iscritto.
+- [ ] Definire quali contenuti sono liberi, disponibili agli iscritti,
+  programmati o bloccati.
+- [ ] Salvare l'avanzamento personale per capitolo o unità.
+- [ ] Permettere di riprendere il percorso dall'ultimo contenuto raggiunto.
+- [ ] Definire quando un contenuto è soltanto aperto, iniziato o completato.
+- [ ] Mostrare nella dashboard corso attivo, prossimo contenuto e stato reale.
+- [ ] Evitare avanzamenti dimostrativi o dedotti soltanto dallo YAML.
+- [ ] Verificare l'intero flusso da telefono.
+- [ ] Aggiungere test per iscrizione, accesso, avanzamento e contenuti bloccati.
+
+## Pubblicazione settimanale da ottobre
+
+Il materiale viene riordinato progressivamente, un'unità alla settimana. Ogni
+unità pubblicata dovrebbe contenere almeno:
+
+- obiettivo;
+- testo o video principale;
+- esercizio o scheda pratica;
+- collegamento al punto pertinente del programma lezioni;
+- stato editoriale e data di pubblicazione;
+- controllo dei link e della resa mobile.
+
+È utile mantenere due o tre unità già pronte, così la cadenza settimanale non
+dipende da una singola settimana di lavoro.
+
+## Cose da fare dopo — offerta dal vivo
+
+1. completare l'anagrafica e l'attivazione degli insegnanti;
+2. definire luoghi, centri e modalità online;
+3. definire i servizi e chi è abilitato a offrirli;
+4. collegare servizi, professionisti e calendari;
+5. creare le `DataSession` reali;
+6. aprire prenotazioni e annullamenti;
+7. registrare presenza, moduli svolti e avanzamento;
+8. attivare tirocinio e supervisione dell'insegnante maestro.
 
 ## Decisione
 
@@ -138,7 +219,7 @@ DataCommitment = partecipazione, presenza, completamento o tirocinio
 
 Lo YAML non conterrà date, prenotazioni, persone o presenze. Questi dati apparterranno a 1Impegno e potranno essere letti dalla pagina PosturaCorretta.
 
-## Passi di implementazione
+## Passi di implementazione del programma lezioni
 
 1. Migrare `programma_lezioni_posturacorretta.yml` allo schema con sezioni, corsi e lezioni.
 2. Conservare tutti i collegamenti esistenti ai capitoli e alle schede.
@@ -149,7 +230,7 @@ Lo YAML non conterrà date, prenotazioni, persone o presenze. Questi dati appart
 7. Verificare desktop e mobile.
 8. Solo dopo la verifica, preparare il changelog pubblico del Brand.
 
-## Stato al 26 settembre 2026
+## Stato della struttura lezioni al 26 settembre 2026
 
 Implementato:
 
@@ -178,3 +259,10 @@ Da validare con casi reali:
 - importazione del programma nel database.
 
 Questi aspetti verranno affrontati dopo aver validato struttura YAML e interfaccia con casi reali.
+
+## Criterio di completamento della priorità corrente
+
+La prima fase è pronta quando una persona può iscriversi al percorso online,
+aprire il primo contenuto, completarlo, ritrovare l'avanzamento dopo un nuovo
+accesso e proseguire con l'unità successiva. Non è necessario che una lezione
+dal vivo sia già prenotabile.

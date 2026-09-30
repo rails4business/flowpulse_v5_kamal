@@ -619,7 +619,16 @@ module Posturacorretta
     lesson_path = resolve_content_path(content_path)
     return unless lesson_path
 
-    @lesson_content = lesson_path.read.sub(/\n<!--\s*advanced\s*-->\s*\n/i, "\n")
+    @lesson_frontmatter, lesson_body = extract_lesson_frontmatter(lesson_path.read)
+    @lesson_content = lesson_body.sub(/\n<!--\s*advanced\s*-->\s*\n/i, "\n")
+  end
+
+  def extract_lesson_frontmatter(text)
+    match = text.match(/\A---\s*\r?\n(.*?)\r?\n---\s*\r?\n/m)
+    return [{}, text] unless match
+
+    metadata = YAML.safe_load(match[1], permitted_classes: [], aliases: false) || {}
+    [metadata.stringify_keys, text[match.end(0)..].to_s]
   end
 
   def resolve_content_path(content_path)

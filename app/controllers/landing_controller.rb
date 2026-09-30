@@ -46,7 +46,10 @@ class LandingController < ApplicationController
   def rails4b_contents
     load_rails4b
     @rails4b_contents_tab = params[:tab] == "passati" ? "passati" : "prossimi"
-    @rails4b_contents = @rails4b_content_catalog.fetch("items", []).select do |content|
+    visible_contents = @rails4b_content_catalog.fetch("items", []).select do |content|
+      %w[published scheduled].include?(content.fetch("status")) || Current.user&.superadmin_user?
+    end
+    @rails4b_contents = visible_contents.select do |content|
       @rails4b_contents_tab == "prossimi" ? content["status"] == "scheduled" : content["status"] != "scheduled"
     end.sort_by { |content| content.fetch("publication_at") }.then { |items| @rails4b_contents_tab == "passati" ? items.reverse : items }.map do |content|
       content.merge("track_slug" => @rails4b_track_by_content_slug[content.fetch("slug")])
@@ -72,6 +75,7 @@ class LandingController < ApplicationController
     @rails4b_track = @rails4b_path.fetch("tracks").find { |track| track.fetch("steps").any? { |step| step.fetch("content_slug") == params[:slug] } }
     @rails4b_article = @rails4b_contents_by_slug[params[:slug]]
     return redirect_to(rails4b_path, alert: "Contenuto non trovato") unless @rails4b_article
+    return redirect_to(rails4b_path, alert: "Contenuto non trovato") if @rails4b_article.fetch("status") == "draft" && !Current.user&.superadmin_user?
 
     load_rails4b_article_body
   end

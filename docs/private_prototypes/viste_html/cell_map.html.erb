@@ -1,0 +1,438 @@
+<%# Vista: mappa dei progetti (cellule) sotto un nodo brand.
+    Richiede dal controller: @brand, @map_data, @create_url, @status_url (vedi cell_map_esempio_rails.rb).
+    Tutto il CSS è limitato al contenitore .cm, quindi si può usare dentro il layout dell'app. %>
+<style nonce="<%= content_security_policy_nonce %>">
+.cm{
+  --vetro:#EAF1F0; --vetrino:#F7FAF9; --inchiostro:#16323B; --tenue:#566C73; --linea:#C5D3D1;
+  --vivo:#2A9D78; --vivo-chiaro:#C4E7D9; --tessuto:#1F7A8C; --tessuto-scuro:#14596A;
+  --estinto:#B4534B; --estinto-chiaro:#EBD3D0; --oro:#C98F0A; --oro-chiaro:#F5DFA3; --spento:#9FB0AE;
+  background:var(--vetro);
+  color:var(--inchiostro);
+  font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+  line-height:1.5;
+}
+.cm *{box-sizing:border-box}
+.cm h1, .cm h2{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;font-weight:600;margin:0}
+.cm button, .cm input, .cm select, .cm textarea{font:inherit;color:inherit}
+.cm :focus-visible{outline:3px solid var(--inchiostro);outline-offset:2px}
+.cm .testata{padding:28px clamp(16px,4vw,48px) 8px;max-width:1500px;margin:0 auto}
+.cm .testata h1{font-size:clamp(26px,3.4vw,38px);letter-spacing:-.01em}
+.cm .testata p{margin:6px 0 0;color:var(--tenue);max-width:62ch}
+.cm .barra{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;margin-top:18px}
+.cm .cruscotto{display:flex;flex-wrap:wrap;margin-top:18px;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
+.cm .dato{padding:12px 24px 12px 0;margin-right:24px;min-width:110px}
+.cm .dato + .dato{border-left:1px solid var(--linea);padding-left:24px}
+.cm .dato b{display:block;font-family:"Palatino Linotype",Palatino,Georgia,serif;font-size:26px;font-weight:600;line-height:1.1}
+.cm .dato span{font-size:13px;color:var(--tenue)}
+.cm .area{max-width:1500px;margin:18px auto 24px;padding:0 clamp(16px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+.cm .mappa{background:var(--vetrino);border:1px solid var(--linea);border-radius:10px;overflow:auto}
+.cm .mappa svg{display:block}
+.cm .legenda{display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 16px;border-top:1px solid var(--linea);font-size:13px;color:var(--tenue);background:var(--vetro)}
+.cm .legenda span{display:inline-flex;align-items:center;gap:6px}
+.cm .lato{position:sticky;top:16px;border-left:3px solid var(--inchiostro);padding:0 0 0 20px}
+.cm .lato h2{font-size:24px;margin-bottom:6px}
+.cm .lato h3{font-size:14px;margin:14px 0 4px}
+.cm .lato ul{margin:0;padding-left:18px;font-size:14px}
+.cm .lato .descr{white-space:pre-line;margin:8px 0}
+.cm .stato{display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;border-radius:999px;border:1.5px solid currentColor;margin-bottom:10px}
+.cm .stato.s-idea{color:var(--tessuto)}
+.cm .stato.s-active{color:var(--vivo)}
+.cm .stato.s-consolidated{color:var(--tessuto-scuro)}
+.cm .stato.s-cut{color:var(--estinto)}
+.cm .stato.s-root{color:var(--oro)}
+.cm .tenue{color:var(--tenue)}
+.cm .errore{color:var(--estinto);font-weight:600;margin:8px 0 0}
+.cm .lato label{display:grid;gap:2px;font-size:13px;color:var(--tenue);margin-top:14px}
+.cm .lato input, .cm dialog input:not([type=checkbox]):not([type=radio]), .cm dialog select, .cm dialog textarea{width:100%;padding:6px 8px;border:1.5px solid var(--linea);border-radius:6px;background:#fff;color:var(--inchiostro)}
+.cm .azioni{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.cm .btn{border:1.5px solid var(--inchiostro);background:transparent;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
+.cm .btn.pieno{background:var(--inchiostro);color:var(--vetrino)}
+.cm .btn:hover{background:var(--inchiostro);color:var(--vetrino)}
+.cm .btn.pericolo{border-color:var(--estinto);color:var(--estinto)}
+.cm .btn.pericolo:hover{background:var(--estinto);color:#fff}
+.cm .btn:disabled{opacity:.5;cursor:default}
+.cm .vai{display:flex;flex-wrap:wrap;gap:6px}
+.cm .vai button, .cm .link{border:1px solid var(--linea);background:#fff;border-radius:999px;padding:3px 12px;cursor:pointer;font-size:13px}
+.cm .vai button:hover, .cm .link:hover{border-color:var(--inchiostro)}
+.cm .storia{list-style:none;margin:0;padding:0;font-size:14px}
+.cm .storia li{padding:4px 0;border-top:1px solid var(--linea)}
+.cm .cronologia{max-width:1500px;margin:0 auto 48px;padding:0 clamp(16px,4vw,48px)}
+.cm .cronologia h2{font-size:24px}
+.cm .cronologia ol{list-style:none;margin:12px 0 0;padding:0}
+.cm .cronologia li{display:grid;grid-template-columns:120px 110px minmax(0,1fr);gap:12px;padding:8px 0;border-top:1px solid var(--linea);align-items:baseline}
+.cm .cronologia .k{font-weight:700}
+.cm .k-started, .cm .k-resumed{color:var(--vivo)}
+.cm .k-consolidated{color:var(--tessuto-scuro)}
+.cm .k-cut{color:var(--estinto)}
+.cm .k-created{color:var(--tenue)}
+.cm .e-base{stroke:var(--spento);stroke-width:1.5;fill:none;opacity:.6}
+.cm .e-attivo{stroke:var(--vivo);stroke-width:2.5;fill:none}
+.cm .e-solido{stroke:var(--tessuto);stroke-width:5;fill:none;stroke-linecap:round}
+.cm .e-estinto{stroke:var(--estinto);stroke-width:2;stroke-dasharray:3 6;fill:none;opacity:.7}
+.cm .e-ponte{stroke:var(--oro);stroke-width:2.5;stroke-dasharray:9 7;fill:none}
+.cm .nodo{cursor:pointer}
+.cm .nodo:focus{outline:none}
+.cm .nodo text{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;pointer-events:none}
+.cm .nodo .corpo{stroke-width:3}
+.cm .nodo .etichetta{font-size:13px;font-weight:600;fill:var(--inchiostro);text-anchor:middle}
+.cm .nodo .sotto{font-size:11.5px;fill:var(--tenue);text-anchor:middle}
+.cm .nodo .segno{font-size:24px;fill:var(--estinto);text-anchor:middle}
+.cm .nodo .selez{fill:none;stroke:var(--inchiostro);stroke-width:1.5;stroke-dasharray:2 4;display:none}
+.cm .nodo.sel .selez{display:block}
+.cm .nodo:focus-visible .corpo{stroke:var(--inchiostro);stroke-width:5}
+.cm .nodo .alone{display:none}
+.cm .st-idea .corpo{fill:#fff;stroke:var(--tessuto);stroke-dasharray:7 5}
+.cm .st-active .corpo{fill:var(--vivo-chiaro);stroke:var(--vivo)}
+.cm .st-active .alone{display:block;fill:var(--vivo);opacity:.25;transform-box:fill-box;transform-origin:center;animation:pulsa 2.4s ease-in-out infinite}
+.cm .st-consolidated .corpo{fill:var(--tessuto);stroke:var(--tessuto-scuro)}
+.cm .st-consolidated .sat{fill:#8CC3CF;stroke:var(--tessuto-scuro);stroke-width:1.5}
+.cm .st-cut .corpo{fill:var(--estinto-chiaro);stroke:var(--estinto);stroke-dasharray:3 5}
+.cm .st-cut{opacity:.9}
+.cm .st-root .corpo{fill:var(--oro-chiaro);stroke:var(--oro)}
+@keyframes pulsa{0%,100%{transform:scale(1);opacity:.28}50%{transform:scale(1.18);opacity:.08}}
+@media (prefers-reduced-motion:reduce){
+  .cm .st-active .alone{animation:none}
+}
+.cm dialog{border:1.5px solid var(--inchiostro);border-radius:12px;padding:22px 24px;background:var(--vetrino);color:var(--inchiostro);max-width:460px;width:calc(100% - 32px)}
+.cm dialog::backdrop{background:rgba(22,50,59,.45)}
+.cm dialog h2{font-size:22px;margin-bottom:12px}
+.cm dialog label{display:grid;gap:4px;font-size:13px;color:var(--tenue);margin-bottom:12px}
+@media (max-width:980px){
+  .cm .area{grid-template-columns:1fr}
+  .cm .lato{position:static}
+  .cm .cronologia li{grid-template-columns:1fr;gap:2px}
+}
+</style>
+
+<div class="cm" data-create-url="<%= @create_url %>" data-status-url="<%= @status_url %>">
+  <header class="testata">
+    <h1>Mappa dei progetti di <%= @brand.title %></h1>
+    <p>Quali progetti sono partiti, quali sono in corso e quali sono stati troncati.</p>
+    <div class="barra">
+      <button type="button" class="btn pieno" id="cm-aggiungi">Aggiungi progetto</button>
+    </div>
+    <div class="cruscotto" aria-live="polite">
+      <div class="dato"><b id="cm-n-idea">0</b><span>idee</span></div>
+      <div class="dato"><b id="cm-n-active">0</b><span>attivi</span></div>
+      <div class="dato"><b id="cm-n-consolidated">0</b><span>consolidati</span></div>
+      <div class="dato"><b id="cm-n-cut">0</b><span>troncati</span></div>
+    </div>
+  </header>
+
+  <main class="area">
+    <section class="mappa" aria-label="Mappa dei progetti">
+      <svg id="cm-svg" role="group" aria-label="Mappa dei progetti, da sinistra a destra"></svg>
+      <div class="legenda" id="cm-legenda"></div>
+    </section>
+    <aside class="lato" id="cm-pannello" aria-live="polite"></aside>
+  </main>
+
+  <section class="cronologia" aria-label="Cronologia">
+    <h2>Cronologia</h2>
+    <ol id="cm-cronologia"></ol>
+  </section>
+
+  <dialog id="cm-dlg" aria-labelledby="cm-dlg-titolo">
+    <form method="dialog" id="cm-form">
+      <h2 id="cm-dlg-titolo">Nuovo progetto</h2>
+      <label>Nome<input name="titolo" required maxlength="80" autocomplete="off"></label>
+      <label>Nasce sotto<select name="padre" id="cm-padre"></select></label>
+      <label>Di cosa si tratta (facoltativo)<textarea name="descrizione" rows="3"></textarea></label>
+      <div class="azioni">
+        <button class="btn pieno" value="ok">Aggiungi</button>
+        <button class="btn" value="annulla" formnovalidate>Annulla</button>
+      </div>
+    </form>
+  </dialog>
+
+  <%# I dati arrivano dal controller (@map_data). json_escape protegge da </script> nei testi. %>
+  <script type="application/json" id="cm-dati"><%== json_escape(@map_data.to_json) %></script>
+</div>
+
+<script nonce="<%= content_security_policy_nonce %>">
+(() => {
+  const raiz = document.querySelector('.cm');
+  if (!raiz) return;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const DATI = JSON.parse($('cm-dati').textContent);
+  const CFG = {
+    crea: raiz.dataset.createUrl || '',
+    stato: raiz.dataset.statusUrl || '',
+    csrf: (document.querySelector('meta[name="csrf-token"]') || {}).content || ''
+  };
+
+  const STATI = {
+    idea:         {eti: 'Idea'},
+    active:       {eti: 'Attivo'},
+    consolidated: {eti: 'Consolidato'},
+    cut:          {eti: 'Troncato'}
+  };
+  const EVENTI = {created: 'Creato', started: 'Avviato', consolidated: 'Consolidato', cut: 'Troncato', resumed: 'Ripreso'};
+  // stato di arrivo : tipo di evento : testo del pulsante : stile
+  const AZIONI = {
+    idea:         [['active', 'started', 'Avvia', 'pieno']],
+    active:       [['consolidated', 'consolidated', 'Consolida', 'pieno'], ['cut', 'cut', 'Tronca', 'pericolo']],
+    consolidated: [['cut', 'cut', 'Tronca', 'pericolo']],
+    cut:          [['active', 'resumed', 'Riprendi', 'pieno']]
+  };
+
+  let celle = DATI.cells || [];
+  let ponti = DATI.bridges || [];
+  let idx = {}, figli = {}, sel = null, W = 0, H = 0;
+  const K = c => String(c.id);
+  const oggi = () => new Date().toISOString();
+  const fmt = at => {
+    const d = new Date(at);
+    return isNaN(d) ? String(at || '') : d.toLocaleDateString('it-IT', {day: 'numeric', month: 'short', year: 'numeric'});
+  };
+  const ultimo = (c, tipi) => [...c.events].reverse().find(e => tipi.includes(e.kind));
+  const intestazioni = () => ({'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-Token': CFG.csrf});
+
+  /* ---------- struttura ---------- */
+  function prepara() {
+    idx = {}; figli = {};
+    celle.forEach(c => {
+      c.events = c.events || [];
+      if (!c.root && !STATI[c.status]) c.status = 'idea';
+      idx[K(c)] = c;
+    });
+    celle.forEach(c => {
+      const p = c.parent_id == null ? null : String(c.parent_id);
+      c._p = p && idx[p] && p !== K(c) ? p : null;
+      if (c._p) (figli[c._p] = figli[c._p] || []).push(c);
+    });
+    Object.values(figli).forEach(l => l.sort((a, b) => (a.position || 0) - (b.position || 0)));
+    ponti = ponti.filter(b => idx[String(b.from)] && idx[String(b.to)]);
+  }
+
+  function impagina() {
+    const colW = 205, rigaH = 150, padX = 95, padTop = 80, padBottom = 130;
+    let riga = 0, maxD = 0;
+    celle.forEach(c => { c._vis = false; });
+    function pos(c, d) {
+      if (c._vis) return;
+      c._vis = true; c._d = d; maxD = Math.max(maxD, d);
+      const ks = (figli[K(c)] || []).filter(k => !k._vis);
+      if (!ks.length) { c._y = riga++; return; }
+      ks.forEach(k => pos(k, d + 1));
+      c._y = (ks[0]._y + ks[ks.length - 1]._y) / 2;
+    }
+    celle.filter(c => !c._p).forEach(r => pos(r, 0));
+    celle.filter(c => !c._vis).forEach(c => pos(c, 0));
+    celle.forEach(c => { c._x = padX + c._d * colW; c._yy = padTop + c._y * rigaH; });
+    W = padX * 2 + maxD * colW;
+    H = padTop + Math.max(riga - 1, 0) * rigaH + padBottom;
+  }
+
+  const raggio = c => c.root ? 40 : 32;
+  function righe(t, max) {
+    const out = []; let cur = '';
+    String(t).split(' ').forEach(w => {
+      if ((cur + ' ' + w).trim().length > max && cur) { out.push(cur); cur = w; }
+      else cur = (cur + ' ' + w).trim();
+    });
+    if (cur) out.push(cur);
+    return out;
+  }
+  const classeStato = c => c.root ? 'st-root' : 'st-' + c.status;
+
+  /* ---------- disegno ---------- */
+  function disegna() {
+    const svg = $('cm-svg');
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+    let h = '<defs><marker id="cm-freccia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C98F0A"/></marker></defs>';
+
+    celle.forEach(c => {
+      if (!c._p) return;
+      const p = idx[c._p];
+      const x1 = p._x + raggio(p), x2 = c._x - raggio(c), m = (x1 + x2) / 2;
+      const cls = c.status === 'cut' ? 'e-estinto' : c.status === 'consolidated' ? 'e-solido' : c.status === 'active' ? 'e-attivo' : 'e-base';
+      h += `<path class="${cls}" d="M${x1},${p._yy} C${m},${p._yy} ${m},${c._yy} ${x2},${c._yy}"/>`;
+    });
+
+    ponti.forEach(b => {
+      const a = idx[String(b.from)], t = idx[String(b.to)];
+      const cls = t.status === 'cut' ? 'e-estinto' : 'e-ponte';
+      const marker = cls === 'e-ponte' ? ' marker-end="url(#cm-freccia)"' : '';
+      if (t._x > a._x + 10) {
+        const x1 = a._x + raggio(a), x2 = t._x - raggio(t) - 4, m = (x1 + x2) / 2;
+        h += `<path class="${cls}"${marker} d="M${x1},${a._yy} C${m},${a._yy} ${m},${t._yy} ${x2},${t._yy}"/>`;
+      } else {
+        const y1 = a._yy - raggio(a), y2 = t._yy - raggio(t) - 4;
+        h += `<path class="${cls}"${marker} d="M${a._x},${y1} C${a._x},${y1 - 100} ${t._x},${y2 - 100} ${t._x},${y2}"/>`;
+      }
+    });
+
+    celle.forEach(c => {
+      const r = raggio(c);
+      let s = `<circle class="selez" r="${r + 14}"/>`;
+      if (c.status === 'consolidated' && !c.root) {
+        for (let k = 0; k < 8; k++) {
+          const ang = (k / 8) * 2 * Math.PI + 0.3;
+          s += `<circle class="sat" cx="${((r + 4) * Math.cos(ang)).toFixed(1)}" cy="${((r + 4) * Math.sin(ang)).toFixed(1)}" r="6.5"/>`;
+        }
+      }
+      if (c.status === 'active' && !c.root) s += `<circle class="alone" r="${r}"/>`;
+      s += `<circle class="corpo" r="${r}"/>`;
+      if (c.status === 'cut' && !c.root) s += `<text class="segno" y="8">\u00D7</text>`;
+
+      const linee = righe(c.title, 19);
+      linee.forEach((l, i) => { s += `<text class="etichetta" y="${r + 22 + i * 15}">${esc(l)}</text>`; });
+      let sotto = '';
+      if (!c.root) {
+        if (c.status === 'cut') { const e = ultimo(c, ['cut']); sotto = e ? 'troncato ' + fmt(e.at) : 'troncato'; }
+        else if (c.status === 'active' || c.status === 'consolidated') { const e = ultimo(c, ['started', 'resumed']); sotto = e ? 'dal ' + fmt(e.at) : ''; }
+      }
+      if (sotto) s += `<text class="sotto" y="${r + 22 + linee.length * 15 + 2}">${esc(sotto)}</text>`;
+
+      const eti = c.root ? 'Brand' : STATI[c.status].eti;
+      const aria = `${c.title}: ${eti}`;
+      h += `<g class="nodo ${classeStato(c)}${sel === K(c) ? ' sel' : ''}" data-id="${esc(K(c))}" transform="translate(${c._x},${c._yy})" tabindex="0" role="button" aria-label="${esc(aria)}"><title>${esc(aria)}</title>${s}</g>`;
+    });
+    svg.innerHTML = h;
+  }
+
+  function legenda() {
+    const v = [['idea', 'Idea'], ['active', 'Attivo'], ['consolidated', 'Consolidato'], ['cut', 'Troncato']];
+    let h = v.map(([st, t]) => `<span><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><g class="nodo st-${st}"><circle class="corpo" r="9"/></g></svg>${t}</span>`).join('');
+    h += `<span><svg width="40" height="14" viewBox="0 0 40 14" aria-hidden="true"><path class="e-ponte" d="M2,7 H36"/></svg>Dipende anche da</span>`;
+    $('cm-legenda').innerHTML = h;
+  }
+
+  function cruscotto() {
+    const n = {idea: 0, active: 0, consolidated: 0, cut: 0};
+    celle.forEach(c => { if (!c.root) n[c.status]++; });
+    Object.keys(n).forEach(k => { $('cm-n-' + k).textContent = n[k]; });
+  }
+
+  function cronologia() {
+    const tutti = [];
+    celle.forEach(c => { if (!c.root) c.events.forEach(e => tutti.push({c, e})); });
+    tutti.sort((a, b) => new Date(b.e.at) - new Date(a.e.at));
+    $('cm-cronologia').innerHTML = tutti.slice(0, 40).map(({c, e}) =>
+      `<li><time datetime="${esc(e.at)}">${esc(fmt(e.at))}</time>
+        <span class="k k-${esc(e.kind)}">${esc(EVENTI[e.kind] || e.kind)}</span>
+        <span><button type="button" class="link" data-vai="${esc(K(c))}">${esc(c.title)}</button>${e.note ? ' \u2014 ' + esc(e.note) : ''}</span></li>`
+    ).join('') || '<li class="tenue">Ancora nessun evento.</li>';
+  }
+
+  /* ---------- pannello ---------- */
+  function pannello() {
+    const el = $('cm-pannello');
+    const c = sel && idx[sel];
+    if (!c) {
+      el.innerHTML = '<h2>Scegli un progetto</h2><p class="tenue">Clicca un nodo della mappa per vedere la sua storia e cambiarne lo stato.</p>';
+      return;
+    }
+    const figliC = figli[K(c)] || [];
+    const dipende = ponti.filter(b => String(b.to) === K(c)).map(b => idx[String(b.from)]);
+    const collegati = ponti.filter(b => String(b.from) === K(c)).map(b => idx[String(b.to)]);
+    const eti = c.root ? 'Brand' : STATI[c.status].eti;
+    const azioni = c.root ? [] : AZIONI[c.status];
+    const vai = l => l.map(x => `<button type="button" data-vai="${esc(K(x))}">${esc(x.title)}</button>`).join('');
+
+    el.innerHTML = `
+      <h2>${esc(c.title)}</h2>
+      <span class="stato s-${c.root ? 'root' : c.status}">${eti}</span>
+      ${c.description ? `<p class="descr">${esc(c.description)}</p>` : ''}
+      ${c.url ? `<p><a href="${esc(c.url)}">Apri il progetto</a></p>` : ''}
+      ${figliC.length ? `<h3>Da qui nascono</h3><div class="vai">${vai(figliC)}</div>` : ''}
+      ${collegati.length ? `<h3>Alimenta anche</h3><div class="vai">${vai(collegati)}</div>` : ''}
+      ${dipende.length ? `<h3>Dipende anche da</h3><div class="vai">${vai(dipende)}</div>` : ''}
+      ${c.events.length ? `<h3>Storia</h3><ul class="storia">${[...c.events].reverse().map(e =>
+        `<li><strong class="k-${esc(e.kind)}">${esc(EVENTI[e.kind] || e.kind)}</strong> ${esc(fmt(e.at))}${e.note ? '<br><span class="tenue">' + esc(e.note) + '</span>' : ''}</li>`).join('')}</ul>` : ''}
+      ${azioni.length ? `<label>Nota (facoltativa, per esempio il motivo)<input id="cm-nota" maxlength="200" autocomplete="off"></label>` : ''}
+      <div class="azioni">
+        ${azioni.map(([st, tipo, testo, stile]) => `<button type="button" class="btn ${stile}" data-az="${st}:${tipo}">${testo}</button>`).join('')}
+        <button type="button" class="btn" data-sotto="${esc(K(c))}">Aggiungi un progetto qui sotto</button>
+      </div>
+      <p class="errore" id="cm-msg" role="alert"></p>`;
+  }
+
+  /* ---------- salvataggio ---------- */
+  async function cambia(c, stato, tipo, nota) {
+    if (CFG.stato) {
+      const r = await fetch(CFG.stato.replace('__ID__', encodeURIComponent(K(c))), {
+        method: 'PATCH', headers: intestazioni(), body: JSON.stringify({status: stato, event: tipo, note: nota})
+      });
+      if (!r.ok) throw new Error(r.status);
+      Object.assign(c, await r.json());
+    } else {
+      c.status = stato;
+      c.events.push({kind: tipo, at: oggi(), note: nota});
+    }
+  }
+  async function crea(titolo, padre, descrizione) {
+    let nuova;
+    if (CFG.crea) {
+      const r = await fetch(CFG.crea, {
+        method: 'POST', headers: intestazioni(), body: JSON.stringify({title: titolo, parent_id: padre, description: descrizione})
+      });
+      if (!r.ok) throw new Error(r.status);
+      nuova = await r.json();
+    } else {
+      nuova = {id: 'nuovo-' + Date.now(), title: titolo, parent_id: padre, position: (figli[padre] || []).length,
+               status: 'idea', description: descrizione, events: [{kind: 'created', at: oggi(), note: ''}]};
+    }
+    celle.push(nuova);
+    return nuova;
+  }
+
+  /* ---------- interazioni ---------- */
+  function aggiorna() { prepara(); impagina(); disegna(); cruscotto(); pannello(); cronologia(); }
+  function seleziona(id) { sel = String(id); disegna(); pannello(); }
+  const messaggio = t => { const m = $('cm-msg'); if (m) m.textContent = t; };
+
+  $('cm-svg').addEventListener('click', e => { const g = e.target.closest('.nodo'); if (g) seleziona(g.dataset.id); });
+  $('cm-svg').addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const g = e.target.closest('.nodo');
+    if (g) { e.preventDefault(); seleziona(g.dataset.id); }
+  });
+  $('cm-cronologia').addEventListener('click', e => { const b = e.target.closest('[data-vai]'); if (b) seleziona(b.dataset.vai); });
+
+  $('cm-pannello').addEventListener('click', async e => {
+    const vai = e.target.closest('[data-vai]');
+    if (vai) { seleziona(vai.dataset.vai); return; }
+    const sotto = e.target.closest('[data-sotto]');
+    if (sotto) { apriDialogo(sotto.dataset.sotto); return; }
+    const b = e.target.closest('[data-az]');
+    if (!b || !sel) return;
+    const [stato, tipo] = b.dataset.az.split(':');
+    const nota = (($('cm-nota') || {}).value || '').trim();
+    b.disabled = true; messaggio('');
+    try { await cambia(idx[sel], stato, tipo, nota); aggiorna(); }
+    catch (err) { messaggio('Non sono riuscito a salvare. Riprova.'); b.disabled = false; }
+  });
+
+  const dlg = $('cm-dlg');
+  function apriDialogo(padre) {
+    $('cm-form').reset();
+    const radice = celle.find(c => c.root);
+    const scelto = padre || (radice && K(radice));
+    $('cm-padre').innerHTML = celle.map(c => `<option value="${esc(K(c))}"${K(c) === scelto ? ' selected' : ''}>${esc(c.title)}</option>`).join('');
+    dlg.returnValue = '';
+    dlg.showModal();
+    $('cm-form').elements.titolo.focus();
+  }
+  $('cm-aggiungi').addEventListener('click', () => apriDialogo(sel));
+  dlg.addEventListener('close', async () => {
+    if (dlg.returnValue !== 'ok') return;
+    const f = new FormData($('cm-form'));
+    const titolo = String(f.get('titolo') || '').trim();
+    if (!titolo) return;
+    try {
+      const nuova = await crea(titolo, String(f.get('padre')), String(f.get('descrizione') || '').trim());
+      sel = K(nuova);
+      aggiorna();
+    } catch (err) { messaggio('Non sono riuscito a creare il progetto. Riprova.'); }
+  });
+
+  legenda();
+  aggiorna();
+})();
+</script>

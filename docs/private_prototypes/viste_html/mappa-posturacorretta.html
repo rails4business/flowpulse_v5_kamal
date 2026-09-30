@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mappa evolutiva di PosturaCorretta</title>
+<style>
+:root{
+  --vetro:#EAF1F0;
+  --vetrino:#F7FAF9;
+  --inchiostro:#16323B;
+  --tenue:#566C73;
+  --linea:#C5D3D1;
+  --vivo:#2A9D78;
+  --vivo-chiaro:#C4E7D9;
+  --tessuto:#1F7A8C;
+  --tessuto-scuro:#14596A;
+  --estinto:#B4534B;
+  --estinto-chiaro:#EBD3D0;
+  --oro:#C98F0A;
+  --oro-chiaro:#F5DFA3;
+  --spento:#9FB0AE;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--vetro);
+  color:var(--inchiostro);
+  font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+  line-height:1.5;
+}
+h1,h2{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;font-weight:600;margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--inchiostro);outline-offset:2px}
+
+.testata{padding:28px clamp(16px,4vw,48px) 8px;max-width:1500px;margin:0 auto}
+.testata h1{font-size:clamp(26px,3.4vw,38px);letter-spacing:-.01em}
+.testata p{margin:6px 0 0;color:var(--tenue);max-width:62ch}
+
+.barra{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;margin-top:18px}
+.modi{display:inline-flex;border:1.5px solid var(--inchiostro);border-radius:999px;overflow:hidden}
+.modi button{border:0;background:transparent;padding:8px 20px;cursor:pointer;font-weight:600}
+.modi button[aria-pressed="true"]{background:var(--inchiostro);color:var(--vetrino)}
+.nota-modo{color:var(--tenue);font-size:14px;max-width:56ch}
+
+.cruscotto{display:flex;flex-wrap:wrap;margin-top:18px;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
+.dato{padding:12px 24px 12px 0;margin-right:24px;min-width:120px}
+.dato + .dato{border-left:1px solid var(--linea);padding-left:24px}
+.dato b{display:block;font-family:"Palatino Linotype",Palatino,Georgia,serif;font-size:26px;font-weight:600;line-height:1.1}
+.dato span{font-size:13px;color:var(--tenue)}
+.neg{color:var(--estinto)}
+.pos{color:var(--tessuto-scuro)}
+
+.avanzamento{margin-top:14px;display:grid;gap:6px}
+.avanzamento .riga{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:15px}
+.binario{height:10px;border-radius:999px;background:var(--linea);overflow:hidden}
+.binario i{display:block;height:100%;background:var(--oro);border-radius:999px;transition:width .35s ease}
+
+.area{max-width:1500px;margin:18px auto 40px;padding:0 clamp(16px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+.mappa{background:var(--vetrino);border:1px solid var(--linea);border-radius:10px;overflow:auto}
+.mappa svg{display:block}
+.legenda{display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 16px;border-top:1px solid var(--linea);font-size:13px;color:var(--tenue);background:var(--vetro)}
+.legenda span{display:inline-flex;align-items:center;gap:6px}
+.legenda svg{flex:none}
+
+.lato{position:sticky;top:16px;border-left:3px solid var(--inchiostro);padding:0 0 0 20px}
+.lato h2{font-size:24px;margin-bottom:6px}
+.stato{display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;border-radius:999px;border:1.5px solid currentColor;margin-bottom:10px}
+.stato.s-bloccata{color:var(--tenue)}
+.stato.s-tentabile{color:var(--tessuto)}
+.stato.s-attiva{color:var(--vivo)}
+.stato.s-tessuto{color:var(--tessuto-scuro)}
+.stato.s-estinta{color:var(--estinto)}
+.tenue{color:var(--tenue)}
+.lato .campi{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:14px 0}
+.lato label{display:grid;gap:2px;font-size:13px;color:var(--tenue)}
+.lato input{width:100%;padding:6px 8px;border:1.5px solid var(--linea);border-radius:6px;background:#fff;color:var(--inchiostro)}
+.lato h3{font-size:14px;margin:14px 0 4px}
+.lato ul{margin:0;padding-left:18px;font-size:14px}
+.azioni{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.btn{border:1.5px solid var(--inchiostro);background:transparent;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn.pieno{background:var(--inchiostro);color:var(--vetrino)}
+.btn:hover{background:var(--inchiostro);color:var(--vetrino)}
+.btn.pericolo{border-color:var(--estinto);color:var(--estinto)}
+.btn.pericolo:hover{background:var(--estinto);color:#fff}
+.sblocca{display:flex;flex-wrap:wrap;gap:6px}
+.sblocca button{border:1px solid var(--linea);background:#fff;border-radius:999px;padding:3px 12px;cursor:pointer;font-size:13px}
+.sblocca button:hover{border-color:var(--inchiostro)}
+
+.file{max-width:1500px;margin:0 auto 48px;padding:0 clamp(16px,4vw,48px);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.file .tenue{font-size:13px;flex-basis:100%}
+.file input[type=file]{display:none}
+
+/* --- mappa: rami --- */
+.e-base{stroke:var(--spento);stroke-width:1.5;fill:none;opacity:.55}
+.e-attivo{stroke:var(--vivo);stroke-width:2.5;fill:none}
+.e-percorso{stroke:var(--tessuto);stroke-width:5;fill:none;stroke-linecap:round}
+.e-piano{stroke:var(--oro);stroke-width:3;stroke-dasharray:9 7;fill:none}
+.e-estinto{stroke:var(--estinto);stroke-width:2;stroke-dasharray:3 6;fill:none;opacity:.6}
+
+/* --- mappa: cellule --- */
+.nodo{cursor:pointer}
+.nodo:focus{outline:none}
+.nodo text{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;pointer-events:none}
+.nodo .corpo{stroke-width:3;transition:fill .3s}
+.nodo .etichetta{font-size:13px;font-weight:600;fill:var(--inchiostro);text-anchor:middle}
+.nodo .cassa{font-size:11.5px;fill:var(--tenue);text-anchor:middle}
+.nodo .cassa.neg{fill:var(--estinto)}
+.nodo .cassa.pos{fill:var(--tessuto-scuro)}
+.nodo .val{font-size:12px;font-weight:700;fill:var(--inchiostro);text-anchor:middle}
+.nodo .nucleo{fill:none;stroke:var(--inchiostro);stroke-opacity:.35;stroke-width:1.5}
+.nodo .punto{fill:var(--inchiostro);fill-opacity:.35}
+.nodo .anello-fondo{fill:none;stroke:var(--linea);stroke-width:4}
+.nodo .anello{fill:none;stroke:var(--vivo);stroke-width:4;stroke-linecap:round}
+.nodo .selez{fill:none;stroke:var(--inchiostro);stroke-width:1.5;stroke-dasharray:2 4;display:none}
+.nodo.sel .selez{display:block}
+.nodo:focus-visible .corpo{stroke:var(--inchiostro);stroke-width:5}
+.nodo .alone{display:none}
+
+.st-bloccata .corpo{fill:#DCE5E3;stroke:var(--spento)}
+.st-bloccata{opacity:.6}
+.st-tentabile .corpo{fill:#fff;stroke:var(--tessuto);stroke-dasharray:7 5}
+.st-attiva .corpo{fill:var(--vivo-chiaro);stroke:var(--vivo)}
+.st-attiva .alone{display:block;fill:var(--vivo);opacity:.25;transform-box:fill-box;transform-origin:center;animation:pulsa 2.4s ease-in-out infinite}
+.st-tessuto .corpo{fill:var(--tessuto);stroke:var(--tessuto-scuro)}
+.st-tessuto .val{fill:#fff}
+.st-tessuto .nucleo{stroke:#fff;stroke-opacity:.7}
+.st-tessuto .punto{fill:#fff;fill-opacity:.8}
+.st-tessuto .sat{fill:#8CC3CF;stroke:var(--tessuto-scuro);stroke-width:1.5}
+.st-estinta .corpo{fill:var(--estinto-chiaro);stroke:var(--estinto);stroke-dasharray:3 5}
+.st-estinta{opacity:.85}
+.st-estinta .val{fill:var(--estinto);font-size:22px;font-weight:400}
+
+.obiettivo.st-bloccata .corpo,.obiettivo.st-tentabile .corpo,.obiettivo.st-attiva .corpo{stroke:var(--oro);fill:var(--oro-chiaro)}
+.obiettivo.st-tentabile .corpo{fill:#FBF1CF}
+.obiettivo.st-tessuto .corpo{fill:var(--oro);stroke:#8F6503}
+.obiettivo.st-tessuto .val{fill:var(--inchiostro)}
+.obiettivo.st-tessuto .punto{fill:var(--inchiostro);fill-opacity:.6}
+.obiettivo.st-tessuto .sat{fill:var(--oro-chiaro);stroke:#8F6503}
+.obiettivo .anello{stroke:var(--oro)}
+.obiettivo.st-attiva .alone{fill:var(--oro)}
+
+@keyframes pulsa{0%,100%{transform:scale(1);opacity:.28}50%{transform:scale(1.18);opacity:.08}}
+@media (prefers-reduced-motion:reduce){
+  .st-attiva .alone{animation:none}
+  .binario i{transition:none}
+}
+@media (max-width:980px){
+  .area{grid-template-columns:1fr}
+  .lato{position:static}
+}
+</style>
+</head>
+<body>
+
+<header class="testata">
+  <h1>Mappa evolutiva di PosturaCorretta</h1>
+  <p>Dal materiale online al centro: quali cellule hai avviato, quali si sono estinte, quale strada regge.</p>
+
+  <div class="barra">
+    <div class="modi" role="group" aria-label="Modalità dei numeri">
+      <button type="button" id="m-ip" aria-pressed="true">Ipotesi</button>
+      <button type="button" id="m-re" aria-pressed="false">Reale</button>
+    </div>
+    <p class="nota-modo" id="nota-modo"></p>
+  </div>
+
+  <div class="cruscotto" aria-live="polite">
+    <div class="dato"><b id="d-vive">0</b><span>cellule attive</span></div>
+    <div class="dato"><b id="d-tessuti">0</b><span>tessuti formati</span></div>
+    <div class="dato"><b id="d-estinte">0</b><span>estinte</span></div>
+    <div class="dato"><b id="d-cassa">–</b><span>cassa lungo la strada</span></div>
+    <div class="dato"><b id="d-persi">–</b><span>costo dei tentativi estinti</span></div>
+  </div>
+
+  <div class="avanzamento">
+    <div class="riga"><strong id="av-titolo"></strong><span id="av-prossimo" class="tenue"></span></div>
+    <div class="binario" role="progressbar" aria-label="Avanzamento verso l'obiettivo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="binario"><i id="barra" style="width:0%"></i></div>
+  </div>
+</header>
+
+<main class="area">
+  <section class="mappa" aria-label="Mappa delle cellule">
+    <svg id="svg" role="group" aria-label="Mappa delle cellule, da sinistra a destra"></svg>
+    <div class="legenda" id="legenda"></div>
+  </section>
+  <aside class="lato" id="pannello" aria-live="polite"></aside>
+</main>
+
+<section class="file">
+  <button type="button" class="btn" id="esporta">Salva la mappa (file)</button>
+  <button type="button" class="btn" id="importa-btn">Carica una mappa</button>
+  <input type="file" id="importa" accept="application/json,.json">
+  <button type="button" class="btn pericolo" id="ripristina">Ripristina l'esempio</button>
+  <p class="tenue">La mappa si salva anche da sola in questo browser. Per aggiungere o cambiare cellule, modifica l'elenco NODI all'inizio dello script.</p>
+</section>
+
+<script>
+/* =====================================================================
+   NODI: l'elenco delle cellule. Modificalo qui per cambiare la mappa.
+
+   id         nome breve senza spazi
+   nome       come compare sulla mappa
+   da         id delle cellule che la sbloccano (vuoto = cellula di partenza)
+   tutti      true = servono TUTTE le cellule di "da"; altrimenti basta una
+   soglia     valore che trasforma la cellula in tessuto
+   misura     cosa conti (iscritti, partecipanti, ...)
+   persone    true se il valore è un numero di persone (serve al tasso di conversione)
+   eucariota  true = ruolo differenziato (doppio contorno)
+   obiettivo  true = nodo finale
+   riga       posizione verticale (0 = in alto). Facoltativa.
+   ip / re    numeri in modalità Ipotesi e Reale:
+              stato (non_tentata | attiva | estinta), valore raggiunto,
+              costo di avvio, mant (mantenimento nel periodo), ricavo nel periodo.
+              Tutti gli importi si riferiscono allo stesso periodo (es. un trimestre).
+   I numeri qui sotto sono ESEMPI inventati: sostituiscili con i tuoi.
+   ===================================================================== */
+const NODI = [
+  { id:'materiale', nome:'Materiale online', da:[], soglia:1, misura:'pubblicazione', persone:false, riga:1,
+    ruoli:['Creatore: scrive e pubblica i contenuti'],
+    processi:['Scrivere le pagine e le schede','Pubblicare sul sito'],
+    ip:{stato:'attiva', valore:1, costo:400, mant:30, ricavo:0},
+    re:{stato:'attiva', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'newsletter', nome:'Newsletter settimanale', da:['materiale'], soglia:200, misura:'iscritti', persone:true, riga:0,
+    ruoli:['Creatore: scrive ogni settimana'],
+    processi:['Scrivere e inviare','Raccogliere le iscrizioni'],
+    ip:{stato:'estinta', valore:12, costo:150, mant:20, ricavo:0},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'corso', nome:'Corso online', da:['materiale'], soglia:100, misura:'iscritti', persone:true, riga:1,
+    ruoli:['Creatore: contenuti e risposte','Assistente: gestione iscrizioni'],
+    processi:['Pagina di iscrizione','Pagamento','Invio dei materiali'],
+    ip:{stato:'attiva', valore:100, costo:600, mant:150, ricavo:2000},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'percorso', nome:'Percorso singolo', da:['corso'], soglia:50, misura:'percorsi avviati', persone:true, riga:1,
+    ruoli:['Insegnante: segue l\u2019allievo uno-a-uno','Allievo'],
+    processi:['Valutazione iniziale','Programma di lezioni','Verifica dei risultati'],
+    ip:{stato:'attiva', valore:50, costo:300, mant:600, ricavo:3000},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'gruppo', nome:'Gruppi nel centro', da:['percorso'], soglia:20, misura:'partecipanti', persone:true, riga:0,
+    ruoli:['Insegnante: conduce il gruppo','Referente sala: spazio e orari'],
+    processi:['Calendario dei gruppi','Affitto o uso dello spazio','Iscrizioni'],
+    ip:{stato:'attiva', valore:20, costo:1200, mant:1500, ricavo:3600},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'insegnanti', nome:'Allievi che diventano insegnanti', da:['percorso'], soglia:2, misura:'insegnanti', persone:true, eucariota:true, riga:1,
+    ruoli:['Formatore: prepara e valuta','Allievo che diventa insegnante'],
+    processi:['Criteri di scelta','Tirocinio affiancato','Controllo di qualità'],
+    ip:{stato:'attiva', valore:2, costo:800, mant:100, ricavo:600},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'dash', nome:'Circuito Dash (opzionale)', da:['percorso'], soglia:30, misura:'pagamenti in Dash', persone:false, riga:2,
+    ruoli:['Referente pagamenti'],
+    processi:['Wallet e prezzi di riferimento in euro','Verifica fiscale con il commercialista'],
+    ip:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'formazione', nome:'Formazione insegnanti', da:['insegnanti'], soglia:6, misura:'insegnanti formati', persone:true, eucariota:true, riga:1,
+    ruoli:['Formatore','Insegnante in formazione'],
+    processi:['Programma del corso','Verifica finale','Registro degli insegnanti formati'],
+    ip:{stato:'attiva', valore:6, costo:1500, mant:800, ricavo:3600},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} },
+
+  { id:'centro', nome:'Centro PosturaCorretta', da:['gruppo','formazione'], tutti:true, soglia:3, misura:'mesi in pareggio', persone:false, eucariota:true, obiettivo:true, riga:0.5,
+    ruoli:['Responsabile del centro','Insegnanti','Referente sala'],
+    processi:['Gestione economica','Calendario','Qualità didattica','Apertura di nuovi gruppi'],
+    ip:{stato:'attiva', valore:3, costo:6000, mant:7000, ricavo:10000},
+    re:{stato:'non_tentata', valore:0, costo:0, mant:0, ricavo:0} }
+];
+
+/* ------------------------------------------------------------------ */
+const CHIAVE = 'posturacorretta-mappa-v1';
+const $ = id => document.getElementById(id);
+const copia = o => JSON.parse(JSON.stringify(o));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const eur = new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0});
+const eurSegno = new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0,signDisplay:'exceptZero'});
+const num = new Intl.NumberFormat('it-IT',{maximumFractionDigits:1});
+
+let modo = 'ip';
+let nodi = copia(NODI);
+let idx = {};
+let selezionato = null;
+let pos = {};
+let W = 0, H = 0;
+
+try{
+  const s = localStorage.getItem(CHIAVE);
+  if(s){
+    const o = JSON.parse(s);
+    if(valido(o)){ nodi = o.nodi; modo = o.modo === 're' ? 're' : 'ip'; }
+  }
+}catch(e){}
+
+function valido(o){
+  return o && Array.isArray(o.nodi) && o.nodi.length > 0 && o.nodi.every(n =>
+    n && typeof n.id === 'string' && typeof n.nome === 'string' && Array.isArray(n.da) &&
+    typeof n.soglia === 'number' && n.ip && n.re);
+}
+function salva(){
+  try{ localStorage.setItem(CHIAVE, JSON.stringify({modo, nodi})); }catch(e){}
+}
+
+/* ---------- stato derivato ---------- */
+function ricostruisci(){
+  idx = {};
+  nodi.forEach(n => idx[n.id] = n);
+  nodi.forEach(n => { n.da = n.da.filter(p => idx[p]); });
+}
+const dati = n => n[modo];
+const tessuto = n => dati(n).stato === 'attiva' && dati(n).valore >= n.soglia;
+function sbloccato(n){
+  if(!n.da.length) return true;
+  const ps = n.da.map(id => idx[id]);
+  return n.tutti ? ps.every(tessuto) : ps.some(tessuto);
+}
+function stato(n){
+  const d = dati(n);
+  if(d.stato === 'estinta') return 'estinta';
+  if(d.stato === 'attiva') return tessuto(n) ? 'tessuto' : 'attiva';
+  return sbloccato(n) ? 'tentabile' : 'bloccata';
+}
+const ETICHETTE = {
+  bloccata:'Non tentata',
+  tentabile:'Pronta da avviare',
+  attiva:'Attiva',
+  tessuto:'Tessuto formato',
+  estinta:'Estinta'
+};
+
+const saldoNodo = n => dati(n).ricavo - dati(n).costo - dati(n).mant;
+const viva = n => dati(n).stato === 'attiva';
+function antenati(id, set = new Set()){
+  idx[id].da.forEach(p => { if(!set.has(p)){ set.add(p); antenati(p, set); } });
+  return set;
+}
+function cassaCumulata(n){
+  let t = viva(n) ? saldoNodo(n) : 0;
+  antenati(n.id).forEach(a => { if(viva(idx[a])) t += saldoNodo(idx[a]); });
+  return t;
+}
+
+/* ---------- la strada verso l'obiettivo ---------- */
+function unisci(opzioni, propri, id){
+  const u = new Set(propri), p = new Set([id]), e = new Set();
+  opzioni.forEach(([pid, r]) => {
+    r.u.forEach(x => u.add(x));
+    r.p.forEach(x => p.add(x));
+    r.e.forEach(x => e.add(x));
+    e.add(pid + '>' + id);
+  });
+  return {u, p, e};
+}
+function pianifica(ignoraStati){
+  const memo = {};
+  function f(n){
+    if(n.id in memo) return memo[n.id];
+    memo[n.id] = null;               // protegge da cicli
+    let res;
+    if(!ignoraStati && dati(n).stato === 'estinta'){
+      res = null;
+    } else {
+      const fatto = !ignoraStati && tessuto(n);
+      const propri = fatto ? [] : [n.id];
+      if(!n.da.length){
+        res = {u:new Set(propri), p:new Set([n.id]), e:new Set()};
+      } else {
+        const opz = n.da.map(id => [id, f(idx[id])]);
+        if(n.tutti){
+          res = opz.some(o => !o[1]) ? null : unisci(opz, propri, n.id);
+        } else {
+          const ok = opz.filter(o => o[1]).sort((a,b) => a[1].u.size - b[1].u.size);
+          res = ok.length ? unisci([ok[0]], propri, n.id) : null;
+        }
+      }
+    }
+    memo[n.id] = res;
+    return res;
+  }
+  return f;
+}
+const obiettivo = () => nodi.find(n => n.obiettivo) || nodi[nodi.length - 1];
+
+/* ---------- posizioni ---------- */
+function profondita(n, memo = {}){
+  if(n.id in memo) return memo[n.id];
+  memo[n.id] = 0;
+  const d = n.da.length ? 1 + Math.max(...n.da.map(p => profondita(idx[p], memo))) : 0;
+  memo[n.id] = d;
+  return d;
+}
+function impagina(){
+  const colW = 205, rigaH = 155, padX = 95, padTop = 75, padBottom = 130;
+  const colonne = {};
+  nodi.forEach(n => { const d = profondita(n); (colonne[d] = colonne[d] || []).push(n); });
+  const maxCol = Math.max(...Object.keys(colonne).map(Number));
+  let maxRiga = 0;
+  pos = {};
+  Object.entries(colonne).forEach(([d, lista]) => {
+    lista.forEach((n, i) => {
+      const riga = typeof n.riga === 'number' ? n.riga : i;
+      maxRiga = Math.max(maxRiga, riga);
+      pos[n.id] = {x: padX + Number(d) * colW, y: padTop + riga * rigaH};
+    });
+  });
+  W = padX * 2 + maxCol * colW;
+  H = padTop + maxRiga * rigaH + padBottom;
+}
+
+function righe(t, max){
+  const out = []; let cur = '';
+  t.split(' ').forEach(w => {
+    if((cur + ' ' + w).trim().length > max && cur){ out.push(cur); cur = w; }
+    else cur = (cur + ' ' + w).trim();
+  });
+  if(cur) out.push(cur);
+  return out;
+}
+
+/* ---------- disegno della mappa ---------- */
+function disegna(){
+  const svg = $('svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+
+  const g = obiettivo();
+  const piano = pianifica(false)(g);
+  let html = '';
+
+  // rami
+  nodi.forEach(n => {
+    n.da.forEach(pid => {
+      const p = idx[pid], a = pos[pid], b = pos[n.id];
+      const ra = (p.obiettivo ? 46 : 34), rb = (n.obiettivo ? 46 : 34);
+      const x1 = a.x + ra, x2 = b.x - rb, m = (x1 + x2) / 2;
+      const chiave = pid + '>' + n.id;
+      const sp = stato(p), sn = stato(n);
+      const inPiano = piano && piano.e.has(chiave);
+      const percorsa = sp === 'tessuto' && (sn === 'attiva' || sn === 'tessuto');
+      let cls = 'e-base';
+      if(sp === 'estinta') cls = 'e-estinto';
+      else if(inPiano) cls = percorsa ? 'e-percorso' : 'e-piano';
+      else if(percorsa) cls = 'e-attivo';
+      html += `<path class="${cls}" d="M${x1},${a.y} C${m},${a.y} ${m},${b.y} ${x2},${b.y}"/>`;
+    });
+  });
+
+  // cellule
+  nodi.forEach(n => {
+    const st = stato(n), d = dati(n), p = pos[n.id];
+    const r = n.obiettivo ? 46 : 34;
+    const frac = Math.max(0, Math.min(1, d.valore / (n.soglia || 1)));
+    const C = 2 * Math.PI * (r + 8);
+    let dentro = '';
+
+    if(st === 'tessuto'){
+      for(let k = 0; k < 8; k++){
+        const ang = (k / 8) * 2 * Math.PI + 0.3;
+        dentro += `<circle class="sat" cx="${((r + 4) * Math.cos(ang)).toFixed(1)}" cy="${((r + 4) * Math.sin(ang)).toFixed(1)}" r="6.5"/>`;
+      }
+    }
+    if(st === 'attiva'){
+      dentro += `<circle class="alone" r="${r}"/>`;
+    }
+
+    let s = `<circle class="selez" r="${r + 16}"/>`;
+    s += dentro;
+    s += `<circle class="corpo" r="${r}"/>`;
+    if(st === 'attiva'){
+      s += `<circle class="anello-fondo" r="${r + 8}"/>`;
+      s += `<circle class="anello" r="${r + 8}" transform="rotate(-90)" stroke-dasharray="${(frac * C).toFixed(1)} ${C.toFixed(1)}"/>`;
+    }
+    if(n.eucariota && !n.obiettivo) s += `<circle class="nucleo" r="${r - 8}"/>`;
+    if(n.obiettivo){
+      s += `<circle class="punto" cx="-12" cy="-22" r="5"/><circle class="punto" cx="12" cy="-22" r="5"/><circle class="punto" cx="0" cy="-31" r="5"/>`;
+    }
+    const testo = st === 'estinta' ? '\u00D7' : `${num.format(d.valore)}/${num.format(n.soglia)}`;
+    s += `<text class="val" y="${n.obiettivo ? 8 : 4}">${esc(testo)}</text>`;
+
+    // etichetta e cassa
+    const linee = righe(n.nome, 19);
+    linee.forEach((l, i) => {
+      s += `<text class="etichetta" y="${r + 22 + i * 15}">${esc(l)}</text>`;
+    });
+    if(st !== 'bloccata' && st !== 'tentabile'){
+      const c = cassaCumulata(n);
+      const cl = c < 0 ? 'neg' : c > 0 ? 'pos' : '';
+      s += `<text class="cassa ${cl}" y="${r + 22 + linee.length * 15 + 2}">cassa ${esc(eurSegno.format(c))}</text>`;
+    }
+
+    const aria = `${n.nome}: ${ETICHETTE[st]}, ${num.format(d.valore)} su ${num.format(n.soglia)} ${n.misura}`;
+    html += `<g class="nodo st-${st}${n.obiettivo ? ' obiettivo' : ''}${selezionato === n.id ? ' sel' : ''}" data-id="${esc(n.id)}" transform="translate(${p.x},${p.y})" tabindex="0" role="button" aria-label="${esc(aria)}"><title>${esc(aria)}</title>${s}</g>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+/* ---------- cruscotto ---------- */
+function cruscotto(){
+  let vive = 0, tess = 0, est = 0, persi = 0;
+  nodi.forEach(n => {
+    const st = stato(n);
+    if(st === 'attiva') vive++;
+    if(st === 'tessuto') tess++;
+    if(st === 'estinta'){ est++; persi += dati(n).costo + dati(n).mant - dati(n).ricavo; }
+  });
+  $('d-vive').textContent = vive;
+  $('d-tessuti').textContent = tess;
+  $('d-estinte').textContent = est;
+
+  const g = obiettivo();
+  const piano = pianifica(false)(g);
+  const ideale = pianifica(true)(g);
+  const totale = ideale ? ideale.u.size : 1;
+
+  const cassaEl = $('d-cassa');
+  if(piano){
+    let c = 0;
+    piano.p.forEach(id => { if(viva(idx[id])) c += saldoNodo(idx[id]); });
+    cassaEl.textContent = eurSegno.format(c);
+    cassaEl.className = c < 0 ? 'neg' : c > 0 ? 'pos' : '';
+  } else {
+    cassaEl.textContent = '–';
+    cassaEl.className = '';
+  }
+  const persiEl = $('d-persi');
+  persiEl.textContent = est ? eurSegno.format(-persi) : '–';
+  persiEl.className = est && persi > 0 ? 'neg' : '';
+
+  let perc = 0, titolo, prossimo = '';
+  if(tessuto(g)){
+    perc = 100; titolo = 'Obiettivo raggiunto';
+  } else if(!piano){
+    titolo = 'Strada chiusa: nessun percorso aperto fino all\u2019obiettivo';
+    prossimo = 'Riprova una cellula estinta o avvia un ramo nuovo.';
+    perc = 0;
+  } else {
+    const mancano = piano.u.size;
+    perc = Math.max(0, Math.min(100, Math.round((1 - mancano / totale) * 100)));
+    titolo = mancano === 1 ? 'Manca 1 cellula all\u2019obiettivo' : `Mancano ${mancano} cellule all\u2019obiettivo`;
+    const prossime = [...piano.u].map(id => idx[id])
+      .filter(n => ['attiva','tentabile'].includes(stato(n)))
+      .sort((a,b) => profondita(a) - profondita(b));
+    if(prossime.length) prossimo = 'Adesso lavora su: ' + prossime.map(n => n.nome).join(', ');
+  }
+  $('av-titolo').textContent = titolo;
+  $('av-prossimo').textContent = prossimo;
+  $('barra').style.width = perc + '%';
+  $('binario').setAttribute('aria-valuenow', perc);
+}
+
+/* ---------- pannello laterale ---------- */
+function conversione(n){
+  if(!n.persone) return '';
+  const p = n.da.map(id => idx[id]).find(x => x.persone);
+  if(!p) return '';
+  const pv = dati(p).valore, v = dati(n).valore;
+  if(!pv) return '';
+  const r = v / pv;
+  return r <= 1
+    ? `${num.format(Math.round(r * 1000) / 10)}% di quelli di \u201C${esc(p.nome)}\u201D`
+    : `${num.format(Math.round(r * 10) / 10)} per ognuno di \u201C${esc(p.nome)}\u201D`;
+}
+
+function pannello(){
+  const el = $('pannello');
+  if(!selezionato || !idx[selezionato]){
+    el.innerHTML = `<h2>Scegli una cellula</h2><p class="tenue">Clicca un nodo della mappa: vedi costi, ruoli, processi e cosa sblocca. Tutti i numeri si possono modificare.</p>`;
+    return;
+  }
+  const n = idx[selezionato], d = dati(n), st = stato(n);
+  const figli = nodi.filter(m => m.da.includes(n.id));
+  const conv = conversione(n);
+  const c = cassaCumulata(n);
+
+  let azioni = '';
+  if(st === 'tentabile') azioni = `<button type="button" class="btn pieno" data-az="avvia">Avvia questa cellula</button>`;
+  if(st === 'attiva' || st === 'tessuto') azioni = `<button type="button" class="btn pericolo" data-az="estingui">Estingui</button>`;
+  if(st === 'estinta') azioni = `<button type="button" class="btn pieno" data-az="riprova">Riprova</button>`;
+
+  let sblocco = '';
+  if(st === 'bloccata'){
+    const nomi = n.da.map(id => `\u201C${esc(idx[id].nome)}\u201D`).join(n.tutti ? ' e ' : ' oppure ');
+    sblocco = `<p class="tenue">Si sblocca quando ${n.tutti ? 'sono tutte tessuto' : 'è tessuto'}: ${nomi}.</p>`;
+  }
+
+  el.innerHTML = `
+    <h2>${esc(n.nome)}</h2>
+    <span class="stato s-${st}">${ETICHETTE[st]}</span>
+    ${sblocco}
+    <p>${esc(n.misura.charAt(0).toUpperCase() + n.misura.slice(1))}: <strong>${num.format(d.valore)}</strong> su ${num.format(n.soglia)}${conv ? `<br><span class="tenue">${conv}</span>` : ''}</p>
+    <div class="campi">
+      <label>Raggiunti (${esc(n.misura)})<input type="number" min="0" step="any" data-campo="valore" value="${d.valore}"></label>
+      <label>Soglia del tessuto<input type="number" min="0" step="any" data-campo="soglia" value="${n.soglia}"></label>
+      <label>Costo di avvio (€)<input type="number" min="0" step="any" data-campo="costo" value="${d.costo}"></label>
+      <label>Mantenimento (€)<input type="number" min="0" step="any" data-campo="mant" value="${d.mant}"></label>
+      <label>Ricavo (€)<input type="number" min="0" step="any" data-campo="ricavo" value="${d.ricavo}"></label>
+      <label>Saldo di questa cellula<input type="text" readonly value="${esc(eurSegno.format(saldoNodo(n)))}"></label>
+    </div>
+    ${st !== 'bloccata' && st !== 'tentabile' ? `<p>Cassa cumulata fino a qui: <strong class="${c < 0 ? 'neg' : 'pos'}">${esc(eurSegno.format(c))}</strong></p>` : ''}
+    <h3>Ruoli</h3>
+    <ul>${(n.ruoli || []).map(r => `<li>${esc(r)}</li>`).join('') || '<li class="tenue">Da definire</li>'}</ul>
+    <h3>Processi necessari</h3>
+    <ul>${(n.processi || []).map(r => `<li>${esc(r)}</li>`).join('') || '<li class="tenue">Da definire</li>'}</ul>
+    ${figli.length ? `<h3>Sblocca</h3><div class="sblocca">${figli.map(f => `<button type="button" data-vai="${esc(f.id)}">${esc(f.nome)}</button>`).join('')}</div>` : ''}
+    <div class="azioni">${azioni}</div>`;
+}
+
+/* ---------- legenda ---------- */
+function legenda(){
+  const voci = [
+    ['bloccata','Non tentata',''],
+    ['tentabile','Da avviare',''],
+    ['attiva','Attiva',''],
+    ['tessuto','Tessuto (soglia raggiunta)',''],
+    ['estinta','Estinta','']
+  ];
+  let h = voci.map(([st, t]) =>
+    `<span><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><g class="nodo st-${st}"><circle class="corpo" r="9"/></g></svg>${t}</span>`).join('');
+  h += `<span><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><g class="nodo st-attiva"><circle class="corpo" r="10"/><circle class="nucleo" r="5"/></g></svg>Ruolo differenziato</span>`;
+  h += `<span><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><g class="nodo obiettivo st-tentabile"><circle class="corpo" r="10"/></g></svg>Obiettivo</span>`;
+  h += `<span><svg width="40" height="14" viewBox="0 0 40 14" aria-hidden="true"><path class="e-percorso" d="M2,7 H38"/></svg>Strada percorsa</span>`;
+  h += `<span><svg width="40" height="14" viewBox="0 0 40 14" aria-hidden="true"><path class="e-piano" d="M2,7 H38"/></svg>Strada da fare</span>`;
+  $('legenda').innerHTML = h;
+}
+
+/* ---------- interazioni ---------- */
+function aggiorna(){
+  disegna(); cruscotto(); pannello(); salva();
+}
+function seleziona(id){
+  selezionato = id;
+  disegna(); pannello();
+}
+function impostaModo(m){
+  modo = m;
+  $('m-ip').setAttribute('aria-pressed', m === 'ip');
+  $('m-re').setAttribute('aria-pressed', m === 're');
+  $('nota-modo').textContent = m === 'ip'
+    ? 'Ipotesi: i numeri che ti aspetti. Servono a capire se la catena regge economicamente prima di provarla.'
+    : 'Reale: i numeri misurati. Aggiornali man mano; la mappa mostra dove ti sei arenato.';
+  aggiorna();
+}
+
+$('m-ip').addEventListener('click', () => impostaModo('ip'));
+$('m-re').addEventListener('click', () => impostaModo('re'));
+
+$('svg').addEventListener('click', e => {
+  const g = e.target.closest('.nodo');
+  if(g) seleziona(g.dataset.id);
+});
+$('svg').addEventListener('keydown', e => {
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const g = e.target.closest('.nodo');
+  if(g){ e.preventDefault(); seleziona(g.dataset.id); }
+});
+
+$('pannello').addEventListener('click', e => {
+  const vai = e.target.closest('[data-vai]');
+  if(vai){ seleziona(vai.dataset.vai); return; }
+  const az = e.target.closest('[data-az]');
+  if(!az || !selezionato) return;
+  const d = dati(idx[selezionato]);
+  if(az.dataset.az === 'avvia') d.stato = 'attiva';
+  if(az.dataset.az === 'estingui') d.stato = 'estinta';
+  if(az.dataset.az === 'riprova'){ d.stato = 'attiva'; d.valore = 0; }
+  aggiorna();
+});
+$('pannello').addEventListener('change', e => {
+  const campo = e.target.dataset.campo;
+  if(!campo || !selezionato) return;
+  const v = Math.max(0, parseFloat(e.target.value) || 0);
+  const n = idx[selezionato];
+  if(campo === 'soglia') n.soglia = v; else dati(n)[campo] = v;
+  aggiorna();
+});
+
+$('esporta').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify({modo, nodi}, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mappa-posturacorretta.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$('importa-btn').addEventListener('click', () => $('importa').click());
+$('importa').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  if(!f) return;
+  try{
+    const o = JSON.parse(await f.text());
+    if(!valido(o)) throw new Error('formato');
+    nodi = o.nodi; modo = o.modo === 're' ? 're' : 'ip';
+    avvia();
+  }catch(err){
+    alert('Il file non è una mappa valida. Carica un file salvato da questa pagina.');
+  }
+  e.target.value = '';
+});
+$('ripristina').addEventListener('click', () => {
+  if(!confirm('Ripristinare l\u2019esempio? Le modifiche fatte in questa mappa andranno perse.')) return;
+  nodi = copia(NODI); modo = 'ip'; selezionato = null;
+  avvia();
+});
+
+function avvia(){
+  ricostruisci();
+  impagina();
+  legenda();
+  selezionato = idx[selezionato] ? selezionato : null;
+  impostaModo(modo);
+}
+avvia();
+</script>
+</body>
+</html>

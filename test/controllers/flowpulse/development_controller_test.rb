@@ -67,7 +67,7 @@ class Flowpulse::DevelopmentControllerTest < ActionDispatch::IntegrationTest
     get flowpulse_development_entry_url("posturacorretta-programma-lezioni-studente-insegnante")
 
     assert_response :success
-    assert_select "h1", "Unificare programma studente e percorso insegnante"
+    assert_select "h1", "Attivare prima il percorso online PosturaCorretta"
     assert_select ".editorial-rich-text h2", text: "Accesso al percorso insegnante"
     assert_select ".editorial-rich-text", text: /non deve essere mostrato agli utenti/
     assert_select "a", text: /Apri il changelog/, count: 0

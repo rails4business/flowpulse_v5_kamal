@@ -37,15 +37,25 @@
   <% else %>
     <p class="text-[10px] font-bold uppercase tracking-[.14em] text-indigo-700">Corso online</p>
     <h2 class="mt-1 text-lg font-bold text-slate-950">Indice dei capitoli</h2>
+    <div class="mt-3 flex flex-wrap gap-3 text-[10px] font-extrabold uppercase tracking-[.1em]" aria-label="Tipi di capitolo">
+      <span class="inline-flex items-center gap-1.5 text-blue-700"><span class="size-2 rounded-full bg-blue-600" aria-hidden="true"></span>Teoria</span>
+      <span class="inline-flex items-center gap-1.5 text-red-700"><span class="size-2 rounded-full bg-red-600" aria-hidden="true"></span>Pratica</span>
+    </div>
     <% if active_course.fetch("chapters", []).empty? %>
       <p class="rounded-lg border border-dashed border-indigo-200 bg-indigo-50/60 px-3 py-4 text-xs leading-5 text-indigo-900">I capitoli di questo corso sono in preparazione.</p>
     <% end %>
     <ol class="mt-5 divide-y divide-slate-200 border-y border-slate-200">
       <% active_course.fetch("chapters", []).each_with_index do |chapter, index| %>
         <% selected = active_lesson&.fetch("slug", nil) == chapter.fetch("slug") %>
-        <li>
-          <%= link_to posturacorretta_course_chapter_path(corso: active_course.fetch("slug"), capitolo: chapter.fetch("slug")), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "block border-l-2 px-3 py-3.5 transition #{selected ? "border-indigo-600 bg-indigo-50 text-indigo-950" : "border-transparent text-slate-600 hover:border-indigo-300 hover:bg-slate-50 hover:text-indigo-800"}" do %>
-            <span class="block text-[9px] font-extrabold uppercase tracking-[.12em] <%= selected ? "text-indigo-700" : "text-slate-400" %>">Capitolo <%= format("%02d", index + 1) %></span>
+        <% practical = chapter.fetch("chapter_type", "theory") == "practical" %>
+        <% item_classes = if practical
+          selected ? "border-red-600 bg-red-50 text-slate-950" : "border-red-200 text-slate-600 hover:border-red-500 hover:bg-red-50/60 hover:text-slate-900"
+        else
+          selected ? "border-blue-600 bg-blue-50 text-slate-950" : "border-blue-200 text-slate-600 hover:border-blue-500 hover:bg-blue-50/60 hover:text-slate-900"
+        end %>
+        <li data-chapter-type="<%= practical ? "practical" : "theory" %>">
+          <%= link_to posturacorretta_course_chapter_path(corso: active_course.fetch("slug"), capitolo: chapter.fetch("slug")), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "block border-l-[3px] px-3 py-3.5 transition #{item_classes}" do %>
+            <span class="flex items-center gap-2 text-[9px] font-extrabold uppercase tracking-[.12em]"><span class="text-slate-400">Capitolo <%= format("%02d", index + 1) %></span><span aria-hidden="true" class="text-slate-300">·</span><span class="<%= practical ? "text-red-700" : "text-blue-700" %>"><%= practical ? "Pratica" : "Teoria" %></span></span>
             <span class="mt-1 block text-sm leading-5 <%= selected ? "font-bold" : "font-medium" %>"><%= chapter.fetch("title") %></span>
           <% end %>
         </li>

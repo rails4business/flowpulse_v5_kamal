@@ -1,0 +1,15 @@
+<li role="treeitem" aria-expanded="true">
+  <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 hover:border-blue-300">
+    <div class="min-w-0">
+      <%= link_to node.title, brand_admin_node_path(brand.slug, node), class: "font-extrabold text-slate-900 hover:text-blue-700" %>
+      <span class="ml-2 text-xs font-bold text-slate-400"><%= node.status.humanize %> · <%= pluralize(node.brand_processes.size, "processo", "processi") %></span>
+    </div>
+    <button type="button" data-node-add-parent="<%= node.id %>" class="rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-black text-slate-600 hover:border-blue-400 hover:text-blue-700" aria-label="Aggiungi un nodo sotto <%= node.title %>">+ sotto</button>
+  </div>
+  <% children = nodes_by_parent_id[node.id] || [] %>
+  <% if children.any? %>
+    <ul class="ml-5 mt-2 space-y-2 border-l-2 border-slate-200 pl-4" role="group">
+      <% children.each do |child| %><%= render "tree_node", node: child, nodes_by_parent_id: nodes_by_parent_id, brand: brand %><% end %>
+    </ul>
+  <% end %>
+</li>

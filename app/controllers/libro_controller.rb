@@ -9,6 +9,7 @@ class LibroController < ApplicationController
 
   before_action :set_book_paths
   before_action :ensure_book_exists, only: %i[index show guida]
+  before_action :ensure_book_visibility, only: %i[index show]
   before_action :load_toc
   helper_method :book_reader_chapter_path, :book_reader_guida_path
 
@@ -135,6 +136,14 @@ class LibroController < ApplicationController
     YAML.safe_load_file(@book_metadata_path, permitted_classes: [], aliases: false) || {}
   rescue StandardError
     {}
+  end
+
+  def ensure_book_visibility
+    @book_status = @book_metadata.fetch("status", "published").to_s.strip.downcase
+    return if @book_status == "published"
+    return @book_draft_preview = true if @book_status == "draft" && Current.user&.superadmin_user?
+
+    render plain: "Libro non trovato", status: :not_found
   end
 
   # L'autore e il Brand che pubblica restano distinti. Il frontmatter di un
