@@ -5,8 +5,8 @@ page:
   owner_node_slug: markpostura
   kind: landing
   renderer: builder
-  title: Mark Postura — fisiologia, stile di vita e tecnologia
-  description: "3 strumenti per affrontare i cambiamenti sempre più veloci in cui ci imbattiamo nella salute nella vita e nel lavoro: PosturaCorretta, Il Giardino del Corpo e Rails4Business."
+  title: Mark Postura — corpo, stile di vita e risorse
+  description: "Ripensare l'essere umano: conoscere il corpo, coltivare ambiente e abilità, trovare e organizzare le risorse attraverso Rails4Business e l'ecosistema FlowPulse."
   status: published
   visibility: public
 
@@ -15,12 +15,9 @@ components:
     type: hero
     variant: split
     data:
-      eyebrow: fisiologia, stile di vita e tecnologia
-      title: Tre progetti, per affrontare i cambiamenti.
-      description: |-
-              - Con le metodiche posturali si lavoro sul corpo. 
-              - Si studia poi l'essere umano nel suo insieme per scoprire che il nostro corpo può essere visto come un giardino, possiamo coltivare abilità inserendo piccole abitudini nel nostro ambiente e costruendo il nostro stile di vita. 
-              - Usando gli strumenti digitali che servono per trasformare le idee in processi e progetti!
+      eyebrow: Corpo · stile di vita · risorse
+      title: Ripensare l'essere umano
+      description: Partire dal corpo per trovare un nuovo punto di vista sulla salute, osservare l'essere umano come un giardino e usare tecnologia e processi per trovare e organizzare le risorse dentro e intorno a noi.
       image:
         url: markpostura/hero_markpostura-720.webp
         alt: Mark Postura
@@ -31,28 +28,33 @@ components:
           - url: markpostura/hero_markpostura-720.webp
             width: 720
       action:
-        label: Cosa ti interessa di più?
+        label: Scopri da dove iniziare
         href: "#progetti"
 
   - id: persona
     type: text
     variant: lead
     data:
-      title: Prima l'essere umani
-      body: "Sono Mark Postura. La mia ricerca attraversa postura, movimento, fisiologia, crescita personale, esoterismo, filosofia, capacità cognitive, natura, musica e tecnologia. Da questa ricerca nascono tre spazi distinti che condividono una stessa direzione: comprendere, l'essere umano per costruire strategie per la salute."
+      title: Dal corpo all'essere umano, dalle idee alle risorse
+      body: |-
+        Sono Mark Postura. Studio come fisiologia, abitudini, relazioni, ambiente e lavoro influenzano il modo in cui viviamo. Da questa ricerca sono nati tre passaggi collegati: conoscere il corpo, osservare l'essere umano nel suo ambiente e trovare le risorse con cui trasformare le idee in qualcosa di concreto.
+
+        **PosturaCorretta** parte dalla fisiologia e dalla postura per conoscere il corpo e trovare un nuovo punto di vista sulla salute. **Il Giardino del Corpo** allarga lo sguardo allo stile di vita, all'ambiente interno ed esterno e alle abilità che possiamo coltivare. **Rails4Business** usa digitale, tecnologia e processi per riconoscere e organizzare ciò che abbiamo dentro e intorno a noi: tempo, competenze, strumenti, luoghi, persone e denaro.
+
+        Alla fine c'è **FlowPulse**: l'ecosistema che collega persone, Brand, progetti, processi ed esperienze senza confonderli. Una pratica, un'esperienza e un processo alla volta.
 
   - id: progetti
     type: three_languages
     variant: default
     data:
-      title: 3 spazi per crescere
-      description: Nuove idee richiedono nuove conoscenze e abilità.
+      title: 3 domande da cui iniziare!
+      description: Come funziona il corpo? Quale ambiente e quali attività mi aiutano a vivere? Quali risorse ho già e quali devo trovare?
     items:
-      - label: Fisiologia
+      - label: Fisiologia e postura
         domain: posturacorretta.org
         color: "#2563eb"
         href: /posturacorretta
-        description: Come funziona il tuo corpo? Percorsi individuali e di gruppo, appuntamenti e formazione per professionisti.
+        description: Conoscere il corpo e la fisiologia attraverso percorsi, pratiche, lezioni e formazione per insegnanti.
         image:
           url: markpostura/percorso-salute-768.webp
           alt: Percorso PosturaCorretta
@@ -63,11 +65,11 @@ components:
             - url: markpostura/percorso-salute-768.webp
               width: 768
         words: [postura, fisiologia, salute, movimento, corpo, respirazione, equilibrio, prevenzione, formazione, professionisti]
-      - label: Stile di vita
+      - label: Stile di vita e abilità
         domain: ilgiardinodelcorpo.it
         color: "#7c3aed"
         href: /il-giardino-del-corpo
-        description: Incontri ed esperienze su ambiente, relazioni, natura, valore, ricchezza e spiritualità.
+        description: Osservare l'essere umano come un giardino, mettendo in relazione ambiente interno ed esterno, attività, natura, relazioni e abilità.
         image:
           url: markpostura/eventi-esperienze-768.webp
           alt: Eventi ed esperienze nella natura
@@ -78,12 +80,11 @@ components:
             - url: markpostura/eventi-esperienze-768.webp
               width: 768
         words: [evoluzione, armonia, natura, ritmo, vita, filosofia, lettura, musica, meditazione, giardino]
-      - label: Tech
+      - label: Digital, tech e risorse
         domain: rails4b.com
         color: "#ea580c"
         href: /rails4b
-
-        description: La software house che costruisce Flowpulse e aiuta a organizzare processi, contenuti e strumenti digitali.
+        description: Riconoscere e organizzare tempo, competenze, strumenti, luoghi, persone e denaro per trasformare idee e collaborazioni in progetti reali.
         image:
           url: markpostura/progetti-software-768.webp
           alt: Progetti e software Rails4Business
@@ -93,7 +94,7 @@ components:
               width: 480
             - url: markpostura/progetti-software-768.webp
               width: 768
-        words: [tecnologia, business, digital, marketing, social, economia, codice, processi, automazione, rails]
+        words: [tecnologia, risorse, tempo, competenze, persone, denaro, codice, processi, automazione, rails]
 
   - id: organizzazione
     type: feature_grid
@@ -112,7 +113,23 @@ components:
       - id: processi
         eyebrow: Processi
         title: Contenuti · Eventi · Lezioni · Software
-        description: Il lavoro concreto che in futuro sarà organizzato con Cycle, Session e Slot.
+        description: Il lavoro concreto viene collegato a nodi, processi, esperienze, sessioni e impegni verificabili.
+
+  - id: approfondisci
+    type: feature_grid
+    variant: default
+    data:
+      title: Approfondisci la visione
+      description: Due articoli per capire perché salute, ambiente, lavoro e organizzazione fanno parte dello stesso percorso.
+    items:
+      - eyebrow: PosturaCorretta
+        title: La salute non è un lusso. E non si compra neppure.
+        description: Perché la salute non è una somma di prodotti, ma un habitat che si ricostruisce attraverso corpo, ambienti e relazioni.
+        href: /posturacorretta/contenuti/la-salute-non-e-un-lusso
+      - eyebrow: Rails4Business
+        title: Dalla banca alla cellula sociale
+        description: Come persone e piccoli progetti possono organizzarsi in cellule, collegare attività e processi e costruire una rete senza perdere identità.
+        href: /rails4b/contenuti/dalla-banca-alla-cellula-sociale
 
   - id: ingresso
     type: steps
@@ -138,9 +155,9 @@ components:
     type: call_to_action
     variant: accent
     data:
-      eyebrow: Flowpulse · creato da Rails4Business
-      title: Una sola webapp per sostenere i progetti.
-      description: Flowpulse è la piattaforma creata da Rails4Business per collegare Brand, progetti, processi, contenuti, eventi e impegni senza confonderne le identità.
+      eyebrow: L'ecosistema che collega tutto
+      title: "FlowPulse: dalla visione al lavoro reale."
+      description: FlowPulse raccoglie persone, Brand, progetti, nodi, processi, contenuti, esperienze e impegni. PosturaCorretta e Il Giardino del Corpo portano pratiche ed esperienze; Rails4Business costruisce gli strumenti digitali che permettono all'ecosistema di funzionare.
       action:
         label: Scopri Flowpulse
         href: /flowpulse

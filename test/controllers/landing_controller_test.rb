@@ -22,6 +22,19 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='/cantachetipassa']", text: /Canta che ti passa/
   end
 
+  test "Canta che ti passa links to its four sessions and participation sections" do
+    get cantachetipassa_url
+
+    assert_response :success
+    assert_select "#sessioni"
+    assert_select "#partecipa"
+    assert_select "a[href='#{cantachetipassa_path}#sessioni']", text: "Le quattro sessioni"
+    assert_select "a[href='#sessioni']", text: "Scopri le quattro sessioni"
+    assert_select "a[href='#{cantachetipassa_path}#partecipa']", text: "Partecipa"
+    assert_select "#sessioni h3", count: 4
+    assert_select "#sessioni", text: /Canto.*Fisarmonica.*Chitarra/m
+  end
+
   test "Flowpulse professionals index has a safe YAML fallback" do
     host! "localhost"
     get flowpulse_professionals_url
@@ -35,11 +48,12 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_url
 
     assert_response :success
-    assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
+    assert_select "h1", text: "Ripensare l'essere umano"
     assert_select "#progetti a", count: 3
     assert_select "#ingresso li", count: 4
     assert_select "#progetti [data-language-card]", count: 3
     assert_select "#progetti", text: /Fisiologia/
+    assert_select "#approfondisci a", count: 2
     assert_select "#timeline iframe", count: 0
     assert_select "#timeline [data-timeline-deferred]"
     assert_select "#timeline button[data-timeline-trigger]", text: "Carica ora"

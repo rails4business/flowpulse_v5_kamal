@@ -330,7 +330,8 @@ module Posturacorretta
       chapter = chapter.merge("publication_node_id" => publication_node&.id, "publication_node_slug" => publication_node_slug)
       chapter.merge(
         "show_available" => chapter_show_available?(chapter),
-        "publication_commitment" => chapter_publication_commitment(chapter)
+        "publication_commitment" => chapter_publication_commitment(chapter),
+        "publication_history" => (chapter_publication_history(chapter) if posturacorretta_editorial_preview?)
       )
     end
     decorated.merge("release_locked" => false, "chapters" => chapters)
@@ -412,10 +413,14 @@ module Posturacorretta
   end
 
   def chapter_publication_commitment(chapter)
-    [chapter["id"], chapter.fetch("slug")].compact.filter_map do |key|
-      latest_publication_commitments[[chapter["publication_node_id"], key]] ||
-        latest_publication_commitments[[nil, key]]
-    end.max_by { |commitment| publication_decision_time(commitment) }
+    chapter_publication_history(chapter).first
+  end
+
+  def chapter_publication_history(chapter)
+    [chapter["id"], chapter.fetch("slug")].compact.flat_map do |key|
+      publication_commitments_by_scope.fetch([chapter["publication_node_id"], key], []) +
+        publication_commitments_by_scope.fetch([nil, key], [])
+    end.uniq.sort_by { |commitment| publication_decision_time(commitment) }.reverse
   end
 
   def posturacorretta_editorial_preview?
@@ -429,16 +434,21 @@ module Posturacorretta
   end
 
   def latest_publication_commitments
-    @latest_publication_commitments ||= begin
+    @latest_publication_commitments ||= publication_commitments_by_scope.transform_values do |commitments|
+      commitments.max_by { |commitment| publication_decision_time(commitment) }
+    end
+  end
+
+  def publication_commitments_by_scope
+    @publication_commitments_by_scope ||= begin
       domain = Domain.find_for_host("posturacorretta.org")
       if domain
         DataCommitment.where(
           domain: domain,
           kind: "content",
           status: "completed"
-        ).where.not(content_key: [nil, ""]).group_by { |commitment| [commitment.subject_type == "Node" ? commitment.subject_id : nil, commitment.content_key] }.transform_values do |commitments|
-          commitments.max_by { |commitment| publication_decision_time(commitment) }
-        end
+        ).where.not(content_key: [nil, ""]).includes(:subject, :published_by_profile)
+          .group_by { |commitment| [commitment.subject_type == "Node" ? commitment.subject_id : nil, commitment.content_key] }
       else
         {}
       end

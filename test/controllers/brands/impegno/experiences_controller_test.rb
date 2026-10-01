@@ -12,7 +12,7 @@ module Brands
         @calendar = ProfessionalCalendar.create!(context_node: @brand, professional_node: @professional_node, created_by_user: @user, title: "Gruppo", slug: "experience-gruppo", color: "sky")
         @service = Service.create!(node: @brand, created_by_user: @user, title: "Lezione", slug: "lezione")
         @process = NodeProcess.create!(node: @brand, created_by_user: @user, title: "Lezioni", status: "active")
-        @domain = Domain.create!(hostname: "experience-tree.test", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true)
+        @domain = Domain.create!(hostname: "experience-tree.test", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true, node: @brand)
         post session_url, params: { email_address: @user.email_address, password: "password123" }
       end
 
@@ -44,6 +44,7 @@ module Brands
         assert_response :success
         assert_select "turbo-frame#experience_workbench"
         assert_select "h1", text: "Lezioni del venerdì"
+        assert_select "a[href='#{brand_admin_node_process_path(@brand.slug, @brand, @process)}']", text: "← Torna al processo"
         assert_select "span", text: "Igiene posturale"
         assert_select "td", text: "Punti di tensione"
         assert_select "td", text: "Igiene posturale"

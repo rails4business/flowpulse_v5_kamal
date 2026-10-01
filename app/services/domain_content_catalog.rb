@@ -83,10 +83,11 @@ class DomainContentCatalog
         return unless article.is_a?(Hash) && article["slug"].present?
 
         article = article.merge(canonical_content_metadata(domain_key, article.fetch("slug")))
+        draft = article["status"].present? && article["status"] != "published"
         source = article["source"].presence || discover_dated_source(domain_key, article.fetch("slug")) || "articoli/#{article.fetch('slug')}.md"
         publication_date = parse_date(article["publication_at"]) || publication_date_from_source(source)
         scheduled = publication_date.present? && publication_date > Date.current
-        return if scheduled && !include_scheduled
+        return if (draft || scheduled) && !include_scheduled
 
         settings = DOMAIN_SETTINGS.fetch(domain_key, default_domain_settings(domain_key))
         article_path = format(settings.fetch("article_path"), slug: article.fetch("slug"))
@@ -105,6 +106,7 @@ class DomainContentCatalog
           "category_name" => category["label"] || article["eyebrow"] || category_key.to_s.humanize.presence,
           "publication_date" => publication_date,
           "publication_label" => publication_date&.strftime("%d/%m/%Y"),
+          "draft" => draft,
           "scheduled" => scheduled,
           "content_path" => content_path&.to_s,
           "path" => article_path,

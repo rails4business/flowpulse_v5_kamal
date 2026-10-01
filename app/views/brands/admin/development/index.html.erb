@@ -3,7 +3,7 @@
 <main class="brand-admin-shell max-w-6xl">
   <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"><%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><span>Sviluppo</span></nav>
   <header class="brand-admin-card p-6">
-    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-amber-700">Amministrazione del Brand</p><h1 class="brand-admin-title mt-2 text-3xl"><%= @brand.title %> · Sviluppo</h1><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Decisioni e attività di implementazione che appartengono a questo Brand.</p>
+    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-amber-700">Amministrazione del Brand</p><h1 class="brand-admin-title mt-2 text-3xl"><%= @brand.title %> · Sviluppo</h1><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Schede nate nei NodeEvent di production e portate nel repository per implementare, revisionare e distribuire il lavoro.</p>
   </header>
   <section class="mt-6 grid gap-4 lg:grid-cols-2">
     <% if @development_entries.any? %>

@@ -25,6 +25,11 @@ module Brands
 
       def show
         prepare_workbench_state
+        process_node = @experience.node_process&.node
+        @process_admin_brand = process_node&.site_node
+        @process_admin_path = if @process_admin_brand&.administered_by?(Current.user)
+          brand_admin_node_process_path(@process_admin_brand.slug, process_node, @experience.node_process)
+        end
       end
 
       def update

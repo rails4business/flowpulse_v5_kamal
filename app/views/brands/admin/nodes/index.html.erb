@@ -30,7 +30,7 @@
       <div><%= form.label :title, "Nome", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, required: true, autofocus: true, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
       <div><%= form.label :parent_id, "Nasce sotto", class: "text-sm font-bold text-slate-700" %><%= form.collection_select :parent_id, @parent_options, :id, :title, { selected: @brand.id }, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
       <%= render "bridge_field", form:, node: form.object, options: @link_node_options, input_id: "new_node_bridge" %>
-      <div><%= form.label :description, "Descrizione iniziale", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 3, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :description, "Visione generale", class: "text-sm font-bold text-slate-700" %><%= form.text_area :description, rows: 3, placeholder: "Che cosa rappresenta questo nodo e quale direzione mantiene nel tempo?", class: "mt-1 w-full rounded-xl border-slate-300" %><p class="mt-1 text-xs text-slate-500">Qui resta la direzione stabile. Il lavoro concreto viene scritto nelle schede dei NodeEvent.</p></div>
       <%= form.hidden_field :status, value: "draft" %>
       <div class="flex justify-end gap-2"><button type="button" data-node-dialog-close class="rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600">Annulla</button><%= form.submit "Crea nodo", class: "cursor-pointer rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white" %></div>
     <% end %>

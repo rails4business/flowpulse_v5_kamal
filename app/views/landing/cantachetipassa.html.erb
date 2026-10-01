@@ -1,80 +1,83 @@
-<% content_for :title, "Canta che ti passa — Musica, canto e territorio" %>
-<% content_for :description, "Fisarmonica, chitarra, canto, ritmo e canti popolari come strumenti di educazione, espressione, memoria e relazione." %>
+<% content_for :title, "Canta che ti passa — Le quattro arti per coltivare armonia" %>
+<% content_for :description, "Qin, Qi, Shu e Hua: musica, strategia, calligrafia e pittura come pratiche per coltivare ascolto, attenzione, espressione e armonia." %>
 <% content_for :landing_nav do %>
   <%= render "landing/cantachetipassa_nav" %>
 <% end %>
 
-<div class="bg-[#fffdf8] text-slate-950">
-  <header class="overflow-hidden border-b border-amber-200 bg-[radial-gradient(circle_at_top_left,_#fef3c7,_#fffdf8_48%)]">
+<div class="bg-[#f8fcf6] text-slate-950">
+  <header class="overflow-hidden border-b border-green-200 bg-[radial-gradient(circle_at_top_left,_#dcfce7,_#f8fcf6_52%)]">
     <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8 lg:py-24">
       <div>
-        <p class="text-xs font-black uppercase tracking-[0.2em] text-red-700">Musica · educazione · comunità</p>
+        <p class="text-xs font-black uppercase tracking-[0.2em] text-red-700">Arte · pratica · armonia</p>
         <h1 class="mt-4 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.05em] sm:text-7xl">Canta che ti passa</h1>
-        <p class="mt-6 max-w-2xl text-xl font-bold leading-8 text-slate-800">Musica, canto e ritmo per conoscere, esprimere e incontrare.</p>
-        <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Parti da fisarmonica, chitarra o canto. Sviluppa ascolto e ritmo, riscopri i canti popolari e porta la musica fuori dalla lezione, dentro le relazioni e il territorio.</p>
+        <p class="mt-6 max-w-2xl text-xl font-bold leading-8 text-slate-800">Quattro arti per riportare armonia tra attenzione, espressione, strategia e bellezza.</p>
+        <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Il canto rimane centrale, ma è soltanto una delle porte. Canta che ti passa riprende la mappa di Qin, Qi, Shu e Hua per creare sessioni di musica, gioco, segno e immagine collegate nell’ecosistema FlowPulse.</p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href="#inizia" class="rounded-xl bg-red-600 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-red-900/10 transition hover:-translate-y-0.5 hover:bg-red-700">Scegli da dove iniziare</a>
-          <a href="#visione" class="rounded-xl border border-amber-300 bg-white px-5 py-3.5 text-sm font-black text-slate-700 transition hover:border-red-300 hover:text-red-700">Scopri la visione</a>
+          <a href="#sessioni" class="ctp-button ctp-button--primary rounded-xl px-5 py-3.5 text-sm font-black shadow-lg shadow-green-900/10 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2">Scopri le quattro sessioni</a>
+          <a href="#visione" class="ctp-button ctp-button--secondary rounded-xl border border-red-200 px-5 py-3.5 text-sm font-black transition hover:border-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2">Scopri la visione</a>
         </div>
       </div>
-      <div class="relative mx-auto flex aspect-square w-full max-w-sm items-center justify-center rounded-full border border-amber-200 bg-white shadow-xl shadow-amber-900/10" aria-hidden="true">
+      <div class="relative mx-auto flex aspect-square w-full max-w-sm items-center justify-center rounded-full border border-green-200 bg-white shadow-xl shadow-green-900/10" aria-hidden="true">
         <span class="absolute left-[18%] top-[19%] text-5xl">♪</span>
         <span class="text-8xl text-red-600">♫</span>
-        <span class="absolute bottom-[17%] right-[18%] text-4xl text-amber-600">♬</span>
+        <span class="absolute bottom-[17%] right-[18%] text-4xl text-green-700">♬</span>
       </div>
     </div>
   </header>
 
   <main>
-    <section id="visione" class="mx-auto max-w-5xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <section id="visione" class="mx-auto max-w-5xl scroll-mt-24 px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
       <div class="grid gap-8 md:grid-cols-[14rem_minmax(0,1fr)]">
         <div>
           <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">La visione</p>
-          <h2 class="mt-3 text-3xl font-black tracking-tight">Dalla lezione all’esperienza</h2>
+          <h2 class="mt-3 text-3xl font-black tracking-tight">Molto più del solo canto</h2>
         </div>
         <div class="space-y-5 text-base leading-7 text-slate-600 sm:text-lg">
-          <p>Imparare uno strumento è la porta d’ingresso. La musica può sviluppare ascolto, coordinazione, memoria, espressione e capacità di stare con gli altri.</p>
-          <p>La <strong class="text-slate-900">Paideia</strong> offre la direzione educativa: musica e pratica corporea partecipano alla formazione della persona e al suo rapporto con la comunità.</p>
-          <p>Canta che ti passa porta quindi la pratica individuale verso il suonare e cantare insieme, la memoria popolare, gli incontri e le iniziative sul territorio.</p>
+          <p>Canta che ti passa è nato dalla musica, dalla fisarmonica, dalla chitarra e dalla voglia di cantare insieme. Quella porta resta aperta, ma dietro c’è uno spazio più grande.</p>
+          <p>Nella tradizione cinese, <strong class="text-slate-900">Qin, Qi, Shu e Hua</strong> erano le quattro arti associate alla formazione dei letterati: musica, gioco di strategia, calligrafia e pittura. Non servivano soltanto a produrre opere; allenavano sensibilità, disciplina, attenzione e capacità di stare nel mondo.</p>
+          <p>Riprendiamo questa mappa senza fingere di ricostruire una scuola dell’antica Cina. La usiamo per organizzare esperienze diverse che possano portare più armonia nella persona, nel gruppo e nei luoghi che abitiamo.</p>
         </div>
       </div>
     </section>
 
-    <section id="inizia" class="border-y border-amber-200 bg-white">
+    <section id="sessioni" class="scroll-mt-24 border-y border-green-200 bg-white">
       <div class="mx-auto max-w-7xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
-        <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Da dove puoi iniziare</p>
-        <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Scegli la tua porta d’ingresso</h2>
-        <div class="mt-9 grid gap-5 md:grid-cols-3">
+        <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Qin · Qi · Shu · Hua</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Le quattro sessioni</h2>
+        <p class="mt-4 max-w-3xl text-base leading-7 text-slate-600">Quattro pratiche differenti per allenare ascolto, scelta, gesto e osservazione. Per ora Qin è la sessione più concreta e comprende le attività musicali già presenti.</p>
+        <div class="mt-9 grid gap-5 md:grid-cols-2">
           <% [
-            ["Fisarmonica", "🪗", "Melodia, accompagnamento e repertorio popolare."],
-            ["Chitarra", "🎸", "Accordi, ritmo e accompagnamento della voce."],
-            ["Canto", "🎤", "Voce, ascolto e piacere di cantare insieme."]
-          ].each do |title, icon, description| %>
-            <article class="rounded-2xl border border-amber-200 bg-[#fffdf8] p-6 transition hover:-translate-y-1 hover:border-red-300 hover:shadow-md">
-              <span class="text-4xl" aria-hidden="true"><%= icon %></span>
-              <h3 class="mt-5 text-2xl font-black"><%= title %></h3>
+            ["Qin", "琴", "Musica e ascolto", "Nella tradizione indica il guqin. Qui parte da canto, fisarmonica e chitarra: voce, respiro, ritmo, melodia e piacere di suonare insieme.", ["Canto", "Fisarmonica", "Chitarra"]],
+            ["Qi", "棋", "Strategia e relazione", "Il gioco del Go, o Weiqi, allena osservazione, pazienza e capacità di leggere le relazioni tra le parti prima di scegliere una mossa.", []],
+            ["Shu", "書", "Segno e scrittura", "La calligrafia come attenzione al gesto, al ritmo e alla forma della parola. In futuro potrà aprire ad altre arti della presenza e dell’espressione.", []],
+            ["Hua", "畫", "Immagine e pittura", "La pittura con pennello e inchiostro come esercizio di osservazione, composizione, vuoto, pieno e rapporto con ciò che abbiamo davanti.", []]
+          ].each do |title, ideogram, subtitle, description, activities| %>
+            <article class="rounded-2xl border border-green-200 bg-[#f8fcf6] p-6 transition hover:-translate-y-1 hover:border-red-300 hover:shadow-md">
+              <div class="flex items-center justify-between gap-4"><span class="text-5xl font-black text-red-700" aria-hidden="true"><%= ideogram %></span><span class="rounded-full bg-green-100 px-3 py-1 text-xs font-black uppercase tracking-wide text-green-900">Sessione <%= title %></span></div>
+              <h3 class="mt-5 text-2xl font-black"><%= title %> · <%= subtitle %></h3>
               <p class="mt-3 leading-6 text-slate-600"><%= description %></p>
+              <% if activities.any? %><ul class="mt-5 flex flex-wrap gap-2"><% activities.each do |activity| %><li class="rounded-full border border-red-200 bg-white px-3 py-1.5 text-sm font-bold text-red-800"><%= activity %></li><% end %></ul><% end %>
             </article>
           <% end %>
         </div>
       </div>
     </section>
 
-    <section id="attivita" class="mx-auto max-w-7xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <section id="attivita" class="mx-auto max-w-7xl scroll-mt-24 px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div>
-          <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Il percorso</p>
-          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">La musica prende vita quando viene condivisa</h2>
-          <p class="mt-5 text-base leading-7 text-slate-600">Il percorso può partire dalla lezione e aprirsi progressivamente alla voce, al corpo, alle altre persone e al territorio.</p>
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Il ritmo delle sessioni</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Praticare, incontrarsi, portare qualcosa nella vita</h2>
+          <p class="mt-5 text-base leading-7 text-slate-600">Ogni arte ha un linguaggio diverso. Il percorso comune è passare dalla curiosità alla pratica, dalla pratica all’incontro e dall’incontro a qualcosa che rimane.</p>
         </div>
-        <ol class="divide-y divide-amber-200 border-y border-amber-200">
+        <ol class="divide-y divide-green-200 border-y border-green-200">
           <% [
-            ["01", "Ascolto e ritmo", "Percepire il tempo, coordinarsi e costruire una base comune."],
-            ["02", "Voce e respirazione", "Esplorare la voce e la relazione tra respiro, corpo e suono."],
-            ["03", "Pratica individuale", "Imparare brani, accompagnamenti e strumenti utili per diventare più autonomi."],
-            ["04", "Suonare e cantare insieme", "Passare dall’esecuzione individuale all’ascolto reciproco."],
-            ["05", "Canti popolari", "Raccogliere repertori, dialetti, racconti e memoria del territorio."],
-            ["06", "Cori e iniziative", "Creare occasioni aperte, intergenerazionali e spontanee."]
+            ["01", "Scopri", "Incontra una delle quattro arti e osserva che cosa muove in te."],
+            ["02", "Pratica", "Ripeti gesti, suoni, segni o mosse finché iniziano a diventare un linguaggio."],
+            ["03", "Condividi", "Porta la pratica nel gruppo e impara ad ascoltare quello che fanno gli altri."],
+            ["04", "Crea", "Dai forma a un canto, una partita, una scrittura, un’immagine o un incontro."],
+            ["05", "Collega", "Metti in relazione l’esperienza con il corpo, l’ambiente e le altre attività."],
+            ["06", "Continua", "Inserisci la pratica nel tuo ritmo di vita senza trasformarla nell’ennesimo obbligo."]
           ].each do |number, title, description| %>
             <li class="grid gap-3 py-5 sm:grid-cols-[3rem_12rem_minmax(0,1fr)] sm:items-start">
               <span class="font-black text-red-600"><%= number %></span>
@@ -86,37 +89,37 @@
       </div>
     </section>
 
-    <section class="bg-red-700 text-white">
+    <section class="bg-green-800 text-white">
       <div class="mx-auto grid max-w-7xl gap-8 px-5 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
         <div>
-          <p class="text-xs font-black uppercase tracking-[0.18em] text-amber-200">Canti popolari e territorio</p>
+          <p class="text-xs font-black uppercase tracking-[0.18em] text-red-200">Canti popolari e territorio</p>
           <h2 class="mt-3 text-3xl font-black tracking-tight">Una memoria che torna a essere esperienza</h2>
         </div>
-        <p class="text-base leading-7 text-red-50 sm:text-lg">Canzoni, dialetti e racconti possono tornare a circolare attraverso incontri, cori spontanei, feste e collaborazioni con persone, associazioni ed eventi del Giardino del Corpo.</p>
+        <p class="text-base leading-7 text-green-50 sm:text-lg">Canzoni, dialetti e racconti possono tornare a circolare attraverso incontri, cori spontanei, feste e collaborazioni con persone, associazioni ed eventi del Giardino del Corpo.</p>
       </div>
     </section>
 
     <section class="mx-auto max-w-5xl px-5 py-16 sm:px-6 lg:px-8 lg:py-24">
-      <div class="rounded-3xl border border-blue-200 bg-blue-50 p-7 sm:p-10">
-        <p class="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Musica, corpo e benessere</p>
-        <h2 class="mt-3 text-3xl font-black tracking-tight">Educazione musicale e relazione</h2>
-        <p class="mt-5 max-w-3xl leading-7 text-slate-700">Le attività attuali usano la musica come esperienza educativa, espressiva e comunitaria. Percorsi di musicoterapia potranno essere proposti come attività distinte, attraverso collaborazioni con professionisti specificamente formati.</p>
+      <div class="rounded-3xl border border-green-200 bg-green-50 p-7 sm:p-10">
+        <p class="text-xs font-black uppercase tracking-[0.18em] text-green-800">Centrale nell’ecosistema FlowPulse</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight">Portare armonia tra le parti</h2>
+        <p class="mt-5 max-w-3xl leading-7 text-slate-700">Canta che ti passa collega attività che sviluppano ascolto, strategia, espressione e sensibilità. In FlowPulse le sessioni possono diventare esperienze, calendari, gruppi e collaborazioni, mantenendo visibile il rapporto con PosturaCorretta, Il Giardino del Corpo e gli altri Brand dell’ecosistema.</p>
       </div>
     </section>
 
-    <section id="partecipa" class="border-t border-amber-200 bg-white">
+    <section id="partecipa" class="scroll-mt-24 border-t border-green-200 bg-white">
       <div class="mx-auto max-w-4xl px-5 py-16 text-center sm:px-6 lg:px-8 lg:py-24">
         <p class="text-xs font-black uppercase tracking-[0.18em] text-red-700">Partecipa</p>
-        <h2 class="mt-3 text-4xl font-black tracking-tight">Porta una canzone, una storia o la voglia di imparare</h2>
-        <p class="mx-auto mt-5 max-w-2xl text-lg leading-7 text-slate-600">Puoi iniziare una lezione, partecipare a un incontro, proporre un canto popolare oppure ospitare un’iniziativa.</p>
-        <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20ricevere%20informazioni%20su%20Canta%20che%20ti%20passa%2C%20le%20lezioni%20e%20le%20prossime%20iniziative." target="_blank" rel="noopener noreferrer" class="mt-8 inline-flex rounded-xl bg-red-600 px-6 py-4 font-black text-white transition hover:bg-red-700">Chiedi informazioni su WhatsApp</a>
+        <h2 class="mt-3 text-4xl font-black tracking-tight">Da quale arte vuoi iniziare?</h2>
+        <p class="mx-auto mt-5 max-w-2xl text-lg leading-7 text-slate-600">Oggi puoi partire concretamente da canto, fisarmonica e chitarra. Puoi anche proporre un incontro o manifestare interesse per Qi, Shu e Hua mentre costruiamo le prossime sessioni.</p>
+        <a href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20ricevere%20informazioni%20su%20Canta%20che%20ti%20passa%2C%20le%20lezioni%20e%20le%20prossime%20iniziative." target="_blank" rel="noopener noreferrer" class="ctp-button ctp-button--primary mt-8 rounded-xl px-6 py-4 font-black transition focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2">Chiedi informazioni su WhatsApp</a>
       </div>
     </section>
   </main>
 
   <footer class="border-t border-slate-200 bg-slate-950 text-slate-300">
     <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 text-sm sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-      <p><strong class="text-white">Canta che ti passa</strong> · Musica, educazione e territorio.</p>
+      <p><strong class="text-white">Canta che ti passa</strong> · Quattro arti per coltivare armonia.</p>
       <div class="flex flex-wrap gap-4">
         <%= link_to "Flowpulse", flowpulse_path, class: "hover:text-white" %>
         <%= link_to "PosturaCorretta", posturacorretta_path, class: "hover:text-white" %>

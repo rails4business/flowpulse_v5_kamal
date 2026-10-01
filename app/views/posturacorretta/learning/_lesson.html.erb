@@ -16,11 +16,11 @@
         <% if posturacorretta_editorial_preview? && Rails.env.development? %>
           <div class="mb-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><strong>Ambiente di sviluppo.</strong> Questo stato editoriale è locale e non modifica la produzione.</div>
         <% end %>
-        <%= render "posturacorretta/learning/publication_admin_bar", chapter: @lesson %>
         <% practical_chapter = @lesson.fetch("chapter_type", "theory") == "practical" %>
         <div class="flex flex-wrap items-center gap-2">
           <p class="text-xs font-semibold uppercase tracking-[.16em] <%= practical_chapter ? "text-red-700" : "text-blue-700" %>"><%= practical_chapter ? "Capitolo pratico" : "Capitolo teorico" %></p>
           <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700"><%= @lesson.fetch("access", "free") == "free" ? "Libero" : "A pagamento" %></span>
+          <%= render "posturacorretta/learning/publication_admin_bar", chapter: @lesson, inline: true %>
         </div>
         <p class="mt-2 text-sm font-medium text-slate-500"><%= @selected_course.fetch("title") %></p>
         <% if @lesson_access_allowed %>

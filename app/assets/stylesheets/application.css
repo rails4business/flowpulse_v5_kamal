@@ -135,6 +135,34 @@ body {
   text-underline-offset: 3px;
 }
 
+/* Canta che ti passa: CTA stabili anche quando Tailwind CDN e build locale convivono. */
+.ctp-button {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.ctp-button--primary {
+  background-color: #15803d !important;
+  color: #fff !important;
+}
+
+.ctp-button--primary:hover {
+  background-color: #166534 !important;
+  color: #fff !important;
+}
+
+.ctp-button--secondary {
+  background-color: #fff !important;
+  color: #334155 !important;
+}
+
+.ctp-button--secondary:hover {
+  background-color: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
 .editorial-rich-text blockquote {
   background: var(--editorial-accent-soft);
   border-left: 4px solid var(--editorial-accent);

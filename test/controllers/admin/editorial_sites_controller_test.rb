@@ -26,10 +26,10 @@ module Admin
       assert_response :success
       assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
       assert_select "h1", count: 1
-      assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
+      assert_select "h1", text: "Ripensare l'essere umano"
       assert_select "#progetti article, #progetti a", count: 3
       assert_select "#ingresso li", count: 4
-      assert_includes response.body, "Una sola webapp per sostenere i progetti."
+      assert_includes response.body, "FlowPulse: dalla visione al lavoro reale."
     end
 
     test "unknown Site returns not found" do

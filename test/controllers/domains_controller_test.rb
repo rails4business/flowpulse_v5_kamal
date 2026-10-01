@@ -114,7 +114,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Tre progetti, per affrontare i cambiamenti."
+    assert_select "h1", text: "Ripensare l'essere umano"
     assert_select "#progetti"
     assert_select "nav a[href='#{markpostura_weekplan_path}']", text: "Orario"
     assert_select "aside", count: 0

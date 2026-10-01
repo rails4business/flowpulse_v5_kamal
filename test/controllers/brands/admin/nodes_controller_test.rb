@@ -256,6 +256,37 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".editorial-rich-text h1", "Aggiornamento dal Markdown"
   end
 
+  test "owner can complete the automatically created event with Markdown and a future development slug" do
+    created_event = @project.node_events.create!(kind: "created", performed_by_user: @owner)
+    sign_in(@owner)
+
+    get brand_admin_node_event_url(@brand.slug, @project, created_event.public_id)
+
+    assert_response :success
+    assert_select "button[data-node-event-edit]", text: "Modifica"
+    assert_select "form[data-node-event-form][hidden]"
+    assert_select "input[name='node_event[development_entry_slug]'][list='event-development-entry-slugs']"
+    assert_select "textarea[name='node_event[body_md]']"
+
+    patch brand_admin_node_event_url(@brand.slug, @project, created_event.public_id), params: {
+      node_event: {
+        title: "Creato percorso online",
+        development_entry_slug: "posturacorretta-percorso-online",
+        body_md: "## Primo piano\n\nPartire dalle iscrizioni."
+      }
+    }
+
+    assert_redirected_to brand_admin_node_event_url(@brand.slug, @project, created_event.public_id)
+    created_event.reload
+    assert_equal "Creato percorso online", created_event.title
+    assert_equal "posturacorretta-percorso-online", created_event.development_entry_slug
+
+    follow_redirect!
+    assert_select "h1", "Creato percorso online"
+    assert_select ".editorial-rich-text h2", "Primo piano"
+    assert_select "p", text: /Markdown atteso/
+  end
+
   test "the Brand node shows its linked development Markdown" do
     event = @brand.node_events.create!(kind: "updated", title: "Aggiornata struttura", performed_by_user: @owner)
     sign_in(@owner)
@@ -267,7 +298,7 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "button[data-event-kind='updated']", text: /Update/
     assert_select "button[data-event-kind='fixed']", text: /Fix/
     assert_select "a[href='#{brand_admin_node_event_path(@brand.slug, @brand, event.public_id)}']", text: "Aggiornata struttura"
-    assert_select "#node-development-title", "Aggiornamenti e sviluppo"
+    assert_select "#node-development-title", "Schede nate dai NodeEvent"
     assert_select "a[href='#{brand_admin_development_entry_path(@brand.slug, "posturacorretta-programma-lezioni-studente-insegnante")}']"
   end
 

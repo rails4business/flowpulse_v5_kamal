@@ -268,7 +268,7 @@ Rails.application.routes.draw do
         resources :processes, controller: "node_processes", only: %i[show update] do
           member { post :experiences, action: :create_experience }
         end
-        resources :events, only: :show, controller: "node_events", param: :public_id
+        resources :events, only: %i[show update], controller: "node_events", param: :public_id
       end
     get "development", to: "development#index", as: :development
     get "development/:slug", to: "development#show", as: :development_entry,

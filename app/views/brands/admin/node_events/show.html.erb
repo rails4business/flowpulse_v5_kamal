@@ -3,12 +3,33 @@
 <% icons = { "created" => "○", "started" => "▶", "consolidated" => "✓", "cut" => "■", "resumed" => "↻", "updated" => "↑", "fixed" => "◆" } %>
 <main class="brand-admin-shell max-w-4xl">
   <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"><%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><%= link_to @node.title, brand_admin_node_path(@brand.slug, @node), class: "font-semibold text-teal-700" %><span>/</span><span>Evento</span></nav>
-  <article class="brand-admin-card p-6 sm:p-8">
-    <div class="flex flex-wrap items-center gap-3 text-sm"><span class="rounded-full bg-slate-100 px-3 py-1 font-black text-slate-700"><%= icons.fetch(@event.kind) %> <%= labels.fetch(@event.kind) %></span><time class="text-slate-500"><%= l(@event.happened_at, format: :long) %></time><code class="text-xs text-slate-400"><%= @event.public_id %></code></div>
-    <h1 class="brand-admin-title mt-5 text-3xl"><%= @event.title.presence || labels.fetch(@event.kind) %></h1>
-    <p class="mt-2 text-sm text-slate-500">Registrato da <%= @event.performed_by_user&.profile&.display_name || @event.performed_by_user&.email_address || "Sistema" %></p>
-    <% if @event.note.present? %><p class="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 leading-7 text-slate-700"><%= @event.note %></p><% end %>
-    <% if @development_entry %><%= link_to "Scheda di sviluppo · #{@development_entry.fetch("title")}", brand_admin_development_entry_path(@brand.slug, @development_entry.fetch("slug")), class: "mt-6 inline-flex rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800 hover:bg-amber-100" %><% end %>
-    <% if @event.body_md.present? %><div class="editorial-rich-text mt-8 border-t border-slate-200 pt-8 text-lg leading-8 text-slate-700"><%= markdown(@event.body_md) %></div><% else %><p class="mt-8 border-t border-slate-200 pt-8 text-sm text-slate-500">Questo evento non contiene ancora note di sviluppo in Markdown.</p><% end %>
+  <article class="brand-admin-card p-6 sm:p-8" data-node-event-editor>
+    <div data-node-event-show>
+      <div class="flex flex-wrap items-start justify-between gap-4"><div class="flex flex-wrap items-center gap-3 text-sm"><span class="rounded-full bg-slate-100 px-3 py-1 font-black text-slate-700"><%= icons.fetch(@event.kind) %> <%= labels.fetch(@event.kind) %></span><time class="text-slate-500"><%= l(@event.happened_at, format: :long) %></time><code class="text-xs text-slate-400"><%= @event.public_id %></code></div><button type="button" data-node-event-edit class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Modifica</button></div>
+      <h1 class="brand-admin-title mt-5 text-3xl"><%= @event.title.presence || labels.fetch(@event.kind) %></h1>
+      <p class="mt-2 text-sm text-slate-500">Registrato da <%= @event.performed_by_user&.profile&.display_name || @event.performed_by_user&.email_address || "Sistema" %></p>
+      <% if @event.note.present? %><p class="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 leading-7 text-slate-700"><%= @event.note %></p><% end %>
+      <% if @development_entry %><%= link_to "Scheda di sviluppo · #{@development_entry.fetch("title")}", brand_admin_development_entry_path(@brand.slug, @development_entry.fetch("slug")), class: "mt-6 inline-flex rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800 hover:bg-amber-100" %><% elsif @event.development_entry_slug.present? %><p class="mt-6 rounded-xl border border-dashed border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"><strong>Markdown atteso:</strong> <code><%= @event.development_entry_slug %></code><br>Il collegamento diventerà apribile quando lo slug sarà presente nel repository dopo il deploy.</p><% end %>
+      <% if @event.body_md.present? %><div class="mt-8 border-t border-slate-200 pt-8"><p class="mb-5 text-xs font-black uppercase tracking-wide text-amber-700">Scheda di sviluppo nel database</p><div class="editorial-rich-text text-lg leading-8 text-slate-700"><%= markdown(@event.body_md) %></div></div><% else %><p class="mt-8 border-t border-slate-200 pt-8 text-sm text-slate-500">Questo evento non contiene ancora una scheda di sviluppo Markdown.</p><% end %>
+    </div>
+    <%= form_with model: @event, url: brand_admin_node_event_path(@brand.slug, @node, @event.public_id), method: :patch, html: { hidden: true, data: { node_event_form: true } }, class: "space-y-4" do |form| %>
+      <div><p class="text-xs font-black uppercase tracking-wide text-teal-700"><%= icons.fetch(@event.kind) %> Modifica evento <%= labels.fetch(@event.kind).downcase %></p><h1 class="mt-1 text-2xl font-extrabold">Note e documentazione</h1></div>
+      <div><%= form.label :title, "Titolo breve", class: "text-sm font-bold text-slate-700" %><%= form.text_field :title, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :note, "Nota breve", class: "text-sm font-bold text-slate-700" %><%= form.text_area :note, rows: 2, class: "mt-1 w-full rounded-xl border-slate-300" %></div>
+      <div><%= form.label :development_entry_slug, "Slug della scheda di sviluppo", class: "text-sm font-bold text-slate-700" %><%= form.text_field :development_entry_slug, list: "event-development-entry-slugs", placeholder: "es. posturacorretta-percorso-online", class: "mt-1 w-full rounded-xl border-slate-300" %><p class="mt-1 text-xs text-slate-500">Identifica sia questa scheda nel database sia la sua futura copia Markdown nel repository.</p></div>
+      <datalist id="event-development-entry-slugs"><% @brand_development_entries.each do |entry| %><option value="<%= entry.fetch("slug") %>"><%= entry.fetch("title") %></option><% end %></datalist>
+      <div><%= form.label :body_md, "Scheda di sviluppo Markdown", class: "text-sm font-bold text-slate-700" %><%= form.text_area :body_md, rows: 16, placeholder: "## Obiettivo\n\n...", class: "mt-1 w-full rounded-xl border-slate-300 font-mono text-sm" %><p class="mt-1 text-xs text-slate-500">Questa è la scheda originale in production. Quando diventa lavoro da implementare, copiala nel repository mantenendo lo stesso slug.</p></div>
+      <div class="flex justify-end gap-2"><button type="button" data-node-event-cancel class="rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100">Annulla</button><%= form.submit "Salva evento", class: "cursor-pointer rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-black text-white" %></div>
+    <% end %>
   </article>
 </main>
+<script nonce="<%= content_security_policy_nonce %>">
+(() => {
+  const root = document.querySelector("[data-node-event-editor]");
+  const show = root?.querySelector("[data-node-event-show]");
+  const form = root?.querySelector("[data-node-event-form]");
+  const toggle = editing => { if (!show || !form) return; show.hidden = editing; form.hidden = !editing; };
+  root?.querySelector("[data-node-event-edit]")?.addEventListener("click", () => { toggle(true); form.querySelector("input[name='node_event[title]']")?.focus(); });
+  root?.querySelector("[data-node-event-cancel]")?.addEventListener("click", () => { form.reset(); toggle(false); });
+})();
+</script>
