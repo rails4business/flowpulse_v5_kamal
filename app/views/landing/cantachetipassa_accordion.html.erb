@@ -1,0 +1,26 @@
+<% content_for :title, "#{@accordion_page.fetch("title")} — Fisarmonica — Canta che ti passa" %>
+<% content_for :description, "Materiali essenziali per organizzare lo studio della fisarmonica." %>
+<% content_for :landing_nav do %><%= render "landing/cantachetipassa_nav", home_url: cantachetipassa_path %><% end %>
+
+<main class="accordion-study">
+  <div class="accordion-study__inner">
+    <p class="accordion-study__back"><%= link_to "← Musica", "#{cantachetipassa_path}#sessioni" %></p>
+    <h1>Fisarmonica</h1>
+
+    <nav class="accordion-study__tabs" aria-label="Studio della fisarmonica">
+      <% @accordion_pages.each do |page| %>
+        <%= link_to page.fetch("title"), cantachetipassa_accordion_path(page: page.fetch("slug")), aria: ({ current: "page" } if page.fetch("slug") == @accordion_page_slug) %>
+      <% end %>
+    </nav>
+
+    <section class="accordion-study__page">
+      <h2><%= @accordion_page.fetch("title") %></h2>
+      <% @accordion_chapters.each do |chapter| %>
+        <% if @accordion_chapters.many? %><h3><%= chapter.fetch("title") %></h3><% end %>
+        <div class="accordion-study__list"><%= markdown(chapter.fetch("content")) %></div>
+      <% end %>
+    </section>
+
+    <p class="accordion-study__copyright">Solo collegamenti alle fonti. Non vengono ospitate scansioni, fotografie o PDF di libri e spartiti.</p>
+  </div>
+</main>

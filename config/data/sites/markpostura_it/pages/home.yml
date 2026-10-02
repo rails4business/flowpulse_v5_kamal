@@ -15,9 +15,9 @@ components:
     type: hero
     variant: split
     data:
-      eyebrow: Corpo · stile di vita · risorse
-      title: Ripensare l'essere umano
-      description: Partire dal corpo per trovare un nuovo punto di vista sulla salute, osservare l'essere umano come un giardino e usare tecnologia e processi per trovare e organizzare le risorse dentro e intorno a noi.
+      eyebrow: Bio Psico Sociale
+      title:  Ambiente, Esperienze e Relazioni 
+      description: Vivere il corpo e costruire il proprio stile di vita. Comprendere attraverso esperienza, modelli e consapevolezza. Costruire relazioni, risorse e progetti attraverso persone, tecnologia e processi.
       image:
         url: markpostura/hero_markpostura-720.webp
         alt: Mark Postura
@@ -42,6 +42,23 @@ components:
         **PosturaCorretta** parte dalla fisiologia e dalla postura per conoscere il corpo e trovare un nuovo punto di vista sulla salute. **Il Giardino del Corpo** allarga lo sguardo allo stile di vita, all'ambiente interno ed esterno e alle abilità che possiamo coltivare. **Rails4Business** usa digitale, tecnologia e processi per riconoscere e organizzare ciò che abbiamo dentro e intorno a noi: tempo, competenze, strumenti, luoghi, persone e denaro.
 
         Alla fine c'è **FlowPulse**: l'ecosistema che collega persone, Brand, progetti, processi ed esperienze senza confonderli. Una pratica, un'esperienza e un processo alla volta.
+
+  - id: prospettiva
+    type: feature_grid
+    variant: default
+    data:
+      title: Dal bio-psico-sociale a tre azioni concrete
+      description: Il modello diventa utile quando entra nel modo in cui viviamo, comprendiamo ciò che accade e costruiamo qualcosa insieme.
+    items:
+      - eyebrow: Bio
+        title: Vivere
+        description: Conoscere fisiologia, movimento, recupero, alimentazione, sonno e abitudini per costruire il proprio stile di vita.
+      - eyebrow: Psico
+        title: Comprendere
+        description: Usare principi e modelli per leggere l’esperienza, poi lasciare che percezione, ascolto e pratica li mettano alla prova.
+      - eyebrow: Sociale
+        title: Costruire
+        description: Collegare persone, competenze, luoghi, strumenti e tecnologia per dare forma a relazioni, risorse e progetti.
 
   - id: progetti
     type: three_languages
@@ -120,8 +137,12 @@ components:
     variant: default
     data:
       title: Approfondisci la visione
-      description: Due articoli per capire perché salute, ambiente, lavoro e organizzazione fanno parte dello stesso percorso.
+      description: Tre articoli per capire perché salute, ambiente, lavoro e organizzazione fanno parte dello stesso percorso.
     items:
+      - eyebrow: MarkPostura
+        title: Dal bio-psico-sociale al vivere, comprendere e costruire
+        description: Una lettura pratica del modello per portarlo nel corpo, nell’esperienza e nei progetti che realizziamo insieme.
+        href: /markpostura/contenuti/dal-bio-psico-sociale-al-vivere-comprendere-costruire
       - eyebrow: PosturaCorretta
         title: La salute non è un lusso. E non si compra neppure.
         description: Perché la salute non è una somma di prodotti, ma un habitat che si ricostruisce attraverso corpo, ambienti e relazioni.

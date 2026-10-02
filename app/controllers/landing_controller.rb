@@ -108,6 +108,20 @@ class LandingController < ApplicationController
   def cantachetipassa
   end
 
+  def cantachetipassa_accordion
+    root = Rails.root.join("config/data/brands/cantachetipassa/accordion").cleanpath
+    index = YAML.safe_load_file(root.join("index.yml"), permitted_classes: [], aliases: false) || {}
+    @accordion_pages = index.fetch("pages")
+    @accordion_page_slug = params[:page].presence_in(@accordion_pages.map { |page| page.fetch("slug") }) || @accordion_pages.first.fetch("slug")
+    @accordion_page = YAML.safe_load_file(root.join("pages", "#{@accordion_page_slug}.yml"), permitted_classes: [], aliases: false) || {}
+    @accordion_chapters = @accordion_page.fetch("chapters", []).map do |chapter|
+      source = root.join(chapter.fetch("source")).cleanpath
+      next unless source.to_s.start_with?("#{root}/") && source.extname == ".md" && source.file?
+
+      chapter.merge("content" => source.read)
+    end.compact
+  end
+
   def giardino_del_corpo
     @garden_tab = %w[contenuti passati].include?(params[:tab]) ? "contenuti" : "eventi"
     garden_entries = garden_event_catalog

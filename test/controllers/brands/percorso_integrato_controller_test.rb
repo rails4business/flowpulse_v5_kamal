@@ -11,6 +11,8 @@ module Brands
       assert_select "header img[src*='percorso_integrato_vecchio.png']"
       assert_select "nav[aria-label='Navigazione Percorso Integrato'] a", text: "Docs"
       assert_select "a[href='#{percorso_integrato_docs_path}']", text: "Apri le Docs"
+      assert_select "a.pi-button.pi-button--primary", minimum: 3
+      assert_select "a.pi-button.pi-button--secondary", text: "Apri le Docs"
       assert_select "#come-funziona"
       assert_select "#ruoli"
       assert_select "#inizia"
@@ -46,6 +48,7 @@ module Brands
 
       assert_response :success
       assert_select "h1", text: "Parti dal bisogno che senti più vicino."
+      assert_select "a.pi-button.pi-button--primary", text: "Chiedi orientamento su WhatsApp"
       assert_select "a[href^='/posturacorretta']", count: 0
     end
 
@@ -62,6 +65,8 @@ module Brands
       get percorso_integrato_places_path
       assert_response :success
       assert_select "h1", text: "Luoghi del Percorso Integrato"
+      assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala"
+      assert_select "p", text: "Viadana di Calvisano · Brescia"
       assert_select "h2", text: "Studio Movimento"
       assert_select "h2", text: "Giardino del Corpo", count: 0
     end

@@ -58,6 +58,9 @@ Rails.application.routes.draw do
   get "posturacorretta/radioestesia/:page" => redirect("/flowpulse/radioestesia/%{page}", status: 301),
       constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
+  get "cantachetipassa/musica/fisarmonica(/:page)" => "landing#cantachetipassa_accordion",
+      as: :cantachetipassa_accordion,
+      constraints: { page: /cambieri|anzaghi|tecnica|canzoni|fonti|contenuti/ }
   get "igieneposturale" => "landing#igieneposturale", as: :igieneposturale
   get "il-giardino-del-corpo" => "landing#giardino_del_corpo", as: :giardino_del_corpo
   get "giardino-del-corpo" => redirect("/il-giardino-del-corpo", status: 301)

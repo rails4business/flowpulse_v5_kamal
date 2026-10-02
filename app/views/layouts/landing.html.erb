@@ -63,7 +63,7 @@
 
   <% posturacorretta_site = pwa_site_config&.site_key == "posturacorretta_it" || request.path.start_with?("/posturacorretta") %>
   <% posturacorretta_course_chapter = params[:capitolo].present? && request.path.start_with?("/posturacorretta/corsi/") %>
-  <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if (content_for?(:landing_header) || content_for?(:landing_nav)) && (posturacorretta_site || controller_name.in?(%w[domains landing])) %>" <%= 'data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown"'.html_safe if posturacorretta_course_chapter %>>
+  <body class="min-h-screen bg-white text-slate-950 <%= "posturacorretta-ui" if (content_for?(:landing_header) || content_for?(:landing_nav)) && posturacorretta_site %>" <%= 'data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown"'.html_safe if posturacorretta_course_chapter %>>
     <%= yield :landing_header if content_for?(:landing_header) %>
     <% if content_for?(:landing_nav) %><div class="pwa-hide-navigation"><%= yield :landing_nav %></div><% end %>
     <%= render "posturacorretta/mobile_app_nav" if posturacorretta_site %>

@@ -163,6 +163,82 @@ body {
   color: #b91c1c !important;
 }
 
+/* Percorso Integrato: i CTA non dipendono dalla disponibilita delle utility
+   colore nel bundle Tailwind generato o conservato dalla cache Turbo. */
+.pi-button {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.pi-button--primary {
+  background-color: #047857 !important;
+  color: #fff !important;
+}
+
+.pi-button--primary:hover {
+  background-color: #065f46 !important;
+  color: #fff !important;
+}
+
+.pi-button--secondary {
+  background-color: #fff !important;
+  color: #064e3b !important;
+}
+
+.pi-button--secondary:hover {
+  background-color: #ecfdf5 !important;
+  color: #064e3b !important;
+}
+
+/* CTA delle pagine editoriali: non dipendono dall'ordine dei bundle Tailwind. */
+.editorial-action-button {
+  align-items: center;
+  background-color: #0f172a !important;
+  color: #fff !important;
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.editorial-action-button:hover {
+  background-color: #334155 !important;
+  color: #fff !important;
+}
+
+.accordion-study {
+  background: #f8fafc;
+  color: #172033;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: calc(100vh - 4rem);
+  padding: 2rem 1rem 4rem;
+}
+
+.accordion-study__inner { margin: 0 auto; max-width: 56rem; }
+.accordion-study__back a { color: #166534; font-size: .875rem; font-weight: 700; text-decoration: none; }
+.accordion-study h1 { font-size: clamp(2rem, 7vw, 3.5rem); line-height: 1; margin: 1rem 0 1.5rem; }
+.accordion-study__tabs { display: flex; gap: .4rem; overflow-x: auto; padding-bottom: .5rem; }
+.accordion-study__tabs a { border: 1px solid #cbd5e1; border-radius: 999px; color: #334155; flex: none; font-size: .875rem; font-weight: 700; padding: .55rem .85rem; text-decoration: none; }
+.accordion-study__tabs a[aria-current="page"] { background: #166534; border-color: #166534; color: #fff; }
+.accordion-study__page { background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; margin-top: 1rem; padding: clamp(1.25rem, 4vw, 2rem); }
+.accordion-study__page h2 { font-size: 1.5rem; margin: 0 0 1.25rem; }
+.accordion-study__page h3 { font-size: 1.1rem; margin: 1.75rem 0 .75rem; }
+.accordion-study__list p { border-bottom: 1px solid #e2e8f0; line-height: 1.55; margin: 0; padding: .85rem 0; }
+.accordion-study__list h2 { font-size: 1.1rem; margin: 1.5rem 0 .25rem; }
+.accordion-study__list a { color: #166534; font-weight: 650; overflow-wrap: anywhere; text-underline-offset: 3px; }
+.accordion-study__copyright { color: #64748b; font-size: .8rem; line-height: 1.5; margin-top: 1rem; }
+
+@media (prefers-color-scheme: dark) {
+  .accordion-study { background: #0f172a; color: #f8fafc; }
+  .accordion-study__back a, .accordion-study__list a { color: #86efac; }
+  .accordion-study__tabs a { border-color: #475569; color: #cbd5e1; }
+  .accordion-study__tabs a[aria-current="page"] { background: #15803d; border-color: #22c55e; color: #fff; }
+  .accordion-study__page { background: #172033; border-color: #334155; }
+  .accordion-study__list p { border-color: #334155; }
+  .accordion-study__copyright { color: #94a3b8; }
+}
+
 .editorial-rich-text blockquote {
   background: var(--editorial-accent-soft);
   border-left: 4px solid var(--editorial-accent);

@@ -86,3 +86,4 @@ L'obiettivo è contribuire alla costruzione di un percorso nel quale:
 - la scienza sia uno strumento di verifica e di esplorazione, non uno slogan da usare per chiudere il confronto.
 
 Questo percorso educativo non sostituisce diagnosi, cure o indicazioni sanitarie. Può però aiutarti a conoscere meglio il corpo, formulare domande più consapevoli e partecipare in modo più attivo al tuo percorso di salute.
+

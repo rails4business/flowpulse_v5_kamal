@@ -6,7 +6,7 @@
     <% if compact %><h2 class="<%= heading_class %>"><%= editorial_inline_markdown(data.fetch("title")) %></h2><% else %><h1 class="<%= heading_class %>"><%= editorial_inline_markdown(data.fetch("title")) %></h1><% end %>
     <div class="mt-6 max-w-2xl text-lg leading-8 text-slate-600 <%= editorial_markdown_classes %>"><%= editorial_markdown(data.fetch("description")) %></div>
     <% if data["action"].present? %>
-      <a href="<%= data.dig("action", "href") %>" class="mt-8 inline-block rounded-full bg-slate-950 px-6 py-3 text-sm font-black text-white hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"><%= data.dig("action", "label") %></a>
+      <a href="<%= data.dig("action", "href") %>" class="editorial-action-button mt-8 rounded-full px-6 py-3 text-sm font-black focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"><%= data.dig("action", "label") %></a>
     <% end %>
   </div>
   <% if data["image"].present? %>

@@ -33,6 +33,28 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{cantachetipassa_path}#partecipa']", text: "Partecipa"
     assert_select "#sessioni h3", count: 4
     assert_select "#sessioni", text: /Canto.*Fisarmonica.*Chitarra/m
+    assert_select "a[href='#{cantachetipassa_accordion_path}']", text: "Fisarmonica"
+  end
+
+  test "accordion study has ordered tabs and YAML backed pages" do
+    get cantachetipassa_accordion_url
+
+    assert_response :success
+    assert_select "h1", text: "Fisarmonica"
+    assert_select "nav[aria-label='Studio della fisarmonica'] a", count: 6 do |tabs|
+      assert_equal %w[Cambieri Anzaghi Tecnica Canzoni Fonti Contenuti], tabs.map { |tab| tab.text.strip }
+    end
+    assert_select "a[href*='youtube.com/playlist']", text: /Metodo per fisarmonica vol.1/
+
+    get cantachetipassa_accordion_url(page: "canzoni")
+    assert_response :success
+    assert_select ".accordion-study__list h2", text: "Facili"
+    assert_select ".accordion-study__list h2", text: "Medie"
+    assert_select ".accordion-study__list h2", text: "Difficili"
+
+    get cantachetipassa_accordion_url(page: "fonti")
+    assert_response :success
+    assert_select ".accordion-study__list a", count: 8
   end
 
   test "Flowpulse professionals index has a safe YAML fallback" do
@@ -48,15 +70,31 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_url
 
     assert_response :success
-    assert_select "h1", text: "Ripensare l'essere umano"
+    assert_select "h1", text: "Ambiente, Esperienze e Relazioni"
     assert_select "#progetti a", count: 3
     assert_select "#ingresso li", count: 4
     assert_select "#progetti [data-language-card]", count: 3
+    assert_select "#prospettiva h3", text: "Vivere"
+    assert_select "#prospettiva h3", text: "Comprendere"
+    assert_select "#prospettiva h3", text: "Costruire"
     assert_select "#progetti", text: /Fisiologia/
-    assert_select "#approfondisci a", count: 2
+    assert_select "#approfondisci a", count: 3
+    assert_select "#approfondisci a[href='/markpostura/contenuti/dal-bio-psico-sociale-al-vivere-comprendere-costruire']"
     assert_select "#timeline iframe", count: 0
     assert_select "#timeline [data-timeline-deferred]"
     assert_select "#timeline button[data-timeline-trigger]", text: "Carica ora"
+    assert_select "body:not(.posturacorretta-ui)"
+    assert_select ".editorial-action-button", count: 5
+  end
+
+  test "MarkPostura publishes the bio psycho social article" do
+    get markpostura_content_url("dal-bio-psico-sociale-al-vivere-comprendere-costruire")
+
+    assert_response :success
+    assert_select "h1", text: "Dal bio-psico-sociale al vivere, comprendere e costruire"
+    assert_select "article h2", text: "Bio: vivere"
+    assert_select "article h2", text: "Psico: comprendere"
+    assert_select "article h2", text: "Sociale: costruire"
   end
 
   test "MarkPostura exposes its TimelineJS page" do
