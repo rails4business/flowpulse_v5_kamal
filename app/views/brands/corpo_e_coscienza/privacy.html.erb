@@ -1,0 +1,15 @@
+<% content_for :title, "Privacy — Corpo e Coscienza" %>
+<% content_for :description, "Informativa sul trattamento dei dati inviati attraverso il modulo Corpo e Coscienza." %>
+
+<main class="cec-page">
+  <section class="cec-section">
+    <div class="cec-wrap">
+      <p class="cec-eyebrow">Corpo e Coscienza</p>
+      <div class="cec-prose"><%= markdown(@privacy_markdown) %></div>
+      <div class="cec-actions">
+        <%= link_to "← Torna al modulo", corpo_e_coscienza_path(anchor: "richiesta"), class: "cec-button cec-button--primary" %>
+        <%= mail_to @site.fetch("privacy_email"), "Contatta il responsabile", class: "cec-button cec-button--light" %>
+      </div>
+    </div>
+  </section>
+</main>

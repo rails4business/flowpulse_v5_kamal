@@ -25,6 +25,7 @@
         <%= link_to "Nodi", brand_admin_nodes_path(@brand.slug), aria: { current: ("page" if controller_name == "nodes" && params[:view] != "schema") } %>
         <%= link_to "Schema", brand_admin_nodes_path(@brand.slug, view: "schema"), aria: { current: ("page" if controller_name == "nodes" && params[:view] == "schema") } %>
         <%= link_to "Sviluppo", brand_admin_development_path(@brand.slug), aria: { current: ("page" if controller_name == "development") } %>
+        <%= link_to "Impegni e richieste", brand_admin_data_commitments_path(@brand.slug), aria: { current: ("page" if controller_name == "data_commitments") } %>
       </nav>
     </header>
 

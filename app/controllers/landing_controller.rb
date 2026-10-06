@@ -137,6 +137,8 @@ class LandingController < ApplicationController
     end.compact
     @accordion_study = YAML.safe_load_file(root.join("study.yml"), permitted_classes: [], aliases: true) || {}
     @accordion_study_paths = @accordion_study.fetch("paths", [])
+    @accordion_study_path_slug = params[:percorso].presence_in(@accordion_study_paths.map { |path| path.fetch("slug") }) || @accordion_study_paths.first.fetch("slug")
+    @accordion_study_path = @accordion_study_paths.find { |path| path.fetch("slug") == @accordion_study_path_slug }
     @accordion_pieces = @accordion_study.fetch("pieces", []).reject { |piece| piece.fetch("template", false) }.index_by { |piece| piece.fetch("slug") }
   end
 

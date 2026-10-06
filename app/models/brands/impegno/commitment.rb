@@ -35,7 +35,7 @@ module Brands
 
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :starts_at, presence: true, unless: -> { experience_tree_draft? || unscheduled_request? }
+  validates :starts_at, presence: true, unless: -> { experience_tree_draft? || external_request? }
   validates :calendar_key, :calendar_label, presence: true
   validates :kind, inclusion: { in: KINDS }
   validates :status, inclusion: { in: STATUSES }
@@ -164,6 +164,12 @@ module Brands
 
     def unscheduled_request?
       status == "requested" && !blocks_calendar? && participant_contact.present?
+    end
+
+    # Una richiesta proveniente da una persona esterna non diventa un evento di
+    # calendario quando viene presa in carico o chiusa.
+    def external_request?
+      !blocks_calendar? && participant_contact.present?
     end
 
     def experience_tree_draft?

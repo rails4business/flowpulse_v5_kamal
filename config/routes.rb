@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   direct(:il_giardino_del_corpo) { "/il-giardino-del-corpo" }
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
   get "corpo-e-coscienza" => "brands/corpo_e_coscienza#index", as: :corpo_e_coscienza
+  get "corpo-e-coscienza/privacy" => "brands/corpo_e_coscienza#privacy", as: :corpo_e_coscienza_privacy
   get "corpo-e-coscienza/localita" => "brands/corpo_e_coscienza#locations", as: :corpo_e_coscienza_locations
   post "corpo-e-coscienza/richieste" => "brands/corpo_e_coscienza#create_request", as: :corpo_e_coscienza_requests
   get "percorso-integrato/docs" => "brands/percorso_integrato#docs", as: :percorso_integrato_docs
@@ -280,6 +281,8 @@ Rails.application.routes.draw do
     get "development", to: "development#index", as: :development
     get "development/:slug", to: "development#show", as: :development_entry,
         constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+    get "data-commitments", to: "data_commitments#index", as: :data_commitments
+    patch "data-commitments/:id/state", to: "data_commitments#update_state", as: :data_commitment_state
   end
 
   namespace :sync do

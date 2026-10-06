@@ -32,6 +32,38 @@
 .brand-admin-card { border:1px solid var(--ba-line); border-radius:1rem; background:var(--ba-paper); box-shadow:0 12px 35px rgb(22 50 59 / .06); }
 .brand-admin-title { font-family:Georgia,serif; font-weight:700; letter-spacing:-.02em; }
 
+/* Componenti con colori espliciti: non dipendono dalla scansione Tailwind
+   delle classi costruite dinamicamente nei template ERB. */
+.brand-admin-filter {
+  display:inline-flex;
+  align-items:center;
+  border:1px solid var(--ba-line) !important;
+  border-radius:999px;
+  background-color:#fff !important;
+  color:var(--ba-muted) !important;
+  padding:.375rem .75rem;
+  font-size:.75rem;
+  font-weight:800;
+  line-height:1.25;
+  text-decoration:none;
+}
+.brand-admin-filter:hover { border-color:var(--ba-green) !important; color:var(--ba-ink) !important; }
+.brand-admin-filter[aria-current="page"] {
+  border-color:#17634d !important;
+  background-color:#17634d !important;
+  color:#fff !important;
+}
+.brand-admin-badge { display:inline-flex; align-items:center; border-radius:999px; padding:.25rem .625rem; font-size:.6875rem; font-weight:800; letter-spacing:.025em; }
+.brand-admin-badge--status { background-color:#e4dcfa !important; color:#553c9a !important; }
+.brand-admin-badge--kind { background-color:#e6eceb !important; color:#465b60 !important; }
+.brand-admin-badge--request { background-color:#fff1c2 !important; color:#805b0b !important; }
+.brand-admin-badge--user { background-color:#dff3ff !important; color:#145a75 !important; }
+.brand-admin-badge--professional { background-color:#dff4e9 !important; color:#17634d !important; }
+.brand-admin-action { display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--ba-line) !important; border-radius:.65rem; background-color:#fff !important; color:var(--ba-ink) !important; padding:.5rem .7rem; font-size:.75rem; font-weight:800; cursor:pointer; }
+.brand-admin-action:hover { border-color:var(--ba-green) !important; background-color:#eef8f4 !important; }
+.brand-admin-action--primary { border-color:#17634d !important; background-color:#17634d !important; color:#fff !important; }
+.brand-admin-action--danger { border-color:#e4b3ae !important; color:#8d3932 !important; }
+
 .brand-cell-map { --cell-status:#809391; }
 .brand-cell-map__canvas { overflow:auto; border:1px solid var(--ba-line); border-radius:1rem; background:var(--ba-paper); }
 .brand-cell-map__canvas svg { display:block; min-width:100%; }

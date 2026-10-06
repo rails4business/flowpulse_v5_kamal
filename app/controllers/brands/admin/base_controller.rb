@@ -1,6 +1,12 @@
 module Brands
   module Admin
     class BaseController < ApplicationController
+      BRAND_SLUG_ALIASES = {
+        "corpo-e-coscienza" => "corpoecoscienza",
+        "canta-che-ti-passa" => "cantachetipassa",
+        "il-giardino-del-corpo" => "ilgiardinodelcorpo"
+      }.freeze
+
       layout "brand_admin"
 
       before_action :require_authentication
@@ -12,7 +18,9 @@ module Brands
       private
 
         def set_brand
-          @brand = Node.includes(:domains, role_assignment: :profile).find_by!(slug: params[:brand_slug])
+          requested_slug = params[:brand_slug].to_s
+          canonical_slug = BRAND_SLUG_ALIASES.fetch(requested_slug, requested_slug)
+          @brand = Node.includes(:domains, role_assignment: :profile).find_by!(slug: canonical_slug)
           raise ActiveRecord::RecordNotFound, "Brand non trovato" unless @brand.brand?
         end
 

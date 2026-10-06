@@ -7,38 +7,32 @@
     <p class="accordion-study__back"><%= link_to "← Musica", "#{cantachetipassa_path}#sessioni" %></p>
     <h1>Fisarmonica</h1>
 
-    <nav class="accordion-study__tabs" aria-label="Studio della fisarmonica">
-      <% @accordion_pages.each do |page| %>
-        <%= link_to page.fetch("title"), cantachetipassa_accordion_path(page: page.fetch("slug")), aria: ({ current: "page" } if page.fetch("slug") == @accordion_page_slug) %>
+    <div class="accordion-study__navigation">
+      <p>Percorsi</p>
+      <nav class="accordion-study__tabs accordion-study__tabs--paths" aria-label="Percorsi della fisarmonica">
+        <% @accordion_study_paths.each do |path| %>
+          <%= link_to path.fetch("tab_title", path.fetch("title")), cantachetipassa_accordion_path(page: path.fetch("page"), percorso: path.fetch("slug")), aria: ({ current: "page" } if path.fetch("slug") == @accordion_study_path_slug) %>
+        <% end %>
+      </nav>
+
+      <p>Materiali di studio</p>
+      <nav class="accordion-study__tabs" aria-label="Studio della fisarmonica">
+        <% @accordion_pages.each do |page| %>
+          <%= link_to page.fetch("title"), cantachetipassa_accordion_path(page: page.fetch("slug"), percorso: @accordion_study_path_slug), aria: ({ current: "page" } if page.fetch("slug") == @accordion_page_slug) %>
+        <% end %>
+      </nav>
+    </div>
+
+    <section class="accordion-study__path-intro" aria-labelledby="percorso-studio-title">
+      <p class="accordion-study__eyebrow">Fisarmonica cromatica a bottoni · C-system</p>
+      <h2 id="percorso-studio-title"><%= @accordion_study_path.fetch("title") %></h2>
+      <p><%= @accordion_study_path.fetch("description") %></p>
+      <% if @accordion_study_path["steps"].present? %>
+        <ul>
+          <% @accordion_study_path.fetch("steps").each do |step| %><li><%= step %></li><% end %>
+        </ul>
       <% end %>
-    </nav>
-
-    <section class="accordion-study__journey" aria-labelledby="percorso-studio-title">
-      <div class="accordion-study__journey-heading">
-        <div>
-          <p class="accordion-study__eyebrow">C-system · tre percorsi paralleli</p>
-          <h2 id="percorso-studio-title">Percorso di studio</h2>
-        </div>
-        <p><%= @accordion_study.dig("instrument", "source_note") %></p>
-      </div>
-
-      <div class="accordion-study__map">
-        <% classical = @accordion_study_paths.find { |path| path.fetch("slug") == "classical" } %>
-        <% folk = @accordion_study_paths.find { |path| path.fetch("slug") == "folk" } %>
-        <% italian = @accordion_study_paths.find { |path| path.fetch("slug") == "italian" } %>
-
-        <article class="accordion-study__branch accordion-study__branch--classical">
-          <p>01</p><h3><%= classical.fetch("title") %></h3><span><%= classical.fetch("description") %></span>
-          <ul><% classical.fetch("steps").each do |step| %><li><%= step %></li><% end %></ul>
-        </article>
-        <div class="accordion-study__instrument"><span>Fisarmonica</span><small>cromatica a bottoni · C-system</small></div>
-        <article class="accordion-study__branch accordion-study__branch--folk">
-          <p>02</p><h3><%= folk.fetch("title") %></h3><span><%= folk.fetch("description") %></span>
-        </article>
-        <article class="accordion-study__branch accordion-study__branch--italian">
-          <p>03</p><h3><%= italian.fetch("title") %></h3><span><%= italian.fetch("description") %></span>
-        </article>
-      </div>
+      <small><%= @accordion_study.dig("instrument", "source_note") %></small>
     </section>
 
     <section class="accordion-study__page">
@@ -55,7 +49,7 @@
             <h2 id="repertorio-progressivo-title">Repertorio progressivo</h2>
             <p>Apri un brano per aggiungere tonalità, velocità, lavoro delle mani, fonti e note personali.</p>
           </div>
-          <% @accordion_study_paths.select { |path| %w[folk italian].include?(path.fetch("slug")) }.each do |path| %>
+          <% [@accordion_study_path].reject { |path| path.fetch("slug") == "classical" }.each do |path| %>
             <section class="accordion-repertoire__path" id="percorso-<%= path.fetch("slug") %>">
               <h3><%= path.fetch("title") %></h3>
               <% path.fetch("groups").each do |group| %>

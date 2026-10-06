@@ -90,8 +90,23 @@ class DomainsController < ApplicationController
         @roles = data.fetch("roles", [])
         @steps = data.fetch("steps", [])
         render "brands/percorso_integrato/index"
+      elsif target_controller == "brands/corpo_e_coscienza" && target_action == "index"
+        prepare_corpo_e_coscienza
+        render "brands/corpo_e_coscienza/index"
       else
         render "#{target_controller}/#{target_action}"
+      end
+    end
+
+    def prepare_corpo_e_coscienza
+      CorpoECoscienzaCatalog.load.each { |name, value| instance_variable_set("@#{name}", value) }
+      @request_kind = params[:request_kind].presence_in(Brands::CorpoECoscienzaController::REQUEST_KINDS) || "professional_application"
+      @request_tab = if %w[professional_application training].include?(@request_kind)
+        "professional_application"
+      elsif %w[group_path individual_treatment events find_professional].include?(@request_kind)
+        "find_professional"
+      else
+        "information"
       end
     end
 

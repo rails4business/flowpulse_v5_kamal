@@ -181,7 +181,7 @@
             <%= form.hidden_field :location_ref, data: { location_autocomplete_target: "locationRef" } %>
           </div>
           <div class="cec-field"><%= form.label :message, "Messaggio" %><%= form.text_area :message, rows: 5, required: true %></div>
-          <label class="cec-consent"><%= form.check_box :privacy_consent, required: true %><span>Acconsento all’uso dei recapiti indicati per ricevere una risposta a questa richiesta.</span></label>
+          <label class="cec-consent"><%= form.check_box :privacy_consent, required: true %><span>Ho letto l’<%= link_to "informativa privacy", corpo_e_coscienza_privacy_path, target: "_blank", rel: "noopener" %> e chiedo di usare i dati indicati per rispondere alla mia richiesta.</span></label>
           <%= form.submit "Invia la richiesta", class: "cec-button cec-button--primary" %>
           <p class="cec-form-email">Preferisci scrivere direttamente? <%= mail_to @site.fetch("training_email") %></p>
         </div>

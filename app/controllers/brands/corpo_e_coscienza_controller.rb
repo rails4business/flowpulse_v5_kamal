@@ -17,6 +17,10 @@ module Brands
       end
     end
 
+    def privacy
+      load_site
+    end
+
     def locations
       query = params[:q].to_s.squish
       return render json: [] if query.length < 3
@@ -36,7 +40,7 @@ module Brands
 
       attributes = request_params
       unless attributes[:privacy_consent] == "1"
-        return redirect_to(corpo_e_coscienza_path(anchor: "richiesta"), alert: "Devi accettare l’informativa per inviare la richiesta.")
+        return redirect_to(corpo_e_coscienza_path(anchor: "richiesta"), alert: "Devi confermare di aver letto l’informativa per inviare la richiesta.")
       end
       if attributes[:email].blank? && attributes[:phone].blank?
         return redirect_to(corpo_e_coscienza_path(anchor: "richiesta"), alert: "Indica almeno un indirizzo email o un numero di telefono.")
@@ -53,7 +57,8 @@ module Brands
           notes: attributes[:city].present? ? "Località: #{attributes[:city]}" : nil,
           metadata: {
             "source_domain" => domain.hostname,
-            "privacy_consent_at" => Time.current.iso8601
+            "privacy_notice_acknowledged_at" => Time.current.iso8601,
+            "privacy_notice_version" => "2026-10-06"
           }
         )
 
@@ -74,6 +79,7 @@ module Brands
           calendar_label: "Richieste · Corpo e Coscienza",
           metadata: {
             "request_kind" => attributes.fetch(:request_kind),
+            "request_audience" => request_audience(attributes.fetch(:request_kind)),
             "source_domain" => domain.hostname,
             "source_url" => request.referer.to_s.presence || corpo_e_coscienza_url,
             "city" => attributes[:city].to_s.strip.presence,
@@ -93,24 +99,7 @@ module Brands
     private
 
       def load_site
-        root = Rails.root.join("config/data/brands/corpoecoscienza").cleanpath
-        @site = YAML.safe_load_file(root.join("site.yml"), permitted_classes: [], aliases: false) || {}
-        @method_markdown = root.join("pages/metodo.md").read
-        @founder_markdown = root.join("pages/georges-courchinoux.md").read
-        professionals = YAML.safe_load_file(root.join("professionals/index.yml"), permitted_classes: [], aliases: false) || {}
-        @professionals = professionals.fetch("professionals", []).select { |item| item.fetch("public", false) }.map do |item|
-          source = root.join("professionals", item.fetch("source")).cleanpath
-          next unless source.to_s.start_with?(root.join("professionals").to_s) && source.file?
-
-          item.merge("body" => source.read)
-        end.compact
-        @professional_map_points = @professionals.filter_map do |professional|
-          latitude = Float(professional["latitude"], exception: false)
-          longitude = Float(professional["longitude"], exception: false)
-          next unless latitude && longitude
-
-          professional.slice("name", "city").merge("latitude" => latitude, "longitude" => longitude)
-        end
+        CorpoECoscienzaCatalog.load.each { |name, value| instance_variable_set("@#{name}", value) }
       end
 
       def request_params
@@ -139,6 +128,10 @@ module Brands
           "professional_application" => "Candidatura di un professionista formato",
           "other" => "Richiesta dal sito Corpo e Coscienza"
         }.fetch(kind)
+      end
+
+      def request_audience(kind)
+        %w[training professional_application].include?(kind) ? "professional" : "user"
       end
 
       def decimal_or_nil(value)

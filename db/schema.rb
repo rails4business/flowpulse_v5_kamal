@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_30_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_06_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,6 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_130000) do
     t.string "publication_change_kind"
     t.text "publication_note_md"
     t.bigint "previous_publication_commitment_id"
+    t.datetime "resolved_at"
     t.index ["access_modes"], name: "index_data_commitments_on_access_modes", using: :gin
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
@@ -110,6 +111,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_130000) do
     t.index ["profile_id"], name: "index_data_commitments_on_profile_id"
     t.index ["publication_status"], name: "index_data_commitments_on_publication_status"
     t.index ["published_by_profile_id"], name: "index_data_commitments_on_published_by_profile_id"
+    t.index ["resolved_at"], name: "index_data_commitments_on_resolved_at"
     t.index ["responsible_profile_id"], name: "index_data_commitments_on_responsible_profile_id"
     t.index ["starts_at"], name: "index_data_commitments_on_starts_at"
     t.index ["status"], name: "index_data_commitments_on_status"

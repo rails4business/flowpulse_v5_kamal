@@ -5,7 +5,8 @@ instrument:
 
 paths:
   - slug: classical
-    title: Classico / Tecnica
+    title: Tecnica classico-internazionale
+    tab_title: Tecnica classico-internazionale
     description: Costruire lettura, controllo dello strumento e indipendenza delle mani.
     page: cambieri
     steps:
@@ -19,6 +20,7 @@ paths:
 
   - slug: folk
     title: Irlandese / Folk
+    tab_title: Irlandese / Folk
     description: Entrare nel repertorio attraverso songs, sea shanties, jigs, reels e altri ritmi tradizionali.
     page: canzoni
     groups:
@@ -32,7 +34,8 @@ paths:
         pieces: []
 
   - slug: italian
-    title: Italiano / Fisarmonica
+    title: Italiana
+    tab_title: Italiana
     description: Conoscere il linguaggio popolare italiano e procedere verso valzer, mazurka, polka e liscio.
     page: canzoni
     groups:
@@ -42,6 +45,17 @@ paths:
         pieces: []
       - title: Liscio
         pieces: [romagna-mia]
+
+  - slug: french
+    title: Francese
+    tab_title: Francese
+    description: Avvicinarsi al repertorio francese attraverso musette, valzer e canzoni.
+    page: canzoni
+    groups:
+      - title: Musette e valzer
+        pieces: []
+      - title: Canzoni francesi
+        pieces: []
 
 pieces:
   - &piece_defaults

@@ -42,6 +42,28 @@ module Brands
       assert_includes response.body, "Georges Courchinoux"
       assert_includes response.body, "professionisti della salute e del benessere"
       assert_includes response.body, "cecgc@digicolorfree.net"
+      assert_select "a[href='#{corpo_e_coscienza_privacy_path}']", text: "informativa privacy"
+    end
+
+    test "shows the privacy information for the request form" do
+      get corpo_e_coscienza_privacy_url
+
+      assert_response :success
+      assert_select "h1", "Informativa sul trattamento dei dati personali"
+      assert_select ".cec-prose", text: /articolo 13.*Regolamento UE 2016\/679/m
+      assert_select "a[href='mailto:cecgc@digicolorfree.net']", text: "Contatta il responsabile"
+      assert_select "a[href='#{corpo_e_coscienza_path(anchor: 'richiesta')}']", text: /Torna al modulo/
+    end
+
+    test "shows the page from the root of its dedicated domain" do
+      host! "corpoecoscienza.org"
+      get "/"
+
+      assert_response :success
+      assert_select "h1", "Corpo e Coscienza"
+      assert_select ".cec-method-name", "Metodo Georges Courchinoux"
+      assert_select "#cec-professionals-map[data-professionals]"
+      assert_select "form[action='#{corpo_e_coscienza_requests_path}']"
     end
 
     test "preserves the originating section in the request form" do
