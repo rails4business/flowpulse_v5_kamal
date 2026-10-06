@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Crea e aggiorna prima i Node dichiarati nel repository: i Domain possono
+# riferirsi a questi Node tramite node_slug.
+bin/kamal app exec "bin/rails nodes:import" || exit 1
+
 # Mantiene il routing dei domini di produzione allineato a config/domains.yml.
 bin/kamal app exec "bin/rails domains:import"
 

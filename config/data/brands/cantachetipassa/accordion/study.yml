@@ -1,0 +1,154 @@
+instrument:
+  title: Fisarmonica cromatica a bottoni
+  system: C-system
+  source_note: I tutorial per piano accordion, B/C, C#/D e altri sistemi possono essere usati per melodia, ritmo e interpretazione. La diteggiatura viene poi adattata al C-system.
+
+paths:
+  - slug: classical
+    title: Classico / Tecnica
+    description: Costruire lettura, controllo dello strumento e indipendenza delle mani.
+    page: cambieri
+    steps:
+      - Cambieri-Fugazza-Melocchi
+      - Anzaghi
+      - Tecnica moderna
+      - Scale e arpeggi
+      - Articolazione
+      - Indipendenza delle mani
+      - Brani classici progressivi
+
+  - slug: folk
+    title: Irlandese / Folk
+    description: Entrare nel repertorio attraverso songs, sea shanties, jigs, reels e altri ritmi tradizionali.
+    page: canzoni
+    groups:
+      - title: Songs / Sea Shanties
+        pieces: [wellerman, drunken-sailor, the-wild-rover, whiskey-in-the-jar, molly-malone, the-foggy-dew]
+      - title: Jigs
+        pieces: [the-kesh-jig, morrisons-jig]
+      - title: Reels
+        pieces: [the-banshee, cooleys-reel]
+      - title: Altri ritmi tradizionali
+        pieces: []
+
+  - slug: italian
+    title: Italiano / Fisarmonica
+    description: Conoscere il linguaggio popolare italiano e procedere verso valzer, mazurka, polka e liscio.
+    page: canzoni
+    groups:
+      - title: Canzoni popolari
+        pieces: [quel-mazzolin-di-fiori, la-bella-gigogin]
+      - title: Valzer, mazurka e polka
+        pieces: []
+      - title: Liscio
+        pieces: [romagna-mia]
+
+pieces:
+  - &piece_defaults
+    slug: schema-brano
+    title: Schema brano
+    path: folk
+    level: 1
+    key:
+    rhythm:
+    bpm_start:
+    bpm_target:
+    right_hand:
+    basses_chords:
+    c_system_fingering:
+    score_sources: []
+    youtube: []
+    personal_notes:
+    status: da_studiare
+    template: true
+
+  - <<: *piece_defaults
+    slug: wellerman
+    title: Wellerman
+    rhythm: song / sea shanty
+    template: false
+
+  - <<: *piece_defaults
+    slug: drunken-sailor
+    title: Drunken Sailor
+    rhythm: sea shanty
+    template: false
+
+  - <<: *piece_defaults
+    slug: the-wild-rover
+    title: The Wild Rover
+    level: 2
+    rhythm: song
+    template: false
+
+  - <<: *piece_defaults
+    slug: whiskey-in-the-jar
+    title: Whiskey in the Jar
+    level: 2
+    rhythm: song
+    template: false
+
+  - <<: *piece_defaults
+    slug: molly-malone
+    title: Molly Malone
+    level: 2
+    rhythm: song
+    template: false
+
+  - <<: *piece_defaults
+    slug: the-foggy-dew
+    title: The Foggy Dew
+    level: 3
+    rhythm: song
+    template: false
+
+  - <<: *piece_defaults
+    slug: the-kesh-jig
+    title: The Kesh Jig
+    level: 3
+    rhythm: jig
+    template: false
+
+  - <<: *piece_defaults
+    slug: morrisons-jig
+    title: Morrison's Jig
+    level: 3
+    rhythm: jig
+    template: false
+
+  - <<: *piece_defaults
+    slug: the-banshee
+    title: The Banshee
+    level: 4
+    rhythm: reel
+    template: false
+
+  - <<: *piece_defaults
+    slug: cooleys-reel
+    title: Cooley's Reel
+    level: 4
+    rhythm: reel
+    template: false
+
+  - <<: *piece_defaults
+    slug: quel-mazzolin-di-fiori
+    title: Quel mazzolin di fiori
+    path: italian
+    rhythm: canzone popolare
+    template: false
+
+  - <<: *piece_defaults
+    slug: la-bella-gigogin
+    title: La bella Gigogin
+    path: italian
+    level: 2
+    rhythm: canzone popolare
+    template: false
+
+  - <<: *piece_defaults
+    slug: romagna-mia
+    title: Romagna mia
+    path: italian
+    level: 2
+    rhythm: liscio
+    template: false

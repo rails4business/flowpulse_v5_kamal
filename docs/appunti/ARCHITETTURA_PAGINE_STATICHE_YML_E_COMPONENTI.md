@@ -1092,6 +1092,7 @@ Le singole settimane restano dati operativi separati in:
 config/data/markpostura/settimane/*.yml
 ```
 
-Il deploy importa automaticamente `config/domains.yml` nel database tramite
-l'hook `.kamal/hooks/post-deploy`, rendendo effettivo `site_key` anche in
-produzione.
+Il deploy importa automaticamente prima `config/nodes.yml` e poi
+`config/domains.yml` nel database tramite l'hook `.kamal/hooks/post-deploy`.
+L'ordine è necessario perché un dominio può riferirsi al proprio Brand tramite
+`node_slug`; rende inoltre effettivo `site_key` anche in produzione.

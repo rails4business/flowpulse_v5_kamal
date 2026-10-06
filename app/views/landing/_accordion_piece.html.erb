@@ -1,0 +1,38 @@
+<details class="accordion-piece" id="brano-<%= piece.fetch("slug") %>">
+  <summary>
+    <span>
+      <strong><%= piece.fetch("title") %></strong>
+      <small>Livello <%= piece.fetch("level") %> · <%= piece.fetch("rhythm").presence || "ritmo da definire" %></small>
+    </span>
+    <span class="accordion-piece__status"><%= piece.fetch("status").tr("_", " ") %></span>
+  </summary>
+  <div class="accordion-piece__body">
+    <dl>
+      <div><dt>Percorso</dt><dd><%= path_title %></dd></div>
+      <div><dt>Livello</dt><dd><%= piece.fetch("level") %> / 5</dd></div>
+      <div><dt>Tonalità</dt><dd><%= piece["key"].presence || "Da definire" %></dd></div>
+      <div><dt>Ritmo</dt><dd><%= piece["rhythm"].presence || "Da definire" %></dd></div>
+      <div><dt>BPM iniziale</dt><dd><%= piece["bpm_start"].presence || "Da definire" %></dd></div>
+      <div><dt>BPM obiettivo</dt><dd><%= piece["bpm_target"].presence || "Da definire" %></dd></div>
+      <div><dt>Mano destra</dt><dd><%= piece["right_hand"].presence || "Da annotare" %></dd></div>
+      <div><dt>Bassi / accordi</dt><dd><%= piece["basses_chords"].presence || "Da annotare" %></dd></div>
+      <div><dt>Diteggiatura C-system</dt><dd><%= piece["c_system_fingering"].presence || "Da adattare" %></dd></div>
+      <div><dt>Note personali</dt><dd><%= piece["personal_notes"].presence || "Nessuna nota" %></dd></div>
+    </dl>
+    <div class="accordion-piece__sources">
+      <div>
+        <h4>Spartito e fonti</h4>
+        <% if Array(piece["score_sources"]).any? %>
+          <ul><% Array(piece["score_sources"]).each do |source| %><li><%= link_to source.fetch("title"), source.fetch("url"), target: "_blank", rel: "noopener" %></li><% end %></ul>
+        <% else %><p>Da aggiungere.</p><% end %>
+      </div>
+      <div>
+        <h4>Video YouTube</h4>
+        <% if Array(piece["youtube"]).any? %>
+          <ul><% Array(piece["youtube"]).each do |video| %><li><%= link_to video.fetch("title"), video.fetch("url"), target: "_blank", rel: "noopener" %></li><% end %></ul>
+        <% else %><p>Da aggiungere.</p><% end %>
+      </div>
+    </div>
+    <p class="accordion-piece__source-note">Le fonti possono usare piano accordion, B/C, C#/D o altri sistemi: melodia, ritmo e interpretazione restano utili; la diteggiatura viene adattata al C-system.</p>
+  </div>
+</details>

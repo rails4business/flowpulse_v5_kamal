@@ -42,16 +42,25 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Fisarmonica"
+    assert_select "#percorso-studio-title", text: "Percorso di studio"
+    assert_select ".accordion-study__branch", count: 3
+    assert_select ".accordion-study__instrument", text: /Fisarmonica.*C-system/m
     assert_select "nav[aria-label='Studio della fisarmonica'] a", count: 6 do |tabs|
-      assert_equal %w[Cambieri Anzaghi Tecnica Canzoni Fonti Contenuti], tabs.map { |tab| tab.text.strip }
+      assert_equal ["Cambieri-Fugazza-Melocchi", "Metodo Anzaghi", "Tecnica moderna", "Repertorio", "Fonti", "Contenuti"], tabs.map { |tab| tab.text.strip }
     end
-    assert_select "a[href*='youtube.com/playlist']", text: /Metodo per fisarmonica vol.1/
+    assert_select "a[href*='youtube.com/watch']", text: /Metodo per fisarmonica vol.1/
 
     get cantachetipassa_accordion_url(page: "canzoni")
     assert_response :success
     assert_select ".accordion-study__list h2", text: "Facili"
     assert_select ".accordion-study__list h2", text: "Medie"
     assert_select ".accordion-study__list h2", text: "Difficili"
+    assert_select "#repertorio-progressivo-title", text: "Repertorio progressivo"
+    assert_select ".accordion-piece", count: 13
+    assert_select "#brano-wellerman", text: /Wellerman/
+    assert_select "#brano-the-kesh-jig", text: /The Kesh Jig/
+    assert_select "#brano-romagna-mia", text: /Romagna mia/
+    assert_select ".accordion-piece__body dt", text: "Diteggiatura C-system"
 
     get cantachetipassa_accordion_url(page: "fonti")
     assert_response :success

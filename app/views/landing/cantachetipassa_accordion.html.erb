@@ -13,11 +13,66 @@
       <% end %>
     </nav>
 
+    <section class="accordion-study__journey" aria-labelledby="percorso-studio-title">
+      <div class="accordion-study__journey-heading">
+        <div>
+          <p class="accordion-study__eyebrow">C-system · tre percorsi paralleli</p>
+          <h2 id="percorso-studio-title">Percorso di studio</h2>
+        </div>
+        <p><%= @accordion_study.dig("instrument", "source_note") %></p>
+      </div>
+
+      <div class="accordion-study__map">
+        <% classical = @accordion_study_paths.find { |path| path.fetch("slug") == "classical" } %>
+        <% folk = @accordion_study_paths.find { |path| path.fetch("slug") == "folk" } %>
+        <% italian = @accordion_study_paths.find { |path| path.fetch("slug") == "italian" } %>
+
+        <article class="accordion-study__branch accordion-study__branch--classical">
+          <p>01</p><h3><%= classical.fetch("title") %></h3><span><%= classical.fetch("description") %></span>
+          <ul><% classical.fetch("steps").each do |step| %><li><%= step %></li><% end %></ul>
+        </article>
+        <div class="accordion-study__instrument"><span>Fisarmonica</span><small>cromatica a bottoni · C-system</small></div>
+        <article class="accordion-study__branch accordion-study__branch--folk">
+          <p>02</p><h3><%= folk.fetch("title") %></h3><span><%= folk.fetch("description") %></span>
+        </article>
+        <article class="accordion-study__branch accordion-study__branch--italian">
+          <p>03</p><h3><%= italian.fetch("title") %></h3><span><%= italian.fetch("description") %></span>
+        </article>
+      </div>
+    </section>
+
     <section class="accordion-study__page">
       <h2><%= @accordion_page.fetch("title") %></h2>
       <% @accordion_chapters.each do |chapter| %>
         <% if @accordion_chapters.many? %><h3><%= chapter.fetch("title") %></h3><% end %>
         <div class="accordion-study__list"><%= markdown(chapter.fetch("content")) %></div>
+      <% end %>
+
+      <% if @accordion_page_slug == "canzoni" %>
+        <section class="accordion-repertoire" aria-labelledby="repertorio-progressivo-title">
+          <div class="accordion-repertoire__heading">
+            <p class="accordion-study__eyebrow">Schede predisposte</p>
+            <h2 id="repertorio-progressivo-title">Repertorio progressivo</h2>
+            <p>Apri un brano per aggiungere tonalità, velocità, lavoro delle mani, fonti e note personali.</p>
+          </div>
+          <% @accordion_study_paths.select { |path| %w[folk italian].include?(path.fetch("slug")) }.each do |path| %>
+            <section class="accordion-repertoire__path" id="percorso-<%= path.fetch("slug") %>">
+              <h3><%= path.fetch("title") %></h3>
+              <% path.fetch("groups").each do |group| %>
+                <div class="accordion-repertoire__group">
+                  <h4><%= group.fetch("title") %></h4>
+                  <% if group.fetch("pieces").any? %>
+                    <% group.fetch("pieces").each do |piece_slug| %>
+                      <%= render "landing/accordion_piece", piece: @accordion_pieces.fetch(piece_slug), path_title: path.fetch("title") %>
+                    <% end %>
+                  <% else %>
+                    <p class="accordion-repertoire__empty">Il primo brano verrà aggiunto qui.</p>
+                  <% end %>
+                </div>
+              <% end %>
+            </section>
+          <% end %>
+        </section>
       <% end %>
     </section>
 

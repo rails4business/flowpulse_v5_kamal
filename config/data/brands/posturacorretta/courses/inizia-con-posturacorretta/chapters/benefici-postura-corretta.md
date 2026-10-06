@@ -6,69 +6,87 @@ publisher_node_slug: posturacorretta
 
 # I benefici di una postura corretta
 
-## L'importanza dell'educazione  
+Quando si parla di postura si toccano almeno quattro temi: che cos'è la postura, che cosa la influenza, quali benefici possiamo cercare e perché potrebbe servire una vera educazione al corpo.
 
-Da sempre gli esseri umani hanno capito l'importanza della salute
+Sono argomenti grandi e ognuno meriterebbe un approfondimento. Qui iniziamo a costruire una mappa, così almeno sappiamo dove ci troviamo.
 
-Nell'antica grecia musica e ginastica servivano per formare corpo e mente
+## Che cos'è la postura?
 
-Proviamo ora a immaginare la stessa vita partendo da un'educazione diversa.
+Quando diciamo “postura corretta” viene subito in mente qualcuno ben dritto, con le spalle aperte e la schiena allineata. Sembra quasi che esista una posizione giusta da trovare e poi mantenere tutto il giorno. Sarebbe comodo, ma il corpo non funziona proprio così.
 
-Nell'antica grecia la paydeya consisteva nel far imparare due attività che forgiavano il corpo e la mente.
+Possiamo iniziare distinguendo due aspetti:
 
-Una scuola dovrebbe inserire queste attività per aiutare i ragazzi ma se si potesse fare qualcosa in più?
+- la **postura statica**, osservata in un determinato momento, quasi come in una fotografia;
+- la **postura dinamica**, che cambia mentre ci muoviamo e rispondiamo a quello che accade intorno a noi.
 
-## Un percorso per conoscere come funziona il corpo e riattivare i sistemi
+La postura non dipende soltanto dalla forma delle ossa o dalla forza dei muscoli. Entrano in gioco il respiro, la mobilità, il tono muscolare, il sistema nervoso, la percezione, le abitudini, le emozioni e l'ambiente in cui viviamo.
 
-Sono tante le occasioni per inserire un percorso del genere nella scuola, nel mondo del lavoro, nei percorsi di cura, per le persone in fasce protette anziani e disabili.
+Esiste davvero una postura corretta uguale per tutti? Probabilmente è una domanda troppo semplice. I corpi sono diversi, hanno storie diverse e, durante una sola giornata, assumono moltissime posizioni.
 
-Un percorso che ti insegni come funzionano i tuoi sistemi e come riattivarli con piccole pratiche una volta imparato è prezioso perchè si può semplicemente rispolverare.
+La struttura, inoltre, non è immobile. Nel tempo viene sottoposta a carichi, traumi, attività ripetute e periodi in cui ci muoviamo molto o pochissimo. Tutto questo può modificarne l'organizzazione e ridurre alcune possibilità.
 
-Riattivare le tue articolazioni il tuo sistema respiratorio il sistema nervoso, linfatico e così andando verso i sistemi più sottili è importante perchè questo andrebbe direttamente ad influenzare la nostra postura...
+Le posture sono tante. Prima di correggerle, il primo compito è imparare a leggerle.
 
+## Perché serve un'educazione al corpo?
 
-## Perchè una postura corretta?
+Nell'antica Grecia si dava spazio sia alla ginnastica sia alla musica: non bastava riempire la testa di nozioni, bisognava formare la persona.
 
-Madame Denise Godelieve Struif diceva: La forma delle ossa rivela i nostri modi di essere e di agire
+Oggi a scuola impariamo molte cose, ma raramente qualcuno ci insegna come respirare, recuperare, riconoscere una tensione o accorgerci che stiamo passando dieci ore nella stessa posizione.
 
-Quando si parla di postura corretta si pensa a stare ben dritti con la schiena, ad una buona mobilità articolare, certo allineamento ed elasticità sono 2 fattori importanti che hanno molti benefici, ma conoscere i nostri sistemi e come funzionano, Respiro, circolazione, sistema nervoso, risposta ormonale, tono muscolare, aiuta la nostra capacità di recupero ea mantenere lontane malattie.
+Proviamo allora a riprendere la storia del capitolo precedente partendo da un'educazione diversa.
 
-Il percorso posturacorretta ha questo obiettivo così facendo hai un cambiamento della tua postura e della posizione da cui osservi mondo.
+Da piccoli impariamo a conoscere il corpo attraverso il gioco. Crescendo continuiamo ad allenare mobilità, equilibrio, respirazione e capacità di recupero. Da adulti non serve ricordarsi cento esercizi: bastano alcuni principi e poche pratiche da riprendere quando servono.
 
-I modelli e i principi delle metodiche posturali sono gli strumenti che usiamo traendo dei semplici eserizi perciò impariamo anche a conoscere modi di lavoro che hanno principi complementari alla medicina che spesso siamo abituati e impareremo perciò che oltre al farmaco ci sono altri modi per aiutare il nostro corpo a non ammalarsi.
+Forse avremmo comunque dolori, infortuni e periodi difficili. La differenza è che non arriveremmo completamente impreparati al primo segnale del corpo.
 
+Un'educazione di questo tipo potrebbe trovare spazio nella scuola, nel lavoro, nei percorsi di cura e nelle attività rivolte ad anziani o persone con disabilità. Il modo di proporla cambierebbe, naturalmente, ma la domanda resterebbe la stessa: quanto conosciamo il corpo con cui viviamo ogni giorno?
 
-## Cattive abitudini
+## Che cosa modifica le nostre condizioni?
 
-Sicuramente ci sono delle abitudini che hanno degli effetti negativi per la nostra postura e per la nostra salute.
+Si parla spesso di cattive abitudini, come se bastasse fare un elenco di colpe. Stare seduti non è sbagliato. Anche riposare sul divano o usare un computer fanno parte della vita.
 
-- Stare molto tempo seduti
-- Stare molto tempo fermi in piedi in una stessa posizione
-- Stare davanti agli schermi
-- Stare molto tempo al chiuso
-- Luce artificiale 
-- Avere molti pensieri preoccupazioni
-- Ritmi di vita e urgenze
-- Mangiare velocemente non avere tempo per digerire
-- Respiro superficiale
-- Mantenere spalle curve e capo chino
+Il problema può iniziare quando manca la varietà:
 
-Sono solo alcune delle cattive abitudini che hanno un impatto negatico sui nostri sistemi fisiologici.
+- restiamo seduti o fermi per molte ore;
+- ripetiamo sempre gli stessi gesti;
+- trascorriamo poco tempo all'aperto;
+- viviamo quasi sempre sotto luce artificiale;
+- mangiamo in fretta e riprendiamo subito a correre;
+- respiriamo in modo superficiale;
+- dormiamo, ma recuperiamo poco;
+- accumuliamo pensieri, preoccupazioni e urgenze;
+- manteniamo a lungo spalle chiuse e capo chino davanti agli schermi.
+
+Una singola posizione non racconta tutto. Ma se quella posizione viene ripetuta ogni giorno, insieme agli stessi ritmi e senza occasioni di recupero, il corpo si organizza di conseguenza.
+
+Per questo osservare la postura significa anche osservare la giornata che abbiamo costruito intorno al corpo.
+
+## Quali benefici cerchiamo con PosturaCorretta?
+
+PosturaCorretta non propone una posa perfetta da mantenere. Propone un percorso per conoscere il corpo, leggere le sue posture e creare condizioni in cui possa muoversi e adattarsi meglio.
+
+I benefici che cerchiamo sono concreti:
+
+- aumentare la consapevolezza del corpo;
+- recuperare possibilità di movimento;
+- riconoscere prima tensione, fatica e cambiamenti;
+- osservare come respiriamo, appoggiamo i piedi e distribuiamo il peso;
+- imparare pratiche semplici che possiamo riprendere nel tempo;
+- comprendere quando possiamo lavorare in autonomia e quando è utile chiedere aiuto a un professionista.
+
+Le metodiche posturali ci offrono modelli, principi ed esercizi differenti. Non dobbiamo trasformarle in una gara per decidere quale sia la migliore. Possiamo usarle come strumenti per fare esperienza, porci domande e comprendere qualcosa in più della nostra fisiologia.
+
+Il cambiamento non riguarda soltanto la forma che vediamo allo specchio. Cambia anche il punto dal quale osserviamo il corpo: da oggetto da raddrizzare a organismo da conoscere.
 
 ## Imparare a leggere il corpo
 
-Per questo non esiste un unica postura corretta le posture che può assumre il corpo sono molte, e ognuna ha un significato. 
+Prima di passare agli esercizi, fermiamoci un momento. Non serve misurare tutto e non dobbiamo formulare una diagnosi. Iniziamo semplicemente a osservare.
 
-In oltre c'è da considerare la postura statica, come una fotogramma, che interessa appunto la forma delle ossa e la posizione nello spazio e la postura dinamica che è influenzata dal nostro comportamento e risponde agli stimoli attorno a noi.
+1. Come senti il corpo in questo momento?
+2. Dove percepisci più libertà e dove senti maggiore tensione?
+3. Il respiro si muove liberamente oppure sembra fermarsi in alcune zone?
+4. Come distribuisci il peso quando sei in piedi?
+5. Che cosa accade quando ti siedi, ti sdrai e torni in piedi?
+6. Dopo qualche minuto di movimento, qualcosa cambia?
 
-Quello che proponiamo oltre ad imparare a riattivare la nostra fisiologia è capire la nostra postura statica e come questa è legata ai segnali fisiologici che il corpo ci dà, per il resto servirebbe poi un altra guida che considera tutto gli aspetti sociali, gli aspetti comunicativi ma non è questo la funzione di questa guida.
-
-## Scheda pratica:
-
-Alcune domande
-
-1. Come senti il tuo corpo?
-2. Senti tensioni su collo spalle schiena
-3. Test dello sdraiarsi ed alzarsi
-4. Chiudi gli occhi e body scan
-
+Questa è già una prima pratica posturale: non cercare subito di correggere, ma imparare ad ascoltare ciò che sta succedendo.

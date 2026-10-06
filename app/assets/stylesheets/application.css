@@ -313,6 +313,22 @@ body {
 .accordion-study__inner { margin: 0 auto; max-width: 56rem; }
 .accordion-study__back a { color: #166534; font-size: .875rem; font-weight: 700; text-decoration: none; }
 .accordion-study h1 { font-size: clamp(2rem, 7vw, 3.5rem); line-height: 1; margin: 1rem 0 1.5rem; }
+.accordion-study__journey { margin-bottom: 1.25rem; border: 1px solid #dbe4dc; border-radius: 1.25rem; padding: clamp(1rem, 3vw, 1.5rem); background: linear-gradient(145deg, #f0fdf4, #fff); }
+.accordion-study__journey-heading { display: grid; grid-template-columns: minmax(0, .8fr) minmax(280px, 1.2fr); gap: 1.5rem; align-items: end; margin-bottom: 1.25rem; }
+.accordion-study__journey-heading h2 { margin: .2rem 0 0; font-size: clamp(1.5rem, 4vw, 2.1rem); }
+.accordion-study__journey-heading > p { margin: 0; color: #475569; font-size: .9rem; line-height: 1.55; }
+.accordion-study__eyebrow { margin: 0; color: #166534; font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.accordion-study__map { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.accordion-study__branch { position: relative; border: 1px solid #d7e2d8; border-radius: 1rem; padding: 1rem; background: #fff; }
+.accordion-study__branch--classical { grid-column: 1 / -1; width: calc(50% - .4rem); justify-self: center; }
+.accordion-study__branch > p { margin: 0 0 .4rem; color: #15803d; font-size: .7rem; font-weight: 900; letter-spacing: .12em; }
+.accordion-study__branch h3 { margin: 0; font-size: 1rem; }
+.accordion-study__branch > span { display: block; margin-top: .35rem; color: #64748b; font-size: .85rem; line-height: 1.45; }
+.accordion-study__branch ul { display: flex; flex-wrap: wrap; gap: .35rem; margin: .8rem 0 0; padding: 0; list-style: none; }
+.accordion-study__branch li { border-radius: 999px; padding: .3rem .55rem; color: #365243; background: #eef7f0; font-size: .72rem; font-weight: 650; }
+.accordion-study__instrument { grid-column: 1 / -1; justify-self: center; display: grid; gap: .15rem; min-width: min(100%, 17rem); border-radius: 999px; padding: .75rem 1.2rem; color: #fff; background: #166534; text-align: center; box-shadow: 0 8px 24px rgb(22 101 52 / 18%); }
+.accordion-study__instrument span { font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.accordion-study__instrument small { color: #dcfce7; }
 .accordion-study__tabs { display: flex; gap: .4rem; overflow-x: auto; padding-bottom: .5rem; }
 .accordion-study__tabs a { border: 1px solid #cbd5e1; border-radius: 999px; color: #334155; flex: none; font-size: .875rem; font-weight: 700; padding: .55rem .85rem; text-decoration: none; }
 .accordion-study__tabs a[aria-current="page"] { background: #166534; border-color: #166534; color: #fff; }
@@ -323,6 +339,31 @@ body {
 .accordion-study__list h2 { font-size: 1.1rem; margin: 1.5rem 0 .25rem; }
 .accordion-study__list a { color: #166534; font-weight: 650; overflow-wrap: anywhere; text-underline-offset: 3px; }
 .accordion-study__copyright { color: #64748b; font-size: .8rem; line-height: 1.5; margin-top: 1rem; }
+.accordion-repertoire { margin-top: 2.5rem; border-top: 1px solid #dbe3dc; padding-top: 2rem; }
+.accordion-repertoire__heading > h2 { margin-bottom: .35rem; }
+.accordion-repertoire__heading > p:last-child { margin: 0; color: #64748b; line-height: 1.55; }
+.accordion-repertoire__path { margin-top: 2rem; }
+.accordion-repertoire__path > h3 { margin: 0 0 1rem; font-size: 1.25rem; }
+.accordion-repertoire__group { margin-top: 1.25rem; }
+.accordion-repertoire__group > h4 { margin: 0 0 .6rem; color: #475569; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; }
+.accordion-repertoire__empty { border: 1px dashed #cbd5e1 !important; border-radius: .75rem; padding: .8rem !important; color: #64748b; font-size: .85rem; }
+.accordion-piece { overflow: hidden; margin-bottom: .55rem; border: 1px solid #dbe3dc; border-radius: .85rem; background: #fff; }
+.accordion-piece summary { display: flex; gap: 1rem; align-items: center; justify-content: space-between; padding: .85rem 1rem; cursor: pointer; list-style: none; }
+.accordion-piece summary::-webkit-details-marker { display: none; }
+.accordion-piece summary > span:first-child { display: grid; gap: .2rem; }
+.accordion-piece summary strong { color: #172033; }
+.accordion-piece summary small { color: #64748b; }
+.accordion-piece__status { flex: none; border-radius: 999px; padding: .3rem .55rem; color: #166534; background: #dcfce7; font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+.accordion-piece__body { border-top: 1px solid #e2e8f0; padding: 1rem; }
+.accordion-piece__body dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; margin: 0; }
+.accordion-piece__body dl > div { border-radius: .65rem; padding: .65rem .75rem; background: #f8fafc; }
+.accordion-piece__body dt { color: #64748b; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.accordion-piece__body dd { margin: .2rem 0 0; color: #172033; font-size: .88rem; }
+.accordion-piece__sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-top: .75rem; }
+.accordion-piece__sources > div { border: 1px solid #e2e8f0; border-radius: .65rem; padding: .75rem; }
+.accordion-piece__sources h4 { margin: 0 0 .35rem; font-size: .8rem; }
+.accordion-piece__sources p, .accordion-piece__sources ul { margin: 0; padding: 0; border: 0; color: #64748b; font-size: .8rem; list-style: none; }
+.accordion-piece__source-note { margin: .75rem 0 0 !important; border: 0 !important; border-radius: .65rem; padding: .75rem !important; color: #475569; background: #f0fdf4; font-size: .78rem; }
 
 @media (prefers-color-scheme: dark) {
   .accordion-study { background: #0f172a; color: #f8fafc; }
@@ -330,8 +371,25 @@ body {
   .accordion-study__tabs a { border-color: #475569; color: #cbd5e1; }
   .accordion-study__tabs a[aria-current="page"] { background: #15803d; border-color: #22c55e; color: #fff; }
   .accordion-study__page { background: #172033; border-color: #334155; }
+  .accordion-study__journey { border-color: #334155; background: #172033; }
+  .accordion-study__journey-heading > p, .accordion-study__branch > span, .accordion-repertoire__heading > p:last-child { color: #cbd5e1; }
+  .accordion-study__branch, .accordion-piece { border-color: #334155; background: #1e293b; }
+  .accordion-study__branch li, .accordion-piece__status { color: #bbf7d0; background: #14532d; }
+  .accordion-piece summary strong, .accordion-piece__body dd { color: #f8fafc; }
+  .accordion-piece summary small, .accordion-piece__body dt { color: #94a3b8; }
+  .accordion-piece__body { border-color: #334155; }
+  .accordion-piece__body dl > div { background: #0f172a; }
+  .accordion-piece__sources > div { border-color: #334155; }
+  .accordion-piece__source-note { color: #bbf7d0; background: #14532d; }
   .accordion-study__list p { border-color: #334155; }
   .accordion-study__copyright { color: #94a3b8; }
+}
+
+@media (max-width: 640px) {
+  .accordion-study__journey-heading, .accordion-study__map, .accordion-piece__body dl, .accordion-piece__sources { grid-template-columns: 1fr; }
+  .accordion-study__branch--classical { grid-column: auto; width: auto; justify-self: stretch; }
+  .accordion-study__instrument { grid-column: auto; width: 100%; }
+  .accordion-piece summary { align-items: flex-start; }
 }
 
 .editorial-rich-text blockquote {

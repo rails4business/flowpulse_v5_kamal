@@ -135,6 +135,9 @@ class LandingController < ApplicationController
 
       chapter.merge("content" => source.read)
     end.compact
+    @accordion_study = YAML.safe_load_file(root.join("study.yml"), permitted_classes: [], aliases: true) || {}
+    @accordion_study_paths = @accordion_study.fetch("paths", [])
+    @accordion_pieces = @accordion_study.fetch("pieces", []).reject { |piece| piece.fetch("template", false) }.index_by { |piece| piece.fetch("slug") }
   end
 
   def giardino_del_corpo
