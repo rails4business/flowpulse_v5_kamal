@@ -20,6 +20,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='/impegno']", text: /1Impegno/
     assert_select "a[href='/rails4b']", text: /Rails4Business/
     assert_select "a[href='/cantachetipassa']", text: /Canta che ti passa/
+    assert_select "a[href='/flowpulse/inside-adventure']", text: /Inside Adventure/
   end
 
   test "Canta che ti passa links to its four sessions and participation sections" do

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Percorso Integrato — Programmi, professionisti e verifiche</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f8f5;--card:#fff;--ink:#1d3838;--mute:#5a7371;--line:#d3e1da;--brand:#2a6f77}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a1a;--card:#152626;--ink:#e5f0ed;--mute:#9ab3ae;--line:#26403c;--brand:#6fc0c8}}
+:root[data-theme="dark"]{--bg:#0e1a1a;--card:#152626;--ink:#e5f0ed;--mute:#9ab3ae;--line:#26403c;--brand:#6fc0c8}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+nav{display:flex;gap:16px;align-items:center;padding:14px 0;font-size:.9rem;flex-wrap:wrap}
+nav b{color:var(--brand);margin-right:auto;font-size:1.05rem}
+nav a{color:var(--mute);text-decoration:none}
+.eyebrow{letter-spacing:.25em;text-transform:uppercase;font-size:.72rem;color:#e8662a;margin:30px 0 6px}
+h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.15;margin:0 0 12px;color:var(--brand)}
+h2{font-size:1.5rem;margin:0 0 6px;color:var(--brand)}
+.lead{color:var(--mute);font-size:1.05rem;margin:0 0 20px}
+.btn{display:inline-block;background:var(--brand);color:var(--bg);padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:600;margin:0 8px 8px 0}
+.btn.o{background:none;color:var(--brand);border:2px solid var(--brand)}
+section{padding:34px 0}
+.kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin:0}
+/* scala */
+.start{display:flex;align-items:center;gap:10px;margin:20px 0 6px;color:#c0392b;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.8rem}
+.ladder{position:relative}
+.ladder::before{content:"";position:absolute;left:35px;top:36px;bottom:36px;width:4px;border-radius:4px;background:linear-gradient(#c0392b,#e8662a,#e5a823,#3f9a4f);opacity:.5}
+.deep .ladder::before{background:linear-gradient(#2f86d6,#5b4fc9,#9b59d0)}
+.step{display:flex;gap:16px;margin-bottom:18px;position:relative}
+.lot{flex:0 0 72px;height:72px;border-radius:50%;background:var(--card);border:3px solid var(--c);color:var(--c);display:grid;place-items:center;box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 16%,transparent);z-index:1}
+.lot svg{width:48px;height:48px}
+.box{flex:1;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;padding:12px 16px;display:flex;gap:12px;align-items:center}
+.box .ic{flex:0 0 46px;color:var(--c)}
+.box .ic svg{width:46px;height:46px}
+.box h3{margin:0;color:var(--c);text-transform:uppercase;font-size:1.02rem;letter-spacing:.03em}
+.box p{margin:2px 0 0;color:var(--mute);font-size:.92rem}
+.box small{display:block;margin-top:4px;color:var(--c);font-weight:600;font-size:.78rem;letter-spacing:.05em}
+.n{position:absolute;left:0;top:-4px;background:var(--c);color:#fff;border-radius:999px;font-size:.7rem;font-weight:700;padding:1px 7px;z-index:2}
+details.deep{margin-top:10px;border:1px dashed var(--line);border-radius:16px;padding:6px 16px 4px;background:color-mix(in srgb,var(--card) 60%,transparent)}
+details.deep>summary{cursor:pointer;padding:10px 0;font-weight:600;color:var(--brand);list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.deep>summary::after{content:"+";font-size:1.3rem;line-height:1}
+details.deep[open]>summary::after{content:"–"}
+details.deep>summary span{display:block;font-weight:400;font-size:.85rem;color:var(--mute)}
+.deep .ladder{margin-top:10px}
+/* griglie */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.c h3{margin:0 0 4px;font-size:1.02rem;color:var(--brand)}
+.c p{margin:0;font-size:.92rem;color:var(--mute)}
+.c .num{font-size:.75rem;color:#e8662a;font-weight:700;letter-spacing:.1em}
+.c.pj{border-top:4px solid var(--p);text-decoration:none;color:inherit;display:block}
+.c.pj em{font-style:normal;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--p)}
+.c.here{outline:2px solid var(--p)}
+footer{padding:30px 0 40px;border-top:1px solid var(--line);color:var(--mute);font-size:.85rem;display:flex;gap:14px;align-items:center}
+.yy{flex:0 0 46px;height:46px;border-radius:50%;background:linear-gradient(90deg,#c0392b 50%,#3f9a4f 50%);position:relative}
+.yy::after{content:"";position:absolute;inset:11px;border-radius:50%;background:radial-gradient(circle,#fff 0 30%,transparent 31%)}
+@media(max-width:520px){.lot{flex-basis:56px;height:56px}.lot svg{width:38px;height:38px}.ladder::before{left:27px}.box .ic{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="lotus" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6">
+      <ellipse cx="24" cy="9" rx="4" ry="8"/><ellipse cx="24" cy="9" rx="4" ry="8" transform="rotate(45 24 24)"/><ellipse cx="24" cy="9" rx="4" ry="8" transform="rotate(90 24 24)"/><ellipse cx="24" cy="9" rx="4" ry="8" transform="rotate(135 24 24)"/><ellipse cx="24" cy="9" rx="4" ry="8" transform="rotate(180 24 24)"/><ellipse cx="24" cy="9" rx="4" ry="8" transform="rotate(225 24 24)"/><ellipse cx="24" cy="9" rx="4" ry="8" transform="rotate(270 24 24)"/><ellipse cx="24" cy="9" rx="4" ry="8" transform="rotate(315 24 24)"/>
+      <circle cx="24" cy="24" r="6"/></g></symbol>
+    <symbol id="risk" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="31" cy="11" r="4.5"/><path d="M27 18 L20 30 L26 41 M20 30 L11 38 M27 21 L38 27 M20 30 L16 22"/></g></symbol>
+    <symbol id="run" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4.5"/><path d="M27 16 L21 26 L29 32 L25 43 M21 26 L12 24 M27 18 L36 23 M6 18h8 M4 26h6"/></g></symbol>
+    <symbol id="target" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="22" cy="26" r="16"/><circle cx="22" cy="26" r="9"/><circle cx="22" cy="26" r="2.5"/><path d="M22 26 L42 6 M42 6 v7 M42 6 h-7"/></g></symbol>
+    <symbol id="zen" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="4.5"/><path d="M24 15 V27 M24 19 L14 27 M24 19 L34 27 M7 37 Q24 26 41 37 Q24 45 7 37"/></g></symbol>
+    <symbol id="hand" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 34 Q16 28 24 30 L40 28 M10 38 Q24 42 38 32 M30 8 Q22 14 26 26 Q34 20 30 8Z M26 26 L24 30"/></g></symbol>
+    <symbol id="eye" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 24 Q24 6 44 24 Q24 42 4 24Z"/><circle cx="24" cy="24" r="6"/><circle cx="24" cy="24" r="1.5"/></g></symbol>
+    <symbol id="voice" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 20 h6 l10-8 v24 l-10-8 h-6z M31 18 q5 6 0 12 M36 13 q10 11 0 22"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <nav><b>Percorso Integrato</b><a href="#percorso">Il percorso</a><a href="#ruoli">Chi partecipa</a><a href="#inizia">Inizia</a><a href="#progetti">I progetti</a></nav>
+
+  <header>
+    <div class="eyebrow">Accompagnamento e coordinamento</div>
+    <h1>Costruisci un percorso personale, leggibile e coordinato.</h1>
+    <p class="lead">Parti dal bisogno della persona, definisci un programma sostenibile e collega professionisti, servizi e verifiche senza sommare interventi scollegati.</p>
+    <a class="btn" href="#inizia">Racconta la tua richiesta</a><a class="btn o" href="https://percorsointegrato.it/percorso-integrato/docs">Apri le Docs</a>
+  </header>
+
+  <section id="percorso">
+    <p class="kicker">Il cammino</p>
+    <h2>Si parte da dove sei. Si sale un livello alla volta.</h2>
+    <p class="lead">Quattro livelli, dal rosso al verde: dal recuperare la salute allo stare bene. Non devi attraversarli tutti: scegli da dove cominciare.</p>
+    <div class="start">● Parti da qui</div>
+    <div class="ladder">
+      <div class="step" style="--c:#c0392b"><span class="n">1</span><div class="lot"><svg><use href="#lotus"/></svg></div>
+        <div class="box"><div class="ic"><svg><use href="#risk"/></svg></div><div><h3>Salute a rischio</h3><p>La mia salute è a rischio</p><small>RECUPERARE</small></div></div></div>
+      <div class="step" style="--c:#e8662a"><span class="n">2</span><div class="lot"><svg><use href="#lotus"/></svg></div>
+        <div class="box"><div class="ic"><svg><use href="#run"/></svg></div><div><h3>Prevenzione, lavoro e sport</h3><p>Prevenire i rischi</p><small>PREVENIRE</small></div></div></div>
+      <div class="step" style="--c:#e5a823"><span class="n">3</span><div class="lot"><svg><use href="#lotus"/></svg></div>
+        <div class="box"><div class="ic"><svg><use href="#target"/></svg></div><div><h3>Performance e obiettivi</h3><p>Ottenere un risultato</p><small>OTTENERE</small></div></div></div>
+      <div class="step" style="--c:#3f9a4f"><span class="n">4</span><div class="lot"><svg><use href="#lotus"/></svg></div>
+        <div class="box"><div class="ic"><svg><use href="#zen"/></svg></div><div><h3>Star bene</h3><p>Stare bene</p><small>MANTENERE</small></div></div></div>
+    </div>
+
+    <details class="deep">
+      <summary><div>Vuoi andare oltre?<span>Per chi vuole approfondire: dal benessere alla connessione</span></div></summary>
+      <div class="ladder">
+        <div class="step" style="--c:#2f86d6"><span class="n">5</span><div class="lot"><svg><use href="#lotus"/></svg></div>
+          <div class="box"><div class="ic"><svg><use href="#voice"/></svg></div><div><h3>Espressione</h3><p>Dare voce a ciò che hai capito</p></div></div></div>
+        <div class="step" style="--c:#5b4fc9"><span class="n">6</span><div class="lot"><svg><use href="#lotus"/></svg></div>
+          <div class="box"><div class="ic"><svg><use href="#eye"/></svg></div><div><h3>Consapevolezza</h3><p>Vedere cosa succede dentro di te</p></div></div></div>
+        <div class="step" style="--c:#9b59d0"><span class="n">7</span><div class="lot"><svg><use href="#lotus"/></svg></div>
+          <div class="box"><div class="ic"><svg><use href="#hand"/></svg></div><div><h3>Connessione</h3><p>Sentirsi parte di qualcosa di più grande</p></div></div></div>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <p class="kicker">La differenza</p>
+    <h2>Non una somma di interventi, ma una direzione condivisa.</h2>
+    <p class="lead">Il percorso rende visibili bisogni, programmi, responsabilità, attività e verifiche, affinché la persona e i professionisti sappiano dove stanno andando.</p>
+    <div class="grid">
+      <div class="c"><span class="num">01</span><h3>Una richiesta concreta</h3><p>Si parte dal problema, dagli obiettivi, dal luogo e da ciò che la persona ha già fatto.</p></div>
+      <div class="c"><span class="num">02</span><h3>Un programma leggibile</h3><p>Il tutor organizza passaggi, responsabilità, attività educative, professionisti e condizioni della proposta.</p></div>
+      <div class="c"><span class="num">03</span><h3>Professionisti coordinati</h3><p>Ogni professionista conserva competenze e responsabilità, condividendo obiettivi e informazioni utili.</p></div>
+      <div class="c"><span class="num">04</span><h3>Verifiche e adattamenti</h3><p>Risultati, difficoltà e feedback permettono di aggiornare il programma senza perdere la direzione.</p></div>
+    </div>
+  </section>
+
+  <section id="ruoli">
+    <p class="kicker">Chi partecipa</p>
+    <h2>Ruoli differenti, responsabilità leggibili.</h2>
+    <div class="grid">
+      <div class="c"><h3>Persona</h3><p>Partecipa alle decisioni, sceglie la proposta e comunica disponibilità, priorità e difficoltà reali.</p></div>
+      <div class="c"><h3>Tutor</h3><p>Raccoglie la richiesta, prepara il percorso, facilita il dialogo e mantiene leggibile il quadro generale.</p></div>
+      <div class="c"><h3>Professionisti</h3><p>Realizzano i programmi di propria competenza e documentano attività, indicazioni e verifiche.</p></div>
+    </div>
+  </section>
+
+  <section id="inizia">
+    <p class="kicker">Primo passo</p>
+    <h2>Invia la richiesta, poi decidi sulla proposta.</h2>
+    <p class="lead">Il primo contatto serve a capire il problema e preparare una bozza. Il percorso viene aperto soltanto dopo che hai ricevuto e confermato la proposta.</p>
+    <a class="btn" href="https://wa.me/393792891488?text=Ciao%2C%20vorrei%20capire%20come%20iniziare%20un%20Percorso%20Integrato%20e%20ricevere%20una%20prima%20valutazione%20della%20mia%20richiesta.">Scrivi su WhatsApp</a>
+    <div class="grid">
+      <div class="c"><span class="num">1</span><h3>Invia la richiesta</h3><p>Racconta il problema, da quanto tempo c'è, diagnosi e visite già fatte e il paese da cui scrivi.</p></div>
+      <div class="c"><span class="num">2</span><h3>Parla con il tutor</h3><p>Chiarisce bisogni, disponibilità, tempo e livello di partecipazione possibile.</p></div>
+      <div class="c"><span class="num">3</span><h3>Valuta la proposta</h3><p>Ricevi programmi, passaggi, professionisti, condizioni e preventivo prima di decidere.</p></div>
+      <div class="c"><span class="num">4</span><h3>Apri il percorso</h3><p>Dopo la conferma si organizzano programmi, impegni, verifiche e collaborazioni.</p></div>
+    </div>
+  </section>
+
+  <section id="progetti">
+    <p class="kicker">La parte che ci unisce</p>
+    <h2>Tre progetti, una persona.</h2>
+    <p class="lead">Puoi iniziare dall'educazione, da un bisogno che richiede professionisti oppure da un'esperienza. Le tre strade si incontrano senza perdere la propria identità.</p>
+    <div class="grid">
+      <a class="c pj" style="--p:#2f86d6" href="https://percorsointegrato.it/posturacorretta"><em>Educazione</em><h3>PosturaCorretta</h3><p>Parte dal corpo e dalla postura per sviluppare conoscenza, pratica e consapevolezza della salute.</p></a>
+      <div class="c pj here" style="--p:#e8662a"><em>Accompagnamento · sei qui</em><h3>Percorso Integrato</h3><p>Collega bisogni, programmi e competenze professionali in un percorso coordinato.</p></div>
+      <a class="c pj" style="--p:#3f9a4f" href="https://percorsointegrato.it/il-giardino-del-corpo"><em>Filosofia ed esperienze</em><h3>Il Giardino del Corpo</h3><p>Allarga lo sguardo a natura, relazioni, cultura, espressione e sviluppo armonico dell'essere umano.</p></a>
+    </div>
+  </section>
+
+  <footer><div class="yy" aria-hidden="true"></div><div><b>Percorso Integrato</b> · Interno Salute<br>Insieme, più benessere. Infrastruttura digitale: Flowpulse.</div></footer>
+</div>
+</body>
+</html>

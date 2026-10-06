@@ -4,6 +4,26 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
+
+
+## Perché nasce PosturaCorretta?
+
+PosturaCorretta usa la postura come punto di partenza per conoscere la fisiologia, osservare come corpo e ambiente interagiscono e sperimentare pratiche semplici.
+
+Puoi seguire il percorso online per informarti, praticare con un insegnante oppure approfondirlo per imparare a trasmetterlo. 
+
+Il percorso è educativo ciò vuol dire che se ti trovi in presenza di un problema o una patologia devi rivolgerti a un professionista della salute 
+Quando serve una valutazione clinica, un trattamento o un programma personalizzato.
+
+Questo programma educativo non sostituisce diagnosi, cure o indicazioni sanitarie.
+
+
+Il percorso può aiutarti ad orientarti, anche per avere una panoramica più ampia sul mondo del benessere.
+
+
+
+
+
 I 3 errori che tutti fanno quando iniziano un percorso posturale
 Scritto da Mark Postura · pubblicato su PosturaCorretta
 

@@ -35,6 +35,25 @@ default: &default
       status: published
       visibility: public
 
+    insideadventure:
+      title: Inside Adventure
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: draft
+      visibility: public
+
+    corpoecoscienza:
+      title: Corpo e Coscienza
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      operator_roles:
+        - segreteria
+        - professionista
+
     cantachetipassa:
       title: Canta che ti passa
       node_type: project

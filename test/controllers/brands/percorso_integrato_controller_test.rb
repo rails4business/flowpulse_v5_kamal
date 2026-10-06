@@ -14,6 +14,11 @@ module Brands
       assert_select "a.pi-button.pi-button--primary", minimum: 3
       assert_select "a.pi-button.pi-button--secondary", text: "Apri le Docs"
       assert_select "#come-funziona"
+      assert_select "#percorso"
+      assert_select "#percorso .pi-upgrade__level", count: 7
+      assert_select "#percorso", text: /Salute a rischio/
+      assert_select "#percorso", text: /Connessione/
+      assert_select "details.pi-upgrade__deep"
       assert_select "#ruoli"
       assert_select "#inizia"
       assert_select "a[href^='https://wa.me/393792891488']", text: "Scrivi su WhatsApp"

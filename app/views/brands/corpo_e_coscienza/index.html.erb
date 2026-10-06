@@ -1,0 +1,253 @@
+<% content_for :title, @site.fetch("title") %>
+<% content_for :description, @site.fetch("description") %>
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<% end %>
+
+<main class="cec-page">
+  <div class="cec-language-bar"><div class="cec-wrap"><span lang="it" aria-label="Lingua: italiano">IT · Italiano</span></div></div>
+  <section class="cec-hero">
+    <div class="cec-wrap cec-hero__grid">
+      <div>
+        <h1>Corpo e Coscienza</h1>
+        <p class="cec-method-name"><%= @site.fetch("eyebrow") %></p>
+        <p class="cec-lead"><%= @site.fetch("description") %></p>
+        <div class="cec-actions">
+          <%= link_to "Conosci il metodo", "#metodo", class: "cec-button cec-button--primary" %>
+          <%= link_to "Trova un professionista", corpo_e_coscienza_path(request_kind: "find_professional", anchor: "richiesta"), class: "cec-button cec-button--light" %>
+        </div>
+      </div>
+      <%= image_tag @site.fetch("logo_image"), alt: "Logo Corpo e Coscienza", class: "cec-logo" %>
+    </div>
+  </section>
+
+  <section id="metodo" class="cec-section">
+    <div class="cec-wrap cec-prose"><%= markdown(@method_markdown) %></div>
+  </section>
+
+  <section class="cec-section cec-section--soft">
+    <div class="cec-wrap cec-founder">
+      <%= image_tag @site.fetch("founder_image"), alt: @site.fetch("founder_name"), class: "cec-founder__image", loading: "lazy" %>
+      <div class="cec-prose">
+        <%= markdown(@founder_markdown) %>
+        <%= link_to "Leggi la biografia originale →", @site.fetch("source_url"), target: "_blank", rel: "noopener", class: "cec-text-link" %>
+      </div>
+    </div>
+  </section>
+
+  <section id="partecipa" class="cec-section">
+    <div class="cec-wrap">
+      <p class="cec-eyebrow">Per le persone</p>
+      <h2>Vivi un’esperienza Corpo e Coscienza</h2>
+      <p class="cec-section-intro">Puoi avvicinarti al metodo attraverso un percorso condiviso, un incontro individuale oppure un evento.</p>
+      <div class="cec-opportunities">
+        <article class="cec-card">
+          <p class="cec-card__number">01</p>
+          <h3>Trattamenti individuali</h3>
+          <p>Cerca un professionista formato con cui valutare un percorso individuale.</p>
+          <%= link_to "Richiedi un trattamento", corpo_e_coscienza_path(request_kind: "individual_treatment", anchor: "richiesta"), class: "cec-card-action" %>
+        </article>
+        <article class="cec-card">
+          <p class="cec-card__number">02</p>
+          <h3>Crea il tuo percorso in gruppo</h3>
+          <p>Segnala il tuo interesse e la tua zona: la richiesta può aiutare a far nascere un nuovo gruppo.</p>
+          <%= link_to "Crea un percorso di gruppo", corpo_e_coscienza_path(request_kind: "group_path", anchor: "richiesta"), class: "cec-card-action" %>
+        </article>
+        <article class="cec-card">
+          <p class="cec-card__number">03</p>
+          <h3>Partecipa agli eventi</h3>
+          <p>Ricevi informazioni sugli incontri e sulle esperienze Corpo e Coscienza.</p>
+          <%= link_to "Partecipa agli eventi", corpo_e_coscienza_path(request_kind: "events", anchor: "richiesta"), class: "cec-card-action" %>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="formazione" class="cec-section cec-section--soft">
+    <div class="cec-wrap cec-callout">
+      <div>
+        <p class="cec-eyebrow">Per i professionisti</p>
+        <h2>Vuoi conoscere il percorso formativo?</h2>
+        <p>La formazione è rivolta ai professionisti della salute e del benessere. Per le informazioni ufficiali puoi scrivere direttamente alla segreteria. Se sei già un professionista formato, puoi chiedere di entrare nella rete pubblica.</p>
+      </div>
+      <div class="cec-actions">
+        <%= mail_to @site.fetch("training_email"), "Info per la formazione", class: "cec-button cec-button--primary" %>
+        <%= link_to "Sono formato e voglio registrarmi", corpo_e_coscienza_path(request_kind: "professional_application", anchor: "richiesta"), class: "cec-button cec-button--light" %>
+      </div>
+    </div>
+  </section>
+
+  <section id="professionisti" class="cec-section">
+    <div class="cec-wrap">
+      <p class="cec-eyebrow">Rete</p>
+      <h2>Trova un professionista</h2>
+      <p>La mappa raccoglierà progressivamente le località dei professionisti formati e autorizzati alla pubblicazione.</p>
+      <div class="cec-map-shell" data-turbo-cache="false">
+        <div id="cec-professionals-map" class="cec-map" data-professionals="<%= @professional_map_points.to_json %>" aria-label="Mappa dei professionisti Corpo e Coscienza"></div>
+        <% if @professional_map_points.empty? %>
+          <p class="cec-map__empty">La registrazione dei professionisti formati è in corso.</p>
+        <% end %>
+      </div>
+      <% if @professionals.any? %>
+        <div class="cec-professionals">
+          <% @professionals.each do |professional| %>
+            <article class="cec-card cec-prose">
+              <h3><%= professional.fetch("name") %></h3>
+              <% if professional["city"].present? %><p class="cec-place"><%= professional["city"] %></p><% end %>
+              <%= markdown(professional.fetch("body")) %>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="cec-card">
+          <p>L’elenco pubblico è in preparazione. I profili saranno mostrati soltanto dopo la verifica della formazione e del consenso alla pubblicazione.</p>
+        </div>
+      <% end %>
+      <div class="cec-actions">
+        <%= link_to "Cerco un professionista", corpo_e_coscienza_path(request_kind: "find_professional", anchor: "richiesta"), class: "cec-button cec-button--primary" %>
+        <%= link_to "Sono un professionista formato", corpo_e_coscienza_path(request_kind: "professional_application", anchor: "richiesta"), class: "cec-button cec-button--light" %>
+      </div>
+    </div>
+  </section>
+
+  <section id="richiesta" class="cec-section">
+    <div class="cec-wrap cec-request-grid">
+      <div>
+        <p class="cec-eyebrow">Contatti</p>
+        <h2>Lascia una richiesta</h2>
+        <p>Non è necessario registrarsi. La richiesta viene affidata al responsabile di Corpo e Coscienza e resta distinta dal calendario degli appuntamenti.</p>
+        <p class="cec-note">Non inserire diagnosi, referti o altri dati sanitari nel messaggio.</p>
+      </div>
+
+      <%= form_with url: corpo_e_coscienza_requests_path, scope: :request, class: "cec-request-panel" do |form| %>
+        <div class="cec-form cec-form--<%= @request_tab %>">
+          <nav class="cec-request-tabs" aria-label="Tipo di richiesta">
+            <%= link_to "Sono un professionista", corpo_e_coscienza_path(request_kind: "professional_application", anchor: "richiesta"), class: class_names("cec-request-tab cec-request-tab--professional", active: @request_tab == "professional_application"), aria: { current: (@request_tab == "professional_application" ? "page" : nil) } %>
+            <%= link_to "Cerco un professionista", corpo_e_coscienza_path(request_kind: "find_professional", anchor: "richiesta"), class: class_names("cec-request-tab cec-request-tab--search", active: @request_tab == "find_professional"), aria: { current: (@request_tab == "find_professional" ? "page" : nil) } %>
+            <%= link_to "Altro", corpo_e_coscienza_path(request_kind: "information", anchor: "richiesta"), class: class_names("cec-request-tab cec-request-tab--other", active: @request_tab == "information"), aria: { current: (@request_tab == "information" ? "page" : nil) } %>
+          </nav>
+          <div class="cec-request-mobile">
+            <label for="cec-request-selector">Tipo di richiesta</label>
+            <select id="cec-request-selector" data-cec-request-selector>
+              <option value="<%= corpo_e_coscienza_path(request_kind: "professional_application", anchor: "richiesta") %>" <%= "selected" if @request_tab == "professional_application" %>>Sono un professionista</option>
+              <option value="<%= corpo_e_coscienza_path(request_kind: "find_professional", anchor: "richiesta") %>" <%= "selected" if @request_tab == "find_professional" %>>Cerco un professionista</option>
+              <option value="<%= corpo_e_coscienza_path(request_kind: "information", anchor: "richiesta") %>" <%= "selected" if @request_tab == "information" %>>Altro</option>
+            </select>
+          </div>
+          <% if @request_tab == "professional_application" %>
+            <div class="cec-request-context cec-request-context--professional">
+              <strong>Voglio essere inserito nell’elenco dei professionisti formati</strong>
+              <span>Se cerchi invece informazioni sul percorso, <%= link_to "chiedi informazioni sulla formazione", corpo_e_coscienza_path(request_kind: "training", anchor: "richiesta") %>.</span>
+            </div>
+          <% elsif @request_tab == "find_professional" %>
+            <div class="cec-request-context cec-request-context--search"><strong>Cerco un professionista Corpo e Coscienza</strong><span>Indica la tua località e ciò che stai cercando.</span></div>
+          <% else %>
+            <div class="cec-request-context"><strong>Altre informazioni</strong><span>Scrivi liberamente la tua richiesta.</span></div>
+          <% end %>
+          <%= form.hidden_field :request_kind, value: @request_kind %>
+          <div class="cec-field"><%= form.label :name, "Nome e cognome" %><%= form.text_field :name, required: true, autocomplete: "name" %></div>
+          <div class="cec-form__row">
+            <div class="cec-field"><%= form.label :email, "Email" %><%= form.email_field :email, autocomplete: "email" %></div>
+            <div class="cec-field"><%= form.label :phone, "Telefono" %><%= form.telephone_field :phone, autocomplete: "tel" %></div>
+          </div>
+          <p class="cec-hint">Indica almeno uno tra email e telefono.</p>
+          <div class="cec-location-box" data-controller="location-autocomplete" data-location-autocomplete-url-value="<%= corpo_e_coscienza_locations_path %>">
+            <div class="cec-location-heading">
+              <strong><%= @request_tab == "professional_application" ? "Dove lavori?" : (@request_tab == "find_professional" ? "Dove cerchi il professionista?" : "Località") %></strong>
+              <span>Seleziona il Paese e poi cerca il comune o la città.</span>
+            </div>
+            <div class="cec-location-fields">
+              <div class="cec-field cec-country-field">
+                <%= form.label :country_code, "Paese" %>
+                <%= form.select :country_code, options_for_select([
+                  ["Italia", "IT"], ["Francia", "FR"], ["Svizzera", "CH"], ["Spagna", "ES"], ["Germania", "DE"],
+                  ["Austria", "AT"], ["Belgio", "BE"], ["Paesi Bassi", "NL"], ["Regno Unito", "GB"], ["Portogallo", "PT"]
+                ], "IT"), {}, data: { location_autocomplete_target: "country", action: "change->location-autocomplete#countryChanged" } %>
+              </div>
+              <div class="cec-field cec-location-field">
+                <%= form.label :city, "Comune o città" %>
+                <div class="cec-location-input-wrap">
+                  <span class="cec-location-icon" aria-hidden="true">⌖</span>
+                  <%= form.text_field :city, autocomplete: "off", placeholder: "Es. Abbiategrasso, Milano…", data: { location_autocomplete_target: "input", action: "input->location-autocomplete#search keydown->location-autocomplete#keydown" }, aria: { autocomplete: "list", controls: "cec-location-results", expanded: "false" } %>
+                  <button type="button" class="cec-location-clear" data-location-autocomplete-target="clear" data-action="location-autocomplete#clear" aria-label="Cancella la località" hidden>×</button>
+                </div>
+                <div id="cec-location-results" class="cec-location-results" role="listbox" data-location-autocomplete-target="results" hidden></div>
+                <p class="cec-location-status" data-location-autocomplete-target="status" aria-live="polite">Scrivi almeno tre caratteri e scegli una località suggerita.</p>
+              </div>
+            </div>
+            <%= form.hidden_field :latitude, data: { location_autocomplete_target: "latitude" } %>
+            <%= form.hidden_field :longitude, data: { location_autocomplete_target: "longitude" } %>
+            <%= form.hidden_field :location_ref, data: { location_autocomplete_target: "locationRef" } %>
+          </div>
+          <div class="cec-field"><%= form.label :message, "Messaggio" %><%= form.text_area :message, rows: 5, required: true %></div>
+          <label class="cec-consent"><%= form.check_box :privacy_consent, required: true %><span>Acconsento all’uso dei recapiti indicati per ricevere una risposta a questa richiesta.</span></label>
+          <%= form.submit "Invia la richiesta", class: "cec-button cec-button--primary" %>
+          <p class="cec-form-email">Preferisci scrivere direttamente? <%= mail_to @site.fetch("training_email") %></p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</main>
+
+<script>
+  (() => {
+    let leafletAttempts = 0
+    const initialiseProfessionalsMap = () => {
+      const element = document.getElementById("cec-professionals-map")
+      if (!element) return
+      if (!window.L) {
+        leafletAttempts += 1
+        if (leafletAttempts < 30) window.setTimeout(initialiseProfessionalsMap, 100)
+        return
+      }
+      if (element._cecMap) { element._cecMap.invalidateSize(); return }
+
+      const professionals = JSON.parse(element.dataset.professionals || "[]")
+      const map = L.map(element, { scrollWheelZoom: false }).setView([42.5, 12.5], 5)
+      element._cecMap = map
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+        maxZoom: 19
+      }).addTo(map)
+
+      const bounds = []
+      professionals.forEach((professional) => {
+        const coordinates = [professional.latitude, professional.longitude]
+        bounds.push(coordinates)
+        const popup = document.createElement("div")
+        const name = document.createElement("strong")
+        name.textContent = professional.name
+        popup.append(name)
+        if (professional.city) {
+          popup.append(document.createElement("br"), document.createTextNode(professional.city))
+        }
+        L.marker(coordinates).addTo(map).bindPopup(popup)
+      })
+
+      if (bounds.length === 1) map.setView(bounds[0], 11)
+      if (bounds.length > 1) map.fitBounds(bounds, { padding: [32, 32] })
+      window.requestAnimationFrame(() => map.invalidateSize())
+    }
+
+    const destroyProfessionalsMap = () => {
+      const element = document.getElementById("cec-professionals-map")
+      if (!element?._cecMap) return
+      element._cecMap.remove()
+      delete element._cecMap
+    }
+
+    document.addEventListener("turbo:load", initialiseProfessionalsMap)
+    document.addEventListener("turbo:before-cache", destroyProfessionalsMap)
+    document.addEventListener("DOMContentLoaded", initialiseProfessionalsMap)
+
+    const connectRequestSelector = () => {
+      const selector = document.querySelector("[data-cec-request-selector]")
+      if (!selector || selector.dataset.connected === "true") return
+      selector.dataset.connected = "true"
+      selector.addEventListener("change", () => { window.location.href = selector.value })
+    }
+    document.addEventListener("turbo:load", connectRequestSelector)
+    document.addEventListener("DOMContentLoaded", connectRequestSelector)
+  })()
+</script>

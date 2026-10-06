@@ -7,6 +7,21 @@ class LandingController < ApplicationController
   def flowpulse
   end
 
+  def inside_adventure
+    response.set_header("X-Robots-Tag", "noindex, nofollow")
+    prototype = Rails.root.join("docs/private_prototypes/viste_html/inside-adventure.html").read
+    development_styles = <<~CSS
+      .development-banner{background:#f8e24c;color:#1b2b54;padding:10px 18px;text-align:center;font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+      .development-banner a{color:#1b2b54;font-weight:800;margin-left:10px;text-underline-offset:3px}
+    CSS
+    development_banner = '<aside class="development-banner">Brand in sviluppo su FlowPulse · contenuti, prezzi e percorsi sono ancora da verificare. <a href="/flowpulse">Torna a FlowPulse →</a></aside>'
+    prototype.sub!("</style>", "#{development_styles}</style>")
+    prototype.sub!("<body>", "<body>#{development_banner}")
+    prototype.sub!("<footer>WWW.????????.COM</footer>", '<footer><a class="lnk" href="/flowpulse">Inside Adventure · un Brand in sviluppo su FlowPulse</a></footer>')
+
+    render html: prototype.html_safe, layout: false
+  end
+
   def flowpulse_projects
     projects = FlowpulseProjectRegistry.load.fetch("projects", [])
     @flowpulse_projects = projects.select do |project|

@@ -35,7 +35,7 @@ module Brands
 
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :starts_at, presence: true, unless: :experience_tree_draft?
+  validates :starts_at, presence: true, unless: -> { experience_tree_draft? || unscheduled_request? }
   validates :calendar_key, :calendar_label, presence: true
   validates :kind, inclusion: { in: KINDS }
   validates :status, inclusion: { in: STATUSES }
@@ -50,6 +50,7 @@ module Brands
   validate :actual_end_after_actual_start
   validate :calendar_interval_does_not_overlap
   validate :participant_contact_is_a_person
+  validate :requested_contact_has_a_channel
   validate :access_modes_are_valid
   validate :free_access_is_exclusive
 
@@ -152,6 +153,17 @@ module Brands
       return if participant_contact.blank? || participant_contact.kind == "person"
 
       errors.add(:participant_contact, "deve essere una persona")
+    end
+
+    def requested_contact_has_a_channel
+      return unless unscheduled_request?
+      return if participant_contact&.email.present? || participant_contact&.phone.present?
+
+      errors.add(:participant_contact, "deve avere almeno un indirizzo email o un numero di telefono")
+    end
+
+    def unscheduled_request?
+      status == "requested" && !blocks_calendar? && participant_contact.present?
     end
 
     def experience_tree_draft?

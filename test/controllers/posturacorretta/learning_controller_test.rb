@@ -37,7 +37,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "header"
     assert_select "header img[src*='posturacorretta_home.png']", count: 1
     assert_select "header h1", text: "Inizia con PosturaCorretta"
-    assert_select "header", text: /6 capitoli/
+    assert_select "header", text: /7 capitoli/
     assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", count: 0
     assert_not_includes response.body, 'header class="border-b border-slate-200 bg-[#F6F7F4] p-4 sm:p-6 lg:p-8"'
     assert_select "nav[aria-label='Navigazione del corso']", count: 0
@@ -46,7 +46,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#capitoli.rounded-2xl", count: 1
     assert_select "h2", text: "Corso online"
     assert_select "p", text: "Studio in autonomia"
-    assert_select "#capitoli", text: /L'incontro con la salute e con le metodiche posturali/
+    assert_select "#capitoli", text: /La nostra idea di salute e l'incontro con le metodiche posturali/
     assert_select "#capitoli", text: /In preparazione/
     assert_select "#capitoli a", text: /Prima scheda esercizi e video/, count: 0
     assert_select "#capitoli span", text: "Capitolo 01"
@@ -132,8 +132,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "details > summary", text: /Inizia con PosturaCorretta/, minimum: 1
     assert_select "h3", text: "Intro: basi e fondamenti", count: 0
     assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", count: 0
-    assert_select "div", text: /L'incontro con la salute/
-    assert_select "div", text: /I benefici di una postura corretta/m
+    assert_select "div", text: /La nostra idea di salute e l'incontro con le metodiche posturali/
+    assert_select "div", text: /La storia comune e i benefici della postura/m
     assert_not_includes response.body, "Uscita "
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Come funziona", count: 0
@@ -170,7 +170,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
 
     assert_response :success
-    assert_select "h1", text: "L'incontro con la salute e con le metodiche posturali"
+    assert_select "h1", text: "La nostra idea di salute e l'incontro con le metodiche posturali"
     assert_includes response.body, "Il movimento è innato. Fin dalla culla"
     assert_not_includes response.body, "author_node_slug"
     assert_not_includes response.body, "publisher_node_slug"
@@ -180,7 +180,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] button[data-mobile-aside-target='toggle'][aria-controls='seme-aside']", text: /Indice/
     assert_select "#seme-aside[data-mobile-aside-target='panel']"
     assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='theory']", count: 5
-    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", count: 1
+    assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", count: 2
     assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='theory']", text: /Teoria/
     assert_select "nav[aria-label='Indice del corso'] [data-chapter-type='practical']", text: /Pratica/
   end
@@ -264,7 +264,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "benefici-postura-corretta")
 
       assert_response :success
-      assert_select "h1", text: "I benefici di una postura corretta"
+      assert_select "h1", text: "La storia comune e i benefici della postura"
       assert_select "a[href*='content_key=inizia-benefici-postura-corretta']", text: /DataCommitment/
     end
   end
@@ -491,7 +491,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
     assert_response :success
-    assert_select "#capitoli", text: /L'incontro con la salute e con le metodiche posturali/
+    assert_select "#capitoli", text: /La nostra idea di salute e l'incontro con le metodiche posturali/
     assert_select "#capitoli a[href='#{chapter_path}']", count: 0
 
     get chapter_path
@@ -501,7 +501,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get chapter_path
     assert_response :success
-    assert_select "h1", text: "L'incontro con la salute e con le metodiche posturali"
+    assert_select "h1", text: "La nostra idea di salute e l'incontro con le metodiche posturali"
   end
 
   test "the latest completed editorial commitment can return a chapter to draft" do

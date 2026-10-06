@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   get "esperienze" => redirect("/eventi", status: 301), as: :esperienze
   get "esperienze/:id" => redirect("/eventi/%{id}", status: 301), as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
+  get "flowpulse/inside-adventure" => "landing#inside_adventure", as: :inside_adventure
   get "flowpulse/progetti" => "landing#flowpulse_projects", as: :flowpulse_projects
   get "flowpulse/professionisti" => "landing#flowpulse_professionals", as: :flowpulse_professionals
   get "flowpulse/sviluppo" => "flowpulse/development#index", as: :flowpulse_development
@@ -66,6 +67,9 @@ Rails.application.routes.draw do
   get "giardino-del-corpo" => redirect("/il-giardino-del-corpo", status: 301)
   direct(:il_giardino_del_corpo) { "/il-giardino-del-corpo" }
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
+  get "corpo-e-coscienza" => "brands/corpo_e_coscienza#index", as: :corpo_e_coscienza
+  get "corpo-e-coscienza/localita" => "brands/corpo_e_coscienza#locations", as: :corpo_e_coscienza_locations
+  post "corpo-e-coscienza/richieste" => "brands/corpo_e_coscienza#create_request", as: :corpo_e_coscienza_requests
   get "percorso-integrato/docs" => "brands/percorso_integrato#docs", as: :percorso_integrato_docs
   get "percorso-integrato/professionisti" => "brands/percorso_integrato#professionals", as: :percorso_integrato_professionals
   get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional

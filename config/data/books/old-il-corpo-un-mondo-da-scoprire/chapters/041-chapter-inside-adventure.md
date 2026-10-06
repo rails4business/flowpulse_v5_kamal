@@ -3,6 +3,7 @@ title: "Inside Adventure"
 description: "Capacità cognitive, stati mentali e apprendimento nell’era dell’IA"
 color: "arancione"
 access: "hidden"
+source_version: "il-corpo-un-mondo-da-scoprire/versions/2026-10-03-versione-con-appunti.md"
 ---
 
 # Inside Adventure
@@ -60,3 +61,53 @@ Se leggendo queste righe ti viene un po’ di vertigine,
 e sei sospeso tra la voglia di chiudere il libro e la curiosità di capire dove si va a parare,
 sei nel punto giusto, se la tua voglia di ricerca e le domande vincono sulla paura siamo pronti, è così che tutte le storie hanno inizio come ci spiega campbell nel viaggio dell'eroe, la vita è olografica ci dicono e il viaggio dell'eroe e il ciclo della natura delle stagioni, dell'anno ci raccontano la storia di ogni vita, che ha un inizio e una fine o se si vuole suddividere un ciclo in più parti a un inizio poi arriva una trasformazione e c'è una fine o se la vogliamo vedere su 4 parti che ha una primavera, un estate un autunno, e un inverno, tutto dipende dal tempo, dalla suddivisione che vogliamo dare.
 Questo comunque è il viaggio che ci accomuna poi ognuno ha la sua storia, e ogni storia è una verità che arrichisce quella degli altri per questo, come Insegna Georges Courchinoux prima di partire per un viaggio sarebbe giusto presentarsi magari mettendosi in cerchio, e sarebbe bello che ognuno raccontasse la sua storia, perchè no davanti a un fuoco sarebbe ancora meglio, ora questo non è possibile ma magari un giorno ci potremo incontrare in uno dei molti eventi o gruppi o magari in una delle molte scuole sulla postura o dei molti agriturismi rigenerativi che spero possano nascere grazie all'ispirazione di questo libro e magari potresti essere tu a dirigere uno di questi, così ognuno potrebbe racconterai la propria storia non davanti a uno schermo ma davanti a volti persone, usando non solo 2 sensi la vista e l'udito ma tutti i sensi di cui l'essere umano è dotato, ognuno raccontando la propria storia racconta la propria verità e può arricchire e completare quella degli altri non è solo l'IA che funziona così questo vale anche per le persone, la ricchezza nell'incontrare persone è che ognuno porta un pezzo del puzzle che potrebbe essere importante per te.
+
+
+I ruoli di un individuo all’interno di un gruppo
+La formazione per conoscerci meglio. Modelli e chiavi di lettura per comprendere come interagiamo con le altre persone.
+I ruoli di un individuo all’interno di un gruppo
+Una nota importante: mappe simboliche (da usare bene)
+Nel mio percorso ho incontrato anche mappe “non scientifiche” ma potenti come linguaggio e come immaginario: taoismo, confucianesimo, buddhismo, ruote simboliche, archetipi, carte, tetractys, tradizioni antiche.
+Queste mappe possono essere utili per tre motivi: - aiutano a dare un linguaggio a esperienze interne difficili da descrivere, - possono diventare strumenti di riflessione, motivazione e senso, - a volte funzionano come “interfacce” per parlare di cicli, equilibrio, disciplina, attenzione.
+Ma hanno anche un rischio: se le uso male, diventano parole deboli (belle, ma vaghe) e possono creare confusione.
+Per questo, in questo libro-mappa io scelgo una regola semplice: - qui uso soprattutto strumenti pratici e verificabili (movimento, abitudini, diario, professionisti, progressi), - e rimando le mappe simboliche a un’area dedicata: Inside Adventure.
+Come le useremo in modo sano
+Le useremo come “secondo livello”, solo quando: 1) una pratica concreta è già chiara (cosa fai, quanto, quando, perché), 2) il simbolo serve a sostenere la continuità, non a sostituire la realtà.
+Se ti interessa questa parte, sappi che non è “fuffa”: è un linguaggio. Ma va trattato come si tratta il fuoco: con rispetto e con metodo.
+Nota di confine (per non fare confusione)
+In questo libro distinguiamo due livelli:
+Livello pratico (qui): strumenti, abitudini, diario, percorsi, professionisti.
+Livello simbolico e di formazione profonda (dopo): mappe archetipiche, tradizioni, filosofia, modelli di apprendimento avanzati.
+Il simbolico non è “sbagliato”. Semplicemente è un secondo livello: funziona meglio quando hai già costruito le fondamenta.
+I ruoli di un individuo all’interno di un gruppo
+Come abbiamo visto nel lavoro sulla conoscenza del lavoro sull’ascolto e la comprensione degli aspetti emotivi mentali energetici sono tanti i modelli che vengono proposti e l’aspetto simbolico è importante
+una volta che ci vengono descritti da questi modelli. ci permettono di riconoscere parti di noi e capire quando entrano in atto così da avere una maggior comprensione del nostro comportamento
+e una volta viste le cose sono automaticamente superate
+Come la storia dei vampiri che alla luce del sole si sciolgono perchè se vediamo cosa ci toglie energia se ce ne accorgiamo automaticamente ce ne liberiamo
+è proprio il concetto di trauma che non è solo il fatto di aver preso un colpo che ha provocato danni fisici o psichici è il fatto di avere avuto un momento della vita in cui sono arrivate forze che non riuscivamo a gestire perchè non eravamo pronti e queste forze
+hanno causato dei cambiamenti o le abbiamo chiuse in stanze dove magari c’era qualcosa di importante
+quando siamo pronti ad affrontarli e guardarli in faccia a parlargli, a riaprire la stanza questi traumi che erano cose dimenticate come dei demoni o delle applicazioni di un computer che sono attive e rubano ram al processore senza che ce ne accorgiamo.
+Utilizzare modelli quali l’iching i tarocchi lo zodiaco, la musica il tocco la poesia l’arte con occhi nuovi e in modo oculato può aiutarci a scoprire queste e a vedere che noi siamo qualcosa di più grande…
+infatti ogni volta che scopriamo qualcosa è come se il nostro cerchio si allarghi… il problema è che poi se siamo troppo larghi dobbiamo adattare le nostre corazze proprio come i crostacei che fanno la muta o i serpenti che cambiano la pelle altrimenti rimaniamo schiacciati
+anche questi argomenti che appunto ci aiutano una volta capito come agiscono le parti interne di noi ci aiutano a vedere il rapporto con gli altri in un altro modo forse le tragedie i miti greci e le costellazioni famigliare una forma di teatro sono quello che rappresenta meglio il tutto e ora detto ciò abbiamo svelato un altra sfera e siamo pronti per vedere la mappa finale e andare ad approfondire questa antica mappa che qui troviamo in modo rivisitato che va a vedere alcuni punti per l’evoluzione dell’uomo.
+
+Yin yang
+IL modello dei 3 cervelli 
+L’influenza tra istinto relazione pensieri
+Il. Modello dei 4 cervelli
+Cervello lento cervello veloce
+Destra e sx 
+4 parti del cervello anteriore posteriore orientato ai task alle persone aperto focalizzato 
+Steven pinker siamo fatti di parole
+Sensazione pensiero sentimento intuito 
+Chi cosa come i tre centri presentazione della apple
+Simbolismo del corpo umano i 4 mondi emanazione creazione formazione
+Pensare come leonardo
+L’interprete del cervello
+Dataclisma
+I meridiani come ministri
+Lo stato e i meridiani
+Tarocchi e la storia dell’eroe
+Il ciclo delle stagioni
+Alieni quando ci stacchiamo dal corpo
+La visione dei corpi sottili

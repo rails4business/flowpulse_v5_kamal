@@ -19,6 +19,17 @@
 
   <%= render "landing/flowpulse_ecosystem_map" %>
 
+  <section class="border-t border-violet-200 bg-violet-950 px-5 py-16 text-white">
+    <div class="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.2em] text-violet-300">Brand in sviluppo</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Inside Adventure</h2>
+        <p class="mt-4 max-w-3xl text-lg leading-8 text-violet-100">Il sentiero dedicato al viaggio interiore: capacità, mappe personali, direzione e incontri. È già collegato all’ecosistema, mentre il percorso viene ordinato e verificato.</p>
+      </div>
+      <%= link_to "Esplora l’anteprima →", inside_adventure_path, class: "gdc-button gdc-button--accent rounded-full px-6 py-3 text-sm font-black" %>
+    </div>
+  </section>
+
   <section class="border-t border-slate-200 bg-blue-50"><div class="mx-auto max-w-4xl px-5 py-16 text-center"><p class="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Una piattaforma, molti Brand</p><h2 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Flowpulse sostiene la struttura. I contenuti restano nei progetti.</h2><p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Gli articoli sul software, sui processi e sulla costruzione dell’ecosistema sono pubblicati da Rails4Business. Flowpulse rimane la pagina di presentazione della webapp.</p><%= link_to "Contenuti futuri Rails4Business →", rails4b_contents_path, class: "mt-7 inline-flex rounded-full bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-700" %></div></section>
 
   <footer class="border-t border-slate-200 px-5 py-6"><div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-5 text-sm"><%= render "shared/changelog_footer_link" %><a href="https://github.com/rails4business/flowpulse_v5_kamal" target="_blank" rel="noopener noreferrer" class="font-bold text-slate-600 hover:text-blue-700">Codice su GitHub ↗</a><% if Current.user&.superadmin_user? %><%= link_to "Prototipo progetti e sovranità", admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html"), class: "font-bold text-violet-700 hover:text-violet-900" %><% end %></div></footer>

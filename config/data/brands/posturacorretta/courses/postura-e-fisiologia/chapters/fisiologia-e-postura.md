@@ -27,3 +27,19 @@ per l'elaborazione, movimento per l'efferenza e l'azione.
 - Come riconoscere una sensazione senza trasformarla subito in una diagnosi?
 - Quali osservazioni possono essere condivise con il professionista?
 - Come verificare nel tempo se una pratica sta aiutando?
+
+
+
+5) Stai già facendo qualcosa per rimanere in salute? Se si cosa?
+
+6) Hai un programma?
+
+7) Segui dei corsi? 
+
+8) Ti sta seguendo qualche professionista sanitario (medico fisioterapista)?
+
+9) Ti stanno seguendo altri professionisti del benessere, fitness o altro (massaggi shiatsu altri trattamenti sulla guarigione) 
+
+10) Pratichi sport palestra qualche disciplina musica danza lotta? 
+
+

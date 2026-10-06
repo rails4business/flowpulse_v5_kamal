@@ -12,6 +12,14 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Coltiva il corpo, le capacità e le relazioni."
     assert_select "#esperienze"
+    assert_select "#flowpulse"
+    assert_select "#flowpulse h3", text: "Inside Adventure"
+    assert_select "#flowpulse a[href='#{inside_adventure_path}']", text: /Inside Adventure/
+    assert_select "#flowpulse a[href='#{cantachetipassa_path}']"
+    assert_select "#flowpulse a[href='#{rails4b_path}']"
+    assert_select "#flowpulse a[href='#{genera_impresa_path}']"
+    assert_select "#flowpulse a[href='#{impegno_path}']"
+    assert_select "#flowpulse a[href='#{flowpulse_path}']", text: /Apri FlowPulse/
     assert_select "#eventi"
     assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=contenuti']", text: "Contenuti"
     assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=eventi']", text: "Eventi"
@@ -19,7 +27,11 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#luoghi h3", text: "Giardino del Corpo"
     assert_select "a[href='#{posturacorretta_path}']", minimum: 1
     assert_select "a[href='#{flowpulse_path}']", minimum: 1
-    assert_select "a[href='https://il-giardinio-del-corpo-5xsl9ik.gamma.site/']", text: /Vecchia versione/
+    assert_select "a[href='https://il-giardino-del-corpo-5xsl9ik.gamma.site/']", text: /Vecchia versione/
+
+    get giardino_del_corpo_path(tab: "contenuti", anchor: "eventi")
+    assert_response :success
+    assert_select "#eventi", text: /La linea invisibile/
   end
 
   test "shows Flowpulse only as the platform presentation" do
@@ -30,6 +42,20 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{rails4b_path}']", text: /Rails4Business/, minimum: 1
     assert_select "a[href='#{eventi_path}']", count: 0
     assert_select "a[href^='/flowpulse/contenuti']", count: 0
+    assert_select "a[href='#{inside_adventure_path}']", text: /Esplora l’anteprima/
+  end
+
+  test "shows Inside Adventure as a Flowpulse brand in development" do
+    get inside_adventure_path
+
+    assert_response :success
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+    assert_select "h1", text: "Animum debes mutare, non caelum."
+    assert_select ".development-banner", text: /Brand in sviluppo su FlowPulse/
+    assert_select ".steps .step", count: 5
+    assert_select "#quizbox"
+    assert_select "a[href='#{flowpulse_path}']", minimum: 1
+    assert_select "footer", text: /Brand in sviluppo su FlowPulse/
   end
 
   test "shows the projects prototype link only to a superadmin" do

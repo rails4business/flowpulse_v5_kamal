@@ -158,6 +158,23 @@ default: &default
   www.ilgiardinodelcorpo.it:
     canonical_host: ilgiardinodelcorpo.it
 
+  corpoecoscienza.org:
+    locale: it
+    target_controller: brands/corpo_e_coscienza
+    target_action: index
+    primary: true
+    node_slug: corpoecoscienza
+    operational_roles:
+      - segreteria
+      - professionista
+    site_title: "Corpo e Coscienza — Metodo Georges Courchinoux"
+    site_description: "Metodo Georges Courchinoux, esperienze, formazione per professionisti della salute e del benessere e rete dei professionisti formati."
+    logo_full_url: "https://ik.imagekit.io/posturacorretta/sub_brands/corpo-e-coscienza/logo-corpo-e-coscienza.png"
+    social_image_url: "https://ik.imagekit.io/posturacorretta/sub_brands/corpo-e-coscienza/logo-corpo-e-coscienza.png"
+
+  www.corpoecoscienza.org:
+    canonical_host: corpoecoscienza.org
+
 
 development:
   <<: *default
