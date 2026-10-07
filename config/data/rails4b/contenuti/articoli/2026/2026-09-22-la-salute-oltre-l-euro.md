@@ -30,7 +30,7 @@ Il problema quindi non è semplicemente «come facciamo ad accettare Dash?», ma
 
 ## Euro e Dash possono convivere
 
-Non è necessario sostituire improvvisamente l'euro. Possiamo costruire una **economia a doppio circuito**.
+L'obiettivo non è la sostituzione dell'euro. Possiamo costruire una **economia a doppio circuito**.
 
 ```text
 EURO + DASH + SCAMBIO DI SERVIZI + TEMPO + COMPETENZE

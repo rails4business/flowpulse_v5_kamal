@@ -21,8 +21,9 @@
     </div>
 
     <% if @article["format"] == "video" %>
-      <div class="mt-10 aspect-video overflow-hidden rounded-2xl bg-slate-100">
-        <iframe src="https://www.youtube.com/embed/<%= @article.fetch("slug") %>" title="<%= @article.fetch("title") %>" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen class="h-full w-full"></iframe>
+      <div class="privacy-embed mt-10 aspect-video overflow-hidden rounded-2xl bg-slate-100">
+        <iframe data-privacy-content="functionality" data-privacy-category="functionality" data-privacy-embed-src="https://www.youtube-nocookie.com/embed/<%= @article.fetch("slug") %>" title="<%= @article.fetch("title") %>" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen class="h-full w-full" hidden></iframe>
+        <div class="privacy-embed__placeholder" data-privacy-placeholder="functionality"><strong>Video YouTube</strong><p>Il video viene caricato soltanto dopo la tua scelta.</p><button type="button" data-privacy-enable="functionality">Carica il video</button></div>
       </div>
     <% end %>
 

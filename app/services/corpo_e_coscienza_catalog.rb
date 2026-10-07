@@ -16,6 +16,7 @@ class CorpoECoscienzaCatalog
       site: YAML.safe_load_file(ROOT.join("site.yml"), permitted_classes: [], aliases: false) || {},
       method_markdown: ROOT.join("pages/metodo.md").read,
       founder_markdown: ROOT.join("pages/georges-courchinoux.md").read,
+      training_markdown: ROOT.join("pages/formazione.md").read,
       privacy_markdown: ROOT.join("pages/privacy.md").read,
       professionals: professionals,
       professional_map_points: professionals.filter_map do |professional|

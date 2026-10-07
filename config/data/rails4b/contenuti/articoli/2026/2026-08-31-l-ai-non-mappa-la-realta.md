@@ -419,9 +419,9 @@ Tra materia ed energia.
 
 Tra **Yin e Yang**.
 
-Non è necessario sostenere che questi linguaggi descrivano scientificamente la stessa cosa.
+Questi linguaggi cercano di descrivere gli stessi fenomeni partendo da culture diverse.
 
-Possiamo però accorgerci che, in epoche e culture differenti, l'essere umano ha continuamente cercato di comprendere il rapporto tra:
+In epoche e culture differenti, l'essere umano ha continuamente cercato di comprendere il rapporto tra:
 
 **ciò che esiste**
 

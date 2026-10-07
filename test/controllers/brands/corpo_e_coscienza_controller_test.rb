@@ -41,8 +41,24 @@ module Brands
       assert_includes response.body, "Trattamenti individuali"
       assert_includes response.body, "Georges Courchinoux"
       assert_includes response.body, "professionisti della salute e del benessere"
+      assert_includes response.body, "Il Secondo e il Terzo Ciclo sono riservati ai professionisti della salute"
       assert_includes response.body, "cecgc@digicolorfree.net"
       assert_select "a[href='#{corpo_e_coscienza_privacy_path}']", text: "informativa privacy"
+      assert_select "#metodo h2", text: "Le quattro direzioni di lavoro"
+      assert_select ".cec-sticky-nav a[href='#metodo']", text: "Il metodo"
+      assert_select ".cec-sticky-nav", text: /Il metodo.*Inizia un percorso.*Trova un professionista.*Formazione.*Contatti/m
+      assert_select ".cec-sticky-nav", text: /Per le persone|Per i professionisti|Entra nella rete/, count: 0
+      assert_select "#formazione a", text: "Sei già formato? Registrati"
+      assert_select ".cec-sticky-nav a[href='#richiesta']", text: "Contatti"
+      assert_select ".cec-training-program h1", text: "Piano di formazione"
+      assert_select ".cec-training-program h2", text: "Primo Ciclo"
+      assert_select ".cec-training-program", text: /12 meridiani principali.*Ritmologia stagionale.*Posture e autoposture/m
+      assert_select ".privacy-center__banner[hidden]"
+      assert_select ".privacy-center__dialog"
+      assert_select "[data-privacy-placeholder='functionality']", text: /Carica la mappa/
+      assert_select "[data-privacy-content='functionality'][hidden]#cec-professionals-map"
+      assert_select "script[src*='unpkg.com/leaflet']", count: 0
+      assert_select "template[data-privacy-src*='unpkg.com/leaflet']", count: 1
     end
 
     test "shows the privacy information for the request form" do

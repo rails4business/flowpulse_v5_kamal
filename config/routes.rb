@@ -281,6 +281,7 @@ Rails.application.routes.draw do
     get "development", to: "development#index", as: :development
     get "development/:slug", to: "development#show", as: :development_entry,
         constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+    get "privacy", to: "privacy#index", as: :privacy
     get "data-commitments", to: "data_commitments#index", as: :data_commitments
     patch "data-commitments/:id/state", to: "data_commitments#update_state", as: :data_commitment_state
   end

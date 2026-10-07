@@ -75,7 +75,7 @@ Integrato; Il Giardino del Corpo; movimento, meditazione e massaggio;
 nutrimento, piante e rimedi; canto e musica; studio e formazione;
 incontri ed eventi.
 
-Non è necessario chiamarlo *comunità* in partenza.
+
 
 > **Incontri ripetuti + pratiche condivise + ritmo possono far nascere
 > naturalmente una comunità.**

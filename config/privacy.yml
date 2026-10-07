@@ -1,0 +1,52 @@
+default: &default
+  version: "2026-10-07"
+  prompt: false
+  policy_path:
+  categories:
+    necessary:
+      enabled: true
+      label: Necessari
+      description: Accesso, sicurezza e funzionamento essenziale del sito.
+    functionality:
+      enabled: false
+      label: Funzionali
+      description: Mappe, video e servizi esterni richiesti dalla persona.
+    analytics:
+      enabled: false
+      label: Analitici
+      description: Misurazione aggregata dell’utilizzo del sito.
+    marketing:
+      enabled: false
+      label: Marketing
+      description: Personalizzazione e comunicazioni promozionali.
+
+  domains:
+    corpoecoscienza.org:
+      prompt: true
+      policy_path: /corpo-e-coscienza/privacy
+      categories:
+        functionality:
+          enabled: true
+          services:
+            - Leaflet
+            - OpenStreetMap
+    markpostura.it: &youtube_domain
+      prompt: true
+      categories:
+        functionality:
+          enabled: true
+          services:
+            - YouTube in modalità privacy avanzata
+    markpostura.com:
+      <<: *youtube_domain
+    posturacorretta.org:
+      <<: *youtube_domain
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

@@ -1,0 +1,29 @@
+<% config = privacy_preferences_config %>
+<div class="privacy-center" data-controller="privacy-center" data-privacy-center-config-value="<%= config.to_json %>">
+  <aside class="privacy-center__banner" data-privacy-center-target="banner" hidden aria-label="Preferenze privacy">
+    <button type="button" class="privacy-center__close" aria-label="Continua solo con gli strumenti necessari" data-action="privacy-center#necessaryOnly">×</button>
+    <strong>Una scelta semplice</strong>
+    <p>Usiamo strumenti necessari al sito. Con il tuo permesso possiamo caricare anche mappe, video o altri servizi esterni.</p>
+    <div class="privacy-center__actions">
+      <button type="button" data-action="privacy-center#necessaryOnly">Solo necessari</button>
+      <button type="button" data-action="privacy-center#open">Personalizza</button>
+      <button type="button" data-action="privacy-center#acceptAll">Accetta tutti</button>
+    </div>
+  </aside>
+
+  <button type="button" class="privacy-center__trigger" data-action="privacy-center#open" aria-label="Apri privacy e preferenze">Privacy e preferenze</button>
+
+  <dialog class="privacy-center__dialog" data-privacy-center-target="dialog" data-action="click->privacy-center#close">
+    <div class="privacy-center__panel" data-action="click->privacy-center#stop">
+      <div class="privacy-center__heading"><div><small>FlowPulse Privacy Center</small><h2>Privacy e preferenze</h2></div><button type="button" aria-label="Chiudi" data-action="privacy-center#close">×</button></div>
+      <p>Puoi cambiare scelta in qualsiasi momento. Le preferenze valgono soltanto per questo dominio.</p>
+      <div class="privacy-center__categories">
+        <% config.fetch("categories").each do |key, category| %>
+          <% next unless key == "necessary" || category.fetch("enabled", false) %>
+          <label><span><strong><%= category.fetch("label") %></strong><small><%= category.fetch("description") %><% if category["services"].present? %> Servizi: <%= category.fetch("services").join(", ") %>.<% end %></small></span><input type="checkbox" value="<%= key %>" data-privacy-center-target="category" <%= "checked disabled" if key == "necessary" %>></label>
+        <% end %>
+      </div>
+      <div class="privacy-center__panel-actions"><% if config["policy_path"].present? %><%= link_to "Leggi l’informativa", config.fetch("policy_path") %><% end %><button type="button" data-action="privacy-center#necessaryOnly">Solo necessari</button><button type="button" class="privacy-center__save" data-action="privacy-center#save">Salva preferenze</button></div>
+    </div>
+  </dialog>
+</div>

@@ -1,12 +1,21 @@
 <% content_for :title, @site.fetch("title") %>
 <% content_for :description, @site.fetch("description") %>
 <% content_for :head do %>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <template data-privacy-category="functionality" data-privacy-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></template>
+  <template data-privacy-category="functionality" data-privacy-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></template>
 <% end %>
 
 <main class="cec-page">
   <div class="cec-language-bar"><div class="cec-wrap"><span lang="it" aria-label="Lingua: italiano">IT · Italiano</span></div></div>
+  <nav class="cec-sticky-nav" aria-label="Sezioni Corpo e Coscienza">
+    <div class="cec-wrap cec-sticky-nav__inner">
+      <a href="#metodo">Il metodo</a>
+      <a href="#partecipa">Inizia un percorso</a>
+      <a href="#professionisti">Trova un professionista</a>
+      <a href="#formazione">Formazione</a>
+      <a href="#richiesta">Contatti</a>
+    </div>
+  </nav>
   <section class="cec-hero">
     <div class="cec-wrap cec-hero__grid">
       <div>
@@ -64,29 +73,20 @@
     </div>
   </section>
 
-  <section id="formazione" class="cec-section cec-section--soft">
-    <div class="cec-wrap cec-callout">
-      <div>
-        <p class="cec-eyebrow">Per i professionisti</p>
-        <h2>Vuoi conoscere il percorso formativo?</h2>
-        <p>La formazione è rivolta ai professionisti della salute e del benessere. Per le informazioni ufficiali puoi scrivere direttamente alla segreteria. Se sei già un professionista formato, puoi chiedere di entrare nella rete pubblica.</p>
-      </div>
-      <div class="cec-actions">
-        <%= mail_to @site.fetch("training_email"), "Info per la formazione", class: "cec-button cec-button--primary" %>
-        <%= link_to "Sono formato e voglio registrarmi", corpo_e_coscienza_path(request_kind: "professional_application", anchor: "richiesta"), class: "cec-button cec-button--light" %>
-      </div>
-    </div>
-  </section>
-
-  <section id="professionisti" class="cec-section">
+  <section id="professionisti" class="cec-section cec-section--soft">
     <div class="cec-wrap">
       <p class="cec-eyebrow">Rete</p>
       <h2>Trova un professionista</h2>
       <p>La mappa raccoglierà progressivamente le località dei professionisti formati e autorizzati alla pubblicazione.</p>
       <div class="cec-map-shell" data-turbo-cache="false">
-        <div id="cec-professionals-map" class="cec-map" data-professionals="<%= @professional_map_points.to_json %>" aria-label="Mappa dei professionisti Corpo e Coscienza"></div>
+        <div id="cec-professionals-map" class="cec-map" data-privacy-content="functionality" data-professionals="<%= @professional_map_points.to_json %>" aria-label="Mappa dei professionisti Corpo e Coscienza" hidden></div>
+        <div class="cec-map-consent" data-privacy-placeholder="functionality">
+          <strong>Mappa dei professionisti</strong>
+          <p>La mappa usa Leaflet e OpenStreetMap. Verrà caricata soltanto dopo la tua scelta.</p>
+          <button type="button" class="cec-button cec-button--primary" data-privacy-enable="functionality">Carica la mappa</button>
+        </div>
         <% if @professional_map_points.empty? %>
-          <p class="cec-map__empty">La registrazione dei professionisti formati è in corso.</p>
+          <p class="cec-map__empty" data-privacy-content="functionality" hidden>La registrazione dei professionisti formati è in corso.</p>
         <% end %>
       </div>
       <% if @professionals.any? %>
@@ -111,12 +111,33 @@
     </div>
   </section>
 
+  <section id="formazione" class="cec-section">
+    <div class="cec-wrap cec-callout">
+      <div>
+        <p class="cec-eyebrow">Per i professionisti</p>
+        <h2>Vuoi conoscere il percorso formativo?</h2>
+        <p>Il Primo Ciclo è rivolto ai professionisti della salute e del benessere. Il Secondo e il Terzo Ciclo sono riservati ai professionisti della salute. Per le informazioni ufficiali puoi scrivere direttamente alla segreteria. Se sei già un professionista formato, puoi chiedere di entrare nella rete pubblica.</p>
+      </div>
+      <div class="cec-actions">
+        <%= mail_to @site.fetch("training_email"), "Info per la formazione", class: "cec-button cec-button--primary" %>
+        <%= link_to "Sei già formato? Registrati", corpo_e_coscienza_path(request_kind: "professional_application", anchor: "richiesta"), class: "cec-button cec-button--light" %>
+      </div>
+    </div>
+    <div class="cec-wrap cec-training-program cec-prose">
+      <%= markdown(@training_markdown) %>
+      <div class="cec-actions">
+        <%= mail_to @site.fetch("training_email"), "Richiedi informazioni sulla formazione", class: "cec-button cec-button--primary" %>
+        <%= link_to "Lascia una richiesta", corpo_e_coscienza_path(request_kind: "training", anchor: "richiesta"), class: "cec-button cec-button--light" %>
+      </div>
+    </div>
+  </section>
+
   <section id="richiesta" class="cec-section">
     <div class="cec-wrap cec-request-grid">
       <div>
         <p class="cec-eyebrow">Contatti</p>
         <h2>Lascia una richiesta</h2>
-        <p>Non è necessario registrarsi. La richiesta viene affidata al responsabile di Corpo e Coscienza e resta distinta dal calendario degli appuntamenti.</p>
+        <p>Risponderemo al più presto.</p>
         <p class="cec-note">Non inserire diagnosi, referti o altri dati sanitari nel messaggio.</p>
       </div>
 
@@ -238,6 +259,7 @@
     }
 
     document.addEventListener("turbo:load", initialiseProfessionalsMap)
+    window.addEventListener("privacy:changed", initialiseProfessionalsMap)
     document.addEventListener("turbo:before-cache", destroyProfessionalsMap)
     document.addEventListener("DOMContentLoaded", initialiseProfessionalsMap)
 

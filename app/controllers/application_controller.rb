@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   helper_method :active_data_commitment
   helper_method :public_node_visible?, :public_node_navigable?, :public_node_accessible_children
   helper_method :pwa_site_config
+  helper_method :privacy_preferences_config
   before_action :resume_session
   before_action :ensure_active_role_assignment
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
@@ -28,6 +29,12 @@ class ApplicationController < ActionController::Base
 
     def pwa_site_config
       @pwa_site_config ||= Pwa::SiteConfig.for(request:, domain: current_domain)
+    end
+
+    def privacy_preferences_config
+      host = current_domain&.hostname.presence || current_domain_host
+      host = "corpoecoscienza.org" if controller_path == "brands/corpo_e_coscienza"
+      @privacy_preferences_config ||= PrivacyCatalog.for(host: host)
     end
 
     def current_profile

@@ -1,0 +1,65 @@
+<% content_for :title, "Privacy · #{@brand.title}" %>
+
+<main class="brand-admin-shell max-w-6xl">
+  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Percorso">
+    <%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %><span>/</span><span>Privacy</span>
+  </nav>
+
+  <header class="mb-8 max-w-3xl">
+    <p class="text-xs font-black uppercase tracking-[.14em] text-teal-700">Impostazioni del dominio</p>
+    <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950"><%= @brand.title %> · Privacy</h1>
+    <p class="mt-3 leading-7 text-slate-600">Questa è la checklist predefinita per pubblicare e mantenere il sito. Il Privacy Center gestisce la scelta tecnica dei visitatori; questa pagina ricorda quali informazioni devono essere verificate dal responsabile del Brand.</p>
+  </header>
+
+  <section class="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(18rem,.75fr)]">
+    <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 class="text-xl font-extrabold text-slate-950">Prima della pubblicazione</h2>
+      <ol class="mt-5 grid list-none gap-4 p-0">
+        <% [
+          ["Titolare e contatti", "Indicare chi tratta i dati, un recapito reale e l’eventuale responsabile privacy."],
+          ["Dati e finalità", "Descrivere quali dati vengono raccolti e perché: richieste, registrazione, acquisti, newsletter o altre funzioni."],
+          ["Servizi esterni", "Elencare mappe, video, statistiche, pagamenti e ogni fornitore che riceve dati dal browser o dall’applicazione."],
+          ["Conservazione", "Stabilire per quanto tempo vengono conservati richieste, account, log e consensi."],
+          ["Base giuridica e diritti", "Verificare base giuridica, modalità di revoca e canale per accesso, rettifica o cancellazione."],
+          ["Test del consenso", "Controllare che i servizi facoltativi non partano prima della scelta e che rifiutare sia semplice quanto accettare."],
+          ["Aggiornamenti", "Aggiornare versione e informativa quando cambiano strumenti, finalità o fornitori."]
+        ].each_with_index do |(title, description), index| %>
+          <li class="flex gap-3 rounded-xl bg-slate-50 p-4">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-teal-700 text-xs font-black text-white"><%= index + 1 %></span>
+            <span><strong class="block text-slate-900"><%= title %></strong><span class="mt-1 block text-sm leading-6 text-slate-600"><%= description %></span></span>
+          </li>
+        <% end %>
+      </ol>
+    </article>
+
+    <aside class="space-y-5">
+      <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
+        <h2 class="font-extrabold">Nota operativa</h2>
+        <p class="mt-2">Il pannello fornisce una base tecnica e organizzativa. I testi definitivi devono rispecchiare il funzionamento reale del dominio e vanno verificati quando vengono aggiunti nuovi servizi.</p>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="font-extrabold text-slate-950">Configurazione attiva</h2>
+        <% if @privacy_domains.any? %>
+          <div class="mt-4 space-y-4">
+            <% @privacy_domains.each do |entry| %>
+              <% config = entry.fetch(:config) %>
+              <div class="rounded-xl border border-slate-200 p-4">
+                <strong class="break-all text-sm text-slate-900"><%= entry.fetch(:domain).hostname %></strong>
+                <p class="mt-1 text-xs text-slate-500">Versione <%= config.fetch("version") %> · banner <%= config.fetch("prompt") ? "attivo" : "non necessario" %></p>
+                <ul class="mt-3 space-y-1 text-xs text-slate-600">
+                  <% config.fetch("categories").each do |key, category| %>
+                    <li><span aria-hidden="true"><%= category.fetch("enabled") ? "●" : "○" %></span> <%= category.fetch("label") %><% if category["services"].present? %>: <%= category.fetch("services").join(", ") %><% end %></li>
+                  <% end %>
+                </ul>
+                <% if config["policy_path"].present? %><%= link_to "Apri informativa →", config.fetch("policy_path"), class: "mt-3 inline-block text-xs font-black text-teal-700" %><% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="mt-3 text-sm leading-6 text-slate-600">Il Brand non ha ancora un dominio associato. La checklist resta valida; la configurazione sarà mostrata dopo il collegamento del dominio.</p>
+        <% end %>
+      </section>
+    </aside>
+  </section>
+</main>
