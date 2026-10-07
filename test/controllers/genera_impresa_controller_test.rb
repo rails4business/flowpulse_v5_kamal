@@ -39,4 +39,30 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Step del progetto"
   end
+
+  test "owner sees managed brands domains and FlowPulse administration links" do
+    owner = User.create!(email_address: "genera-owner@example.com", password: "password123", password_confirmation: "password123")
+    profile = owner.create_profile!(display_name: "Genera Owner", username: "genera_owner")
+    assignment = RoleAssignment.create!(profile: profile, role: :creator_of_worlds)
+    brand = Node.create!(title: "Brand del proprietario", slug: "brand-del-proprietario", role_assignment: assignment, status: "published")
+    Domain.create!(hostname: "brand-proprietario.test", node: brand, role_assignment: assignment, primary: true, active: true)
+    post session_url, params: { email_address: owner.email_address, password: "password123" }
+
+    get genera_impresa_url
+
+    assert_response :success
+    assert_select "#i-miei-brand h2", "I tuoi Brand e domini"
+    assert_select "#i-miei-brand h3", "Brand del proprietario"
+    assert_select "a[href='https://brand-proprietario.test']", text: /brand-proprietario\.test/
+    assert_select "a[href='#{brand_admin_nodes_path(brand.slug)}']", text: "Nodi"
+    assert_select "a[href='#{brand_admin_data_commitments_path(brand.slug)}']", text: "Richieste"
+    assert_select "a[href='#{brand_admin_privacy_path(brand.slug)}']", text: "Privacy"
+  end
+
+  test "public catalog does not expose the private control room" do
+    get genera_impresa_url
+
+    assert_select "#i-miei-brand", count: 0
+    assert_select "a", text: "I miei Brand", count: 0
+  end
 end

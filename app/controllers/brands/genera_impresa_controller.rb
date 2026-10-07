@@ -4,7 +4,9 @@ module Brands
     allow_unauthenticated_access
     before_action :load_catalog
 
-    def index; end
+    def index
+      @managed_brands = managed_brands
+    end
 
     def brand
       @brand = @catalog.brand(params[:slug])
@@ -24,6 +26,15 @@ module Brands
       @catalog = GeneraImpresaCatalog.load
       @site = @catalog.site
       @brands = @catalog.brands
+    end
+
+    def managed_brands
+      return [] unless Current.user
+
+      Node.includes(:domains, :role_assignment)
+        .select(&:brand?)
+        .select { |node| node.administered_by?(Current.user) }
+        .sort_by { |node| node.title.downcase }
     end
   end
 end

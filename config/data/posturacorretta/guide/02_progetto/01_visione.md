@@ -42,7 +42,7 @@ Nel progetto convivono due forme di competenza differenti e complementari.
 
 I **professionisti della salute e del benessere** sviluppano competenze verticali attraverso università, scuole professionali e percorsi specifici. Valutano e intervengono nel rispetto del proprio ruolo, della propria professione e delle responsabilità che ne derivano.
 
-Gli **insegnanti dell'Accademia PosturaCorretta** sviluppano una formazione educativa orizzontale. Aiutano le persone a conoscere il corpo, la fisiologia, le abitudini e i principi delle metodiche posturali, creando cultura, consapevolezza e collegamento.
+Gli **insegnanti dell'Accademia PosturaCorretta** sviluppano una formazione educativa orizzontale. Aiutano le persone a conoscere e riattivare i sistemi fisiologici, la fisiologia, le abitudini e i principi delle metodiche posturali, creando cultura, consapevolezza e collegamento.
 
 L'insegnante accompagna l'educazione al corpo; il professionista mette a disposizione la propria competenza specifica quando è necessaria. La collaborazione tra queste funzioni può rendere la persona più preparata a comprendere e seguire il proprio percorso.
 

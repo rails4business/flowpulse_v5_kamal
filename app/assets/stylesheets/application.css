@@ -5563,3 +5563,30 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .privacy-embed__placeholder strong { font-size:1.2rem; }
 .privacy-embed__placeholder p { margin:0; color:#64748b; font-size:.9rem; }
 .privacy-embed__placeholder button { justify-self:center; margin-top:.4rem; border:1px solid #315f52; border-radius:999px; padding:.6rem .9rem; color:#fff; background:#315f52; font-weight:750; cursor:pointer; }
+
+/* PosturaCorretta · presentazione per eventi sportivi.
+   Colori espliciti per evitare che i reset globali annullino i background dei link. */
+.pc-sport-events__button { display:inline-flex; min-height:3rem; align-items:center; justify-content:center; border:1px solid transparent; border-radius:999px; padding:.75rem 1.25rem; text-align:center; text-decoration:none; font-size:.875rem; font-weight:900; transition:background-color .15s ease, border-color .15s ease, transform .15s ease; }
+.pc-sport-events__button--primary { border-color:#1d4ed8 !important; color:#fff !important; background-color:#1d4ed8 !important; box-shadow:0 4px 12px rgb(29 78 216 / 18%); }
+.pc-sport-events__button--primary:hover { border-color:#1e40af !important; background-color:#1e40af !important; transform:translateY(-1px); }
+.pc-sport-events__button--secondary { border-color:#bfdbfe !important; color:#1e40af !important; background-color:#fff !important; }
+.pc-sport-events__button--secondary:hover { background-color:#eff6ff !important; }
+.pc-sport-events__step { display:inline-flex; width:2.5rem; height:2.5rem; align-items:center; justify-content:center; border-radius:999px; color:#fff !important; font-size:.875rem; font-weight:900; }
+.pc-sport-events__step--lesson { background-color:#1d4ed8 !important; }
+.pc-sport-events__step--treatment { background-color:#047857 !important; }
+.pc-sport-events__faq { padding:0; }
+.pc-sport-events__faq summary { display:flex; min-height:4.25rem; cursor:pointer; list-style:none; align-items:center; justify-content:space-between; gap:1rem; border-radius:.75rem; padding:.85rem .75rem; color:#0f172a; font-weight:900; }
+.pc-sport-events__faq summary::-webkit-details-marker { display:none; }
+.pc-sport-events__faq summary::marker { content:""; }
+.pc-sport-events__faq summary:hover { background-color:#f8fafc; }
+.pc-sport-events__faq summary:focus-visible { outline:3px solid rgb(37 99 235 / 25%); outline-offset:2px; }
+.pc-sport-events__faq-icon { width:1.35rem; height:1.35rem; flex:none; color:#2563eb; transition:transform .18s ease; }
+.pc-sport-events__faq[open] .pc-sport-events__faq-icon { transform:rotate(180deg); }
+.pc-sport-events__faq > p { margin:0; padding:0 3.25rem 1.35rem .75rem; color:#475569; font-size:.875rem; line-height:1.6; }
+
+/* Stato pubblico dell'area Lezioni PosturaCorretta. */
+.pc-lessons-coming-soon { display:flex; align-items:flex-start; gap:1rem; margin-bottom:2rem; border:1px solid #bfdbfe; border-radius:1rem; padding:1rem 1.15rem; color:#172554; background-color:#eff6ff !important; box-shadow:0 8px 24px rgb(30 64 175 / 7%); }
+.pc-lessons-coming-soon__badge { display:inline-flex; flex:none; align-items:center; border-radius:999px; padding:.35rem .65rem; color:#fff !important; background-color:#2563eb !important; font-size:.68rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+.pc-lessons-coming-soon h1 { margin:0; color:#172554; font-size:1rem; font-weight:900; line-height:1.35; }
+.pc-lessons-coming-soon p { max-width:52rem; margin:.25rem 0 0; color:#475569; font-size:.875rem; line-height:1.55; }
+@media (max-width:560px) { .pc-lessons-coming-soon { display:grid; gap:.65rem; } .pc-lessons-coming-soon__badge { justify-self:start; } }

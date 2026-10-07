@@ -296,6 +296,23 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Collabora con noi"
   end
 
+  test "renders the presentation for sport event organisers" do
+    get posturacorretta_eventi_sportivi_url
+
+    assert_response :success
+    assert_select "h1", "Porta l’educazione alla salute nel tuo evento sportivo o nella tua società"
+    assert_select "img[src*='posturacorretta-eventi-sportivi']"
+    assert_select "#esperienza h3", text: "Una scheda iniziale per migliorare la postura"
+    assert_select "#esperienza h3", text: "Un trattamento dimostrativo"
+    assert_select "#domande details", count: 6
+    assert_select "#domande summary svg.pc-sport-events__faq-icon", count: 6
+    assert_select "#percorso-strutturato h3", text: "Un ciclo di 3 o 5 incontri"
+    assert_select "#percorso-strutturato a[href^='mailto:markpostura@gmail.com']", text: "Parliamo di un percorso strutturato"
+    assert_includes response.body, "senza essere obbligata a lasciare i contatti"
+    assert_select "a[href='#{posturacorretta_collabora_professionisti_path}']", text: /Informazioni per i professionisti/
+    assert_select "a[href^='mailto:markpostura@gmail.com']", text: "Presentaci il tuo evento"
+  end
+
   test "should get progetti" do
     get posturacorretta_progetti_url
     assert_response :success

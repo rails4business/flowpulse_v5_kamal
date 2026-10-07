@@ -277,6 +277,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_student_dashboard_path
     assert_response :success
+    assert_select "section[aria-label='Stato Lezioni PosturaCorretta']", text: /In arrivo.*Stiamo completando Lezioni PosturaCorretta/m
     assert_select "nav[aria-label='Lezioni PosturaCorretta'] a", text: "Programma"
     assert_select "nav[aria-label='Lezioni PosturaCorretta'] a[href='#{posturacorretta_insegnanti_path}']", text: "Insegnanti"
     assert_select "h2", text: "Programmi attivi", count: 0
@@ -350,6 +351,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_student_appointments_path
     assert_response :success
+    assert_select "section[aria-label='Stato Lezioni PosturaCorretta']", text: /In arrivo/
     assert_select "a[href='#{posturacorretta_student_appointments_path}']", text: "Appuntamenti"
     assert_select "h2", text: "I tuoi appuntamenti"
     assert_select "h3", text: "Prossimi"

@@ -1,0 +1,123 @@
+<% content_for :title, "Postura nello sport" %>
+<% content_for :description, "Un percorso di educazione alla salute che porta negli eventi la conoscenza del corpo, delle metodiche posturali e dei professionisti." %>
+<% content_for :landing_nav do %><%= render "posturacorretta/header" %><% end %>
+
+<div class="pc-sport-events min-h-screen bg-white text-slate-950">
+  <header class="overflow-hidden border-b border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[.95fr_1.05fr]">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[.18em] text-blue-700">Per enti, società sportive e organizzatori</p>
+        <h1 class="mt-4 max-w-3xl text-4xl font-black leading-[.98] tracking-[-.045em] sm:text-6xl">Porta l’educazione alla salute nel tuo evento sportivo o nella tua società</h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">PosturaCorretta aiuta le persone a conoscere il corpo e a riattivare i sistemi fisiologici, avvicinandole alle metodiche posturali.</p>
+        <p class="mt-3 max-w-2xl font-bold leading-7 text-slate-800">Il progetto cresce grazie a professionisti che, diventando insegnanti, possono farsi conoscere e diffondere un metodo semplice di educazione alla salute.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <%= link_to "Come funziona", "#esperienza", class: "pc-sport-events__button pc-sport-events__button--primary" %>
+          <%= link_to "Richiedi una proposta", "#proposta", class: "pc-sport-events__button pc-sport-events__button--secondary" %>
+        </div>
+      </div>
+      <figure>
+        <%= image_tag "posturacorretta-eventi-sportivi.png", alt: "Illustrazione di uno spazio educativo con gazebo e lettino durante un evento sportivo", class: "w-full rounded-3xl border border-white shadow-xl shadow-blue-900/10", width: 1672, height: 941 %>
+        <figcaption class="mt-2 text-right text-xs text-slate-500">Immagine rappresentativa dell’allestimento.</figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <main>
+    <section class="border-b border-slate-200 py-14 sm:py-16">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-blue-700">Il progetto</p>
+        <h2 class="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">Dalla prima esperienza al proprio percorso</h2>
+        <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <% [["01", "Conoscere il corpo"], ["02", "Scoprire le metodiche"], ["03", "Incontrare gli operatori"], ["04", "Migliorare il recupero"]].each do |number, label| %>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5"><span class="text-xs font-black text-blue-600"><%= number %></span><p class="mt-2 font-black text-slate-900"><%= label %></p></div>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section id="esperienza" class="scroll-mt-24 py-16 sm:py-20">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+        <div class="max-w-3xl">
+          <p class="text-xs font-black uppercase tracking-[.18em] text-blue-700">L’esperienza gratuita per il partecipante</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Due momenti individuali sul lettino</h2>
+          <p class="mt-4 text-lg leading-8 text-slate-600">Il tempo dedicato a ogni persona viene valutato dall’operatore in base all’evento e all’esperienza proposta.</p>
+        </div>
+        <div class="mt-9 grid gap-6 lg:grid-cols-2">
+          <article class="rounded-3xl border border-blue-100 bg-blue-50/60 p-7 sm:p-9">
+            <span class="pc-sport-events__step pc-sport-events__step--lesson">1</span>
+            <p class="mt-6 text-xs font-black uppercase tracking-[.14em] text-blue-700">Parte educativa</p>
+            <h3 class="mt-2 text-2xl font-black">Una scheda iniziale per migliorare la postura</h3>
+            <p class="mt-4 leading-7 text-slate-600">L’insegnante presenta il progetto e guida individualmente la persona attraverso semplici esercizi della scheda iniziale. Spiega poi che il percorso educativo può continuare sul sito oppure con un insegnante, individualmente o in gruppo.</p>
+          </article>
+          <article class="rounded-3xl border border-emerald-100 bg-emerald-50/60 p-7 sm:p-9">
+            <span class="pc-sport-events__step pc-sport-events__step--treatment">2</span>
+            <p class="mt-6 text-xs font-black uppercase tracking-[.14em] text-emerald-700">Parte professionale</p>
+            <h3 class="mt-2 text-2xl font-black">Un trattamento dimostrativo</h3>
+            <p class="mt-4 leading-7 text-slate-600">L’operatore sceglie un breve trattamento coerente con la propria professione e specializzazione. Presenta inoltre la differenza tra il percorso educativo e il Percorso Integrato, nel quale entra anche la componente professionale.</p>
+            <p class="mt-5 text-sm leading-6 text-emerald-950">Ogni operatore interviene esclusivamente entro le competenze della propria professione.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-slate-50 py-14 sm:py-16">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+        <div class="grid gap-6 lg:grid-cols-2">
+          <article class="rounded-2xl border border-slate-200 bg-white p-7"><p class="text-xs font-black uppercase tracking-[.14em] text-blue-700">Per gli sportivi</p><h2 class="mt-2 text-2xl font-black">Un primo passo concreto</h2><ul class="mt-5 space-y-3 text-sm leading-6 text-slate-700"><li>Provare gratuitamente la scheda iniziale e il trattamento dimostrativo.</li><li>Conoscere il corpo, le metodiche e il lavoro dell’operatore.</li><li>Capire la differenza tra percorso educativo e Percorso Integrato.</li><li>Scegliere liberamente se continuare sul sito o contattare l’operatore.</li></ul></article>
+          <article class="rounded-2xl border border-slate-200 bg-white p-7"><p class="text-xs font-black uppercase tracking-[.14em] text-blue-700">Per l’organizzatore</p><h2 class="mt-2 text-2xl font-black">Un’attività pronta da inserire nell’evento</h2><ul class="mt-5 space-y-3 text-sm leading-6 text-slate-700"><li>PosturaCorretta porta gazebo, lettino e materiale necessario.</li><li>L’organizzatore mette a disposizione lo spazio per il gazebo.</li><li>Arrivo, scarico, preparazione, inizio e fine vengono concordati.</li><li>La persona può partecipare senza essere obbligata a lasciare i contatti.</li></ul></article>
+        </div>
+        <p class="mt-6 rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm leading-6 text-slate-700"><strong class="text-slate-950">Società sportive:</strong> la presentazione può svolgersi anche in sede, durante un open day o un ritiro. In seguito si potranno valutare lezioni o incontri durante la stagione, senza definirli prima di aver conosciuto le esigenze della società.</p>
+      </div>
+    </section>
+
+    <section id="domande" class="py-14 sm:py-16">
+      <div class="mx-auto max-w-4xl px-5 sm:px-8">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-blue-700">Domande frequenti</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight">Le informazioni essenziali</h2>
+        <div class="mt-7 divide-y divide-slate-200 border-y border-slate-200">
+          <% [["Quanto dura la presenza?", "Orari, arrivo, allestimento, inizio e fine vengono concordati con l’organizzatore."], ["Quanto costa al partecipante?", "Nella giornata di presentazione la scheda iniziale e il trattamento dimostrativo sono gratuiti."], ["Che cosa deve fornire l’organizzatore?", "Uno spazio adeguato per il gazebo. Il resto dell’allestimento viene portato da PosturaCorretta."], ["È necessario registrarsi?", "No. Lasciare i contatti o iscriversi al sito è una scelta libera del partecipante."], ["Chi conduce l’esperienza?", "Un insegnante PosturaCorretta oppure un professionista che ha chiesto di partecipare e inizia il percorso per diventarlo. Ciascuno opera entro le competenze della propria professione."], ["Come può continuare la persona?", "Può seguire il percorso educativo sul sito, rivolgersi a un insegnante individualmente o in gruppo, contattare l’operatore oppure approfondire il Percorso Integrato."]].each do |question, answer| %>
+            <details class="pc-sport-events__faq">
+              <summary><span><%= question %></span><svg class="pc-sport-events__faq-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg></summary>
+              <p><%= answer %></p>
+            </details>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <aside class="bg-slate-950 py-8 text-white"><div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-5 sm:flex-row sm:items-center sm:px-8"><div><p class="text-xs font-black uppercase tracking-[.14em] text-cyan-300">Sei un professionista?</p><p class="mt-1 text-sm leading-6 text-slate-300">Puoi chiedere di partecipare e iniziare il percorso per diventare insegnante PosturaCorretta.</p></div><%= link_to "Informazioni per i professionisti →", posturacorretta_collabora_professionisti_path, class: "shrink-0 text-sm font-black text-cyan-300 hover:text-white" %></div></aside>
+
+    <section id="proposta" class="scroll-mt-24 bg-blue-50 py-16 sm:py-20">
+      <div class="mx-auto max-w-4xl px-5 text-center sm:px-8">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-blue-700">Parliamo della manifestazione</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Costruiamo una presenza adatta al tuo evento</h2>
+        <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">La presenza può essere gratuita oppure sostenuta attraverso una collaborazione con l’organizzatore. La modalità viene concordata in base all’evento, con l’obiettivo iniziale di far conoscere il progetto.</p>
+        <%= mail_to "markpostura@gmail.com", "Presentaci il tuo evento", subject: "Proposta PosturaCorretta per evento sportivo", class: "pc-sport-events__button pc-sport-events__button--primary mt-8" %>
+      </div>
+    </section>
+
+    <section id="percorso-strutturato" class="border-t border-slate-200 bg-white py-14 sm:py-16">
+      <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-8 lg:grid-cols-[.8fr_1.2fr]">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-blue-700">Dopo la giornata</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight">Hai una società o un’azienda?</h2>
+          <p class="mt-4 leading-7 text-slate-600">La presentazione può diventare il punto di partenza per costruire un percorso più strutturato dedicato ad atleti, squadre o gruppi di lavoro.</p>
+        </div>
+        <div class="rounded-3xl border border-blue-200 bg-blue-50/70 p-7 shadow-sm sm:p-9">
+          <h3 class="text-2xl font-black text-slate-950">Un ciclo di 3 o 5 incontri</h3>
+          <p class="mt-4 leading-7 text-slate-600">Il percorso viene concordato con la società o con l’azienda. Può coinvolgere più professionisti e alternare educazione alla salute, esercizi della scheda PosturaCorretta, schede comuni e momenti individuali nei quali ciascun operatore interviene secondo la propria professione.</p>
+          <ul class="mt-6 grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
+            <li class="rounded-xl bg-white p-4"><strong class="block text-slate-950">Parte condivisa</strong>Conoscenza del corpo ed esercizi utilizzabili anche tra un incontro e l’altro.</li>
+            <li class="rounded-xl bg-white p-4"><strong class="block text-slate-950">Parte individuale</strong>Trattamenti e indicazioni definiti dal professionista nell’ambito delle proprie competenze.</li>
+            <li class="rounded-xl bg-white p-4"><strong class="block text-slate-950">Continuità</strong>Possibilità di proseguire con l’insegnante, con l’operatore o attraverso il Percorso Integrato.</li>
+            <li class="rounded-xl bg-white p-4"><strong class="block text-slate-950">Proposta su misura</strong>Numero di persone, professionisti, tempi e condizioni vengono definiti insieme.</li>
+          </ul>
+          <p class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs leading-5 text-amber-950">Il percorso non sostituisce la visita medica o la certificazione di idoneità sportiva e, nelle aziende, non sostituisce la sorveglianza sanitaria prevista dalla normativa.</p>
+          <%= mail_to "markpostura@gmail.com", "Parliamo di un percorso strutturato", subject: "Percorso PosturaCorretta per società o azienda", class: "pc-sport-events__button pc-sport-events__button--secondary mt-6" %>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<%= render "posturacorretta/footer" %>

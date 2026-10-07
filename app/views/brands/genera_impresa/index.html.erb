@@ -11,6 +11,61 @@
     </div>
   </header>
 
+  <% if Current.user %>
+    <section id="i-miei-brand" class="border-b border-slate-200 bg-slate-900 text-white scroll-mt-20">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <p class="text-xs font-black uppercase tracking-[.16em] text-orange-300">Cabina di regia</p>
+        <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 class="text-3xl font-black">I tuoi Brand e domini</h2>
+            <p class="mt-3 max-w-3xl leading-7 text-slate-300">GeneraImpresa raccoglie le realtà che governi. Domini e nodi restano nella struttura FlowPulse; da qui puoi raggiungere il pannello corretto senza duplicare dati.</p>
+          </div>
+          <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-slate-200"><%= @managed_brands.size %> <%= @managed_brands.one? ? "Brand" : "Brand" %></span>
+        </div>
+
+        <% if @managed_brands.any? %>
+          <div class="mt-7 grid gap-5 lg:grid-cols-2">
+            <% @managed_brands.each do |brand| %>
+              <% primary_domain = brand.domains.find(&:primary?) || brand.domains.first %>
+              <article class="rounded-2xl border border-white/15 bg-white/[.07] p-5 shadow-lg shadow-black/10">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="min-w-0">
+                    <p class="text-[11px] font-black uppercase tracking-[.14em] text-orange-300">Brand · FlowPulse Node</p>
+                    <h3 class="mt-1 truncate text-xl font-black"><%= brand.title %></h3>
+                    <p class="mt-1 font-mono text-xs text-slate-400"><%= brand.slug %></p>
+                  </div>
+                  <span class="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-slate-300"><%= brand.status.humanize %></span>
+                </div>
+
+                <div class="mt-5">
+                  <p class="text-[11px] font-black uppercase tracking-wider text-slate-400">Domini</p>
+                  <% if brand.domains.any? %>
+                    <ul class="mt-2 flex list-none flex-wrap gap-2 p-0">
+                      <% brand.domains.sort_by(&:hostname).each do |domain| %>
+                        <li><%= link_to domain.display_hostname, "https://#{domain.hostname}", target: "_blank", rel: "noopener", class: "inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/20" %></li>
+                      <% end %>
+                    </ul>
+                  <% else %>
+                    <p class="mt-2 text-sm text-slate-400">Nessun dominio collegato.</p>
+                  <% end %>
+                </div>
+
+                <nav class="mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-4" aria-label="Gestione di <%= brand.title %>">
+                  <%= link_to "Nodi", brand_admin_nodes_path(brand.slug), class: "rounded-lg bg-white px-3 py-2 text-xs font-black text-slate-900 hover:bg-orange-50" %>
+                  <%= link_to "Richieste", brand_admin_data_commitments_path(brand.slug), class: "rounded-lg border border-white/20 px-3 py-2 text-xs font-black text-white hover:bg-white/10" %>
+                  <%= link_to "Privacy", brand_admin_privacy_path(brand.slug), class: "rounded-lg border border-white/20 px-3 py-2 text-xs font-black text-white hover:bg-white/10" %>
+                  <% if primary_domain %><%= link_to "Apri il sito ↗", "https://#{primary_domain.hostname}", target: "_blank", rel: "noopener", class: "ml-auto rounded-lg px-3 py-2 text-xs font-black text-orange-300 hover:bg-white/10" %><% end %>
+                </nav>
+              </article>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-7 rounded-2xl border border-dashed border-white/20 p-6 text-slate-300">Non amministri ancora alcun Brand. Quando creerai o riceverai la responsabilità di un Brand, comparirà qui con i suoi domini.</div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
   <section id="brand" class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
     <p class="text-xs font-black uppercase tracking-wider text-red-600">Organizzazioni e identità</p>
     <h2 class="mt-2 text-3xl font-black">Brand</h2>

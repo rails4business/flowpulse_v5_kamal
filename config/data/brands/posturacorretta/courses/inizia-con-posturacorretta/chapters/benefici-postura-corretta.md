@@ -6,9 +6,35 @@ publisher_node_slug: posturacorretta
 
 # I benefici di una postura corretta
 
-Quando si parla di postura si toccano almeno quattro temi: che cos'è la postura, che cosa la influenza, quali benefici possiamo cercare e perché potrebbe servire una vera educazione al corpo.
+Ormai è risaputo che la postura può avere un impatto positivo o negativo sulla nostra salute, ma cerchiamo di capire meglio quali sono i benefici e quali sono i problemi che possiamo evitare con una posturacorertta.
+
+Per fare questo è necessario affrontare quattro temi: 
+
+- Educazione alla salute corpo e mente
+- Che cos'è la postura?
+- Cattive Posture e problemi
+- Benefici 
+
 
 Sono argomenti grandi e ognuno meriterebbe un approfondimento. Qui iniziamo a costruire una mappa, così almeno sappiamo dove ci troviamo.
+
+https://ik.imagekit.io/posturacorretta/percorso_posturacorretta/inizia_con_posturacorretta/problemi_postura.png
+
+https://ik.imagekit.io/posturacorretta/percorso_posturacorretta/inizia_con_posturacorretta/benefici_postura.png
+
+## Perché serve un'educazione al corpo?
+
+Nell'antica Grecia si dava spazio sia alla ginnastica sia alla musica: non bastava riempire la testa di nozioni, bisognava formare la persona.
+
+Oggi a scuola impariamo molte cose, ma raramente qualcuno ci insegna come respirare, recuperare, riconoscere una tensione o accorgerci che stiamo passando dieci ore nella stessa posizione.
+
+Proviamo allora a riprendere la storia del capitolo precedente partendo da un'educazione diversa.
+
+Da piccoli impariamo a conoscere il corpo attraverso il gioco. Crescendo continuiamo ad allenare mobilità, equilibrio, respirazione e capacità di recupero. Da adulti non serve ricordarsi cento esercizi: bastano alcuni principi e poche pratiche da riprendere quando servono.
+
+Forse avremmo comunque dolori, infortuni e periodi difficili. La differenza è che non arriveremmo completamente impreparati al primo segnale del corpo.
+
+Un'educazione di questo tipo potrebbe trovare spazio nella scuola, nel lavoro, nei percorsi di cura e nelle attività rivolte ad anziani o persone con disabilità. Il modo di proporla cambierebbe, naturalmente, ma la domanda resterebbe la stessa: quanto conosciamo il corpo con cui viviamo ogni giorno?
 
 ## Che cos'è la postura?
 
@@ -26,20 +52,6 @@ Esiste davvero una postura corretta uguale per tutti? Probabilmente è una doman
 La struttura, inoltre, non è immobile. Nel tempo viene sottoposta a carichi, traumi, attività ripetute e periodi in cui ci muoviamo molto o pochissimo. Tutto questo può modificarne l'organizzazione e ridurre alcune possibilità.
 
 Le posture sono tante. Prima di correggerle, il primo compito è imparare a leggerle.
-
-## Perché serve un'educazione al corpo?
-
-Nell'antica Grecia si dava spazio sia alla ginnastica sia alla musica: non bastava riempire la testa di nozioni, bisognava formare la persona.
-
-Oggi a scuola impariamo molte cose, ma raramente qualcuno ci insegna come respirare, recuperare, riconoscere una tensione o accorgerci che stiamo passando dieci ore nella stessa posizione.
-
-Proviamo allora a riprendere la storia del capitolo precedente partendo da un'educazione diversa.
-
-Da piccoli impariamo a conoscere il corpo attraverso il gioco. Crescendo continuiamo ad allenare mobilità, equilibrio, respirazione e capacità di recupero. Da adulti non serve ricordarsi cento esercizi: bastano alcuni principi e poche pratiche da riprendere quando servono.
-
-Forse avremmo comunque dolori, infortuni e periodi difficili. La differenza è che non arriveremmo completamente impreparati al primo segnale del corpo.
-
-Un'educazione di questo tipo potrebbe trovare spazio nella scuola, nel lavoro, nei percorsi di cura e nelle attività rivolte ad anziani o persone con disabilità. Il modo di proporla cambierebbe, naturalmente, ma la domanda resterebbe la stessa: quanto conosciamo il corpo con cui viviamo ogni giorno?
 
 ## Che cosa modifica le nostre condizioni?
 

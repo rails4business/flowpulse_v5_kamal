@@ -279,6 +279,7 @@ class PosturacorrettaController < ApplicationController
     end
   end
   def collabora; end
+  def eventi_sportivi; end
   def collabora_professionisti; end
   def collabora_professionisti_guida
     chapter = {
