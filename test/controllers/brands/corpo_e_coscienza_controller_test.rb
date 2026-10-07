@@ -32,7 +32,6 @@ module Brands
       assert_select "#cec-professionals-map[data-professionals]"
       assert_select ".cec-request-tabs a", count: 3
       assert_select ".cec-request-mobile select option", count: 3
-      assert_select "[aria-label='Lingua: italiano']", text: "IT · Italiano"
       assert_select "select[name='request[country_code]'] option[value='IT']", text: "Italia"
       assert_select "[data-controller='location-autocomplete']"
       assert_select ".cec-request-tab--professional.active", text: "Sono un professionista"
@@ -46,6 +45,12 @@ module Brands
       assert_select "a[href='#{corpo_e_coscienza_privacy_path}']", text: "informativa privacy"
       assert_select "#metodo h2", text: "Le quattro direzioni di lavoro"
       assert_select ".cec-sticky-nav a[href='#metodo']", text: "Il metodo"
+      assert_select ".cec-sticky-nav__brand[href='#top'] img[src*='logo-corpo-coscienza-quadrato.png']", count: 1
+      assert_select "link[rel='icon'][href*='logo-corpo-coscienza-quadrato.png']"
+      assert_select "link[rel='apple-touch-icon'][href*='logo-corpo-coscienza-quadrato.png']"
+      assert_select "meta[property='og:image'][content*='logo-corpo-coscienza-quadrato.png']"
+      assert_select "meta[name='twitter:image'][content*='logo-corpo-coscienza-quadrato.png']"
+      assert_select ".cec-language-bar", count: 0
       assert_select ".cec-sticky-nav", text: /Il metodo.*Inizia un percorso.*Trova un professionista.*Formazione.*Contatti/m
       assert_select ".cec-sticky-nav", text: /Per le persone|Per i professionisti|Entra nella rete/, count: 0
       assert_select "#formazione a", text: "Sei già formato? Registrati"

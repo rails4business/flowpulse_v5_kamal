@@ -1,14 +1,18 @@
 <% content_for :title, @site.fetch("title") %>
 <% content_for :description, @site.fetch("description") %>
+<% content_for :favicon_url, @site.fetch("logo_square_image") %>
+<% content_for :social_image_url, @site.fetch("logo_square_image") %>
 <% content_for :head do %>
   <template data-privacy-category="functionality" data-privacy-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></template>
   <template data-privacy-category="functionality" data-privacy-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></template>
 <% end %>
 
 <main class="cec-page">
-  <div class="cec-language-bar"><div class="cec-wrap"><span lang="it" aria-label="Lingua: italiano">IT · Italiano</span></div></div>
   <nav class="cec-sticky-nav" aria-label="Sezioni Corpo e Coscienza">
     <div class="cec-wrap cec-sticky-nav__inner">
+      <a class="cec-sticky-nav__brand" href="#top" aria-label="Corpo e Coscienza · torna all’inizio">
+        <%= image_tag @site.fetch("logo_square_image"), alt: "", width: 36, height: 36 %>
+      </a>
       <a href="#metodo">Il metodo</a>
       <a href="#partecipa">Inizia un percorso</a>
       <a href="#professionisti">Trova un professionista</a>
@@ -16,7 +20,7 @@
       <a href="#richiesta">Contatti</a>
     </div>
   </nav>
-  <section class="cec-hero">
+  <section id="top" class="cec-hero">
     <div class="cec-wrap cec-hero__grid">
       <div>
         <h1>Corpo e Coscienza</h1>
