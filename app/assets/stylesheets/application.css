@@ -5571,6 +5571,11 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .pc-sport-events__button--primary:hover { border-color:#1e40af !important; background-color:#1e40af !important; transform:translateY(-1px); }
 .pc-sport-events__button--secondary { border-color:#bfdbfe !important; color:#1e40af !important; background-color:#fff !important; }
 .pc-sport-events__button--secondary:hover { background-color:#eff6ff !important; }
+.pc-sport-events__audience-nav { position:sticky; top:0; z-index:20; border-bottom:1px solid #e2e8f0; background-color:rgb(255 255 255 / 96%); box-shadow:0 1px 3px rgb(15 23 42 / 8%); backdrop-filter:blur(10px); }
+.pc-sport-events__audience-tab { display:inline-flex; min-height:2.75rem; flex:none; align-items:center; justify-content:center; border:1px solid #e2e8f0; border-radius:999px; padding:.625rem 1.25rem; color:#334155 !important; background-color:#f1f5f9 !important; text-decoration:none; font-size:.875rem; font-weight:900; transition:background-color .15s ease, border-color .15s ease, color .15s ease; }
+.pc-sport-events__audience-tab:hover { border-color:#bfdbfe; color:#1e40af !important; background-color:#eff6ff !important; }
+.pc-sport-events__audience-tab--active,
+.pc-sport-events__audience-tab--active:hover { border-color:#1d4ed8 !important; color:#fff !important; background-color:#1d4ed8 !important; box-shadow:0 3px 10px rgb(29 78 216 / 18%); }
 .pc-sport-events__step { display:inline-flex; width:2.5rem; height:2.5rem; align-items:center; justify-content:center; border-radius:999px; color:#fff !important; font-size:.875rem; font-weight:900; }
 .pc-sport-events__step--lesson { background-color:#1d4ed8 !important; }
 .pc-sport-events__step--treatment { background-color:#047857 !important; }

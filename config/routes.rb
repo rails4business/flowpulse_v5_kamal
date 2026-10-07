@@ -152,6 +152,7 @@ Rails.application.routes.draw do
   get "impegni" => redirect("/impegno?area=user&view=agenda"), as: :legacy_data_commitments
   get "posturacorretta/collabora" => "brands/posturacorretta#collabora", as: :posturacorretta_collabora
   get "posturacorretta/collabora/eventi-sportivi" => "brands/posturacorretta#eventi_sportivi", as: :posturacorretta_eventi_sportivi
+  get "posturacorretta/collabora/eventi-sportivi/presentazione.pdf" => "posturacorretta#sport_events_presentation", as: :posturacorretta_eventi_sportivi_pdf
   get "posturacorretta/collabora/professionisti" => "brands/posturacorretta#collabora_professionisti", as: :posturacorretta_collabora_professionisti
   get "posturacorretta/collabora/professionisti/:slug" => "brands/posturacorretta#collabora_professionisti_guida", as: :posturacorretta_collabora_professionisti_guida
   get "posturacorretta/collabora/digital" => "brands/posturacorretta#collabora_digital", as: :posturacorretta_collabora_digital

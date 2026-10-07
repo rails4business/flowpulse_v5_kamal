@@ -3,6 +3,7 @@ class PosturacorrettaController < ApplicationController
   allow_unauthenticated_access
 
   TRIATHLON_HANDOUT_PATH = Rails.root.join("docs/handouts/Presentazione PosturaCorretta.pdf").freeze
+  SPORT_EVENTS_PRESENTATION_PATH = Rails.root.join("docs/handouts/PosturaCorretta per eventi sportivi.pdf").freeze
 
   # These listings load and filter a sizeable YAML catalog. Keep abusive crawls from
   # occupying every Puma thread before the expensive callbacks below are reached.
@@ -19,6 +20,13 @@ class PosturacorrettaController < ApplicationController
 
   def triathlon_handout
     send_file TRIATHLON_HANDOUT_PATH, type: "application/pdf", disposition: "inline"
+  end
+
+  def sport_events_presentation
+    send_file SPORT_EVENTS_PRESENTATION_PATH,
+              type: "application/pdf",
+              disposition: "attachment",
+              filename: "PosturaCorretta-per-eventi-sportivi.pdf"
   end
 
   def profile

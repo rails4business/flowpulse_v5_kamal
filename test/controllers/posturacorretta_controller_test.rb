@@ -302,15 +302,52 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Porta l’educazione alla salute nel tuo evento sportivo o nella tua società"
     assert_select "img[src*='posturacorretta-eventi-sportivi']"
-    assert_select "#esperienza h3", text: "Una scheda iniziale per migliorare la postura"
-    assert_select "#esperienza h3", text: "Un trattamento dimostrativo"
+    assert_select "#organizzatori h2", text: "Uno spazio PosturaCorretta nel tuo evento"
+    assert_select "#organizzatori", text: /L’organizzatore mette a disposizione lo spazio.*PosturaCorretta porta operatori, allestimento e attività/m
+    assert_select "#organizzatori article", count: 4
+    assert_select "#esperienza h3", text: "Come disporci?"
+    assert_select "#esperienza h3", text: "Chiusura"
     assert_select "#domande details", count: 6
     assert_select "#domande summary svg.pc-sport-events__faq-icon", count: 6
     assert_select "#percorso-strutturato h3", text: "Un ciclo di 3 o 5 incontri"
     assert_select "#percorso-strutturato a[href^='mailto:markpostura@gmail.com']", text: "Parliamo di un percorso strutturato"
-    assert_includes response.body, "senza essere obbligata a lasciare i contatti"
-    assert_select "a[href='#{posturacorretta_collabora_professionisti_path}']", text: /Informazioni per i professionisti/
+    assert_includes response.body, "Lasciare i contatti o iscriversi al percorso è facoltativo"
+    assert_select "main", text: /Cosa dobbiamo concordare/
+    assert_select "main", text: /Per gli sportivi/, count: 0
+    assert_select "main", text: /Sei un professionista/, count: 0
     assert_select "a[href^='mailto:markpostura@gmail.com']", text: "Presentaci il tuo evento"
+    assert_select "a[href='#{posturacorretta_eventi_sportivi_pdf_path}'][download]", text: "Scarica la presentazione PDF"
+    assert_select "nav[aria-label='Scegli per chi sono le informazioni'] [role='tab']", count: 3
+    assert_select "nav[aria-label='Scegli per chi sono le informazioni'] [aria-selected='true']", text: "Organizzatore"
+    assert_select ".pc-sport-events > nav + header"
+  end
+
+  test "downloads the sport event organiser PDF" do
+    get posturacorretta_eventi_sportivi_pdf_url
+
+    assert_response :success
+    assert_equal "application/pdf", response.media_type
+    assert_match(/attachment/, response.headers["Content-Disposition"])
+    assert_match(/PosturaCorretta-per-eventi-sportivi\.pdf/, response.headers["Content-Disposition"])
+  end
+
+  test "separates operator and participant information on sport event presentation" do
+    get posturacorretta_eventi_sportivi_url(per: "operatore")
+
+    assert_response :success
+    assert_select "[aria-selected='true']", text: "Operatore"
+    assert_select "#ruolo-operatore h2", text: "Insegnante PosturaCorretta e professionista"
+    assert_select "#ruolo-operatore article", count: 4
+    assert_select "#organizzatori", count: 0
+
+    get posturacorretta_eventi_sportivi_url(per: "partecipante")
+
+    assert_response :success
+    assert_select "[aria-selected='true']", text: "Partecipante"
+    assert_select "#esperienza-partecipante h2", text: "Un primo incontro con PosturaCorretta"
+    assert_select "#esperienza-partecipante h3", text: "Una scheda iniziale per migliorare la postura"
+    assert_select "#esperienza-partecipante h3", text: "Un breve trattamento dimostrativo"
+    assert_select "#ruolo-operatore", count: 0
   end
 
   test "should get progetti" do
