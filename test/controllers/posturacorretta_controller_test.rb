@@ -304,6 +304,8 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "img[src*='posturacorretta-eventi-sportivi']"
     assert_select "#organizzatori h2", text: "Uno spazio PosturaCorretta nel tuo evento"
     assert_select "#organizzatori", text: /L’organizzatore mette a disposizione lo spazio.*PosturaCorretta porta operatori, allestimento e attività/m
+    assert_select "#organizzatori", text: /Rotoli di carta per proteggere i lettini/
+    assert_select "#organizzatori", text: /Disinfettante per le mani/
     assert_select "#organizzatori article", count: 4
     assert_select "#esperienza h3", text: "Come disporci?"
     assert_select "#esperienza h3", text: "Chiusura"

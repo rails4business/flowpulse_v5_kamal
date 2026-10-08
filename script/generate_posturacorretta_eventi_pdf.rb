@@ -114,12 +114,13 @@ page.rule
 page.label("Cosa portiamo all’evento")
 page.heading("Uno spazio PosturaCorretta nel tuo evento", size: 19)
 page.paragraph("Nel giorno e negli orari concordati, uno o più operatori arrivano con l’allestimento e il materiale necessario. Accolgono le persone, presentano il percorso PosturaCorretta, guidano la scheda iniziale e, quando previsto, propongono un breve trattamento.")
-page.callout("Chi porta cosa", "L’organizzatore mette a disposizione lo spazio. PosturaCorretta porta gli operatori, il gazebo, il lettino e il materiale per le attività.")
+page.callout("Chi porta cosa", "L’organizzatore mette a disposizione lo spazio. PosturaCorretta porta gli operatori, il gazebo, uno o più lettini e il materiale per le attività.")
 page.label("Che cosa viene proposto")
 page.bullet("Accoglienza delle persone nello spazio PosturaCorretta.")
 page.bullet("Presentazione del progetto e scheda iniziale con semplici esercizi per migliorare la postura.")
 page.bullet("Un breve trattamento dimostrativo coerente con la professione dell’operatore.")
-page.bullet("Materiale per conoscere il progetto e continuare il percorso dopo l’evento.")
+page.bullet("Rotoli di carta per i lettini e disinfettante per le mani.")
+page.bullet("Materiale informativo e strumenti necessari ai trattamenti dei singoli professionisti.")
 pages << page
 
 page = PdfPage.new

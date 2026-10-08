@@ -6,6 +6,12 @@ publisher_node_slug: posturacorretta
 
 # L'incontro con la salute e la postura
 
+## Chi ti ha insegnatato come si resta in salute?
+
+Ci hanno insegnato a leggere, a scrivere, a fare le divisioni. Ma come si cura un corpo, come si recupera dopo una giornata pesante, come si capisce perchè cos'è il dolore e perchè arriva? Quasi sempre questo lo scopri quando qualcosa smette di funzionare.
+
+Se sei qui, probabilmente è successo anche a te. Prima di cercare risposte, però, vale la pena fare un passo indietro e capire come abbiamo imparato ad usare il nostro corpo. Da lì poi sarà più facile capire dove vuoi andare.
+
 ## Ripercorriamo i passi
 
 Ripercorrere i passi dai quali veniamo è importante per capire dove ci troviamo e, magari, decidere dove vogliamo andare. La domanda iniziale che ci guida è: come nasce la nostra salute?
