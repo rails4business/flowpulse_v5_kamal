@@ -60,7 +60,11 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_select "dialog#davide-qualifications", text: /Igiene Posturale · livello base/
     assert_select "dialog[id^='davide-service-']", count: 4
     assert_select "dialog#davide-service-3 a[href='https://posturacorretta.org']", text: /Apri PosturaCorretta.org/
-    assert_select "a.davide-video-link[href='https://youtube.com/watch?v=FthfIMTv7CQ'][target='_blank']", text: /Guarda il video/
+    assert_select "a.davide-media-preview--video[href='https://youtube.com/watch?v=FthfIMTv7CQ'][target='_blank']", text: /Guarda il video/
+    assert_select "a.davide-media-preview--video img[src='https://i.ytimg.com/vi/FthfIMTv7CQ/hqdefault.jpg']", count: 1
+    assert_select "button.davide-media-preview--certificate img[src='https://ik.imagekit.io/posturacorretta/corsi/igiene_posturale/attestati_insegnanti_igiene_posturale/01-davide-cattaneo-cert-igp-2025-08-12.png']", count: 1
+    assert_select "header a.davide-action--youtube[href='https://youtube.com/watch?v=FthfIMTv7CQ']", text: /Guarda il video/
+    assert_select "header button.davide-action--certificate", text: /Vedi attestato/
     assert_select "#contatti", text: /Parliamone e definiamo la proposta.*quale servizio interessa.*condizioni della proposta/m
     assert_select "a[href^='mailto:markpostura@gmail.com']", text: "Contatta per concordare"
     assert_select "img[src=?]", "https://ik.imagekit.io/posturacorretta/corsi/igiene_posturale/attestati_insegnanti_igiene_posturale/01-davide-cattaneo-cert-igp-2025-08-12.png"
@@ -137,7 +141,7 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     get genera_impresa_url
 
     assert_response :success
-    assert_select "summary[aria-label='Apri menu profilo']", count: 1
+    assert_select "summary.profile-menu-toggle[aria-label='Apri menu profilo']", count: 1
     assert_select "a[href='#{genera_impresa_path}#i-miei-brand']", text: "I miei Brand"
     assert_select "form[action=?]", session_path
     assert_select "#i-miei-brand h2", "I tuoi Brand e domini"
