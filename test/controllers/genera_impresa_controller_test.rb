@@ -4,12 +4,13 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
   test "renders the public brand and project catalog" do
     get genera_impresa_url
     assert_response :success
+    assert_select "a[href=?]", new_session_path(return_to: genera_impresa_path), text: "Accedi"
     assert_select "h1", /Dalle idee ai progetti/
     assert_includes response.body, "PosturaCorretta"
     assert_includes response.body, "FlowPulse"
     assert_select "h2", text: "Brand personali"
     assert_select "h2", text: "Brand progetto"
-    assert_not_includes response.body, "Davide Cattaneo"
+    assert_includes response.body, "Davide Cattaneo"
   end
 
   test "renders a brand with many projects" do
@@ -38,7 +39,6 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "renders Davide Cattaneo as a personal brand in construction" do
-    sign_in_as_superadmin
     get genera_impresa_brand_url("davide-cattaneo")
 
     assert_response :success
@@ -137,6 +137,9 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     get genera_impresa_url
 
     assert_response :success
+    assert_select "summary[aria-label='Apri menu profilo']", count: 1
+    assert_select "a[href='#{genera_impresa_path}#i-miei-brand']", text: "I miei Brand"
+    assert_select "form[action=?]", session_path
     assert_select "#i-miei-brand h2", "I tuoi Brand e domini"
     assert_select "#i-miei-brand h3", "Brand del proprietario"
     assert_select "a[href='https://brand-proprietario.test']", text: /brand-proprietario\.test/
@@ -153,7 +156,7 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "building brands are private to superadmin" do
-    get genera_impresa_brand_url("davide-cattaneo")
+    get genera_impresa_brand_url("inside-adventure")
     assert_response :not_found
 
     sign_in_as_superadmin

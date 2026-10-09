@@ -83,7 +83,7 @@ module Brands
     end
 
     def brand_public?(brand)
-      brand["status"] == "launched"
+      brand["status"] == "launched" || brand["visibility"] == "public"
     end
 
     def superadmin_catalog_access?

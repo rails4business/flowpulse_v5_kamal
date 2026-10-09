@@ -75,7 +75,7 @@ class DomainsController < ApplicationController
       elsif target_controller == "brands/genera_impresa" && target_action == "index"
         @catalog = GeneraImpresaCatalog.load
         @site = @catalog.site
-        @brands = @catalog.brands.select { |brand| brand["status"] == "launched" || Current.user&.superadmin_user? }
+        @brands = @catalog.brands.select { |brand| brand["status"] == "launched" || brand["visibility"] == "public" || Current.user&.superadmin_user? }
         @personal_brands = @brands.select { |brand| brand["kind"] == "professional" }
         @project_brands = @brands.select { |brand| brand["kind"] != "professional" }
         @managed_brands = if Current.user
