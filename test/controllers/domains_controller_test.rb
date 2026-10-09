@@ -149,6 +149,8 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "GeneraImpresa"
+    assert_select "h2", text: "Brand personali"
+    assert_select "h2", text: "Brand progetto"
     assert_select "meta[name='description'][content=?]", GeneraImpresaCatalog.load.site.fetch("description")
     assert_select "link[rel='icon'][href='https://cdn.example.com/generaimpresa.png']"
   end

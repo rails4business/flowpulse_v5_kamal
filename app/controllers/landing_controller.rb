@@ -60,13 +60,10 @@ class LandingController < ApplicationController
 
   def rails4b_contents
     load_rails4b
-    @rails4b_contents_tab = %w[contenuti passati].include?(params[:tab]) ? "contenuti" : "eventi"
     visible_contents = @rails4b_content_catalog.fetch("items", []).select do |content|
       %w[published scheduled].include?(content.fetch("status")) || Current.user&.superadmin_user?
     end
-    @rails4b_contents = visible_contents.select do |content|
-      @rails4b_contents_tab == "eventi" ? content["status"] == "scheduled" : content["status"] != "scheduled"
-    end.sort_by { |content| content.fetch("publication_at") }.then { |items| @rails4b_contents_tab == "contenuti" ? items.reverse : items }.map do |content|
+    @rails4b_contents = visible_contents.sort_by { |content| content.fetch("publication_at") }.reverse.map do |content|
       content.merge("track_slug" => @rails4b_track_by_content_slug[content.fetch("slug")])
     end
   end

@@ -54,6 +54,8 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     get cantachetipassa_accordion_url(page: "canzoni", percorso: "folk")
     assert_response :success
+    assert_select ".accordion-study__path-intro", count: 0
+    assert_select "#percorso-studio-title", count: 0
     assert_select ".accordion-study__list h2", text: "Facili"
     assert_select ".accordion-study__list h2", text: "Medie"
     assert_select ".accordion-study__list h2", text: "Difficili"
@@ -299,8 +301,9 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Contenuti Rails4Business"
-    assert_select "a[href='#{rails4b_contents_path(tab: "eventi")}']", text: "Eventi"
-    assert_select "a[href='#{rails4b_contents_path(tab: "contenuti")}']", text: "Contenuti"
+    assert_select "nav[aria-label='Contenuti ed eventi']", count: 0
+    assert_select "a[href='#{rails4b_contents_path(tab: "eventi")}']", count: 0
+    assert_select "a[href='#{rails4b_contents_path(tab: "contenuti")}']", count: 0
     assert_select "a[href='#{rails4b_track_path("collaborare", contenuto: "installa-dash-wallet")}']", text: /Installa Dash Wallet/
   end
 

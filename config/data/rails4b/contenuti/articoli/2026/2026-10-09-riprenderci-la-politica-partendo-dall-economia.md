@@ -138,7 +138,7 @@ Un grande potere comporta una grande responsabilità. La frase arriva dai fumett
 
 L'articolo mette insieme l'idea. Adesso serve un posto nel quale trasformarla in una prova, vedere che cosa manca e raccogliere le persone interessate.
 
-Ho aperto in GeneraImpresa la prima scheda del progetto. È ancora in elaborazione: non c'è una soluzione già confezionata e non voglio fingere che ci sia. Ci sono il primo comune da cercare, i ruoli da coprire e una missione abbastanza piccola da poter essere verificata.
+Ho aperto in GeneraImpresa la prima scheda del progetto. È ancora in elaborazione: non c'è una soluzione già confezionata e non voglio fingere che ci sia. Ci sono il primo comune da cercare, le categorie locali da aprire e una missione abbastanza piccola da poter essere verificata.
 
 [**Apri il progetto Ripartire con Dash su GeneraImpresa →**](/generaimpresa/progetti/ripartire-con-dash)
 

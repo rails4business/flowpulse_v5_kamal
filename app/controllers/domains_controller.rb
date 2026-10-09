@@ -75,7 +75,17 @@ class DomainsController < ApplicationController
       elsif target_controller == "brands/genera_impresa" && target_action == "index"
         @catalog = GeneraImpresaCatalog.load
         @site = @catalog.site
-        @brands = @catalog.brands
+        @brands = @catalog.brands.select { |brand| brand["status"] == "launched" || Current.user&.superadmin_user? }
+        @personal_brands = @brands.select { |brand| brand["kind"] == "professional" }
+        @project_brands = @brands.select { |brand| brand["kind"] != "professional" }
+        @managed_brands = if Current.user
+          Node.includes(:domains, :role_assignment)
+            .select(&:brand?)
+            .select { |node| node.administered_by?(Current.user) }
+            .sort_by { |node| node.title.downcase }
+        else
+          []
+        end
         render "brands/genera_impresa/index"
       elsif target_controller == "brands/svuotamente" && target_action == "index"
         render "brands/svuotamente/index", layout: false

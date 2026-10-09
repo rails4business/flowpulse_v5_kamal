@@ -23,7 +23,7 @@
       </nav>
     </div>
 
-    <section class="accordion-study__path-intro" aria-labelledby="percorso-studio-title">
+    <% if @accordion_study_path_slug == "classical" %><section class="accordion-study__path-intro" aria-labelledby="percorso-studio-title">
       <p class="accordion-study__eyebrow">Fisarmonica cromatica a bottoni · C-system</p>
       <h2 id="percorso-studio-title"><%= @accordion_study_path.fetch("title") %></h2>
       <p><%= @accordion_study_path.fetch("description") %></p>
@@ -33,7 +33,7 @@
         </ul>
       <% end %>
       <small><%= @accordion_study.dig("instrument", "source_note") %></small>
-    </section>
+    </section><% end %>
 
     <section class="accordion-study__page">
       <h2><%= @accordion_page.fetch("title") %></h2>
