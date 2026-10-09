@@ -12,7 +12,7 @@ Non penso che serva partire dalle barricate e neppure aspettare che cambi tutto.
 
 > Possiamo riprenderci una piccola parte di ciò che abbiamo delegato e vedere che cosa succede.
 
-## 🧭 Io partirei da due cose
+## 🧭 Perchè non partirei da due cose?
 
 ### 1. Riprenderci l'educazione
 
@@ -133,6 +133,14 @@ Possiamo **costruire** un servizio o un'attività reale e vedere se altre person
 Forse la politica torna concreta proprio qui: in quello che chiediamo agli altri, certo, ma anche in ciò che siamo disposti a organizzare, provare e sostenere insieme.
 
 Un grande potere comporta una grande responsabilità. La frase arriva dai fumetti, ma per una volta può essere un buon programma politico.
+
+## 🌱 Il progetto è partito da qui
+
+L'articolo mette insieme l'idea. Adesso serve un posto nel quale trasformarla in una prova, vedere che cosa manca e raccogliere le persone interessate.
+
+Ho aperto in GeneraImpresa la prima scheda del progetto. È ancora in elaborazione: non c'è una soluzione già confezionata e non voglio fingere che ci sia. Ci sono il primo comune da cercare, i ruoli da coprire e una missione abbastanza piccola da poter essere verificata.
+
+[**Apri il progetto Ripartire con Dash su GeneraImpresa →**](/generaimpresa/progetti/ripartire-con-dash)
 
 ---
 

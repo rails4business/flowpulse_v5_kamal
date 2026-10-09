@@ -46,6 +46,19 @@ module Brands
       render @project["view"] if @project["view"].present?
     end
 
+    def project_step
+      @project = @catalog.project(params[:slug])
+      raise ActiveRecord::RecordNotFound, "Progetto non trovato" unless @project
+      raise ActiveRecord::RecordNotFound, "Progetto non trovato" if @project["visibility"] == "private" && !superadmin_catalog_access?
+
+      @step = @project.fetch("steps", []).find { |step| step.is_a?(Hash) && step["slug"] == params[:step] }
+      raise ActiveRecord::RecordNotFound, "Passaggio non trovato" unless @step
+
+      @step_index = @project.fetch("steps").index(@step)
+      @previous_step = @project.fetch("steps")[@step_index - 1] if @step_index.positive?
+      @next_step = @project.fetch("steps")[@step_index + 1]
+    end
+
     private
 
     def load_catalog

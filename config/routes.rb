@@ -162,6 +162,7 @@ Rails.application.routes.draw do
   get "generaimpresa/brand/:slug/materiali/:material/esercizi/:position" => "brands/genera_impresa#exercise", as: :genera_impresa_brand_material_exercise
   get "generaimpresa/brand/:slug/materiali/:material/immagini/:position" => "brands/genera_impresa#material_image", as: :genera_impresa_brand_material_image
   get "generaimpresa/progetti/:slug" => "brands/genera_impresa#project", as: :genera_impresa_project
+  get "generaimpresa/progetti/:slug/passaggi/:step" => "brands/genera_impresa#project_step", as: :genera_impresa_project_step
   get "brands/svuotamente" => "brands/svuotamente#index", as: :svuotamente
   get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
   get "impegno" => "brands/impegno/home#index", as: :impegno

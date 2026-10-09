@@ -103,6 +103,10 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "#mark-panel-metodo [aria-label='Fasi della soluzione atomica'] li", count: 7
     assert_select "#mark-panel-metodo", text: /Diffondila/
     assert_select "#mark-panel-metodo .mark-ecosystem__platform", text: /FlowPulse/
+    assert_select "#mark-panel-metodo .mark-ecosystem__platform a[href='#{flowpulse_path}']", text: /FlowPulse/
+    assert_select "#mark-panel-metodo .mark-ecosystem__brand-types a[href='#{markpostura_path}']", text: /MarkPostura/
+    assert_select "#mark-panel-metodo .mark-ecosystem__brand-types a[href='#{posturacorretta_path}']", text: /PosturaCorretta/
+    assert_select "#mark-panel-metodo .mark-ecosystem__skills-source a[href='#{rails4b_path}']", text: /Rails4Business/
     assert_select "#mark-panel-metodo .mark-ecosystem__brand-types article", count: 2
     assert_select "#mark-panel-metodo", text: /Brand professionista.*Brand progetto/m
     assert_select "#mark-panel-metodo .mark-ecosystem__projects article", count: 3
@@ -277,12 +281,17 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{rails4b_content_path("dalla-banca-alla-cellula-sociale")}']"
   end
 
-  test "Rails4Business keeps the politics and economy article in draft" do
+  test "Rails4Business publishes the politics and economy article" do
     get rails4b_content_url("riprenderci-la-politica-partendo-dall-economia")
 
-    assert_redirected_to rails4b_path
-    follow_redirect!
-    assert_select "h1", text: "Riprenderci la politica, partendo dall'economia", count: 0
+    assert_response :success
+    assert_select "h1", text: "Riprenderci la politica, partendo dall'economia"
+    assert_select "h2", text: /Partire da un comune/
+    assert_select "a[href='#{genera_impresa_project_path("ripartire-con-dash")}']", text: /Apri il progetto Ripartire con Dash/
+
+    get rails4b_contents_url(tab: "contenuti")
+    assert_response :success
+    assert_select "a[href='#{rails4b_content_path("riprenderci-la-politica-partendo-dall-economia")}']"
   end
 
   test "Rails4Business separates dated content from the permanent train" do

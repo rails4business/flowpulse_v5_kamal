@@ -52,7 +52,15 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "contesti sportivi e aziendali"
     assert_select "img[src=?]", "https://ik.imagekit.io/posturacorretta/Professionisti/davide_cattaneo.png?updatedAt=1772458283972"
     assert_includes response.body, "Igiene Posturale · livello base"
-    assert_includes response.body, "Formazione collegata al servizio"
+    assert_select ".davide-service-card", count: 4
+    assert_select ".davide-service-card h3", text: "Istruttore di nuoto"
+    assert_select ".davide-service-card button", text: "Scopri il servizio", count: 4
+    assert_select ".davide-service-card a[href='#contatti']", text: "Contatta", count: 4
+    assert_select "button[data-modal-dialog-id-value='davide-qualifications']", text: "Formazione e attestati · 1"
+    assert_select "dialog#davide-qualifications", text: /Igiene Posturale · livello base/
+    assert_select "dialog[id^='davide-service-']", count: 4
+    assert_select "dialog#davide-service-3 a[href='https://posturacorretta.org']", text: /Apri PosturaCorretta.org/
+    assert_select "a.davide-video-link[href='https://youtube.com/watch?v=FthfIMTv7CQ'][target='_blank']", text: /Guarda il video/
     assert_select "#contatti", text: /Parliamone e definiamo la proposta.*quale servizio interessa.*condizioni della proposta/m
     assert_select "a[href^='mailto:markpostura@gmail.com']", text: "Contatta per concordare"
     assert_select "img[src=?]", "https://ik.imagekit.io/posturacorretta/corsi/igiene_posturale/attestati_insegnanti_igiene_posturale/01-davide-cattaneo-cert-igp-2025-08-12.png"
@@ -96,17 +104,26 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Step del progetto"
   end
 
-  test "Ripartire con Dash is a private lightweight project landing" do
-    get genera_impresa_project_url("ripartire-con-dash")
-    assert_response :not_found
-
-    sign_in_as_superadmin
+  test "Ripartire con Dash is a public lightweight project landing" do
     get genera_impresa_project_url("ripartire-con-dash")
     assert_response :success
     assert_select "h1", "Ripartire con Dash"
     assert_select "a[href=?]", rails4b_content_path("riprenderci-la-politica-partendo-dall-economia")
     assert_select "a[href=?]", impegno_path(area: "problems")
     assert_includes response.body, "In elaborazione"
+    assert_includes response.body, "Categorie da aprire"
+    assert_includes response.body, "più di 20.000 abitanti"
+    assert_select "a[href=?]", genera_impresa_project_step_path("ripartire-con-dash", "apri-la-lista-del-comune"), text: /Apri la lista del tuo comune/
+  end
+
+  test "renders every operational content of Ripartire with Dash" do
+    get genera_impresa_project_step_url("ripartire-con-dash", "aiuta-ad-aprire-il-portafoglio")
+
+    assert_response :success
+    assert_select "h1", "Trova e aiuta ad aprire un portafoglio"
+    assert_select "h2", "Prima lista di controllo"
+    assert_select "li", text: /Spiega a che cosa serve/
+    assert_select "a[href=?]", genera_impresa_project_step_path("ripartire-con-dash", "trova-un-bisogno-reale"), text: /Trova un bisogno reale/
   end
 
   test "owner sees managed brands domains and FlowPulse administration links" do

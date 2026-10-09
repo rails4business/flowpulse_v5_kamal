@@ -87,7 +87,7 @@
 
         <div class="mark-ecosystem__platform mt-8">
           <span><%= ecosystem.dig("platform", "type") %></span>
-          <strong><%= ecosystem.dig("platform", "title") %></strong>
+          <% if ecosystem.dig("platform", "href").present? %><a href="<%= ecosystem.dig("platform", "href") %>"><strong><%= ecosystem.dig("platform", "title") %></strong></a><% else %><strong><%= ecosystem.dig("platform", "title") %></strong><% end %>
           <p><%= ecosystem.dig("platform", "description") %></p>
         </div>
 
@@ -95,7 +95,7 @@
           <h5><%= ecosystem.dig("brand_types", "title") %></h5>
           <div>
             <% ecosystem.dig("brand_types", "items").each do |brand_type| %>
-              <article><small><%= brand_type.fetch("type") %></small><strong><%= brand_type.fetch("title") %></strong><p><%= brand_type.fetch("description") %></p></article>
+              <article><small><%= brand_type.fetch("type") %></small><% if brand_type["href"].present? %><a href="<%= brand_type["href"] %>"><strong><%= brand_type.fetch("title") %></strong></a><% else %><strong><%= brand_type.fetch("title") %></strong><% end %><p><%= brand_type.fetch("description") %></p></article>
             <% end %>
           </div>
         </div>
@@ -121,7 +121,7 @@
             <span><%= skills.fetch("description") %></span>
           </div>
           <div class="mark-ecosystem__skills-flow" aria-label="Dalla Skill comune ai Brand">
-            <div class="mark-ecosystem__skills-source"><small><%= skills.dig("source", "type") %></small><strong><%= skills.dig("source", "title") %></strong></div>
+            <div class="mark-ecosystem__skills-source"><small><%= skills.dig("source", "type") %></small><% if skills.dig("source", "href").present? %><a href="<%= skills.dig("source", "href") %>"><strong><%= skills.dig("source", "title") %></strong></a><% else %><strong><%= skills.dig("source", "title") %></strong><% end %></div>
             <div class="mark-ecosystem__skills-list"><small>Esempi di Skill</small><strong><%= skills.fetch("examples").join(" · ") %></strong></div>
             <div class="mark-ecosystem__skills-targets"><small>Attivabili in</small><strong><%= skills.fetch("targets").join(" · ") %></strong></div>
           </div>
@@ -138,7 +138,7 @@
           <p><%= ecosystem.dig("example", "description") %></p>
           <ol>
             <% ecosystem.dig("example", "steps").each do |step| %>
-              <li><small><%= step.fetch("type") %></small><strong><%= step.fetch("title") %></strong></li>
+              <li><small><%= step.fetch("type") %></small><% if step["href"].present? %><a href="<%= step["href"] %>"><strong><%= step.fetch("title") %></strong></a><% else %><strong><%= step.fetch("title") %></strong><% end %></li>
             <% end %>
           </ol>
         </div>
@@ -221,7 +221,7 @@
   .mark-directions__cycle-number{position:relative;z-index:1;display:flex;width:2.5rem;height:2.5rem;align-items:center;justify-content:center;border:3px solid #fff;border-radius:999px;background:#0f172a;color:#fff;font-size:.8rem;font-weight:900;box-shadow:0 0 0 1px #f59e0b}
   .mark-ecosystem__platform{position:relative;margin-inline:auto;max-width:30rem;border-radius:1.25rem;background:#0f172a;padding:1.25rem;text-align:center;color:#fff;box-shadow:0 10px 25px rgb(15 23 42 / 18%)}
   .mark-ecosystem__platform span,.mark-ecosystem small{display:block;font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
-  .mark-ecosystem__platform span{color:#fcd34d}.mark-ecosystem__platform strong{display:block;margin-top:.3rem;font-size:1.35rem}.mark-ecosystem__platform p{margin-top:.4rem;color:#cbd5e1;font-size:.8rem;line-height:1.4}
+  .mark-ecosystem__platform span{color:#fcd34d}.mark-ecosystem__platform a{color:#fff!important;text-decoration:none}.mark-ecosystem__platform strong{display:block;margin-top:.3rem;font-size:1.35rem}.mark-ecosystem__platform a:hover strong{text-decoration:underline}.mark-ecosystem__platform p{margin-top:.4rem;color:#cbd5e1;font-size:.8rem;line-height:1.4}
   .mark-ecosystem__brand-types{margin-top:2rem}.mark-ecosystem__brand-types>h5{font-weight:900}.mark-ecosystem__brand-types>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:.75rem}.mark-ecosystem__brand-types article{border:1px solid #e2e8f0;border-radius:1rem;background:#fff;padding:1rem}.mark-ecosystem__brand-types small,.mark-ecosystem__brand-copy p,.mark-ecosystem__projects small,.mark-ecosystem__people p,.mark-ecosystem__people small{display:block;color:#b45309;font-size:.65rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.mark-ecosystem__brand-types strong,.mark-ecosystem__projects strong,.mark-ecosystem__people strong{display:block;margin-top:.25rem;font-weight:900}.mark-ecosystem__brand-types p{margin-top:.4rem;color:#64748b;font-size:.8rem;line-height:1.45}
   .mark-ecosystem__brand{margin-top:1.5rem;border:1px solid #bfdbfe;border-radius:1.25rem;background:#eff6ff;padding:1.25rem}.mark-ecosystem__brand-copy h5,.mark-ecosystem__people h5{margin-top:.25rem;font-weight:900}.mark-ecosystem__brand-copy span,.mark-ecosystem__people span{display:block;margin-top:.4rem;color:#64748b;font-size:.82rem;line-height:1.5}.mark-ecosystem__projects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1rem}.mark-ecosystem__projects article{border-radius:.9rem;background:#fff;padding:.85rem}.mark-ecosystem__projects dl{margin-top:.7rem;border-top:1px solid #e2e8f0;padding-top:.55rem}.mark-ecosystem__projects dl div+div{margin-top:.45rem}.mark-ecosystem__projects dt{color:#64748b;font-size:.62rem;font-weight:900;text-transform:uppercase}.mark-ecosystem__projects dd{margin-top:.1rem;font-size:.75rem;line-height:1.35}
   .mark-ecosystem__skills{margin-top:1.5rem;border:1px solid #fed7aa;border-radius:1.25rem;background:#fff7ed;padding:1.25rem}.mark-ecosystem__skills-copy p{font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#c2410c}.mark-ecosystem__skills-copy h5{margin-top:.25rem;font-weight:900}.mark-ecosystem__skills-copy span{display:block;margin-top:.45rem;max-width:52rem;color:#64748b;font-size:.82rem;line-height:1.5}.mark-ecosystem__skills-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;margin-top:1rem}.mark-ecosystem__skills-flow>div{position:relative;border-radius:.8rem;background:#fff;padding:.8rem}.mark-ecosystem__skills-flow>div:not(:last-child)::after{content:"→";position:absolute;top:50%;right:-1.35rem;transform:translateY(-50%);color:#ea580c;font-weight:900}.mark-ecosystem__skills-flow small{display:block;color:#9a3412;font-size:.62rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.mark-ecosystem__skills-flow strong{display:block;margin-top:.25rem;font-size:.8rem;line-height:1.4}
@@ -234,6 +234,8 @@
   @media(max-width:1023px){.mark-directions__cycle{display:flex;overflow-x:auto;gap:0;padding-bottom:1rem;scroll-snap-type:x proximity}.mark-directions__cycle::before{right:auto;left:1.25rem;width:76rem}.mark-directions__cycle-step{width:12rem;min-width:12rem;padding-right:1.5rem;scroll-snap-align:start}}
   @media(max-width:900px){.mark-ecosystem__example ol{align-items:stretch}}
   @media(max-width:700px){.mark-ecosystem__brand-types>div{grid-template-columns:1fr}.mark-ecosystem__projects,.mark-ecosystem__people ul{display:flex;overflow-x:auto}.mark-ecosystem__projects article,.mark-ecosystem__people li{width:14rem;min-width:14rem}.mark-ecosystem__skills-flow{display:flex;overflow-x:auto;gap:1.5rem}.mark-ecosystem__skills-flow>div{width:14rem;min-width:14rem}.mark-ecosystem__consultation ul{grid-template-columns:1fr}}
+  .mark-ecosystem__brand-types a,.mark-ecosystem__skills-source a,.mark-ecosystem__example a{color:inherit!important;text-decoration:none}.mark-ecosystem__brand-types a:hover strong,.mark-ecosystem__skills-source a:hover strong,.mark-ecosystem__example a:hover strong{text-decoration:underline}
+  @media(max-width:520px){.mark-directions__main-tabs,.mark-directions__area-tabs{margin-right:-1.25rem;padding-right:1.25rem}.mark-directions__tab,.mark-directions__area-tab{padding:.65rem .85rem;font-size:.78rem}.mark-directions__panel,.mark-directions__area-panel{border-radius:1.1rem;padding:1rem}.mark-directions__panel h3,.mark-directions__area-panel h4{font-size:1.55rem;line-height:1.15}.mark-directions__cycle-step{width:10.5rem;min-width:10.5rem}.mark-ecosystem__projects,.mark-ecosystem__people ul,.mark-ecosystem__skills-flow{display:grid;grid-template-columns:1fr;overflow:visible;gap:.65rem}.mark-ecosystem__projects article,.mark-ecosystem__people li,.mark-ecosystem__skills-flow>div{width:auto;min-width:0}.mark-ecosystem__skills-flow>div:not(:last-child)::after{content:"↓";top:auto;right:50%;bottom:-1.05rem;transform:translateX(50%)}.mark-ecosystem__example ol{gap:1rem}.mark-ecosystem__example li{min-width:8.5rem}}
 </style>
 
 <script>

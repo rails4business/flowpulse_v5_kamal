@@ -5592,6 +5592,18 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 /* Stato pubblico dell'area Lezioni PosturaCorretta. */
 .pc-lessons-coming-soon { display:flex; align-items:flex-start; gap:1rem; margin-bottom:2rem; border:1px solid #bfdbfe; border-radius:1rem; padding:1rem 1.15rem; color:#172554; background-color:#eff6ff !important; box-shadow:0 8px 24px rgb(30 64 175 / 7%); }
 .pc-lessons-coming-soon__badge { display:inline-flex; flex:none; align-items:center; border-radius:999px; padding:.35rem .65rem; color:#fff !important; background-color:#2563eb !important; font-size:.68rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+
+/* CTA GeneraImpresa / 1Impegno: colori espliciti per evitare override dei temi brand. */
+.gi-dash-button, .impegno-problem-button { display:inline-flex; min-height:2.75rem; align-items:center; justify-content:center; border:1px solid transparent; border-radius:.75rem; padding:.7rem 1.25rem; text-align:center; text-decoration:none; font-size:.875rem; font-weight:900; cursor:pointer; transition:background-color .15s ease, border-color .15s ease; }
+.gi-dash-button--primary, .impegno-problem-button--primary { border-color:#0f172a !important; color:#fff !important; background-color:#0f172a !important; }
+.gi-dash-button--primary:hover, .impegno-problem-button--primary:hover { background-color:#1e293b !important; }
+.gi-dash-button--accent, .impegno-problem-button--accent { border-color:#f59e0b !important; color:#0f172a !important; background-color:#fcd34d !important; }
+.gi-dash-button--accent:hover, .impegno-problem-button--accent:hover { background-color:#fde68a !important; }
+.impegno-problem-button--success { border-color:#6ee7b7 !important; color:#065f46 !important; background-color:#ecfdf5 !important; }
+.impegno-problem-button--success:hover { background-color:#d1fae5 !important; }
+.impegno-problems-tab { display:inline-flex; flex:none; align-items:center; border-radius:.5rem; padding:.5rem .75rem; color:#475569 !important; background-color:transparent !important; font-size:.875rem; font-weight:700; text-decoration:none; }
+.impegno-problems-tab:hover { color:#0f172a !important; background-color:#f1f5f9 !important; }
+.impegno-problems-tab--active, .impegno-problems-tab--active:hover { color:#0f172a !important; background-color:#f59e0b !important; }
 .pc-lessons-coming-soon h1 { margin:0; color:#172554; font-size:1rem; font-weight:900; line-height:1.35; }
 .pc-lessons-coming-soon p { max-width:52rem; margin:.25rem 0 0; color:#475569; font-size:.875rem; line-height:1.55; }
 @media (max-width:560px) { .pc-lessons-coming-soon { display:grid; gap:.65rem; } .pc-lessons-coming-soon__badge { justify-self:start; } }

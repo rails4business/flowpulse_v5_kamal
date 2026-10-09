@@ -22,8 +22,8 @@
           <% end %>
         </ol>
         <div class="mt-6 flex flex-wrap gap-3">
-          <% if completed.size < @steps.size %><%= button_to "Completa il prossimo passaggio", impegno_problem_path(@active_problem), method: :patch, params: { operation: "advance" }, class: "rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-800" %><% end %>
-          <% if completed.size == @steps.size %><%= button_to "Segna come risolto", impegno_problem_path(@active_problem), method: :patch, params: { operation: "resolve" }, class: "rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-800 hover:bg-emerald-100" %><% end %>
+          <% if completed.size < @steps.size %><%= button_to "Completa il prossimo passaggio", impegno_problem_path(@active_problem), method: :patch, params: { operation: "advance" }, class: "impegno-problem-button impegno-problem-button--primary" %><% end %>
+          <% if completed.size == @steps.size %><%= button_to "Segna come risolto", impegno_problem_path(@active_problem), method: :patch, params: { operation: "resolve" }, class: "impegno-problem-button impegno-problem-button--success" %><% end %>
         </div>
       </section>
     <% else %>
@@ -33,7 +33,7 @@
     <div class="grid gap-6 lg:grid-cols-2">
       <section class="rounded-3xl border border-slate-200 bg-white p-6">
         <h2 class="text-xl font-black">Problemi futuri</h2><p class="mt-1 text-sm text-slate-500">Restano qui senza rubare attenzione al problema attivo.</p>
-        <div class="mt-5 space-y-3"><% @future_problems.each do |problem| %><article class="rounded-2xl border border-slate-200 p-4"><h3 class="font-black"><%= problem.title %></h3><p class="mt-1 line-clamp-2 text-sm text-slate-500"><%= problem.description %></p><%= button_to "Lavora su questo", impegno_problem_path(problem), method: :patch, params: { operation: "focus" }, class: "mt-3 rounded-lg bg-amber-400 px-3 py-2 text-xs font-black text-slate-950 hover:bg-amber-300" %></article><% end %><% if @future_problems.empty? %><p class="mt-5 text-sm text-slate-400">Nessun problema in attesa.</p><% end %></div>
+        <div class="mt-5 space-y-3"><% @future_problems.each do |problem| %><article class="rounded-2xl border border-slate-200 p-4"><h3 class="font-black"><%= problem.title %></h3><p class="mt-1 line-clamp-2 text-sm text-slate-500"><%= problem.description %></p><%= button_to "Lavora su questo", impegno_problem_path(problem), method: :patch, params: { operation: "focus" }, class: "impegno-problem-button impegno-problem-button--accent mt-3" %></article><% end %><% if @future_problems.empty? %><p class="mt-5 text-sm text-slate-400">Nessun problema in attesa.</p><% end %></div>
       </section>
       <section class="rounded-3xl border border-slate-200 bg-white p-6">
         <h2 class="text-xl font-black">Problemi risolti</h2><p class="mt-1 text-sm text-slate-500">La memoria delle soluzioni che hai portato fino in fondo.</p>
@@ -41,7 +41,7 @@
       </section>
     </div>
 
-    <section class="rounded-3xl bg-slate-950 p-6 text-white sm:p-8"><h2 class="text-2xl font-black">Aggiungi un problema</h2><p class="mt-2 text-sm text-slate-300">Se ne esiste già uno attivo, il nuovo entra automaticamente tra i futuri.</p><%= form_with url: impegno_problems_path, scope: :problem, class: "mt-6 grid gap-4" do |form| %><%= form.text_field :title, required: true, placeholder: "Qual è il problema?", class: "rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" %><%= form.text_area :description, rows: 3, placeholder: "Cosa succede, a chi e in quale situazione?", class: "rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" %><%= form.submit "Aggiungi all’elenco", class: "w-fit rounded-xl bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 hover:bg-amber-300" %><% end %></section>
+    <section class="rounded-3xl bg-slate-950 p-6 text-white sm:p-8"><h2 class="text-2xl font-black">Aggiungi un problema</h2><p class="mt-2 text-sm text-slate-300">Se ne esiste già uno attivo, il nuovo entra automaticamente tra i futuri.</p><%= form_with url: impegno_problems_path, scope: :problem, class: "mt-6 grid gap-4" do |form| %><%= form.text_field :title, required: true, placeholder: "Qual è il problema?", class: "rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" %><%= form.text_area :description, rows: 3, placeholder: "Cosa succede, a chi e in quale situazione?", class: "rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" %><%= form.submit "Aggiungi all’elenco", class: "impegno-problem-button impegno-problem-button--accent w-fit" %><% end %></section>
   </div>
 <% end %>
 <%= frame %>

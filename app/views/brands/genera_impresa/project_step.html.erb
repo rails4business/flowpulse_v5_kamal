@@ -1,0 +1,23 @@
+<% content_for :title, "#{@step['title']} — #{@project['title']}" %>
+<% content_for :description, @step["summary"] %>
+<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+
+<main class="min-h-screen bg-stone-50 text-slate-950">
+  <article class="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-20">
+    <%= link_to "← Ripartire con Dash", genera_impresa_project_path(@project.fetch("slug")), class: "text-sm font-black text-amber-800 hover:text-amber-950" %>
+    <div class="mt-8 flex items-center gap-3"><span class="flex size-10 items-center justify-center rounded-full bg-amber-300 font-black"><%= @step_index + 1 %></span><span class="text-xs font-black uppercase tracking-[.16em] text-amber-800">Passaggio operativo</span></div>
+    <h1 class="mt-5 text-4xl font-black tracking-[-.04em] sm:text-6xl"><%= @step.fetch("title") %></h1>
+    <p class="mt-6 text-lg leading-8 text-slate-600"><%= @step.fetch("summary") %></p>
+
+    <section class="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-xl font-black">Prima lista di controllo</h2>
+      <ul class="mt-5 divide-y divide-slate-200 border-y border-slate-200"><% @step.fetch("checklist").each do |item| %><li class="flex gap-4 py-4"><span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md border-2 border-amber-400 text-xs text-amber-700">✓</span><span class="font-bold leading-6"><%= item %></span></li><% end %></ul>
+      <p class="mt-5 text-sm leading-6 text-slate-500">Questa scheda è una base da provare e aggiornare con il primo gruppo locale. Non certifica il completamento del passaggio e non costituisce consulenza finanziaria.</p>
+    </section>
+
+    <nav class="mt-10 grid gap-3 sm:grid-cols-2" aria-label="Passaggi del progetto">
+      <% if @previous_step %><%= link_to genera_impresa_project_step_path(@project.fetch("slug"), @previous_step.fetch("slug")), class: "rounded-2xl border border-slate-200 bg-white p-4 text-sm font-black hover:border-amber-300" do %><small class="block text-slate-400">Precedente</small><span class="mt-1 block">← <%= @previous_step.fetch("title") %></span><% end %><% else %><span></span><% end %>
+      <% if @next_step %><%= link_to genera_impresa_project_step_path(@project.fetch("slug"), @next_step.fetch("slug")), class: "rounded-2xl border border-slate-200 bg-white p-4 text-right text-sm font-black hover:border-amber-300" do %><small class="block text-slate-400">Successivo</small><span class="mt-1 block"><%= @next_step.fetch("title") %> →</span><% end %><% end %>
+    </nav>
+  </article>
+</main>
