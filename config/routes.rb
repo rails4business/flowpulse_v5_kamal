@@ -158,11 +158,15 @@ Rails.application.routes.draw do
   get "posturacorretta/collabora/digital" => "brands/posturacorretta#collabora_digital", as: :posturacorretta_collabora_digital
   get "generaimpresa" => "brands/genera_impresa#index", as: :genera_impresa
   get "generaimpresa/brand/:slug" => "brands/genera_impresa#brand", as: :genera_impresa_brand
+  get "generaimpresa/brand/:slug/materiali/:material" => "brands/genera_impresa#material", as: :genera_impresa_brand_material
+  get "generaimpresa/brand/:slug/materiali/:material/esercizi/:position" => "brands/genera_impresa#exercise", as: :genera_impresa_brand_material_exercise
+  get "generaimpresa/brand/:slug/materiali/:material/immagini/:position" => "brands/genera_impresa#material_image", as: :genera_impresa_brand_material_image
   get "generaimpresa/progetti/:slug" => "brands/genera_impresa#project", as: :genera_impresa_project
   get "brands/svuotamente" => "brands/svuotamente#index", as: :svuotamente
   get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
   get "impegno" => "brands/impegno/home#index", as: :impegno
   scope path: "impegno", as: :impegno do
+    resources :problems, path: "problemi", controller: "brands/impegno/problems", only: %i[index create update]
     resources :experiences, path: "esperienze", controller: "brands/impegno/experiences", only: %i[index new create show update]
     resources :experiences, path: "esperienze", controller: "brands/impegno/experiences", only: [] do
       resources :sessions, path: "sessioni", controller: "brands/impegno/experience_sessions", only: %i[create update destroy]

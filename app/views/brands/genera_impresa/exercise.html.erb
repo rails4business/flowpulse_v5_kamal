@@ -1,0 +1,112 @@
+<% content_for :title, "#{@exercise['title']} — #{@material['title']}" %>
+<% content_for :description, @exercise["execution"] %>
+<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+
+<main class="min-h-screen bg-slate-100 text-slate-950">
+  <article class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <nav class="flex flex-wrap items-center gap-2 text-sm font-bold text-slate-500" aria-label="Percorso">
+      <%= link_to @brand["name"], genera_impresa_brand_path(@brand["slug"]), class: "hover:text-sky-800" %><span>/</span>
+      <%= link_to "Scheda preparazione al nuoto", genera_impresa_brand_material_path(@brand["slug"], @material["slug"]), class: "hover:text-sky-800" %><span>/</span>
+      <span class="text-slate-900"><%= @exercise["title"] %></span>
+    </nav>
+
+    <div class="mt-7 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm lg:grid lg:grid-cols-[1fr_1fr]">
+      <div class="exercise-animation bg-slate-100" data-exercise-animation data-source="<%= genera_impresa_brand_material_image_path(@brand["slug"], @material["slug"], @exercise["position"]) %>">
+        <%= image_tag genera_impresa_brand_material_image_path(@brand["slug"], @material["slug"], @exercise["position"]), alt: @exercise["title"], class: "exercise-animation__fallback aspect-square h-full w-full object-cover", data: { exercise_animation_target: "fallback" } %>
+        <canvas class="exercise-animation__canvas" data-exercise-animation-target="canvas" role="img" aria-label="Animazione: <%= @exercise['title'] %>" hidden></canvas>
+        <div class="exercise-animation__controls" data-exercise-animation-target="controls" hidden>
+          <button type="button" data-speed-control>Velocità: normale</button>
+          <button type="button" data-pause-control>Pausa</button>
+        </div>
+      </div>
+      <div class="p-6 sm:p-9">
+        <p class="text-xs font-black uppercase tracking-wider text-sky-700">Esercizio <%= format("%02d", @exercise["position"]) %> di <%= @material.fetch("exercises").size %></p>
+        <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl"><%= @exercise["title"] %></h1>
+        <dl class="mt-8 space-y-6">
+          <div><dt class="text-xs font-black uppercase tracking-wider text-slate-400">Obiettivo</dt><dd class="mt-2 text-lg leading-7 text-slate-700"><%= @exercise["objective"] %></dd></div>
+          <div><dt class="text-xs font-black uppercase tracking-wider text-slate-400">Come si esegue</dt><dd class="mt-2 text-lg leading-7 text-slate-700"><%= @exercise["execution"] %></dd></div>
+          <div class="rounded-2xl bg-sky-50 p-5"><dt class="text-xs font-black uppercase tracking-wider text-sky-700">Dose indicativa</dt><dd class="mt-2 text-xl font-black text-sky-950"><%= @exercise["dose"] %></dd></div>
+        </dl>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <% previous_exercise = @material.fetch("exercises")[@exercise["position"].to_i - 2] if @exercise["position"].to_i > 1 %>
+          <% next_exercise = @material.fetch("exercises")[@exercise["position"].to_i] %>
+          <% if previous_exercise %><%= link_to "← Precedente", genera_impresa_brand_material_exercise_path(@brand["slug"], @material["slug"], previous_exercise["position"]), class: "exercise-nav exercise-nav--secondary" %><% end %>
+          <% if next_exercise %><%= link_to "Successivo →", genera_impresa_brand_material_exercise_path(@brand["slug"], @material["slug"], next_exercise["position"]), class: "exercise-nav exercise-nav--primary" %><% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950"><strong>Nota:</strong> questa è una scheda dimostrativa. Indicazioni e dosaggi devono essere rivisti da Davide prima dell'utilizzo didattico pubblico.</div>
+  </article>
+</main>
+
+<style>
+  .exercise-nav{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.7rem 1rem;text-decoration:none;font-size:.8rem;font-weight:900}.exercise-nav--primary{background:#0c4a6e!important;color:#fff!important}.exercise-nav--primary:hover{background:#0369a1!important}.exercise-nav--secondary{border:1px solid #cbd5e1;background:#fff!important;color:#334155!important}.exercise-nav--secondary:hover{background:#f8fafc!important}
+  .exercise-animation{position:relative;min-width:0}.exercise-animation__canvas{aspect-ratio:1/1;width:100%;height:100%;object-fit:cover}.exercise-animation__controls{position:absolute;right:1rem;bottom:1rem;left:1rem;display:flex;justify-content:center;gap:.5rem}.exercise-animation__controls[hidden]{display:none}.exercise-animation__controls button{border:1px solid rgb(255 255 255 / 35%);border-radius:999px;background:rgb(15 23 42 / 88%)!important;color:#fff!important;padding:.65rem .9rem;font-size:.72rem;font-weight:900;box-shadow:0 4px 14px rgb(15 23 42 / 22%);backdrop-filter:blur(8px)}.exercise-animation__controls button:hover{background:#0c4a6e!important}
+</style>
+
+<script>
+  (() => {
+    const initializeExerciseAnimations = () => document.querySelectorAll("[data-exercise-animation]").forEach(async (container) => {
+      if (container.dataset.initialized || !("ImageDecoder" in window)) return;
+      container.dataset.initialized = "true";
+
+      const fallback = container.querySelector("[data-exercise-animation-target='fallback']");
+      const canvas = container.querySelector("[data-exercise-animation-target='canvas']");
+      const controls = container.querySelector("[data-exercise-animation-target='controls']");
+      const speedButton = container.querySelector("[data-speed-control]");
+      const pauseButton = container.querySelector("[data-pause-control]");
+
+      try {
+        const response = await fetch(container.dataset.source);
+        const decoder = new ImageDecoder({ data: await response.arrayBuffer(), type: "image/gif" });
+        await decoder.tracks.ready;
+        const frameCount = decoder.tracks.selectedTrack.frameCount;
+        if (frameCount < 2) return;
+
+        const context = canvas.getContext("2d");
+        let frameIndex = 0;
+        let paused = false;
+        let speed = 1;
+        let timer;
+
+        const renderFrame = async () => {
+          if (paused) return;
+          const result = await decoder.decode({ frameIndex });
+          const frame = result.image;
+          if (!canvas.width) {
+            canvas.width = frame.displayWidth;
+            canvas.height = frame.displayHeight;
+            fallback.hidden = true;
+            canvas.hidden = false;
+            controls.hidden = false;
+          }
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(frame, 0, 0, canvas.width, canvas.height);
+          const duration = Math.max((frame.duration || 100000) / 1000, 40) * speed;
+          frame.close();
+          frameIndex = (frameIndex + 1) % frameCount;
+          timer = window.setTimeout(renderFrame, duration);
+        };
+
+        speedButton.addEventListener("click", () => {
+          speed = speed === 1 ? 2 : 1;
+          speedButton.textContent = speed === 2 ? "Velocità: lenta" : "Velocità: normale";
+        });
+        pauseButton.addEventListener("click", () => {
+          paused = !paused;
+          pauseButton.textContent = paused ? "Riprendi" : "Pausa";
+          if (paused) window.clearTimeout(timer);
+          else renderFrame();
+        });
+        renderFrame();
+      } catch (_error) {
+        container.dataset.animationFallback = "true";
+      }
+    });
+
+    document.addEventListener("turbo:load", initializeExerciseAnimations);
+    document.addEventListener("DOMContentLoaded", initializeExerciseAnimations);
+    initializeExerciseAnimations();
+  })();
+</script>

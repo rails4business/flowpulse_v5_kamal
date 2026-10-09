@@ -7,7 +7,9 @@ module Brands
       def self.model_name
         @model_name ||= ActiveModel::Name.new(self, nil, "DataCommitment")
       end
-  KINDS = %w[personal appointment event project path content academy work service purchase report].freeze
+  # `work_commitment` resta accettato soltanto per leggere e aggiornare eventuali
+  # problemi creati durante il primo prototipo della funzione.
+  KINDS = %w[personal appointment event project path content academy work problem_solving work_commitment service purchase report].freeze
   STATUSES = %w[draft requested planned confirmed in_progress completed cancelled].freeze
   PRICING_TYPES = %w[hourly fixed none].freeze
   CONTRIBUTION_TYPES = %w[time_investment money_investment paid unpaid].freeze
@@ -35,7 +37,7 @@ module Brands
 
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :starts_at, presence: true, unless: -> { experience_tree_draft? || external_request? }
+  validates :starts_at, presence: true, unless: -> { experience_tree_draft? || external_request? || problem_commitment? }
   validates :calendar_key, :calendar_label, presence: true
   validates :kind, inclusion: { in: KINDS }
   validates :status, inclusion: { in: STATUSES }
@@ -91,6 +93,10 @@ module Brands
 
   def publication_requested?
     kind == "content" && publish_on_completion?
+  end
+
+  def problem_commitment?
+    kind.in?(%w[problem_solving work_commitment])
   end
 
   private

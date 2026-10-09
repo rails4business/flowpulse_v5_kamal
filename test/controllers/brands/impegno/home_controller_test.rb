@@ -30,6 +30,7 @@ module Brands
         assert_select "select[name=area]", count: 0
         assert_select "nav[aria-label='Sezioni di Impegno'] a[aria-current=page]", text: "Agenda"
         assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Settimana"
+        assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Problemi"
         assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Esperienze"
         assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Luoghi"
         assert_select "nav[aria-label='Sezioni di Impegno'] a", text: "Contatti"

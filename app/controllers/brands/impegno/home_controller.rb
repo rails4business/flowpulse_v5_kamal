@@ -4,7 +4,7 @@ module Brands
       layout "landing"
       allow_unauthenticated_access
 
-      AREAS = %w[agenda user domain_roles places contacts professional].freeze
+      AREAS = %w[agenda problems user domain_roles places contacts professional].freeze
       VIEWS = {
         "agenda" => %w[agenda],
         "user" => %w[practices recurring],
@@ -63,7 +63,7 @@ module Brands
         requested_view = params[:view] == "programs" ? "practices" : params[:view]
         @impegno_legacy_area = requested_area if %w[user domain_roles].include?(requested_area)
         @impegno_legacy_view = requested_view.presence
-        @impegno_area = requested_area.presence_in(%w[places contacts professional]) || "agenda"
+        @impegno_area = requested_area.presence_in(%w[problems places contacts professional]) || "agenda"
         @impegno_area = "agenda" if @impegno_area == "professional" && !@impegno_professional_access
         @impegno_view = @impegno_area == "agenda" ? "agenda" : nil
         @impegno_period = @impegno_area == "agenda" ? params[:period].presence_in(AGENDA_PERIODS) : nil
@@ -99,6 +99,7 @@ module Brands
         end
 
         def workspace_src
+          return impegno_problems_path(workspace: "1") if @impegno_area == "problems"
           return impegno_contacts_path(workspace: "1") if @impegno_area == "contacts"
           return impegno_places_path(workspace: "1") if @impegno_area == "places"
           return impegno_professional_path(workspace: "1") if @impegno_area == "professional"

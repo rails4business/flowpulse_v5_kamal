@@ -1,0 +1,276 @@
+<%
+  about = data.fetch("about")
+  method = data.fetch("method")
+  areas = data.fetch("areas")
+  first_area = areas.fetch("items").first.fetch("id")
+%>
+
+<section id="<%= component.fetch("id") %>" class="mark-directions scroll-mt-24 border-y border-slate-200 bg-slate-50" data-method-areas>
+  <span id="chi-sono" class="block scroll-mt-24" aria-hidden="true"></span>
+  <span id="metodo" class="block scroll-mt-24" aria-hidden="true"></span>
+  <span id="ambiti" class="block scroll-mt-24" aria-hidden="true"></span>
+  <div class="mx-auto max-w-6xl px-5 py-14 sm:py-20">
+    <div class="max-w-3xl">
+      <% if data["eyebrow"].present? %><p class="text-xs font-black uppercase tracking-[.2em] text-amber-700"><%= data["eyebrow"] %></p><% end %>
+      <h2 class="mt-3 text-3xl font-black tracking-[-.04em] text-slate-950 sm:text-5xl"><%= data.fetch("title") %></h2>
+      <% if data["description"].present? %><p class="mt-5 text-lg leading-8 text-slate-600"><%= data["description"] %></p><% end %>
+    </div>
+
+    <div class="mark-directions__main-tabs mt-9" role="tablist" aria-label="Presentazione di Mark Postura">
+      <button type="button" id="mark-tab-chi-sono" class="mark-directions__tab mark-directions__tab--active" role="tab" aria-selected="true" aria-controls="mark-panel-chi-sono" data-main-tab="chi-sono">Chi sono</button>
+      <button type="button" id="mark-tab-metodo" class="mark-directions__tab" role="tab" aria-selected="false" aria-controls="mark-panel-metodo" data-main-tab="metodo">Metodo di lavoro</button>
+      <button type="button" id="mark-tab-ambiti" class="mark-directions__tab" role="tab" aria-selected="false" aria-controls="mark-panel-ambiti" data-main-tab="ambiti">Ambiti di applicazione</button>
+    </div>
+
+    <div id="mark-panel-chi-sono" class="mark-directions__panel" role="tabpanel" aria-labelledby="mark-tab-chi-sono" data-main-panel="chi-sono">
+      <div class="grid gap-8 lg:grid-cols-[.85fr_1.15fr]">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-amber-700"><%= about.fetch("eyebrow") %></p>
+          <h3 class="mt-3 text-3xl font-black tracking-tight"><%= about.fetch("title") %></h3>
+          <div class="mt-5 space-y-4 text-base leading-7 text-slate-600">
+            <% Array(about.fetch("paragraphs")).each do |paragraph| %><p><%= editorial_inline_markdown(paragraph) %></p><% end %>
+          </div>
+        </div>
+
+        <div class="grid gap-3">
+          <% Array(about.fetch("strengths")).each do |strength| %>
+            <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h4 class="font-black text-slate-950"><%= strength.fetch("title") %></h4>
+              <p class="mt-2 text-sm leading-6 text-slate-600"><%= strength.fetch("description") %></p>
+            </article>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="mt-8 rounded-3xl bg-slate-950 p-7 text-white">
+        <h3 class="text-xl font-black"><%= about.dig("delegation", "title") %></h3>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-300"><%= about.dig("delegation", "description") %></p>
+      </div>
+    </div>
+
+    <div id="mark-panel-metodo" class="mark-directions__panel" role="tabpanel" aria-labelledby="mark-tab-metodo" data-main-panel="metodo" hidden>
+      <div class="max-w-3xl">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-amber-700"><%= method.fetch("eyebrow") %></p>
+        <h3 class="mt-3 text-3xl font-black tracking-tight"><%= method.fetch("title") %></h3>
+        <p class="mt-4 text-lg leading-8 text-slate-600"><%= method.fetch("introduction") %></p>
+      </div>
+
+      <section class="mt-9 rounded-3xl border border-amber-200 bg-amber-50 p-6 sm:p-8" aria-labelledby="atomic-solution-title">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-amber-800">Dalla programmazione ai progetti</p>
+        <h4 id="atomic-solution-title" class="mt-3 text-2xl font-black tracking-tight text-slate-950"><%= method.dig("atomic", "title") %></h4>
+        <div class="mt-5 grid gap-4 text-sm leading-7 text-slate-700 lg:grid-cols-3">
+          <% Array(method.dig("atomic", "paragraphs")).each do |paragraph| %><p><%= editorial_inline_markdown(paragraph) %></p><% end %>
+        </div>
+      </section>
+
+      <div class="mt-12 border-t border-slate-200 pt-10">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-amber-700">Dall'intuizione all'esperienza</p>
+        <h4 class="mt-3 text-2xl font-black tracking-tight sm:text-3xl"><%= method.dig("cycle", "title") %></h4>
+        <ol class="mark-directions__cycle mt-8" aria-label="Fasi della soluzione atomica">
+          <% Array(method.dig("cycle", "steps")).each_with_index do |step, index| %>
+            <li class="mark-directions__cycle-step">
+              <span class="mark-directions__cycle-number"><%= index + 1 %></span>
+              <h4 class="mt-4 font-black"><%= step.fetch("title") %></h4>
+              <p class="mt-2 text-sm leading-6 text-slate-600"><%= step.fetch("description") %></p>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+
+      <% ecosystem = method.fetch("ecosystem") %>
+      <section class="mark-ecosystem mt-12 border-t border-slate-200 pt-10" aria-labelledby="mark-ecosystem-title">
+        <div class="max-w-3xl">
+          <p class="text-xs font-black uppercase tracking-[.18em] text-amber-700"><%= ecosystem.fetch("eyebrow") %></p>
+          <h4 id="mark-ecosystem-title" class="mt-3 text-2xl font-black tracking-tight sm:text-3xl"><%= ecosystem.fetch("title") %></h4>
+          <p class="mt-4 leading-7 text-slate-600"><%= ecosystem.fetch("description") %></p>
+        </div>
+
+        <div class="mark-ecosystem__platform mt-8">
+          <span><%= ecosystem.dig("platform", "type") %></span>
+          <strong><%= ecosystem.dig("platform", "title") %></strong>
+          <p><%= ecosystem.dig("platform", "description") %></p>
+        </div>
+
+        <div class="mark-ecosystem__brand-types">
+          <h5><%= ecosystem.dig("brand_types", "title") %></h5>
+          <div>
+            <% ecosystem.dig("brand_types", "items").each do |brand_type| %>
+              <article><small><%= brand_type.fetch("type") %></small><strong><%= brand_type.fetch("title") %></strong><p><%= brand_type.fetch("description") %></p></article>
+            <% end %>
+          </div>
+        </div>
+
+        <% brand = ecosystem.fetch("brand") %>
+        <div class="mark-ecosystem__brand">
+          <div class="mark-ecosystem__brand-copy"><p>Struttura del Brand</p><h5><%= brand.fetch("title") %></h5><span><%= brand.fetch("description") %></span></div>
+          <div class="mark-ecosystem__projects" aria-label="Esempi di progetti del Brand">
+            <% brand.fetch("projects").each do |project| %>
+              <article>
+                <small>Progetto</small><strong><%= project.fetch("title") %></strong>
+                <dl><div><dt>Responsabile</dt><dd><%= project.fetch("responsible") %></dd></div><div><dt>Ruoli</dt><dd><%= project.fetch("roles") %></dd></div></dl>
+              </article>
+            <% end %>
+          </div>
+        </div>
+
+        <% skills = ecosystem.fetch("skills") %>
+        <div class="mark-ecosystem__skills">
+          <div class="mark-ecosystem__skills-copy">
+            <p>Skill condivise</p>
+            <h5><%= skills.fetch("title") %></h5>
+            <span><%= skills.fetch("description") %></span>
+          </div>
+          <div class="mark-ecosystem__skills-flow" aria-label="Dalla Skill comune ai Brand">
+            <div class="mark-ecosystem__skills-source"><small><%= skills.dig("source", "type") %></small><strong><%= skills.dig("source", "title") %></strong></div>
+            <div class="mark-ecosystem__skills-list"><small>Esempi di Skill</small><strong><%= skills.fetch("examples").join(" · ") %></strong></div>
+            <div class="mark-ecosystem__skills-targets"><small>Attivabili in</small><strong><%= skills.fetch("targets").join(" · ") %></strong></div>
+          </div>
+        </div>
+
+        <% people = ecosystem.fetch("people") %>
+        <div class="mark-ecosystem__people">
+          <div><p>Persone nel progetto</p><h5><%= people.fetch("title") %></h5><span><%= people.fetch("description") %></span></div>
+          <ul><% people.fetch("items").each do |item| %><li><small><%= item.fetch("type") %></small><strong><%= item.fetch("title") %></strong></li><% end %></ul>
+        </div>
+
+        <div class="mark-ecosystem__example">
+          <h5><%= ecosystem.dig("example", "title") %></h5>
+          <p><%= ecosystem.dig("example", "description") %></p>
+          <ol>
+            <% ecosystem.dig("example", "steps").each do |step| %>
+              <li><small><%= step.fetch("type") %></small><strong><%= step.fetch("title") %></strong></li>
+            <% end %>
+          </ol>
+        </div>
+
+        <% consultation = ecosystem["consultation"] %>
+        <% if consultation.present? %>
+          <div class="mark-ecosystem__consultation">
+            <div class="mark-ecosystem__consultation-copy">
+              <p><%= consultation.fetch("eyebrow") %></p>
+              <h5><%= consultation.fetch("title") %></h5>
+              <span><%= consultation.fetch("description") %></span>
+            </div>
+            <ul aria-label="Modi per usare FlowPulse">
+              <% consultation.fetch("paths").each do |path| %>
+                <li><strong><%= path.fetch("title") %></strong><span><%= path.fetch("description") %></span></li>
+              <% end %>
+            </ul>
+            <a class="mark-ecosystem__consultation-action" href="<%= consultation.dig("action", "href") %>"><%= consultation.dig("action", "label") %></a>
+          </div>
+        <% end %>
+      </section>
+
+      <div class="mt-8 rounded-3xl bg-slate-950 p-7 text-white sm:flex sm:items-center sm:justify-between sm:gap-8">
+        <div>
+          <h4 class="text-xl font-black">Dal metodo al progetto</h4>
+          <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-300">GeneraImpresa conserva il problema, il responsabile, lo stato del ciclo e ciò che abbiamo imparato lungo il percorso.</p>
+        </div>
+        <% if method.dig("action", "href").present? %><a href="<%= method.dig("action", "href") %>" class="mark-directions__action mt-5 sm:mt-0"><%= method.dig("action", "label") %></a><% end %>
+      </div>
+    </div>
+
+    <div id="mark-panel-ambiti" class="mark-directions__panel" role="tabpanel" aria-labelledby="mark-tab-ambiti" data-main-panel="ambiti" hidden>
+      <div class="max-w-3xl">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-amber-700"><%= areas.fetch("eyebrow") %></p>
+        <h3 class="mt-3 text-3xl font-black tracking-tight"><%= areas.fetch("title") %></h3>
+        <p class="mt-4 leading-7 text-slate-600"><%= areas.fetch("description") %></p>
+      </div>
+
+      <div class="mark-directions__area-tabs mt-8" role="tablist" aria-label="Ambiti di applicazione">
+        <% areas.fetch("items").each_with_index do |area, index| %>
+          <button type="button" id="mark-area-tab-<%= area.fetch("id") %>" class="mark-directions__area-tab <%= 'mark-directions__area-tab--active' if index.zero? %>" role="tab" aria-selected="<%= index.zero? %>" aria-controls="mark-area-panel-<%= area.fetch("id") %>" data-area-tab="<%= area.fetch("id") %>"><%= area.fetch("label") %></button>
+        <% end %>
+      </div>
+
+      <% areas.fetch("items").each do |area| %>
+        <article id="mark-area-panel-<%= area.fetch("id") %>" class="mark-directions__area-panel" role="tabpanel" aria-labelledby="mark-area-tab-<%= area.fetch("id") %>" data-area-panel="<%= area.fetch("id") %>" <%= "hidden" unless area.fetch("id") == first_area %>>
+          <div class="grid gap-8 lg:grid-cols-[1fr_.85fr]">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[.18em]" style="color:<%= area.fetch("color") %>"><%= area.fetch("audience") %></p>
+              <h4 class="mt-3 text-3xl font-black tracking-tight"><%= area.fetch("title") %></h4>
+              <p class="mt-5 text-base leading-7 text-slate-600"><%= area.fetch("description") %></p>
+              <% if area["boundary"].present? %><p class="mt-5 rounded-2xl border border-slate-200 bg-white p-5 text-sm leading-6 text-slate-600"><strong class="text-slate-950">Confine:</strong> <%= area["boundary"] %></p><% end %>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h5 class="font-black text-slate-950">Brand e progetti</h5>
+              <ul class="mt-4 space-y-2">
+                <% Array(area.fetch("projects")).each do |project| %>
+                  <li><a href="<%= project.fetch("href") %>" class="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950"><span><%= project.fetch("title") %></span><span aria-hidden="true">→</span></a></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mark-directions__main-tabs,.mark-directions__area-tabs{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.25rem}
+  .mark-directions__tab,.mark-directions__area-tab{flex:none;border:1px solid #cbd5e1;border-radius:999px;background:#fff!important;color:#334155!important;padding:.75rem 1.1rem;font-size:.875rem;font-weight:900;transition:.15s ease}
+  .mark-directions__tab:hover,.mark-directions__area-tab:hover{border-color:#f59e0b;background:#fffbeb!important;color:#92400e!important}
+  .mark-directions__tab--active,.mark-directions__tab--active:hover,.mark-directions__area-tab--active,.mark-directions__area-tab--active:hover{border-color:#0f172a!important;background:#0f172a!important;color:#fff!important;box-shadow:0 4px 12px rgb(15 23 42 / 16%)}
+  .mark-directions__panel{margin-top:1rem;border:1px solid #e2e8f0;border-radius:1.5rem;background:#fff;padding:1.5rem;box-shadow:0 12px 35px rgb(15 23 42 / 6%)}
+  .mark-directions__area-tabs{margin-bottom:1rem}
+  .mark-directions__area-panel{border:1px solid #e2e8f0;border-radius:1.5rem;background:#f8fafc;padding:1.5rem}
+  .mark-directions__cycle{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1rem}
+  .mark-directions__cycle::before{content:"";position:absolute;top:1.25rem;right:3%;left:3%;height:2px;background:#fcd34d}
+  .mark-directions__cycle-step{position:relative;min-width:0;padding-right:.25rem}
+  .mark-directions__cycle-number{position:relative;z-index:1;display:flex;width:2.5rem;height:2.5rem;align-items:center;justify-content:center;border:3px solid #fff;border-radius:999px;background:#0f172a;color:#fff;font-size:.8rem;font-weight:900;box-shadow:0 0 0 1px #f59e0b}
+  .mark-ecosystem__platform{position:relative;margin-inline:auto;max-width:30rem;border-radius:1.25rem;background:#0f172a;padding:1.25rem;text-align:center;color:#fff;box-shadow:0 10px 25px rgb(15 23 42 / 18%)}
+  .mark-ecosystem__platform span,.mark-ecosystem small{display:block;font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+  .mark-ecosystem__platform span{color:#fcd34d}.mark-ecosystem__platform strong{display:block;margin-top:.3rem;font-size:1.35rem}.mark-ecosystem__platform p{margin-top:.4rem;color:#cbd5e1;font-size:.8rem;line-height:1.4}
+  .mark-ecosystem__brand-types{margin-top:2rem}.mark-ecosystem__brand-types>h5{font-weight:900}.mark-ecosystem__brand-types>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:.75rem}.mark-ecosystem__brand-types article{border:1px solid #e2e8f0;border-radius:1rem;background:#fff;padding:1rem}.mark-ecosystem__brand-types small,.mark-ecosystem__brand-copy p,.mark-ecosystem__projects small,.mark-ecosystem__people p,.mark-ecosystem__people small{display:block;color:#b45309;font-size:.65rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.mark-ecosystem__brand-types strong,.mark-ecosystem__projects strong,.mark-ecosystem__people strong{display:block;margin-top:.25rem;font-weight:900}.mark-ecosystem__brand-types p{margin-top:.4rem;color:#64748b;font-size:.8rem;line-height:1.45}
+  .mark-ecosystem__brand{margin-top:1.5rem;border:1px solid #bfdbfe;border-radius:1.25rem;background:#eff6ff;padding:1.25rem}.mark-ecosystem__brand-copy h5,.mark-ecosystem__people h5{margin-top:.25rem;font-weight:900}.mark-ecosystem__brand-copy span,.mark-ecosystem__people span{display:block;margin-top:.4rem;color:#64748b;font-size:.82rem;line-height:1.5}.mark-ecosystem__projects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1rem}.mark-ecosystem__projects article{border-radius:.9rem;background:#fff;padding:.85rem}.mark-ecosystem__projects dl{margin-top:.7rem;border-top:1px solid #e2e8f0;padding-top:.55rem}.mark-ecosystem__projects dl div+div{margin-top:.45rem}.mark-ecosystem__projects dt{color:#64748b;font-size:.62rem;font-weight:900;text-transform:uppercase}.mark-ecosystem__projects dd{margin-top:.1rem;font-size:.75rem;line-height:1.35}
+  .mark-ecosystem__skills{margin-top:1.5rem;border:1px solid #fed7aa;border-radius:1.25rem;background:#fff7ed;padding:1.25rem}.mark-ecosystem__skills-copy p{font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#c2410c}.mark-ecosystem__skills-copy h5{margin-top:.25rem;font-weight:900}.mark-ecosystem__skills-copy span{display:block;margin-top:.45rem;max-width:52rem;color:#64748b;font-size:.82rem;line-height:1.5}.mark-ecosystem__skills-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;margin-top:1rem}.mark-ecosystem__skills-flow>div{position:relative;border-radius:.8rem;background:#fff;padding:.8rem}.mark-ecosystem__skills-flow>div:not(:last-child)::after{content:"→";position:absolute;top:50%;right:-1.35rem;transform:translateY(-50%);color:#ea580c;font-weight:900}.mark-ecosystem__skills-flow small{display:block;color:#9a3412;font-size:.62rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.mark-ecosystem__skills-flow strong{display:block;margin-top:.25rem;font-size:.8rem;line-height:1.4}
+  .mark-ecosystem__people{margin-top:1.5rem;border:1px solid #ddd6fe;border-radius:1.25rem;background:#f5f3ff;padding:1.25rem}.mark-ecosystem__people ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1rem}.mark-ecosystem__people li{border-radius:.8rem;background:#fff;padding:.8rem}.mark-ecosystem__people small{color:#6d28d9}.mark-ecosystem__people strong{font-size:.8rem;line-height:1.4}
+  .mark-ecosystem__example{margin-top:1.5rem;border:1px solid #fde68a;border-radius:1.25rem;background:#fffbeb;padding:1.25rem}.mark-ecosystem__example h5{font-weight:900}.mark-ecosystem__example>p{margin-top:.35rem;max-width:48rem;color:#78716c;font-size:.78rem;line-height:1.45}.mark-ecosystem__example ol{display:flex;align-items:stretch;gap:1.5rem;margin-top:1rem;overflow-x:auto;padding-bottom:.25rem}.mark-ecosystem__example li{position:relative;min-width:9rem;border-radius:.8rem;background:#fff;padding:.75rem}.mark-ecosystem__example li:not(:last-child)::after{content:"→";position:absolute;top:50%;right:-1.1rem;transform:translateY(-50%);color:#b45309;font-weight:900}.mark-ecosystem__example small{color:#92400e}.mark-ecosystem__example strong{display:block;margin-top:.2rem;font-size:.85rem}
+  .mark-ecosystem__consultation{margin-top:1.5rem;border-radius:1.25rem;background:#0f172a;padding:1.25rem;color:#fff}.mark-ecosystem__consultation-copy p{color:#fcd34d;font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.mark-ecosystem__consultation-copy h5{margin-top:.3rem;font-size:1.2rem;font-weight:900}.mark-ecosystem__consultation-copy span{display:block;margin-top:.45rem;max-width:48rem;color:#cbd5e1;font-size:.84rem;line-height:1.55}.mark-ecosystem__consultation ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1rem}.mark-ecosystem__consultation li{border:1px solid #334155;border-radius:.85rem;background:#1e293b;padding:.85rem}.mark-ecosystem__consultation li strong{display:block;font-size:.85rem}.mark-ecosystem__consultation li span{display:block;margin-top:.3rem;color:#cbd5e1;font-size:.75rem;line-height:1.45}.mark-ecosystem__consultation-action{display:inline-flex;align-items:center;justify-content:center;margin-top:1rem;border-radius:999px;background:#fbbf24!important;color:#0f172a!important;padding:.7rem 1rem;text-decoration:none;font-size:.82rem;font-weight:900}.mark-ecosystem__consultation-action:hover{background:#fde68a!important}
+  .mark-directions__action{display:inline-flex;min-height:2.75rem;flex:none;align-items:center;justify-content:center;border-radius:999px;background:#fff!important;color:#0f172a!important;padding:.7rem 1.1rem;text-decoration:none;font-size:.875rem;font-weight:900}
+  .mark-directions__action:hover{background:#fef3c7!important}
+  @media(min-width:640px){.mark-directions__panel,.mark-directions__area-panel{padding:2rem}}
+  @media(max-width:1023px){.mark-directions__cycle{display:flex;overflow-x:auto;gap:0;padding-bottom:1rem;scroll-snap-type:x proximity}.mark-directions__cycle::before{right:auto;left:1.25rem;width:76rem}.mark-directions__cycle-step{width:12rem;min-width:12rem;padding-right:1.5rem;scroll-snap-align:start}}
+  @media(max-width:900px){.mark-ecosystem__example ol{align-items:stretch}}
+  @media(max-width:700px){.mark-ecosystem__brand-types>div{grid-template-columns:1fr}.mark-ecosystem__projects,.mark-ecosystem__people ul{display:flex;overflow-x:auto}.mark-ecosystem__projects article,.mark-ecosystem__people li{width:14rem;min-width:14rem}.mark-ecosystem__skills-flow{display:flex;overflow-x:auto;gap:1.5rem}.mark-ecosystem__skills-flow>div{width:14rem;min-width:14rem}.mark-ecosystem__consultation ul{grid-template-columns:1fr}}
+</style>
+
+<script>
+  (() => {
+    const initialize = () => document.querySelectorAll("[data-method-areas]").forEach((container) => {
+      if (container.dataset.initialized) return;
+      container.dataset.initialized = "true";
+
+      const activate = (kind, value, updateHash = true) => {
+        const buttonSelector = kind === "main" ? "[data-main-tab]" : "[data-area-tab]";
+        const panelSelector = kind === "main" ? "[data-main-panel]" : "[data-area-panel]";
+        const key = kind === "main" ? "mainTab" : "areaTab";
+        const panelKey = kind === "main" ? "mainPanel" : "areaPanel";
+        container.querySelectorAll(buttonSelector).forEach((button) => {
+          const selected = button.dataset[key] === value;
+          button.setAttribute("aria-selected", String(selected));
+          button.classList.toggle(kind === "main" ? "mark-directions__tab--active" : "mark-directions__area-tab--active", selected);
+        });
+        container.querySelectorAll(panelSelector).forEach((panel) => { panel.hidden = panel.dataset[panelKey] !== value; });
+        if (updateHash) history.replaceState(null, "", `#${kind === "main" ? value : `ambiti-${value}`}`);
+      };
+
+      container.querySelectorAll("[data-main-tab]").forEach((button) => button.addEventListener("click", () => activate("main", button.dataset.mainTab)));
+      container.querySelectorAll("[data-area-tab]").forEach((button) => button.addEventListener("click", () => { activate("main", "ambiti", false); activate("area", button.dataset.areaTab); }));
+
+      const syncHash = () => {
+        const hash = window.location.hash.slice(1);
+        if (hash === "ambiti") activate("main", "ambiti", false);
+        else if (hash.startsWith("ambiti-")) { activate("main", "ambiti", false); activate("area", hash.replace("ambiti-", ""), false); }
+        else if (hash === "metodo") activate("main", "metodo", false);
+        else if (hash === "chi-sono") activate("main", "chi-sono", false);
+      };
+      window.addEventListener("hashchange", syncHash);
+      syncHash();
+    });
+    document.addEventListener("turbo:load", initialize);
+    document.addEventListener("DOMContentLoaded", initialize);
+    initialize();
+  })();
+</script>

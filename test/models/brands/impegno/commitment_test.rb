@@ -3,6 +3,13 @@ require "test_helper"
 module Brands
   module Impegno
     class CommitmentTest < ActiveSupport::TestCase
+      test "work commitment can stay outside the calendar" do
+        commitment = @profile.data_commitments.new(created_by_profile: @profile, domain: @domain, title: "Problema da risolvere", kind: "problem_solving", status: "planned", blocks_calendar: false, pricing_type: "none", contribution_type: "unpaid")
+
+        assert commitment.valid?
+        assert_equal "problem_solving", commitment.kind
+        assert_nil commitment.starts_at
+      end
       setup do
         user = User.create!(email_address: "request-owner@example.com", password: "password123", password_confirmation: "password123")
         @profile = user.create_profile!(display_name: "Request owner", username: "request_owner")

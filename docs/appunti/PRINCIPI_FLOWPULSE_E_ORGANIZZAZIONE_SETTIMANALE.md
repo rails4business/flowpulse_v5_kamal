@@ -4,6 +4,10 @@
 > come si distinguono i tre canali principali e in quale ordine procedere. La
 > struttura tecnica di contenuti e attività resta descritta in
 > [ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md).
+> Il metodo con cui GeneraImpresa parte dall'idea, Rails4Business organizza il
+> lavoro dei professionisti digitali e una soluzione viene provata e diffusa è
+> descritto in
+> [METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md](METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md).
 
 ## 1. Ruolo di Flowpulse
 

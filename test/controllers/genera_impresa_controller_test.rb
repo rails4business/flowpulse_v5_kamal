@@ -6,7 +6,10 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", /Dalle idee ai progetti/
     assert_includes response.body, "PosturaCorretta"
-    assert_includes response.body, "Flowpulse"
+    assert_includes response.body, "FlowPulse"
+    assert_select "h2", text: "Brand personali"
+    assert_select "h2", text: "Brand progetto"
+    assert_not_includes response.body, "Davide Cattaneo"
   end
 
   test "renders a brand with many projects" do
@@ -19,7 +22,7 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
   test "renders a brand with one project" do
     get genera_impresa_brand_url("flowpulse")
     assert_response :success
-    assert_select "h1", "Flowpulse"
+    assert_select "h1", "FlowPulse"
     assert_select "article", count: 1
   end
 
@@ -34,10 +37,76 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", svuotamente_path, text: /Apri la webapp/
   end
 
+  test "renders Davide Cattaneo as a personal brand in construction" do
+    sign_in_as_superadmin
+    get genera_impresa_brand_url("davide-cattaneo")
+
+    assert_response :success
+    assert_select "h1", "Davide Cattaneo"
+    assert_includes response.body, "Brand personale"
+    assert_includes response.body, "In costruzione"
+    assert_includes response.body, "Istruttore di nuoto"
+    assert_includes response.body, "Operatore del benessere"
+    assert_includes response.body, "Insegnante PosturaCorretta"
+    assert_includes response.body, "Organizzatore di eventi"
+    assert_includes response.body, "contesti sportivi e aziendali"
+    assert_select "img[src=?]", "https://ik.imagekit.io/posturacorretta/Professionisti/davide_cattaneo.png?updatedAt=1772458283972"
+    assert_includes response.body, "Igiene Posturale · livello base"
+    assert_includes response.body, "Formazione collegata al servizio"
+    assert_select "#contatti", text: /Parliamone e definiamo la proposta.*quale servizio interessa.*condizioni della proposta/m
+    assert_select "a[href^='mailto:markpostura@gmail.com']", text: "Contatta per concordare"
+    assert_select "img[src=?]", "https://ik.imagekit.io/posturacorretta/corsi/igiene_posturale/attestati_insegnanti_igiene_posturale/01-davide-cattaneo-cert-igp-2025-08-12.png"
+    assert_select "a[href=?]", genera_impresa_brand_material_path("davide-cattaneo", "scheda-nuoto"), text: /Apri la scheda.*10 esercizi/m
+  end
+
+  test "renders Davide swimming exercise sheet and its prototype images" do
+    sign_in_as_superadmin
+    get genera_impresa_brand_material_url("davide-cattaneo", "scheda-nuoto")
+    assert_response :success
+    assert_select "h1", "Preparazione al nuoto · 10 esercizi"
+    assert_select "table tbody tr", count: 10
+    assert_select ".gym-sheet__mobile article", count: 10
+    assert_select "button", text: "Stampa scheda"
+    assert_includes response.body, "Allungamento in alto"
+    assert_includes response.body, "Spalle e trapezi"
+
+    get genera_impresa_brand_material_image_url("davide-cattaneo", "scheda-nuoto", 1)
+    assert_response :success
+    assert_equal "image/gif", response.media_type
+  end
+
+  test "renders a single exercise from Davide swimming sheet" do
+    sign_in_as_superadmin
+    get genera_impresa_brand_material_exercise_url("davide-cattaneo", "scheda-nuoto", 1)
+
+    assert_response :success
+    assert_select "h1", "Allungamento in alto"
+    assert_includes response.body, "Esercizio 01 di 10"
+    assert_includes response.body, "Spalle, tronco e asse del corpo"
+    assert_includes response.body, "15–25 secondi × 2"
+    assert_select "[data-exercise-animation]"
+    assert_select "button[data-speed-control]", text: "Velocità: normale"
+    assert_select "button[data-pause-control]", text: "Pausa"
+    assert_select "a[href=?]", genera_impresa_brand_material_exercise_path("davide-cattaneo", "scheda-nuoto", 2), text: /Successivo/
+  end
+
   test "renders a public project page" do
     get genera_impresa_project_url("piattaforma-flowpulse-rails4business")
     assert_response :success
     assert_includes response.body, "Step del progetto"
+  end
+
+  test "Ripartire con Dash is a private lightweight project landing" do
+    get genera_impresa_project_url("ripartire-con-dash")
+    assert_response :not_found
+
+    sign_in_as_superadmin
+    get genera_impresa_project_url("ripartire-con-dash")
+    assert_response :success
+    assert_select "h1", "Ripartire con Dash"
+    assert_select "a[href=?]", rails4b_content_path("riprenderci-la-politica-partendo-dall-economia")
+    assert_select "a[href=?]", impegno_path(area: "problems")
+    assert_includes response.body, "In elaborazione"
   end
 
   test "owner sees managed brands domains and FlowPulse administration links" do
@@ -64,5 +133,25 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "#i-miei-brand", count: 0
     assert_select "a", text: "I miei Brand", count: 0
+  end
+
+  test "building brands are private to superadmin" do
+    get genera_impresa_brand_url("davide-cattaneo")
+    assert_response :not_found
+
+    sign_in_as_superadmin
+    get genera_impresa_url
+    assert_response :success
+    assert_includes response.body, "Davide Cattaneo"
+    assert_includes response.body, "Radioestesia e Benessere"
+    assert_includes response.body, "Inside Adventure"
+    assert_includes response.body, "Vista superadmin"
+  end
+
+  private
+
+  def sign_in_as_superadmin
+    user = User.create!(email_address: "superadmin-#{SecureRandom.hex(4)}@example.com", password: "password123", password_confirmation: "password123", active_role: :superadmin, superadmin: true)
+    post session_url, params: { email_address: user.email_address, password: "password123" }
   end
 end

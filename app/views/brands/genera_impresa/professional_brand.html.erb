@@ -1,0 +1,76 @@
+<% content_for :title, "#{@brand['name']} — Brand personale in costruzione" %>
+<% content_for :description, @brand["description"] %>
+<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+
+<main class="min-h-screen bg-slate-50 text-slate-950">
+  <nav class="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur" aria-label="Pagina di Davide Cattaneo">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <%= link_to @brand["name"], genera_impresa_brand_path(@brand["slug"]), class: "font-black" %>
+      <div class="flex items-center gap-1 overflow-x-auto text-xs font-bold text-slate-600"><a href="#bio" class="rounded-full px-3 py-2 hover:bg-slate-100">Bio</a><a href="#attivita" class="rounded-full px-3 py-2 hover:bg-slate-100">Servizi</a><a href="#scheda" class="rounded-full px-3 py-2 hover:bg-slate-100">Scheda nuoto</a><a href="#contatti" class="davide-nav-contact">Contatta</a></div>
+    </div>
+  </nav>
+
+  <header class="border-b border-sky-100 bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 text-white">
+    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
+      <div class="self-center">
+        <div class="flex flex-wrap gap-2"><span class="rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-wider">Brand personale</span><span class="rounded-full bg-amber-300 px-3 py-1 text-xs font-black uppercase tracking-wider text-slate-950"><%= @brand["status_label"] %></span></div>
+        <h1 class="mt-6 text-5xl font-black tracking-tight sm:text-6xl"><%= @brand["name"] %></h1>
+        <p class="mt-6 max-w-3xl text-xl leading-8 text-sky-100"><%= @brand["tagline"] %></p>
+        <div class="mt-8 flex flex-wrap gap-3"><a href="#contatti" class="davide-action davide-action--light">Contatta per concordare</a><%= link_to "Apri la scheda · 10 esercizi", genera_impresa_brand_material_path(@brand["slug"], "scheda-nuoto"), class: "davide-action davide-action--outline" %></div>
+      </div>
+      <aside class="mx-auto flex max-w-xs items-center gap-4 rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur lg:block lg:w-52"><%= image_tag @brand["profile_image_url"], alt: "Davide Cattaneo", class: "size-24 shrink-0 rounded-full border-2 border-white/30 bg-white/10 object-cover object-top lg:mx-auto lg:size-36" %><div class="lg:mt-4 lg:text-center"><p class="text-xs font-black uppercase tracking-wider text-cyan-200">Davide Cattaneo</p><p class="mt-2 text-xs leading-5 text-sky-100">Nuoto · benessere · postura</p></div></aside>
+    </div>
+  </header>
+
+  <% biography = @brand.fetch("biography") %>
+  <section id="bio" class="scroll-mt-28 border-b border-slate-200 bg-white">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[.7fr_1.3fr] lg:px-8"><div><p class="text-xs font-black uppercase tracking-wider text-sky-700">Bio</p><h2 class="mt-2 text-3xl font-black"><%= biography["title"] %></h2></div><div class="space-y-4 text-base leading-7 text-slate-600"><% biography.fetch("paragraphs").each do |paragraph| %><p><%= paragraph %></p><% end %></div></div>
+  </section>
+
+  <section id="attivita" class="scroll-mt-28 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <p class="text-xs font-black uppercase tracking-wider text-sky-700">Servizi distinti</p><h2 class="mt-2 text-3xl font-black">Scegli da dove vuoi partire</h2><p class="mt-3 max-w-3xl leading-7 text-slate-600">Nuoto, trattamento, educazione posturale ed eventi rispondono a bisogni diversi. Per questo vengono presentati separatamente.</p>
+    <% service_styles = ["border-sky-200 bg-sky-50", "border-emerald-200 bg-emerald-50", "border-amber-200 bg-amber-50", "border-violet-200 bg-violet-50"] %>
+    <div class="mt-8 grid gap-5 md:grid-cols-2">
+      <% @brand.fetch("roles", []).each_with_index do |role, index| %>
+        <% role_qualifications = @brand.fetch("qualifications", []).select { |qualification| qualification["role"] == role["title"] } %>
+        <article class="rounded-3xl border p-7 <%= service_styles[index] %>">
+          <div class="flex items-center justify-between gap-3"><span class="text-xs font-black uppercase tracking-wider text-slate-500"><%= role["label"] %></span><span class="text-xs font-black text-slate-400"><%= format("%02d", index + 1) %></span></div>
+          <h3 class="mt-4 text-2xl font-black"><%= role["title"] %></h3><p class="mt-3 text-sm font-bold text-slate-800"><%= role["audience"] %></p><p class="mt-3 leading-7 text-slate-600"><%= role["description"] %></p><p class="mt-5 border-t border-slate-900/10 pt-4 text-xs font-bold leading-5 text-slate-500"><%= role["boundary"] %></p>
+          <% role_qualifications.each do |qualification| %>
+            <a href="<%= qualification["image_url"] %>" target="_blank" rel="noopener" class="mt-5 grid grid-cols-[4.5rem_1fr] gap-4 rounded-2xl border border-slate-900/10 bg-white p-3 transition hover:border-sky-300 hover:shadow-sm">
+              <%= image_tag qualification["image_url"], alt: "Attestato #{qualification['title']} di Davide Cattaneo", class: "h-16 w-[4.5rem] rounded-lg border border-slate-200 object-contain" %>
+              <span><small class="block text-[10px] font-black uppercase tracking-wider text-sky-700">Formazione collegata al servizio</small><strong class="mt-1 block text-sm text-slate-950"><%= qualification["title"] %></strong><small class="mt-1 block text-xs leading-5 text-slate-500"><%= qualification["status"] %> · Apri attestato</small></span>
+            </a>
+          <% end %>
+          <a href="#contatti" class="davide-service-contact">Chiedi informazioni su questo servizio →</a>
+        </article>
+      <% end %>
+    </div>
+  </section>
+
+  <% material = @brand.fetch("materials").first %>
+  <section id="scheda" class="scroll-mt-28 border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <%= link_to genera_impresa_brand_material_path(@brand["slug"], material["slug"]), class: "davide-workout-link group grid gap-7 rounded-3xl border-2 border-sky-200 bg-sky-50 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center" do %>
+        <div><p class="text-xs font-black uppercase tracking-wider text-sky-700">Scheda di preparazione al nuoto</p><h2 class="mt-2 text-3xl font-black text-slate-950"><%= material["title"] %></h2><p class="mt-4 max-w-3xl leading-7 text-slate-600"><%= material["description"] %></p><div class="mt-5 flex flex-wrap gap-2"><span>10 esercizi</span><span>Immagini</span><span>Descrizione</span><span>Dose indicativa</span></div></div>
+        <div class="davide-workout-link__action">Apri la scheda <span aria-hidden="true">→</span></div>
+      <% end %>
+    </div>
+  </section>
+
+  <% contact = @brand.fetch("contact") %>
+  <section id="contatti" class="scroll-mt-28 border-b border-slate-200 bg-sky-950 text-white">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_.9fr] lg:px-8">
+      <div><p class="text-xs font-black uppercase tracking-wider text-cyan-300">Primo contatto</p><h2 class="mt-3 text-3xl font-black">Parliamone e definiamo la proposta</h2><p class="mt-4 max-w-2xl leading-7 text-sky-100">Le attività non sono prenotate automaticamente: prima bisogna capire che cosa serve e concordare insieme la proposta più adatta.</p><a href="mailto:<%= contact["email"] %>?subject=<%= ERB::Util.url_encode(contact["subject"]) %>" class="davide-contact-action">Contatta per concordare</a><p class="mt-4 max-w-xl text-xs leading-5 text-sky-300"><%= contact["note"] %></p></div>
+      <div class="rounded-3xl border border-white/15 bg-white/10 p-6"><h3 class="font-black">Che cosa concordiamo</h3><ul class="mt-4 space-y-3"><% contact.fetch("agreements").each do |agreement| %><li class="flex gap-3 text-sm leading-6 text-sky-100"><span class="text-cyan-300" aria-hidden="true">✓</span><span><%= agreement %></span></li><% end %></ul></div>
+    </div>
+  </section>
+
+  <section id="sviluppo" class="scroll-mt-28 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl bg-slate-950 p-7 text-white sm:p-10"><p class="text-xs font-black uppercase tracking-wider text-amber-300">Demo GeneraImpresa</p><h2 class="mt-3 text-3xl font-black">Questo Brand è ancora in costruzione</h2><p class="mt-4 max-w-3xl leading-7 text-slate-300">La pagina mostra come potrebbe presentarsi Davide. Nome definitivo, offerte, confini professionali, luoghi e modalità di contatto devono essere verificati prima della pubblicazione autonoma.</p><ol class="mt-7 grid gap-3 md:grid-cols-2"><% @brand.fetch("next_steps", []).each_with_index do |step, index| %><li class="flex gap-3 rounded-2xl bg-white/10 p-4"><span class="font-black text-amber-300"><%= index + 1 %>.</span><span class="text-sm leading-6 text-slate-200"><%= step %></span></li><% end %></ol><%= link_to "Torna ai Brand di GeneraImpresa", "#{genera_impresa_path}#brand", class: "mt-7 inline-flex rounded-full bg-white px-5 py-3 text-sm font-black text-slate-950 hover:bg-slate-100" %></div>
+  </section>
+</main>
+
+<style>
+  .davide-action{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.78rem 1.2rem;text-decoration:none;font-size:.875rem;font-weight:900;transition:.15s ease}.davide-action--light{background:#fff!important;color:#0c4a6e!important}.davide-action--light:hover{background:#e0f2fe!important}.davide-action--outline{border:1px solid rgb(255 255 255 / 45%);background:rgb(255 255 255 / 12%)!important;color:#fff!important}.davide-action--outline:hover{background:rgb(255 255 255 / 22%)!important}.davide-nav-contact{flex:none;border-radius:999px;background:#0c4a6e!important;color:#fff!important;padding:.5rem .8rem;text-decoration:none}.davide-nav-contact:hover{background:#0369a1!important}.davide-service-contact{display:inline-flex;margin-top:1.25rem;color:#075985!important;text-decoration:none;font-size:.78rem;font-weight:900}.davide-service-contact:hover{text-decoration:underline}.davide-contact-action{display:inline-flex;margin-top:1.5rem;border-radius:999px;background:#fff!important;color:#0c4a6e!important;padding:.8rem 1.1rem;text-decoration:none;font-size:.875rem;font-weight:900}.davide-contact-action:hover{background:#e0f2fe!important}.davide-workout-link{text-decoration:none!important}.davide-workout-link>div>div span{border-radius:999px;background:#fff;padding:.4rem .7rem;color:#075985;font-size:.7rem;font-weight:900}.davide-workout-link__action{display:inline-flex;min-height:3rem;align-items:center;justify-content:center;gap:.6rem;border-radius:999px;background:#0c4a6e!important;color:#fff!important;padding:.8rem 1.1rem;font-size:.875rem;font-weight:900;white-space:nowrap}.davide-workout-link:hover .davide-workout-link__action{background:#0369a1!important}
+</style>

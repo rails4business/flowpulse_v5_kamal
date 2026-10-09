@@ -33,6 +33,12 @@ module Editorial
         required_data: [],
         items: true
       ),
+      "method_areas" => Definition.new(
+        partial: "editorial/components/method_areas",
+        variants: %w[default],
+        required_data: %w[title about method areas],
+        items: false
+      ),
       "image" => Definition.new(
         partial: "editorial/components/image",
         variants: %w[default portrait cover],

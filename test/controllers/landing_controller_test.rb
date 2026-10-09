@@ -89,21 +89,42 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_url
 
     assert_response :success
-    assert_select "h1", text: "Ambiente, Esperienze e Relazioni"
-    assert_select "#progetti a", count: 3
-    assert_select "#ingresso li", count: 4
-    assert_select "#progetti [data-language-card]", count: 3
-    assert_select "#prospettiva h3", text: "Vivere"
-    assert_select "#prospettiva h3", text: "Comprendere"
-    assert_select "#prospettiva h3", text: "Costruire"
-    assert_select "#progetti", text: /Fisiologia/
+    assert_select "h1", text: "Problemi, idee e soluzioni da mettere alla prova"
+    assert_select "#direzioni [role='tablist'][aria-label='Presentazione di Mark Postura'] [role='tab']", count: 3
+    assert_select "#direzioni [data-main-tab='chi-sono'][aria-selected='true']", text: "Chi sono"
+    assert_select "#direzioni [data-main-tab='metodo']", text: "Metodo di lavoro"
+    assert_select "#direzioni [role='tablist'][aria-label='Ambiti di applicazione'] [role='tab']", count: 3
+    assert_select "#direzioni [data-area-tab='salute']", text: "Salute e metodo scientifico"
+    assert_select "#direzioni [data-area-tab='evoluzione']", text: "Evoluzione armonica"
+    assert_select "#direzioni [data-area-tab='lavoro']", text: "Lavoro e risorse"
+    assert_select "#mark-panel-chi-sono", text: /Il Matto.*L'Eremita.*Il Mago/m
+    assert_select "#mark-panel-metodo", text: /Che cos'è una soluzione atomica/
+    assert_select "#mark-panel-metodo", text: /Il mio metodo di lavoro/
+    assert_select "#mark-panel-metodo [aria-label='Fasi della soluzione atomica'] li", count: 7
+    assert_select "#mark-panel-metodo", text: /Diffondila/
+    assert_select "#mark-panel-metodo .mark-ecosystem__platform", text: /FlowPulse/
+    assert_select "#mark-panel-metodo .mark-ecosystem__brand-types article", count: 2
+    assert_select "#mark-panel-metodo", text: /Brand professionista.*Brand progetto/m
+    assert_select "#mark-panel-metodo .mark-ecosystem__projects article", count: 3
+    assert_select "#mark-panel-metodo .mark-ecosystem__projects article", text: /Responsabile.*Ruoli/m
+    assert_select "#mark-panel-metodo .mark-ecosystem__skills-flow > div", count: 3
+    assert_select "#mark-panel-metodo .mark-ecosystem__skills", text: /Rails4Business.*Contenuti.*Corsi.*Eventi/m
+    assert_select "#mark-panel-metodo .mark-ecosystem__people li", count: 3
+    assert_select "#mark-panel-metodo .mark-ecosystem__people", text: /Responsabile.*operatori.*Utente/m
+    assert_select "#mark-panel-metodo .mark-ecosystem__example", text: /L'esempio MarkPostura.*ogni Brand può avere una struttura diversa/m
+    assert_select "#mark-panel-metodo .mark-ecosystem__consultation", text: /Vuoi usarlo per costruire il tuo progetto.*Come creator.*Come professionista.*Come responsabile/m
+    assert_select "#mark-panel-metodo a[href='#contatti']", text: "Richiedi una consulenza"
+    assert_select "#mark-panel-metodo .mark-ecosystem__example li", count: 6
+    assert_select "#mark-panel-metodo .mark-ecosystem__example", text: /FlowPulse.*Brand professionale.*MarkPostura.*Brand progetto.*PosturaCorretta/m
+    assert_select "#mark-area-panel-lavoro a[href='/generaimpresa']", text: /GeneraImpresa/
+    assert_select "#mark-area-panel-lavoro a[href='/rails4b']", text: /Rails4Business/
     assert_select "#approfondisci a", count: 3
     assert_select "#approfondisci a[href='/markpostura/contenuti/dal-bio-psico-sociale-al-vivere-comprendere-costruire']"
     assert_select "#timeline iframe", count: 0
     assert_select "#timeline [data-timeline-deferred]"
     assert_select "#timeline button[data-timeline-trigger]", text: "Carica ora"
     assert_select "body:not(.posturacorretta-ui)"
-    assert_select ".editorial-action-button", count: 5
+    assert_select ".editorial-action-button", count: 4
   end
 
   test "MarkPostura publishes the bio psycho social article" do
@@ -254,6 +275,14 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "a[href='#{rails4b_content_path("dalla-banca-alla-cellula-sociale")}']"
+  end
+
+  test "Rails4Business keeps the politics and economy article in draft" do
+    get rails4b_content_url("riprenderci-la-politica-partendo-dall-economia")
+
+    assert_redirected_to rails4b_path
+    follow_redirect!
+    assert_select "h1", text: "Riprenderci la politica, partendo dall'economia", count: 0
   end
 
   test "Rails4Business separates dated content from the permanent train" do
