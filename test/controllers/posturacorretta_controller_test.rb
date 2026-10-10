@@ -105,11 +105,26 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='https://youtube.com/watch?v=FthfIMTv7CQ'] img[src='https://i.ytimg.com/vi/FthfIMTv7CQ/hqdefault.jpg']"
     assert_select "a[href='#{percorso_integrato_professional_path("davide-cattaneo")}']", text: /profilo professionale/
 
+    get posturacorretta_insegnante_path("davide-cattaneo", tab: "training")
+    assert_response :success
+    assert_select "a[href='#{percorso_integrato_professional_path("davide-cattaneo", tab: "profilo")}']", text: /Apri la bio/
+    assert_select "h3", text: "Corsi come insegnante"
+    assert_select "a[href='#{posturacorretta_student_dashboard_path(corso: "introduzione-a-posturacorretta")}']", text: "Introduzione a PosturaCorretta"
+    assert_select "a[href='#{posturacorretta_student_dashboard_path(corso: "igiene-posturale")}']", text: "Igiene Posturale"
+    assert_select "#teacher-training-courses a[href^='#{posturacorretta_student_dashboard_path}']", count: 7
+    assert_select "a", text: /Attestato presente/, count: 1
+    assert_select "span", text: "Nessun attestato inserito", count: 6
+
     get posturacorretta_insegnante_path("antonio-ventura", tab: "bio")
     assert_response :success
     assert_select "h1", text: "Antonio Ventura"
     assert_select "a[href='https://www.youtube.com/watch?v=w1aiyyXwShQ']"
     assert_select "img[src*='02-antonio-ventura-cert-igp-2026-02-02.png']"
+
+    get posturacorretta_insegnante_path("antonio-ventura", tab: "training")
+    assert_response :success
+    assert_select "h3", text: "Corsi come insegnante"
+    assert_select "#teacher-training-courses a[href^='#{posturacorretta_student_dashboard_path}']", count: 7
 
     get posturacorretta_insegnante_path("markpostura", tab: "training")
     assert_response :success

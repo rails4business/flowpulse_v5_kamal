@@ -91,20 +91,13 @@
 
     <% elsif @profile_tab == "formazione" %>
       <section>
-        <p class="text-xs font-black uppercase tracking-wider text-emerald-700">Formazione verificabile</p>
+        <p class="text-xs font-black uppercase tracking-wider text-emerald-700">Qualifiche professionali</p>
         <h2 class="mt-2 text-3xl font-black">Formazione e attestati</h2>
         <% if certifications.any? %>
-          <div class="mt-7 grid gap-5 md:grid-cols-2">
-            <% certifications.each do |certificate| %>
-              <a href="<%= certificate.fetch("image_url") %>" target="_blank" rel="noopener" class="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                <div class="aspect-video bg-slate-50 p-4"><%= image_tag certificate.fetch("image_url"), alt: "Attestato #{certificate.fetch('title')} di #{@professional.fetch('name')}", class: "size-full object-contain", loading: "lazy" %></div>
-                <div class="p-6"><p class="text-xs font-black uppercase tracking-wider text-emerald-700"><%= certificate["issuer"] %></p><h3 class="mt-2 text-xl font-black"><%= certificate.fetch("title") %></h3><p class="mt-3 text-sm font-black text-emerald-800">Apri l’attestato originale →</p></div>
-              </a>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="mt-6 rounded-2xl border border-dashed border-slate-300 p-6 text-slate-500">Nessun attestato pubblico inserito.</p>
-        <% end %>
+          <ul class="mt-7 divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+            <% certifications.each do |certificate| %><li class="flex flex-wrap items-center justify-between gap-4 p-5"><div><p class="font-black"><%= certificate.fetch("title") %></p><p class="mt-1 text-sm text-slate-500"><%= certificate["issuer"] %></p></div><a href="<%= certificate.fetch("image_url") %>" target="_blank" rel="noopener" class="text-sm font-black text-emerald-800">Apri attestato ↗</a></li><% end %>
+          </ul>
+        <% else %><p class="mt-6 rounded-2xl border border-dashed border-slate-300 p-6 text-slate-500">Nessun attestato professionale pubblico inserito.</p><% end %>
       </section>
 
     <% elsif @profile_tab == "contenuti" %>

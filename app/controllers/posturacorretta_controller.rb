@@ -146,6 +146,9 @@ class PosturacorrettaController < ApplicationController
     end
     @teacher_tab = params[:tab].presence_in(%w[schedule centres bio training]) || "schedule"
     @teacher_training = build_teacher_training(@teacher, teachers: curriculum.fetch("teachers", {}))
+    @teacher_training_courses = teacher_training_courses
+    @teacher_professional_profile = professional_profile_for(@teacher["professional_profile_slug"])
+    @teacher_external_links = teacher_external_links(@teacher, @teacher_professional_profile)
     @teacher_founder_formation = build_founder_formation(@teacher, methodologies: curriculum.fetch("methodologies", {}))
     @teacher_training_professional_access = Current.user&.superadmin_user? ||
       Current.user&.role_assignments&.where(role: :operator, role_operator: "professionista")&.exists? || false
@@ -368,6 +371,39 @@ class PosturacorrettaController < ApplicationController
         )
       end
     )
+  end
+
+  def teacher_training_courses
+    path = Rails.root.join("config/data/posturacorretta/programmi/programma_lezioni_posturacorretta.yml")
+    program = path.file? ? YAML.safe_load_file(path, permitted_classes: [], aliases: false).to_h.fetch("program", {}) : {}
+    courses = Array(program["courses"]) + Array(program["sections"]).flat_map { |section| Array(section["courses"]) }
+    courses.first(7).each_with_index.map do |course, index|
+      {
+        "number" => index + 1,
+        "key" => course.fetch("key"),
+        "title" => course.fetch("key") == "introduzione-al-metodo-corpo-e-coscienza" ? "Corpo e Coscienza" : course.fetch("title"),
+        "subtitle" => ("Postura, recupero e coscienza corporea" if course.fetch("key") == "introduzione-a-posturacorretta")
+      }
+    end
+  end
+
+  def professional_profile_for(slug)
+    return if slug.blank?
+
+    path = Rails.root.join("config/data/posturacorretta/posturacorretta_professionisti.yml")
+    data = path.file? ? YAML.safe_load_file(path, permitted_classes: [], aliases: false).to_h : {}
+    Array(data["professionals"]).find { |profile| profile["slug"] == slug }
+  end
+
+  def teacher_external_links(teacher, professional_profile)
+    links = Array(teacher["external_links"])
+    return links unless professional_profile
+
+    links << { "label" => "Sito personale", "url" => professional_profile["website_url"] } if professional_profile["website_url"].present?
+    professional_profile.fetch("social_links", {}).each do |label, url|
+      links << { "label" => label.to_s.humanize, "url" => url } if url.present?
+    end
+    links
   end
 
   def build_founder_formation(teacher, methodologies:)
