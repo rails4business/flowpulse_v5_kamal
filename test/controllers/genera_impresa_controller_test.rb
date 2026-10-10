@@ -10,7 +10,11 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "FlowPulse"
     assert_select "h2", text: "Brand personali"
     assert_select "h2", text: "Brand progetto"
-    assert_includes response.body, "Davide Cattaneo"
+    assert_not_includes response.body, "Davide Cattaneo"
+    assert_select "#brand-personali" do
+      assert_select "a[href='#{genera_impresa_brand_path("radioestesia")}']", text: /Radioestesia e Benessere/
+    end
+    assert_select "#brand-progetto a[href='#{genera_impresa_brand_path("radioestesia")}']", count: 0
   end
 
   test "renders a brand with many projects" do
@@ -27,6 +31,16 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_select "article", count: 1
   end
 
+  test "renders Radioestesia as a public brand preview hosted by GeneraImpresa" do
+    get genera_impresa_brand_url("radioestesia")
+
+    assert_response :success
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+    assert_select "nav[aria-label='Navigazione Radioestesia']"
+    assert_select "a[href='#{radioestesia_page_path("percorsi")}']"
+    assert_select "a[href='#{radioestesia_page_path("contenuti")}']"
+  end
+
   test "renders SvuotaMente as a brand with its webapp project" do
     get genera_impresa_brand_url("svuotamente")
     assert_response :success
@@ -40,35 +54,11 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
 
   test "renders Davide Cattaneo as a personal brand in construction" do
     get genera_impresa_brand_url("davide-cattaneo")
+    assert_redirected_to "https://percorsointegrato.it#{percorso_integrato_professional_path("davide-cattaneo")}"
 
-    assert_response :success
-    assert_select "h1", "Davide Cattaneo"
-    assert_includes response.body, "Brand personale"
-    assert_includes response.body, "In costruzione"
-    assert_includes response.body, "Istruttore di nuoto"
-    assert_includes response.body, "Operatore del benessere"
-    assert_includes response.body, "Insegnante PosturaCorretta"
-    assert_includes response.body, "Organizzatore di eventi"
-    assert_includes response.body, "contesti sportivi e aziendali"
-    assert_select "img[src=?]", "https://ik.imagekit.io/posturacorretta/Professionisti/davide_cattaneo.png?updatedAt=1772458283972"
-    assert_includes response.body, "Igiene Posturale · livello base"
-    assert_select ".davide-service-card", count: 4
-    assert_select ".davide-service-card h3", text: "Istruttore di nuoto"
-    assert_select ".davide-service-card button", text: "Scopri il servizio", count: 4
-    assert_select ".davide-service-card a[href='#contatti']", text: "Contatta", count: 4
-    assert_select "button[data-modal-dialog-id-value='davide-qualifications']", text: "Formazione e attestati · 1"
-    assert_select "dialog#davide-qualifications", text: /Igiene Posturale · livello base/
-    assert_select "dialog[id^='davide-service-']", count: 4
-    assert_select "dialog#davide-service-3 a[href='https://posturacorretta.org']", text: /Apri PosturaCorretta.org/
-    assert_select "a.davide-media-preview--video[href='https://youtube.com/watch?v=FthfIMTv7CQ'][target='_blank']", text: /Guarda il video/
-    assert_select "a.davide-media-preview--video img[src='https://i.ytimg.com/vi/FthfIMTv7CQ/hqdefault.jpg']", count: 1
-    assert_select "button.davide-media-preview--certificate img[src='https://ik.imagekit.io/posturacorretta/corsi/igiene_posturale/attestati_insegnanti_igiene_posturale/01-davide-cattaneo-cert-igp-2025-08-12.png']", count: 1
-    assert_select "header a.davide-action--youtube[href='https://youtube.com/watch?v=FthfIMTv7CQ']", text: /Guarda il video/
-    assert_select "header button.davide-action--certificate", text: /Vedi attestato/
-    assert_select "#contatti", text: /Parliamone e definiamo la proposta.*quale servizio interessa.*condizioni della proposta/m
-    assert_select "a[href^='mailto:markpostura@gmail.com']", text: "Contatta per concordare"
-    assert_select "img[src=?]", "https://ik.imagekit.io/posturacorretta/corsi/igiene_posturale/attestati_insegnanti_igiene_posturale/01-davide-cattaneo-cert-igp-2025-08-12.png"
-    assert_select "a[href=?]", genera_impresa_brand_material_path("davide-cattaneo", "scheda-nuoto"), text: /Apri la scheda.*10 esercizi/m
+    sign_in_as_superadmin
+    get genera_impresa_brand_url("davide-cattaneo")
+    assert_redirected_to "https://percorsointegrato.it#{percorso_integrato_professional_path("davide-cattaneo")}"
   end
 
   test "renders Davide swimming exercise sheet and its prototype images" do
@@ -166,8 +156,7 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     sign_in_as_superadmin
     get genera_impresa_url
     assert_response :success
-    assert_includes response.body, "Davide Cattaneo"
-    assert_includes response.body, "Radioestesia e Benessere"
+    assert_not_includes response.body, "Davide Cattaneo"
     assert_includes response.body, "Inside Adventure"
     assert_includes response.body, "Vista superadmin"
   end

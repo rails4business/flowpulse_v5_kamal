@@ -28,8 +28,31 @@ module Brands
       @professional = public_professionals.find { |person| person.fetch("slug") == params[:slug] }
       return redirect_to(percorso_integrato_professionals_path, alert: "Professionista non trovato") unless @professional
 
-      @services = load_connections("servizi.yml", "paths").select { |item| item["professional_slug"] == params[:slug] }
+      @services = Array(@professional["services"]) + load_connections("servizi.yml", "paths").select { |item| item["professional_slug"] == params[:slug] }
       @contents = load_connections("contenuti.yml", "content_connections").select { |item| item["professional_slug"] == params[:slug] }
+      @profile_tab = params[:tab].presence_in(%w[profilo servizi formazione contenuti]) || "profilo"
+    end
+
+    def professional_material
+      load_professional_material
+      @material_context = :percorso_integrato
+      render "brands/genera_impresa/material"
+    end
+
+    def professional_exercise
+      load_professional_material
+      @exercise = find_professional_exercise
+      @material_context = :percorso_integrato
+      render "brands/genera_impresa/exercise"
+    end
+
+    def professional_material_image
+      load_professional_material
+      image = find_professional_exercise
+      path = Rails.root.join(@material.fetch("source_directory"), "images", image.fetch("image"))
+      raise ActiveRecord::RecordNotFound, "Immagine non trovata" unless path.file?
+
+      send_file path, type: "image/gif", disposition: "inline"
     end
 
     def places
@@ -50,7 +73,15 @@ module Brands
 
     def public_professionals
       data = YAML.safe_load_file(Rails.root.join("config/data/posturacorretta/posturacorretta_professionisti.yml"), permitted_classes: [], aliases: false) || {}
-      data.fetch("professionals", []).select { |professional| professional["public"] }
+      people = PersonProfileCatalog.all
+      data.fetch("professionals", []).select { |professional| professional["public"] }.map do |professional|
+        person = people[professional.fetch("person_profile_slug", professional.fetch("slug"))] || {}
+        person.merge(professional).merge(
+          "image_url" => professional["image_url"].presence || person["image_url"],
+          "video" => professional["video"].presence || person["video"],
+          "certifications" => professional["certifications"].presence || person.fetch("certifications", [])
+        )
+      end
     end
 
     def load_connections(filename, collection)
@@ -58,6 +89,26 @@ module Brands
       return [] unless path.file?
 
       (YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}).fetch(collection, [])
+    end
+
+    def load_professional_material
+      load_site
+      @professional = public_professionals.find { |person| person.fetch("slug") == params[:slug] }
+      raise ActiveRecord::RecordNotFound, "Professionista non trovato" unless @professional
+
+      source_slug = @professional["material_source_brand_slug"]
+      source_brand = GeneraImpresaCatalog.load.brand(source_slug) if source_slug.present?
+      @material = source_brand&.fetch("materials", [])&.find { |item| item["slug"] == params[:material] }
+      raise ActiveRecord::RecordNotFound, "Scheda non trovata" unless @material
+
+      @brand = { "slug" => @professional.fetch("slug"), "name" => @professional.fetch("name") }
+    end
+
+    def find_professional_exercise
+      exercise = @material.fetch("exercises", []).find { |item| item["position"].to_s == params[:position].to_s }
+      raise ActiveRecord::RecordNotFound, "Esercizio non trovato" unless exercise
+
+      exercise
     end
 
     def docs_root

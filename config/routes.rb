@@ -47,16 +47,25 @@ Rails.application.routes.draw do
   get "rails4b/percorsi/:slug" => "landing#rails4b_track", as: :rails4b_track
   get "rails4b/contenuti" => "landing#rails4b_contents", as: :rails4b_contents
   get "rails4b/contenuti/:slug" => "landing#rails4b_content", as: :rails4b_content
-  get "flowpulse/radioestesia" => "landing#radioestesia", as: :radioestesia
-  get "flowpulse/radioestesia/changelog" => "changelog#index", defaults: { brand: "radioestesia", brand_preview: "1" }, as: :radioestesia_changelog
-  get "flowpulse/radioestesia/changelog/:slug" => "changelog#show", defaults: { brand: "radioestesia", brand_preview: "1" }, as: :radioestesia_changelog_entry,
+  # Radioestesia e Benessere is a personal Brand incubated by GeneraImpresa.
+  # Keep the complete minisite under the Brand path instead of exposing a
+  # second, generic Brand page.
+  get "generaimpresa/brand/radioestesia" => "landing#radioestesia", as: :radioestesia
+  get "generaimpresa/brand/radioestesia/changelog" => "changelog#index", defaults: { brand: "radioestesia", brand_preview: "1" }, as: :radioestesia_changelog
+  get "generaimpresa/brand/radioestesia/changelog/:slug" => "changelog#show", defaults: { brand: "radioestesia", brand_preview: "1" }, as: :radioestesia_changelog_entry,
       constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
-  get "flowpulse/radioestesia/contenuti/:slug" => "landing#radioestesia_content", as: :radioestesia_content
-  get "flowpulse/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,
+  get "generaimpresa/brand/radioestesia/contenuti/:slug" => "landing#radioestesia_content", as: :radioestesia_content
+  get "generaimpresa/brand/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,
       constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
-  get "posturacorretta/radioestesia" => redirect("/flowpulse/radioestesia", status: 301)
-  get "posturacorretta/radioestesia/contenuti/:slug" => redirect("/flowpulse/radioestesia/contenuti/%{slug}", status: 301)
-  get "posturacorretta/radioestesia/:page" => redirect("/flowpulse/radioestesia/%{page}", status: 301),
+  get "flowpulse/radioestesia" => redirect("/generaimpresa/brand/radioestesia", status: 301)
+  get "flowpulse/radioestesia/changelog" => redirect("/generaimpresa/brand/radioestesia/changelog", status: 301)
+  get "flowpulse/radioestesia/changelog/:slug" => redirect("/generaimpresa/brand/radioestesia/changelog/%{slug}", status: 301)
+  get "flowpulse/radioestesia/contenuti/:slug" => redirect("/generaimpresa/brand/radioestesia/contenuti/%{slug}", status: 301)
+  get "flowpulse/radioestesia/:page" => redirect("/generaimpresa/brand/radioestesia/%{page}", status: 301),
+      constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
+  get "posturacorretta/radioestesia" => redirect("/generaimpresa/brand/radioestesia", status: 301)
+  get "posturacorretta/radioestesia/contenuti/:slug" => redirect("/generaimpresa/brand/radioestesia/contenuti/%{slug}", status: 301)
+  get "posturacorretta/radioestesia/:page" => redirect("/generaimpresa/brand/radioestesia/%{page}", status: 301),
       constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "cantachetipassa/musica/fisarmonica(/:page)" => "landing#cantachetipassa_accordion",
@@ -73,6 +82,9 @@ Rails.application.routes.draw do
   post "corpo-e-coscienza/richieste" => "brands/corpo_e_coscienza#create_request", as: :corpo_e_coscienza_requests
   get "percorso-integrato/docs" => "brands/percorso_integrato#docs", as: :percorso_integrato_docs
   get "percorso-integrato/professionisti" => "brands/percorso_integrato#professionals", as: :percorso_integrato_professionals
+  get "percorso-integrato/professionisti/:slug/schede/:material" => "brands/percorso_integrato#professional_material", as: :percorso_integrato_professional_material
+  get "percorso-integrato/professionisti/:slug/schede/:material/esercizi/:position" => "brands/percorso_integrato#professional_exercise", as: :percorso_integrato_professional_exercise
+  get "percorso-integrato/professionisti/:slug/schede/:material/immagini/:position" => "brands/percorso_integrato#professional_material_image", as: :percorso_integrato_professional_material_image
   get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional
   get "percorso-integrato/luoghi" => "brands/percorso_integrato#places", as: :percorso_integrato_places
   get "markpostura" => "landing#markpostura", as: :markpostura

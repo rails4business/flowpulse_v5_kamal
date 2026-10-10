@@ -41,7 +41,7 @@ class Admin::BrandsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Brand in costruzione"
     assert_select "a[href='#{admin_brand_path(candidate)}']", text: "Radioestesia e Benessere"
-    assert_select "a[href='/flowpulse/radioestesia'][target='_blank']", text: "Apri anteprima"
+    assert_select "a[href='/generaimpresa/brand/radioestesia'][target='_blank']", text: "Apri anteprima"
   end
 
   test "superadmin sees the node sheet" do

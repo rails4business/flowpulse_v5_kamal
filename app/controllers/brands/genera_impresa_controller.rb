@@ -6,13 +6,20 @@ module Brands
 
     def index
       @managed_brands = managed_brands
-      @personal_brands = @brands.select { |brand| brand["kind"] == "professional" }
-      @project_brands = @brands.select { |brand| brand["kind"] != "professional" }
+      @personal_brands = @brands.select { |brand| personal_brand?(brand) }
+      @project_brands = @brands.reject { |brand| personal_brand?(brand) }
     end
 
     def brand
+      requested_brand = @catalog.brand(params[:slug])
+      if requested_brand&.dig("professional_profile_slug").present?
+        profile_path = percorso_integrato_professional_path(requested_brand.fetch("professional_profile_slug"))
+        destination = local_request? ? profile_path : "https://percorsointegrato.it#{profile_path}"
+        return redirect_to destination, status: :moved_permanently, allow_other_host: true
+      end
+
       load_brand
-      render :professional_brand if @brand["kind"] == "professional"
+      render @brand.fetch("page_template") if @brand["page_template"].present?
     end
 
     def material
@@ -64,7 +71,9 @@ module Brands
     def load_catalog
       @catalog = GeneraImpresaCatalog.load
       @site = @catalog.site
-      @brands = @catalog.brands.select { |brand| brand_public?(brand) || superadmin_catalog_access? }
+      @brands = @catalog.brands.select do |brand|
+        brand.fetch("catalog_visible", true) && (brand_public?(brand) || superadmin_catalog_access?)
+      end
     end
 
     def managed_brands
@@ -84,6 +93,10 @@ module Brands
 
     def brand_public?(brand)
       brand["status"] == "launched" || brand["visibility"] == "public"
+    end
+
+    def personal_brand?(brand)
+      brand["brand_type"] == "personal" || brand["kind"] == "professional"
     end
 
     def superadmin_catalog_access?

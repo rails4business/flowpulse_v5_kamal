@@ -1,18 +1,23 @@
 <% content_for :title, "#{@exercise['title']} — #{@material['title']}" %>
 <% content_for :description, @exercise["execution"] %>
-<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+<% percorso_integrato_context = @material_context == :percorso_integrato %>
+<% profile_path = percorso_integrato_context ? percorso_integrato_professional_path(@brand["slug"]) : genera_impresa_brand_path(@brand["slug"]) %>
+<% material_path = percorso_integrato_context ? percorso_integrato_professional_material_path(@brand["slug"], @material["slug"]) : genera_impresa_brand_material_path(@brand["slug"], @material["slug"]) %>
+<% exercise_path = ->(position) { percorso_integrato_context ? percorso_integrato_professional_exercise_path(@brand["slug"], @material["slug"], position) : genera_impresa_brand_material_exercise_path(@brand["slug"], @material["slug"], position) } %>
+<% image_path = ->(position) { percorso_integrato_context ? percorso_integrato_professional_material_image_path(@brand["slug"], @material["slug"], position) : genera_impresa_brand_material_image_path(@brand["slug"], @material["slug"], position) } %>
+<% content_for :landing_nav do %><%= render(percorso_integrato_context ? "brands/percorso_integrato/header" : "brands/genera_impresa/header") %><% end %>
 
 <main class="min-h-screen bg-slate-100 text-slate-950">
   <article class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
     <nav class="flex flex-wrap items-center gap-2 text-sm font-bold text-slate-500" aria-label="Percorso">
-      <%= link_to @brand["name"], genera_impresa_brand_path(@brand["slug"]), class: "hover:text-sky-800" %><span>/</span>
-      <%= link_to "Scheda preparazione al nuoto", genera_impresa_brand_material_path(@brand["slug"], @material["slug"]), class: "hover:text-sky-800" %><span>/</span>
+      <%= link_to @brand["name"], profile_path, class: "hover:text-sky-800" %><span>/</span>
+      <%= link_to "Scheda preparazione al nuoto", material_path, class: "hover:text-sky-800" %><span>/</span>
       <span class="text-slate-900"><%= @exercise["title"] %></span>
     </nav>
 
     <div class="mt-7 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm lg:grid lg:grid-cols-[1fr_1fr]">
-      <div class="exercise-animation bg-slate-100" data-exercise-animation data-source="<%= genera_impresa_brand_material_image_path(@brand["slug"], @material["slug"], @exercise["position"]) %>">
-        <%= image_tag genera_impresa_brand_material_image_path(@brand["slug"], @material["slug"], @exercise["position"]), alt: @exercise["title"], class: "exercise-animation__fallback aspect-square h-full w-full object-cover", data: { exercise_animation_target: "fallback" } %>
+      <div class="exercise-animation bg-slate-100" data-exercise-animation data-source="<%= image_path.call(@exercise["position"]) %>">
+        <%= image_tag image_path.call(@exercise["position"]), alt: @exercise["title"], class: "exercise-animation__fallback aspect-square h-full w-full object-cover", data: { exercise_animation_target: "fallback" } %>
         <canvas class="exercise-animation__canvas" data-exercise-animation-target="canvas" role="img" aria-label="Animazione: <%= @exercise['title'] %>" hidden></canvas>
         <div class="exercise-animation__controls" data-exercise-animation-target="controls" hidden>
           <button type="button" data-speed-control>Velocità: normale</button>
@@ -30,8 +35,8 @@
         <div class="mt-8 flex flex-wrap gap-3">
           <% previous_exercise = @material.fetch("exercises")[@exercise["position"].to_i - 2] if @exercise["position"].to_i > 1 %>
           <% next_exercise = @material.fetch("exercises")[@exercise["position"].to_i] %>
-          <% if previous_exercise %><%= link_to "← Precedente", genera_impresa_brand_material_exercise_path(@brand["slug"], @material["slug"], previous_exercise["position"]), class: "exercise-nav exercise-nav--secondary" %><% end %>
-          <% if next_exercise %><%= link_to "Successivo →", genera_impresa_brand_material_exercise_path(@brand["slug"], @material["slug"], next_exercise["position"]), class: "exercise-nav exercise-nav--primary" %><% end %>
+          <% if previous_exercise %><%= link_to "← Precedente", exercise_path.call(previous_exercise["position"]), class: "exercise-nav exercise-nav--secondary" %><% end %>
+          <% if next_exercise %><%= link_to "Successivo →", exercise_path.call(next_exercise["position"]), class: "exercise-nav exercise-nav--primary" %><% end %>
         </div>
       </div>
     </div>

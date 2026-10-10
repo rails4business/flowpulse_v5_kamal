@@ -1,24 +1,143 @@
-<% content_for :title, "#{@professional.fetch('name')} — Percorso Integrato" %>
+<% content_for :title, "#{@professional.fetch('name')} — Professionista · Percorso Integrato" %>
 <% content_for :landing_nav do %><%= render "brands/percorso_integrato/header" %><% end %>
+<% public_services = @services.select { |service| service.fetch("public", false) } %>
+<% certifications = Array(@professional["certifications"]) %>
+<% materials = Array(@professional["materials"]) %>
+<% video = @professional["video"] %>
+<% tabs = [
+  ["profilo", "Profilo"],
+  ["servizi", "Servizi", public_services.size],
+  ["formazione", "Formazione", certifications.size],
+  ["contenuti", "Contenuti", materials.size + @contents.size + (video.present? ? 1 : 0)]
+] %>
 
-<main class="min-h-screen bg-[#f8fbf8] px-4 py-12 sm:px-6 lg:px-8">
-  <article class="mx-auto max-w-4xl rounded-3xl border border-emerald-100 bg-white p-7 shadow-sm sm:p-10">
-    <%= link_to "← Professionisti", percorso_integrato_professionals_path, class: "text-sm font-bold text-emerald-800" %>
-    <p class="mt-8 text-xs font-black uppercase tracking-[.16em] text-emerald-700"><%= @professional.fetch("city", "Sede da definire") %></p>
-    <h1 class="mt-2 text-4xl font-black tracking-tight text-slate-950"><%= @professional.fetch("name") %></h1>
-    <p class="mt-2 text-lg font-semibold text-slate-600"><%= @professional.fetch("profession") %></p>
-    <p class="mt-6 text-base leading-8 text-slate-600"><%= @professional.fetch("description", "") %></p>
+<main class="min-h-screen bg-[#f8fbf8] text-slate-950">
+  <header class="border-b border-emerald-100 bg-white">
+    <div class="mx-auto max-w-6xl px-4 pb-9 pt-8 sm:px-6 sm:pb-12 lg:px-8">
+      <%= link_to "← Tutti i professionisti", percorso_integrato_professionals_path, class: "text-sm font-black text-emerald-800" %>
+      <div class="mt-7 grid gap-6 sm:grid-cols-[auto_1fr] sm:items-center">
+        <% if @professional["image_url"].present? %>
+          <%= image_tag @professional.fetch("image_url"), alt: "Foto profilo di #{@professional.fetch('name')}", class: "size-28 rounded-3xl border border-emerald-100 bg-emerald-50 object-cover object-top sm:size-36", loading: "lazy" %>
+        <% end %>
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.16em] text-emerald-700"><%= @professional.fetch("city", "Sede da definire") %></p>
+          <h1 class="mt-2 text-4xl font-black tracking-tight sm:text-5xl"><%= @professional.fetch("name") %></h1>
+          <p class="mt-3 text-lg font-bold text-slate-600"><%= @professional.fetch("profession") %></p>
+          <p class="mt-4 max-w-3xl leading-7 text-slate-600"><%= @professional.fetch("description", "") %></p>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <% public_services = @services.select { |service| service.fetch("public", false) } %>
-    <section class="mt-10 border-t border-slate-100 pt-8">
-      <h2 class="text-2xl font-black text-slate-950">Programmi e servizi</h2>
-      <% if public_services.present? %>
-        <div class="mt-5 space-y-4"><% public_services.each do |service| %><div class="rounded-xl bg-emerald-50 p-5"><h3 class="font-black"><%= service.fetch("title") %></h3><p class="mt-2 text-sm leading-6 text-slate-600"><%= service.fetch("description", "") %></p></div><% end %></div>
-      <% else %>
-        <p class="mt-3 text-sm leading-6 text-slate-500">Le proposte pubbliche verranno aggiunte dopo la conferma del professionista.</p>
+  <nav class="sticky top-0 z-20 border-b border-emerald-100 bg-white/95 backdrop-blur" aria-label="Sezioni del profilo professionale">
+    <div class="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+      <% tabs.each do |key, label, count| %>
+        <%= link_to percorso_integrato_professional_path(@professional.fetch("slug"), tab: key), class: class_names("pi-profile-tab", active: @profile_tab == key), aria: { current: (@profile_tab == key ? "page" : nil) } do %>
+          <span><%= label %></span><% if count.to_i.positive? %><span class="pi-profile-tab__count"><%= count %></span><% end %>
+        <% end %>
       <% end %>
-    </section>
-  </article>
+    </div>
+  </nav>
+
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <% if @profile_tab == "profilo" %>
+      <% biography = @professional["biography"] %>
+      <section class="grid gap-8 lg:grid-cols-[1fr_.72fr]">
+        <article class="rounded-3xl border border-emerald-100 bg-white p-7 shadow-sm sm:p-9">
+          <p class="text-xs font-black uppercase tracking-wider text-emerald-700">Profilo professionale</p>
+          <h2 class="mt-3 text-3xl font-black"><%= biography&.fetch("title", nil) || "Presentazione" %></h2>
+          <div class="mt-6 space-y-4 text-base leading-8 text-slate-600">
+            <% if biography.present? %>
+              <% biography.fetch("paragraphs", []).each do |paragraph| %><p><%= paragraph %></p><% end %>
+            <% else %>
+              <p><%= @professional.fetch("description", "") %></p>
+            <% end %>
+          </div>
+          <% if @professional["teacher_slug"].present? %><%= link_to "Profilo insegnante su PosturaCorretta →", posturacorretta_insegnante_path(@professional.fetch("teacher_slug")), class: "mt-7 inline-flex rounded-full bg-blue-700 px-5 py-3 text-sm font-black text-white hover:bg-blue-800", style: "color:#fff" %><% end %>
+        </article>
+        <aside class="rounded-3xl bg-emerald-950 p-7 text-white sm:p-9">
+          <p class="text-xs font-black uppercase tracking-wider text-emerald-300">Contatto</p>
+          <h2 class="mt-3 text-2xl font-black">Parliamone prima di prenotare</h2>
+          <% if @professional["contact"].present? %>
+            <p class="mt-4 leading-7 text-emerald-100"><%= @professional.dig("contact", "note") %></p>
+            <a href="mailto:<%= @professional.dig("contact", "email") %>?subject=<%= ERB::Util.url_encode(@professional.dig("contact", "subject")) %>" class="mt-6 inline-flex rounded-full bg-white px-5 py-3 text-sm font-black text-emerald-950" style="color:#064e3b;background:#fff">Contatta</a>
+          <% else %>
+            <p class="mt-4 leading-7 text-emerald-100">I recapiti verranno pubblicati dopo la conferma del professionista.</p>
+          <% end %>
+        </aside>
+      </section>
+
+    <% elsif @profile_tab == "servizi" %>
+      <section>
+        <p class="text-xs font-black uppercase tracking-wider text-emerald-700">Attività distinte</p>
+        <h2 class="mt-2 text-3xl font-black">Servizi e percorsi</h2>
+        <p class="mt-3 max-w-3xl leading-7 text-slate-600">Ogni proposta mantiene chiari obiettivo, destinatari e confini professionali.</p>
+        <% if public_services.any? %>
+          <div class="mt-7 grid gap-5 md:grid-cols-2">
+            <% public_services.each do |service| %>
+              <article class="flex flex-col rounded-3xl border border-emerald-100 bg-white p-7 shadow-sm">
+                <p class="text-xs font-black uppercase tracking-wider text-emerald-700"><%= service.fetch("label", "Servizio") %></p>
+                <h3 class="mt-2 text-2xl font-black"><%= service.fetch("title") %></h3>
+                <% if service["audience"].present? %><p class="mt-3 text-sm font-bold text-slate-700"><%= service["audience"] %></p><% end %>
+                <p class="mt-4 leading-7 text-slate-600"><%= service.fetch("description", "") %></p>
+                <% if service["boundary"].present? %><p class="mt-5 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600"><strong class="text-slate-900">Confini del servizio</strong><br><%= service["boundary"] %></p><% end %>
+              </article>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="mt-6 rounded-2xl border border-dashed border-slate-300 p-6 text-slate-500">I servizi pubblici verranno aggiunti dopo la conferma del professionista.</p>
+        <% end %>
+      </section>
+
+    <% elsif @profile_tab == "formazione" %>
+      <section>
+        <p class="text-xs font-black uppercase tracking-wider text-emerald-700">Formazione verificabile</p>
+        <h2 class="mt-2 text-3xl font-black">Formazione e attestati</h2>
+        <% if certifications.any? %>
+          <div class="mt-7 grid gap-5 md:grid-cols-2">
+            <% certifications.each do |certificate| %>
+              <a href="<%= certificate.fetch("image_url") %>" target="_blank" rel="noopener" class="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <div class="aspect-video bg-slate-50 p-4"><%= image_tag certificate.fetch("image_url"), alt: "Attestato #{certificate.fetch('title')} di #{@professional.fetch('name')}", class: "size-full object-contain", loading: "lazy" %></div>
+                <div class="p-6"><p class="text-xs font-black uppercase tracking-wider text-emerald-700"><%= certificate["issuer"] %></p><h3 class="mt-2 text-xl font-black"><%= certificate.fetch("title") %></h3><p class="mt-3 text-sm font-black text-emerald-800">Apri l’attestato originale →</p></div>
+              </a>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="mt-6 rounded-2xl border border-dashed border-slate-300 p-6 text-slate-500">Nessun attestato pubblico inserito.</p>
+        <% end %>
+      </section>
+
+    <% elsif @profile_tab == "contenuti" %>
+      <section>
+        <p class="text-xs font-black uppercase tracking-wider text-sky-700">Contributi del professionista</p>
+        <h2 class="mt-2 text-3xl font-black">Video, schede e contenuti</h2>
+        <p class="mt-3 max-w-3xl leading-7 text-slate-600">Qui vengono raccolti i materiali creati dal professionista o ai quali ha partecipato: schede pratiche, video del canale e futuri approfondimenti.</p>
+        <div class="mt-7 grid gap-5 md:grid-cols-2">
+          <% if video.present? %>
+            <a href="<%= video.fetch("url") %>" target="_blank" rel="noopener" class="group overflow-hidden rounded-3xl border border-red-100 bg-white shadow-sm">
+              <div class="relative aspect-video bg-slate-900"><%= image_tag video.fetch("preview_image_url"), alt: "Anteprima #{video.fetch('label')}", class: "size-full object-cover", loading: "lazy" %><span class="absolute inset-0 grid place-items-center"><span class="grid size-14 place-items-center rounded-full bg-red-600 text-white shadow-lg">▶</span></span></div>
+              <div class="p-6"><p class="text-xs font-black uppercase tracking-wider text-red-700">Video YouTube</p><h3 class="mt-2 text-xl font-black"><%= video.fetch("label") %></h3><span class="mt-4 inline-flex text-sm font-black text-red-700">Guarda il video →</span></div>
+            </a>
+          <% end %>
+          <% materials.each do |material| %>
+            <%= link_to percorso_integrato_professional_material_path(@professional.fetch("slug"), material.fetch("slug")), class: "group flex flex-col rounded-3xl border border-sky-200 bg-sky-50 p-7 shadow-sm hover:border-sky-400" do %>
+              <p class="text-xs font-black uppercase tracking-wider text-sky-700">Scheda pratica</p><h3 class="mt-2 text-xl font-black"><%= material.fetch("title") %></h3><p class="mt-3 grow text-sm leading-6 text-slate-600"><%= material.fetch("description", "") %></p><span class="mt-5 inline-flex text-sm font-black text-sky-800">Apri la scheda e gli esercizi →</span>
+            <% end %>
+          <% end %>
+          <% @contents.each do |connection| %>
+            <% Array(connection["content_slugs"]).each do |content_slug| %>
+              <a href="https://www.youtube.com/watch?v=<%= content_slug %>" target="_blank" rel="noopener" class="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"><p class="text-xs font-black uppercase tracking-wider text-red-700">YouTube · <%= connection["channel"] %></p><h3 class="mt-2 text-xl font-black">Video con <%= @professional.fetch("name") %></h3><p class="mt-3 text-sm text-slate-600"><%= connection["role"] %></p></a>
+            <% end %>
+          <% end %>
+        </div>
+        <% if video.blank? && materials.empty? && @contents.empty? %><p class="mt-6 rounded-2xl border border-dashed border-slate-300 p-6 text-slate-500">Nessun contenuto pubblico inserito.</p><% end %>
+      </section>
+    <% end %>
+  </div>
 </main>
+
+<style>
+  .pi-profile-tab{display:inline-flex;flex:none;align-items:center;gap:.45rem;border-radius:999px;padding:.62rem .9rem;color:#475569;text-decoration:none;font-size:.8rem;font-weight:900}.pi-profile-tab:hover{background:#ecfdf5;color:#065f46}.pi-profile-tab.active{background:#065f46!important;color:#fff!important}.pi-profile-tab__count{display:inline-grid;min-width:1.3rem;height:1.3rem;place-items:center;border-radius:999px;background:rgb(255 255 255 / 22%);padding:0 .3rem;font-size:.66rem}.pi-profile-tab:not(.active) .pi-profile-tab__count{background:#e2e8f0;color:#475569}
+</style>
 
 <%= render "posturacorretta/footer" %>

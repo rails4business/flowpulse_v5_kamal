@@ -6,6 +6,7 @@ site:
 brands:
   - slug: "markpostura"
     name: "MarkPostura"
+    brand_type: "personal"
     kind: "professional"
     kind_label: "Brand personale"
     status: "launched"
@@ -151,28 +152,28 @@ brands:
 
   - slug: "radioestesia"
     name: "Radioestesia e Benessere"
+    brand_type: "personal"
     kind: "professional"
     kind_label: "Brand personale"
     status: "building"
     status_label: "In progettazione"
+    visibility: "public"
     description: "Brand personale ancora in costruzione nell'incubatore di GeneraImpresa."
     project_slugs: []
 
   - slug: "davide-cattaneo"
+    person_profile_slug: "davide-cattaneo"
+    page_template: "professional_brand"
+    catalog_visible: false
     name: "Davide Cattaneo"
     kind: "professional"
     kind_label: "Brand personale"
     status: "building"
     status_label: "In costruzione"
-    visibility: "public"
     owner: "Davide Cattaneo"
-    profile_image_url: "https://ik.imagekit.io/posturacorretta/Professionisti/davide_cattaneo.png?updatedAt=1772458283972"
+    professional_profile_slug: "davide-cattaneo"
     description: "Una proposta personale che collega nuoto, benessere ed educazione posturale, mantenendo distinti i diversi ruoli professionali."
     tagline: "Nuoto, benessere e postura: attività diverse per aiutare le persone a conoscere e usare meglio il proprio corpo."
-    video:
-      label: "Guarda il video"
-      url: "https://youtube.com/watch?v=FthfIMTv7CQ"
-      preview_image_url: "https://i.ytimg.com/vi/FthfIMTv7CQ/hqdefault.jpg"
     contact:
       email: "markpostura@gmail.com"
       subject: "Richiesta informazioni per Davide Cattaneo"
@@ -190,12 +191,6 @@ brands:
         - "Davide Cattaneo lavora come istruttore di nuoto e operatore del benessere. Sta costruendo una proposta personale nella quale attività in acqua, preparazione a secco e trattamento rimangono servizi distinti."
         - "Ha completato il livello base del percorso di Igiene Posturale di PosturaCorretta. Il suo profilo come insegnante prenotabile è ancora in preparazione."
         - "Il Brand è in fase di sviluppo anche per organizzare esperienze dedicate alla salute e al benessere in società sportive, eventi e aziende."
-    qualifications:
-      - title: "Igiene Posturale · livello base"
-        role: "Insegnante PosturaCorretta"
-        issuer: "PosturaCorretta"
-        status: "Attestato conseguito · profilo insegnante in preparazione"
-        image_url: "https://ik.imagekit.io/posturacorretta/corsi/igiene_posturale/attestati_insegnanti_igiene_posturale/01-davide-cattaneo-cert-igp-2025-08-12.png"
     roles:
       - title: "Istruttore di nuoto"
         label: "Attività sportiva"

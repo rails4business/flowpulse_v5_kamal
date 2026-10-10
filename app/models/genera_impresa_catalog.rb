@@ -14,7 +14,7 @@ class GeneraImpresaCatalog
     posturacorretta_projects = PosturacorrettaProjectCatalog.load.fetch("projects", []).each { |project| project["source"] ||= "posturacorretta" }
     genera_impresa_data = YAML.safe_load_file(PROJECTS_PATH, permitted_classes: [], aliases: false) || {}
     @projects = posturacorretta_projects + genera_impresa_data.fetch("projects", [])
-    @brands = assign_projects(data.fetch("brands", []))
+    @brands = assign_person_profiles(assign_projects(data.fetch("brands", [])))
   end
 
   def brand(slug)
@@ -30,6 +30,18 @@ class GeneraImpresaCatalog
   end
 
   private
+
+  def assign_person_profiles(brands)
+    people = PersonProfileCatalog.all
+    brands.each do |brand|
+      person = people[brand["person_profile_slug"]]
+      next unless person
+
+      brand["profile_image_url"] = person["image_url"]
+      brand["video"] = person["video"]
+      brand["qualifications"] = person.fetch("certifications", [])
+    end
+  end
 
   def assign_projects(configured_brands)
     default_brand = configured_brands.find { |brand| brand["default"] }

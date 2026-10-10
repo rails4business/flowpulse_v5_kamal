@@ -88,7 +88,8 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Insegnanti PosturaCorretta"
     assert_select "h2", text: "Mark Postura"
-    assert_select "h2", text: "Davide Cattaneo", count: 0
+    assert_select "h2", text: "Davide Cattaneo"
+    assert_select "h2", text: "Antonio Ventura"
     assert_select "a[href='#{posturacorretta_insegnante_path("markpostura")}'] img[alt='Foto profilo di Mark Postura']"
 
     get posturacorretta_insegnante_path("markpostura")
@@ -96,7 +97,19 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Mark Postura"
     assert_select "nav[aria-label='Profilo insegnante'] a:first-child", text: "Orario"
     assert_select "h2", text: "Gruppi e appuntamenti"
-    assert_select "a[href='#{markpostura_weekplan_path}']", text: "Apri il Week Plan di MarkPostura →"
+    assert_select "p", text: "Nessun orario pubblicato"
+
+    get posturacorretta_insegnante_path("davide-cattaneo", tab: "bio")
+    assert_response :success
+    assert_select "h1", text: "Davide Cattaneo"
+    assert_select "a[href='https://youtube.com/watch?v=FthfIMTv7CQ'] img[src='https://i.ytimg.com/vi/FthfIMTv7CQ/hqdefault.jpg']"
+    assert_select "a[href='#{percorso_integrato_professional_path("davide-cattaneo")}']", text: /profilo professionale/
+
+    get posturacorretta_insegnante_path("antonio-ventura", tab: "bio")
+    assert_response :success
+    assert_select "h1", text: "Antonio Ventura"
+    assert_select "a[href='https://www.youtube.com/watch?v=w1aiyyXwShQ']"
+    assert_select "img[src*='02-antonio-ventura-cert-igp-2026-02-02.png']"
 
     get posturacorretta_insegnante_path("markpostura", tab: "training")
     assert_response :success

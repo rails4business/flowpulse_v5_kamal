@@ -151,6 +151,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "GeneraImpresa"
     assert_select "h2", text: "Brand personali"
     assert_select "h2", text: "Brand progetto"
+    assert_select "#brand-personali a[href='#{genera_impresa_brand_path("radioestesia")}']", text: /Radioestesia e Benessere/
     assert_select "meta[name='description'][content=?]", GeneraImpresaCatalog.load.site.fetch("description")
     assert_select "link[rel='icon'][href='https://cdn.example.com/generaimpresa.png']"
   end

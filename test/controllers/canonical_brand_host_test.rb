@@ -15,15 +15,14 @@ class CanonicalBrandHostTest < ActionDispatch::IntegrationTest
 
     get "/generaimpresa/brand/davide-cattaneo"
 
-    assert_response :success
-    assert_select "h1", "Davide Cattaneo"
+    assert_redirected_to "https://percorsointegrato.it/percorso-integrato/professionisti/davide-cattaneo"
   end
 
-  test "allows every brand path on localhost for development" do
+  test "moves the former Davide brand page to Percorso Integrato on localhost" do
     host! "localhost"
 
     get "/generaimpresa/brand/davide-cattaneo"
 
-    assert_response :success
+    assert_redirected_to "/percorso-integrato/professionisti/davide-cattaneo"
   end
 end

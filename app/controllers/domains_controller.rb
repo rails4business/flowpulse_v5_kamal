@@ -75,9 +75,11 @@ class DomainsController < ApplicationController
       elsif target_controller == "brands/genera_impresa" && target_action == "index"
         @catalog = GeneraImpresaCatalog.load
         @site = @catalog.site
-        @brands = @catalog.brands.select { |brand| brand["status"] == "launched" || brand["visibility"] == "public" || Current.user&.superadmin_user? }
-        @personal_brands = @brands.select { |brand| brand["kind"] == "professional" }
-        @project_brands = @brands.select { |brand| brand["kind"] != "professional" }
+        @brands = @catalog.brands.select do |brand|
+          brand.fetch("catalog_visible", true) && (brand["status"] == "launched" || brand["visibility"] == "public" || Current.user&.superadmin_user?)
+        end
+        @personal_brands = @brands.select { |brand| brand["brand_type"] == "personal" || brand["kind"] == "professional" }
+        @project_brands = @brands - @personal_brands
         @managed_brands = if Current.user
           Node.includes(:domains, :role_assignment)
             .select(&:brand?)

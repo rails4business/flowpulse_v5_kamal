@@ -13,9 +13,10 @@
     <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       <% @professionals.each do |professional| %>
         <article class="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-          <p class="text-xs font-black uppercase tracking-[.14em] text-emerald-700"><%= professional.fetch("city", "Da definire") %></p>
-          <h2 class="mt-2 text-xl font-black text-slate-950"><%= professional.fetch("name") %></h2>
-          <p class="mt-1 text-sm font-semibold text-slate-600"><%= professional.fetch("profession") %></p>
+          <div class="flex items-start gap-4">
+            <% if professional["image_url"].present? %><%= image_tag professional.fetch("image_url"), alt: "Foto profilo di #{professional.fetch('name')}", class: "size-16 shrink-0 rounded-2xl border border-emerald-100 bg-emerald-50 object-cover object-top", loading: "lazy" %><% end %>
+            <div><p class="text-xs font-black uppercase tracking-[.14em] text-emerald-700"><%= professional.fetch("city", "Da definire") %></p><h2 class="mt-2 text-xl font-black text-slate-950"><%= professional.fetch("name") %></h2><p class="mt-1 text-sm font-semibold text-slate-600"><%= professional.fetch("profession") %></p></div>
+          </div>
           <p class="mt-4 text-sm leading-6 text-slate-600"><%= professional.fetch("description", "") %></p>
           <%= link_to "Vedi profilo →", percorso_integrato_professional_path(professional.fetch("slug")), class: "mt-6 inline-flex text-sm font-bold text-emerald-800 hover:text-emerald-950" %>
         </article>

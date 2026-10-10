@@ -3,11 +3,11 @@ require "test_helper"
 class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
   test "renders all preview pages without indexing" do
     [
-      "/flowpulse/radioestesia",
-      "/flowpulse/radioestesia/chi-sono",
-      "/flowpulse/radioestesia/percorsi",
-      "/flowpulse/radioestesia/contatti",
-      "/flowpulse/radioestesia/contenuti"
+      "/generaimpresa/brand/radioestesia",
+      "/generaimpresa/brand/radioestesia/chi-sono",
+      "/generaimpresa/brand/radioestesia/percorsi",
+      "/generaimpresa/brand/radioestesia/contatti",
+      "/generaimpresa/brand/radioestesia/contenuti"
     ].each do |path|
       get path
 
@@ -17,7 +17,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "renders a free chapter with the course sidebar" do
-    get "/flowpulse/radioestesia/contenuti/mappa-energetica-alimenti"
+    get "/generaimpresa/brand/radioestesia/contenuti/mappa-energetica-alimenti"
 
     assert_response :success
     assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
@@ -28,7 +28,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
 
   test "shows item purchase and annual options for a future masterclass" do
     travel_to Time.zone.parse("2026-09-10 09:00") do
-      get "/flowpulse/radioestesia/contenuti/incontro-di-approfondimento"
+      get "/generaimpresa/brand/radioestesia/contenuti/incontro-di-approfondimento"
 
       assert_response :success
       assert_select "#acquista", /Partecipa alla masterclass/
@@ -42,7 +42,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
 
   test "lists independent entries through shareable events and contents tabs" do
     travel_to Time.zone.parse("2026-09-10 09:00") do
-      get "/flowpulse/radioestesia/contenuti?tab=eventi"
+      get "/generaimpresa/brand/radioestesia/contenuti?tab=eventi"
 
       assert_response :success
       assert_select "a", /Prepara la tua energia all’Autunno/
@@ -53,7 +53,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
       assert_select "a", text: /Mappa energetica degli alimenti/, count: 0
       assert_select "a", text: /Materiali di conferenze/, count: 0
 
-      get "/flowpulse/radioestesia/contenuti?tab=contenuti"
+      get "/generaimpresa/brand/radioestesia/contenuti?tab=contenuti"
 
       assert_response :success
       assert_select "a", /Introduzione alla radiestesia/
@@ -62,11 +62,17 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "redirects the old PosturaCorretta preview paths" do
+  test "redirects the old FlowPulse and PosturaCorretta preview paths" do
+    get "/flowpulse/radioestesia"
+    assert_redirected_to "/generaimpresa/brand/radioestesia"
+
+    get "/flowpulse/radioestesia/contenuti/mappa-energetica-alimenti"
+    assert_redirected_to "/generaimpresa/brand/radioestesia/contenuti/mappa-energetica-alimenti"
+
     get "/posturacorretta/radioestesia"
-    assert_redirected_to "/flowpulse/radioestesia"
+    assert_redirected_to "/generaimpresa/brand/radioestesia"
 
     get "/posturacorretta/radioestesia/contenuti/mappa-energetica-alimenti"
-    assert_redirected_to "/flowpulse/radioestesia/contenuti/mappa-energetica-alimenti"
+    assert_redirected_to "/generaimpresa/brand/radioestesia/contenuti/mappa-energetica-alimenti"
   end
 end

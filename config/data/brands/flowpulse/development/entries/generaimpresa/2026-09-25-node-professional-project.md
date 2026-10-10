@@ -32,7 +32,7 @@ La pagina elenca i figli del relativo Node contenitore e permette di aprirne
 la scheda amministrativa. Un registro YAML separato conserva gli indirizzi
 provvisori delle anteprime senza aggiungere campi al modello `Node`.
 Finché Radioestesia non possiede un dominio, la sua anteprima canonica è
-`/flowpulse/radioestesia`; i precedenti URL sotto PosturaCorretta rimangono
+`/generaimpresa/brand/radioestesia`; i precedenti URL sotto FlowPulse e PosturaCorretta rimangono
 soltanto come redirect di compatibilità.
 
 ## Verifica

@@ -38,10 +38,16 @@
             </article>
           <% end %>
         </div>
+        <% if @teacher_group_lessons.empty? %>
+          <div class="mt-5 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-6">
+            <p class="font-bold text-slate-950">Nessun orario pubblicato</p>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Le disponibilità compariranno qui quando saranno confermate dall’insegnante.</p>
+          </div>
+        <% end %>
         <article class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
           <p class="text-xs font-black uppercase tracking-[.14em] text-slate-500">Appuntamenti individuali</p>
           <p class="mt-2 text-sm leading-6 text-slate-600">Gli appuntamenti individuali vengono definiti insieme alla persona e pubblicati nel calendario quando confermati.</p>
-          <%= link_to "Apri il Week Plan di MarkPostura →", markpostura_weekplan_path, class: "mt-4 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900 hover:underline" %>
+          <% if @teacher["schedule_url"].present? %><%= link_to "Apri il calendario →", @teacher.fetch("schedule_url"), class: "mt-4 inline-flex text-sm font-bold text-blue-700 hover:text-blue-900 hover:underline" %><% end %>
         </article>
       </section>
     <% when "centres" %>
@@ -67,6 +73,23 @@
         <% if @teacher_bio.present? %>
           <div class="mt-4 max-w-3xl text-base leading-7 text-slate-600 [&_a]:font-bold [&_a]:text-blue-700 [&_a:hover]:text-blue-900 [&_p+p]:mt-4"><%= markdown(@teacher_bio) %></div>
         <% end %>
+        <% if @teacher["video"].present? || Array(@teacher["certifications"]).any? %>
+          <div class="mt-7 grid gap-5 sm:grid-cols-2">
+            <% if @teacher["video"].present? %>
+              <a href="<%= @teacher.dig("video", "url") %>" target="_blank" rel="noopener" class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:border-red-300">
+                <div class="relative aspect-video overflow-hidden bg-slate-900"><%= image_tag @teacher.dig("video", "preview_image_url"), alt: "Anteprima video di #{@teacher.fetch('name')}", class: "size-full object-cover", loading: "lazy" %><span class="absolute inset-0 grid place-items-center"><span class="grid size-12 place-items-center rounded-full bg-red-600 text-white shadow-lg">▶</span></span></div>
+                <div class="p-4"><p class="text-xs font-black uppercase tracking-wider text-red-700">Video</p><p class="mt-1 font-bold text-slate-950"><%= @teacher.dig("video", "label") %></p></div>
+              </a>
+            <% end %>
+            <% Array(@teacher["certifications"]).first&.then do |certificate| %>
+              <a href="<%= certificate.fetch("image_url") %>" target="_blank" rel="noopener" class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:border-blue-300">
+                <div class="aspect-video bg-slate-50 p-3"><%= image_tag certificate.fetch("image_url"), alt: "Attestato #{certificate.fetch('title')} di #{@teacher.fetch('name')}", class: "size-full object-contain", loading: "lazy" %></div>
+                <div class="p-4"><p class="text-xs font-black uppercase tracking-wider text-blue-700">Attestato</p><p class="mt-1 font-bold text-slate-950"><%= certificate.fetch("title") %></p></div>
+              </a>
+            <% end %>
+          </div>
+        <% end %>
+        <% if @teacher["professional_profile_slug"].present? %><%= link_to "Vedi il profilo professionale su Percorso Integrato →", percorso_integrato_professional_path(@teacher.fetch("professional_profile_slug")), class: "mt-6 inline-flex text-sm font-bold text-emerald-800 hover:underline" %><% end %>
       </section>
     <% when "training" %>
       <section class="mt-6" aria-labelledby="teacher-training-title">

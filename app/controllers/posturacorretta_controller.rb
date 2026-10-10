@@ -135,9 +135,14 @@ class PosturacorrettaController < ApplicationController
 
     modules_by_slug = curriculum.fetch("modules", []).index_by { |mod| mod.fetch("slug") }
     @teacher_modules = @teacher.fetch("active_modules", []).filter_map { |slug| modules_by_slug[slug] }
-    @teacher_centers = curriculum.fetch("locations", {}).values.select do |center|
-      center["city"] != "Online" && Array(center["projects"]).include?("posturacorretta") &&
-        (Array(center["active_modules"]) & @teacher.fetch("active_modules", [])).any?
+    @teacher_centers = if @teacher.key?("centre_slugs")
+      centre_slugs = Array(@teacher["centre_slugs"])
+      curriculum.fetch("locations", {}).values.select { |center| centre_slugs.include?(center["slug"]) }
+    else
+      curriculum.fetch("locations", {}).values.select do |center|
+        center["city"] != "Online" && Array(center["projects"]).include?("posturacorretta") &&
+          (Array(center["active_modules"]) & @teacher.fetch("active_modules", [])).any?
+      end
     end
     @teacher_tab = params[:tab].presence_in(%w[schedule centres bio training]) || "schedule"
     @teacher_training = build_teacher_training(@teacher, teachers: curriculum.fetch("teachers", {}))
@@ -147,7 +152,9 @@ class PosturacorrettaController < ApplicationController
     @teacher_bio = academy_markdown_source(@teacher["bio_source"])
     calendar_path = Rails.root.join("config/data/posturacorretta/programmi/calendario_lezioni_gruppo.yml")
     calendar = calendar_path.file? ? YAML.safe_load_file(calendar_path, permitted_classes: [], aliases: false).to_h.fetch("calendar", {}) : {}
-    @teacher_group_lessons = calendar["group_lessons"] || [calendar["group_lesson"]].compact
+    @teacher_group_lessons = Array(calendar["group_lessons"] || [calendar["group_lesson"]].compact).select do |lesson|
+      Array(lesson["teacher_slugs"]).include?(@teacher.fetch("slug"))
+    end
   end
 
   def professionisti

@@ -46,12 +46,19 @@ class AcademyCurriculum
   def load_teachers
     teachers_root = @directory.join(TEACHERS_DIRECTORY)
     index = load_yaml(teachers_root.join(TEACHERS_INDEX_FILENAME))
+    people = PersonProfileCatalog.all
 
     index.fetch("teachers", []).each_with_object({}) do |slug, teachers|
       teacher_path = teachers_root.join("#{slug}.yml")
       raise ArgumentError, "File insegnante academy mancante: #{slug}" unless teacher_path.file?
 
-      teachers[slug] = load_yaml(teacher_path)
+      teacher = load_yaml(teacher_path)
+      person = people[teacher.fetch("person_profile_slug", slug)] || {}
+      teachers[slug] = teacher.merge(
+        "img" => teacher["img"].presence || person["image_url"],
+        "video" => teacher["video"].presence || person["video"],
+        "certifications" => teacher["certifications"].presence || person.fetch("certifications", [])
+      )
     end
   end
 
