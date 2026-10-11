@@ -28,6 +28,7 @@
             <%= link_to "I miei Brand", "#{genera_impresa_path}#i-miei-brand", class: "block rounded-lg px-3 py-2 text-sm font-bold text-red-700 hover:bg-red-50" %>
             <%= link_to "Dashboard", dashboard_home_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
             <%= link_to "Profilo", profile_path, class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+            <%= render "shared/privacy_menu_button" %>
             <% if Current.user.superadmin_user? %><%= link_to "Superadmin", admin_dashboard_path, class: "block rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
             <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
           </div>

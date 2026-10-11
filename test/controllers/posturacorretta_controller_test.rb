@@ -94,6 +94,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_insegnante_path("markpostura")
     assert_response :success
+    assert_select "button[data-privacy-open]", text: /Privacy e cookie/
     assert_select "h1", text: "Mark Postura"
     assert_select "nav[aria-label='Profilo insegnante'] a:first-child", text: "Orario"
     assert_select "h2", text: "Gruppi e appuntamenti"

@@ -5557,7 +5557,15 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .privacy-center__categories label small { color:#64748b; line-height:1.4; }
 .privacy-center__categories input { width:1.2rem; height:1.2rem; flex:none; accent-color:#315f52; }
 .privacy-center__panel-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.55rem; border-top:1px solid #e2e8f0; padding-top:1rem; }
-@media (max-width:560px) { .privacy-center__actions { grid-template-columns:1fr; } .privacy-center__trigger { right:.65rem; bottom:.65rem; } .privacy-center__banner { right:.65rem; bottom:3.7rem; width:calc(100vw - 1.3rem); } .privacy-center__panel-actions > * { width:100%; } }
+@media (max-width:560px) {
+  .privacy-center__trigger { display:none; }
+  .privacy-center__banner { top:max(.65rem,env(safe-area-inset-top)); right:.65rem; bottom:auto; width:calc(100vw - 1.3rem); border-radius:1rem; padding:1rem; box-shadow:0 12px 38px rgb(15 23 42 / 20%); }
+  .privacy-center__banner p { margin:.35rem 0 .75rem; font-size:.8rem; }
+  .privacy-center__actions { grid-template-columns:1fr 1fr; }
+  .privacy-center__actions button { min-height:2.35rem; }
+  .privacy-center__actions button:last-child { grid-column:1 / -1; }
+  .privacy-center__panel-actions > * { width:100%; }
+}
 .privacy-embed { position:relative; }
 .privacy-embed__placeholder { display:grid; width:100%; height:100%; place-content:center; gap:.5rem; padding:1.5rem; color:#334155; text-align:center; }
 .privacy-embed__placeholder strong { font-size:1.2rem; }

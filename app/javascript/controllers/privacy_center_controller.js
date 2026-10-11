@@ -12,11 +12,19 @@ export default class extends Controller {
       if (button) this.enable({ currentTarget: button })
     }
     document.addEventListener("click", this.enableListener)
+    this.openListener = (event) => {
+      const button = event.target.closest("[data-privacy-open]")
+      if (button) this.open()
+    }
+    document.addEventListener("click", this.openListener)
     this.applyPreferences()
     if (!this.preferences.savedAt && this.configValue.prompt) this.bannerTarget.hidden = false
   }
 
-  disconnect() { document.removeEventListener("click", this.enableListener) }
+  disconnect() {
+    document.removeEventListener("click", this.enableListener)
+    document.removeEventListener("click", this.openListener)
+  }
 
   acceptAll() {
     Object.entries(this.configValue.categories).forEach(([key, category]) => {
