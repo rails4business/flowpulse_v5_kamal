@@ -15,6 +15,14 @@ class Profile < ApplicationRecord
   has_many :impegno_contacts, class_name: "Brands::Impegno::Contact", dependent: :destroy
   has_many :impegno_places, class_name: "Brands::Impegno::Place", dependent: :destroy
   has_many :data_commitment_imports, foreign_key: :target_profile_id, dependent: :nullify
+  has_many :problem_solving_cycles,
+           foreign_key: :owner_profile_id,
+           inverse_of: :owner_profile,
+           dependent: :destroy
+  has_many :reusable_skills,
+           foreign_key: :owner_profile_id,
+           inverse_of: :owner_profile,
+           dependent: :destroy
 
   validates :user_id, uniqueness: true
   validates :username, presence: true,

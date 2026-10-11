@@ -14,6 +14,14 @@ module Brands
       assert_select "a.pi-button.pi-button--primary", minimum: 3
       assert_select "a.pi-button.pi-button--secondary", text: "Apri le Docs"
       assert_select "#come-funziona"
+      assert_select "#presa-in-carico", text: /un professionista apre il primo programma/
+      assert_select "#presa-in-carico", text: /consulenze, trattamenti, lavoro individuale o di gruppo, eventi e attività da svolgere in autonomia/
+      assert_select "#presa-in-carico dt", text: "Problema"
+      assert_select "#presa-in-carico dt", text: "Possibili cause"
+      assert_select "#presa-in-carico dt", text: "Principi e metodiche"
+      assert_select "#presa-in-carico dt", text: "Feedback"
+      assert_select "details summary", text: /I sette ambiti della persona/
+      assert_select "details summary", text: /Le cinque aree di intervento/
       assert_select "#percorso"
       assert_select "#percorso .pi-upgrade__level", count: 7
       assert_select "#percorso", text: /Salute a rischio/
@@ -21,6 +29,7 @@ module Brands
       assert_select "details.pi-upgrade__deep"
       assert_select "#ruoli"
       assert_select "#inizia"
+      assert_select "h3", text: "Scegliere il primo professionista"
       assert_select "a[href^='https://wa.me/393792891488']", text: "Scrivi su WhatsApp"
     end
 

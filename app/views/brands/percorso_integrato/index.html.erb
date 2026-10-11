@@ -11,7 +11,7 @@
           <h1 class="mt-5 max-w-4xl text-5xl font-black leading-[.98] tracking-[-.045em] text-slate-950 sm:text-6xl"><%= @site.fetch("title") %></h1>
           <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600"><%= @site.fetch("description") %></p>
           <div class="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a href="#inizia" class="pi-button pi-button--primary rounded-xl px-6 py-3.5 font-bold shadow-lg shadow-emerald-900/10">Racconta la tua richiesta</a>
+            <a href="#inizia" class="pi-button pi-button--primary rounded-xl px-6 py-3.5 font-bold shadow-lg shadow-emerald-900/10">Capisci da dove iniziare</a>
             <%= link_to "Apri le Docs", percorso_integrato_docs_path, class: "pi-button pi-button--secondary rounded-xl border border-emerald-200 px-6 py-3.5 font-bold hover:border-emerald-400" %>
           </div>
         </div>
@@ -19,6 +19,48 @@
           <p class="text-xs font-black uppercase tracking-[.16em] text-teal-200">Si parte da dove sei</p>
           <p class="mt-5 text-3xl font-black leading-tight">Un percorso personale, non un pacchetto uguale per tutti.</p>
           <p class="mt-5 leading-7 text-teal-50">Non devi attraversare ogni livello. Il primo passo è riconoscere il bisogno attuale e costruire una proposta sostenibile attorno alla persona.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="presa-in-carico" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Dalla profilazione al programma</p>
+        <h2 class="mt-3 max-w-4xl text-3xl font-black tracking-tight sm:text-5xl">Prima capiamo la situazione. Poi un professionista apre il primo programma.</h2>
+        <p class="mt-5 max-w-4xl text-lg leading-8 text-slate-600">La profilazione iniziale è uguale per tutti e serve a raccogliere le informazioni di base. Il primo professionista valuta la situazione e decide, insieme alla persona, se può diventare il responsabile del percorso.</p>
+
+        <div class="mt-10 grid gap-5 lg:grid-cols-3">
+          <article class="rounded-3xl border border-emerald-100 bg-white p-7 shadow-sm"><span class="text-xs font-black text-emerald-700">01</span><h3 class="mt-3 text-xl font-black">La prima valutazione</h3><p class="mt-3 leading-7 text-slate-600">Se il caso rientra nelle sue competenze e il professionista si sente adatto a seguirlo, apre un programma e rimane il primo riferimento.</p></article>
+          <article class="rounded-3xl border border-orange-100 bg-white p-7 shadow-sm"><span class="text-xs font-black text-orange-700">02</span><h3 class="mt-3 text-xl font-black">Se serve un’altra competenza</h3><p class="mt-3 leading-7 text-slate-600">Può consigliare un altro professionista oppure restare responsabile e aggiungere al percorso le persone necessarie. Ognuno lavora entro le proprie competenze.</p></article>
+          <article class="rounded-3xl border border-sky-100 bg-white p-7 shadow-sm"><span class="text-xs font-black text-sky-700">03</span><h3 class="mt-3 text-xl font-black">Uno o più programmi</h3><p class="mt-3 leading-7 text-slate-600">Ogni professionista può proporre il proprio programma: consulenze, trattamenti, lavoro individuale o di gruppo, eventi e attività da svolgere in autonomia.</p></article>
+        </div>
+
+        <div class="mt-12 rounded-[2rem] bg-[#173f43] p-7 text-white sm:p-10">
+          <p class="text-xs font-black uppercase tracking-[.16em] text-teal-200">Una traccia comune</p>
+          <h3 class="mt-3 text-3xl font-black">Che cosa dovrebbe spiegare ogni programma</h3>
+          <p class="mt-4 max-w-4xl leading-7 text-teal-50">Il programma viene discusso con il cliente o paziente. Quando partecipano più professionisti, questa traccia rende più semplice confrontarsi e capire che cosa sta funzionando.</p>
+          <% program_fields = [
+            ["Problema", "Che cosa sta succedendo e che cosa vuole cambiare la persona."],
+            ["Possibili cause", "Quali sistemi sembrano coinvolti e possono aver contribuito al problema."],
+            ["Rimedio proposto", "La soluzione consigliata e perché potrebbe essere utile."],
+            ["Principi e metodiche", "Le idee e i metodi sui quali il professionista basa la proposta."],
+            ["Ambiti e aree", "Su quali ambiti della persona e su quali delle cinque aree interviene."],
+            ["Comportamento", "Che cosa farà il professionista e che cosa viene chiesto alla persona."],
+            ["Tempi", "Durata indicativa, frequenza e momento della verifica."],
+            ["Feedback", "Risultati, difficoltà e modifiche da condividere con la persona e con gli altri professionisti."]
+          ] %>
+          <dl class="mt-8 grid gap-3 sm:grid-cols-2"><% program_fields.each do |label, text| %><div class="rounded-2xl border border-white/15 bg-white/10 p-5"><dt class="font-black text-white"><%= label %></dt><dd class="mt-2 text-sm leading-6 text-teal-50"><%= text %></dd></div><% end %></dl>
+        </div>
+
+        <div class="mt-10 grid gap-5 lg:grid-cols-2">
+          <details class="group rounded-3xl border border-blue-100 bg-white shadow-sm">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-6 font-black text-slate-950"><span>I sette ambiti della persona</span><span class="text-blue-700 transition group-open:rotate-45">＋</span></summary>
+            <div class="border-t border-blue-100"><%= render "posturacorretta/chakras_ambiti" %></div>
+          </details>
+          <details class="group rounded-3xl border border-blue-100 bg-white shadow-sm">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-6 font-black text-slate-950"><span>Le cinque aree di intervento</span><span class="text-blue-700 transition group-open:rotate-45">＋</span></summary>
+            <div class="border-t border-blue-100"><%= render "posturacorretta/aree" %></div>
+          </details>
         </div>
       </div>
     </section>
@@ -96,8 +138,8 @@
       <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
         <div>
           <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Primo passo</p>
-          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Invia la richiesta, poi decidi sulla proposta.</h2>
-          <p class="mt-5 leading-7 text-slate-600">Il primo contatto serve a capire il problema e preparare una bozza. Il percorso viene aperto soltanto dopo che hai ricevuto e confermato la proposta.</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Racconta da dove parti. Il programma si decide insieme.</h2>
+          <p class="mt-5 leading-7 text-slate-600">Il primo contatto serve a capire la situazione e scegliere con chi parlarne. Nessun programma viene aperto prima che attività, tempi e condizioni siano stati discussi e accettati.</p>
           <%= link_to "Scrivi su WhatsApp", "https://wa.me/#{@site.fetch("whatsapp_number")}?text=#{ERB::Util.url_encode(@site.fetch("whatsapp_message"))}", target: "_blank", rel: "noopener noreferrer", class: "pi-button pi-button--primary mt-7 rounded-xl px-6 py-3.5 font-bold" %>
         </div>
         <ol class="space-y-4">

@@ -103,7 +103,7 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Ripartire con Dash"
     assert_select "a[href=?]", rails4b_content_path("riprenderci-la-politica-partendo-dall-economia")
-    assert_select "a[href=?]", impegno_path(area: "problems")
+    assert_select "a[href=?]", rails4b_problems_path
     assert_includes response.body, "In elaborazione"
     assert_includes response.body, "Categorie da aprire"
     assert_includes response.body, "più di 20.000 abitanti"

@@ -20,6 +20,10 @@ class Node < ApplicationRecord
   has_many :services, dependent: :restrict_with_error
   has_many :node_processes, dependent: :restrict_with_error
   has_many :node_events, dependent: :destroy
+  has_many :problem_solving_cycle_nodes, dependent: :destroy
+  has_many :problem_solving_cycles, through: :problem_solving_cycle_nodes
+  has_many :reusable_skill_nodes, dependent: :destroy
+  has_many :reusable_skills, through: :reusable_skill_nodes
   has_many :context_professional_calendars,
     class_name: "ProfessionalCalendar",
     foreign_key: :context_node_id,

@@ -47,6 +47,16 @@ Rails.application.routes.draw do
   get "rails4b/percorsi/:slug" => "landing#rails4b_track", as: :rails4b_track
   get "rails4b/contenuti" => "landing#rails4b_contents", as: :rails4b_contents
   get "rails4b/contenuti/:slug" => "landing#rails4b_content", as: :rails4b_content
+  scope path: "rails4b", as: :rails4b do
+    resources :problems,
+      path: "problemi",
+      controller: "brands/rails4business/problem_solving_cycles",
+      only: %i[index show create update]
+    resources :skills,
+      path: "skills",
+      controller: "brands/rails4business/reusable_skills",
+      only: %i[index show create update]
+  end
   # Radioestesia e Benessere is a personal Brand incubated by GeneraImpresa.
   # Keep the complete minisite under the Brand path instead of exposing a
   # second, generic Brand page.
@@ -178,8 +188,8 @@ Rails.application.routes.draw do
   get "brands/svuotamente" => "brands/svuotamente#index", as: :svuotamente
   get "svuotamente" => redirect("/brands/svuotamente", status: 301), as: :legacy_svuotamente
   get "impegno" => "brands/impegno/home#index", as: :impegno
+  get "impegno/problemi", to: redirect("/rails4b/problemi", status: 301)
   scope path: "impegno", as: :impegno do
-    resources :problems, path: "problemi", controller: "brands/impegno/problems", only: %i[index create update]
     resources :experiences, path: "esperienze", controller: "brands/impegno/experiences", only: %i[index new create show update]
     resources :experiences, path: "esperienze", controller: "brands/impegno/experiences", only: [] do
       resources :sessions, path: "sessioni", controller: "brands/impegno/experience_sessions", only: %i[create update destroy]

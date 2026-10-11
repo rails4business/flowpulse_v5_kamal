@@ -1,0 +1,35 @@
+<% content_for :title, "#{@cycle.title} — Rails4Business" %>
+
+<main class="min-h-screen bg-stone-50 text-slate-900">
+  <%= render "landing/rails4b_nav", active: :problems %>
+  <div class="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+    <%= link_to "← Tutti i problemi", rails4b_problems_path, class: "text-sm font-black text-blue-700 hover:underline" %>
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5 border-b border-slate-200 pb-8">
+      <div><p class="text-xs font-black uppercase tracking-[.16em] text-blue-700"><%= @cycle.status == "active" ? "In lavorazione" : @cycle.status == "backlog" ? "Da affrontare" : @cycle.status.humanize %></p><h1 class="mt-2 text-4xl font-black tracking-[-.045em]"><%= @cycle.title %></h1><% if @cycle.nodes.any? %><div class="mt-4 flex flex-wrap gap-2"><% @cycle.nodes.each do |node| %><span class="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-bold text-violet-800"><%= node.title %></span><% end %></div><% end %></div>
+      <span class="rounded-full bg-slate-900 px-4 py-2 text-sm font-black text-white"><%= @cycle.current_step %>/<%= @steps.size %></span>
+    </header>
+
+    <ol class="mt-8 divide-y divide-slate-200 border-y border-slate-200 bg-white px-5 sm:px-7">
+      <% @steps.each_with_index do |(_key, label), index| %><% done = index < @cycle.current_step %><% current = index == @cycle.current_step %><li class="flex items-center gap-4 py-4 <%= current ? 'text-slate-950' : 'text-slate-500' %>"><span class="flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-black <%= done ? 'bg-emerald-600 text-white' : current ? 'bg-amber-400 text-slate-950' : 'bg-slate-100' %>"><%= done ? "✓" : index + 1 %></span><span class="font-bold"><%= label %></span></li><% end %>
+    </ol>
+
+    <div class="mt-6 flex flex-wrap gap-3">
+      <% if @cycle.active? && @cycle.current_step.positive? %><%= button_to "Riapri il passaggio precedente", rails4b_problem_path(@cycle), method: :patch, params: { operation: "back" }, class: "rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-100" %><% end %>
+      <% if @cycle.active? && @cycle.current_step < @steps.size %><%= button_to "Completa il passaggio", rails4b_problem_path(@cycle), method: :patch, params: { operation: "advance" }, class: "rounded-full bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-700" %><% end %>
+      <% if @cycle.active? && @cycle.current_step == @steps.size %><%= button_to "Segna come risolto", rails4b_problem_path(@cycle), method: :patch, params: { operation: "resolve" }, class: "rounded-full bg-emerald-600 px-4 py-2 text-sm font-black text-white hover:bg-emerald-700" %><% end %>
+      <% if @cycle.active? %><%= button_to "Chiudi senza risolvere", rails4b_problem_path(@cycle), method: :patch, params: { operation: "close" }, class: "rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-600 hover:bg-slate-100" %><% end %>
+      <% unless @cycle.active? %><%= button_to "Lavora su questo", rails4b_problem_path(@cycle), method: :patch, params: { operation: "focus" }, class: "rounded-full bg-amber-400 px-4 py-2 text-sm font-black text-slate-950 hover:bg-amber-300" %><% end %>
+    </div>
+
+    <% fields = [[:problem, "Il problema", "Che cosa sta succedendo?"], [:isolated_problem, "Problema isolato", "Quale parte abbastanza piccola puoi affrontare?"], [:possible_solutions, "Possibili soluzioni", "Elenca ipotesi e strade diverse prima di scegliere."], [:minimum_solution, "Soluzione minima", "Qual è l’esperimento più semplice che puoi fare?"], [:self_test, "Prova su di te", "Che cosa hai provato e che cosa è successo?"], [:small_group_test, "Prova con poche persone", "Con chi hai provato e in quali condizioni?"], [:feedback, "Feedback e correzioni", "Che cosa hai osservato e cambiato?"], [:validation_notes, "Verifica", "Per chi funziona, come e con quali limiti?"], [:diffusion_notes, "Diffusione", "Come la passi a chi vive lo stesso problema?"], [:closure_notes, "Chiusura o automazione", "Che cosa resta da automatizzare, archiviare o riaprire?"]] %>
+    <%= form_with model: @cycle, url: rails4b_problem_path(@cycle), class: "mt-10 space-y-8" do |form| %>
+      <% if @cycle.errors.any? %><p class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700"><%= @cycle.errors.full_messages.to_sentence %></p><% end %>
+      <section class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8"><h2 class="text-xl font-black">Scheda di lavoro</h2><div class="mt-6 grid gap-6"><div><%= form.label :title, "Titolo", class: "text-sm font-black" %><%= form.text_field :title, required: true, class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3" %></div><% fields.each do |name, label, hint| %><div><%= form.label name, label, class: "text-sm font-black" %><p class="mt-1 text-sm text-slate-500"><%= hint %></p><%= form.text_area name, rows: 4, class: "mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 leading-7" %></div><% end %></div></section>
+      <section class="rounded-3xl border border-violet-200 bg-violet-50/50 p-6 sm:p-8"><h2 class="text-xl font-black">Dove viene applicato?</h2><p class="mt-2 text-sm leading-6 text-slate-600">Puoi lasciarlo indipendente oppure collegarlo a uno o più Node che amministri.</p><div class="mt-5 grid gap-3 sm:grid-cols-2"><%= form.collection_check_boxes :node_ids, @node_options, :id, :title do |box| %><label class="flex items-center gap-3 rounded-xl border border-violet-200 bg-white p-3 font-bold"><%= box.check_box(class: "size-4 rounded border-slate-300") %><span><%= box.text %></span></label><% end %></div></section>
+      <%= form.submit "Salva la scheda", class: "rounded-full bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-700" %>
+    <% end %>
+
+    <aside class="mt-10 rounded-3xl border border-blue-200 bg-blue-50 p-6"><h2 class="font-black text-blue-950">Tempo e attività restano in 1Impegno</h2><p class="mt-2 text-sm leading-6 text-blue-900">Questo ciclo descrive il lavoro. Gli appuntamenti e le attività potranno essere creati come DataCommitment con questa scheda come soggetto; sessioni e slot passeranno da una DataExperience collegata.</p></aside>
+    <aside class="mt-5 rounded-3xl border border-violet-200 bg-violet-50 p-6"><div class="flex flex-wrap items-center justify-between gap-3"><div><h2 class="font-black text-violet-950">Skill collegate</h2><p class="mt-2 text-sm leading-6 text-violet-900"><%= @cycle.reusable_skills.any? ? @cycle.reusable_skills.map(&:title).to_sentence : "Nessuna Skill collegata: il problema può restare indipendente." %></p></div><%= link_to "Apri le Skill →", rails4b_skills_path, class: "rounded-full bg-violet-600 px-4 py-2 text-sm font-black text-white hover:bg-violet-700" %></div></aside>
+  </div>
+</main>

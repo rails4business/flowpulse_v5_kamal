@@ -1,6 +1,16 @@
 require "test_helper"
 
 class LandingControllerTest < ActionDispatch::IntegrationTest
+  test "Rails4Business landing separates problems from reusable skills" do
+    get rails4b_url
+
+    assert_response :success
+    assert_select "#rails4b-workspaces", text: /Problemi e Skill non sono la stessa cosa/
+    assert_select "#rails4b-workspaces article", count: 2
+    assert_select "a[href=?]", new_session_path(return_to: rails4b_problems_path)
+    assert_select "a[href=?]", new_session_path(return_to: rails4b_skills_path)
+  end
+
   test "Flowpulse navigation exposes projects professionals and changelog" do
     get flowpulse_url
 
@@ -227,8 +237,8 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "img[src*='rails4b_logo_quadrato']"
     assert_select "img[src*='rails4b_logo_lungo']", count: 0
-    assert_select "h1", text: "Dalla persona ai processi che fanno funzionare l'impresa."
-    assert_select "p", text: /La persona crea o realizza un'impresa/
+    assert_select "h1", text: "Problemi da risolvere. Skill da costruire e riutilizzare."
+    assert_select "p", text: /Rails4Business tiene separate due cose/
     assert_select "h2", text: "Ogni persona può ideare o realizzare"
     assert_select "h2", text: "Come si collegano persone, Brand, progetti, attività e processi"
     assert_select "h3", text: "Persona e Brand"
@@ -311,7 +321,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get rails4b_url(percorso: "collaborare")
 
     assert_response :success
-    assert_select "h1", text: "Dalla persona ai processi che fanno funzionare l'impresa."
+    assert_select "h1", text: "Problemi da risolvere. Skill da costruire e riutilizzare."
     assert_select "h2", text: "Ogni persona può ideare o realizzare"
     assert_select "h3", text: "Guarda Flowpulse", count: 0
   end

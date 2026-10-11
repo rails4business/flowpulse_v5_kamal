@@ -8,7 +8,7 @@
       <div class="flex flex-wrap gap-2"><span class="rounded-full bg-amber-400 px-3 py-1 text-xs font-black uppercase tracking-wider">In elaborazione</span><span class="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-bold">Progetto GeneraImpresa</span></div>
       <h1 class="mt-6 max-w-4xl text-5xl font-black tracking-[-.05em] sm:text-7xl">Ripartire con Dash</h1>
       <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-700"><%= @project["summary"] %></p>
-      <div class="mt-8 flex flex-wrap gap-3"><%= link_to "Leggi da dove nasce l’idea →", rails4b_content_path(@project["article_slug"]), class: "gi-dash-button gi-dash-button--primary" %><%= link_to "Metti a fuoco un problema", impegno_path(area: "problems"), class: "gi-dash-button gi-dash-button--accent" %></div>
+      <div class="mt-8 flex flex-wrap gap-3"><%= link_to "Leggi da dove nasce l’idea →", rails4b_content_path(@project["article_slug"]), class: "gi-dash-button gi-dash-button--primary" %><%= link_to "Metti a fuoco un problema", rails4b_problems_path, class: "gi-dash-button gi-dash-button--accent" %></div>
     </div>
   </section>
   <section class="mx-auto max-w-6xl px-5 py-16 sm:px-8">

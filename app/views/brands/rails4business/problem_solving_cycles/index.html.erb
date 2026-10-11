@@ -1,0 +1,43 @@
+<% content_for :title, "Problemi — Rails4Business" %>
+
+<main class="min-h-screen bg-stone-50 text-slate-900">
+  <%= render "landing/rails4b_nav", active: :problems %>
+
+  <header class="border-b border-blue-100 bg-gradient-to-br from-blue-50 via-white to-amber-50/60">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-xs font-black uppercase tracking-[.18em] text-blue-700">Metodo di lavoro</p>
+      <h1 class="mt-3 text-4xl font-black tracking-[-.045em] sm:text-5xl">Un problema alla volta.</h1>
+      <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Il problema resta qui, anche senza un progetto. Quando serve puoi collegarlo a uno o più Node e usare 1Impegno per programmare il lavoro concreto.</p>
+    </div>
+  </header>
+
+  <div class="mx-auto max-w-6xl space-y-8 px-5 py-10 sm:px-8">
+    <% if @active_cycle %>
+      <section class="rounded-3xl border-2 border-slate-950 bg-white p-6 shadow-sm sm:p-8">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div><span class="rounded-full bg-amber-400 px-3 py-1 text-xs font-black uppercase tracking-wider">In lavorazione</span><h2 class="mt-4 text-2xl font-black"><%= @active_cycle.title %></h2><p class="mt-2 max-w-3xl leading-7 text-slate-600"><%= @active_cycle.problem %></p></div>
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-600"><%= @active_cycle.current_step %>/<%= @steps.size %></span>
+        </div>
+        <% if @active_cycle.current_step_definition %><p class="mt-6 rounded-2xl bg-blue-50 p-4 font-bold text-blue-900">Ora: <%= @active_cycle.current_step_definition.last %></p><% else %><p class="mt-6 rounded-2xl bg-emerald-50 p-4 font-bold text-emerald-800">Tutti i passaggi sono stati completati: puoi verificare e chiudere il ciclo.</p><% end %>
+        <%= link_to "Apri la scheda →", rails4b_problem_path(@active_cycle), class: "mt-6 inline-flex rounded-full bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-700" %>
+      </section>
+    <% else %>
+      <section class="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center"><h2 class="text-xl font-black">Nessun problema in lavorazione</h2><p class="mt-2 text-slate-600">Aggiungine uno o scegline uno dall’elenco.</p></section>
+    <% end %>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <section class="rounded-3xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-black">Da affrontare</h2><p class="mt-1 text-sm text-slate-500">Le questioni che vuoi conservare senza disperdere l’attenzione.</p><div class="mt-5 space-y-3"><% @backlog_cycles.each do |cycle| %><article class="rounded-2xl border border-slate-200 p-4"><h3 class="font-black"><%= link_to cycle.title, rails4b_problem_path(cycle), class: "hover:text-blue-700" %></h3><p class="mt-1 line-clamp-2 text-sm text-slate-500"><%= cycle.problem %></p><%= button_to "Lavora su questo", rails4b_problem_path(cycle), method: :patch, params: { operation: "focus" }, class: "mt-3 rounded-full bg-amber-400 px-4 py-2 text-xs font-black text-slate-950 hover:bg-amber-300" %></article><% end %><% if @backlog_cycles.empty? %><p class="mt-5 text-sm text-slate-400">Nessun problema in attesa.</p><% end %></div></section>
+      <section class="rounded-3xl border border-slate-200 bg-white p-6"><h2 class="text-xl font-black">Risolti e chiusi</h2><p class="mt-1 text-sm text-slate-500">Le soluzioni verificate e i tentativi che hai deciso di fermare.</p><div class="mt-5 space-y-3"><% (@resolved_cycles + @closed_cycles).each do |cycle| %><article class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4"><h3 class="font-black"><%= link_to cycle.title, rails4b_problem_path(cycle), class: "hover:text-emerald-800" %></h3><p class="mt-1 text-xs font-bold text-emerald-700"><%= cycle.status == "resolved" ? "Risolto" : "Chiuso" %><%= " · #{l(cycle.resolved_at, format: :short)}" if cycle.resolved_at %></p></article><% end %><% if @resolved_cycles.empty? && @closed_cycles.empty? %><p class="mt-5 text-sm text-slate-400">Le soluzioni concluse compariranno qui.</p><% end %></div></section>
+    </div>
+
+    <section class="rounded-3xl bg-slate-950 p-6 text-white sm:p-8">
+      <h2 class="text-2xl font-black">Aggiungi un problema</h2><p class="mt-2 text-sm text-slate-300">Se stai già lavorando su altro, entrerà nell’elenco “Da affrontare”.</p>
+      <% if @cycle.errors.any? %><p class="mt-4 rounded-xl bg-red-950 p-3 text-sm font-bold text-red-100"><%= @cycle.errors.full_messages.to_sentence %></p><% end %>
+      <%= form_with model: @cycle, url: rails4b_problems_path, class: "mt-6 grid gap-4" do |form| %>
+        <%= form.text_field :title, required: true, placeholder: "Titolo breve", class: "rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" %>
+        <%= form.text_area :problem, rows: 4, placeholder: "Che cosa succede, a chi e in quale situazione?", class: "rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" %>
+        <%= form.submit "Aggiungi all’elenco", class: "w-fit rounded-full bg-blue-500 px-5 py-3 text-sm font-black text-white hover:bg-blue-400" %>
+      <% end %>
+    </section>
+  </div>
+</main>

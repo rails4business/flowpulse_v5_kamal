@@ -69,6 +69,10 @@ module Brands
       @principles = data.fetch("principles", [])
       @roles = data.fetch("roles", [])
       @steps = data.fetch("steps", [])
+      taxonomy_path = Rails.root.join("config/data/posturacorretta/taxonomies.yml")
+      taxonomy = taxonomy_path.file? ? YAML.safe_load_file(taxonomy_path, permitted_classes: [], aliases: false).to_h : {}
+      @areas = taxonomy.fetch("areas", {})
+      @scopes = taxonomy.fetch("scopes", {})
     end
 
     def public_professionals

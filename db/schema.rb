@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -360,6 +360,51 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_150000) do
     t.index ["domain_id"], name: "index_posturacorretta_directory_places_on_domain_id"
   end
 
+  create_table "problem_solving_cycle_nodes", force: :cascade do |t|
+    t.bigint "problem_solving_cycle_id", null: false
+    t.bigint "node_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["node_id"], name: "index_problem_solving_cycle_nodes_on_node_id"
+    t.index ["problem_solving_cycle_id", "node_id"], name: "index_problem_cycles_nodes_uniqueness", unique: true
+    t.index ["problem_solving_cycle_id"], name: "index_problem_solving_cycle_nodes_on_problem_solving_cycle_id"
+  end
+
+  create_table "problem_solving_cycle_skills", force: :cascade do |t|
+    t.bigint "problem_solving_cycle_id", null: false
+    t.bigint "reusable_skill_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["problem_solving_cycle_id", "reusable_skill_id"], name: "index_problem_cycles_skills_uniqueness", unique: true
+    t.index ["problem_solving_cycle_id"], name: "index_problem_solving_cycle_skills_on_problem_solving_cycle_id"
+    t.index ["reusable_skill_id"], name: "index_problem_solving_cycle_skills_on_reusable_skill_id"
+  end
+
+  create_table "problem_solving_cycles", force: :cascade do |t|
+    t.bigint "owner_profile_id", null: false
+    t.bigint "responsible_profile_id"
+    t.string "title", null: false
+    t.text "problem"
+    t.text "isolated_problem"
+    t.text "possible_solutions"
+    t.text "minimum_solution"
+    t.text "self_test"
+    t.text "small_group_test"
+    t.text "feedback"
+    t.text "validation_notes"
+    t.text "diffusion_notes"
+    t.text "closure_notes"
+    t.string "status", default: "backlog", null: false
+    t.integer "current_step", default: 0, null: false
+    t.datetime "resolved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_profile_id"], name: "index_one_active_problem_cycle_per_profile", unique: true, where: "((status)::text = 'active'::text)"
+    t.index ["owner_profile_id"], name: "index_problem_solving_cycles_on_owner_profile_id"
+    t.index ["responsible_profile_id"], name: "index_problem_solving_cycles_on_responsible_profile_id"
+    t.index ["status"], name: "index_problem_solving_cycles_on_status"
+  end
+
   create_table "professional_calendars", force: :cascade do |t|
     t.bigint "context_node_id", null: false
     t.bigint "created_by_user_id", null: false
@@ -393,6 +438,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_150000) do
     t.index ["primary_node_id"], name: "index_profiles_on_primary_node_id", unique: true
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
     t.index ["username"], name: "index_profiles_on_username", unique: true
+  end
+
+  create_table "reusable_skill_nodes", force: :cascade do |t|
+    t.bigint "reusable_skill_id", null: false
+    t.bigint "node_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["node_id"], name: "index_reusable_skill_nodes_on_node_id"
+    t.index ["reusable_skill_id", "node_id"], name: "index_reusable_skill_nodes_uniqueness", unique: true
+    t.index ["reusable_skill_id"], name: "index_reusable_skill_nodes_on_reusable_skill_id"
+  end
+
+  create_table "reusable_skills", force: :cascade do |t|
+    t.bigint "owner_profile_id", null: false
+    t.bigint "responsible_profile_id"
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.string "category", default: "other", null: false
+    t.string "status", default: "idea", null: false
+    t.text "description"
+    t.text "purpose"
+    t.text "operation_notes"
+    t.text "reuse_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_profile_id", "slug"], name: "index_reusable_skills_on_owner_profile_id_and_slug", unique: true
+    t.index ["owner_profile_id", "status"], name: "index_reusable_skills_on_owner_profile_id_and_status"
+    t.index ["owner_profile_id"], name: "index_reusable_skills_on_owner_profile_id"
+    t.index ["responsible_profile_id"], name: "index_reusable_skills_on_responsible_profile_id"
   end
 
   create_table "role_assignments", force: :cascade do |t|
@@ -509,11 +583,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_150000) do
   add_foreign_key "posturacorretta_directory_people", "domains"
   add_foreign_key "posturacorretta_directory_people", "profiles"
   add_foreign_key "posturacorretta_directory_places", "domains"
+  add_foreign_key "problem_solving_cycle_nodes", "nodes"
+  add_foreign_key "problem_solving_cycle_nodes", "problem_solving_cycles"
+  add_foreign_key "problem_solving_cycle_skills", "problem_solving_cycles"
+  add_foreign_key "problem_solving_cycle_skills", "reusable_skills"
+  add_foreign_key "problem_solving_cycles", "profiles", column: "owner_profile_id"
+  add_foreign_key "problem_solving_cycles", "profiles", column: "responsible_profile_id"
   add_foreign_key "professional_calendars", "nodes", column: "context_node_id"
   add_foreign_key "professional_calendars", "nodes", column: "professional_node_id"
   add_foreign_key "professional_calendars", "users", column: "created_by_user_id"
   add_foreign_key "profiles", "nodes", column: "primary_node_id"
   add_foreign_key "profiles", "users"
+  add_foreign_key "reusable_skill_nodes", "nodes"
+  add_foreign_key "reusable_skill_nodes", "reusable_skills"
+  add_foreign_key "reusable_skills", "profiles", column: "owner_profile_id"
+  add_foreign_key "reusable_skills", "profiles", column: "responsible_profile_id"
   add_foreign_key "role_assignments", "profiles"
   add_foreign_key "role_assignments", "role_assignments", column: "parent_id"
   add_foreign_key "services", "nodes"
