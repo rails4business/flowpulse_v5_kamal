@@ -3,7 +3,8 @@ class BrandAccessesController < ApplicationController
 
   def create
     domain = Domain.active.where.not(node_id: nil).find(params[:domain_id])
-    grant_current_user_brand_access!(domain)
+    access = grant_current_user_brand_access!(domain)
+    Current.session&.update!(brand_access: access)
 
     redirect_back fallback_location: viaggiatori_path, notice: "Ora hai accesso a #{domain.site_title.presence || domain.display_hostname}."
   end

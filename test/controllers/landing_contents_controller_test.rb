@@ -42,7 +42,8 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{rails4b_path}']", text: /Rails4Business/, minimum: 1
     assert_select "a[href='#{eventi_path}']", count: 0
     assert_select "a[href^='/flowpulse/contenuti']", count: 0
-    assert_select "figcaption", text: /mappa di MarkPostura, non la forma obbligatoria di FlowPulse/
+    assert_select "svg title", text: "Costruisci il tuo mondo con FlowPulse"
+    assert_select "#mondo-markpostura", text: /Il FlowPulse costruito da MarkPostura/
   end
 
   test "shows Inside Adventure as a GeneraImpresa brand in development" do

@@ -12,6 +12,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get rails4b_url
 
     assert_response :success
+    assert_select "nav[aria-label='Navigazione Rails4Business'] img[src='https://ik.imagekit.io/posturacorretta/sub_brands/loghi/rails4b.png']"
     assert_select "#rails4b-workspaces", text: /Problemi e Skill non sono la stessa cosa/
     assert_select "#rails4b-workspaces article", count: 2
     assert_select "a[href=?]", new_session_path(return_to: rails4b_problems_path)
@@ -23,9 +24,13 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: /Costruisci il tuo mondo.*Segui il tuo flow/m
+    assert_select "figure[aria-labelledby='personal-flow-title personal-flow-caption']"
+    assert_select "svg[aria-labelledby='personal-flow-title personal-flow-description']"
+    assert_select "svg title", text: "Costruisci il tuo mondo con FlowPulse"
     assert_select "#come-funziona", text: /Il tuo mondo non deve assomigliare/
-    assert_select "#mondo-markpostura", text: /Il mondo di MarkPostura rende visibile una possibilità/
-    assert_select "figcaption", text: /MarkPostura può ampliarla.*ogni creator può costruire il proprio mondo/
+    assert_select "#mondo-markpostura", text: /Il FlowPulse costruito da MarkPostura/
+    assert_select "#mondo-markpostura img[alt='Il FlowPulse costruito da MarkPostura']"
+    assert_select "#mondo-markpostura", text: /Un’altra persona può partire da sfere completamente diverse/
     assert_select "a[href='#{genera_impresa_path}']", text: /Dai forma a un’idea/
   end
 
@@ -253,7 +258,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get rails4b_url
 
     assert_response :success
-    assert_select "img[src*='rails4b_logo_quadrato']"
+    assert_select "img[src='https://ik.imagekit.io/posturacorretta/sub_brands/loghi/rails4b.png']"
     assert_select "img[src*='rails4b_logo_lungo']", count: 0
     assert_select "h1", text: "Problemi da risolvere. Skill da costruire e riutilizzare."
     assert_select "p", text: /Rails4Business tiene separate due cose/

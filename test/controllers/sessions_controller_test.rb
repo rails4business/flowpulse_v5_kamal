@@ -19,9 +19,9 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     @domain = Domain.create!(hostname: "login-domain.example", node: @node, role_assignment: @assignment, locale: "it")
   end
 
-  test "login with a domain creates brand and domain accesses" do
+  test "login with a domain creates a brand access and a brand-scoped session" do
     assert_difference -> { BrandAccess.count }, 1 do
-      assert_difference -> { DomainAccess.count }, 1 do
+      assert_difference -> { Session.count }, 1 do
         post session_url, params: {
           email_address: @user.email_address,
           password: "password123",
@@ -31,7 +31,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert @user.profile.brand_accesses.active.exists?(brand_node: @node)
-    assert @user.profile.domain_accesses.active.exists?(domain: @domain)
+    assert_equal @node, @user.sessions.order(:created_at).last.brand_access.brand_node
     assert_redirected_to root_url
     assert_equal "Ora hai accesso a login-domain.example.", flash[:notice]
   end
@@ -62,7 +62,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='site']", count: 0
   end
 
-  test "login from PosturaCorretta creates linked brand and domain accesses" do
+  test "login from PosturaCorretta creates a linked brand access" do
     posturacorretta = Domain.create!(
       hostname: "posturacorretta.org",
       node: @node,
@@ -80,18 +80,18 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     get new_session_path(site: "posturacorretta", return_to: "/posturacorretta/dashboard")
 
     assert_difference -> { BrandAccess.count }, 1 do
-      assert_difference -> { DomainAccess.count }, 1 do
+      assert_difference -> { Session.count }, 1 do
         post session_path, params: { site: "posturacorretta", email_address: @user.email_address, password: "password123" }
       end
     end
 
     assert @user.profile.brand_accesses.active.exists?(brand_node: @node)
-    assert @user.profile.domain_accesses.active.exists?(domain: posturacorretta)
+    assert_equal @node, @user.sessions.order(:created_at).last.brand_access.brand_node
     assert_redirected_to "/posturacorretta/dashboard"
     assert_equal "Benvenuto in PosturaCorretta.", flash[:notice]
   end
 
-  test "login in a brand context creates brand and domain accesses" do
+  test "login in a brand context creates one brand access" do
     @domain.update!(
       auth_slug: "posturacorretta",
       auth_enabled: true,
@@ -102,18 +102,16 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_session_path(site: "posturacorretta")
 
-    assert_difference -> { DomainAccess.count }, 1 do
-      assert_difference -> { BrandAccess.count }, 1 do
-        post session_path, params: {
-          site: "posturacorretta",
-          email_address: @user.email_address,
-          password: "password123"
-        }
-      end
+    assert_difference -> { BrandAccess.count }, 1 do
+      post session_path, params: {
+        site: "posturacorretta",
+        email_address: @user.email_address,
+        password: "password123"
+      }
     end
 
     assert @user.profile.brand_accesses.active.exists?(brand_node: @node)
-    assert @user.profile.domain_accesses.active.exists?(domain: @domain)
+    assert_equal @node, @user.sessions.order(:created_at).last.brand_access.brand_node
     assert_redirected_to "/posturacorretta/dashboard"
   end
 
@@ -171,6 +169,8 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 
     posturacorretta = Domain.create!(
       hostname: "posturacorretta.org",
+      node: @node,
+      role_assignment: @assignment,
       target_controller: "brands/posturacorretta",
       target_action: "home",
       locale: "it",

@@ -4,6 +4,11 @@ Rails.application.routes.draw do
   get "posturacorrettastart/primo_mese/:chapter", to: "posturacorrettastart#one_month", as: :posturacorrettastart_primo_mese_chapter
   get "posturacorrettastart/1mese", to: redirect("/posturacorrettastart/primo_mese", status: 301)
   resource :session
+  get "email-verification/sent", to: "email_verifications#sent", as: :email_verification_sent
+  get "email-verification/:token", to: "email_verifications#show", as: :email_verification
+  patch "email-verification/:token", to: "email_verifications#update"
+  resources :brand_invitations, only: %i[create]
+  get "brand-invitations/:token", to: "brand_invitations#show", as: :brand_invitation
   resource :site_selection, only: :create
   resources :users, only: %i[new create]
   resources :passwords, param: :token
@@ -35,6 +40,8 @@ Rails.application.routes.draw do
     get "/", to: "landing#giardino_del_corpo", as: :giardino_del_corpo_domain_root
   end
   root "domains#show"
+  get ":locale", to: "domains#show", as: :localized_domain_root,
+      constraints: { locale: /it|en|fr|de|es/ }
   resources :nodes, only: [:show]
   get "eventi" => "public_events#index", as: :eventi
   get "eventi/:id" => "public_events#show", as: :evento

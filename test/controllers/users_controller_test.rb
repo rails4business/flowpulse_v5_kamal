@@ -13,10 +13,10 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @domain = Domain.create!(hostname: "registration-domain.example", node: @node, role_assignment: @assignment, locale: "it")
   end
 
-  test "registration with a domain creates profile, brand access and domain access" do
+  test "registration with a domain waits for email verification before creating accesses" do
     assert_difference -> { User.count }, 1 do
-      assert_difference -> { BrandAccess.count }, 1 do
-        assert_difference -> { DomainAccess.count }, 1 do
+      assert_difference -> { EmailVerification.count }, 1 do
+        assert_no_difference -> { BrandAccess.count } do
           post users_url, params: {
             subscription: @domain.signed_id(purpose: :free_subscription),
             user: {
@@ -32,15 +32,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     user = User.find_by!(email_address: "new-domain-traveler@example.com")
     assert_equal "traveler", user.active_role
     assert user.profile.present?
-    assert user.profile.brand_accesses.active.exists?(brand_node: @node)
-    assert user.profile.domain_accesses.active.exists?(domain: @domain)
-    assert_redirected_to root_url
-    assert_equal "Registrazione completata. Ora hai accesso a registration-domain.example.", flash[:notice]
+    assert_equal "pending_email_verification", user.registration_status
+    assert_not user.email_verified?
+    assert_redirected_to email_verification_sent_path(email: user.email_address)
   end
 
   test "registration page accepts an authenticated site context locally" do
     Domain.create!(
       hostname: "posturacorretta.org",
+      node: @node,
+      role_assignment: @assignment,
       target_controller: "brands/posturacorretta",
       target_action: "home",
       locale: "it",
@@ -60,7 +61,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='return_to'][value='/posturacorretta/dashboard']"
   end
 
-  test "registration from PosturaCorretta creates linked brand and domain accesses" do
+  test "registration from PosturaCorretta creates access only after email confirmation" do
     posturacorretta = Domain.create!(
       hostname: "posturacorretta.org",
       node: @node,
@@ -77,8 +78,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_user_path(site: "posturacorretta", return_to: "/posturacorretta/dashboard")
 
-    assert_difference -> { BrandAccess.count }, 1 do
-      assert_difference -> { DomainAccess.count }, 1 do
+    assert_no_difference -> { BrandAccess.count } do
         post users_path, params: {
           site: "posturacorretta",
           return_to: "/posturacorretta/dashboard",
@@ -88,17 +88,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
             password_confirmation: "password123"
           }
         }
-      end
     end
 
     user = User.find_by!(email_address: "new-posturacorretta-member@example.com")
-    assert user.profile.brand_accesses.active.exists?(brand_node: @node)
-    assert user.profile.domain_accesses.active.exists?(domain: posturacorretta)
-    assert_redirected_to "/posturacorretta/dashboard"
-    assert_equal "Registrazione completata. Benvenuto in PosturaCorretta.", flash[:notice]
+    assert_equal posturacorretta, user.email_verifications.last.requested_domain
+    assert_equal @node, user.email_verifications.last.brand_node
+    assert_equal "pending_email_verification", user.registration_status
+    assert_redirected_to email_verification_sent_path(email: user.email_address)
   end
 
-  test "registration in a brand context creates brand and domain accesses" do
+  test "registration in a brand context records the requested domain for verification" do
     @domain.update!(
       auth_slug: "posturacorretta",
       auth_enabled: true,
@@ -109,8 +108,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_user_path(site: "posturacorretta")
 
-    assert_difference -> { DomainAccess.count }, 1 do
-      assert_difference -> { BrandAccess.count }, 1 do
+    assert_no_difference -> { BrandAccess.count } do
         post users_path, params: {
           site: "posturacorretta",
           user: {
@@ -119,13 +117,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
             password_confirmation: "password123"
           }
         }
-      end
     end
 
     user = User.find_by!(email_address: "new-posturacorretta-traveler@example.com")
-    assert user.profile.brand_accesses.active.exists?(brand_node: @node)
-    assert user.profile.domain_accesses.active.exists?(domain: @domain)
-    assert_redirected_to "/posturacorretta/dashboard"
+    assert_equal @domain, user.email_verifications.last.requested_domain
+    assert_equal @node, user.email_verifications.last.brand_node
+    assert_redirected_to email_verification_sent_path(email: user.email_address)
   end
 
   test "invalid brand registration leaves no partial account or access records" do
@@ -133,7 +130,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_user_path(site: "posturacorretta")
 
-    assert_no_difference [-> { User.count }, -> { DomainAccess.count }, -> { BrandAccess.count }] do
+    assert_no_difference [-> { User.count }, -> { BrandAccess.count }] do
       post users_path, params: {
         site: "posturacorretta",
         user: {

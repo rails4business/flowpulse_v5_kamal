@@ -104,35 +104,25 @@ Osservare la postura significa quindi osservare anche la giornata che abbiamo co
 ## Esiste una postura corretta?
 
 
-Quando parliamo di postura corretta immaginiamo subito una persona ben dritta, con le spalle aperte e la schiena allineata. Sembra che esista una posizione perfetta da trovare e mantenere tutto il giorno.
+Quando parliamo di postura corretta immaginiamo subito una persona ben dritta, con le spalle aperte e la schiena allineata. Vien da pensare che dovremmo  mantenere tutto il giorno quella posizione e appena ci accorgiamo che ci stiamo rilassando, tac bisogna ritornare in posizione.
 
-Sarebbe comodo, ma il corpo non funziona così.
+Allineamento e mobilità sono importanti ed è importante anche rendersi conto della posizione che manteniamo, ma la postura come abbiamo visto dovrebbe essere qualcosa che automaticamente funziona e magari proprio come fanno i nostri animali domestici è da resettare con uno sbadiglio e uno stiramento solo quando, ci svegliamo o la sera prima di distendersi.
 
-I corpi sono diversi, hanno storie diverse e, in una sola giornata, assumono moltissime posizioni. Cambiano il compito, l'ambiente, la fatica e perfino il nostro stato d'animo.
 
-Allineamento e mobilità sono importanti, ma non bastano. Contano anche la capacità di percepirsi, adattarsi, respirare, distribuire i carichi e passare da una posizione all'altra.
+Le posture che assumiamo durante il giorno sono molte e ogni persona è diversa e risponde con i suoi adattamenti.
 
-**Le posture sono tante. Prima di correggerle, dobbiamo imparare a leggerle.**
+**Per questo la postura non è una cosa da correggere, ma una cosa che possiamo imparare a leggerle.**
 
-PosturaCorretta è un percorso per conoscere il corpo, osservarne l'organizzazione e sperimentare strumenti provenienti da diverse metodiche posturali.
 
-Non vogliamo trasformare le metodiche in una gara per decidere quale sia la migliore. Possiamo utilizzarne principi ed esercizi per fare esperienza, porci domande e capire qualcosa in più della nostra fisiologia.
-
-Si può iniziare con la parte teorica e con pratiche semplici. Quando serve, un insegnante accompagna l'esperienza e un professionista interviene nell'ambito delle proprie competenze.
-
-Il percorso parte da sistemi facili da conoscere e riattivare, per arrivare gradualmente a concetti che richiedono più attenzione ed esperienza. Leggere e ascoltare sono utili, ma è soprattutto attraverso la pratica che impariamo a riconoscere ciò che accade nel corpo.
-
-Un'educazione di questo tipo può trovare spazio nella scuola, nel lavoro, nei percorsi di cura e nelle attività rivolte ad anziani o persone con disabilità. Il modo di proporla cambia, ma la domanda rimane la stessa: **quanto conosciamo il corpo con cui viviamo ogni giorno?**
-
-Lavorare sulla postura non modifica soltanto ciò che vediamo allo specchio. Può cambiare il punto da cui osserviamo e utilizziamo il corpo.
-
+Si può imparare la capacità di ascoltare il corpo, adattarsi, respirare, distribuire i carichi e sentire che passare da il passaggio da una posizione all'altra dipende anche da fattori comportamentali.
 
 
 ## I benefici di un lavoro sulla postura
 
-Chi studia una disciplina corporea dedica tempo all'ascolto, al movimento e alla pratica. La maggior parte delle persone, invece, non riceve mai un'educazione di questo tipo.
+Solitamente Fisioterapisti, laureati in scienze motorie, insegnanti di yoga tai chi, nella loro professione si ritrovano dedicano tempo alla formazione e studio, ascolto, movimento e pratica, diventano routine quotidiane. La maggior parte delle persone, invece, non riceve mai un'educazione di questo tipo.
 
-Per questo non serve imparare cento esercizi da ripetere tutti i giorni. Servono pochi principi e alcune pratiche da conoscere bene, da poter riprendere quando occorrono.
+
+Per questo abbiamo pensato di creare un percorso da ripetere tutti i giorni. Servono pochi principi e alcune pratiche da conoscere bene, da poter riprendere quando occorrono.
 
 Non risolveranno ogni dolore o problema. Possono però aiutarci a non arrivare completamente impreparati quando il corpo comincia a chiedere attenzione.
 

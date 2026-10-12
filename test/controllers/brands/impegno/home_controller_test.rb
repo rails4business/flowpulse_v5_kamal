@@ -154,8 +154,7 @@ module Brands
         creator_assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
         node = Node.create!(title: "Percorso Integrato", slug: "percorso-integrato-test", role_assignment: creator_assignment, operator_roles: %w[professional tutor])
         domain = Domain.create!(hostname: "percorsointegrato.it", locale: "it", target_controller: "brands/percorso_integrato", target_action: "index", primary: true, active: true, node: node, settings: { operational_roles: ["professional", "tutor"] })
-        brand_access = user.profile.brand_accesses.create!(source_domain: domain)
-        user.profile.domain_accesses.create!(domain: domain, brand_access: brand_access)
+        user.profile.brand_accesses.create!(source_domain: domain)
         RoleAssignment.create!(profile: user.profile, role: :operator, role_operator: "professional", context: node, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
@@ -214,8 +213,7 @@ module Brands
         creator_assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
         node = Node.create!(title: "Postura User Context", slug: "postura-user-context", role_assignment: creator_assignment)
         domain = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, node: node, role_assignment: creator_assignment, settings: { operational_roles: ["teacher", "tutor", "segreteria_clienti"] })
-        brand_access = user.profile.brand_accesses.create!(source_domain: domain)
-        user.profile.domain_accesses.create!(domain: domain, brand_access: brand_access)
+        user.profile.brand_accesses.create!(source_domain: domain)
 
         get impegno_url(brand: "posturacorretta", area: "domain_roles", role: "teacher")
 
@@ -231,8 +229,7 @@ module Brands
         creator_assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
         node = Node.create!(title: "Postura Teacher", slug: "postura-teacher-test", role_assignment: creator_assignment, operator_roles: %w[teacher tutor segreteria_clienti])
         domain = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, node: node, settings: { operational_roles: ["teacher", "tutor", "segreteria_clienti"] })
-        brand_access = user.profile.brand_accesses.create!(source_domain: domain)
-        user.profile.domain_accesses.create!(domain: domain, brand_access: brand_access)
+        user.profile.brand_accesses.create!(source_domain: domain)
         RoleAssignment.create!(profile: user.profile, role: :operator, role_operator: "teacher", context: node, parent: creator_assignment)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
@@ -254,10 +251,8 @@ module Brands
         postura = Domain.create!(hostname: "posturacorretta.org", locale: "it", target_controller: "brands/posturacorretta", target_action: "home", primary: true, active: true, site_title: "PosturaCorretta", node: postura_node, role_assignment: assignment, settings: { operational_roles: ["teacher"] })
         genera = Domain.create!(hostname: "generaimpresa.it", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true, site_title: "GeneraImpresa", node: genera_node, role_assignment: assignment)
         Domain.create!(hostname: "unrelated.test", locale: "it", target_controller: "landing", target_action: "flowpulse", primary: true, active: true, site_title: "Non iscritto", node: unrelated_node, role_assignment: assignment)
-        postura_access = user.profile.brand_accesses.create!(source_domain: postura)
-        genera_access = user.profile.brand_accesses.create!(source_domain: genera)
-        user.profile.domain_accesses.create!(domain: postura, brand_access: postura_access)
-        user.profile.domain_accesses.create!(domain: genera, brand_access: genera_access)
+        user.profile.brand_accesses.create!(source_domain: postura)
+        user.profile.brand_accesses.create!(source_domain: genera)
         post session_url, params: { email_address: user.email_address, password: "password123" }
 
         get impegno_url(brand: "posturacorretta")

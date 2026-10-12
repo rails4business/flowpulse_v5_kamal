@@ -1,0 +1,16 @@
+<% brand_name = @invitation.source_domain&.site_title.presence || @invitation.brand_node.title %>
+<% content_for :title, "Invito · #{brand_name}" %>
+
+<section class="mx-auto w-full max-w-md px-4 py-10 sm:py-16">
+  <div class="rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-sm sm:px-8">
+    <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600">Invito personale</p>
+    <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950"><%= brand_name %></h1>
+    <p class="mt-4 leading-7 text-slate-600">
+      L’invito è riservato a <strong><%= @invitation.email_address %></strong>. Accedi oppure crea il tuo account FlowPulse con questo indirizzo.
+    </p>
+    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+      <%= link_to "Accedi", new_session_path(invitation: params[:token]), class: "rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-blue-700" %>
+      <%= link_to "Crea account", new_user_path(invitation: params[:token]), class: "rounded-lg border border-slate-300 bg-white px-4 py-3 text-center text-sm font-bold text-slate-800 hover:bg-slate-50" %>
+    </div>
+  </div>
+</section>

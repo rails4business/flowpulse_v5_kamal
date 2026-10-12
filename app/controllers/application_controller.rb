@@ -106,15 +106,25 @@ class ApplicationController < ActionController::Base
     def grant_current_user_brand_access!(domain)
       return if Current.user.blank? || domain.blank?
 
-      ensure_profile_domain_access!(current_profile, domain).fetch(:brand_access)
+      grant_profile_brand_access!(current_profile, domain)
     end
 
     def grant_profile_brand_access!(profile, domain)
+      domain = domain&.canonical_domain_record
       return if profile.blank? || domain.blank? || domain.node_id.blank?
 
-      access = profile.brand_accesses.find_or_initialize_by(brand_node_id: domain.node_id)
-      access.source_domain ||= domain
-      access.brand_node = domain.node
+      grant_profile_brand_access_for_node!(profile, domain.node, source_domain: domain)
+    end
+
+    def grant_profile_brand_access_for_node!(profile, brand_node, source_domain: nil)
+      return if profile.blank? || brand_node.blank?
+
+      source_domain ||= brand_node.domains.active.where(canonical_host: [nil, ""]).order(primary: :desc, hostname: :asc).first
+      raise ArgumentError, "Il Brand deve avere un dominio principale" if source_domain.blank?
+
+      access = profile.brand_accesses.find_or_initialize_by(brand_node:)
+      access.source_domain ||= source_domain
+      access.brand_node = brand_node
       access.status = "active"
       access.joined_at ||= Time.current
       access.save!
@@ -124,22 +134,7 @@ class ApplicationController < ActionController::Base
     def ensure_current_user_site_access!(domain)
       return if Current.user.blank? || domain.blank?
 
-      ensure_profile_domain_access!(current_profile, domain)
-    end
-
-    def ensure_profile_domain_access!(profile, domain)
-      return if profile.blank? || domain.blank?
-      raise ArgumentError, "Il Domain deve essere collegato a un Node" if domain.node_id.blank?
-
-      brand_access = grant_profile_brand_access!(profile, domain)
-      domain_access = profile.domain_accesses.find_or_initialize_by(domain: domain)
-      domain_access.brand_access = brand_access
-      domain_access.status = "active"
-      domain_access.activated_at ||= Time.current
-      domain_access.last_accessed_at = Time.current
-      domain_access.save!
-
-      { brand_access: brand_access, domain_access: domain_access }
+      grant_profile_brand_access!(current_profile, domain)
     end
 
     def require_permission!(resource, action = :read)

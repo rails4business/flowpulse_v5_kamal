@@ -123,6 +123,34 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_select "meta[name='robots'][content='noindex,nofollow']", count: 0
   end
 
+  test "renders a configured language Site under its locale prefix" do
+    Domain.create!(
+      hostname: "markpostura.it",
+      site_key: "markpostura_it",
+      sites: { it: "markpostura_it" },
+      locale: "it"
+    )
+    host! "markpostura.it"
+
+    get localized_domain_root_url(locale: "it")
+
+    assert_response :success
+    assert_select "h1", text: "Problemi, idee e soluzioni da mettere alla prova"
+  end
+
+  test "does not publish an undeclared language variant" do
+    Domain.create!(
+      hostname: "markpostura.it",
+      sites: { it: "markpostura_it" },
+      locale: "it"
+    )
+    host! "markpostura.it"
+
+    get localized_domain_root_url(locale: "en")
+
+    assert_response :not_found
+  end
+
   test "uses the canonical domain without query parameters and emits valid structured data" do
     @other_node.update!(node_type: "professional")
     Domain.create!(

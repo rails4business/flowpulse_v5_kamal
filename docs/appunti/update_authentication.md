@@ -1,168 +1,97 @@
-# Aggiornamento autenticazione, accessi, Site e lingue
+# Autenticazione FlowPulse: User, BrandAccess e Session
 
-> **Fonte corrente aggiornata al 12 ottobre 2026.** `BrandAccess` e
-> `DomainAccess` sostituiscono rispettivamente `TravelerSubscription` e
-> `DomainMembership`. `NodeParticipation` è progettato, ma viene rinviato alla
-> fase dedicata a percorsi, ruoli e accessi economici.
+## Decisione corrente
 
-## La distinzione essenziale
+L’identità è globale, l’autorizzazione appartiene al Brand e la sessione attiva
+è collegata direttamente al relativo `BrandAccess`.
 
 ```text
-User + Session     → autenticazione globale
-Profile            → identità della persona
-BrandAccess        → accesso generale al Brand/Node radice
-DomainAccess       → porta linguistica del Brand utilizzata
-NodeParticipation  → futura partecipazione a un Node interno
-Domain             → indirizzo pubblico
-Site               → composizione editoriale e presentazione
-```
-
-La metafora operativa è quella della casa:
-
-- l'autenticazione riconosce la persona;
-- `BrandAccess` permette di entrare nella casa;
-- `DomainAccess` registra quale porta, lingua o presentazione viene usata;
-- `NodeParticipation` stabilirà quali stanze, percorsi o attività la persona
-  frequenta e a quali condizioni.
-
-## BrandAccess
-
-```text
-BrandAccess
-├── profile_id
-├── brand_node_id
-├── source_domain_id
-├── status
-└── joined_at
-```
-
-- La coppia `profile_id + brand_node_id` è unica.
-- Il `source_domain` ricorda la porta dalla quale è nato il rapporto.
-- Il Node del Domain di provenienza deve coincidere con `brand_node`.
-- Domini italiani, inglesi o con presentazioni differenti non producono un
-  secondo accesso allo stesso Brand.
-- Cancellare il BrandAccess disattiva anche i suoi DomainAccess.
-
-## DomainAccess
-
-```text
-DomainAccess
-├── profile_id
-├── brand_access_id
-├── domain_id
-├── status
-├── activated_at
-└── last_accessed_at
-```
-
-- Il Domain deve presentare lo stesso Node del BrandAccess.
-- La coppia `profile_id + domain_id` è unica.
-- Lo stesso BrandAccess può avere più DomainAccess, per esempio italiano e
-  inglese.
-- Gli alias tecnici come `www` non creano un accesso autonomo.
-- Visitare una pagina pubblica non crea alcun record.
-- L'accesso nasce o viene riattivato quando la persona entra nell'area del
-  Brand o usa una CTA esplicita.
-
-```text
-BrandAccess: PosturaCorretta
-├── DomainAccess: posturacorretta.org · it
-└── DomainAccess: dominio inglese · en
-```
-
-## Registrazione e accesso
-
-```text
-richiesta
-└── Domain
-    ├── Site e lingua
-    ├── autenticazione globale
+User globale
+└── Profile
     └── BrandAccess
-        └── DomainAccess
+        └── Session
 ```
 
-- La registrazione crea `User` e `Profile` una volta sola.
-- L'ingresso da un Domain autenticato crea o riattiva BrandAccess e
-  DomainAccess.
-- La CTA pubblica “Accedi al brand” usa lo stesso flusso.
-- Una seconda lingua riutilizza il BrandAccess e aggiunge soltanto il
-  DomainAccess mancante.
-- Un Domain canonico usato per l'accesso deve essere collegato a un Node.
+`DomainAccess` è stato eliminato: hostname e lingua non costituiscono
+autorizzazioni personali.
 
-## NodeParticipation: fase successiva
+## Responsabilità
 
-`NodeParticipation` non viene ancora introdotto. Servirà quando una persona
-parteciperà a una parte specifica del Brand:
+- `User`: email, password e stato di verifica dell’identità globale.
+- `Profile`: dati della persona condivisi nell’ecosistema.
+- `BrandAccess`: autorizzazione della persona a un Brand/Node.
+- `Session`: autenticazione attiva, associata a `User` e `BrandAccess`.
+- `Domain`: indirizzo tecnico del Brand, canonical e redirect.
+- `Site`: presentazione editoriale e variante linguistica.
+
+La `Session` può non avere `brand_access_id` soltanto negli spazi globali di
+FlowPulse. Su un dominio di Brand deve corrispondere al Node del dominio:
 
 ```text
-NodeParticipation
-├── profile_id
-├── node_id
-├── brand_access_id
-├── participation_kind
-├── access_kind
-├── status
-├── starts_at
-└── ends_at
+Session.user == BrandAccess.profile.user
+Domain.node == BrandAccess.brand_node
 ```
 
-Potrà rappresentare iscrizioni a percorsi o corsi, ruoli di insegnante e
-collaboratore e accessi gratuiti, acquistati, in abbonamento o su invito. La
-parte economica non appartiene al BrandAccess: il Brand può essere accessibile
-gratuitamente mentre un corso interno richiede un acquisto.
+Se una condizione non coincide, la sessione viene revocata.
 
-Fino a questa fase, il controllo storico che permette a un BrandAccess di
-vedere alcuni Node discendenti con visibilità `subscription` viene conservato
-per compatibilità. Non è il contratto definitivo.
-
-## Il ruolo di Site e delle Skill
-
-Il Site non possiede utenti, accessi o permessi. Decide **come** un Domain
-presenta il Node e le risorse disponibili.
-
-Più Domain e Site possono presentare lo stesso Node. Riconoscono lo stesso
-BrandAccess, mentre possono produrre DomainAccess distinti perché sono porte
-diverse.
-
-La lingua non può appartenere soltanto al Site: una Skill può produrre
-contenuti, corsi, eventi o servizi riutilizzati da più Node e Site. La singola
-risorsa deve dichiarare la propria lingua.
+## Registrazione
 
 ```text
-Skill
-└── SkillProduct / risorsa
-    ├── source_locale
-    ├── contenuto originale
-    └── traduzioni editoriali collegate (facoltative)
-
-Domain.locale + Site
-└── scelgono la variante disponibile da presentare
+email + password
+→ User pending_email_verification
+→ email di verifica
+→ User active
+→ BrandAccess
+→ Session
 ```
 
-## Strategia per le traduzioni
+L’accesso non viene creato prima della conferma dell’email. La verifica è
+monouso e scade dopo 30 minuti.
 
-Per l'MVP l'applicazione non traduce automaticamente tutto. Browser e AI
-possono aiutare nella lettura, ma quella traduzione non diventa una
-pubblicazione editoriale: non ha un canonical controllato, non è verificata e
-non entra automaticamente in sitemap, `hreflang`, API o dati strutturati.
+## Inviti
 
-1. Ogni Site e risorsa dichiarano la lingua originale.
-2. Inizialmente si indicizza soltanto l'originale.
-3. Browser e AI possono tradurlo per la lettura personale.
-4. Quando un Brand lavora stabilmente in un'altra lingua, crea una traduzione
-   editoriale verificata.
-5. Solo quella versione riceve URL, canonical, `hreflang`, sitemap e API.
-6. L'AI può preparare la bozza; proprietario o produttore ne approvano la
-   pubblicazione.
+`BrandInvitation` contiene email, Brand/Node, autore dell’invito, eventuale
+ruolo e scadenza. L’invito pre-autorizza l’accesso al Brand; la persona deve
+comunque verificare l’email se sta creando un nuovo User.
 
-## Stato
+## Login successivo
 
-- [x] definito `BrandAccess` come accesso unico al Brand/Node;
-- [x] definito `DomainAccess` come porta linguistica collegata;
-- [x] predisposta la migrazione conservativa dei record esistenti;
-- [x] aggiornati registrazione, login, CTA, dashboard e selezione Domain;
-- [x] mantenuti stato, date e possibilità di disattivazione;
-- [ ] introdurre `NodeParticipation`;
-- [ ] sostituire l'ereditarietà provvisoria sui Node `subscription`;
-- [ ] definire traduzioni e `source_locale` dei prodotti delle Skill.
+```text
+email + password globale
+→ controllo BrandAccess
+→ nuova Session del Brand
+```
 
+La password appartiene allo User, mai al dominio. Resend viene usato per prima
+verifica, recupero e controlli di sicurezza, non per ogni login ordinario.
+
+## Domain e Site
+
+Ogni Brand/Node può avere molti record `Domain`, ma un solo dominio canonico
+con `primary: true`. Gli altri sono alias e reindirizzano al principale.
+
+Le lingue appartengono ai Site:
+
+```text
+brand.example/it/
+brand.example/en/
+```
+
+Cambiare lingua non crea un accesso né una sessione. Le cartelle editoriali
+seguono la convenzione `<node_slug>_<locale>` e possono essere dichiarate nella
+mappa `sites` del dominio principale.
+
+## Logout e revoca
+
+- logout: revoca la Session corrente;
+- cancellazione del BrandAccess: revoca tutte le Session collegate;
+- cambio password: revoca tutte le Session dello User.
+
+## Passi successivi
+
+- la radice linguistica (`/it`, `/en`) è disponibile solo per i Site dichiarati
+  nella mappa `sites`; resta da estendere il prefisso alle pagine editoriali
+  interne quando verrà aggiunta una seconda lingua reale;
+- aggiungere l’approvazione manuale per i Brand che non usano accesso libero o invito;
+- valutare in futuro un’autenticazione centrale FlowPulse per passare fra Brand
+  differenti senza reinserire la password.

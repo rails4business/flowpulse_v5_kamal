@@ -24,15 +24,12 @@ class BrandAccessesControllerTest < ActionDispatch::IntegrationTest
     sign_in(@user)
 
     assert_difference -> { BrandAccess.count }, 1 do
-      assert_difference -> { DomainAccess.count }, 1 do
-        post brand_accesses_url, params: { domain_id: @domain.id }
-      end
+      post brand_accesses_url, params: { domain_id: @domain.id }
     end
 
     access = @user.profile.brand_accesses.find_by!(brand_node: @node)
     assert_equal @domain, access.source_domain
     assert_equal "active", access.status
-    assert @user.profile.domain_accesses.active.exists?(domain: @domain, brand_access: access)
     assert_redirected_to viaggiatori_url
     assert_equal "Ora hai accesso a Access Brand.", flash[:notice]
 
@@ -41,10 +38,10 @@ class BrandAccessesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to viaggiatori_url
     assert_equal "Hai rimosso l'accesso a Domain Node.", flash[:notice]
     assert_equal "cancelled", access.reload.status
-    assert @user.profile.domain_accesses.where(brand_access: access, status: "cancelled").exists?
+    assert access.sessions.where.not(revoked_at: nil).exists?
   end
 
-  test "another language adds a domain access without duplicating the brand access" do
+  test "another hostname for the same brand does not duplicate the brand access" do
     english_domain = Domain.create!(
       hostname: "access-controller-en.example",
       node: @node,
@@ -57,13 +54,11 @@ class BrandAccessesControllerTest < ActionDispatch::IntegrationTest
     post brand_accesses_url, params: { domain_id: @domain.id }
 
     assert_no_difference -> { BrandAccess.count } do
-      assert_difference -> { DomainAccess.count }, 1 do
-        post brand_accesses_url, params: { domain_id: english_domain.id }
-      end
+      post brand_accesses_url, params: { domain_id: english_domain.id }
     end
 
     brand_access = @user.profile.brand_accesses.find_by!(brand_node: @node)
-    assert_equal ["en", "it"], brand_access.domain_accesses.joins(:domain).order("domains.locale").pluck("domains.locale")
+    assert_equal @domain, brand_access.source_domain
   end
 
   private

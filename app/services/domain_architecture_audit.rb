@@ -41,7 +41,7 @@ class DomainArchitectureAudit
         add(domain, :warning, :excluded_from_public_discovery, "Escluso da motori di ricerca, API e AI: il Node radice non è published/public")
       end
 
-      inspect_site(domain) if domain.site_key.present?
+      inspect_sites(domain)
 
       missing_metadata = {
         site_title: "titolo",
@@ -61,13 +61,22 @@ class DomainArchitectureAudit
       add(domain, :warning, :inactive_canonical, "Host canonico non attivo") if canonical.present? && !canonical.active?
       add(domain, :error, :primary_alias, "Un alias non può essere dominio primario") if domain.primary?
       add(domain, :warning, :alias_with_node, "L'alias eredita il Node dal dominio canonico") if domain.node.present?
-      add(domain, :warning, :alias_with_site, "L'alias eredita il Site dal dominio canonico") if domain.site_key.present?
+      add(domain, :warning, :alias_with_site, "L'alias eredita i Site dal dominio canonico") if domain.site_key.present? || domain.sites.present?
     end
 
-    def inspect_site(domain)
-      site = @site_configs[domain.site_key]
+    def inspect_sites(domain)
+      site_mappings = domain.sites.to_h.stringify_keys
+      site_mappings[domain.locale] ||= domain.site_key if domain.site_key.present?
+
+      site_mappings.each do |locale, site_key|
+        inspect_site(domain, site_key, locale)
+      end
+    end
+
+    def inspect_site(domain, site_key, expected_locale)
+      site = @site_configs[site_key]
       unless site
-        add(domain, :error, :unknown_site, "Site #{domain.site_key.inspect} non trovato")
+        add(domain, :error, :unknown_site, "Site #{site_key.inspect} non trovato per #{expected_locale}")
         return
       end
 
@@ -79,27 +88,27 @@ class DomainArchitectureAudit
       end
 
       site_locale = site["locale"].to_s.presence
-      if site_locale.present? && site_locale != domain.locale
-        add(domain, :error, :site_locale_mismatch, "Lingua Site #{site_locale.inspect} diversa dal Domain #{domain.locale.inspect}")
+      if site_locale.present? && site_locale != expected_locale
+        add(domain, :error, :site_locale_mismatch, "Lingua Site #{site_locale.inspect} diversa dalla variante #{expected_locale.inspect}")
       end
     end
 
     def inspect_primary_domains
       @domains.reject { |domain| domain.canonical_host.present? || domain.node.blank? }
-        .group_by { |domain| [domain.node_id, domain.locale] }
+        .group_by(&:node_id)
         .each_value do |domains|
           primary_domains = domains.select(&:primary?)
 
           if primary_domains.size > 1
-            primary_domains.each { |domain| add(domain, :error, :multiple_primary, "Più domini primari per lo stesso Node e lingua") }
+            primary_domains.each { |domain| add(domain, :error, :multiple_primary, "Più domini primari per lo stesso Brand") }
           elsif domains.size > 1 && primary_domains.empty?
-            domains.each { |domain| add(domain, :warning, :missing_primary, "Nessun dominio primario per questo Node e lingua") }
+            domains.each { |domain| add(domain, :warning, :missing_primary, "Nessun dominio primario per questo Brand") }
           end
         end
     end
 
     def entrypoint?(domain)
-      domain.site_key.present? || (domain.target_controller.present? && domain.target_action.present?)
+      domain.site_key.present? || domain.sites.present? || (domain.target_controller.present? && domain.target_action.present?)
     end
 
     def available_site_configs

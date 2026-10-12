@@ -16,14 +16,16 @@ module AuthenticationBrandContext
     def authentication_context_domain
       return @authentication_context_domain if defined?(@authentication_context_domain)
 
-      domain = current_domain
+      domain = current_domain&.canonical_domain_record
       domain = local_authentication_domain if domain.blank? || !authentication_enabled?(domain)
       domain = session_authentication_domain if domain.blank?
+      domain = domain&.canonical_domain_record
       @authentication_context_domain = authentication_enabled?(domain) ? domain : nil
     end
 
     def authentication_context_site
-      authentication_context_domain&.auth_slug
+      domain = authentication_context_domain
+      domain&.auth_slug.presence || domain&.site_key.presence || domain&.node&.slug
     end
 
     def authentication_context?
@@ -80,12 +82,19 @@ module AuthenticationBrandContext
     def redirect_authenticated_user_from_authentication!
       return unless authenticated?
 
+      if authentication_context?
+        access = grant_current_user_brand_access!(authentication_context_domain)
+        Current.session.update!(brand_access: access) if access.present? && Current.session.brand_access_id != access.id
+      end
+
       destination = authentication_context? ? authentication_context_default_return_to : profile_path
       redirect_to destination, notice: "Hai già effettuato l’accesso."
     end
 
     def authentication_enabled?(domain)
       return false if domain.blank?
+      return false unless domain.active? && domain.node_id.present?
+      return true if domain.auth_enabled.nil?
 
       ActiveModel::Type::Boolean.new.cast(domain.auth_enabled)
     end
@@ -97,14 +106,18 @@ module AuthenticationBrandContext
       site ||= "posturacorretta" if request.path.start_with?("/posturacorretta")
       return if site.blank?
 
-      Domain.active.to_a.find { |domain| domain.auth_slug == site }
+      Domain.active.includes(:node).to_a.find do |domain|
+        [domain.auth_slug, domain.site_key, domain.node&.slug].compact.include?(site)
+      end
     end
 
     def session_authentication_domain
       site = session[:authentication_site].to_s.presence
       return if site.blank?
 
-      Domain.active.to_a.find { |domain| domain.auth_slug == site }
+      Domain.active.includes(:node).to_a.find do |domain|
+        [domain.auth_slug, domain.site_key, domain.node&.slug].compact.include?(site)
+      end
     end
 
     def authentication_context_path_prefix

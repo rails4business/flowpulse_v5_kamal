@@ -119,6 +119,10 @@ class Node < ApplicationRecord
     domains.exists?
   end
 
+  def primary_domain
+    domains.active.where(primary: true, canonical_host: [nil, ""]).first
+  end
+
   def owned_by?(user)
     user.present? && role_assignment&.user == user
   end

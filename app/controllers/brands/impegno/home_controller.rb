@@ -126,13 +126,9 @@ module Brands
           end
 
           profile = Current.user.profile
-          accessible_domains = profile.domain_accesses.active
-            .joins(:brand_access)
-            .merge(BrandAccess.active)
-            .includes(domain: :node)
-            .filter_map do |access|
-              access.domain if access.domain.active?
-            end
+          accessible_domains = Domain.active
+            .where(primary: true, node_id: profile.brand_accesses.active.select(:brand_node_id))
+            .includes(:node)
 
           collapse_domains_by_brand(accessible_domains)
         end

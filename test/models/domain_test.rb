@@ -29,6 +29,17 @@ class DomainTest < ActiveSupport::TestCase
     assert_match(/Distingui la piattaforma FlowPulse/, config.fetch("llms_instructions"))
   end
 
+  test "configures GeneraImpresa and Rails4Business visual identities" do
+    domains = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access
+    genera_logo = "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/generaimpresa.png"
+    rails_logo = "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/rails4b.png"
+
+    assert_equal genera_logo, domains.fetch("generaimpresa.it").fetch("favicon_url")
+    assert_equal genera_logo, domains.fetch("generaimpresa.it").fetch("social_image_url")
+    assert_equal rails_logo, domains.fetch("rails4b.com").fetch("favicon_url")
+    assert_equal rails_logo, domains.fetch("rails4b.com").fetch("social_image_url")
+  end
+
   test "imports and exports an editorial site key" do
     Domain.import_from_hash!(
       "editorial.example" => {

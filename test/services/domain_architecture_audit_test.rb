@@ -32,22 +32,22 @@ class DomainArchitectureAuditTest < ActiveSupport::TestCase
     assert_includes result.issues_for(domain).map(&:code), :missing_node
   end
 
-  test "checks aliases and primary domains per node and locale" do
+  test "checks aliases while the model prevents multiple primary domains for a brand" do
     creator = RoleAssignment.create!(
       profile: User.create!(email_address: "domain-audit@example.com", password: "password123").create_profile!(display_name: "Domain Audit"),
       role: :ideatore
     )
     node = Node.create!(title: "Audit Brand", role_assignment: creator)
     first = Domain.create!(hostname: "first.example", locale: "it", node: node, primary: true, target_controller: "landing", target_action: "flowpulse")
-    second = Domain.create!(hostname: "second.example", locale: "it", node: node, primary: true, target_controller: "landing", target_action: "flowpulse")
-    orphan_alias = Domain.create!(hostname: "www.orphan.example", canonical_host: "orphan.example", locale: "it", primary: true)
+    second = Domain.new(hostname: "second.example", locale: "en", node: node, primary: true, target_controller: "landing", target_action: "flowpulse")
+    orphan_alias = Domain.create!(hostname: "www.orphan.example", canonical_host: "orphan.example", locale: "it")
 
-    result = DomainArchitectureAudit.new([first, second, orphan_alias], site_configs: {}).call
+    assert_not second.valid?
+    assert_includes second.errors[:primary], "esiste già per questo Brand"
 
-    assert_includes result.issues_for(first).map(&:code), :multiple_primary
-    assert_includes result.issues_for(second).map(&:code), :multiple_primary
+    result = DomainArchitectureAudit.new([first, orphan_alias], site_configs: {}).call
+
     assert_includes result.issues_for(orphan_alias).map(&:code), :missing_canonical
-    assert_includes result.issues_for(orphan_alias).map(&:code), :primary_alias
   end
 
 
@@ -74,6 +74,32 @@ class DomainArchitectureAuditTest < ActiveSupport::TestCase
 
     assert_includes codes, :site_node_mismatch
     assert_includes codes, :site_locale_mismatch
+  end
+
+  test "checks each language Site declared by one Domain" do
+    creator = RoleAssignment.create!(
+      profile: User.create!(email_address: "multisite-audit@example.com", password: "password123").create_profile!(display_name: "Multisite Audit"),
+      role: :ideatore
+    )
+    node = Node.create!(title: "Multisite Brand", slug: "multisite-brand", role_assignment: creator)
+    domain = Domain.create!(
+      hostname: "multisite.example",
+      locale: "it",
+      node:,
+      sites: { it: "multisite_it", en: "multisite_en" },
+      target_controller: "landing",
+      target_action: "flowpulse"
+    )
+
+    result = DomainArchitectureAudit.new(
+      [domain],
+      site_configs: {
+        "multisite_it" => { "node_slug" => "multisite-brand", "locale" => "it" },
+        "multisite_en" => { "node_slug" => "multisite-brand", "locale" => "en" }
+      }
+    ).call
+
+    assert_empty result.issues_for(domain).select { |issue| issue.code.in?(%i[unknown_site site_node_mismatch site_locale_mismatch]) }
   end
 
   test "warns when an active canonical domain is excluded from public discovery" do

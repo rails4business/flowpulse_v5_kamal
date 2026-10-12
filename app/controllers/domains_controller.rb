@@ -7,7 +7,9 @@ class DomainsController < ApplicationController
   before_action :set_domain
 
   def show
-    I18n.with_locale(Current.domain&.locale || I18n.default_locale) do
+    return head :not_found if unsupported_site_locale?
+
+    I18n.with_locale(requested_site_locale) do
       if Current.domain&.canonical_host.present? && current_domain_host != Current.domain.canonical_host
         return redirect_to_canonical_host
       end
@@ -28,8 +30,12 @@ class DomainsController < ApplicationController
       return if canonical_host.blank?
       return if current_domain_host == canonical_host
 
+      destination_path = Current.domain.redirect_path.presence || request.fullpath
+      if Current.domain.redirect_path.present? && request.query_string.present?
+        destination_path = "#{destination_path}?#{request.query_string}"
+      end
       redirect_to(
-        "#{request.protocol}#{canonical_host}#{request.fullpath}",
+        "#{request.protocol}#{canonical_host}#{destination_path}",
         status: :moved_permanently,
         allow_other_host: true
       )
@@ -52,8 +58,9 @@ class DomainsController < ApplicationController
     end
 
     def dispatch_domain_action
-      if Current.domain&.site_key.present? && editorial_site_uses_builder?(Current.domain.site_key)
-        render_editorial_site(Current.domain.site_key)
+      selected_site_key = Current.domain&.site_key_for(requested_site_locale)
+      if selected_site_key.present? && editorial_site_uses_builder?(selected_site_key)
+        render_editorial_site(selected_site_key)
       elsif Current.domain&.target_controller.present?
         render_domain_target
       elsif Current.domain&.node.present? && render_public_node(Current.domain.node)
@@ -64,6 +71,17 @@ class DomainsController < ApplicationController
         prepare_flowpulse_landing
         render "landing/flowpulse"
       end
+    end
+
+    def requested_site_locale
+      requested = params[:locale].to_s.presence
+      available = Current.domain&.available_site_locales || []
+      requested.presence_in(available) || Current.domain&.locale || I18n.default_locale
+    end
+
+    def unsupported_site_locale?
+      requested = params[:locale].to_s.presence
+      requested.present? && !requested.in?(Current.domain&.available_site_locales || [])
     end
 
     def editorial_site_uses_builder?(site_key)

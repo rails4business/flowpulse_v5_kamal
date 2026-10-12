@@ -63,7 +63,20 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("AUTH_MAILER_HOST", "flowpulse.net"), protocol: "https" }
+
+  if ENV["RESEND_API_KEY"].present?
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.smtp_settings = {
+      address: "smtp.resend.com",
+      port: 587,
+      user_name: "resend",
+      password: ENV.fetch("RESEND_API_KEY"),
+      authentication: :plain,
+      enable_starttls_auto: true
+    }
+  end
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {

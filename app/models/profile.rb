@@ -3,7 +3,6 @@ class Profile < ApplicationRecord
   belongs_to :primary_node, class_name: "Node", optional: true, inverse_of: :primary_professional_profile
   has_many :role_assignments, dependent: :destroy
   has_many :brand_accesses, dependent: :destroy
-  has_many :domain_accesses, dependent: :destroy
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
   has_many :created_data_commitments,
            class_name: "Brands::Impegno::Commitment",

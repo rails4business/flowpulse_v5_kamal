@@ -13,6 +13,7 @@ module Authentication
   end
 
   private
+
     def authenticated?
       resume_session
     end
@@ -26,7 +27,19 @@ module Authentication
     end
 
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      session_id = cookies.signed[:session_id]
+      return if session_id.blank?
+
+      authenticated_session = Session.find_by(id: session_id)
+      requested_domain = current_domain || authentication_context_domain
+      can_enter_brand_access = authenticated_session&.brand_access.nil? && controller_path.in?(%w[sessions users])
+      if authenticated_session&.active? && (requested_domain.blank? || authenticated_session.valid_for?(requested_domain) || can_enter_brand_access)
+        return authenticated_session
+      end
+
+      authenticated_session&.revoke! if authenticated_session&.revoked_at.nil?
+      cookies.delete(:session_id)
+      nil
     end
 
     def request_authentication
@@ -38,15 +51,27 @@ module Authentication
       safe_authentication_return_to(session.delete(:return_to_after_authenticating)) || authentication_context_default_return_to
     end
 
-    def start_new_session_for(user)
-      user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|
-        Current.session = session
-        cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
+    def start_new_session_for(user, brand_access: nil, authentication_method: "password")
+      user.sessions.create!(
+        brand_access: brand_access,
+        user_agent: request.user_agent,
+        ip_address: request.remote_ip,
+        authentication_method:
+      ).tap do |authenticated_session|
+        Current.session = authenticated_session
+        cookies.signed.permanent[:session_id] = {
+          value: authenticated_session.id,
+          httponly: true,
+          same_site: :lax,
+          secure: Rails.env.production?,
+          expires: authenticated_session.expires_at
+        }
       end
     end
 
     def terminate_session
-      Current.session.destroy
+      Current.session&.revoke!
+      Current.session = nil
       cookies.delete(:session_id)
     end
 end

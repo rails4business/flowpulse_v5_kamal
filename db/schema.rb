@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_152000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -28,6 +28,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
     t.index ["profile_id"], name: "index_brand_accesses_on_profile_id"
     t.index ["source_domain_id"], name: "index_brand_accesses_on_source_domain_id"
     t.index ["status"], name: "index_brand_accesses_on_status"
+  end
+
+  create_table "brand_invitations", force: :cascade do |t|
+    t.bigint "brand_node_id", null: false
+    t.bigint "source_domain_id"
+    t.bigint "invited_by_user_id", null: false
+    t.bigint "accepted_by_user_id"
+    t.string "email_address", null: false
+    t.string "token_digest", null: false
+    t.string "status", default: "pending", null: false
+    t.string "role_code"
+    t.datetime "expires_at", null: false
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accepted_by_user_id"], name: "index_brand_invitations_on_accepted_by_user_id"
+    t.index ["brand_node_id", "email_address", "status"], name: "index_brand_invitations_lookup"
+    t.index ["brand_node_id"], name: "index_brand_invitations_on_brand_node_id"
+    t.index ["invited_by_user_id"], name: "index_brand_invitations_on_invited_by_user_id"
+    t.index ["source_domain_id"], name: "index_brand_invitations_on_source_domain_id"
+    t.index ["token_digest"], name: "index_brand_invitations_on_token_digest", unique: true
   end
 
   create_table "data_commitment_imports", force: :cascade do |t|
@@ -179,23 +200,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
     t.index ["data_session_id"], name: "index_data_slots_on_data_session_id"
   end
 
-  create_table "domain_accesses", force: :cascade do |t|
-    t.bigint "profile_id", null: false
-    t.bigint "domain_id", null: false
-    t.string "status", default: "active", null: false
-    t.datetime "activated_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "brand_access_id", null: false
-    t.datetime "last_accessed_at", null: false
-    t.index ["brand_access_id", "domain_id"], name: "index_domain_accesses_on_brand_access_id_and_domain_id", unique: true
-    t.index ["brand_access_id"], name: "index_domain_accesses_on_brand_access_id"
-    t.index ["domain_id"], name: "index_domain_accesses_on_domain_id"
-    t.index ["profile_id", "domain_id"], name: "index_domain_accesses_on_profile_id_and_domain_id", unique: true
-    t.index ["profile_id"], name: "index_domain_accesses_on_profile_id"
-    t.index ["status"], name: "index_domain_accesses_on_status"
-  end
-
   create_table "domains", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.string "canonical_host"
@@ -211,7 +215,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
     t.bigint "role_assignment_id"
     t.index ["hostname"], name: "index_domains_on_hostname", unique: true
     t.index ["node_id"], name: "index_domains_on_node_id"
+    t.index ["node_id"], name: "index_one_primary_domain_per_brand", unique: true, where: "((\"primary\" = true) AND (canonical_host IS NULL))"
     t.index ["role_assignment_id"], name: "index_domains_on_role_assignment_id"
+  end
+
+  create_table "email_verifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "brand_node_id"
+    t.bigint "requested_domain_id"
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "verified_at"
+    t.string "return_to"
+    t.string "request_ip"
+    t.string "user_agent"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_node_id"], name: "index_email_verifications_on_brand_node_id"
+    t.index ["requested_domain_id"], name: "index_email_verifications_on_requested_domain_id"
+    t.index ["token_digest"], name: "index_email_verifications_on_token_digest", unique: true
+    t.index ["user_id", "verified_at"], name: "index_email_verifications_on_user_id_and_verified_at"
+    t.index ["user_id"], name: "index_email_verifications_on_user_id"
   end
 
   create_table "impegno_contacts", force: :cascade do |t|
@@ -546,6 +571,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
     t.datetime "updated_at", null: false
     t.string "user_agent"
     t.integer "user_id", null: false
+    t.bigint "brand_access_id"
+    t.datetime "authenticated_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.string "authentication_method", default: "password", null: false
+    t.index ["brand_access_id"], name: "index_sessions_on_brand_access_id"
+    t.index ["expires_at"], name: "index_sessions_on_expires_at"
+    t.index ["revoked_at"], name: "index_sessions_on_revoked_at"
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
@@ -591,13 +624,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
     t.datetime "updated_at", null: false
     t.bigint "current_role_assignment_id"
     t.datetime "email_change_authorized_at"
+    t.datetime "email_verified_at"
+    t.string "registration_status", default: "active", null: false
     t.index ["current_role_assignment_id"], name: "index_users_on_current_role_assignment_id"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["registration_status"], name: "index_users_on_registration_status"
   end
 
   add_foreign_key "brand_accesses", "domains", column: "source_domain_id"
   add_foreign_key "brand_accesses", "nodes", column: "brand_node_id"
   add_foreign_key "brand_accesses", "profiles"
+  add_foreign_key "brand_invitations", "domains", column: "source_domain_id"
+  add_foreign_key "brand_invitations", "nodes", column: "brand_node_id"
+  add_foreign_key "brand_invitations", "users", column: "accepted_by_user_id"
+  add_foreign_key "brand_invitations", "users", column: "invited_by_user_id"
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "data_commitments", column: "parent_id"
@@ -619,11 +659,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
   add_foreign_key "data_sessions", "services", name: "fk_data_sessions_service"
   add_foreign_key "data_slots", "data_experiences"
   add_foreign_key "data_slots", "data_sessions"
-  add_foreign_key "domain_accesses", "brand_accesses"
-  add_foreign_key "domain_accesses", "domains"
-  add_foreign_key "domain_accesses", "profiles"
   add_foreign_key "domains", "nodes"
   add_foreign_key "domains", "role_assignments"
+  add_foreign_key "email_verifications", "domains", column: "requested_domain_id"
+  add_foreign_key "email_verifications", "nodes", column: "brand_node_id"
+  add_foreign_key "email_verifications", "users"
   add_foreign_key "impegno_contacts", "profiles"
   add_foreign_key "impegno_places", "domains"
   add_foreign_key "impegno_places", "profiles"
@@ -662,6 +702,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
   add_foreign_key "role_assignments", "role_assignments", column: "parent_id"
   add_foreign_key "services", "nodes"
   add_foreign_key "services", "users", column: "created_by_user_id"
+  add_foreign_key "sessions", "brand_accesses"
   add_foreign_key "sessions", "users"
   add_foreign_key "skill_product_links", "skill_products", column: "source_product_id"
   add_foreign_key "skill_product_links", "skill_products", column: "target_product_id"

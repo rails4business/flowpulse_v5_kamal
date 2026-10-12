@@ -11,6 +11,8 @@ class Domain < ApplicationRecord
     :auth_enabled,
     :operational_roles,
     :site_key,
+    :sites,
+    :redirect_path,
     :llms_enabled,
     :llms_summary,
     :llms_instructions
@@ -22,7 +24,10 @@ class Domain < ApplicationRecord
            foreign_key: :source_domain_id,
            inverse_of: :source_domain,
            dependent: :restrict_with_error
-  has_many :domain_accesses, dependent: :destroy
+  has_many :originating_brand_invitations,
+           class_name: "BrandInvitation",
+           foreign_key: :source_domain_id,
+           dependent: :nullify
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
 
   before_validation :normalize_hosts
@@ -37,6 +42,8 @@ class Domain < ApplicationRecord
   validate :role_assignment_is_creator_world
   validate :node_belongs_to_role_assignment
   validate :operational_roles_are_known
+  validate :only_one_primary_domain_per_brand
+  validate :primary_domain_is_canonical
 
   scope :active, -> { where(active: true) }
 
@@ -115,6 +122,25 @@ class Domain < ApplicationRecord
     hostname.to_s.sub(/\Awww\./, "")
   end
 
+  def canonical_domain_record
+    return self if canonical_host.blank?
+
+    self.class.active.find_by(hostname: canonical_host) || self
+  end
+
+  def resolved_node
+    canonical_domain_record.node
+  end
+
+  def site_key_for(requested_locale = nil)
+    locale_key = requested_locale.to_s.presence || locale
+    settings.to_h.fetch("sites", {}).to_h[locale_key].presence || (site_key if locale_key == locale)
+  end
+
+  def available_site_locales
+    (settings.to_h.fetch("sites", {}).to_h.keys + [locale]).compact.uniq
+  end
+
   def llms_discovery_enabled?
     llms_enabled.nil? || ActiveModel::Type::Boolean.new.cast(llms_enabled)
   end
@@ -150,6 +176,8 @@ class Domain < ApplicationRecord
       self.auth_default_path = auth_default_path.to_s.strip.presence
       self.auth_enabled = ActiveModel::Type::Boolean.new.cast(raw_auth_enabled) unless raw_auth_enabled.nil?
       self.site_key = site_key.to_s.strip.presence
+      self.sites = sites.to_h.transform_keys(&:to_s).transform_values { |value| value.to_s.strip }.compact_blank.presence if sites.present?
+      self.redirect_path = redirect_path.to_s.strip.presence
       raw_llms_enabled = llms_enabled
       self.llms_enabled = ActiveModel::Type::Boolean.new.cast(raw_llms_enabled) unless raw_llms_enabled.nil?
       self.llms_summary = llms_summary.to_s.strip.presence
@@ -162,6 +190,17 @@ class Domain < ApplicationRecord
     def operational_roles_are_known
       invalid_roles = Array(operational_roles).reject { |role| role.match?(/\A[a-z0-9_]+\z/) }
       errors.add(:operational_roles, "contiene codici non validi: #{invalid_roles.join(', ')}") if invalid_roles.any?
+    end
+
+    def only_one_primary_domain_per_brand
+      return unless primary? && node_id.present? && canonical_host.blank?
+
+      duplicate = self.class.where(node_id:, primary: true, canonical_host: [nil, ""]).where.not(id: id).exists?
+      errors.add(:primary, "esiste già per questo Brand") if duplicate
+    end
+
+    def primary_domain_is_canonical
+      errors.add(:primary, "non può essere usato su un dominio alias") if primary? && canonical_host.present?
     end
 
     def target_controller_and_action_presence

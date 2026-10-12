@@ -11,7 +11,7 @@ Le sottocartelle diventano automaticamente categorie nell'indice. I file Markdow
 - [`ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md`](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md): vocabolario tecnico corrente e ordine di implementazione;
 - [`METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md`](METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md): divisione tra GeneraImpresa, Rails4Business, ProblemSolving, Skill e mappa amministrativa;
 - [`RAILS4BUSINESS_SKILL_E_PRODOTTI.md`](RAILS4BUSINESS_SKILL_E_PRODOTTI.md): stato operativo di Skill, attivazioni, prodotti, sincronizzazione e attività rinviate;
-- [`update_authentication.md`](update_authentication.md): contratto corrente di `BrandAccess` e `DomainAccess`, con `NodeParticipation` rinviato alla gestione dei percorsi;
+- [`update_authentication.md`](update_authentication.md): contratto corrente di `User`, `BrandAccess` e `Session`; Domain e Site restano routing e presentazione;
 - [`REGISTRO_PROGETTI_YML.md`](REGISTRO_PROGETTI_YML.md): fonte YAML e priorità dei progetti;
 - [`ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md`](ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md): sequenza del pilota PosturaCorretta;
 - [`INVENTARIO_DOCUMENTI_FLOWPULSE.md`](INVENTARIO_DOCUMENTI_FLOWPULSE.md): mappa degli appunti da usare, rivedere o conservare come storico.

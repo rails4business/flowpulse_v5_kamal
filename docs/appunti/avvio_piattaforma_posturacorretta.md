@@ -223,7 +223,7 @@ Questa è la checklist principale per l'avvio. Va aggiornata nello stesso moment
 - [x] Riconoscere il contesto PosturaCorretta nei percorsi locali `/posturacorretta/...`.
 - [x] Mostrare logo, titolo, descrizione, colori e navigazione PosturaCorretta nelle pagine di registrazione e accesso.
 - [x] Conservare una destinazione `return_to` interna e sicura.
-- [x] Dopo la registrazione creare o riattivare il `BrandAccess` al Node del Brand e il `DomainAccess` alla porta linguistica utilizzata.
+- [x] Dopo la verifica email creare o riattivare il `BrandAccess` al Node e aprire la `Session` del Brand.
 - [x] Dopo accesso o registrazione tornare alla dashboard, alla lezione o alla pagina inizialmente richiesta.
 - [x] Mantenere un solo account e una sola autenticazione per tutta la piattaforma.
 - [x] Verificare registrazione, accesso, errori, uscita e nuovo accesso sia da localhost sia dal dominio.
@@ -232,12 +232,12 @@ Questa è la checklist principale per l'avvio. Va aggiornata nello stesso moment
 
 ### Collegamento del profilo al sito e al brand
 
-L'accesso distingue il **Brand** dalla singola porta linguistica:
+L'accesso appartiene al **Brand**, non alla porta linguistica:
 
 - `BrandAccess` collega una sola volta `profile_id + brand_node_id`;
-- `DomainAccess` collega allo stesso BrandAccess il Domain canonico utilizzato;
-- più Domain in lingue diverse possono condividere lo stesso BrandAccess;
-- ogni Domain canonico usato per l'accesso deve essere collegato a un Node.
+- la `Session` collega lo User al BrandAccess attivo;
+- un Brand ha un solo Domain primario e gli altri hostname sono alias;
+- le lingue sono Site sotto percorsi come `/it` e `/en`.
 
 Se un Brand possiede più domini, nel selettore può comparire una sola volta. Il Domain determina routing, Site, lingua e host; il BrandAccess determina l'accesso generale al Brand. Registrazione e autenticazione restano comuni.
 
@@ -323,10 +323,9 @@ Non vanno create nuove route di autenticazione per ogni brand. In produzione il 
 
 - [x] Creare `User` e `Profile` con la procedura comune.
 - [x] Creare o riattivare il `BrandAccess` del profilo per il Node del Brand.
-- [x] Creare o riattivare il `DomainAccess` per lo specifico Domain linguistico.
 - [x] Evitare duplicati quando più domini appartengono allo stesso nodo.
 
-**Implementato:** login, registrazione e dashboard usano `ensure_profile_domain_access!`. Il metodo mantiene un solo BrandAccess per `profile_id + brand_node_id` e un DomainAccess per la porta canonica utilizzata.
+**Implementato:** login e registrazione mantengono un solo BrandAccess per `profile_id + brand_node_id`; la Session è collegata direttamente a tale accesso.
 - [x] Eseguire creazione dell'account e collegamento in modo atomico.
 - [x] Avviare una sola sessione dopo il completamento della transazione.
 - [x] Reindirizzare alla destinazione richiesta.
@@ -424,7 +423,7 @@ Il dominio destinato all'iscrizione gratuita non viene più esposto tramite un I
 
 #### Regola per studenti, centri e professionisti di riferimento
 
-Il nome e i dati personali appartengono al `Profile`; l'accesso generale appartiene al `BrandAccess` e la porta linguistica al `DomainAccess`. Centro e professionista di riferimento, invece, non vanno salvati in questi record: possono cambiare in base al corso o al percorso frequentato.
+Il nome e i dati personali appartengono al `Profile`; l'accesso generale appartiene al `BrandAccess`, mentre lingua e hostname restano configurazione di Site e Domain. Centro e professionista di riferimento non vanno salvati in questi record: possono cambiare in base al corso o al percorso frequentato.
 
 Quando verrà introdotta l'iscrizione, il record di iscrizione al corso/percorso dovrà quindi contenere almeno:
 

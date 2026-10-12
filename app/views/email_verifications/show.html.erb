@@ -1,0 +1,13 @@
+<% content_for :title, "Conferma email" %>
+
+<section class="mx-auto w-full max-w-md px-4 py-10 sm:py-16">
+  <div class="rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-sm sm:px-8">
+    <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600"><%= @domain&.site_title.presence || "FlowPulse" %></p>
+    <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950">Conferma il tuo accesso</h1>
+    <p class="mt-4 leading-7 text-slate-600">
+      Conferma l’indirizzo <strong><%= @verification.user.email_address %></strong>. Attiveremo l’account e l’accesso al dominio richiesto.
+    </p>
+    <%= button_to "Conferma email e accedi", email_verification_path(params[:token]), method: :patch,
+      class: "mt-6 w-full cursor-pointer rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+  </div>
+</section>

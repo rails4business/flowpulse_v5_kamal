@@ -4,7 +4,7 @@ class BrandAccess < ApplicationRecord
   belongs_to :profile
   belongs_to :source_domain, class_name: "Domain", inverse_of: :originating_brand_accesses
   belongs_to :brand_node, class_name: "Node", inverse_of: :brand_accesses
-  has_many :domain_accesses, dependent: :destroy
+  has_many :sessions, dependent: :destroy
 
   before_validation :sync_brand_node_from_source_domain
   before_validation :set_defaults
@@ -43,7 +43,7 @@ class BrandAccess < ApplicationRecord
   def cancel!
     transaction do
       update!(status: "cancelled")
-      domain_accesses.active.update_all(status: "cancelled", updated_at: Time.current)
+      sessions.where(revoked_at: nil).update_all(revoked_at: Time.current, updated_at: Time.current)
     end
   end
 

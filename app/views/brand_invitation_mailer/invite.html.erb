@@ -1,0 +1,7 @@
+<h1>Hai ricevuto un invito</h1>
+<p>
+  <%= @invitation.invited_by_user.profile&.display_name.presence || @invitation.invited_by_user.email_address %>
+  ti ha invitato ad accedere a <strong><%= @domain&.site_title.presence || @invitation.brand_node.title %></strong> con il tuo account FlowPulse.
+</p>
+<p><%= link_to "Apri l’invito", @invitation_url %></p>
+<p>L’invito è personale e scade tra 7 giorni.</p>

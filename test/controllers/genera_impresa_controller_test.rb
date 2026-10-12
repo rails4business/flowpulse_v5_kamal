@@ -6,6 +6,7 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a[href=?]", new_session_path(return_to: genera_impresa_path), text: "Accedi"
     assert_select "h1", /Dalle idee ai progetti/
+    assert_select "header img[src='https://ik.imagekit.io/posturacorretta/sub_brands/loghi/generaimpresa.png']"
     assert_includes response.body, "PosturaCorretta"
     assert_includes response.body, "FlowPulse"
     assert_select "h2", text: "Brand personali"

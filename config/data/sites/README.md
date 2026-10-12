@@ -36,10 +36,11 @@ realmente diversa.
 `mounts.yml` è l'unica fonte degli indirizzi delle pagine editoriali del
 Site. I domini e i loro alias restano definiti in `config/domains.yml`.
 
-Ogni Domain canonico deve essere collegato a un Node. Quando dichiara un
-`site_key`, il `node_slug` e la `locale` del Site devono coincidere con il Node
-e la lingua del Domain. Il Site non sostituisce il Node e gli alias tecnici non
-possiedono un Site autonomo. La fonte canonica del contratto è
+Ogni Brand/Node ha un solo Domain primario. Quando dichiara un `site_key` o una
+mappa `sites`, il `node_slug` deve coincidere con il Node e la lingua del Site
+determina il prefisso editoriale (`/it`, `/en`), non un accesso differente.
+Il Site non sostituisce il Node e gli alias tecnici non possiedono un Site
+autonomo. La fonte canonica del contratto è
 `docs/appunti/ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md`.
 
 I file in `documents/` e le fonti in `tracks/` e `shared/` vengono richiamati

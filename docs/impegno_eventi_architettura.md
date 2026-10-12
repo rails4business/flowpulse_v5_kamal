@@ -35,7 +35,7 @@ Il prototipo [1Impegno](../public/viste_html/18-00-14-7-2026-1impegno.html) rest
 
 L'area tecnica di Impegno è `domain_roles`; nell'interfaccia viene chiamata **Ruoli operativi**. `roles` da solo non viene usato perché non chiarirebbe il contesto, mentre `professional` era troppo limitato per Tutor, Insegnanti e Segreterie.
 
-Ogni dominio dichiara in `config/domains.yml` i propri `operational_roles`. L'accesso generale della persona al Brand resta in `BrandAccess`, mentre `DomainAccess` registra la porta linguistica utilizzata. Il ruolo effettivo viene assegnato con un `RoleAssignment` contestuale:
+Ogni Brand dichiara in `config/domains.yml` i propri `operational_roles`. L'accesso generale della persona resta in `BrandAccess`; lingua e hostname sono configurazioni di Domain e Site. Il ruolo effettivo viene assegnato con un `RoleAssignment` contestuale:
 
 ```text
 Profile + Domain + role
@@ -47,9 +47,9 @@ Il selettore distingue due casi:
 
 - il Domain canonico usato per l'accesso deve appartenere a un `Node`/Brand;
 - `BrandAccess` collega il profilo una sola volta a quel Node;
-- `DomainAccess` collega allo stesso BrandAccess ogni porta linguistica effettivamente utilizzata.
+- la `Session` collega lo User al BrandAccess attivo.
 
-I domini dello stesso nodo vengono raggruppati in una sola voce di Brand. Se è disponibile una sola voce, l'interfaccia ne mostra il nome senza aprire un menu. I DomainAccess restano distinti perché possono rappresentare lingue differenti, ma condividono lo stesso BrandAccess.
+I domini dello stesso nodo vengono raggruppati in una sola voce di Brand. Un solo dominio è primario; alias e lingue non producono nuove autorizzazioni.
 
 Una coppia `profile_id + brand_node_id` può avere un solo `BrandAccess`: cambiare lingua o hostname dello stesso Brand non deve creare un secondo accesso al Brand.
 

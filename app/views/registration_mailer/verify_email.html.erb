@@ -1,0 +1,12 @@
+<h1>Conferma il tuo indirizzo email</h1>
+
+<p>
+  Hai creato il tuo account FlowPulse<% if @domain.present? %> per accedere a
+  <strong><%= @domain.site_title.presence || @domain.display_hostname %></strong><% end %>.
+</p>
+
+<p><%= link_to "Conferma email e accedi", @confirmation_url %></p>
+
+<p>Il collegamento è personale e scade tra 30 minuti.</p>
+
+<p>Se non hai richiesto tu la registrazione, puoi ignorare questa email.</p>

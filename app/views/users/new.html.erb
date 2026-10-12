@@ -1,5 +1,5 @@
 <% if authentication_context? %>
-  <% content_for :landing_nav do %><%= render "posturacorretta/header" %><% end %>
+  <% content_for :landing_nav do %><%= render "shared/authentication_nav" %><% end %>
 <% end %>
 <% content_for :title, authentication_context? ? "Crea account · #{authentication_context_domain.site_title}" : "Crea account" %>
 
@@ -11,7 +11,7 @@
       <% end %>
       <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600"><%= authentication_context? ? authentication_context_domain.site_title : "Inizia da qui" %></p>
       <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950">Crea il tuo account</h1>
-      <p class="mt-2 text-sm leading-6 text-slate-600"><%= authentication_context? ? "Crea un unico account per accedere ai tuoi corsi, lezioni e appuntamenti PosturaCorretta." : "Ti servirà per accedere ai tuoi spazi e alle funzionalità che attiverai." %></p>
+      <p class="mt-2 text-sm leading-6 text-slate-600"><%= authentication_context? ? "Crea un unico account FlowPulse. Dopo aver verificato l’email attiveremo l’accesso a questo dominio." : "Ti servirà per accedere ai tuoi spazi e alle funzionalità che attiverai." %></p>
     </div>
 
     <div class="px-6 py-7 sm:px-7">
@@ -27,6 +27,9 @@
       <% end %>
 
       <%= form_with model: @user, url: users_path, class: "space-y-5" do |form| %>
+        <% if params[:invitation].present? || session[:pending_brand_invitation_token].present? %>
+          <%= form.hidden_field :invitation, value: params[:invitation].presence || session[:pending_brand_invitation_token] %>
+        <% end %>
         <% if local_request? && authentication_context? %><%= hidden_field_tag :site, authentication_context_site %><% end %>
         <% if session[:return_to_after_authenticating].present? %><%= hidden_field_tag :return_to, session[:return_to_after_authenticating] %><% end %>
         <% if @subscription_domain.present? %>
@@ -38,7 +41,7 @@
 
         <div>
           <%= form.label :email_address, "Email", class: "block text-sm font-bold text-slate-800" %>
-          <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "nome@esempio.it", class: "mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+          <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "nome@esempio.it", readonly: @user.email_address.present? && session[:pending_brand_invitation_token].present?, class: "mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
         </div>
 
         <div>
