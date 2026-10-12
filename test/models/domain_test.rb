@@ -22,7 +22,7 @@ class DomainTest < ActiveSupport::TestCase
   test "configures Flowpulse public identity and AI summary" do
     config = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access.fetch("flowpulse.net")
 
-    logo_url = "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/logo_flowpulse.png"
+    logo_url = "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/logo_flowpulse.png?updatedAt=1791783480838"
     assert_equal logo_url, config.fetch("favicon_url")
     assert_equal logo_url, config.fetch("logo_square_url")
     assert_match(/primo esempio/, config.fetch("llms_summary"))

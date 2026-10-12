@@ -38,24 +38,28 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     get flowpulse_path
 
     assert_response :success
-    assert_select "h1", text: "Flowpulse"
+    assert_select "h1", text: /Costruisci il tuo mondo.*Segui il tuo flow/m
     assert_select "a[href='#{rails4b_path}']", text: /Rails4Business/, minimum: 1
     assert_select "a[href='#{eventi_path}']", count: 0
     assert_select "a[href^='/flowpulse/contenuti']", count: 0
-    assert_select "a[href='#{inside_adventure_path}']", text: /Esplora l’anteprima/
+    assert_select "figcaption", text: /mappa di MarkPostura, non la forma obbligatoria di FlowPulse/
   end
 
-  test "shows Inside Adventure as a Flowpulse brand in development" do
+  test "shows Inside Adventure as a GeneraImpresa brand in development" do
     get inside_adventure_path
 
     assert_response :success
     assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
     assert_select "h1", text: "Animum debes mutare, non caelum."
-    assert_select ".development-banner", text: /Brand in sviluppo su FlowPulse/
+    assert_select ".development-banner", text: /Brand in sviluppo in GeneraImpresa/
     assert_select ".steps .step", count: 5
     assert_select "#quizbox"
-    assert_select "a[href='#{flowpulse_path}']", minimum: 1
-    assert_select "footer", text: /Brand in sviluppo su FlowPulse/
+    assert_select "a[href='#{genera_impresa_path}']", minimum: 1
+    assert_select "footer", text: /Brand in sviluppo in GeneraImpresa/
+
+    get "/flowpulse/inside-adventure"
+    assert_response :moved_permanently
+    assert_redirected_to inside_adventure_path
   end
 
   test "shows the projects prototype link only to a superadmin" do

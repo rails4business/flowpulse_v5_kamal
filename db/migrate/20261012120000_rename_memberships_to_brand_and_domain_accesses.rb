@@ -1,5 +1,7 @@
 class RenameMembershipsToBrandAndDomainAccesses < ActiveRecord::Migration[8.1]
   def up
+    prepare_domain_nodes!
+
     rename_table :traveler_subscriptions, :brand_accesses
     rename_column :brand_accesses, :domain_id, :source_domain_id
     rename_column :brand_accesses, :node_id, :brand_node_id
@@ -68,4 +70,29 @@ class RenameMembershipsToBrandAndDomainAccesses < ActiveRecord::Migration[8.1]
     rename_column :brand_accesses, :source_domain_id, :domain_id
     rename_table :brand_accesses, :traveler_subscriptions
   end
+
+  private
+
+    # In produzione alcuni DomainMembership possono essere stati creati prima
+    # che config/domains.yml collegasse il relativo Domain al suo Node. Il
+    # post-deploy importa la configurazione troppo tardi: db:prepare deve prima
+    # riuscire ad avviare il nuovo container. Prepariamo quindi soltanto i
+    # cataloghi necessari alla conversione quando esistono davvero record
+    # orfani; su un database nuovo questa fase viene saltata.
+    def prepare_domain_nodes!
+      return unless table_exists?(:domain_memberships)
+
+      orphan_count = select_value(<<~SQL.squish).to_i
+        SELECT COUNT(*)
+        FROM domain_memberships
+        INNER JOIN domains ON domains.id = domain_memberships.domain_id
+        WHERE domains.node_id IS NULL
+      SQL
+      return if orphan_count.zero?
+
+      say_with_time "Associo i Domain esistenti ai Node versionati" do
+        NodeCatalog.from_config.import!
+        Domain.import_from_config!
+      end
+    end
 end

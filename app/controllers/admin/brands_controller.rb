@@ -12,6 +12,10 @@ module Admin
       if @active_tab == "domains"
         @domains = Domain.includes(:node, :role_assignment).order(:hostname)
         @domain_audit = DomainArchitectureAudit.new(@domains).call
+        performance_document = Performance::DomainBudgetCatalog.new.validate.document
+        @publication_audits = @domains.index_with do |domain|
+          DomainPublicationAudit.new(domain, domains: @domains, performance_document:).call
+        end
       elsif @active_tab == "building"
         container = Node.find_by(slug: "brand-in-costruzione")
         @brands = container ? container.children.preload(:domains, :role_assignment, :parent).order(:title, :id) : Node.none

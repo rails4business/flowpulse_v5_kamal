@@ -149,9 +149,11 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_select "a", text: "I miei Brand", count: 0
   end
 
-  test "building brands are private to superadmin" do
+  test "Inside Adventure is a public development preview in GeneraImpresa" do
     get genera_impresa_brand_url("inside-adventure")
-    assert_response :not_found
+    assert_response :success
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+    assert_select ".development-banner", text: /Brand in sviluppo in GeneraImpresa/
 
     sign_in_as_superadmin
     get genera_impresa_url

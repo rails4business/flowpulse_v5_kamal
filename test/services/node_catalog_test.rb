@@ -19,6 +19,8 @@ class NodeCatalogTest < ActiveSupport::TestCase
 
     mark = Node.find_by!(slug: "markpostura")
     postura = Node.find_by!(slug: "posturacorretta")
+    genera_impresa = Node.find_by!(slug: "generaimpresa")
+    inside_adventure = Node.find_by!(slug: "insideadventure")
 
     configured_slugs = %w[markpostura flowpulse rails4business posturacorretta percorso-integrato ilgiardinodelcorpo insideadventure corpoecoscienza cantachetipassa generaimpresa impegno svuotamente brand-in-costruzione igiene-posturale radioestesia]
     assert_equal configured_slugs.size, first.nodes
@@ -27,6 +29,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert mark.professional?
     assert_equal mark, user_profile.primary_node
     assert_equal mark, postura.parent
+    assert_equal genera_impresa, inside_adventure.parent
     assert_equal mark, postura.professional_owner_node
   end
 

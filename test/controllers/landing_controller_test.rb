@@ -25,7 +25,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: /Costruisci il tuo mondo.*Segui il tuo flow/m
     assert_select "#come-funziona", text: /Il tuo mondo non deve assomigliare/
     assert_select "#mondo-markpostura", text: /Il mondo di MarkPostura rende visibile una possibilità/
-    assert_select "figcaption", text: /primo esempio/
+    assert_select "figcaption", text: /MarkPostura può ampliarla.*ogni creator può costruire il proprio mondo/
     assert_select "a[href='#{genera_impresa_path}']", text: /Dai forma a un’idea/
   end
 
@@ -48,7 +48,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='/impegno']", text: /1Impegno/
     assert_select "a[href='/rails4b']", text: /Rails4Business/
     assert_select "a[href='/cantachetipassa']", text: /Canta che ti passa/
-    assert_select "a[href='/flowpulse/inside-adventure']", text: /Inside Adventure/
+    assert_select "a[href='/flowpulse/inside-adventure']", count: 0
   end
 
   test "Canta che ti passa links to its four sessions and participation sections" do

@@ -21,39 +21,67 @@ Quando tutto questo è in armonia tutto funziona per il meglio altrimenti il cor
 Ecco perchè val la pena di approfondire quali benefici si possono trarre dalla postura ma prima iniziamo chiarendo alcuni punti:
 
 - che cos'è la postura;
-- che cosa può modificarla;
-- perché serve un'educazione al corpo;
-- che cosa intendiamo con PosturaCorretta.
+- la postura e automatismi;
+- Educazione e cultura del corpo;
+- Cattive abitudini e problemi;
+- Esiste una PosturaCorretta?;
+- I benefici di un lavoro sulla postura
+
 
 ## Che cos'è la postura?
 
-La postura è il modo in cui il corpo si organizza nello spazio mentre stiamo fermi, ci muoviamo e rispondiamo a ciò che accade intorno a noi.
+Abbiamo visto che la postura è il modo in cui il corpo si organizza nello spazio mentre stiamo fermi o ci muoviamo e rispondiamo a ciò che accade intorno a noi.
 
 Non dipende soltanto dalla forma delle ossa o dalla forza dei muscoli. Entrano in gioco almeno tre aspetti:
 
-- **La struttura:** ossa, articolazioni, muscoli, fasce e legamenti. È il corpo osservato in un momento, quasi come in una fotografia.
-- **La funzione:** equilibrio, tono muscolare, propriocezione, coordinazione e controllo del movimento. È il modo in cui il corpo si regola e si muove.
+1. **La struttura:** ossa, articolazioni, muscoli, fasce e legamenti. È il corpo osservato in un momento, quasi come in una fotografia.
+2. **La funzione:** equilibrio, tono muscolare, propriocezione, coordinazione e controllo del movimento. È il modo in cui il corpo si regola e si muove. La funzione dipende da:
+- **Fisiologica (neurofisiologica):** tono posturale, propriocezione, vestibolo, riflessi, controllo motorio. È il *come si regola*.
 - **L'esperienza:** percezione del corpo, emozioni, stress e abitudini. È il modo in cui viviamo e utilizziamo il corpo ogni giorno.
 
 Anche l'ambiente ha il suo peso. Una giornata passata davanti allo schermo richiede al corpo un adattamento diverso da una giornata trascorsa camminando, lavorando all'aperto o cambiando spesso posizione.
 
-La postura, quindi, non è soltanto la forma che vediamo allo specchio.
+La postura, quindi, non è soltanto stare ben dritti con la schiena l'allineamento è solo una delle caratteristihe che si prendono in considerazione.
 
-## Perché serve un'educazione al corpo?
+## Postura e automatismi
 
-Per molto tempo educare il corpo è stato considerato importante quanto educare la mente. Nell'antica Grecia, per esempio, ginnastica e musica facevano parte della formazione: non bastava riempire la testa di nozioni, si faceva pratica.
+**L'apprendimento non è immediato:** è un percorso.
 
-Oggi impariamo moltissime cose, ma raramente qualcuno ci insegna a riconoscere una tensione, recuperare dopo una giornata faticosa o accorgerci che, dopo molte ore nella stessa posizione, il corpo ha bisogno di muoversi.
+Imparare ad andare in bicicletta è forse un buon esempio per capire che ogni cosa prima di essere utilizzata in modo automatico deve essere appresa.
 
-Da bambini impariamo soprattutto giocando. Da giovani possiamo praticare uno sport e avere ancora tempo per muoverci. Crescendo arrivano studio, lavoro, spostamenti, responsabilità e cose da ricordare. Il tempo diminuisce e il movimento diventa qualcosa da programmare.
+Da qui lo schema:
 
-Chi studia una disciplina corporea dedica tempo all'ascolto, al movimento e alla pratica. La maggior parte delle persone, invece, non riceve mai un'educazione di questo tipo.
+1. Incompetenza inconscia	
+Non so andare in bici e non so di non saperlo (es. un bimbo piccolo)
+2. Incompetenza conscia	So di non saper andare in bici
+3.	Competenza conscia	So andare in bici, ma devo concentrarmi: equilibrio, pedalata, sterzo
+4. Competenza inconscia	Vado in bici in automatico, senza pensarci
 
-Per questo non serve imparare cento esercizi da ripetere tutti i giorni. Servono pochi principi e alcune pratiche da conoscere bene, da poter riprendere quando occorrono.
+La postura così come la persona sono influenzati da corpo e mente che sono le due componenti che da molto tempo si considera importanti educare.
 
-Non risolveranno ogni dolore o problema. Possono però aiutarci a non arrivare completamente impreparati quando il corpo comincia a chiedere attenzione.
+Un abilità è acquisita quando apprendiamo automatismi e siamo in grado di utilizzarli appunto in maniera automatica senza pensarci. Per fare questo non si impara dall'oggi al domani ma è necessario un percorso, fatto di teoria e pratica.
 
-## Che cosa accade con il tempo?
+
+## Educazione e cultura del corpo
+
+Da sempre si sa che è importante, insieme agli aspetti teorici affiancare l'esperienza pratica, e da sempre si sa che è necessario un percorso per far si che una cosa venga appresa.
+
+Nell'antica Grecia, per esempio, ginnastica e musica facevano parte della formazione e venivano insegnate fin da piccoli, con la pratica e non solo con le nozioni.
+
+Al giorno d'oggi però ci stiamo pian piano alienando dal corpo.
+
+Nel modo di vivere della società occidentale, l'accesso alle risorse grazie all'organizzazione sociale, alla tecnologia e alle macchine ci viene facilitato sotto il punto di vista di lavoro fisico.
+
+Perciò siamo arrivati a pensare che imparare voglia dire conoscere nozioni teoriche. Si dà molta importanza agli aspetti razionali, e ci si dimentica che la razionalità è solo il vertice di una piramide retto alla base da emozioni e istinti.
+
+Passare molto tempo davanti agli schermi, chiusi in ambienti artificiali, fa si che il nostro corpo spesso non venga a contatto con gli stimoli di cui ha bisogno e pian piano rischia di essere dimenticato, e intere parti di noi vengono spente.
+
+Il corpo diventa così come un reame in cui il re perde la capacità di governare e se non si governa un territorio prima o poi ci si troverà nei guai.
+
+Certo da bambini impariamo soprattutto giocando. Da giovani possiamo praticare uno sport e avere ancora tempo per muoverci. Crescendo arrivano studio, lavoro, spostamenti, responsabilità e cose da ricordare. Il tempo diminuisce e il movimento diventa qualcosa da programmare.
+
+
+## Cattive abitudini e problemi, cosa accade con il tempo?
 
 Il corpo sa adattarsi. Il problema nasce quando deve adattarsi ogni giorno alle stesse condizioni, senza abbastanza movimento, varietà e recupero:
 
@@ -75,6 +103,7 @@ Osservare la postura significa quindi osservare anche la giornata che abbiamo co
 
 ## Esiste una postura corretta?
 
+
 Quando parliamo di postura corretta immaginiamo subito una persona ben dritta, con le spalle aperte e la schiena allineata. Sembra che esista una posizione perfetta da trovare e mantenere tutto il giorno.
 
 Sarebbe comodo, ma il corpo non funziona così.
@@ -84,8 +113,6 @@ I corpi sono diversi, hanno storie diverse e, in una sola giornata, assumono mol
 Allineamento e mobilità sono importanti, ma non bastano. Contano anche la capacità di percepirsi, adattarsi, respirare, distribuire i carichi e passare da una posizione all'altra.
 
 **Le posture sono tante. Prima di correggerle, dobbiamo imparare a leggerle.**
-
-## Che cosa significa PosturaCorretta?
 
 PosturaCorretta è un percorso per conoscere il corpo, osservarne l'organizzazione e sperimentare strumenti provenienti da diverse metodiche posturali.
 
@@ -99,7 +126,15 @@ Un'educazione di questo tipo può trovare spazio nella scuola, nel lavoro, nei p
 
 Lavorare sulla postura non modifica soltanto ciò che vediamo allo specchio. Può cambiare il punto da cui osserviamo e utilizziamo il corpo.
 
-## I benefici che cerchiamo
+
+
+## I benefici di un lavoro sulla postura
+
+Chi studia una disciplina corporea dedica tempo all'ascolto, al movimento e alla pratica. La maggior parte delle persone, invece, non riceve mai un'educazione di questo tipo.
+
+Per questo non serve imparare cento esercizi da ripetere tutti i giorni. Servono pochi principi e alcune pratiche da conoscere bene, da poter riprendere quando occorrono.
+
+Non risolveranno ogni dolore o problema. Possono però aiutarci a non arrivare completamente impreparati quando il corpo comincia a chiedere attenzione.
 
 I risultati non sono uguali per tutti e il lavoro posturale non sostituisce una valutazione sanitaria quando è necessaria. I benefici che cerchiamo sono però concreti:
 
@@ -112,7 +147,7 @@ I risultati non sono uguali per tutti e il lavoro posturale non sostituisce una 
 
 ![I benefici di una postura corretta](https://ik.imagekit.io/posturacorretta/percorso_posturacorretta/inizia_con_posturacorretta/benefici_postura.png)
 
-## Imparare a leggere il corpo
+## Imparare a leggere il corpo esercizio 
 
 Prima di passare agli esercizi, fermiamoci un momento. Non serve misurare tutto e non devi formulare una diagnosi. Inizia semplicemente a osservare.
 

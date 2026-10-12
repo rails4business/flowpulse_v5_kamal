@@ -41,7 +41,8 @@ Rails.application.routes.draw do
   get "esperienze" => redirect("/eventi", status: 301), as: :esperienze
   get "esperienze/:id" => redirect("/eventi/%{id}", status: 301), as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
-  get "flowpulse/inside-adventure" => "landing#inside_adventure", as: :inside_adventure
+  get "generaimpresa/brand/inside-adventure" => "landing#inside_adventure", as: :inside_adventure
+  get "flowpulse/inside-adventure" => redirect("/generaimpresa/brand/inside-adventure", status: 301)
   get "flowpulse/progetti" => "landing#flowpulse_projects", as: :flowpulse_projects
   get "flowpulse/professionisti" => "landing#flowpulse_professionals", as: :flowpulse_professionals
   get "flowpulse/rete" => "flowpulse/network#show", as: :flowpulse_network
