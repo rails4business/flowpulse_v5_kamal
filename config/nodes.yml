@@ -8,6 +8,14 @@ default: &default
       status: published
       visibility: public
 
+    flowpulse:
+      title: Flowpulse
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     rails4business:
       title: Rails4Business
       node_type: project
@@ -25,6 +33,17 @@ default: &default
       visibility: public
       operator_roles:
         - insegnante
+        - segreteria
+
+    percorso-integrato:
+      title: Percorso Integrato
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      operator_roles:
+        - professionista
         - segreteria
 
     ilgiardinodelcorpo:
@@ -73,10 +92,34 @@ default: &default
       status: published
       visibility: public
 
+    impegno:
+      title: 1Impegno
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    svuotamente:
+      title: SvuotaMente
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     brand-in-costruzione:
       title: Brand in costruzione
       node_type: project
       parent_slug: generaimpresa
+      status: draft
+      visibility: private
+
+    igiene-posturale:
+      title: Igiene Posturale
+      node_type: project
+      parent_slug: brand-in-costruzione
+      professional_owner_slug: markpostura
       status: draft
       visibility: private
 

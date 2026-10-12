@@ -5,7 +5,11 @@
 > reintrodotti modelli soltanto dopo la validazione nella vista. Il
 > primo nucleo confermato è `DataExperience → DataSession → DataSlot →
 > DataCommitment`, affiancato da `ProfessionalCalendar`, `Service` e
-> `BrandProcess`.
+> `NodeProcess`.
+>
+> **Perimetro:** questo documento governa risorse operative, calendari,
+> contenuti e servizi. Per la struttura di Brand, Node, Domain e Site prevale
+> [ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md](ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md).
 
 Questo è il **documento tecnico principale che tiene le fila dello sviluppo**.
 Le nuove decisioni operative vengono prima riportate qui e poi implementate un
@@ -97,7 +101,7 @@ Calendari, servizi e processi si amministrano nelle rispettive tab dello show
 del Node. Il calendario appartiene al professionista e punta al Node preciso
 per cui viene usato. Brand e Domain si ricavano risalendo `parent_node_id`
 fino al primo antenato dotato di dominio. Un Service appartiene direttamente a
-un Node e resta facoltativo sulla Session. Un `BrandProcess` appartiene a un Node e può raccogliere più
+un Node e resta facoltativo sulla Session. Un `NodeProcess` appartiene a un Node e può raccogliere più
 `DataExperience`; eliminare il processo conserva le Esperienze scollegandole.
 
 La pagina MarkPostura mantiene due livelli distinti:
@@ -433,7 +437,7 @@ ciò che una persona ha scelto, svolto o completato.
 ## 3. Permessi del pilota e futuro Operator
 
 Nel pilota soltanto il `superadmin` può creare o modificare
-`ProfessionalCalendar`, `Service`, `BrandProcess`, `DataExperience`,
+`ProfessionalCalendar`, `Service`, `NodeProcess`, `DataExperience`,
 `DataSession` e `DataSlot`. Le pagine
 pubbliche hanno accesso esclusivamente alle DataSession con `visibility:
 public`. Il ruolo `operator` non riceve ancora permessi operativi.
@@ -477,7 +481,7 @@ professionista la può usare per pianificare e tracciare il proprio lavoro.
 nel contesto esatto di un Node, che può essere Brand, Project o nodo interno.
 `Service` descrive facoltativamente ciò che quel Node offre. Non è un calendario
 e non è un quarto livello della gerarchia. `DataExperience`
-rimane il contenitore operativo, mentre `BrandProcess` descrive il processo
+rimane il contenitore operativo, mentre `NodeProcess` descrive il processo
 ripetibile a cui un'Esperienza può appartenere.
 
 ```text
@@ -490,7 +494,7 @@ Node professionale
 
 Node
 ├── Service               # offerta facoltativa collegata alla Session
-└── BrandProcess          # processo organizzativo ripetibile
+└── NodeProcess           # processo organizzativo ripetibile
     └── DataExperience    # applicazione concreta del processo
 ```
 

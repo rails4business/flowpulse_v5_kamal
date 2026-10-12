@@ -20,14 +20,14 @@ class SessionsController < ApplicationController
         domain = pending_subscription_domain
         User.transaction do
           profile = user.profile || user.create_profile!(display_name: user.email_address.to_s.split("@").first)
-          ensure_profile_site_access!(profile, brand_domain) if brand_domain.present?
-          subscribe_profile_to_domain(profile, domain) if domain.present?
+          ensure_profile_domain_access!(profile, brand_domain) if brand_domain.present?
+          ensure_profile_domain_access!(profile, domain) if domain.present? && domain != brand_domain
         end
         start_new_session_for user
         notice = if brand_domain.present?
           "Benvenuto in #{brand_domain.site_title}."
         elsif domain.present?
-          "Ti sei iscritto gratuitamente a #{domain.display_hostname}."
+          "Ora hai accesso a #{domain.site_title.presence || domain.display_hostname}."
         end
         redirect_to after_authentication_url, notice: notice
       rescue ActiveRecord::RecordInvalid
@@ -50,6 +50,8 @@ class SessionsController < ApplicationController
     subscription_token = params[:subscription].presence
     return nil if subscription_token.blank?
 
-    Domain.find_signed(subscription_token, purpose: :free_subscription)&.then { |domain| domain if domain.active? }
+    Domain.find_signed(subscription_token, purpose: :free_subscription)&.then do |domain|
+      domain if domain.active? && domain.node_id.present?
+    end
   end
 end

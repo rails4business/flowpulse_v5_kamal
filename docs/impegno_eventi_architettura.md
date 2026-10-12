@@ -35,7 +35,7 @@ Il prototipo [1Impegno](../public/viste_html/18-00-14-7-2026-1impegno.html) rest
 
 L'area tecnica di Impegno è `domain_roles`; nell'interfaccia viene chiamata **Ruoli operativi**. `roles` da solo non viene usato perché non chiarirebbe il contesto, mentre `professional` era troppo limitato per Tutor, Insegnanti e Segreterie.
 
-Ogni dominio dichiara in `config/domains.yml` i propri `operational_roles`. L'appartenenza generale della persona al sito resta in `DomainMembership`; il ruolo effettivo viene assegnato con un `RoleAssignment` contestuale:
+Ogni dominio dichiara in `config/domains.yml` i propri `operational_roles`. L'accesso generale della persona al Brand resta in `BrandAccess`, mentre `DomainAccess` registra la porta linguistica utilizzata. Il ruolo effettivo viene assegnato con un `RoleAssignment` contestuale:
 
 ```text
 Profile + Domain + role
@@ -45,12 +45,13 @@ In termini di record, `RoleAssignment.context_type` è `Domain` e `context_id` i
 
 Il selettore distingue due casi:
 
-- se il dominio appartiene a un `Node`/brand, l'accesso al brand deriva dalla `TravelerSubscription` attiva del profilo per quel nodo e la `DomainMembership` conserva l'adesione allo specifico hostname;
-- se il dominio non appartiene a un nodo, l'accesso deriva dalla `DomainMembership` attiva per quello specifico hostname.
+- il Domain canonico usato per l'accesso deve appartenere a un `Node`/Brand;
+- `BrandAccess` collega il profilo una sola volta a quel Node;
+- `DomainAccess` collega allo stesso BrandAccess ogni porta linguistica effettivamente utilizzata.
 
-I domini dello stesso nodo vengono raggruppati in una sola voce di brand. Se è disponibile una sola voce, l'interfaccia ne mostra il nome senza aprire un menu. `DomainMembership` e `TravelerSubscription` vengono mantenute entrambe, ma `DomainMembership` non contiene un `traveler_subscription_id`: l'eventuale relazione si ricava senza duplicare la fonte di verità attraverso `membership.domain.node_id` e `membership.profile_id`.
+I domini dello stesso nodo vengono raggruppati in una sola voce di Brand. Se è disponibile una sola voce, l'interfaccia ne mostra il nome senza aprire un menu. I DomainAccess restano distinti perché possono rappresentare lingue differenti, ma condividono lo stesso BrandAccess.
 
-Una coppia `profile_id + node_id` può avere una sola `TravelerSubscription`: cambiare hostname dello stesso brand non deve creare una seconda iscrizione.
+Una coppia `profile_id + brand_node_id` può avere un solo `BrandAccess`: cambiare lingua o hostname dello stesso Brand non deve creare un secondo accesso al Brand.
 
 I ruoli non vengono scelti dall'utente: sono permessi contestuali assegnati dal superadmin. L'interfaccia li mostra come badge informativi e usa automaticamente quelli disponibili per determinare le viste accessibili. Il parametro `role` resta accettato nei collegamenti diretti per compatibilità con gli URL esistenti.
 

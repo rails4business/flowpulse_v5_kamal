@@ -62,6 +62,25 @@ module Admin
       post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
       get admin_domains_url
       assert_response :success
+      assert_select "[data-domain-audit-summary]"
+      assert_select "th", text: "Verifica"
+      assert_select "th", text: "Pubblicazione"
+      assert_select "td", text: /dominio canonico deve avere un Node radice/
+    end
+
+    test "superadmin sees the publication checklist on a domain" do
+      @domain.update!(node: @node, role_assignment: @role_assignment)
+      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
+
+      get admin_domain_url(@domain)
+
+      assert_response :success
+      assert_select "[data-domain-publication-audit]"
+      assert_select "h2", text: "Checklist del dominio"
+      assert_select "h3", text: "Node radice"
+      assert_select "h3", text: "Sitemap"
+      assert_select "h3", text: "API pubblica"
+      assert_select "a[href='https://example-existing.com/api/v1/domain']"
     end
 
     test "domains list groups canonical aliases under canonical host" do

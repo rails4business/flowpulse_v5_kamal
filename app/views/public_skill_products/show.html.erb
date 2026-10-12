@@ -1,0 +1,26 @@
+<% description = @public_resource.data.to_h["description"].presence || truncate(strip_tags(markdown(@public_resource.body)).squish, length: 180) %>
+<% content_for :title, @public_resource.title %>
+<% content_for :description, description %>
+
+<main class="node-public-article lg:min-h-0">
+  <p class="node-public-kicker"><%= @public_resource.reusable_skill.title %></p>
+  <h1 class="node-public-title"><%= @public_resource.title %></h1>
+
+  <div class="node-public-meta mt-4 flex flex-wrap items-center gap-2 border-b border-slate-100 pb-6 text-xs font-semibold text-slate-500">
+    <span class="rounded-full bg-slate-100 px-2.5 py-1"><%= @public_resource.node.title %></span>
+    <span class="rounded-full bg-slate-100 px-2.5 py-1"><%= @public_resource.format.humanize %></span>
+    <% if @public_resource.published_at.present? %>
+      <time datetime="<%= @public_resource.published_at.iso8601 %>"><%= l(@public_resource.published_at.to_date) %></time>
+    <% end %>
+  </div>
+
+  <% if description.present? %><p class="node-public-description"><%= description %></p><% end %>
+
+  <article class="node-public-content">
+    <% if @public_resource.body.present? %>
+      <%= markdown(@public_resource.body) %>
+    <% else %>
+      <p>Questa risorsa non contiene ancora un testo pubblico.</p>
+    <% end %>
+  </article>
+</main>

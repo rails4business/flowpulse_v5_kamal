@@ -10,12 +10,19 @@ class Domain < ApplicationRecord
     :auth_default_path,
     :auth_enabled,
     :operational_roles,
-    :site_key
+    :site_key,
+    :llms_enabled,
+    :llms_summary,
+    :llms_instructions
 
   belongs_to :role_assignment, optional: true
   belongs_to :node, optional: true
-  has_many :traveler_subscriptions, dependent: :destroy
-  has_many :domain_memberships, dependent: :destroy
+  has_many :originating_brand_accesses,
+           class_name: "BrandAccess",
+           foreign_key: :source_domain_id,
+           inverse_of: :source_domain,
+           dependent: :restrict_with_error
+  has_many :domain_accesses, dependent: :destroy
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
 
   before_validation :normalize_hosts
@@ -108,6 +115,10 @@ class Domain < ApplicationRecord
     hostname.to_s.sub(/\Awww\./, "")
   end
 
+  def llms_discovery_enabled?
+    llms_enabled.nil? || ActiveModel::Type::Boolean.new.cast(llms_enabled)
+  end
+
   def to_config
     {}.tap do |hash|
       hash["canonical_host"] = canonical_host if canonical_host.present?
@@ -139,6 +150,10 @@ class Domain < ApplicationRecord
       self.auth_default_path = auth_default_path.to_s.strip.presence
       self.auth_enabled = ActiveModel::Type::Boolean.new.cast(raw_auth_enabled) unless raw_auth_enabled.nil?
       self.site_key = site_key.to_s.strip.presence
+      raw_llms_enabled = llms_enabled
+      self.llms_enabled = ActiveModel::Type::Boolean.new.cast(raw_llms_enabled) unless raw_llms_enabled.nil?
+      self.llms_summary = llms_summary.to_s.strip.presence
+      self.llms_instructions = llms_instructions.to_s.strip.presence
       raw_operational_roles = operational_roles
       self.operational_roles = Array(raw_operational_roles).filter_map { |role| role.to_s.strip.presence }.uniq unless raw_operational_roles.nil?
       self.settings = settings.to_h.compact.presence

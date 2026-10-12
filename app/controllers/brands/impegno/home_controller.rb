@@ -126,14 +126,15 @@ module Brands
           end
 
           profile = Current.user.profile
-          subscribed_domains = profile.traveler_subscriptions.active.includes(domain: :node).filter_map do |subscription|
-            subscription.domain if subscription.domain.active?
-          end
-          standalone_domains = profile.domain_memberships.active.includes(domain: :node).filter_map do |membership|
-            membership.domain if membership.standalone_domain? && membership.domain.active?
-          end
+          accessible_domains = profile.domain_accesses.active
+            .joins(:brand_access)
+            .merge(BrandAccess.active)
+            .includes(domain: :node)
+            .filter_map do |access|
+              access.domain if access.domain.active?
+            end
 
-          collapse_domains_by_brand(subscribed_domains + standalone_domains)
+          collapse_domains_by_brand(accessible_domains)
         end
 
         def domain_options

@@ -4,8 +4,15 @@ default: &default
     target_controller: landing
     target_action: flowpulse
     primary: true
-    site_title: "Flowpulse — Dall'idea a un sistema che funziona"
-    site_description: "Un ecosistema per organizzare il lavoro, verificare le idee e trasformarle in progetti digitali utilizzabili."
+    node_slug: flowpulse
+    site_title: "FlowPulse — Costruisci il tuo mondo e collegalo agli altri"
+    site_description: "Una piattaforma per dare forma al proprio mondo attraverso Brand, progetti, persone e strumenti, e collegarlo ai mondi costruiti dagli altri."
+    logo_full_url: "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/logo_flowpulse.png"
+    logo_square_url: "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/logo_flowpulse.png"
+    favicon_url: "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/logo_flowpulse.png"
+    social_image_url: "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/logo_flowpulse.png"
+    llms_summary: "FlowPulse permette a persone e creator di costruire il proprio mondo attraverso Brand personali o di progetto, organizzarlo in progetti e Node e collegarlo ai mondi degli altri. L'ecosistema MarkPostura mostrato nella home è il primo esempio, non il confine della piattaforma."
+    llms_instructions: "Distingui la piattaforma FlowPulse dal mondo costruito da MarkPostura: PosturaCorretta, Il Giardino del Corpo e gli altri progetti mostrati sono un esempio concreto di utilizzo."
 
   www.flowpulse.net:
     canonical_host: flowpulse.net
@@ -27,6 +34,7 @@ default: &default
 
   posturacorretta.org:
     locale: it
+    site_key: posturacorretta_it
     target_controller: brands/posturacorretta
     target_action: home
     primary: true
@@ -52,6 +60,7 @@ default: &default
     target_controller: brands/percorso_integrato
     target_action: index
     primary: true
+    node_slug: percorso-integrato
     site_title: "Percorso Integrato — Programmi, professionisti e verifiche"
     site_description: "Costruisci un percorso personale e coordinato collegando bisogni, programmi, professionisti e verifiche."
     logo_full_url: "https://ik.imagekit.io/posturacorretta/percorso_integrato_vecchio.png?updatedAt=1789395080250"
@@ -70,6 +79,7 @@ default: &default
     target_controller: brands/genera_impresa
     target_action: index
     primary: true
+    node_slug: generaimpresa
     site_title: "GeneraImpresa — Dall'idea a un progetto possibile"
     site_description: "Dai una prima forma all'idea, verificane fattibilità e valore e validala prima di passare alla realizzazione."
 
@@ -111,6 +121,7 @@ default: &default
     target_controller: brands/svuotamente
     target_action: index
     primary: true
+    node_slug: svuotamente
     site_title: "SvuotaMente — Libera lo spazio, recupera il valore"
     site_description: "Vendi ciò che vale, dona ciò che può servire e libera gli spazi entro una data."
 
@@ -122,6 +133,7 @@ default: &default
     target_controller: brands/impegno/home
     target_action: index
     primary: true
+    node_slug: impegno
     auth_slug: impegno
     auth_default_path: /impegno
     auth_enabled: true
@@ -142,6 +154,7 @@ default: &default
     target_controller: landing
     target_action: igieneposturale
     primary: true
+    node_slug: igiene-posturale
 
   www.igieneposturale.it:
     canonical_host: igieneposturale.it

@@ -28,5 +28,9 @@ La sequenza concreta è descritta in
 
 1. usare e testare il pilota PosturaCorretta;
 2. provare i YAML comuni `DataSession → DataSlot`, collegati ai contenuti;
-3. solo dopo uso reale: `Project`, `ProjectUpdate`, `ProjectNeed`,
-   `ProjectParticipation`, e infine organizzazioni/sovranità.
+3. usare i `Node` per Brand, progetti e sottoprogetti, senza introdurre un
+   modello `Project` duplicato;
+4. registrare avanzamenti con `NodeEvent`, ricerca delle soluzioni con
+   `ProblemSolvingCycle` e funzioni riutilizzabili con `ReusableSkill`;
+5. modellare partecipazioni o organizzazioni ulteriori solo dopo casi reali
+   non rappresentabili dalle relazioni esistenti.

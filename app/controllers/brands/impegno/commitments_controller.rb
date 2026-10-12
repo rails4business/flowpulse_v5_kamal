@@ -376,7 +376,7 @@ module Brands
       return Domain.active.where(primary: true).order(:hostname) if Current.user.superadmin_user?
 
       Domain.active
-        .where(id: current_profile.traveler_subscriptions.active.select(:domain_id))
+        .where(id: current_profile.domain_accesses.active.joins(:brand_access).merge(BrandAccess.active).select(:domain_id))
         .order(:hostname)
     end
 

@@ -32,6 +32,7 @@
     <% if page_social_image.present? %>
       <meta name="twitter:image" content="<%= page_social_image %>">
     <% end %>
+    <script type="application/ld+json"><%= raw json_escape(seo_json_ld(domain: page_domain, title: page_title, description: page_description, url: page_url)) %></script>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="<%= page_domain&.site_title.presence || page_title %>">

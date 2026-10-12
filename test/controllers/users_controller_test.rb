@@ -13,26 +13,29 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @domain = Domain.create!(hostname: "registration-domain.example", node: @node, role_assignment: @assignment, locale: "it")
   end
 
-  test "registration with subscription domain creates profile and free subscription" do
+  test "registration with a domain creates profile, brand access and domain access" do
     assert_difference -> { User.count }, 1 do
-      assert_difference -> { TravelerSubscription.count }, 1 do
-        post users_url, params: {
-          subscription: @domain.signed_id(purpose: :free_subscription),
-          user: {
-            email_address: "new-domain-traveler@example.com",
-            password: "password123",
-            password_confirmation: "password123"
+      assert_difference -> { BrandAccess.count }, 1 do
+        assert_difference -> { DomainAccess.count }, 1 do
+          post users_url, params: {
+            subscription: @domain.signed_id(purpose: :free_subscription),
+            user: {
+              email_address: "new-domain-traveler@example.com",
+              password: "password123",
+              password_confirmation: "password123"
+            }
           }
-        }
+        end
       end
     end
 
     user = User.find_by!(email_address: "new-domain-traveler@example.com")
     assert_equal "traveler", user.active_role
     assert user.profile.present?
-    assert user.profile.traveler_subscriptions.active.exists?(domain: @domain)
+    assert user.profile.brand_accesses.active.exists?(brand_node: @node)
+    assert user.profile.domain_accesses.active.exists?(domain: @domain)
     assert_redirected_to root_url
-    assert_equal "Registrazione completata. Ti sei iscritto gratuitamente a registration-domain.example.", flash[:notice]
+    assert_equal "Registrazione completata. Ora hai accesso a registration-domain.example.", flash[:notice]
   end
 
   test "registration page accepts an authenticated site context locally" do
@@ -57,9 +60,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='return_to'][value='/posturacorretta/dashboard']"
   end
 
-  test "registration from PosturaCorretta creates a domain membership without a node" do
+  test "registration from PosturaCorretta creates linked brand and domain accesses" do
     posturacorretta = Domain.create!(
       hostname: "posturacorretta.org",
+      node: @node,
+      role_assignment: @assignment,
       target_controller: "brands/posturacorretta",
       target_action: "home",
       locale: "it",
@@ -72,25 +77,28 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_user_path(site: "posturacorretta", return_to: "/posturacorretta/dashboard")
 
-    assert_difference -> { DomainMembership.count }, 1 do
-      post users_path, params: {
-        site: "posturacorretta",
-        return_to: "/posturacorretta/dashboard",
-        user: {
-          email_address: "new-posturacorretta-member@example.com",
-          password: "password123",
-          password_confirmation: "password123"
+    assert_difference -> { BrandAccess.count }, 1 do
+      assert_difference -> { DomainAccess.count }, 1 do
+        post users_path, params: {
+          site: "posturacorretta",
+          return_to: "/posturacorretta/dashboard",
+          user: {
+            email_address: "new-posturacorretta-member@example.com",
+            password: "password123",
+            password_confirmation: "password123"
+          }
         }
-      }
+      end
     end
 
     user = User.find_by!(email_address: "new-posturacorretta-member@example.com")
-    assert user.profile.domain_memberships.active.exists?(domain: posturacorretta)
+    assert user.profile.brand_accesses.active.exists?(brand_node: @node)
+    assert user.profile.domain_accesses.active.exists?(domain: posturacorretta)
     assert_redirected_to "/posturacorretta/dashboard"
     assert_equal "Registrazione completata. Benvenuto in PosturaCorretta.", flash[:notice]
   end
 
-  test "registration in a brand context creates a traveler subscription when the domain has a node" do
+  test "registration in a brand context creates brand and domain accesses" do
     @domain.update!(
       auth_slug: "posturacorretta",
       auth_enabled: true,
@@ -101,8 +109,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_user_path(site: "posturacorretta")
 
-    assert_difference -> { DomainMembership.count }, 1 do
-      assert_difference -> { TravelerSubscription.count }, 1 do
+    assert_difference -> { DomainAccess.count }, 1 do
+      assert_difference -> { BrandAccess.count }, 1 do
         post users_path, params: {
           site: "posturacorretta",
           user: {
@@ -115,8 +123,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     end
 
     user = User.find_by!(email_address: "new-posturacorretta-traveler@example.com")
-    assert user.profile.traveler_subscriptions.active.exists?(node: @node)
-    assert user.profile.domain_memberships.active.exists?(domain: @domain)
+    assert user.profile.brand_accesses.active.exists?(brand_node: @node)
+    assert user.profile.domain_accesses.active.exists?(domain: @domain)
     assert_redirected_to "/posturacorretta/dashboard"
   end
 
@@ -125,7 +133,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_user_path(site: "posturacorretta")
 
-    assert_no_difference [-> { User.count }, -> { DomainMembership.count }, -> { TravelerSubscription.count }] do
+    assert_no_difference [-> { User.count }, -> { DomainAccess.count }, -> { BrandAccess.count }] do
       post users_path, params: {
         site: "posturacorretta",
         user: {

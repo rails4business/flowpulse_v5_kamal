@@ -223,7 +223,7 @@ Questa è la checklist principale per l'avvio. Va aggiornata nello stesso moment
 - [x] Riconoscere il contesto PosturaCorretta nei percorsi locali `/posturacorretta/...`.
 - [x] Mostrare logo, titolo, descrizione, colori e navigazione PosturaCorretta nelle pagine di registrazione e accesso.
 - [x] Conservare una destinazione `return_to` interna e sicura.
-- [x] Dopo la registrazione collegare o riattivare il profilo al dominio con `DomainMembership` e, quando il dominio ha un nodo, anche al brand con `TravelerSubscription`.
+- [x] Dopo la registrazione creare o riattivare il `BrandAccess` al Node del Brand e il `DomainAccess` alla porta linguistica utilizzata.
 - [x] Dopo accesso o registrazione tornare alla dashboard, alla lezione o alla pagina inizialmente richiesta.
 - [x] Mantenere un solo account e una sola autenticazione per tutta la piattaforma.
 - [x] Verificare registrazione, accesso, errori, uscita e nuovo accesso sia da localhost sia dal dominio.
@@ -232,15 +232,14 @@ Questa è la checklist principale per l'avvio. Va aggiornata nello stesso moment
 
 ### Collegamento del profilo al sito e al brand
 
-L'accesso distingue il **brand** dal singolo hostname:
+L'accesso distingue il **Brand** dalla singola porta linguistica:
 
-- quando il dominio è collegato a un `Node`/brand, l'appartenenza al brand viene rappresentata da una `TravelerSubscription` identificata da `profile_id + node_id`;
-- nello stesso caso viene mantenuta anche una `DomainMembership`, che registra a quale specifico dominio del brand la persona ha aderito;
-- quando il dominio è autonomo e non possiede un nodo, l'appartenenza viene rappresentata da una `DomainMembership` identificata da `profile_id + domain_id`;
-- una `DomainMembership` su un dominio appartenente a un brand registra l'accesso allo specifico hostname, ma non sostituisce l'iscrizione al brand;
-- `DomainMembership` non salva un `traveler_subscription_id`: l'eventuale relazione viene ricostruita tramite profilo e `domain.node_id`, evitando due fonti di verità.
+- `BrandAccess` collega una sola volta `profile_id + brand_node_id`;
+- `DomainAccess` collega allo stesso BrandAccess il Domain canonico utilizzato;
+- più Domain in lingue diverse possono condividere lo stesso BrandAccess;
+- ogni Domain canonico usato per l'accesso deve essere collegato a un Node.
 
-Se un brand possiede più domini, nel selettore compare una sola volta. Il dominio determina routing, configurazione grafica e host; la `TravelerSubscription` determina l'appartenenza al brand. Registrazione e accesso restano comuni: non sono richiesti un secondo account o una seconda autenticazione.
+Se un Brand possiede più domini, nel selettore può comparire una sola volta. Il Domain determina routing, Site, lingua e host; il BrandAccess determina l'accesso generale al Brand. Registrazione e autenticazione restano comuni.
 
 **Stato locale:** è stato creato il Node `PosturaCorretta`, appartenente al Creator world di `@markpostura`, e `posturacorretta.org` è stato collegato sia al nodo sia al relativo `RoleAssignment`.
 
@@ -323,11 +322,11 @@ Non vanno create nuove route di autenticazione per ogni brand. In produzione il 
 ##### Punto 6 — Registrazione e collegamento al brand o al sito
 
 - [x] Creare `User` e `Profile` con la procedura comune.
-- [x] Se il dominio ha un nodo, creare o riattivare sia la `TravelerSubscription` del profilo per il brand sia la `DomainMembership` per lo specifico dominio.
-- [x] Se il dominio non ha un nodo, creare o riattivare la `DomainMembership` per quel sito autonomo.
+- [x] Creare o riattivare il `BrandAccess` del profilo per il Node del Brand.
+- [x] Creare o riattivare il `DomainAccess` per lo specifico Domain linguistico.
 - [x] Evitare duplicati quando più domini appartengono allo stesso nodo.
 
-**Implementato:** login, registrazione e dashboard usano `ensure_current_user_site_access!`. Il metodo mantiene sempre la `DomainMembership`; quando è presente `domain.node_id`, mantiene anche la `TravelerSubscription`, cercata per `profile_id + node_id` e non per hostname.
+**Implementato:** login, registrazione e dashboard usano `ensure_profile_domain_access!`. Il metodo mantiene un solo BrandAccess per `profile_id + brand_node_id` e un DomainAccess per la porta canonica utilizzata.
 - [x] Eseguire creazione dell'account e collegamento in modo atomico.
 - [x] Avviare una sola sessione dopo il completamento della transazione.
 - [x] Reindirizzare alla destinazione richiesta.
@@ -425,7 +424,7 @@ Il dominio destinato all'iscrizione gratuita non viene più esposto tramite un I
 
 #### Regola per studenti, centri e professionisti di riferimento
 
-Il nome e i dati personali appartengono al `Profile`; il collegamento generale al sito appartiene a `DomainMembership`. Centro e professionista di riferimento, invece, non vanno salvati in uno di questi due record: possono cambiare in base al corso o al percorso frequentato.
+Il nome e i dati personali appartengono al `Profile`; l'accesso generale appartiene al `BrandAccess` e la porta linguistica al `DomainAccess`. Centro e professionista di riferimento, invece, non vanno salvati in questi record: possono cambiare in base al corso o al percorso frequentato.
 
 Quando verrà introdotta l'iscrizione, il record di iscrizione al corso/percorso dovrà quindi contenere almeno:
 

@@ -55,11 +55,11 @@ module NavigationHelper
     FlowRoles.group_label(group)
   end
 
-  def traveler_dashboard_aside_subscriptions
+  def traveler_dashboard_aside_brand_accesses
     return [] unless active_dashboard_role == "traveler"
     return [] unless Current.user&.profile
 
-    TravelerSubscription.ordered_for(profile: Current.user.profile, domain: current_domain)
+    BrandAccess.ordered_for(profile: Current.user.profile, domain: current_domain)
   end
 
   def can_access_menu_item?(item)

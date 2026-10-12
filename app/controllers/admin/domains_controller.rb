@@ -6,10 +6,18 @@ module Admin
     before_action :set_domain, only: %i[show edit update destroy]
 
     def index
-      @domains = Domain.order(:hostname)
+      @domains = Domain.includes(:node, :role_assignment).order(:hostname)
+      @domain_audit = DomainArchitectureAudit.new(@domains).call
+      performance_document = Performance::DomainBudgetCatalog.new.validate.document
+      @publication_audits = @domains.index_with do |domain|
+        DomainPublicationAudit.new(domain, domains: @domains, performance_document:).call
+      end
     end
 
     def show
+      domains = Domain.includes(:node, :role_assignment).order(:hostname)
+      performance_document = Performance::DomainBudgetCatalog.new.validate.document
+      @publication_audit = DomainPublicationAudit.new(@domain, domains:, performance_document:).call
     end
 
     def new
@@ -74,7 +82,7 @@ module Admin
       end
 
       def domain_params
-        params.require(:domain).permit(:hostname, :canonical_host, :locale, :target_controller, :target_action, :site_key, :primary, :active, :role_assignment_id, :node_id, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url, :social_image_url)
+        params.require(:domain).permit(:hostname, :canonical_host, :locale, :target_controller, :target_action, :site_key, :primary, :active, :role_assignment_id, :node_id, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url, :social_image_url, :llms_enabled, :llms_summary, :llms_instructions)
       end
 
       def yaml_export_request?

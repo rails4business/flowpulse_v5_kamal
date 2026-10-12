@@ -25,11 +25,22 @@ class Admin::BrandsControllerTest < ActionDispatch::IntegrationTest
     get admin_brands_url
 
     assert_response :success
-    assert_select "h1", "Brand e progetti"
-    assert_select "a[href='#{admin_brands_path}']", text: /Brand/
+    assert_select "h1", "Brand progetto"
+    assert_select "a[href='#{flowpulse_admin_brands_path(tab: 'projects')}']", text: /Brand progetto/
     assert_select "a", "PosturaCorretta"
     assert_select "a", text: /brands-example\.test/
     assert_select "a", { text: "Canale YouTube", count: 0 }
+  end
+
+  test "superadmin sees professional brands in a separate register" do
+    Domain.create!(hostname: "markpostura-example.test", locale: "it", node: @professional, role_assignment: @professional.role_assignment, active: true)
+
+    get flowpulse_admin_brands_url(tab: "professionals")
+
+    assert_response :success
+    assert_select "h1", "Brand professionali"
+    assert_select "a[href='#{flowpulse_admin_brand_path(@professional)}']", text: "MarkPostura"
+    assert_select "a", text: "PosturaCorretta", count: 0
   end
 
   test "superadmin sees nodes collected under brand in costruzione" do
@@ -40,7 +51,7 @@ class Admin::BrandsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", "Brand in costruzione"
-    assert_select "a[href='#{admin_brand_path(candidate)}']", text: "Radioestesia e Benessere"
+    assert_select "a[href='#{flowpulse_admin_brand_path(candidate)}']", text: "Radioestesia e Benessere"
     assert_select "a[href='/generaimpresa/brand/radioestesia'][target='_blank']", text: "Apri anteprima"
   end
 
@@ -56,6 +67,33 @@ class Admin::BrandsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", admin_brand_path(@brand, tab: "services"), "Servizi"
     assert_select "a[href=?]", admin_brand_path(@brand, tab: "calendars"), "Calendari"
     assert_select "a[href=?]", admin_brand_path(@brand, tab: "processes"), "Processi"
+  end
+
+  test "brand tree stops at a nested domain and exposes it as a portal" do
+    nested_brand = Node.create!(role_assignment: @brand.role_assignment, parent: @brand, title: "Corpo e Coscienza", node_type: :project, status: "published")
+    hidden_child = Node.create!(role_assignment: @brand.role_assignment, parent: nested_brand, title: "Formazione interna", node_type: :project)
+    Domain.create!(hostname: "corpoecoscienza-example.test", locale: "it", node: nested_brand, role_assignment: @brand.role_assignment, active: true)
+
+    get flowpulse_admin_brand_url(@brand)
+
+    assert_response :success
+    assert_select "a[href='#{flowpulse_admin_brand_path(nested_brand)}']", text: "Corpo e Coscienza", minimum: 1
+    assert_select "span", text: "sotto-Brand"
+    assert_select "a", text: "Formazione interna", count: 0
+
+    get flowpulse_admin_brand_url(nested_brand)
+    assert_response :success
+    assert_select "a", text: "Formazione interna"
+  end
+
+  test "professional brand lists project brands without nesting them" do
+    Domain.create!(hostname: "markpostura-network.test", locale: "it", node: @professional, role_assignment: @professional.role_assignment, active: true)
+
+    get flowpulse_admin_brand_url(@professional)
+
+    assert_response :success
+    assert_select "h2", text: "Brand progetto posseduti o amministrati"
+    assert_select "a[href='#{flowpulse_admin_brand_path(@brand)}']", text: /PosturaCorretta/
   end
 
   test "superadmin creates a service on a Project Node" do
@@ -118,7 +156,7 @@ class Admin::BrandsControllerTest < ActionDispatch::IntegrationTest
     get admin_brands_url(tab: "domains")
 
     assert_response :success
-    assert_select "a[href='#{admin_brands_path(tab: 'domains')}']", text: "Domini"
+    assert_select "a[href='#{flowpulse_admin_brands_path(tab: 'domains')}']", text: "Domini"
     assert_select "a", "brands-example.test"
     assert_select "a", "Nuovo dominio"
   end

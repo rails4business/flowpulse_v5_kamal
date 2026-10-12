@@ -20,4 +20,20 @@ class ReusableSkillTest < ActiveSupport::TestCase
     assert_equal [problem], skill.problem_solving_cycles
     assert_equal [skill], problem.reusable_skills
   end
+
+  test "can use another skill without becoming its child" do
+    contents = @profile.reusable_skills.create!(title: "Contenuti", category: "contents")
+    paths = @profile.reusable_skills.create!(title: "Percorsi", category: "paths", required_skills: [contents])
+
+    assert_equal [contents], paths.required_skills
+    assert_equal [paths], contents.dependent_skills
+  end
+
+  test "cannot depend on itself" do
+    skill = @profile.reusable_skills.create!(title: "Eventi", category: "events")
+    dependency = skill.reusable_skill_dependencies.new(required_skill: skill)
+
+    assert_not dependency.valid?
+    assert_includes dependency.errors[:required_skill], "non può coincidere con la Skill"
+  end
 end

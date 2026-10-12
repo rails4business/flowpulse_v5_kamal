@@ -13,6 +13,57 @@
     </div>
   </header>
 
+  <% audit_style = if @publication_audit.ready?
+    { box: "border-emerald-200 bg-emerald-50", text: "text-emerald-800", label: "Pronto alla pubblicazione" }
+  elsif @publication_audit.blocked?
+    { box: "border-red-200 bg-red-50", text: "text-red-800", label: "Pubblicazione bloccata" }
+  else
+    { box: "border-amber-200 bg-amber-50", text: "text-amber-800", label: "Da completare" }
+  end %>
+
+  <section class="rounded-2xl border p-5 <%= audit_style[:box] %>" data-domain-publication-audit>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.14em] <%= audit_style[:text] %>">Controllo pubblicazione</p>
+        <h2 class="mt-1 text-2xl font-black text-slate-950"><%= audit_style[:label] %></h2>
+        <p class="mt-2 text-sm text-slate-600"><%= @publication_audit.count(:ready) %> controlli superati, <%= @publication_audit.count(:warning) %> da completare, <%= @publication_audit.count(:blocked) %> bloccanti.</p>
+      </div>
+      <%= link_to "Apri il dominio", "https://#{@domain.hostname}/", target: "_blank", rel: "noopener", class: "inline-flex items-center justify-center rounded-lg bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800" %>
+    </div>
+  </section>
+
+  <section>
+    <div class="mb-4">
+      <p class="text-xs font-black uppercase tracking-[0.14em] text-blue-600">SEO · API · AI</p>
+      <h2 class="mt-1 text-2xl font-black text-slate-950">Checklist del dominio</h2>
+      <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Il controllo verifica il contratto nell'applicazione. I link permettono di provare la risposta realmente servita dopo il deploy.</p>
+    </div>
+
+    <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <% @publication_audit.checks.each do |check| %>
+        <% check_style = if check.ready?
+          { box: "border-emerald-200", icon: "bg-emerald-100 text-emerald-700", symbol: "✓" }
+        elsif check.blocked?
+          { box: "border-red-200", icon: "bg-red-100 text-red-700", symbol: "!" }
+        else
+          { box: "border-amber-200", icon: "bg-amber-100 text-amber-700", symbol: "•" }
+        end %>
+        <article class="rounded-xl border bg-white p-4 <%= check_style[:box] %>">
+          <div class="flex items-start gap-3">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-black <%= check_style[:icon] %>" aria-hidden="true"><%= check_style[:symbol] %></span>
+            <div class="min-w-0">
+              <h3 class="font-black text-slate-950"><%= check.label %></h3>
+              <p class="mt-1 text-sm leading-5 text-slate-600"><%= check.detail %></p>
+              <% if check.path.present? %>
+                <%= link_to "Verifica #{check.path}", "https://#{@domain.hostname}#{check.path}", target: "_blank", rel: "noopener", class: "mt-3 inline-flex text-xs font-black text-blue-700 hover:text-blue-500" %>
+              <% end %>
+            </div>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </section>
+
   <dl class="grid gap-4 rounded-xl border border-slate-200 bg-white p-6 sm:grid-cols-2">
     <div>
       <dt class="text-xs font-bold uppercase tracking-wide text-slate-500">Canonical host</dt>

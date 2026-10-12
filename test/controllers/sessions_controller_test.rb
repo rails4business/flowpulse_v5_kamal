@@ -19,23 +19,28 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     @domain = Domain.create!(hostname: "login-domain.example", node: @node, role_assignment: @assignment, locale: "it")
   end
 
-  test "login with subscription domain creates free subscription" do
-    assert_difference -> { TravelerSubscription.count }, 1 do
-      post session_url, params: {
-        email_address: @user.email_address,
-        password: "password123",
-        subscription: @domain.signed_id(purpose: :free_subscription)
-      }
+  test "login with a domain creates brand and domain accesses" do
+    assert_difference -> { BrandAccess.count }, 1 do
+      assert_difference -> { DomainAccess.count }, 1 do
+        post session_url, params: {
+          email_address: @user.email_address,
+          password: "password123",
+          subscription: @domain.signed_id(purpose: :free_subscription)
+        }
+      end
     end
 
-    assert @user.profile.traveler_subscriptions.active.exists?(domain: @domain)
+    assert @user.profile.brand_accesses.active.exists?(brand_node: @node)
+    assert @user.profile.domain_accesses.active.exists?(domain: @domain)
     assert_redirected_to root_url
-    assert_equal "Ti sei iscritto gratuitamente a login-domain.example.", flash[:notice]
+    assert_equal "Ora hai accesso a login-domain.example.", flash[:notice]
   end
 
   test "login page uses the PosturaCorretta context from its production host" do
     Domain.create!(
       hostname: "posturacorretta.org",
+      node: @node,
+      role_assignment: @assignment,
       target_controller: "brands/posturacorretta",
       target_action: "home",
       locale: "it",
@@ -57,9 +62,11 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='site']", count: 0
   end
 
-  test "login from PosturaCorretta creates a domain membership without a node" do
+  test "login from PosturaCorretta creates linked brand and domain accesses" do
     posturacorretta = Domain.create!(
       hostname: "posturacorretta.org",
+      node: @node,
+      role_assignment: @assignment,
       target_controller: "brands/posturacorretta",
       target_action: "home",
       locale: "it",
@@ -72,16 +79,19 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_session_path(site: "posturacorretta", return_to: "/posturacorretta/dashboard")
 
-    assert_difference -> { DomainMembership.count }, 1 do
-      post session_path, params: { site: "posturacorretta", email_address: @user.email_address, password: "password123" }
+    assert_difference -> { BrandAccess.count }, 1 do
+      assert_difference -> { DomainAccess.count }, 1 do
+        post session_path, params: { site: "posturacorretta", email_address: @user.email_address, password: "password123" }
+      end
     end
 
-    assert @user.profile.domain_memberships.active.exists?(domain: posturacorretta)
+    assert @user.profile.brand_accesses.active.exists?(brand_node: @node)
+    assert @user.profile.domain_accesses.active.exists?(domain: posturacorretta)
     assert_redirected_to "/posturacorretta/dashboard"
     assert_equal "Benvenuto in PosturaCorretta.", flash[:notice]
   end
 
-  test "login in a brand context creates a traveler subscription when the domain has a node" do
+  test "login in a brand context creates brand and domain accesses" do
     @domain.update!(
       auth_slug: "posturacorretta",
       auth_enabled: true,
@@ -92,8 +102,8 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     host! "localhost"
     get new_session_path(site: "posturacorretta")
 
-    assert_difference -> { DomainMembership.count }, 1 do
-      assert_difference -> { TravelerSubscription.count }, 1 do
+    assert_difference -> { DomainAccess.count }, 1 do
+      assert_difference -> { BrandAccess.count }, 1 do
         post session_path, params: {
           site: "posturacorretta",
           email_address: @user.email_address,
@@ -102,14 +112,16 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert @user.profile.traveler_subscriptions.active.exists?(node: @node)
-    assert @user.profile.domain_memberships.active.exists?(domain: @domain)
+    assert @user.profile.brand_accesses.active.exists?(brand_node: @node)
+    assert @user.profile.domain_accesses.active.exists?(domain: @domain)
     assert_redirected_to "/posturacorretta/dashboard"
   end
 
   test "login from PosturaCorretta uses its dashboard as the default destination" do
     Domain.create!(
       hostname: "posturacorretta.org",
+      node: @node,
+      role_assignment: @assignment,
       target_controller: "brands/posturacorretta",
       target_action: "home",
       locale: "it",
@@ -129,6 +141,8 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   test "login from PosturaCorretta rejects external and unrelated return paths" do
     Domain.create!(
       hostname: "posturacorretta.org",
+      node: @node,
+      role_assignment: @assignment,
       target_controller: "brands/posturacorretta",
       target_action: "home",
       locale: "it",

@@ -8,6 +8,12 @@ module Brands
       assert_response :success
       assert_select "h1", text: "Costruisci un percorso personale, leggibile e coordinato."
       assert_select "nav[aria-label='Navigazione Percorso Integrato']"
+      assert_select "details.pi-mobile-menu summary[aria-label='Apri il menu di Percorso Integrato']", text: /Menu/
+      assert_select "nav[aria-label='Navigazione mobile Percorso Integrato']" do
+        assert_select "a[href='#{percorso_integrato_path}']", text: "Home"
+        assert_select "a[href='#{percorso_integrato_path(anchor: "ruoli")}']", text: "Chi partecipa"
+        assert_select "a[href='#{percorso_integrato_path(anchor: "inizia")}']", text: "Inizia"
+      end
       assert_select "header img[src*='percorso_integrato_vecchio.png']"
       assert_select "nav[aria-label='Navigazione Percorso Integrato'] a", text: "Docs"
       assert_select "a[href='#{percorso_integrato_docs_path}']", text: "Apri le Docs"

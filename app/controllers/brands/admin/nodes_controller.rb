@@ -5,16 +5,16 @@ module Brands
 
       def index
         @active_view = params[:view] == "schema" ? "schema" : "list"
-        @nodes = @brand.self_and_descendants
-          .includes(:node_processes, :link_node, :node_events)
-          .order(:position, :title, :id)
-          .to_a
+        @nodes = visible_brand_nodes
         @nodes_by_parent_id = @nodes.group_by(&:parent_id)
         load_form_options
       end
 
       def show
+        @active_tab = %w[overview development problems skills processes].include?(params[:tab]) ? params[:tab] : "overview"
         @processes = @node.node_processes.order(:title)
+        @problem_solving_cycles = @node.problem_solving_cycles.includes(:responsible_profile).order(updated_at: :desc)
+        @reusable_skills = @node.reusable_skills.includes(:responsible_profile).order(:title)
         @brand_development_entries = FlowpulseDevelopmentRepository.new.entries.select { |entry| entry.fetch("owner_brand") == @brand.slug }
         @development_entries = @brand_development_entries.select { |entry| entry["node_slug"] == @node.slug }
         @development_entries_by_slug = @brand_development_entries.index_by { |entry| entry.fetch("slug") }
@@ -39,9 +39,12 @@ module Brands
         @node.parent = brand_nodes.where.not(id: @node.self_and_descendants.map(&:id)).find(parent_id) if parent_id.present?
 
         if @node.update(attributes)
-          redirect_to brand_admin_node_path(@brand.slug, @node), notice: "Nodo aggiornato."
+          redirect_to brand_admin_node_path(@brand.slug, @node, tab: "overview"), notice: "Nodo aggiornato."
         else
+          @active_tab = "overview"
           @processes = @node.node_processes.order(:title)
+          @problem_solving_cycles = @node.problem_solving_cycles.includes(:responsible_profile).order(updated_at: :desc)
+          @reusable_skills = @node.reusable_skills.includes(:responsible_profile).order(:title)
           load_form_options
           flash.now[:alert] = @node.errors.full_messages.to_sentence
           render :show, status: :unprocessable_entity
@@ -70,16 +73,16 @@ module Brands
         unless event.save
           return redirect_to brand_admin_node_path(@brand.slug, @node), alert: event.errors.full_messages.to_sentence
         end
-        redirect_to brand_admin_node_path(@brand.slug, @node), notice: "Stato operativo aggiornato."
+        redirect_to brand_admin_node_path(@brand.slug, @node, tab: "development"), notice: "Stato operativo aggiornato."
       end
 
       def create_process
         @node = brand_nodes.find(params[:id])
         process_record = @node.node_processes.new(process_params.merge(created_by_user: Current.user))
         if process_record.save
-          redirect_to brand_admin_node_path(@brand.slug, @node, anchor: "node-processes"), notice: "Processo aggiunto."
+          redirect_to brand_admin_node_path(@brand.slug, @node, tab: "processes", anchor: "node-processes"), notice: "Processo aggiunto."
         else
-          redirect_to brand_admin_node_path(@brand.slug, @node, anchor: "node-processes"), alert: process_record.errors.full_messages.to_sentence
+          redirect_to brand_admin_node_path(@brand.slug, @node, tab: "processes", anchor: "node-processes"), alert: process_record.errors.full_messages.to_sentence
         end
       end
 
@@ -90,7 +93,28 @@ module Brands
         end
 
         def brand_nodes
-          Node.where(id: @brand.self_and_descendants.map(&:id))
+          Node.where(id: visible_brand_node_ids)
+        end
+
+        def visible_brand_nodes
+          candidates = @brand.self_and_descendants
+            .includes(:domains, :node_processes, :link_node, :node_events)
+            .order(:position, :title, :id)
+            .to_a
+          children_by_parent_id = candidates.group_by(&:parent_id)
+          visible = []
+          visit = lambda do |node|
+            visible << node
+            return if node != @brand && node.brand?
+
+            children_by_parent_id.fetch(node.id, []).each { |child| visit.call(child) }
+          end
+          visit.call(@brand)
+          visible
+        end
+
+        def visible_brand_node_ids
+          @visible_brand_node_ids ||= visible_brand_nodes.map(&:id)
         end
 
         def node_params
@@ -107,7 +131,8 @@ module Brands
 
         def load_form_options
           excluded_ids = @node ? @node.self_and_descendants.select(:id) : []
-          @parent_options = @brand.self_and_descendants.where.not(id: excluded_ids).order(:title)
+          boundary_ids = visible_brand_nodes.select { |node| node != @brand && node.brand? }.map(&:id)
+          @parent_options = Node.where(id: visible_brand_node_ids).where.not(id: excluded_ids).where.not(id: boundary_ids).order(:title)
           @link_node_options = Node.where(role_assignment: @brand.role_assignment).where.not(id: @node&.id).order(:title)
         end
     end

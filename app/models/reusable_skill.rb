@@ -23,8 +23,17 @@ class ReusableSkill < ApplicationRecord
   belongs_to :responsible_profile, class_name: "Profile", optional: true
   has_many :reusable_skill_nodes, dependent: :destroy
   has_many :nodes, through: :reusable_skill_nodes
+  has_many :skill_products, through: :reusable_skill_nodes
   has_many :problem_solving_cycle_skills, dependent: :destroy
   has_many :problem_solving_cycles, through: :problem_solving_cycle_skills
+  has_many :reusable_skill_dependencies, dependent: :destroy, inverse_of: :reusable_skill
+  has_many :required_skills, through: :reusable_skill_dependencies, source: :required_skill
+  has_many :dependent_skill_dependencies,
+           class_name: "ReusableSkillDependency",
+           foreign_key: :required_skill_id,
+           dependent: :destroy,
+           inverse_of: :required_skill
+  has_many :dependent_skills, through: :dependent_skill_dependencies, source: :reusable_skill
 
   before_validation :set_slug, if: -> { slug.blank? && title.present? }
 

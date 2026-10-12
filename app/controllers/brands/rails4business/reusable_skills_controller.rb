@@ -48,12 +48,17 @@ module Brands
         def load_options
           @node_options = available_commitment_nodes
           @problem_options = current_profile.problem_solving_cycles.order(:title)
+          @skill_options = skills.where.not(id: @skill.id).order(:title)
+          @activations = @skill.reusable_skill_nodes.includes(:node).order("nodes.title")
+          @products = @skill.skill_products.includes(reusable_skill_node: :node).recent_first
+          @product = SkillProduct.new
         end
 
         def skill_params
           params.require(:reusable_skill).permit(
             :title, :slug, :category, :status, :description, :purpose,
-            :operation_notes, :reuse_notes, node_ids: [], problem_solving_cycle_ids: []
+            :operation_notes, :reuse_notes, :resource_type, :documentation_markdown,
+            node_ids: [], problem_solving_cycle_ids: [], required_skill_ids: []
           )
         end
     end

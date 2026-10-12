@@ -8,6 +8,18 @@ Rails.application.routes.draw do
   resources :users, only: %i[new create]
   resources :passwords, param: :token
   get "sitemap.xml", to: "sitemaps#show", defaults: { format: :xml }
+  get "robots.txt", to: "robots#show", defaults: { format: :text }
+  get "llms.txt", to: "llms#show", defaults: { format: :text }
+  get "resources/:id/:slug", to: "public_skill_products#show", as: :public_skill_product,
+      constraints: { id: /\d+/, slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+
+  namespace :api do
+    namespace :v1 do
+      resource :domain, only: :show
+      resources :nodes, only: %i[index show], param: :slug
+      resources :resources, only: %i[index show]
+    end
+  end
   get "manifest.json" => "pwa#manifest", as: :pwa_manifest
   get "service-worker.js" => "pwa#service_worker", as: :pwa_service_worker
   get "offline" => "pwa#offline", as: :pwa_offline
@@ -32,6 +44,7 @@ Rails.application.routes.draw do
   get "flowpulse/inside-adventure" => "landing#inside_adventure", as: :inside_adventure
   get "flowpulse/progetti" => "landing#flowpulse_projects", as: :flowpulse_projects
   get "flowpulse/professionisti" => "landing#flowpulse_professionals", as: :flowpulse_professionals
+  get "flowpulse/rete" => "flowpulse/network#show", as: :flowpulse_network
   get "flowpulse/sviluppo" => "flowpulse/development#index", as: :flowpulse_development
   get "flowpulse/sviluppo/:slug" => "flowpulse/development#show", as: :flowpulse_development_entry,
       constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
@@ -55,7 +68,12 @@ Rails.application.routes.draw do
     resources :skills,
       path: "skills",
       controller: "brands/rails4business/reusable_skills",
-      only: %i[index show create update]
+      only: %i[index show create update] do
+        resources :products,
+          path: "prodotti",
+          controller: "brands/rails4business/skill_products",
+          only: %i[show create update]
+      end
   end
   # Radioestesia e Benessere is a personal Brand incubated by GeneraImpresa.
   # Keep the complete minisite under the Brand path instead of exposing a
@@ -215,7 +233,7 @@ Rails.application.routes.draw do
   get "dashboard/viaggiatore" => "pages#viaggiatori", as: :viaggiatori
   patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
   patch "dashboard_channel" => "home#dashboard_channel", as: :dashboard_channel
-  resources :traveler_subscriptions, only: [:create, :destroy]
+  resources :brand_accesses, only: [:create, :destroy]
   resource :profile, only: %i[show update] do
     patch :details
   end
@@ -294,6 +312,10 @@ Rails.application.routes.draw do
     end
     resources :risorse, controller: "/resources", only: [:index, :show]
   end
+
+  # Alias esplicito: la mappa globale di Brand e Node appartiene a FlowPulse.
+  get "flowpulse/admin/brands", to: "admin/brands#index", as: :flowpulse_admin_brands
+  get "flowpulse/admin/brands/:id", to: "admin/brands#show", as: :flowpulse_admin_brand
 
   scope ":brand_slug/admin", module: "brands/admin", as: :brand_admin,
       constraints: { brand_slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ } do

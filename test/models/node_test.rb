@@ -174,4 +174,20 @@ class NodeTest < ActiveSupport::TestCase
     @node_a.update!(node_type: :professional)
     assert @user.profile.valid?
   end
+
+  test "professional owner can administer its project brand" do
+    professional = Node.create!(title: "Professional owner", role_assignment: @role_assignment, node_type: :professional)
+    project = Node.create!(title: "Owned project", role_assignment: @role_assignment, node_type: :project, professional_owner_node: professional)
+
+    assert project.administered_by?(@user)
+  end
+
+  test "operator collaboration does not grant brand administration" do
+    other_user = User.create!(email_address: "operator-only@flowpulse.test", password: "password123", password_confirmation: "password123")
+    other_profile = other_user.create_profile!(display_name: "Operator only", username: "operator_only")
+    @node_a.update!(operator_roles: ["insegnante"])
+    RoleAssignment.create!(profile: other_profile, role: :operator, role_operator: "insegnante", parent: @role_assignment, context: @node_a)
+
+    assert_not @node_a.administered_by?(other_user)
+  end
 end

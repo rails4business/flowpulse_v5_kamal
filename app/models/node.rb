@@ -34,7 +34,10 @@ class Node < ApplicationRecord
     foreign_key: :professional_node_id,
     dependent: :restrict_with_error,
     inverse_of: :professional_node
-  has_many :traveler_subscriptions, dependent: :destroy
+  has_many :brand_accesses,
+           foreign_key: :brand_node_id,
+           inverse_of: :brand_node,
+           dependent: :destroy
   has_many :professionally_owned_nodes,
     class_name: "Node",
     foreign_key: :professional_owner_node_id,
@@ -123,6 +126,8 @@ class Node < ApplicationRecord
   def administered_by?(user)
     return false unless user
     return true if user.superadmin_user? || owned_by?(user)
+    return true if professional? && primary_professional_profile&.user == user
+    return true if professional_owner_node&.owned_by?(user)
     return false unless user.profile
 
     RoleAssignment.where(profile: user.profile, context: self, role: %i[admin responsabile]).exists?

@@ -60,17 +60,17 @@ Ogni DataSession collega una o più schede/contenuti tramite DataSlot. Una
 DataSession può essere presentata come lezione, incontro, appuntamento o
 evento. Cycle e Service restano in standby fino alla prova di questa vista.
 
-## 3. Database — solo dopo uso ripetuto
+## 3. Struttura dati — usare prima i modelli esistenti
 
 Ordine confermato:
 
-1. `Project`;
-2. `ProjectUpdate`;
-3. `ProjectNeed`;
-4. `ProjectParticipation`;
-5. organizzazioni e sovranità.
+1. `Node` per Brand, progetti e sottoprogetti;
+2. `NodeEvent` per aggiornamenti e note di sviluppo;
+3. `ProblemSolvingCycle` per problemi e verifica delle soluzioni;
+4. `ReusableSkill` per funzioni riutilizzabili attivate sui Node;
+5. nuovi modelli di partecipazione o organizzazione soltanto quando un caso
+   reale non può essere espresso dalle relazioni esistenti.
 
 Le prime entità operative da valutare saranno DataSession e DataSlot. Cycle e
 Service arriveranno solo dopo il test dei YAML; senza ripristinare il vecchio
-modello `DataEvent`. Project e i modelli di aggiornamento restano successivi
-all'uso reale del pilota.
+modello `DataEvent`. Non si introduce un modello `Project` parallelo al Node.

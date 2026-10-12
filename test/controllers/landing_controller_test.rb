@@ -1,6 +1,13 @@
 require "test_helper"
 
 class LandingControllerTest < ActionDispatch::IntegrationTest
+  test "Igiene Posturale route stays inside GeneraImpresa while its Node is not public" do
+    get igieneposturale_url
+
+    assert_redirected_to "http://generaimpresa.it/generaimpresa"
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+  end
+
   test "Rails4Business landing separates problems from reusable skills" do
     get rails4b_url
 
@@ -9,6 +16,17 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "#rails4b-workspaces article", count: 2
     assert_select "a[href=?]", new_session_path(return_to: rails4b_problems_path)
     assert_select "a[href=?]", new_session_path(return_to: rails4b_skills_path)
+  end
+
+  test "Flowpulse presents MarkPostura as one world rather than the whole platform" do
+    get flowpulse_url
+
+    assert_response :success
+    assert_select "h1", text: /Costruisci il tuo mondo.*Segui il tuo flow/m
+    assert_select "#come-funziona", text: /Il tuo mondo non deve assomigliare/
+    assert_select "#mondo-markpostura", text: /Il mondo di MarkPostura rende visibile una possibilità/
+    assert_select "figcaption", text: /primo esempio/
+    assert_select "a[href='#{genera_impresa_path}']", text: /Dai forma a un’idea/
   end
 
   test "Flowpulse navigation exposes projects professionals and changelog" do

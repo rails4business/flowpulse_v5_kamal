@@ -1,0 +1,86 @@
+schema_version: 1
+
+# Lighthouse/PageSpeed viene eseguito esternamente alla repository.
+# Questo file contiene soltanto il contratto versionato e non valori inventati.
+defaults:
+  strategy: mobile
+  runs: 3
+  budgets:
+    performance_score_min: 90
+    accessibility_score_min: 90
+    lcp_ms_max: 2500
+    inp_ms_max: 200
+    cls_max: 0.1
+    ttfb_ms_max: 800
+    transfer_kb_max: 1536
+    requests_max: 70
+
+domains:
+  flowpulse.net:
+    pages:
+      - { key: landing, path: / }
+      - { key: network, path: /flowpulse/rete }
+    baseline: { status: pending }
+
+  markpostura.it:
+    pages:
+      - { key: landing, path: / }
+      - { key: contents, path: /markpostura/contenuti }
+    baseline: { status: pending }
+
+  posturacorretta.org:
+    pages:
+      - { key: landing, path: / }
+      - { key: courses, path: /posturacorretta/corsi }
+      - { key: contents, path: /posturacorretta/contenuti }
+    baseline: { status: pending }
+
+  percorsointegrato.it:
+    pages:
+      - { key: landing, path: / }
+      - { key: professionals, path: /percorso-integrato/professionisti }
+    baseline: { status: pending }
+
+  generaimpresa.it:
+    pages:
+      - { key: landing, path: / }
+      - { key: brands, path: /generaimpresa }
+    baseline: { status: pending }
+
+  rails4b.com:
+    pages:
+      - { key: landing, path: / }
+      - { key: contents, path: /rails4b/contenuti }
+    baseline: { status: pending }
+
+  cantachetipassa.it:
+    pages:
+      - { key: landing, path: / }
+      - { key: accordion, path: /cantachetipassa/musica/fisarmonica }
+    baseline: { status: pending }
+
+  svuotamente.it:
+    pages:
+      - { key: landing, path: / }
+    baseline: { status: pending }
+
+  1impegno.it:
+    pages:
+      - { key: landing, path: / }
+    baseline: { status: pending }
+
+  igieneposturale.it:
+    pages: []
+    baseline:
+      status: skipped
+      reason: Node draft/private; il dominio rinvia temporaneamente a GeneraImpresa.
+
+  ilgiardinodelcorpo.it:
+    pages:
+      - { key: landing, path: / }
+    baseline: { status: pending }
+
+  corpoecoscienza.org:
+    pages:
+      - { key: landing, path: / }
+    baseline: { status: pending }

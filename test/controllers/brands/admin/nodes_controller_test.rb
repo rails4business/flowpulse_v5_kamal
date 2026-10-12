@@ -46,6 +46,42 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "#brand-node-map-data", text: /Iscrizione al percorso online/, count: 0
   end
 
+  test "tree stops at a nested Brand domain and opens it as a separate context" do
+    nested_brand = Node.create!(parent: @brand, title: "Corpo e Coscienza", slug: "corpoecoscienza", node_type: :project, status: "published")
+    nested_child = Node.create!(parent: nested_brand, title: "Formazione interna", node_type: :project)
+    Domain.create!(hostname: "corpoecoscienza-tree.test", node: nested_brand, role_assignment: @brand.role_assignment, active: true)
+    sign_in(@owner)
+
+    get brand_admin_nodes_url(@brand.slug)
+
+    assert_response :success
+    assert_select "[role='tree'] a[href='#{brand_admin_nodes_path(nested_brand.slug)}']", text: "Corpo e Coscienza"
+    assert_select "[role='treeitem']", text: /Corpo e Coscienza.*sotto-Brand/m
+    assert_select "button[data-node-add-parent='#{nested_brand.id}']", count: 0
+    assert_select "a", text: "Formazione interna", count: 0
+
+    get brand_admin_node_url(@brand.slug, nested_child)
+    assert_response :not_found
+
+    get brand_admin_nodes_url(nested_brand.slug)
+    assert_response :success
+    assert_select "[role='tree'] a", text: "Formazione interna"
+  end
+
+  test "visual schema excludes descendants behind a nested Brand domain" do
+    nested_brand = Node.create!(parent: @brand, title: "Sotto Brand", slug: "sotto-brand", node_type: :project, status: "published")
+    Node.create!(parent: nested_brand, title: "Nodo nascosto", node_type: :project)
+    Domain.create!(hostname: "nested-schema.test", node: nested_brand, role_assignment: @brand.role_assignment, active: true)
+    sign_in(@owner)
+
+    get brand_admin_nodes_url(@brand.slug, view: "schema")
+
+    assert_response :success
+    assert_select "#brand-node-map-data", text: /Sotto Brand/
+    assert_select "#brand-node-map-data", text: /"domain_boundary":true/
+    assert_select "#brand-node-map-data", text: /Nodo nascosto/, count: 0
+  end
+
   test "brand owner creates a real child node and records its birth" do
     sign_in(@owner)
 
@@ -66,23 +102,49 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     process_record = NodeProcess.create!(node: @project, created_by_user: @owner, title: "Pubblicazione settimanale", status: "active")
     sign_in(@owner)
 
-    get brand_admin_node_url(@brand.slug, @project)
+    get brand_admin_node_url(@brand.slug, @project, tab: "processes")
 
     assert_response :success
     assert_select "h1", "Primo progetto"
-    assert_select "[data-node-identity-show] button[data-node-identity-edit]", text: "Modifica"
-    assert_select "form[data-node-identity-form][hidden] textarea[name='node[description]']"
     assert_select "h2", "Processi"
     assert_select "h3", process_record.title
     assert_select "a[href='#{brand_admin_node_process_path(@brand.slug, @project, process_record)}']"
     assert_select "button", text: /Processo/
     assert_select "form[action='#{processes_brand_admin_node_path(@brand.slug, @project)}'] input[name='node_process[title]']"
     assert_select "a[href='#{admin_brand_path(@project, tab: "processes")}']", count: 0
-    assert_select "h2", "Vita del progetto"
+    assert_select "a[aria-current='page']", text: /Processi/
+
+    get brand_admin_node_url(@brand.slug, @project)
+    assert_select "[data-node-identity-show] button[data-node-identity-edit]", text: "Modifica"
+    assert_select "form[data-node-identity-form][hidden] textarea[name='node[description]']"
     assert_select "form[action='#{brand_admin_node_path(@brand.slug, @project)}'] input[data-bridge-search][list='node_bridge_options']"
     assert_select "form[action='#{brand_admin_node_path(@brand.slug, @project)}'] input[type='hidden'][name='node[link_node_id]']"
     assert_select "h2", text: "Struttura del nodo", count: 0
     assert_select "a[href='#{brand_admin_node_path(@brand.slug, @project)}'][data-turbo-method='delete']", text: "Elimina nodo"
+  end
+
+  test "node separates linked problems and reusable skills into dedicated tabs" do
+    cycle = ProblemSolvingCycle.create!(owner_profile: @owner.profile, title: "Aprire il percorso online", problem: "Le iscrizioni non sono ancora operative.", status: "backlog")
+    skill = ReusableSkill.create!(owner_profile: @owner.profile, title: "Corsi online", category: "courses", status: "development")
+    @project.problem_solving_cycles << cycle
+    @project.reusable_skills << skill
+    sign_in(@owner)
+
+    get brand_admin_node_url(@brand.slug, @project, tab: "problems")
+
+    assert_response :success
+    assert_select "a[aria-current='page']", text: /Problemi/
+    assert_select "#node-problems-title", "Problemi collegati"
+    assert_select "a[href='#{rails4b_problem_path(cycle)}']", text: /Aprire il percorso online/
+    assert_select "#node-skills-title", count: 0
+
+    get brand_admin_node_url(@brand.slug, @project, tab: "skills")
+
+    assert_response :success
+    assert_select "a[aria-current='page']", text: /Skill/
+    assert_select "#node-skills-title", "Skill collegate"
+    assert_select "a[href='#{rails4b_skill_path(skill)}']", text: /Corsi online/
+    assert_select "#node-problems-title", count: 0
   end
 
   test "owner opens a process schema with its experiences" do
@@ -147,7 +209,7 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     process_record = NodeProcess.last
     assert_equal @project, process_record.node
     assert_equal "pubblicare-un-capitolo", process_record.slug
-    assert_redirected_to brand_admin_node_url(@brand.slug, @project, anchor: "node-processes")
+    assert_redirected_to brand_admin_node_url(@brand.slug, @project, tab: "processes", anchor: "node-processes")
   end
 
   test "superadmin creates a bridge node" do
@@ -168,7 +230,7 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
 
     patch brand_admin_node_url(@brand.slug, @project), params: { node: { title: "Progetto aggiornato", parent_id: @brand.id, status: "published" } }
 
-    assert_redirected_to brand_admin_node_url(@brand.slug, @project)
+    assert_redirected_to brand_admin_node_url(@brand.slug, @project, tab: "overview")
     @project.reload
     assert_equal ["Progetto aggiornato", "published"], [@project.title, @project.status]
 
@@ -209,11 +271,11 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
       patch lifecycle_brand_admin_node_url(@brand.slug, @project), params: { event: "started", note: "Prima versione" }
     end
 
-    assert_redirected_to brand_admin_node_url(@brand.slug, @project)
+    assert_redirected_to brand_admin_node_url(@brand.slug, @project, tab: "development")
     assert_equal "active", @project.reload.cell_status
     assert_equal @owner, @project.node_events.last.performed_by_user
 
-    get brand_admin_node_url(@brand.slug, @project)
+    get brand_admin_node_url(@brand.slug, @project, tab: "development")
     assert_select "[data-cell-status-badge='active']", text: /In corso/
     assert_select "[data-node-event='started']", text: /▶.*Avviato/
   end
@@ -228,7 +290,7 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal "active", @project.reload.cell_status
-    get brand_admin_node_url(@brand.slug, @project)
+    get brand_admin_node_url(@brand.slug, @project, tab: "development")
     assert_select "[data-node-event='updated']", text: /Aggiornato/
     assert_select "[data-node-event='fixed']", text: /Corretto/
     assert_select "[data-node-event='fixed'] a", text: /Scheda/
@@ -291,7 +353,7 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     event = @brand.node_events.create!(kind: "updated", title: "Aggiornata struttura", performed_by_user: @owner)
     sign_in(@owner)
 
-    get brand_admin_node_url(@brand.slug, @brand)
+    get brand_admin_node_url(@brand.slug, @brand, tab: "development")
 
     assert_response :success
     assert_select "#lifecycle-title", "Aggiornamenti del Brand"

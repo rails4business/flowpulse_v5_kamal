@@ -1,6 +1,6 @@
 # Inventario dei documenti Flowpulse
 
-> Inventario iniziale del 15 settembre 2026. Serve a riordinare senza perdere
+> Inventario iniziale del 15 settembre 2026, rivisto l'11 ottobre 2026. Serve a riordinare senza perdere
 > informazioni. `Attivo` indica una fonte decisionale; `supporto` approfondisce
 > un ambito; `da rivedere` può contenere parti ancora utili; `storico` non deve
 > guidare nuove implementazioni; `prototipo` è un riferimento visuale.
@@ -9,8 +9,10 @@
 
 | Documento | Ambito | Uso |
 | --- | --- | --- |
+| `ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md` | Flowpulse | Fonte canonica per Brand, Node, Domain, Site, alias, lingue e confini dei sotto-Brand |
 | `PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md` | Ecosistema | Principi, responsabilità, tre canali, ordine del lavoro e week plan |
-| `ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md` | Flowpulse / 1Impegno | Content, DataSession, DataSlot, ruoli; Cycle e Service in standby |
+| `ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md` | Flowpulse / 1Impegno | DataExperience, DataSession, DataSlot, DataCommitment, calendari e servizi; non governa Domain e Site |
+| `METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md` | GeneraImpresa / Rails4Business / Flowpulse | ProblemSolving, Skill, metodo di lavoro e mappa amministrativa dei Brand |
 | `REGISTRO_PROGETTI_YML.md` | Flowpulse | Fonte YAML e priorità dei progetti |
 | `ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md` | PosturaCorretta | Sequenza operativa del pilota |
 | `vocabolario_impegno_e_brand.md` | 1Impegno | Vocabolario sintetico coerente con l'architettura corrente |
@@ -34,6 +36,8 @@
 | `dashboard_professionista_privata.md` | Professionisti | Rivedere dopo il pilota Operator |
 | `piano_professionista_tabs.md` | Professionisti | Rivedere insieme alla futura area privata |
 | `generaimpresa-extraction.md` | GeneraImpresa | Conservare per la successiva riattivazione |
+| `ARCHITETTURA_PAGINE_STATICHE_YML_E_COMPONENTI.md` | Site editoriali | Page Builder, componenti e rendering; subordinato al contratto Domain–Node–Site |
+| `ARCHITETTURA_MATERIALE_EDITORIALE_BRAND.md` | Materiale editoriale | Ownership e registri editoriali dei Brand |
 
 ## Documenti storici o superati
 
@@ -44,6 +48,7 @@
 | `esperienze_eventi_commitment.md` | Ipotesi storiche da recuperare solo quando si modelleranno le partecipazioni |
 | `posturacorretta_refactoring_guide.md` | Verificare rispetto all'interfaccia corrente prima di applicarlo |
 | `role_navigation_refactor_plan.md` | Parte del refactoring ruoli è già stata implementata |
+| `FLOWPULSE_INTEGRAZIONE_PROGETTI.md` | Visione utile, ma i futuri modelli Project non sostituiscono i Node, ProblemSolving o Skill correnti |
 
 Questi file non vanno cancellati ora. Quando una decisione utile viene
 recuperata, va trasferita nella fonte attiva appropriata e marcata come già
@@ -71,6 +76,14 @@ assorbita.
 
 I collegamenti tra brand non cambiano la proprietà editoriale. Un contenuto si
 scrive una volta sola e viene richiamato dagli altri canali.
+
+## Perimetro della revisione
+
+La documentazione generale vive soprattutto in `docs/` e `docs/appunti/`.
+I file sotto `config/data/` possono contenere affermazioni storiche, ma sono
+materiale editoriale o registri di Brand e vanno revisionati nel loro contesto,
+non con sostituzioni architetturali di massa. Le cartelle denominate `old`,
+`versions`, `copy` o `changelog` sono testimonianze e non fonti decisionali.
 
 ## Prossima revisione
 

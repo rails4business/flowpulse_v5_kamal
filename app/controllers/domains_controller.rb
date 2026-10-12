@@ -1,4 +1,6 @@
 class DomainsController < ApplicationController
+  include PublicNodePresentation
+
   layout "landing"
 
   allow_unauthenticated_access
@@ -9,6 +11,8 @@ class DomainsController < ApplicationController
       if Current.domain&.canonical_host.present? && current_domain_host != Current.domain.canonical_host
         return redirect_to_canonical_host
       end
+
+      return redirect_unpublished_domain_to_genera_impresa if unpublished_domain_node?
 
       dispatch_domain_action
     end
@@ -31,8 +35,24 @@ class DomainsController < ApplicationController
       )
     end
 
+    def unpublished_domain_node?
+      domain = Current.domain
+      domain&.node.present? && !PublicDiscovery::AccessPolicy.new.public_domain?(domain)
+    end
+
+    def redirect_unpublished_domain_to_genera_impresa
+      response.set_header("X-Robots-Tag", "noindex, nofollow")
+      destination = if local_request?
+        genera_impresa_path
+      else
+        "#{request.protocol}generaimpresa.it#{genera_impresa_path}"
+      end
+
+      redirect_to destination, status: :found, allow_other_host: true
+    end
+
     def dispatch_domain_action
-      if Current.domain&.site_key.present?
+      if Current.domain&.site_key.present? && editorial_site_uses_builder?(Current.domain.site_key)
         render_editorial_site(Current.domain.site_key)
       elsif Current.domain&.target_controller.present?
         render_domain_target
@@ -46,18 +66,16 @@ class DomainsController < ApplicationController
       end
     end
 
+    def editorial_site_uses_builder?(site_key)
+      site = Editorial::SiteRepository.new.load(site_key)
+      site.site.fetch("renderer", "builder") == "builder"
+    rescue Editorial::Error
+      true
+    end
+
     def render_public_node(node)
       if public_node_visible?(node)
-        @node = node
-        @children = public_node_accessible_children(@node)
-        @breadcrumbs = [@node]
-        @siblings = [@node]
-        @parent_node = nil
-        @previous_sibling = nil
-        @next_sibling = nil
-        @traveler_subscription_domain = Current.domain if Current.domain&.node_id == node.id
-        @traveler_subscription = Current.user&.profile&.traveler_subscriptions&.active&.find_by(domain: @traveler_subscription_domain) if @traveler_subscription_domain.present?
-        @node.build_content if @node.content.blank?
+        prepare_public_node(node, navigation_domain: Current.domain, domain_root: true)
         render "nodes/show", layout: "public_node"
         true
       else

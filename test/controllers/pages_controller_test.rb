@@ -18,7 +18,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     @assignment = RoleAssignment.create!(profile: creator.profile, role: :creator_of_worlds)
   end
 
-  test "traveler dashboard filters subscriptions by current domain subtree" do
+  test "traveler dashboard filters brand accesses by current domain subtree" do
     root = Node.create!(title: "Flowpulse Root", role_assignment: @assignment, status: "published", visibility: "public")
     posture = Node.create!(title: "Postura Corretta", role_assignment: @assignment, parent: root, status: "published", visibility: "public")
     igiene = Node.create!(title: "Igiene Posturale", role_assignment: @assignment, parent: posture, status: "published", visibility: "public")
@@ -28,7 +28,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     igiene_domain = Domain.create!(hostname: "igiene.example", node: igiene, role_assignment: @assignment, locale: "it")
     outside_domain = Domain.create!(hostname: "outside.example", node: outside, role_assignment: @assignment, locale: "it")
     [flowpulse, postura, igiene_domain, outside_domain].each do |domain|
-      TravelerSubscription.create!(profile: @traveler.profile, domain: domain)
+      BrandAccess.create!(profile: @traveler.profile, source_domain: domain)
     end
 
     host! "postura.example"
@@ -36,7 +36,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     get viaggiatori_path
 
     assert_response :success
-    assert_select "section[aria-label='Iscrizioni ai domini']" do |section|
+    assert_select "section[aria-label='Accessi ai brand']" do |section|
       section_html = section.to_s
       assert_no_match "flowpulse.example", section_html
       assert_includes section_html, "postura.example"
@@ -45,7 +45,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
       assert_operator section_html.index("postura.example"), :<, section_html.index("igiene.example")
     end
     assert_select "nav[aria-label='Navigazione dashboard']" do
-      assert_select "h3", text: "Domini iscritti"
+      assert_select "h3", text: "Brand accessibili"
       assert_select "a[href=?]", node_path(posture), text: /postura\.example/
       assert_select "a[href=?]", node_path(igiene), text: /igiene\.example/
       assert_select "a[href=?]", node_path(root), count: 0

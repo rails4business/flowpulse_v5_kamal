@@ -204,6 +204,12 @@ class LandingController < ApplicationController
   end
 
   def igieneposturale
+    node = Node.find_by(slug: "igiene-posturale")
+    return if node&.status == "published" && node.visibility == "public"
+
+    response.set_header("X-Robots-Tag", "noindex, nofollow")
+    destination = local_request? ? genera_impresa_path : "#{request.protocol}generaimpresa.it#{genera_impresa_path}"
+    redirect_to destination, status: :found, allow_other_host: true
   end
 
   private

@@ -19,6 +19,16 @@ class DomainTest < ActiveSupport::TestCase
     assert_nil config[:target_action]
   end
 
+  test "configures Flowpulse public identity and AI summary" do
+    config = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access.fetch("flowpulse.net")
+
+    logo_url = "https://ik.imagekit.io/posturacorretta/sub_brands/loghi/logo_flowpulse.png"
+    assert_equal logo_url, config.fetch("favicon_url")
+    assert_equal logo_url, config.fetch("logo_square_url")
+    assert_match(/primo esempio/, config.fetch("llms_summary"))
+    assert_match(/Distingui la piattaforma FlowPulse/, config.fetch("llms_instructions"))
+  end
+
   test "imports and exports an editorial site key" do
     Domain.import_from_hash!(
       "editorial.example" => {
@@ -30,6 +40,23 @@ class DomainTest < ActiveSupport::TestCase
     domain = Domain.find_by!(hostname: "editorial.example")
     assert_equal "markpostura_it", domain.site_key
     assert_equal "markpostura_it", Domain.export_to_hash.dig("editorial.example", "site_key")
+  end
+
+  test "imports and exports llms discovery settings" do
+    Domain.import_from_hash!(
+      "llms-settings.example" => {
+        "locale" => "it",
+        "llms_enabled" => false,
+        "llms_summary" => "Sintesi controllata",
+        "llms_instructions" => "Usa soltanto dati pubblici."
+      }
+    )
+
+    domain = Domain.find_by!(hostname: "llms-settings.example")
+    assert_not domain.llms_discovery_enabled?
+    assert_equal "Sintesi controllata", domain.llms_summary
+    assert_equal false, Domain.export_to_hash.dig("llms-settings.example", "llms_enabled")
+    assert_equal "Usa soltanto dati pubblici.", Domain.export_to_hash.dig("llms-settings.example", "llms_instructions")
   end
 
   test "normalizes hostnames" do

@@ -71,6 +71,22 @@
       </div>
     </div>
 
+    <fieldset class="md:col-span-2 rounded-lg border border-violet-200 bg-violet-50/50 p-4">
+      <legend class="px-2 text-sm font-black text-violet-900">Discovery per AI · llms.txt</legend>
+      <div class="mt-2 flex items-start gap-3">
+        <%= form.check_box :llms_enabled, { checked: domain.llms_discovery_enabled?, class: "mt-1 size-4 rounded border-violet-300 text-violet-700" }, "1", "0" %>
+        <div><%= form.label :llms_enabled, "Pubblica /llms.txt", class: "text-sm font-black text-slate-800" %><p class="mt-1 text-xs leading-5 text-slate-500">Funziona soltanto quando il Domain e il suo Node radice sono pubblici. Il file viene generato e non è salvato come copia separata.</p></div>
+      </div>
+      <div class="mt-4">
+        <%= form.label :llms_summary, "Sintesi per AI", class: "text-sm font-bold text-slate-700" %>
+        <%= form.text_area :llms_summary, rows: 3, placeholder: "Facoltativa: se vuota viene usata la descrizione del sito.", class: "mt-2 w-full rounded-lg border border-violet-200 bg-white px-3 py-2" %>
+      </div>
+      <div class="mt-4">
+        <%= form.label :llms_instructions, "Indicazioni", class: "text-sm font-bold text-slate-700" %>
+        <%= form.text_area :llms_instructions, rows: 3, placeholder: "Facoltative: contesto o indicazioni per interpretare le risorse pubbliche.", class: "mt-2 w-full rounded-lg border border-violet-200 bg-white px-3 py-2" %>
+      </div>
+    </fieldset>
+
     <div class="md:col-span-2">
       <label for="domain_role_assignment_id_input" class="text-sm font-bold text-slate-700">Creator world</label>
       

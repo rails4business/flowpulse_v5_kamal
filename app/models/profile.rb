@@ -2,8 +2,8 @@ class Profile < ApplicationRecord
   belongs_to :user
   belongs_to :primary_node, class_name: "Node", optional: true, inverse_of: :primary_professional_profile
   has_many :role_assignments, dependent: :destroy
-  has_many :traveler_subscriptions, dependent: :destroy
-  has_many :domain_memberships, dependent: :destroy
+  has_many :brand_accesses, dependent: :destroy
+  has_many :domain_accesses, dependent: :destroy
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
   has_many :created_data_commitments,
            class_name: "Brands::Impegno::Commitment",
@@ -23,6 +23,11 @@ class Profile < ApplicationRecord
            foreign_key: :owner_profile_id,
            inverse_of: :owner_profile,
            dependent: :destroy
+  has_many :created_skill_products,
+           class_name: "SkillProduct",
+           foreign_key: :created_by_profile_id,
+           inverse_of: :created_by_profile,
+           dependent: :restrict_with_error
 
   validates :user_id, uniqueness: true
   validates :username, presence: true,

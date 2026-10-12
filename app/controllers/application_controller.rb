@@ -69,8 +69,8 @@ class ApplicationController < ActionController::Base
       return false if node.blank?
       return true if Current.user&.superadmin_user?
       return true if creator_can_manage_node?(node)
-      return true if node.status == "published" && node.visibility == "public"
-      return true if node.status == "published" && node.visibility == "subscription" && traveler_subscribed_to_node?(node)
+      return true if PublicDiscovery::AccessPolicy.new.public_node?(node)
+      return true if node.status == "published" && node.visibility == "subscription" && brand_access_grants_node?(node)
 
       false
     end
@@ -95,48 +95,51 @@ class ApplicationController < ActionController::Base
       Current.user.role_assignment_ids.include?(node.role_assignment_id)
     end
 
-    def traveler_subscribed_to_node?(node)
+    def brand_access_grants_node?(node)
       profile = Current.user&.profile
       return false if profile.blank?
 
       ancestor_node_ids = node.self_and_ancestors.select(:id)
-      profile.traveler_subscriptions.active.where(node_id: ancestor_node_ids).exists?
+      profile.brand_accesses.active.where(brand_node_id: ancestor_node_ids).exists?
     end
 
-    def subscribe_current_user_to_domain(domain)
+    def grant_current_user_brand_access!(domain)
       return if Current.user.blank? || domain.blank?
 
-      subscribe_profile_to_domain(current_profile, domain)
+      ensure_profile_domain_access!(current_profile, domain).fetch(:brand_access)
     end
 
-    def subscribe_profile_to_domain(profile, domain)
+    def grant_profile_brand_access!(profile, domain)
       return if profile.blank? || domain.blank? || domain.node_id.blank?
 
-      subscription = profile.traveler_subscriptions.find_or_initialize_by(node_id: domain.node_id)
-      subscription.domain ||= domain
-      subscription.node = domain.node
-      subscription.status = "active"
-      subscription.subscribed_at ||= Time.current
-      subscription.save!
-      subscription
+      access = profile.brand_accesses.find_or_initialize_by(brand_node_id: domain.node_id)
+      access.source_domain ||= domain
+      access.brand_node = domain.node
+      access.status = "active"
+      access.joined_at ||= Time.current
+      access.save!
+      access
     end
 
     def ensure_current_user_site_access!(domain)
       return if Current.user.blank? || domain.blank?
 
-      ensure_profile_site_access!(current_profile, domain)
+      ensure_profile_domain_access!(current_profile, domain)
     end
 
-    def ensure_profile_site_access!(profile, domain)
+    def ensure_profile_domain_access!(profile, domain)
       return if profile.blank? || domain.blank?
+      raise ArgumentError, "Il Domain deve essere collegato a un Node" if domain.node_id.blank?
 
-      membership = profile.domain_memberships.find_or_initialize_by(domain: domain)
-      membership.status = "active"
-      membership.joined_at ||= Time.current
-      membership.save!
+      brand_access = grant_profile_brand_access!(profile, domain)
+      domain_access = profile.domain_accesses.find_or_initialize_by(domain: domain)
+      domain_access.brand_access = brand_access
+      domain_access.status = "active"
+      domain_access.activated_at ||= Time.current
+      domain_access.last_accessed_at = Time.current
+      domain_access.save!
 
-      subscription = subscribe_profile_to_domain(profile, domain) if domain.node_id.present?
-      { domain_membership: membership, traveler_subscription: subscription }
+      { brand_access: brand_access, domain_access: domain_access }
     end
 
     def require_permission!(resource, action = :read)

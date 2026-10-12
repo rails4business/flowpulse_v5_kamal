@@ -6,8 +6,12 @@ Le sottocartelle diventano automaticamente categorie nell'indice. I file Markdow
 
 ## Fonti correnti
 
+- [`ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md`](ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md): fonte canonica per Brand, Node, Domain, Site, alias, lingue e confini pubblici;
 - [`PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md`](PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md): visione operativa, responsabilità, tre canali e week plan;
 - [`ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md`](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md): vocabolario tecnico corrente e ordine di implementazione;
+- [`METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md`](METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md): divisione tra GeneraImpresa, Rails4Business, ProblemSolving, Skill e mappa amministrativa;
+- [`RAILS4BUSINESS_SKILL_E_PRODOTTI.md`](RAILS4BUSINESS_SKILL_E_PRODOTTI.md): stato operativo di Skill, attivazioni, prodotti, sincronizzazione e attività rinviate;
+- [`update_authentication.md`](update_authentication.md): contratto corrente di `BrandAccess` e `DomainAccess`, con `NodeParticipation` rinviato alla gestione dei percorsi;
 - [`REGISTRO_PROGETTI_YML.md`](REGISTRO_PROGETTI_YML.md): fonte YAML e priorità dei progetti;
 - [`ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md`](ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md): sequenza del pilota PosturaCorretta;
 - [`INVENTARIO_DOCUMENTI_FLOWPULSE.md`](INVENTARIO_DOCUMENTI_FLOWPULSE.md): mappa degli appunti da usare, rivedere o conservare come storico.
@@ -15,3 +19,7 @@ Le sottocartelle diventano automaticamente categorie nell'indice. I file Markdow
 Quando un documento precedente contraddice una fonte corrente, prevalgono le
 fonti elencate qui sopra. I documenti storici non vanno eliminati finché le
 informazioni utili non sono state recuperate.
+
+I Markdown in `config/data/` sono contenuti editoriali, corsi, libri, changelog
+o registri dei singoli Brand: non vengono aggiornati automaticamente durante
+la revisione dell'architettura generale.

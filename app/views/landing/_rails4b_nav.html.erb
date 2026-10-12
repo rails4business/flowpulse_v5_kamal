@@ -9,5 +9,6 @@
     <%= link_to "Contenuti", rails4b_contents_path, class: "border-b-2 py-2 transition #{active == :contents ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700"}" %>
     <% if authenticated? %><%= link_to "Problemi", rails4b_problems_path, class: "border-b-2 py-2 transition #{active == :problems ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:border-blue-200 hover:text-blue-700"}" %><% end %>
     <% if authenticated? %><%= link_to "Skill", rails4b_skills_path, class: "border-b-2 py-2 transition #{active == :skills ? "border-violet-600 text-violet-700" : "border-transparent text-slate-600 hover:border-violet-200 hover:text-violet-700"}" %><% end %>
+    <% if Current.user&.superadmin_user? %><%= link_to "Appunti", admin_note_path(source: "docs", path: "appunti/RAILS4BUSINESS_SKILL_E_PRODOTTI.md"), class: "border-b-2 border-transparent py-2 text-amber-700 transition hover:border-amber-300 hover:text-amber-900" %><% end %>
   </div>
 </nav>

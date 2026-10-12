@@ -8,6 +8,8 @@
 > lavoro dei professionisti digitali e una soluzione viene provata e diffusa è
 > descritto in
 > [METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md](METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md).
+> Per Brand, Node, Domain, Site, alias e lingue prevale
+> [ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md](ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md).
 
 ## 1. Ruolo di Flowpulse
 

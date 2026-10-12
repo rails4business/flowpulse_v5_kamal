@@ -39,6 +39,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
       hostname: "posturacorretta.org",
       target_controller: "landing",
       target_action: "posturacorretta",
+      site_key: "posturacorretta_it",
       locale: "it",
       site_title: "PosturaCorretta",
       site_description: "Percorsi per conoscere e prendersi cura del corpo.",
@@ -102,7 +103,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Dalla persona ai processi che fanno funzionare l'impresa."
+    assert_select "h1", text: "Problemi da risolvere. Skill da costruire e riutilizzare."
     assert_select "h2", text: "Ogni persona può ideare o realizzare"
     assert_select "h2", text: "Il canale YouTube come sottoprogetto"
   end
@@ -114,13 +115,36 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Ambiente, Esperienze e Relazioni"
-    assert_select "#progetti"
+    assert_select "h1", text: "Problemi, idee e soluzioni da mettere alla prova"
+    assert_select "#direzioni"
     assert_select "nav a[href='#{markpostura_weekplan_path}']", text: "Orario"
-    assert_select "aside", count: 0
     assert_select "#weekplan", count: 0
     assert_select "img[src*='hero_markpostura-720']"
     assert_select "meta[name='robots'][content='noindex,nofollow']", count: 0
+  end
+
+  test "uses the canonical domain without query parameters and emits valid structured data" do
+    @other_node.update!(node_type: "professional")
+    Domain.create!(
+      hostname: "profile.example",
+      node: @other_node,
+      target_controller: "landing",
+      target_action: "flowpulse",
+      locale: "it",
+      site_title: "Profilo pubblico",
+      site_description: "Descrizione pubblica"
+    )
+    host! "profile.example"
+
+    get root_url(tab: "method", utm_source: "test")
+
+    assert_response :success
+    assert_select "link[rel='canonical'][href='https://profile.example/']"
+    script = css_select("script[type='application/ld+json']").first
+    data = JSON.parse(script.text)
+    identity = data.fetch("@graph").find { |item| item["@id"] == "https://profile.example/#identity" }
+    assert_equal "Person", identity.fetch("@type")
+    assert_equal "Specific Target Node", identity.fetch("name")
   end
 
   test "redirects a MarkPostura alias to the canonical editorial domain" do
@@ -186,14 +210,22 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to "http://posturacorretta.org/"
   end
 
-  test "renders igiene posturale domain as posturacorretta landing" do
-    Domain.create!(hostname: "igieneposturale.it", target_controller: "landing", target_action: "posturacorretta", locale: "it")
+  test "redirects a domain with a draft private root node to GeneraImpresa" do
+    draft_node = Node.create!(
+      role_assignment: @role_assignment,
+      title: "Igiene Posturale",
+      slug: "igiene-posturale",
+      node_type: "project",
+      status: "draft",
+      visibility: "private"
+    )
+    Domain.create!(hostname: "igieneposturale.it", target_controller: "landing", target_action: "igieneposturale", node: draft_node, locale: "it")
     host! "igieneposturale.it"
 
     get root_url
 
-    assert_response :success
-    assert_includes response.body, "PosturaCorretta"
+    assert_redirected_to "http://generaimpresa.it/generaimpresa"
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
   end
 
   test "prioritizes target_controller and target_action over node and creator" do
@@ -213,8 +245,10 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     # Should render the landing page target_action "posturacorretta"
     assert_includes response.body, "PosturaCorretta"
-    assert_not_includes response.body, "Specific Target Node"
-    assert_not_includes response.body, "Creator Home Node"
+    assert_select "h1", text: /Trova la giusta posizione/
+    assert_select "h1", text: "Specific Target Node", count: 0
+    assert_select "h1", text: "Creator Home Node", count: 0
+    assert_select "script[type='application/ld+json']", text: /Specific Target Node/
   end
 
   test "prioritizes specific node over creator when target_controller/action is blank" do

@@ -3,6 +3,14 @@
 <% base_domain_hosts = %w[flowpulse.net] %>
 <% visible_domains = domains.reject { |domain| domain.canonical_host.present? && canonical_hosts.include?(domain.canonical_host) } %>
 <% visible_domains = visible_domains.sort_by { |domain| [base_domain_hosts.include?(domain.hostname) ? 0 : 1, domain.hostname] } %>
+<% canonical_publication_audits = visible_domains.filter_map { |domain| publication_audits[domain] unless domain.canonical_host.present? } %>
+
+<div class="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-domain-audit-summary>
+  <div class="rounded-xl border border-slate-200 bg-white p-4"><span class="block text-2xl font-black text-slate-950"><%= domains.size %></span><span class="text-xs font-bold uppercase tracking-wide text-slate-500">Host configurati</span></div>
+  <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4"><span class="block text-2xl font-black text-emerald-800"><%= canonical_publication_audits.count(&:ready?) %></span><span class="text-xs font-bold uppercase tracking-wide text-emerald-700">Pronti</span></div>
+  <div class="rounded-xl border border-amber-200 bg-amber-50 p-4"><span class="block text-2xl font-black text-amber-800"><%= canonical_publication_audits.count(&:attention?) %></span><span class="text-xs font-bold uppercase tracking-wide text-amber-700">Da completare</span></div>
+  <div class="rounded-xl border border-red-200 bg-red-50 p-4"><span class="block text-2xl font-black text-red-800"><%= canonical_publication_audits.count(&:blocked?) %></span><span class="text-xs font-bold uppercase tracking-wide text-red-700">Bloccati</span></div>
+</div>
 
 <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
   <table class="w-full text-left text-sm">
@@ -13,6 +21,8 @@
         <th class="px-4 py-3">Creator</th>
         <th class="px-4 py-3">Target</th>
         <th class="px-4 py-3">Locale</th>
+        <th class="px-4 py-3">Verifica</th>
+        <th class="px-4 py-3">Pubblicazione</th>
         <th class="px-4 py-3">Stato</th>
         <th class="px-4 py-3"></th>
       </tr>
@@ -20,6 +30,8 @@
     <tbody class="divide-y divide-slate-100">
       <% visible_domains.each do |domain| %>
         <% canonical_aliases = aliases_by_canonical[domain.hostname].to_a %>
+        <% domain_issues = audit.issues_for(domain) + canonical_aliases.flat_map { |domain_alias| audit.issues_for(domain_alias) } %>
+        <% publication_audit = publication_audits.fetch(domain) %>
         <tr>
           <td class="px-4 py-3 text-slate-500">#<%= domain.id %></td>
           <td class="px-4 py-3 font-semibold text-slate-950">
@@ -43,8 +55,31 @@
           <td class="px-4 py-3 text-slate-600"><%= domain.role_assignment&.display_name || "-" %></td>
           <td class="px-4 py-3 text-slate-600"><%= domain.canonical_host.present? ? "canonical → #{domain.canonical_host}" : domain.site_key.presence || [domain.target_controller, domain.target_action].compact.join("#").presence || "-" %></td>
           <td class="px-4 py-3 text-slate-600"><%= domain.locale %></td>
+          <td class="px-4 py-3">
+            <% if domain_issues.empty? %>
+              <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-emerald-700">Completo</span>
+            <% else %>
+              <div class="space-y-1.5">
+                <% domain_issues.each do |issue| %>
+                  <span class="block text-xs font-semibold <%= issue.severity == :error ? 'text-red-700' : 'text-amber-700' %>"><%= issue.severity == :error ? '●' : '▲' %> <%= issue.message %></span>
+                <% end %>
+              </div>
+            <% end %>
+          </td>
+          <td class="px-4 py-3">
+            <% if domain.canonical_host.present? %>
+              <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-slate-500">Alias</span>
+            <% elsif publication_audit.ready? %>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-emerald-700"><span aria-hidden="true">●</span> Pronto</span>
+            <% elsif publication_audit.blocked? %>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-red-700"><span aria-hidden="true">●</span> Bloccato</span>
+            <% else %>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-amber-700"><span aria-hidden="true">●</span> Da completare</span>
+            <% end %>
+            <div class="mt-1.5 text-xs font-medium text-slate-500"><%= publication_audit.count(:ready) %>/<%= publication_audit.checks.size %> controlli superati</div>
+          </td>
           <td class="px-4 py-3 text-slate-600"><%= domain.active? ? "Attivo" : "Disattivo" %></td>
-          <td class="px-4 py-3 text-right"><%= verified_link_to "Apri", admin_domain_path(domain), class: "font-bold text-blue-600 hover:text-blue-500" %></td>
+          <td class="px-4 py-3 text-right"><%= verified_link_to "Controlla", admin_domain_path(domain), class: "font-bold text-blue-600 hover:text-blue-500" %></td>
         </tr>
       <% end %>
     </tbody>

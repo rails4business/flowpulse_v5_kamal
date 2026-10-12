@@ -12,6 +12,16 @@ module Editorial
       assert_equal 2, result.counts.fetch(:mounts)
     end
 
+    test "validates a controller-backed site without builder mounts" do
+      result = Validator.new.validate("posturacorretta_it")
+
+      assert result.valid?, result.errors.join("\n")
+      assert_empty result.errors
+      assert_equal 1, result.counts.fetch(:sites)
+      assert_equal 0, result.counts.fetch(:pages)
+      assert_equal 0, result.counts.fetch(:mounts)
+    end
+
     test "component registry rejects unknown component types" do
       error = assert_raises(UnknownComponentError) { ComponentRegistry.fetch("partial/arbitraria") }
 

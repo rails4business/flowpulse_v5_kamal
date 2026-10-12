@@ -20,7 +20,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     mark = Node.find_by!(slug: "markpostura")
     postura = Node.find_by!(slug: "posturacorretta")
 
-    configured_slugs = %w[markpostura rails4business posturacorretta ilgiardinodelcorpo insideadventure corpoecoscienza cantachetipassa generaimpresa brand-in-costruzione radioestesia]
+    configured_slugs = %w[markpostura flowpulse rails4business posturacorretta percorso-integrato ilgiardinodelcorpo insideadventure corpoecoscienza cantachetipassa generaimpresa impegno svuotamente brand-in-costruzione igiene-posturale radioestesia]
     assert_equal configured_slugs.size, first.nodes
     assert_equal configured_slugs.size, second.nodes
     assert_equal configured_slugs.size, Node.where(slug: configured_slugs).count

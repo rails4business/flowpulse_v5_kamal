@@ -8,6 +8,7 @@ module Editorial
 
     STATUSES = %w[draft published archived].freeze
     VISIBILITIES = %w[public superadmin].freeze
+    SITE_RENDERERS = %w[builder controller].freeze
     SCHEMA_VERSION = 1
     PATH_PATTERN = %r{\A/(?:[a-z0-9]+(?:-[a-z0-9]+)*/?)*\z}
 
@@ -41,7 +42,17 @@ module Editorial
       return unless settings.is_a?(Hash)
 
       error(key, "site.key deve coincidere con la cartella") unless settings["key"] == key
-      required(settings, %w[key node_slug locale theme entrypoint], "site", key)
+      required(settings, %w[key node_slug locale], "site", key)
+
+      renderer = settings.fetch("renderer", "builder")
+      error(key, "renderer del Site non valido: #{renderer}") unless SITE_RENDERERS.include?(renderer)
+
+      if renderer == "controller"
+        validate_controller_site(site)
+        return
+      end
+
+      required(settings, %w[theme entrypoint], "site", key)
       error(key, "tema non registrato: #{settings['theme']}") unless ThemeRegistry.registered?(settings["theme"])
 
       mount_keys = site.mounts.filter_map { |mount| mount["key"] }
@@ -58,6 +69,11 @@ module Editorial
       validate_redirects(site)
     rescue Error => exception
       error(key, exception.message)
+    end
+
+    def validate_controller_site(site)
+      warning(site.key, "I mount vengono ignorati per un Site servito da controller") if site.mounts.any?
+      validate_redirects(site)
     end
 
     def validate_mount(site, mount)

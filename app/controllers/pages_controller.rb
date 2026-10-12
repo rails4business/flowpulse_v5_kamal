@@ -27,8 +27,8 @@ class PagesController < ApplicationController
 
   def viaggiatori
     profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
-    @traveler_subscription_scope_domain = current_domain
-    @traveler_subscriptions = TravelerSubscription.ordered_for(profile: profile, domain: @traveler_subscription_scope_domain)
+    @brand_access_scope_domain = current_domain
+    @brand_accesses = BrandAccess.ordered_for(profile: profile, domain: @brand_access_scope_domain)
   end
 
   private

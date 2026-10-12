@@ -57,7 +57,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
-  test "traveler with ancestor domain subscription can view free subscription node" do
+  test "traveler with ancestor brand access can view a subscription node" do
     traveler = User.create!(
       email_address: "free-subscription-traveler@example.com",
       password: "password123",
@@ -85,7 +85,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
       role_assignment: @assignment,
       locale: "it"
     )
-    TravelerSubscription.create!(profile: traveler.profile, domain: domain)
+    BrandAccess.create!(profile: traveler.profile, source_domain: domain)
     sign_in(traveler)
 
     get node_url(subscription_node)
@@ -136,7 +136,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".node-public-sidebar-link[href=?]", node_path(public_child), text: "Open Child"
     assert_select ".node-public-sidebar-link[href=?]", node_path(subscription_child), count: 0
 
-    TravelerSubscription.create!(profile: traveler.profile, domain: domain)
+    BrandAccess.create!(profile: traveler.profile, source_domain: domain)
     sign_in(traveler)
 
     get node_url(root)
@@ -161,7 +161,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to rails4b_path
   end
 
-  test "traveler sees subscribe action on domain node" do
+  test "traveler sees brand access action on domain node" do
     traveler = User.create!(
       email_address: "node-domain-traveler@example.com",
       password: "password123",
@@ -180,11 +180,11 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(@published_node)
 
     assert_response :success
-    assert_select "header form[action=?]", traveler_subscriptions_path
+    assert_select "header form[action=?]", brand_accesses_path
     assert_select "header details summary.rounded-full", text: /N/
     assert_select "header details a[href=?]", dashboard_path, text: "Dashboard"
-    assert_operator response.body.index("Iscriviti gratis"), :<, response.body.index("node-public-breadcrumb")
-    assert_includes response.body, "Iscriviti gratis"
+    assert_operator response.body.index("Accedi al brand"), :<, response.body.index("node-public-breadcrumb")
+    assert_includes response.body, "Accedi al brand"
   end
 
   test "public visitor sees free subscribe link on domain node" do
@@ -198,10 +198,10 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(@published_node)
 
     assert_response :success
-    assert_select "header a[href=?]", new_user_path(subscription: domain.signed_id(purpose: :free_subscription), return_to: node_path(@published_node)), text: "Iscriviti gratis"
+    assert_select "header a[href=?]", new_user_path(subscription: domain.signed_id(purpose: :free_subscription), return_to: node_path(@published_node)), text: "Accedi al brand"
   end
 
-  test "traveler sees subscribe action on nodes inside a navigation domain" do
+  test "traveler sees brand access action on nodes inside a navigation domain" do
     traveler = User.create!(
       email_address: "node-domain-child-traveler@example.com",
       password: "password123",
@@ -233,10 +233,10 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(child)
 
     assert_response :success
-    assert_select "header form[action=?]", traveler_subscriptions_path do
+    assert_select "header form[action=?]", brand_accesses_path do
       assert_select "input[name='domain_id'][value=?]", domain.id.to_s
     end
-    assert_operator response.body.index("Iscriviti gratis"), :<, response.body.index("node-public-breadcrumb")
+    assert_operator response.body.index("Accedi al brand"), :<, response.body.index("node-public-breadcrumb")
   end
 
   test "creator can preview own draft node" do

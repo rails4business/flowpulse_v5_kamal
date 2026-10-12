@@ -10,9 +10,15 @@ publisher_node_slug: posturacorretta
 
 Pensi: *“Sarà l'età, sarà lo stress. È normale dopo una giornata pesante.”*
 
-Forse, almeno in parte, è così. Ma c'è anche qualcosa che puoi imparare a osservare e sul quale puoi agire concretamente.
+L'età e lo stress sono elementi da considerare, ma forse dimentichi che il tuo corpo risponde ad ogni stimolo a cui è sottoposto e forse il più grave è proprio la forza di gravità.
 
-Prima di parlare dei benefici dobbiamo chiarire quattro cose:
+Il tuo corpo risponde costantemente alla forza di gravità con la postura, cioè trovando una posizione che medi le esigenze del mondo esterno e quelle del mondo interno. 
+
+Mondo interno perchè c'è da considerare che oltre agli stimoli esterni arrivanodai tuoi organi e dai tuoi sistemi, anche stimoli interni perchè anche organi e sistemi hanno delle necessità, in oltre non abbiamo solo aspetti fisici tangibili, dobbiamo considerare che interagiamo anche con energie, emozioni e pensieri. 
+
+Quando tutto questo è in armonia tutto funziona per il meglio altrimenti il corpo ti presenta il conto, di solito proprio quando hai meno tempo per pagarlo.
+
+Ecco perchè val la pena di approfondire quali benefici si possono trarre dalla postura ma prima iniziamo chiarendo alcuni punti:
 
 - che cos'è la postura;
 - che cosa può modificarla;

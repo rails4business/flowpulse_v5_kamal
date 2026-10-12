@@ -10,9 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "brand_accesses", force: :cascade do |t|
+    t.bigint "profile_id", null: false
+    t.bigint "source_domain_id", null: false
+    t.bigint "brand_node_id", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "joined_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_node_id"], name: "index_brand_accesses_on_brand_node_id"
+    t.index ["profile_id", "brand_node_id"], name: "index_brand_accesses_on_profile_id_and_brand_node_id", unique: true
+    t.index ["profile_id", "source_domain_id"], name: "index_brand_accesses_on_profile_id_and_source_domain_id", unique: true
+    t.index ["profile_id"], name: "index_brand_accesses_on_profile_id"
+    t.index ["source_domain_id"], name: "index_brand_accesses_on_source_domain_id"
+    t.index ["status"], name: "index_brand_accesses_on_status"
+  end
 
   create_table "data_commitment_imports", force: :cascade do |t|
     t.bigint "uploaded_by_user_id", null: false
@@ -163,17 +179,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
     t.index ["data_session_id"], name: "index_data_slots_on_data_session_id"
   end
 
-  create_table "domain_memberships", force: :cascade do |t|
+  create_table "domain_accesses", force: :cascade do |t|
     t.bigint "profile_id", null: false
     t.bigint "domain_id", null: false
     t.string "status", default: "active", null: false
-    t.datetime "joined_at", null: false
+    t.datetime "activated_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["domain_id"], name: "index_domain_memberships_on_domain_id"
-    t.index ["profile_id", "domain_id"], name: "index_domain_memberships_on_profile_id_and_domain_id", unique: true
-    t.index ["profile_id"], name: "index_domain_memberships_on_profile_id"
-    t.index ["status"], name: "index_domain_memberships_on_status"
+    t.bigint "brand_access_id", null: false
+    t.datetime "last_accessed_at", null: false
+    t.index ["brand_access_id", "domain_id"], name: "index_domain_accesses_on_brand_access_id_and_domain_id", unique: true
+    t.index ["brand_access_id"], name: "index_domain_accesses_on_brand_access_id"
+    t.index ["domain_id"], name: "index_domain_accesses_on_domain_id"
+    t.index ["profile_id", "domain_id"], name: "index_domain_accesses_on_profile_id_and_domain_id", unique: true
+    t.index ["profile_id"], name: "index_domain_accesses_on_profile_id"
+    t.index ["status"], name: "index_domain_accesses_on_status"
   end
 
   create_table "domains", force: :cascade do |t|
@@ -440,11 +460,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
     t.index ["username"], name: "index_profiles_on_username", unique: true
   end
 
+  create_table "reusable_skill_dependencies", force: :cascade do |t|
+    t.bigint "reusable_skill_id", null: false
+    t.bigint "required_skill_id", null: false
+    t.string "dependency_kind", default: "uses", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["required_skill_id"], name: "index_reusable_skill_dependencies_on_required_skill_id"
+    t.index ["reusable_skill_id", "required_skill_id"], name: "index_reusable_skill_dependencies_uniqueness", unique: true
+    t.index ["reusable_skill_id"], name: "index_reusable_skill_dependencies_on_reusable_skill_id"
+  end
+
   create_table "reusable_skill_nodes", force: :cascade do |t|
     t.bigint "reusable_skill_id", null: false
     t.bigint "node_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "draft", null: false
+    t.jsonb "configuration", default: {}, null: false
+    t.bigint "activated_by_profile_id"
+    t.index ["activated_by_profile_id"], name: "index_reusable_skill_nodes_on_activated_by_profile_id"
     t.index ["node_id"], name: "index_reusable_skill_nodes_on_node_id"
     t.index ["reusable_skill_id", "node_id"], name: "index_reusable_skill_nodes_uniqueness", unique: true
     t.index ["reusable_skill_id"], name: "index_reusable_skill_nodes_on_reusable_skill_id"
@@ -463,6 +498,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
     t.text "reuse_notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "resource_type"
+    t.text "documentation_markdown"
     t.index ["owner_profile_id", "slug"], name: "index_reusable_skills_on_owner_profile_id_and_slug", unique: true
     t.index ["owner_profile_id", "status"], name: "index_reusable_skills_on_owner_profile_id_and_status"
     t.index ["owner_profile_id"], name: "index_reusable_skills_on_owner_profile_id"
@@ -512,20 +549,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "traveler_subscriptions", force: :cascade do |t|
-    t.bigint "profile_id", null: false
-    t.bigint "domain_id", null: false
-    t.bigint "node_id", null: false
-    t.string "status", default: "active", null: false
-    t.datetime "subscribed_at", null: false
+  create_table "skill_product_links", force: :cascade do |t|
+    t.bigint "source_product_id", null: false
+    t.bigint "target_product_id", null: false
+    t.string "relation_kind", default: "uses", null: false
+    t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["domain_id"], name: "index_traveler_subscriptions_on_domain_id"
-    t.index ["node_id"], name: "index_traveler_subscriptions_on_node_id"
-    t.index ["profile_id", "domain_id"], name: "index_traveler_subscriptions_on_profile_id_and_domain_id", unique: true
-    t.index ["profile_id", "node_id"], name: "index_traveler_subscriptions_on_profile_id_and_node_id"
-    t.index ["profile_id"], name: "index_traveler_subscriptions_on_profile_id"
-    t.index ["status"], name: "index_traveler_subscriptions_on_status"
+    t.index ["source_product_id", "target_product_id", "relation_kind"], name: "index_skill_product_links_uniqueness", unique: true
+    t.index ["source_product_id"], name: "index_skill_product_links_on_source_product_id"
+    t.index ["target_product_id"], name: "index_skill_product_links_on_target_product_id"
+  end
+
+  create_table "skill_products", force: :cascade do |t|
+    t.bigint "reusable_skill_node_id", null: false
+    t.bigint "created_by_profile_id", null: false
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.string "status", default: "draft", null: false
+    t.string "visibility", default: "private", null: false
+    t.string "format", default: "markdown", null: false
+    t.text "body"
+    t.jsonb "data", default: {}, null: false
+    t.string "source_path"
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_profile_id"], name: "index_skill_products_on_created_by_profile_id"
+    t.index ["reusable_skill_node_id", "slug"], name: "index_skill_products_on_activation_and_slug", unique: true
+    t.index ["reusable_skill_node_id"], name: "index_skill_products_on_reusable_skill_node_id"
+    t.index ["source_path"], name: "index_skill_products_on_source_path", unique: true, where: "(source_path IS NOT NULL)"
   end
 
   create_table "users", force: :cascade do |t|
@@ -542,6 +595,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "brand_accesses", "domains", column: "source_domain_id"
+  add_foreign_key "brand_accesses", "nodes", column: "brand_node_id"
+  add_foreign_key "brand_accesses", "profiles"
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "data_commitments", column: "parent_id"
@@ -563,8 +619,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
   add_foreign_key "data_sessions", "services", name: "fk_data_sessions_service"
   add_foreign_key "data_slots", "data_experiences"
   add_foreign_key "data_slots", "data_sessions"
-  add_foreign_key "domain_memberships", "domains"
-  add_foreign_key "domain_memberships", "profiles"
+  add_foreign_key "domain_accesses", "brand_accesses"
+  add_foreign_key "domain_accesses", "domains"
+  add_foreign_key "domain_accesses", "profiles"
   add_foreign_key "domains", "nodes"
   add_foreign_key "domains", "role_assignments"
   add_foreign_key "impegno_contacts", "profiles"
@@ -594,7 +651,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
   add_foreign_key "professional_calendars", "users", column: "created_by_user_id"
   add_foreign_key "profiles", "nodes", column: "primary_node_id"
   add_foreign_key "profiles", "users"
+  add_foreign_key "reusable_skill_dependencies", "reusable_skills"
+  add_foreign_key "reusable_skill_dependencies", "reusable_skills", column: "required_skill_id"
   add_foreign_key "reusable_skill_nodes", "nodes"
+  add_foreign_key "reusable_skill_nodes", "profiles", column: "activated_by_profile_id"
   add_foreign_key "reusable_skill_nodes", "reusable_skills"
   add_foreign_key "reusable_skills", "profiles", column: "owner_profile_id"
   add_foreign_key "reusable_skills", "profiles", column: "responsible_profile_id"
@@ -603,8 +663,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_121000) do
   add_foreign_key "services", "nodes"
   add_foreign_key "services", "users", column: "created_by_user_id"
   add_foreign_key "sessions", "users"
-  add_foreign_key "traveler_subscriptions", "domains"
-  add_foreign_key "traveler_subscriptions", "nodes"
-  add_foreign_key "traveler_subscriptions", "profiles"
+  add_foreign_key "skill_product_links", "skill_products", column: "source_product_id"
+  add_foreign_key "skill_product_links", "skill_products", column: "target_product_id"
+  add_foreign_key "skill_products", "profiles", column: "created_by_profile_id"
+  add_foreign_key "skill_products", "reusable_skill_nodes"
   add_foreign_key "users", "role_assignments", column: "current_role_assignment_id"
 end

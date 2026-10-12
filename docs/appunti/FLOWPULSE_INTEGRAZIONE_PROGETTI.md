@@ -4,6 +4,12 @@
 > modelli `Project`, `ProjectUpdate`, `ProjectNeed` e `ProjectParticipation`
 > restano successivi al pilota PosturaCorretta. Prima si prova l'architettura
 > [contenuti, cicli e servizi](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md) in YAML.
+>
+> **Documento di visione, non fonte del modello corrente.** I futuri modelli
+> `Project*` descritti qui non sostituiscono `Node`, `ProblemSolvingCycle` o
+> `ReusableSkill`. Per la struttura attuale prevalgono
+> [ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md](ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md)
+> e [METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md](METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md).
 
 Prototipo visuale associato (privato, solo superadmin):
 `docs/private_prototypes/viste_html/flowpulse_sovranita_progetti_community.html`.

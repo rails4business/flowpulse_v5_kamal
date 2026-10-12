@@ -371,12 +371,12 @@ Se il ciclo si interrompe, la soluzione rimane aperta oppure viene chiusa senza
 validazione. Ciò che è stato imparato non viene cancellato e può essere usato
 in un nuovo ciclo.
 
-La pagina pubblica mostra quindi il metodo con una linea di sette
-passaggi: trovare il problema, isolarlo, immaginare la soluzione più semplice,
-provarla su di sé, provarla con poche persone, verificarla e diffonderla a chi
-vive lo stesso problema. Stati tecnici, criteri dettagliati di validazione e
-progressioni numeriche restano nella parte operativa di GeneraImpresa e
-FlowPulse.
+La pagina pubblica può riassumere il metodo, mentre la scheda operativa di
+Rails4Business conserva tutti i passaggi: definire il problema, isolarlo,
+immaginare più soluzioni possibili, scegliere la soluzione minima, provarla su
+di sé, provarla con poche persone, raccogliere feedback e correggere,
+verificarla, diffonderla e infine chiudere, automatizzare oppure riaprire il
+ciclo.
 
 ### Dalla soluzione a FlowPulse
 
@@ -413,10 +413,10 @@ FlowPulse
 È soltanto un esempio: non tutti i Brand devono avere la stessa struttura o
 attraversare gli stessi passaggi.
 
-In questa fase `Skill` è un concetto organizzativo, non ancora un modello del
-database. Indica una capacità riutilizzabile composta da un processo e dai
-contenuti o materiali necessari per applicarlo. La stessa Skill può essere
-collegata a più Node senza duplicarne la definizione.
+`ReusableSkill` è il modello che registra una capacità riutilizzabile. La
+stessa Skill può essere collegata a più Node senza duplicarne la definizione.
+Una Skill e un problema restano oggetti separati: il collegamento fra loro è
+facoltativo e viene creato soltanto quando serve.
 
 ### Due tipi di Brand
 
@@ -459,6 +459,199 @@ Rails4Business
 → attivazione nel Giardino del Corpo
 → attivazione nel Brand di un professionista
 ```
+
+## Mappa amministrativa di Brand e Node
+
+La visione globale appartiene a FlowPulse, perché attraversa tutti i Brand
+dell'ecosistema. La creazione e lo sviluppo di problemi e Skill rimangono
+invece in Rails4Business.
+
+La pagina superadmin globale deve mostrare inizialmente soltanto i Node che
+possiedono almeno un Domain. Non deve caricare nello stesso albero ogni Node
+del database.
+
+```text
+FlowPulse superadmin
+├── vista: Brand progetto con dominio
+└── vista: Brand professionali con dominio
+```
+
+Queste due voci sono filtri della vista e **non sono Node contenitore**. La
+distinzione esiste già in `node_type`; creare due ulteriori Node duplicherebbe
+un'informazione presente nel modello e produrrebbe appartenenze artificiali.
+
+I due tipi devono rimanere distinti:
+
+- un **Brand progetto** è un Node `project` con Domain e può essere aperto per
+  consultarne l'albero di progetti e sottoprogetti;
+- un **Brand professionale** è un Node `professional` con Domain e viene
+  mostrato in un elenco personale separato;
+- il rapporto fra un professionista e un Brand progetto viene espresso con
+  ruoli e relazioni, non inserendo il Brand professionale nell'albero del
+  progetto.
+
+### Vista globale
+
+Percorso previsto:
+
+```text
+/flowpulse/admin/brands
+```
+
+La prima schermata mostra solo:
+
+- nome del Brand;
+- tipo: progetto oppure professionale;
+- dominio o domini collegati;
+- stato;
+- proprietario;
+- collegamento alla scheda del Brand.
+
+Non mostra ancora i figli. In questo modo la mappa generale rimane leggibile
+anche quando aumentano progetti e sottoprogetti.
+
+### Apertura di un Brand progetto
+
+Aprendo un Brand progetto si vede il suo albero interno:
+
+```text
+PosturaCorretta
+├── Percorso online
+├── Programma lezioni
+├── Contenuti
+└── Eventi
+```
+
+L'albero usa `parent_id` soltanto per rappresentare la struttura interna del
+Brand. Un Brand professionale non viene inserito in questo albero per indicare
+una collaborazione.
+
+Un progetto interno può diventare a sua volta un sotto-Brand quando possiede un
+Domain. La sua profondità non è prestabilita: fra la radice del Brand e quel
+Node possono esistere altri progetti, sottoprogetti e, in futuro, collegamenti
+ponte. Per esempio `Igiene Posturale` potrà essere un discendente di
+`PosturaCorretta`, ma il suo genitore diretto verrà deciso soltanto quando
+l'albero reale sarà stato definito. Il dominio `igieneposturale.it` andrà
+collegato al Node che rappresenterà la sua effettiva radice pubblica.
+
+I Node sono quindi una struttura evolutiva: possono essere aggiunti, spostati
+o articolati senza cambiare il significato del Domain. `parent_id` descrive la
+gerarchia effettiva; un Node ponte descrive invece un collegamento trasversale
+e non rende il Node collegato un figlio. Quando l'esplorazione incontra un Node
+con Domain, lo mostra come confine navigabile verso il sotto-Brand e non ne
+espande automaticamente i discendenti.
+
+### Node, Domain, lingua e Site
+
+Le responsabilità restano separate:
+
+- il **Node** rappresenta identità, appartenenza e struttura;
+- il **Domain** rappresenta un indirizzo pubblico del Node;
+- la **lingua** descrive la versione linguistica pubblicata dal Domain;
+- il **Site** (`site_key`) sceglie struttura editoriale e presentazione.
+
+Un Node può avere più Domain. Più Domain possono condividere lo stesso Site;
+lo stesso Node può usare Site diversi soltanto quando serve davvero una
+presentazione o una struttura editoriale differente. Gli alias tecnici, come
+`www`, puntano al dominio canonico; un dominio in un'altra lingua non è un
+alias e conserva canonical, lingua, sitemap e in futuro `hreflang` propri.
+
+Il Domain non ricostruisce né congela l'albero: conserva il riferimento al
+proprio Node radice. Di conseguenza la struttura sottostante può evolvere e la
+proiezione pubblica viene calcolata ogni volta a partire da quel Node,
+applicando stato, visibilità, confini dei sotto-Brand e collegamenti ponte.
+
+### Apertura di un Node
+
+Nella scheda del singolo Node devono essere leggibili progressivamente:
+
+- panoramica e posizione nell'albero;
+- sviluppo e NodeEvent;
+- problemi collegati;
+- Skill collegate;
+- processi ed esperienze.
+
+I dati non vengono duplicati:
+
+- FlowPulse mostra la mappa e le associazioni;
+- Rails4Business crea e sviluppa `ProblemSolvingCycle` e `ReusableSkill`;
+- l'admin del Brand collega problemi e Skill ai propri Node;
+- 1Impegno registra il lavoro concreto, il tempo e gli appuntamenti.
+
+### Ordine di implementazione
+
+Si procede un blocco alla volta:
+
+1. **Registro globale dei Brand con dominio**: due elenchi separati, Brand
+   progetto e Brand professionali.
+2. **Scheda del Brand progetto**: apertura dell'albero interno già esistente,
+   senza cambiare ancora le associazioni.
+3. **Problemi nel Node**: visualizzazione, collegamento e scollegamento dei
+   `ProblemSolvingCycle` disponibili.
+4. **Skill nel Node**: visualizzazione, collegamento e scollegamento delle
+   `ReusableSkill` disponibili.
+5. **Regole strutturali**: impedire gerarchie improprie fra Brand personali e
+   Brand progetto, riconoscere i sotto-Brand con Domain e verificare
+   l'isolamento amministrativo fra Brand.
+
+Il primo blocco è intenzionalmente piccolo: deve offrire al superadmin una
+visione generale dei soli Brand dotati di dominio, senza anticipare tutte le
+funzioni della scheda Node.
+
+### Stato dell'implementazione
+
+Il primo blocco è disponibile nell'area superadmin FlowPulse:
+
+```text
+/flowpulse/admin/brands
+```
+
+Sono già presenti:
+
+- registri separati per Brand progetto e Brand professionali;
+- visualizzazione dei soli Brand dotati di dominio;
+- rete dei Brand progetto nella scheda di un Brand professionale;
+- albero interno del Brand progetto;
+- arresto dell'espansione quando l'albero incontra un sotto-Brand con dominio;
+- portale per aprire il sotto-Brand come nuovo contesto;
+- conteggio dei problemi e delle Skill collegati ai Node.
+
+Lo stesso confine è applicato nell'albero operativo del proprietario:
+
+```text
+/:brand_slug/admin/nodes
+```
+
+Lista e schema mostrano il sotto-Brand ma non i suoi discendenti. Il
+proprietario non può modificare quei discendenti usando il contesto del Brand
+padre: deve aprire il sotto-Brand e superare il relativo controllo di accesso.
+Nel Brand padre non è inoltre possibile aggiungere nuovi figli direttamente
+sotto il portale del sotto-Brand.
+
+La mappa globale rimane riservata al superadmin. La rete personale è
+disponibile separatamente:
+
+```text
+/flowpulse/rete
+```
+
+La pagina applica gli stessi confini ma mostra soltanto:
+
+- Brand professionali appartenenti alla persona;
+- Brand progetto posseduti;
+- Brand amministrati tramite un ruolo contestuale;
+- collaborazioni operative e relativo ruolo.
+
+La rappresentazione è una lista ad albero essenziale: il Brand professionale
+fa da radice visiva, sotto compaiono i suoi Brand progetto e ogni riga mostra
+soltanto nome e dominio. I Node interni si vedono solo dopo aver aperto il
+Brand progetto. Se il collegamento a un Brand professionale non è esplicito o
+univoco, il Brand viene conservato in “Altri Brand posseduti” invece di
+inventare una gerarchia.
+
+Anche il superadmin vede in questa pagina soltanto la propria rete personale;
+per consultare tutto l'ecosistema deve aprire la mappa globale. In questo modo
+il privilegio amministrativo non rende ambigua la normale esperienza utente.
 
 ### Gli ambiti di applicazione
 
