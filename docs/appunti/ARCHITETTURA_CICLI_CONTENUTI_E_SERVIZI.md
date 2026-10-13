@@ -56,6 +56,73 @@ ritmo di lavoro. La struttura e le ricorrenze possono ancora arrivare da YAML;
 gli appuntamenti concreti possono ora arrivare dalle DataSession pubbliche del
 calendario professionale.
 
+## Percorso Integrato — programma personale, schede e diario
+
+> **Decisione annotata, da implementare dopo la base Domain/AI e il pilota
+> PosturaCorretta.** Percorso Integrato deve offrire alla persona una vista del
+> proprio programma, distinta dal calendario di 1Impegno. La prima versione
+> operativa sarà visibile almeno al `superadmin`; l'accesso di persona e
+> professionisti verrà aperto soltanto dopo aver definito ruoli e privacy.
+
+Il programma personale può contenere attività di due tipi:
+
+- **in autonomia:** schede, pratiche, osservazioni o attività che la persona
+  svolge da sola;
+- **con un professionista:** consulenze, trattamenti, verifiche o altre
+  attività proposte dal singolo professionista entro le proprie competenze.
+
+Più professionisti possono contribuire allo stesso Percorso Integrato senza
+fondere responsabilità e programmi. Ogni proposta deve conservare almeno:
+
+- professionista responsabile;
+- obiettivo e indicazioni essenziali;
+- modalità autonoma, individuale, di gruppo o evento;
+- schede e materiali collegati;
+- frequenza o tempistica suggerita;
+- stato e feedback della persona.
+
+Il **diario** raccoglie ciò che è stato realmente fatto, le osservazioni e il
+feedback collegato alle singole schede o attività. Non coincide con il
+calendario e non deve trasformare automaticamente ogni nota in un impegno.
+
+```text
+Percorso Integrato della persona
+├── Programma in autonomia
+│   └── Schede e attività
+├── Programma del professionista A
+│   └── Schede, consulenze o trattamenti
+├── Programma del professionista B
+│   └── Schede, consulenze o trattamenti
+└── Diario
+    └── esecuzioni, osservazioni e feedback
+```
+
+Quando una voce viene collocata in un giorno e in un orario, genera o collega
+un `DataCommitment` in 1Impegno. Il commitment registra **chi dedica tempo,
+quando, in quale ruolo e con quale stato**; non duplica il testo della scheda,
+il programma o il diario, ma conserva il collegamento alla voce precisa.
+
+```text
+Scheda o attività del programma
+        ↓ viene calendarizzata
+DataCommitment in 1Impegno
+        ↓ dopo lo svolgimento
+voce del diario e feedback
+```
+
+La home di Percorso Integrato dovrà quindi mostrare, inizialmente al
+`superadmin`:
+
+1. programma complessivo della persona;
+2. attività in autonomia;
+3. programmi distinti dei professionisti coinvolti;
+4. schede ancora da pianificare e attività già calendarizzate;
+5. diario e feedback;
+6. collegamento all'impegno corrispondente in 1Impegno.
+
+Diario, programmi personali e dati sanitari restano privati e non entrano in
+sitemap, API pubbliche, `llms.txt` o altre forme di discovery per le AI.
+
 ## 0. Week Plan YAML — prototipo in uso
 
 MarkPostura carica un file per settimana da:

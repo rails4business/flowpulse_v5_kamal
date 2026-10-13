@@ -130,6 +130,18 @@ class NodeTest < ActiveSupport::TestCase
     assert_equal other_ra.id, domain.reload.role_assignment_id
   end
 
+  test "only active domains turn a node into a brand boundary" do
+    domain = Domain.create!(hostname: "inactive-brand.example", node: @node_a, locale: "it", active: false)
+
+    assert_not @node_a.brand?
+    assert_nil @node_b.site_node
+
+    domain.update!(active: true)
+
+    assert @node_a.brand?
+    assert_equal @node_a, @node_b.site_node
+  end
+
   test "accepts free subscription visibility" do
     node = Node.new(
       title: "Free Subscription Node",

@@ -54,7 +54,13 @@ module Performance
       def canonical_domain_hosts
         configuration = load_yaml(@domains_path, aliases: true)
         domains = configuration.fetch(@environment, configuration.fetch("default", {}))
-        domains.filter_map { |host, settings| host unless settings.to_h["canonical_host"].present? }.sort
+        domains.filter_map do |host, settings|
+          attributes = settings.to_h
+          next if attributes["active"] == false
+          next if attributes["canonical_host"].present?
+
+          host
+        end.sort
       end
 
       def validate_domain(host, configuration, errors, warnings)

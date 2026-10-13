@@ -1,7 +1,7 @@
 # Flowpulse — Audit AI Discovery, SEO, API e MCP
 
 Data dell'audit iniziale: 11 ottobre 2026  
-Ultimo aggiornamento applicativo: 12 ottobre 2026
+Ultimo aggiornamento applicativo: 13 ottobre 2026
 
 ## Stato dopo l'audit
 
@@ -19,6 +19,20 @@ Skill disponibile, attivazione attiva e l'intero ramo Node pubblico nel Domain.
 `subscription`, `purchase` e `private` non vengono esposti. Le sezioni che
 seguono conservano anche decisioni e lacune emerse nell'audit iniziale; quando
 una voce contrasta con questo aggiornamento prevale lo stato qui dichiarato.
+
+### Verifica successiva al deploy del 13 ottobre 2026
+
+Lo smoke test HTTPS ha confermato risposta `200` per landing, `robots.txt`,
+`sitemap.xml`, `llms.txt`, `/api/v1/domain` e `/api/v1/nodes` sui principali
+domini pubblici della rete. La root di 1Impegno conserva il proprio redirect
+applicativo. `igieneposturale.it` risolve ora a `178.105.106.247` e rinvia a
+GeneraImpresa perché il relativo Node non è ancora pubblico; l'alias `www`
+deve essere ricontrollato dopo la propagazione completa.
+
+SvuotaMente è stato riclassificato correttamente come progetto/Node privo di
+dominio autonomo. La pagina resta disponibile nella piattaforma, mentre
+`svuotamente.it` è disattivato e non partecipa più a discovery, budget
+PageSpeed o confini pubblici dei Brand.
 
 ## Legenda
 
@@ -226,7 +240,7 @@ Questo inventario deriva dalle configurazioni versionate. L'associazione effetti
 | `generaimpresa.it` | `brands/genera_impresa#index`, layout `landing` | Node `generaimpresa` esiste in `config/nodes.yml`, non è indicato nel YAML Domain | Title/description presenti; loghi non dichiarati | Allineare Domain e Node prima di esporre l'albero pubblico. |
 | `rails4b.com` | `landing#rails4b`, layout `landing` | `rails4business` | Title/description presenti; loghi non dichiarati | Preparare ingresso Node e asset condivisi. |
 | `cantachetipassa.it` | `landing#cantachetipassa`, layout `landing` | `cantachetipassa` | Title/description presenti; loghi non dichiarati | Misurare landing e sezione fisarmonica, poi collegare l'ingresso Node. |
-| `svuotamente.it` | `brands/svuotamente#index`, rendering senza layout | Non indicato nel YAML Domain | Title/description presenti | Eccezione architetturale: assenza del layout pubblico comune e quindi metadata/asset/policy potenzialmente divergenti. |
+| SvuotaMente | Progetto/Node con pagina `/brands/svuotamente`; non possiede un dominio autonomo | Nessun Domain attivo | Prototipo raggiungibile dalla piattaforma | Non deve essere presentato come sotto-Brand con confine Domain né incluso nei controlli host, sitemap o API di un dominio inesistente. |
 | `1impegno.it` | `brands/impegno/home#index`, layout `landing`, con area operativa | Non indicato nel YAML Domain | Title/description presenti | Separare chiaramente landing pubblica e applicazione autenticata; nessun calendario personale nell'API pubblica. |
 | `igieneposturale.it` | `landing#igieneposturale` | Non indicato nel YAML Domain | Metadata specifici non dichiarati | Completare identità e decidere il Node radice. |
 | `ilgiardinodelcorpo.it` | `landing#giardino_del_corpo`, layout `landing` | `ilgiardinodelcorpo` | Title/description presenti; loghi non dichiarati | Preparare asset e ingresso Node; eventi/luoghi arriveranno dopo tramite Skill. |

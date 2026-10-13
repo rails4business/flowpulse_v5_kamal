@@ -50,7 +50,7 @@ class ChangelogControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "a[href='#{posturacorretta_changelog_path}']", text: /PosturaCorretta/
-    assert_select "a[href='#{brand_changelog_path("svuotamente")}']", text: /SvuotaMente/
+    assert_select "a[href='#{brand_changelog_path("svuotamente")}']", text: /SvuotaMente/, count: 0
     assert_select "a[href='#{brand_changelog_entry_path("posturacorretta", "percorso-educativo-e-programma-lezioni")}']", count: 0
   end
 
@@ -120,12 +120,14 @@ class ChangelogControllerTest < ActionDispatch::IntegrationTest
       posturacorretta_url => posturacorretta_changelog_path,
       percorso_integrato_url => brand_changelog_path("percorso-integrato"),
       cantachetipassa_url => brand_changelog_path("cantachetipassa"),
-      svuotamente_url => brand_changelog_path("svuotamente"),
-      igieneposturale_url => brand_changelog_path("igieneposturale")
+      svuotamente_url => brand_changelog_path("svuotamente")
     }.each do |page, changelog_link|
       get page
       assert_response :success
       assert_select "footer a[href='#{changelog_link}']", text: "Changelog"
     end
+
+    get igieneposturale_url
+    assert_redirected_to genera_impresa_url
   end
 end

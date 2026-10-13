@@ -7,7 +7,7 @@ module Performance
 
       assert result.valid?, result.errors.join("\n")
       assert_empty result.errors
-      assert_equal 12, result.document.fetch("domains").size
+      assert_equal 11, result.document.fetch("domains").size
       assert_equal "skipped", result.document.dig("domains", "igieneposturale.it", "baseline", "status")
       assert_includes result.warnings, "posturacorretta.org: baseline ancora da misurare"
     end

@@ -105,18 +105,18 @@ class Node < ApplicationRecord
   end
 
   # Il contesto preciso può essere un progetto interno. Il sito/Brand si ricava
-  # risalendo fino al primo Node che possiede almeno un Domain.
+  # risalendo fino al primo Node che possiede almeno un Domain attivo.
   def site_node
     current = self
     while current.present?
-      return current if current.domains.exists?
+      return current if current.domains.active.exists?
 
       current = current.parent
     end
   end
 
   def brand?
-    domains.exists?
+    domains.active.exists?
   end
 
   def primary_domain

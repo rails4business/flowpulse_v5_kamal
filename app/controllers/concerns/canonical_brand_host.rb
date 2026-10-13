@@ -9,7 +9,6 @@ module CanonicalBrandHost
     "generaimpresa" => "generaimpresa.it",
     "rails4b" => "rails4b.com",
     "cantachetipassa" => "cantachetipassa.it",
-    "svuotamente" => "svuotamente.it",
     "impegno" => "1impegno.it",
     "impegni" => "1impegno.it",
     "igieneposturale" => "igieneposturale.it",
@@ -50,8 +49,6 @@ module CanonicalBrandHost
 
     def canonical_brand_host_for_path
       segments = request.path.to_s.split("/").reject(&:blank?)
-      return "svuotamente.it" if segments.first(2) == %w[brands svuotamente]
-
       BRAND_PATH_HOSTS[segments.first]
     end
 end

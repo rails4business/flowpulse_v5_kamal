@@ -130,15 +130,11 @@ default: &default
 
   svuotamente.it:
     locale: it
-    target_controller: brands/svuotamente
-    target_action: index
-    primary: true
-    node_slug: svuotamente
-    site_title: "SvuotaMente — Libera lo spazio, recupera il valore"
-    site_description: "Vendi ciò che vale, dona ciò che può servire e libera gli spazi entro una data."
+    active: false
 
   www.svuotamente.it:
     canonical_host: svuotamente.it
+    active: false
 
   1impegno.it:
     locale: it
