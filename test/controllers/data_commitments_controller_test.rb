@@ -182,23 +182,51 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert commitment.valid?
   end
 
-  test "editorial link opens a prefilled content commitment form" do
+  test "editorial link opens a prefilled publication decision form" do
     get impegno_agenda_url(
       workspace: "1",
       default_brand: "posturacorretta",
-      new_content: "1",
+      editorial_decision: "1",
       content_key: "inizia-incontro-salute-metodiche",
       content_title: "L'incontro con la salute e con le metodiche posturali",
       publication_change_kind: "publish"
     )
 
     assert_response :success
-    assert_select "dialog#new-commitment-dialog[data-modal-auto-open-value='true']"
-    assert_select "dialog#new-commitment-dialog h2", text: "Nuovo DataCommitment editoriale"
+    assert_select "dialog#publication-decision-dialog[open]"
+    assert_select "dialog#publication-decision-dialog h2", text: "Approva la pubblicazione"
     assert_select "input[name='data_commitment[title]'][value=?]", "L'incontro con la salute e con le metodiche posturali"
-    assert_select "select[name='data_commitment[kind]'] option[value='content'][selected]"
     assert_select "input[name='data_commitment[content_key]'][value='inizia-incontro-salute-metodiche']"
     assert_select "select[name='data_commitment[publication_change_kind]'] option[value='publish'][selected]"
+  end
+
+  test "publication decision immediately approves content without occupying the calendar" do
+    assert_difference -> { DataCommitment.count }, 1 do
+      post data_commitments_url, params: {
+        publication_decision: "1",
+        context_brand: "posturacorretta",
+        return_to: "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/benefici-postura-corretta",
+        data_commitment: {
+          title: "I benefici di una postura corretta",
+          content_key: "inizia-benefici-postura-corretta",
+          publication_change_kind: "publish",
+          publication_status: "published",
+          publication_visibility: "public",
+          access_modes: ["free"]
+        }
+      }
+    end
+
+    commitment = DataCommitment.last
+    assert_redirected_to "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/benefici-postura-corretta"
+    assert_equal "content", commitment.kind
+    assert_equal "completed", commitment.status
+    assert_equal "published", commitment.publication_status
+    assert_equal "public", commitment.publication_visibility
+    assert_equal ["free"], commitment.access_modes
+    assert_not commitment.blocks_calendar?
+    assert_equal @profile, commitment.published_by_profile
+    assert commitment.published_at.present?
   end
 
   test "content access supports subscription or purchase but keeps free exclusive" do
@@ -252,17 +280,17 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_not_equal commitment.domain.node, commitment.subject
   end
 
-  test "a new commitment records the active 1Impegno Skill activation for the Brand node" do
+  test "a content commitment can refer to a product of an activated Skill" do
     creator = RoleAssignment.create!(profile: @profile, role: :ideatore)
     brand = Node.create!(title: "PosturaCorretta Skill", slug: "posturacorretta-skill-test", role_assignment: creator, node_type: :project)
     @domain.update!(node: brand, auth_slug: "posturacorretta")
     skill = ReusableSkill.create!(
       owner_profile: @profile,
-      title: "1Impegno",
-      slug: "1impegno",
-      category: "commitments",
+      title: "Contenuti",
+      slug: "contenuti-test",
+      category: "contents",
       status: "testing",
-      resource_type: "DataCommitment"
+      resource_type: "Content"
     )
     activation = ReusableSkillNode.create!(
       reusable_skill: skill,
@@ -270,52 +298,29 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
       status: "active",
       activated_by_profile: @profile
     )
+    product = activation.skill_products.create!(
+      title: "Capitolo introduttivo",
+      slug: "capitolo-introduttivo",
+      created_by_profile: @profile
+    )
 
     assert_difference -> { DataCommitment.count }, 1 do
       post data_commitments_url, params: {
         context_brand: "posturacorretta",
         data_commitment: {
-          title: "Impegno prodotto dalla Skill",
-          kind: "personal",
+          title: "Approvare il capitolo",
+          kind: "content",
           starts_at: "2026-10-20T09:00",
           ends_at: "2026-10-20T10:00",
-          calendar_label: @profile.display_name
+          calendar_label: @profile.display_name,
+          subject_node_id: brand.id,
+          skill_product_id: product.id,
+          content_key: "capitolo-introduttivo"
         }
       }
     end
 
-    assert_equal activation, DataCommitment.last.reusable_skill_node
-  end
-
-  test "a suspended 1Impegno Skill prevents new commitments for that Brand" do
-    creator = RoleAssignment.create!(profile: @profile, role: :ideatore)
-    brand = Node.create!(title: "PosturaCorretta sospesa", slug: "posturacorretta-suspended-test", role_assignment: creator, node_type: :project)
-    @domain.update!(node: brand, auth_slug: "posturacorretta")
-    skill = ReusableSkill.create!(
-      owner_profile: @profile,
-      title: "1Impegno",
-      slug: "1impegno",
-      category: "commitments",
-      status: "testing",
-      resource_type: "DataCommitment"
-    )
-    ReusableSkillNode.create!(reusable_skill: skill, node: brand, status: "suspended", activated_by_profile: @profile)
-
-    assert_no_difference -> { DataCommitment.count } do
-      post data_commitments_url, params: {
-        context_brand: "posturacorretta",
-        data_commitment: {
-          title: "Impegno da bloccare",
-          kind: "personal",
-          starts_at: "2026-10-21T09:00",
-          ends_at: "2026-10-21T10:00",
-          calendar_label: @profile.display_name
-        }
-      }
-    end
-
-    assert_redirected_to impegno_url(area: "user", view: "agenda")
-    assert_equal "La funzione 1Impegno non è attiva per questo Brand.", flash[:alert]
+    assert_equal product, DataCommitment.last.skill_product
   end
 
   test "superadmin starts and completes a timer from a GeneraImpresa task" do

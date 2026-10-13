@@ -3,7 +3,6 @@ require "digest"
 module Brands
   module Impegno
     class CommitmentsController < ApplicationController
-      include ImpegnoSkillAccess
       layout "landing"
 
   def index
@@ -29,10 +28,6 @@ module Brands
     # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
     @default_brand = params[:default_brand].to_s.strip.presence || "impegno"
     @default_domain = default_domain_for(@default_brand)
-    unless impegno_skill_available_for?(@default_domain)
-      return render plain: "La funzione 1Impegno non è attiva per questo Brand.", status: :forbidden
-    end
-    @impegno_skill_activation = impegno_skill_activation_for(@default_domain)
     @commitment_node_options = available_commitment_nodes
     @default_commitment_node = @default_domain&.node
 
@@ -76,6 +71,7 @@ module Brands
   end
 
   def create
+    return create_publication_decision if ActiveModel::Type::Boolean.new.cast(params[:publication_decision])
     return create_personal_commitment unless params[:project_slug].present?
 
     return redirect_to(data_commitments_path, alert: "Solo il superadmin può registrare attività GeneraImpresa.") unless Current.user&.superadmin_user?
@@ -84,9 +80,6 @@ module Brands
     profile = current_profile
     domain = current_domain || Domain.find_for_host("posturacorretta.org")
     raise ActiveRecord::RecordNotFound, "Dominio PosturaCorretta non configurato" unless domain
-    unless impegno_skill_available_for?(domain)
-      return redirect_to activity_return_path(project, step, task), alert: "La funzione 1Impegno non è attiva per questo Brand."
-    end
 
     start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
     if start_now && active_timer_for_calendar?(profile, "profile:#{profile.id}")
@@ -97,7 +90,6 @@ module Brands
     commitment.profile = profile
     commitment.created_by_profile = profile
     commitment.domain = domain
-    commitment.reusable_skill_node = impegno_skill_activation_for(domain)
     commitment.assignee_profile = profile
     commitment.calendar_key = "profile:#{profile.id}"
     commitment.calendar_label = profile.display_name.presence || profile.username
@@ -141,13 +133,11 @@ module Brands
 
     attributes = personal_commitment_params
     subject_node_id = attributes.delete(:subject_node_id)
+    skill_product_id = attributes.delete(:skill_product_id)
     commitment.assign_attributes(attributes)
     commitment.domain = domain
-    unless impegno_skill_available_for?(domain)
-      return redirect_to commitment_return_path(commitment), alert: "La funzione 1Impegno non è attiva per questo Brand."
-    end
-    commitment.reusable_skill_node = impegno_skill_activation_for(domain)
     assign_subject_node(commitment, subject_node_id, domain:, preserve_if_blank: true)
+    commitment.skill_product = skill_product_for(skill_product_id, commitment.subject) if skill_product_id.present?
     assign_calendar_identity(commitment)
     if commitment.actual_started_at.present?
       commitment.status = commitment.actual_ended_at.present? ? "completed" : "in_progress"
@@ -255,6 +245,101 @@ module Brands
 
   private
 
+    def create_publication_decision
+      brand = params[:context_brand].to_s.strip.presence || params[:default_brand].to_s.strip.presence
+      domain = default_domain_for(brand)
+      return redirect_to(personal_commitment_return_path, alert: "Il dominio del contenuto non è disponibile.") unless domain
+
+      attributes = params.require(:data_commitment).permit(
+        :title, :content_key, :publication_change_kind, :publication_note_md,
+        :publication_status, :publication_visibility, :subject_node_id, :skill_product_id,
+        access_modes: []
+      )
+      subject_node_id = attributes.delete(:subject_node_id)
+      subject = subject_node_id.present? ? available_commitment_nodes.find_by(id: subject_node_id) : nil
+      subject ||= domain.node
+      unless publication_manageable_by_current_user?(domain, subject)
+        return redirect_to personal_commitment_return_path, alert: "Non hai i permessi per approvare questo contenuto."
+      end
+
+      change_kind = attributes[:publication_change_kind].presence_in(Commitment::PUBLICATION_CHANGE_KINDS) || "publish"
+      publication_status = attributes[:publication_status].presence_in(Commitment::PUBLICATION_STATUSES) || publication_status_for(change_kind)
+      publication_visibility = attributes[:publication_visibility].presence_in(Commitment::PUBLICATION_VISIBILITIES) || "public"
+      access_modes = Array(attributes[:access_modes]).compact_blank
+      access_modes = ["free"] if access_modes.empty?
+      now = Time.current
+
+      commitment = Commitment.new(
+        profile: current_profile,
+        created_by_profile: current_profile,
+        domain: domain,
+        subject: subject,
+        skill_product: skill_product_for(attributes[:skill_product_id], subject),
+        title: attributes[:title],
+        kind: "content",
+        status: "completed",
+        starts_at: now,
+        blocks_calendar: false,
+        pricing_type: "none",
+        contribution_type: "unpaid",
+        content_key: attributes[:content_key],
+        publish_on_completion: true,
+        publication_status: publication_status,
+        publication_visibility: publication_visibility,
+        publication_change_kind: change_kind,
+        publication_note_md: attributes[:publication_note_md],
+        access_modes: access_modes,
+        published_at: (now if publication_status == "published"),
+        published_by_profile: current_profile,
+        metadata: { "content_path" => safe_return_path }
+      )
+      assign_previous_publication_commitment(commitment)
+      assign_calendar_identity(commitment)
+
+      if commitment.save
+        redirect_to personal_commitment_return_path, notice: publication_decision_notice(publication_status)
+      else
+        redirect_to personal_commitment_return_path, alert: commitment.errors.full_messages.to_sentence
+      end
+    end
+
+    def publication_manageable_by_current_user?(domain, subject)
+      return true if Current.user&.superadmin_user?
+
+      domain.node&.administered_by?(Current.user) || subject&.administered_by?(Current.user) || false
+    end
+
+    def skill_product_for(requested_id, subject)
+      return if requested_id.blank?
+
+      product = SkillProduct.includes(:node).find_by(id: requested_id)
+      return product if product && product.node == subject
+
+      nil
+    end
+
+    def publication_status_for(change_kind)
+      return "archived" if change_kind == "archive"
+      return "draft" if change_kind == "unpublish"
+
+      "published"
+    end
+
+    def publication_decision_notice(publication_status)
+      case publication_status
+      when "published" then "Pubblicazione approvata."
+      when "archived" then "Contenuto archiviato."
+      else "Contenuto riportato in bozza."
+      end
+    end
+
+    def safe_return_path
+      candidate = params[:return_to].to_s
+      return candidate if candidate.start_with?("/") && !candidate.start_with?("//")
+
+      nil
+    end
+
     def parse_agenda_date
       return if params[:date].blank?
 
@@ -273,18 +358,16 @@ module Brands
         available_domains.find_by(id: params.dig(:data_commitment, :domain_id))
       end
       return redirect_to(personal_commitment_return_path, alert: "Il dominio del contesto non è disponibile.") unless domain
-      unless impegno_skill_available_for?(domain)
-        return redirect_to personal_commitment_return_path, alert: "La funzione 1Impegno non è attiva per questo Brand."
-      end
 
       attributes = personal_commitment_params
       subject_node_id = attributes.delete(:subject_node_id)
+      skill_product_id = attributes.delete(:skill_product_id)
       commitment = Commitment.new(attributes)
       commitment.profile = current_profile
       commitment.created_by_profile = current_profile
       commitment.domain = domain
-      commitment.reusable_skill_node = impegno_skill_activation_for(domain)
       assign_subject_node(commitment, subject_node_id, domain:)
+      commitment.skill_product = skill_product_for(skill_product_id, commitment.subject) if skill_product_id.present?
       assign_previous_publication_commitment(commitment)
       assign_calendar_identity(commitment)
       start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
@@ -333,8 +416,7 @@ module Brands
     end
 
     def personal_commitment_return_path
-      candidate = params[:return_to].to_s
-      return candidate if candidate.start_with?("/") && !candidate.start_with?("//")
+      return safe_return_path if safe_return_path
 
       impegno_path(area: "user", view: "agenda")
     end
@@ -455,7 +537,7 @@ module Brands
       params.require(:data_commitment).permit(
         :title, :description, :kind, :starts_at, :ends_at, :all_day,
         :actual_started_at, :actual_ended_at, :calendar_label, :domain_id,
-        :context_label, :data_experience_id, :content_key, :publish_on_completion,
+        :context_label, :data_experience_id, :content_key, :publish_on_completion, :skill_product_id,
         :publication_status, :publication_visibility, :publication_change_kind,
         :publication_note_md, :subject_node_id, access_modes: []
       ).except(:domain_id, :context_label)

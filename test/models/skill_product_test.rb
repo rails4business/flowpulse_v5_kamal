@@ -27,4 +27,13 @@ class SkillProductTest < ActiveSupport::TestCase
     product.source_path = "config/data/brands/product-brand/contenuto.md"
     assert product.valid?
   end
+
+  test "can be scheduled and tracked by 1Impegno records" do
+    assert_equal SkillProduct, DataSession.reflect_on_association(:skill_product).klass
+    assert_equal SkillProduct, DataSlot.reflect_on_association(:skill_product).klass
+    assert_equal SkillProduct, DataCommitment.reflect_on_association(:skill_product).klass
+    assert_equal DataSession, SkillProduct.reflect_on_association(:data_sessions).klass
+    assert_equal DataSlot, SkillProduct.reflect_on_association(:data_slots).klass
+    assert_equal DataCommitment, SkillProduct.reflect_on_association(:data_commitments).klass
+  end
 end

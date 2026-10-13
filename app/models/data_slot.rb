@@ -1,6 +1,7 @@
 class DataSlot < ApplicationRecord
   belongs_to :data_experience
   belongs_to :data_session, optional: true
+  belongs_to :skill_product, optional: true, inverse_of: :data_slots
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :restrict_with_error
 
   validates :title, presence: true

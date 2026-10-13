@@ -1,8 +1,6 @@
 module Brands
   module Impegno
     class ProfessionalWorkspaceController < ApplicationController
-      include ImpegnoSkillAccess
-      before_action :require_current_domain_impegno_skill!
       layout "landing"
 
       before_action :require_professional_workspace!

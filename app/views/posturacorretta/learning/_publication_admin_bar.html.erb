@@ -2,7 +2,7 @@
   <% commitment = chapter["publication_commitment"] %>
   <% history = Array(chapter["publication_history"]) %>
   <% dialog_id = "publication-#{chapter.fetch('slug').parameterize}" %>
-  <% commitment_path = impegno_agenda_path(workspace: "1", default_brand: "posturacorretta", new_content: "1", content_key: chapter["id"].presence || chapter.fetch("slug"), content_title: chapter.fetch("title"), publication_change_kind: (commitment ? "update" : "publish"), subject_node_id: chapter["publication_node_id"], return_to: request.fullpath) %>
+  <% commitment_path = impegno_agenda_path(workspace: "1", default_brand: "posturacorretta", editorial_decision: "1", content_key: chapter["id"].presence || chapter.fetch("slug"), content_title: chapter.fetch("title"), publication_change_kind: (commitment ? "update" : "publish"), subject_node_id: chapter["publication_node_id"], return_to: request.fullpath) %>
   <aside class="<%= local_assigns[:inline] ? 'contents' : 'mt-3 flex flex-wrap items-center gap-2' %> text-xs" aria-label="Stato editoriale del capitolo">
     <% if commitment %>
       <% end_time = commitment.actual_ended_at || commitment.ends_at || publication_decision_time(commitment) %>

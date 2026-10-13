@@ -126,30 +126,38 @@ il proprio accesso. La stessa separazione dovrà valere per ogni Skill: il Node
 che usa la funzione stabilisce accesso e visibilità; la Skill stabilisce il
 processo e il tipo di prodotto creato.
 
-### Implementazione 1Impegno come Skill
+### 1Impegno è uno strumento trasversale, non una Skill
 
-La definizione `1impegno` vive nel catalogo versionato di Rails4Business ed è
-collegata ai Brand attraverso `ReusableSkillNode`:
+Rails4Business definisce e rende attivabili le Skill. Una Skill attivata su un
+Node può produrre uno o più `SkillProduct`. 1Impegno interviene dopo: registra
+quando un prodotto viene programmato, svolto o approvato.
 
 ```text
-ReusableSkill: 1impegno
-└── ReusableSkillNode: PosturaCorretta (active)
-    └── DataCommitment
+Node
+└── ReusableSkillNode
+    └── SkillProduct
+        ├── DataSession
+        │   ├── DataSlot
+        │   └── DataCommitment
+        └── DataCommitment diretto
 ```
 
-- il pannello amministrativo del Node permette di attivare o sospendere la
-  Skill;
-- un nuovo `DataCommitment` conserva `reusable_skill_node_id`, quindi è
-  possibile risalire alla funzione e al Node che lo hanno prodotto;
-- gli impegni storici mantengono il collegamento facoltativo;
-- quando il catalogo contiene `1impegno`, un Node privo di attivazione attiva
-  non può aprire l'agenda né creare nuovi impegni;
-- il catalogo iniziale attiva la Skill sui Node `impegno` e
-  `posturacorretta`.
+- `DataSession`, `DataSlot` e `DataCommitment` possono collegarsi
+  facoltativamente a uno `SkillProduct`;
+- possono continuare a esistere senza SkillProduct per attività personali,
+  richieste, impegni generici e dati storici;
+- 1Impegno non compare nel catalogo delle Skill e non richiede una propria
+  attivazione `ReusableSkillNode` sul Brand;
+- il Domain e il Node definiscono il contesto e i permessi; la Session resta
+  quella del Brand dal quale la persona sta lavorando;
+- nel caso della Skill Contenuti, lo SkillProduct rappresenterà il contenuto e
+  il DataCommitment potrà registrare la decisione editoriale di pubblicarlo,
+  aggiornarlo, ritirarlo o archiviarlo.
 
-Nel deploy `deploy:sync_catalogs` importa prima i Node e subito dopo le Skill:
-le attivazioni dichiarate in `config/data/rails4b/skills.yml` vengono quindi
-ricreate anche in produzione senza inserimenti manuali.
+Finché i contenuti Markdown non sono ancora importati come SkillProduct, la
+decisione editoriale conserva anche `content_key` e il percorso pubblico. Il
+collegamento allo SkillProduct è quindi facoltativo e potrà essere aggiunto
+durante la standardizzazione della Skill Contenuti.
 
 ## Logout e revoca
 

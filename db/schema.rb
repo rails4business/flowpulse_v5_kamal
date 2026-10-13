@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_13_153000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -122,7 +122,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_153000) do
     t.text "publication_note_md"
     t.bigint "previous_publication_commitment_id"
     t.datetime "resolved_at"
-    t.bigint "reusable_skill_node_id"
+    t.bigint "skill_product_id"
     t.index ["access_modes"], name: "index_data_commitments_on_access_modes", using: :gin
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
@@ -151,7 +151,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_153000) do
     t.index ["published_by_profile_id"], name: "index_data_commitments_on_published_by_profile_id"
     t.index ["resolved_at"], name: "index_data_commitments_on_resolved_at"
     t.index ["responsible_profile_id"], name: "index_data_commitments_on_responsible_profile_id"
-    t.index ["reusable_skill_node_id"], name: "index_data_commitments_on_reusable_skill_node_id"
+    t.index ["skill_product_id"], name: "index_data_commitments_on_skill_product_id"
     t.index ["starts_at"], name: "index_data_commitments_on_starts_at"
     t.index ["status"], name: "index_data_commitments_on_status"
     t.index ["subject_type", "subject_id"], name: "index_data_commitments_on_subject"
@@ -180,11 +180,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_153000) do
     t.bigint "professional_calendar_id"
     t.string "visibility", default: "private", null: false
     t.bigint "service_id"
+    t.bigint "skill_product_id"
     t.index ["data_experience_id", "position"], name: "index_data_sessions_on_data_experience_id_and_position"
     t.index ["data_experience_id", "starts_at"], name: "index_data_sessions_on_data_experience_id_and_starts_at"
     t.index ["data_experience_id"], name: "index_data_sessions_on_data_experience_id"
     t.index ["professional_calendar_id", "starts_at"], name: "index_data_sessions_on_calendar_and_start"
     t.index ["service_id"], name: "index_data_sessions_on_service_id"
+    t.index ["skill_product_id"], name: "index_data_sessions_on_skill_product_id"
   end
 
   create_table "data_slots", force: :cascade do |t|
@@ -196,10 +198,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_153000) do
     t.bigint "data_experience_id", null: false
     t.datetime "starts_at"
     t.datetime "ends_at"
+    t.bigint "skill_product_id"
     t.index ["data_experience_id", "starts_at"], name: "index_data_slots_on_data_experience_id_and_starts_at"
     t.index ["data_experience_id"], name: "index_data_slots_on_data_experience_id"
     t.index ["data_session_id", "position"], name: "index_data_slots_on_data_session_id_and_position"
     t.index ["data_session_id"], name: "index_data_slots_on_data_session_id"
+    t.index ["skill_product_id"], name: "index_data_slots_on_skill_product_id"
   end
 
   create_table "domains", force: :cascade do |t|
@@ -654,14 +658,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_153000) do
   add_foreign_key "data_commitments", "profiles", column: "created_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "published_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
-  add_foreign_key "data_commitments", "reusable_skill_nodes"
+  add_foreign_key "data_commitments", "skill_products"
   add_foreign_key "data_experiences", "node_processes"
   add_foreign_key "data_experiences", "users", column: "created_by_user_id"
   add_foreign_key "data_sessions", "data_experiences"
   add_foreign_key "data_sessions", "professional_calendars"
   add_foreign_key "data_sessions", "services", name: "fk_data_sessions_service"
+  add_foreign_key "data_sessions", "skill_products"
   add_foreign_key "data_slots", "data_experiences"
   add_foreign_key "data_slots", "data_sessions"
+  add_foreign_key "data_slots", "skill_products"
   add_foreign_key "domains", "nodes"
   add_foreign_key "domains", "role_assignments"
   add_foreign_key "email_verifications", "domains", column: "requested_domain_id"

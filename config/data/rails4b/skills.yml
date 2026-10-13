@@ -1,30 +1,6 @@
 version: 1
 owner_username: markpostura
 skills:
-  1impegno:
-    title: 1Impegno
-    category: commitments
-    status: testing
-    description: Agenda, richieste e impegni utilizzabili dai diversi Brand senza spostare il loro perimetro di accesso.
-    purpose: Permettere a ogni Node attivato di organizzare attività e richieste mantenendo Session, autorizzazioni e dati nel contesto del Brand.
-    resource_type: DataCommitment
-    operation_notes: La funzione viene eseguita dal codice di 1Impegno, mentre il Node attivato stabilisce accesso, dominio e visibilità.
-    reuse_notes: Attivare la Skill sul Node radice del Brand. I Domain collegati allo stesso Node condividono l'attivazione.
-    documentation_markdown: |-
-      ## Contratto iniziale
-
-      1Impegno è una funzione condivisa, non un secondo perimetro di autenticazione.
-
-      Ogni `DataCommitment` creato nel contesto di un Brand viene collegato alla relativa attivazione `ReusableSkillNode`. La Session resta quella del Brand chiamante.
-    nodes:
-      - slug: impegno
-        status: active
-        configuration:
-          mode: standalone
-      - slug: posturacorretta
-        status: active
-        configuration:
-          mode: embedded
   contenuti:
     title: Contenuti
     category: contents

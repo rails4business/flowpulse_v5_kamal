@@ -7,6 +7,12 @@ class SkillProduct < ApplicationRecord
   belongs_to :created_by_profile, class_name: "Profile", inverse_of: :created_skill_products
   has_one :reusable_skill, through: :reusable_skill_node
   has_one :node, through: :reusable_skill_node
+  has_many :data_sessions, dependent: :restrict_with_error, inverse_of: :skill_product
+  has_many :data_slots, dependent: :restrict_with_error, inverse_of: :skill_product
+  has_many :data_commitments,
+           class_name: "Brands::Impegno::Commitment",
+           dependent: :restrict_with_error,
+           inverse_of: :skill_product
 
   has_many :outgoing_links,
            class_name: "SkillProductLink",

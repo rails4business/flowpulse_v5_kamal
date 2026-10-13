@@ -2,6 +2,7 @@ class DataSession < ApplicationRecord
   belongs_to :data_experience
   belongs_to :professional_calendar, optional: true
   belongs_to :service, optional: true
+  belongs_to :skill_product, optional: true, inverse_of: :data_sessions
   has_many :data_slots, dependent: :restrict_with_error
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :restrict_with_error
 

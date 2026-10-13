@@ -30,7 +30,7 @@ module Brands
   belongs_to :data_experience, optional: true
   belongs_to :data_session, optional: true
   belongs_to :data_slot, optional: true
-  belongs_to :reusable_skill_node, optional: true, inverse_of: :data_commitments
+  belongs_to :skill_product, optional: true, inverse_of: :data_commitments
   has_many :children, class_name: "Brands::Impegno::Commitment", foreign_key: :parent_id,
            inverse_of: :parent, dependent: :restrict_with_error
 
