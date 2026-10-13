@@ -6,11 +6,11 @@ publisher_node_slug: posturacorretta
 
 # I benefici di una postura corretta
 
-**Sono le sei di sera. Sei seduto da otto ore. Quando ti alzi senti la schiena rigida, il collo fermo e, al posto delle spalle, due blocchi di marmo.**
+**Scendi dall'auto dopo il solito tragitto, quaranta minuti, magari meno. Senti che la schiena è rigida e dolente e mentre scendi la schiena che ci mette un attimo e "risponde" a fatica, anche, collo e spallesono rigide  tirate in avanti**
 
-Pensi: *“Sarà l'età, sarà lo stress. È normale dopo una giornata pesante.”*
+Pensi: *"Sarà l'età, sarà lo stress. È normale. E' un periodo impegnativo."*
 
-L'età e lo stress sono elementi da considerare, ma forse dimentichi che il tuo corpo risponde ad ogni stimolo a cui è sottoposto e forse il più grave è proprio la forza di gravità.
+L'età e lo stress contano, ma c'è un fattore che di solito non consideri: per tutto il viaggio sei rimasto fermo nella stessa posizione. Testa spinta in avanti, mani sul volante, bacino incassato nel sedile, un piede sempre in tensione sul pedale. E su un corpo che non cambia mai posizione, la forza di gravità lavora senza pause.  
 
 Il tuo corpo risponde costantemente alla forza di gravità con la postura, cioè trovando una posizione che medi le esigenze del mondo esterno e quelle del mondo interno. 
 

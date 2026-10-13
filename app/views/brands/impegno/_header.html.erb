@@ -24,7 +24,7 @@
         </details>
       <% else %>
         <%= link_to "Accedi", new_session_path(return_to: impegno_path), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" %>
-        <%= link_to "Registrati", new_user_path(return_to: impegno_path), class: "rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
+        <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: "impegno" } : {}), class: "rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700" %>
       <% end %>
     </nav>
   </div>

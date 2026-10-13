@@ -84,10 +84,32 @@
       <p class="text-xs font-black uppercase tracking-wide text-blue-700">Capacità riutilizzabili</p>
       <h2 id="node-skills-title" class="mt-1 text-xl font-extrabold">Skill collegate</h2>
       <p class="mt-2 text-sm leading-6 text-slate-500">Le funzioni condivise che questo nodo utilizza. Materiali e configurazione specifici restano nel Brand.</p>
-      <% if @reusable_skills.any? %>
-        <div class="mt-5 grid gap-3 sm:grid-cols-2"><% @reusable_skills.each do |skill| %><%= link_to rails4b_skill_path(skill), class: "rounded-xl border border-slate-200 p-4 transition hover:border-blue-300 hover:bg-blue-50/40" do %><div class="flex flex-wrap items-center justify-between gap-2"><strong class="text-slate-900"><%= skill.title %></strong><span class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700"><%= skill.category.humanize %></span></div><p class="mt-2 text-sm text-slate-500"><%= skill.status.humanize %></p><span class="mt-3 block text-xs font-black text-blue-700">Apri in Rails4Business →</span><% end %><% end %></div>
+      <% if @skill_activations.any? %>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          <% @skill_activations.each do |activation| %>
+            <% skill = activation.reusable_skill %>
+            <article class="rounded-xl border border-slate-200 p-4">
+              <div class="flex flex-wrap items-center justify-between gap-2"><strong><%= link_to skill.title, rails4b_skill_path(skill), class: "text-slate-900 hover:text-blue-700" %></strong><span class="rounded-full px-2.5 py-1 text-xs font-bold <%= activation.status == 'active' ? 'bg-emerald-50 text-emerald-700' : activation.status == 'suspended' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600' %>"><%= activation.status.humanize %></span></div>
+              <p class="mt-2 text-sm text-slate-500"><%= skill.category_label %> · <%= skill.status_label %></p>
+              <div class="mt-4 flex flex-wrap gap-2">
+                <%= link_to "Apri in Rails4Business", rails4b_skill_path(skill), class: "rounded-lg border border-slate-300 px-3 py-2 text-xs font-black text-blue-700 hover:bg-blue-50" %>
+                <% if activation.status == "active" %>
+                  <%= button_to "Sospendi", skill_brand_admin_node_path(@brand.slug, @node, activation), method: :patch, params: { status: "suspended" }, class: "rounded-lg bg-amber-50 px-3 py-2 text-xs font-black text-amber-700 hover:bg-amber-100" %>
+                <% else %>
+                  <%= button_to "Attiva", skill_brand_admin_node_path(@brand.slug, @node, activation), method: :patch, params: { status: "active" }, class: "rounded-lg bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700 hover:bg-emerald-100" %>
+                <% end %>
+              </div>
+            </article>
+          <% end %>
+        </div>
       <% else %>
         <p class="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-500">Nessuna skill è ancora collegata a questo nodo.</p>
+      <% end %>
+      <% if @available_reusable_skills.any? %>
+        <%= form_with url: skills_brand_admin_node_path(@brand.slug, @node), class: "mt-5 flex flex-col gap-3 rounded-xl border border-dashed border-blue-200 bg-blue-50/40 p-4 sm:flex-row sm:items-end" do |form| %>
+          <div class="min-w-0 flex-1"><%= form.label :reusable_skill_id, "Aggiungi una Skill", class: "text-sm font-black text-slate-800" %><%= form.collection_select :reusable_skill_id, @available_reusable_skills, :id, :title, {}, class: "mt-2 w-full rounded-xl border-slate-300 bg-white" %></div>
+          <%= form.submit "Attiva sul nodo", class: "cursor-pointer rounded-xl bg-blue-700 px-4 py-3 text-sm font-black text-white hover:bg-blue-800" %>
+        <% end %>
       <% end %>
     </section>
   <% end %>

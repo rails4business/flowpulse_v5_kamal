@@ -161,7 +161,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to rails4b_path
   end
 
-  test "traveler sees brand access action on domain node" do
+  test "traveler without access sees invitation request on domain node" do
     traveler = User.create!(
       email_address: "node-domain-traveler@example.com",
       password: "password123",
@@ -180,15 +180,15 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(@published_node)
 
     assert_response :success
-    assert_select "header form[action=?]", brand_accesses_path
+    assert_select "header a[href=?]", new_brand_access_request_path, text: "Richiedi accesso"
     assert_select "header details summary.rounded-full", text: /N/
     assert_select "header details a[href=?]", dashboard_path, text: "Dashboard"
-    assert_operator response.body.index("Accedi al brand"), :<, response.body.index("node-public-breadcrumb")
-    assert_includes response.body, "Accedi al brand"
+    assert_operator response.body.index("Richiedi accesso"), :<, response.body.index("node-public-breadcrumb")
+    assert_includes response.body, "Richiedi accesso"
   end
 
-  test "public visitor sees free subscribe link on domain node" do
-    domain = Domain.create!(
+  test "public visitor sees invitation request on domain node" do
+    Domain.create!(
       hostname: "anonymous-subscribe.example",
       node: @published_node,
       role_assignment: @assignment,
@@ -198,10 +198,10 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(@published_node)
 
     assert_response :success
-    assert_select "header a[href=?]", new_user_path(subscription: domain.signed_id(purpose: :free_subscription), return_to: node_path(@published_node)), text: "Accedi al brand"
+    assert_select "header a[href=?]", new_brand_access_request_path, text: "Richiedi accesso"
   end
 
-  test "traveler sees brand access action on nodes inside a navigation domain" do
+  test "traveler sees invitation request on nodes inside a navigation domain" do
     traveler = User.create!(
       email_address: "node-domain-child-traveler@example.com",
       password: "password123",
@@ -233,10 +233,8 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(child)
 
     assert_response :success
-    assert_select "header form[action=?]", brand_accesses_path do
-      assert_select "input[name='domain_id'][value=?]", domain.id.to_s
-    end
-    assert_operator response.body.index("Accedi al brand"), :<, response.body.index("node-public-breadcrumb")
+    assert_select "header a[href=?]", new_brand_access_request_path, text: "Richiedi accesso"
+    assert_operator response.body.index("Richiedi accesso"), :<, response.body.index("node-public-breadcrumb")
   end
 
   test "creator can preview own draft node" do

@@ -6,12 +6,12 @@
 <section class="mx-auto w-full max-w-md px-4 py-10 sm:py-16">
   <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
     <div class="border-b border-slate-100 bg-slate-50/70 px-6 py-6 sm:px-7">
-      <% if authentication_context? %>
+      <% if authentication_context? && authentication_context_domain.logo_full_url.present? %>
         <img src="<%= authentication_context_domain.logo_full_url %>" alt="<%= authentication_context_domain.site_title %>" class="mb-5 h-8 w-auto max-w-full object-contain">
       <% end %>
       <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600"><%= authentication_context? ? authentication_context_domain.site_title : "Inizia da qui" %></p>
       <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950">Crea il tuo account</h1>
-      <p class="mt-2 text-sm leading-6 text-slate-600"><%= authentication_context? ? "Crea un unico account FlowPulse. Dopo aver verificato l’email attiveremo l’accesso a questo dominio." : "Ti servirà per accedere ai tuoi spazi e alle funzionalità che attiverai." %></p>
+      <p class="mt-2 text-sm leading-6 text-slate-600">Hai ricevuto un invito personale. Crea il tuo account: il collegamento autorizza l’accesso a questo Brand.</p>
     </div>
 
     <div class="px-6 py-7 sm:px-7">

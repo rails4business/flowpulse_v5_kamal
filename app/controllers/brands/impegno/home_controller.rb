@@ -1,6 +1,7 @@
 module Brands
   module Impegno
     class HomeController < ApplicationController
+      include ImpegnoSkillAccess
       layout "landing"
       allow_unauthenticated_access
 
@@ -44,6 +45,9 @@ module Brands
         @impegno_domains = available_impegno_domains
         @impegno_domain_options = domain_options
         @impegno_default_domain = default_domain_for(@impegno_brand)
+        unless impegno_skill_available_for?(@impegno_default_domain)
+          return render plain: "La funzione 1Impegno non è attiva per questo Brand.", status: :forbidden
+        end
         @commitment_node_options = available_commitment_nodes
         @default_commitment_node = @impegno_default_domain&.node
         @impegno_domain_roles = available_domain_roles(@impegno_default_domain)
@@ -157,6 +161,7 @@ module Brands
         def default_domain_for(brand)
           @impegno_domains.find { |domain| brand_key_for(domain) == brand }
         end
+
     end
   end
 end

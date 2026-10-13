@@ -1,7 +1,7 @@
 module Brands
   module Admin
     class NodesController < BaseController
-      before_action :set_node, only: %i[show update destroy lifecycle]
+      before_action :set_node, only: %i[show update destroy lifecycle activate_skill update_skill]
 
       def index
         @active_view = params[:view] == "schema" ? "schema" : "list"
@@ -14,7 +14,7 @@ module Brands
         @active_tab = %w[overview development problems skills processes].include?(params[:tab]) ? params[:tab] : "overview"
         @processes = @node.node_processes.order(:title)
         @problem_solving_cycles = @node.problem_solving_cycles.includes(:responsible_profile).order(updated_at: :desc)
-        @reusable_skills = @node.reusable_skills.includes(:responsible_profile).order(:title)
+        load_skill_options
         @brand_development_entries = FlowpulseDevelopmentRepository.new.entries.select { |entry| entry.fetch("owner_brand") == @brand.slug }
         @development_entries = @brand_development_entries.select { |entry| entry["node_slug"] == @node.slug }
         @development_entries_by_slug = @brand_development_entries.index_by { |entry| entry.fetch("slug") }
@@ -44,7 +44,7 @@ module Brands
           @active_tab = "overview"
           @processes = @node.node_processes.order(:title)
           @problem_solving_cycles = @node.problem_solving_cycles.includes(:responsible_profile).order(updated_at: :desc)
-          @reusable_skills = @node.reusable_skills.includes(:responsible_profile).order(:title)
+          load_skill_options
           load_form_options
           flash.now[:alert] = @node.errors.full_messages.to_sentence
           render :show, status: :unprocessable_entity
@@ -84,6 +84,30 @@ module Brands
         else
           redirect_to brand_admin_node_path(@brand.slug, @node, tab: "processes", anchor: "node-processes"), alert: process_record.errors.full_messages.to_sentence
         end
+      end
+
+      def activate_skill
+        skill = ReusableSkill.where.not(status: "archived").find(params[:reusable_skill_id])
+        activation = @node.reusable_skill_nodes.find_or_initialize_by(reusable_skill: skill)
+        activation.status = "active"
+        activation.activated_by_profile ||= current_profile
+
+        if activation.save
+          redirect_to brand_admin_node_path(@brand.slug, @node, tab: "skills"), notice: "Skill #{skill.title} attivata sul nodo."
+        else
+          redirect_to brand_admin_node_path(@brand.slug, @node, tab: "skills"), alert: activation.errors.full_messages.to_sentence
+        end
+      end
+
+      def update_skill
+        activation = @node.reusable_skill_nodes.find(params[:activation_id])
+        status = params[:status].to_s
+        unless ReusableSkillNode::STATUSES.include?(status)
+          return redirect_to brand_admin_node_path(@brand.slug, @node, tab: "skills"), alert: "Stato Skill non valido."
+        end
+
+        activation.update!(status:)
+        redirect_to brand_admin_node_path(@brand.slug, @node, tab: "skills"), notice: "Stato della Skill aggiornato."
       end
 
       private
@@ -134,6 +158,13 @@ module Brands
           boundary_ids = visible_brand_nodes.select { |node| node != @brand && node.brand? }.map(&:id)
           @parent_options = Node.where(id: visible_brand_node_ids).where.not(id: excluded_ids).where.not(id: boundary_ids).order(:title)
           @link_node_options = Node.where(role_assignment: @brand.role_assignment).where.not(id: @node&.id).order(:title)
+        end
+
+        def load_skill_options
+          @skill_activations = @node.reusable_skill_nodes.joins(:reusable_skill).includes(reusable_skill: :responsible_profile).order("reusable_skills.title")
+          @reusable_skills = @skill_activations.map(&:reusable_skill)
+          active_skill_ids = @skill_activations.map(&:reusable_skill_id)
+          @available_reusable_skills = ReusableSkill.where.not(status: "archived", id: active_skill_ids).order(:title)
         end
     end
   end

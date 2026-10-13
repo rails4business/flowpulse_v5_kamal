@@ -11,6 +11,23 @@ class DomainTest < ActiveSupport::TestCase
     assert_equal true, config.fetch("auth_enabled")
   end
 
+  test "builds the authentication sender from the canonical brand domain" do
+    primary = Domain.create!(
+      hostname: "posturacorretta.org",
+      locale: "it",
+      site_title: "PosturaCorretta — Conosci il tuo corpo"
+    )
+    alias_domain = Domain.create!(
+      hostname: "www.posturacorretta.org",
+      canonical_host: primary.hostname,
+      locale: "it"
+    )
+
+    assert_equal "PosturaCorretta", alias_domain.authentication_sender_name
+    assert_equal "accesso@posturacorretta.org", alias_domain.authentication_email_address
+    assert_equal "PosturaCorretta <accesso@posturacorretta.org>", alias_domain.authentication_sender
+  end
+
   test "configures MarkPostura through its editorial Site" do
     config = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access.fetch("markpostura.it")
 

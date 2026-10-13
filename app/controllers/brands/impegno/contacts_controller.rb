@@ -1,6 +1,8 @@
 module Brands
   module Impegno
     class ContactsController < ApplicationController
+      include ImpegnoSkillAccess
+      before_action :require_current_domain_impegno_skill!
       layout "landing"
 
       before_action :set_contact, only: %i[edit update destroy]

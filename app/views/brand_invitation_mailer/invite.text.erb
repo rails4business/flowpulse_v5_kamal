@@ -1,8 +1,10 @@
 Hai ricevuto un invito
 
-<%= @invitation.invited_by_user.profile&.display_name.presence || @invitation.invited_by_user.email_address %> ti ha invitato ad accedere a <%= @domain&.site_title.presence || @invitation.brand_node.title %> con il tuo account FlowPulse.
+<%= @invitation.invited_by_user.profile&.display_name.presence || @invitation.invited_by_user.email_address %> ti ha invitato ad accedere a <%= @domain&.site_title.presence || @invitation.brand_node.title %>.
 
 Apri l’invito:
 <%= @invitation_url %>
 
 L’invito è personale e scade tra 7 giorni.
+
+Se possiedi già un account dell’ecosistema FlowPulse, userai lo stesso profilo personale; l’accesso a questo Brand verrà aggiunto separatamente.

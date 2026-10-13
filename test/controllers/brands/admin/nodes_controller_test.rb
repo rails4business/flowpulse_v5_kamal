@@ -147,6 +147,27 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "#node-problems-title", count: 0
   end
 
+  test "brand owner activates and suspends a reusable Skill on a node" do
+    skill = ReusableSkill.create!(owner_profile: @owner.profile, title: "1Impegno", slug: "1impegno", category: "commitments", status: "testing", resource_type: "DataCommitment")
+    sign_in(@owner)
+
+    assert_difference -> { ReusableSkillNode.count }, 1 do
+      post skills_brand_admin_node_url(@brand.slug, @project), params: { reusable_skill_id: skill.id }
+    end
+
+    activation = ReusableSkillNode.last
+    assert_equal [@project, skill, "active", @owner.profile], [activation.node, activation.reusable_skill, activation.status, activation.activated_by_profile]
+    assert_redirected_to brand_admin_node_url(@brand.slug, @project, tab: "skills")
+
+    patch skill_brand_admin_node_url(@brand.slug, @project, activation), params: { status: "suspended" }
+
+    assert_equal "suspended", activation.reload.status
+    get brand_admin_node_url(@brand.slug, @project, tab: "skills")
+    assert_response :success
+    assert_select "article", text: /1Impegno.*Suspended/m
+    assert_select "form[action='#{skill_brand_admin_node_path(@brand.slug, @project, activation)}'] button", text: "Attiva"
+  end
+
   test "owner opens a process schema with its experiences" do
     process_record = NodeProcess.create!(node: @project, created_by_user: @owner, title: "Pubblicazione settimanale", status: "active")
     DataExperience.create!(node_process: process_record, created_by_user: @owner, title: "Primo capitolo")

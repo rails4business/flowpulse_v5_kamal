@@ -85,17 +85,16 @@
 
         <% if @brand_access_domain.present? %>
           <% if Current.user.blank? %>
-            <%= link_to "Accedi al brand", new_user_path(subscription: @brand_access_domain.signed_id(purpose: :free_subscription), return_to: request.fullpath),
-              title: "Registrati per accedere a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}.",
+            <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: @brand_access_domain.auth_slug.presence || @brand_access_domain.node&.slug } : {}),
+              title: "Richiedi un invito per accedere a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}.",
               class: "rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-bold text-white hover:bg-slate-800" %>
           <% elsif FlowRoles.active_role_for(Current.user) == "traveler" && @brand_access.present? %>
             <%= link_to "Accesso attivo", viaggiatori_path,
               title: "Hai accesso a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}. Puoi gestirlo dalla dashboard.",
               class: "rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-bold text-green-700 hover:bg-green-100" %>
           <% elsif FlowRoles.active_role_for(Current.user) == "traveler" %>
-            <%= button_to "Accedi al brand", brand_accesses_path,
-              params: { domain_id: @brand_access_domain.id },
-              title: "Attiva l'accesso a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname} e a questa porta linguistica.",
+            <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: @brand_access_domain.auth_slug.presence || @brand_access_domain.node&.slug } : {}),
+              title: "Richiedi un invito per accedere a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}.",
               class: "rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-bold text-white hover:bg-slate-800" %>
           <% end %>
         <% end %>
@@ -196,9 +195,9 @@
                 method: :delete,
                 class: "w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50" %>
             <% else %>
-              <% auth_context = @brand_access_domain.present? ? { subscription: @brand_access_domain.signed_id(purpose: :free_subscription), return_to: request.fullpath } : {} %>
+              <% auth_context = @brand_access_domain.present? ? { return_to: request.fullpath } : {} %>
               <%= link_to "Accedi", new_session_path(auth_context), class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
-              <%= link_to "Registrati", new_user_path(auth_context), class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+              <%= link_to "Richiedi un invito", new_brand_access_request_path(local_request? && @brand_access_domain.present? ? { site: @brand_access_domain.auth_slug.presence || @brand_access_domain.node&.slug } : {}), class: "block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
             <% end %>
           </div>
         </details>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_152000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_153000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -122,6 +122,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_152000) do
     t.text "publication_note_md"
     t.bigint "previous_publication_commitment_id"
     t.datetime "resolved_at"
+    t.bigint "reusable_skill_node_id"
     t.index ["access_modes"], name: "index_data_commitments_on_access_modes", using: :gin
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
@@ -150,6 +151,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_152000) do
     t.index ["published_by_profile_id"], name: "index_data_commitments_on_published_by_profile_id"
     t.index ["resolved_at"], name: "index_data_commitments_on_resolved_at"
     t.index ["responsible_profile_id"], name: "index_data_commitments_on_responsible_profile_id"
+    t.index ["reusable_skill_node_id"], name: "index_data_commitments_on_reusable_skill_node_id"
     t.index ["starts_at"], name: "index_data_commitments_on_starts_at"
     t.index ["status"], name: "index_data_commitments_on_status"
     t.index ["subject_type", "subject_id"], name: "index_data_commitments_on_subject"
@@ -652,6 +654,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_152000) do
   add_foreign_key "data_commitments", "profiles", column: "created_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "published_by_profile_id"
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
+  add_foreign_key "data_commitments", "reusable_skill_nodes"
   add_foreign_key "data_experiences", "node_processes"
   add_foreign_key "data_experiences", "users", column: "created_by_user_id"
   add_foreign_key "data_sessions", "data_experiences"

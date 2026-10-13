@@ -20,25 +20,24 @@ class BrandAccessesControllerTest < ActionDispatch::IntegrationTest
     @domain = Domain.create!(hostname: "access-controller.example", node: @node, role_assignment: @assignment, locale: "it", site_title: "Access Brand")
   end
 
-  test "traveler can activate and remove brand access" do
+  test "traveler cannot activate brand access without an invitation" do
     sign_in(@user)
 
-    assert_difference -> { BrandAccess.count }, 1 do
+    assert_no_difference -> { BrandAccess.count } do
       post brand_accesses_url, params: { domain_id: @domain.id }
     end
+    assert_redirected_to new_brand_access_request_url
+  end
 
-    access = @user.profile.brand_accesses.find_by!(brand_node: @node)
-    assert_equal @domain, access.source_domain
-    assert_equal "active", access.status
-    assert_redirected_to viaggiatori_url
-    assert_equal "Ora hai accesso a Access Brand.", flash[:notice]
+  test "traveler can remove an existing brand access" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    sign_in(@user)
 
     delete brand_access_url(access)
 
     assert_redirected_to viaggiatori_url
     assert_equal "Hai rimosso l'accesso a Domain Node.", flash[:notice]
     assert_equal "cancelled", access.reload.status
-    assert access.sessions.where.not(revoked_at: nil).exists?
   end
 
   test "another hostname for the same brand does not duplicate the brand access" do
@@ -49,9 +48,8 @@ class BrandAccessesControllerTest < ActionDispatch::IntegrationTest
       locale: "en",
       site_title: "Access Brand"
     )
+    BrandAccess.create!(profile: @user.profile, source_domain: @domain)
     sign_in(@user)
-
-    post brand_accesses_url, params: { domain_id: @domain.id }
 
     assert_no_difference -> { BrandAccess.count } do
       post brand_accesses_url, params: { domain_id: english_domain.id }

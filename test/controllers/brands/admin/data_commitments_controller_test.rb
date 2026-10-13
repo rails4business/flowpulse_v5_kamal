@@ -83,6 +83,26 @@ class Brands::Admin::DataCommitmentsControllerTest < ActionDispatch::Integration
     assert_nil @brand_request.resolved_at
   end
 
+  test "owner approves an access request and receives a copyable invitation link" do
+    @brand_request.update!(metadata: { "request_kind" => "access_invitation", "request_audience" => "user" })
+    sign_in(@owner)
+
+    assert_no_emails do
+      assert_difference -> { BrandInvitation.count }, 1 do
+        post brand_admin_data_commitment_invitation_url(@brand.slug, @brand_request)
+      end
+    end
+
+    invitation = BrandInvitation.order(:created_at).last
+    assert_equal @contact.email, invitation.email_address
+    assert_equal @brand, invitation.brand_node
+    assert_equal "in_progress", @brand_request.reload.status
+    assert_equal invitation.id, @brand_request.metadata["brand_invitation_id"]
+    follow_redirect!
+    assert_select "input#brand-invitation-url[value*='/brand-invitations/']"
+    assert_select "button[data-controller='clipboard']", text: "Copia link"
+  end
+
   private
 
     def sign_in(user)

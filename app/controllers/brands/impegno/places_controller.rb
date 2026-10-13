@@ -1,6 +1,8 @@
 module Brands
   module Impegno
     class PlacesController < ApplicationController
+      include ImpegnoSkillAccess
+      before_action :require_current_domain_impegno_skill!
       layout "landing"
 
       before_action :set_place, only: %i[edit update destroy]

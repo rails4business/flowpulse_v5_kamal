@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 
   allow_unauthenticated_access only: %i[ new create ]
   before_action :redirect_authenticated_user_from_authentication!, only: %i[new create]
+  before_action :require_registration_invitation!, only: :new
 
   def new
     persist_authentication_context!
@@ -23,7 +24,13 @@ class UsersController < ApplicationController
     brand_domain = authentication_context_domain
     domain = pending_subscription_domain
     invitation = pending_invitation
-    target_domain = invitation&.source_domain || domain || brand_domain
+    unless invitation&.pending?
+      @user.errors.add(:base, "Per creare un account serve un invito personale valido.")
+      @subscription_domain = pending_subscription_domain
+      return render :new, status: :unprocessable_entity
+    end
+
+    target_domain = invitation.source_domain || domain || brand_domain
     target_brand_node = invitation&.brand_node || target_domain&.node
 
     begin
@@ -32,27 +39,22 @@ class UsersController < ApplicationController
         raise ActiveRecord::RecordInvalid, @user
       end
 
-      verification = nil
-      raw_token = nil
+      brand_access = nil
       User.transaction do
-        @user.registration_status = "pending_email_verification"
+        @user.registration_status = "active"
         @user.email_verified_at = nil
         @user.save!
-        @user.create_profile!(display_name: @user.email_address.to_s.split("@").first) unless @user.profile
-        verification, raw_token = EmailVerification.issue!(
-          user: @user,
-          brand_node: target_brand_node,
-          requested_domain: target_domain,
-          return_to: safe_authentication_return_to(session[:return_to_after_authenticating]),
-          request_ip: request.remote_ip,
-          user_agent: request.user_agent,
-          metadata: { "brand_invitation_id" => invitation&.id }.compact
-        )
+        profile = @user.create_profile!(display_name: @user.email_address.to_s.split("@").first) unless @user.profile
+        profile ||= @user.profile
+        brand_access = grant_profile_brand_access_for_node!(profile, target_brand_node, source_domain: target_domain)
+        invitation.accept!(@user)
+        complete_access_request_for!(invitation)
       end
 
-      RegistrationMailer.verify_email(verification, raw_token, verification_url_for(verification, raw_token)).deliver_now
-      redirect_to email_verification_sent_path(email: @user.email_address),
-        notice: "Account creato. Controlla l’email per completare la registrazione."
+      start_new_session_for(@user, brand_access:, authentication_method: "invitation")
+      session.delete(:pending_brand_invitation_token)
+      redirect_to(safe_authentication_return_to(session.delete(:return_to_after_authenticating)) || target_domain&.auth_default_path.presence || root_path,
+        notice: "Account creato. Ora hai accesso a #{target_domain&.authentication_sender_name || target_brand_node.title}.")
     rescue ActiveRecord::RecordInvalid => error
       @user.errors.add(:base, error.record.errors.full_messages.to_sentence) unless error.record == @user
       @subscription_domain = pending_subscription_domain
@@ -81,6 +83,13 @@ class UsersController < ApplicationController
 
     def pending_invitation
       BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
+    end
+
+    def require_registration_invitation!
+      return if pending_invitation.present?
+
+      redirect_to new_brand_access_request_path(authentication_context_link_params),
+        alert: "In questa fase puoi creare un account soltanto dopo aver ricevuto un invito personale."
     end
 
     def verification_url_for(verification, raw_token)

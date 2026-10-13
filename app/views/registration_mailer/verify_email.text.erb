@@ -1,9 +1,13 @@
 Conferma il tuo indirizzo email
 
-Hai creato il tuo account FlowPulse<% if @domain.present? %> per accedere a <%= @domain.site_title.presence || @domain.display_hostname %><% end %>.
+<% if @domain.present? %>Hai creato il tuo account per accedere a <%= @domain.site_title.presence || @domain.display_hostname %>.<% else %>Hai creato il tuo account FlowPulse.<% end %>
 
 Apri questo collegamento per confermare l’email e accedere:
 <%= @confirmation_url %>
 
 Il collegamento è personale e scade tra 30 minuti.
 Se non hai richiesto tu la registrazione, puoi ignorare questa email.
+<% if @domain.present? %>
+
+L’account personale è condiviso in modo sicuro attraverso l’infrastruttura FlowPulse; l’accesso a questo Brand resta distinto.
+<% end %>

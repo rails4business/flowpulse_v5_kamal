@@ -6,6 +6,8 @@ class BrandInvitationMailer < ApplicationMailer
     @domain = invitation.source_domain
 
     brand_name = @domain&.site_title.presence || invitation.brand_node.title
-    mail to: invitation.email_address, subject: "Sei stato invitato in #{brand_name}"
+    mail from: authentication_sender_for(@domain),
+      to: invitation.email_address,
+      subject: "Sei stato invitato in #{brand_name}"
   end
 end

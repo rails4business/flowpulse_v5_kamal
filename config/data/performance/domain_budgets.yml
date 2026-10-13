@@ -19,8 +19,37 @@ domains:
   flowpulse.net:
     pages:
       - { key: landing, path: / }
-      - { key: network, path: /flowpulse/rete }
-    baseline: { status: pending }
+      - { key: projects, path: /flowpulse/progetti }
+    baseline:
+      status: measured
+      measured_at: "2026-10-13"
+      tool: "Lighthouse 13.4.1"
+      environment: production
+      strategy: mobile
+      report: docs/architecture/reports/pagespeed-2026-10-13-flowpulse.md
+      pages:
+        landing:
+          runs: 3
+          median:
+            performance_score: 92
+            accessibility_score: 100
+            lcp_ms: 2660
+            inp_ms:
+            cls: 0
+            ttfb_ms: 55
+            transfer_kb: 309
+            requests: 16
+        projects:
+          runs: 3
+          median:
+            performance_score: 96
+            accessibility_score: 100
+            lcp_ms: 2631
+            inp_ms:
+            cls: 0
+            ttfb_ms: 56
+            transfer_kb: 243
+            requests: 15
 
   markpostura.it:
     pages:

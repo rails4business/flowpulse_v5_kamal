@@ -8,7 +8,7 @@ module Brands
 
         assert_response :success
         assert_select "h1", /Il tuo tempo/
-        assert_select "a[href=?]", new_user_path(return_to: data_commitments_path), text: /Apri Impegno/
+        assert_select "a[href=?]", new_brand_access_request_path, text: /Apri Impegno/
       end
 
       test "renders the authenticated Impegno workspace with the Agenda turbo frame" do

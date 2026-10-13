@@ -86,7 +86,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     )
 
     patch start_data_commitment_url(commitment)
-    assert_redirected_to data_commitments_url(tab: "upcoming", anchor: "commitment-#{commitment.id}")
+    assert_redirected_to impegno_url(brand: "posturacorretta", area: "agenda", period: "upcoming", anchor: "commitment-#{commitment.id}")
     assert commitment.reload.tracking?
 
     patch complete_data_commitment_url(commitment)
@@ -250,6 +250,72 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Node", commitment.subject_type
     assert_equal course_node, commitment.subject
     assert_not_equal commitment.domain.node, commitment.subject
+  end
+
+  test "a new commitment records the active 1Impegno Skill activation for the Brand node" do
+    creator = RoleAssignment.create!(profile: @profile, role: :ideatore)
+    brand = Node.create!(title: "PosturaCorretta Skill", slug: "posturacorretta-skill-test", role_assignment: creator, node_type: :project)
+    @domain.update!(node: brand, auth_slug: "posturacorretta")
+    skill = ReusableSkill.create!(
+      owner_profile: @profile,
+      title: "1Impegno",
+      slug: "1impegno",
+      category: "commitments",
+      status: "testing",
+      resource_type: "DataCommitment"
+    )
+    activation = ReusableSkillNode.create!(
+      reusable_skill: skill,
+      node: brand,
+      status: "active",
+      activated_by_profile: @profile
+    )
+
+    assert_difference -> { DataCommitment.count }, 1 do
+      post data_commitments_url, params: {
+        context_brand: "posturacorretta",
+        data_commitment: {
+          title: "Impegno prodotto dalla Skill",
+          kind: "personal",
+          starts_at: "2026-10-20T09:00",
+          ends_at: "2026-10-20T10:00",
+          calendar_label: @profile.display_name
+        }
+      }
+    end
+
+    assert_equal activation, DataCommitment.last.reusable_skill_node
+  end
+
+  test "a suspended 1Impegno Skill prevents new commitments for that Brand" do
+    creator = RoleAssignment.create!(profile: @profile, role: :ideatore)
+    brand = Node.create!(title: "PosturaCorretta sospesa", slug: "posturacorretta-suspended-test", role_assignment: creator, node_type: :project)
+    @domain.update!(node: brand, auth_slug: "posturacorretta")
+    skill = ReusableSkill.create!(
+      owner_profile: @profile,
+      title: "1Impegno",
+      slug: "1impegno",
+      category: "commitments",
+      status: "testing",
+      resource_type: "DataCommitment"
+    )
+    ReusableSkillNode.create!(reusable_skill: skill, node: brand, status: "suspended", activated_by_profile: @profile)
+
+    assert_no_difference -> { DataCommitment.count } do
+      post data_commitments_url, params: {
+        context_brand: "posturacorretta",
+        data_commitment: {
+          title: "Impegno da bloccare",
+          kind: "personal",
+          starts_at: "2026-10-21T09:00",
+          ends_at: "2026-10-21T10:00",
+          calendar_label: @profile.display_name
+        }
+      }
+    end
+
+    assert_redirected_to impegno_url(area: "user", view: "agenda")
+    assert_equal "La funzione 1Impegno non è attiva per questo Brand.", flash[:alert]
   end
 
   test "superadmin starts and completes a timer from a GeneraImpresa task" do
@@ -514,7 +580,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert first.reload.tracking?
 
     patch start_data_commitment_url(second)
-    assert_redirected_to data_commitments_url(tab: "upcoming", anchor: "commitment-#{second.id}")
+    assert_redirected_to impegno_url(brand: "posturacorretta", area: "agenda", period: "upcoming", anchor: "commitment-#{second.id}")
     assert_equal "planned", second.reload.status
     assert_includes flash[:alert], "già un’attività in corso"
   end
@@ -560,6 +626,6 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_difference -> { DataCommitment.count }, -1 do
       delete data_commitment_url(commitment)
     end
-    assert_redirected_to data_commitments_url(tab: "upcoming", anchor: "commitment-#{commitment.id}")
+    assert_redirected_to impegno_url(brand: "posturacorretta", area: "agenda", period: "upcoming", anchor: "commitment-#{commitment.id}")
   end
 end

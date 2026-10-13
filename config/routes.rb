@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get "posturacorrettastart/primo_mese/:chapter", to: "posturacorrettastart#one_month", as: :posturacorrettastart_primo_mese_chapter
   get "posturacorrettastart/1mese", to: redirect("/posturacorrettastart/primo_mese", status: 301)
   resource :session
+  resource :brand_access_request, path: "accesso/richiesta", only: %i[new create]
   get "email-verification/sent", to: "email_verifications#sent", as: :email_verification_sent
   get "email-verification/:token", to: "email_verifications#show", as: :email_verification
   patch "email-verification/:token", to: "email_verifications#update"
@@ -331,6 +332,8 @@ Rails.application.routes.draw do
         member do
           patch :lifecycle
           post :processes, action: :create_process
+          post :skills, action: :activate_skill
+          patch "skills/:activation_id", action: :update_skill, as: :skill
         end
         resources :processes, controller: "node_processes", only: %i[show update] do
           member { post :experiences, action: :create_experience }
@@ -343,6 +346,7 @@ Rails.application.routes.draw do
     get "privacy", to: "privacy#index", as: :privacy
     get "data-commitments", to: "data_commitments#index", as: :data_commitments
     patch "data-commitments/:id/state", to: "data_commitments#update_state", as: :data_commitment_state
+    post "data-commitments/:id/invitation", to: "data_commitments#create_invitation", as: :data_commitment_invitation
   end
 
   namespace :sync do

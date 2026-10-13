@@ -6,7 +6,7 @@
 <section class="mx-auto w-full max-w-md px-4 py-10 sm:py-16">
   <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
     <div class="border-b border-slate-100 bg-slate-50/70 px-6 py-6 sm:px-7">
-      <% if authentication_context? %>
+      <% if authentication_context? && authentication_context_domain.logo_full_url.present? %>
         <img src="<%= authentication_context_domain.logo_full_url %>" alt="<%= authentication_context_domain.site_title %>" class="mb-5 h-8 w-auto max-w-full object-contain">
       <% end %>
       <p class="text-xs font-black uppercase tracking-[0.16em] text-blue-600"><%= authentication_context? ? authentication_context_domain.site_title : "Il tuo spazio" %></p>
@@ -48,8 +48,13 @@
       <% end %>
 
       <div class="mt-6 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
-        Non hai ancora un account?
-        <%= verified_link_to "Crea un account", new_user_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating]).merge(subscription: @subscription_domain&.signed_id(purpose: :free_subscription))), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
+        <% if @brand_invitation.present? %>
+          Non hai ancora un account?
+          <%= verified_link_to "Crealo con questo invito", new_user_path(invitation: params[:invitation].presence || session[:pending_brand_invitation_token]), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
+        <% else %>
+          Non hai ancora accesso?
+          <%= verified_link_to "Richiedi un invito", new_brand_access_request_path(authentication_context_link_params), class: "font-bold text-blue-700 hover:text-blue-800 hover:underline" %>
+        <% end %>
       </div>
     </div>
   </div>

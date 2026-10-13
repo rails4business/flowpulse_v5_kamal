@@ -33,7 +33,7 @@
             </details>
           <% else %>
             <%= verified_link_to "Accedi", new_session_path, class: "rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" %>
-            <%= verified_link_to "Registrati", new_user_path, class: "rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" %>
+            <%= verified_link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: "flowpulse" } : {}), class: "rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" %>
           <% end %>
         </div>
       </nav>

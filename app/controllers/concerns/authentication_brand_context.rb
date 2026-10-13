@@ -18,6 +18,7 @@ module AuthenticationBrandContext
 
       domain = current_domain&.canonical_domain_record
       domain = local_authentication_domain if domain.blank? || !authentication_enabled?(domain)
+      domain = pending_invitation_authentication_domain if domain.blank?
       domain = session_authentication_domain if domain.blank?
       domain = domain&.canonical_domain_record
       @authentication_context_domain = authentication_enabled?(domain) ? domain : nil
@@ -83,7 +84,19 @@ module AuthenticationBrandContext
       return unless authenticated?
 
       if authentication_context?
+        invitation = BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
+        profile = Current.user.profile
+        unless invitation_or_administration_allows_access?(profile, authentication_context_domain, invitation)
+          redirect_to new_brand_access_request_path(authentication_context_link_params),
+            alert: "Non hai ancora accesso a questo Brand. Puoi richiedere un invito al suo responsabile."
+          return
+        end
         access = grant_current_user_brand_access!(authentication_context_domain)
+        if invitation&.email_address&.casecmp?(Current.user.email_address)
+          invitation.accept!(Current.user)
+          complete_access_request_for!(invitation)
+          session.delete(:pending_brand_invitation_token)
+        end
         Current.session.update!(brand_access: access) if access.present? && Current.session.brand_access_id != access.id
       end
 
@@ -118,6 +131,11 @@ module AuthenticationBrandContext
       Domain.active.includes(:node).to_a.find do |domain|
         [domain.auth_slug, domain.site_key, domain.node&.slug].compact.include?(site)
       end
+    end
+
+    def pending_invitation_authentication_domain
+      token = session[:pending_brand_invitation_token].to_s.presence
+      BrandInvitation.find_pending_by_token(token)&.source_domain&.canonical_domain_record if token
     end
 
     def authentication_context_path_prefix

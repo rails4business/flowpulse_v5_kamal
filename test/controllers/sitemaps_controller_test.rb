@@ -27,7 +27,7 @@ class SitemapsControllerTest < ActionDispatch::IntegrationTest
     get "/sitemap.xml", headers: { "HOST" => "flowpulse.net" }
 
     assert_response :success
-    assert_includes response.body, "https://flowpulse.net/flowpulse/rete"
+    assert_not_includes response.body, "https://flowpulse.net/flowpulse/rete"
     assert_not_includes response.body, "posturacorretta.org"
     assert_not_includes response.body, "/posturacorretta/"
   end

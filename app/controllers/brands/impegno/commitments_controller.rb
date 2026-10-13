@@ -3,6 +3,7 @@ require "digest"
 module Brands
   module Impegno
     class CommitmentsController < ApplicationController
+      include ImpegnoSkillAccess
       layout "landing"
 
   def index
@@ -26,8 +27,12 @@ module Brands
     @agenda_filter = @active_area == "agenda" && @active_view == "agenda" && @impegno_professional_access ? params[:agenda_filter].presence_in(%w[all events booking_slots]) || "all" : nil
 
     # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
-    @default_brand = params[:default_brand].presence_in(%w[impegno posturacorretta generaimpresa personale]) || "impegno"
+    @default_brand = params[:default_brand].to_s.strip.presence || "impegno"
     @default_domain = default_domain_for(@default_brand)
+    unless impegno_skill_available_for?(@default_domain)
+      return render plain: "La funzione 1Impegno non è attiva per questo Brand.", status: :forbidden
+    end
+    @impegno_skill_activation = impegno_skill_activation_for(@default_domain)
     @commitment_node_options = available_commitment_nodes
     @default_commitment_node = @default_domain&.node
 
@@ -79,6 +84,9 @@ module Brands
     profile = current_profile
     domain = current_domain || Domain.find_for_host("posturacorretta.org")
     raise ActiveRecord::RecordNotFound, "Dominio PosturaCorretta non configurato" unless domain
+    unless impegno_skill_available_for?(domain)
+      return redirect_to activity_return_path(project, step, task), alert: "La funzione 1Impegno non è attiva per questo Brand."
+    end
 
     start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
     if start_now && active_timer_for_calendar?(profile, "profile:#{profile.id}")
@@ -89,6 +97,7 @@ module Brands
     commitment.profile = profile
     commitment.created_by_profile = profile
     commitment.domain = domain
+    commitment.reusable_skill_node = impegno_skill_activation_for(domain)
     commitment.assignee_profile = profile
     commitment.calendar_key = "profile:#{profile.id}"
     commitment.calendar_label = profile.display_name.presence || profile.username
@@ -134,6 +143,10 @@ module Brands
     subject_node_id = attributes.delete(:subject_node_id)
     commitment.assign_attributes(attributes)
     commitment.domain = domain
+    unless impegno_skill_available_for?(domain)
+      return redirect_to commitment_return_path(commitment), alert: "La funzione 1Impegno non è attiva per questo Brand."
+    end
+    commitment.reusable_skill_node = impegno_skill_activation_for(domain)
     assign_subject_node(commitment, subject_node_id, domain:, preserve_if_blank: true)
     assign_calendar_identity(commitment)
     if commitment.actual_started_at.present?
@@ -251,7 +264,7 @@ module Brands
     end
 
     def create_personal_commitment
-      context_brand = params[:context_brand].presence_in(%w[impegno posturacorretta generaimpresa personale])
+      context_brand = params[:context_brand].to_s.strip.presence
       domain = if context_brand
         default_domain_for(context_brand)
       else
@@ -260,6 +273,9 @@ module Brands
         available_domains.find_by(id: params.dig(:data_commitment, :domain_id))
       end
       return redirect_to(personal_commitment_return_path, alert: "Il dominio del contesto non è disponibile.") unless domain
+      unless impegno_skill_available_for?(domain)
+        return redirect_to personal_commitment_return_path, alert: "La funzione 1Impegno non è attiva per questo Brand."
+      end
 
       attributes = personal_commitment_params
       subject_node_id = attributes.delete(:subject_node_id)
@@ -267,6 +283,7 @@ module Brands
       commitment.profile = current_profile
       commitment.created_by_profile = current_profile
       commitment.domain = domain
+      commitment.reusable_skill_node = impegno_skill_activation_for(domain)
       assign_subject_node(commitment, subject_node_id, domain:)
       assign_previous_publication_commitment(commitment)
       assign_calendar_identity(commitment)
@@ -367,8 +384,15 @@ module Brands
         )
       end
 
-      tab = %w[completed cancelled].include?(commitment.status) || (commitment.ends_at.present? && commitment.ends_at < Time.current) ? "past" : "upcoming"
-      data_commitments_path(tab: tab, anchor: "commitment-#{commitment.id}")
+      period = %w[completed cancelled].include?(commitment.status) || (commitment.ends_at.present? && commitment.ends_at < Time.current) ? "past" : "upcoming"
+      brand = brand_context_for(commitment.domain)
+      impegno_path(brand:, area: "agenda", period:, anchor: "commitment-#{commitment.id}")
+    end
+
+    def brand_context_for(domain)
+      domain = domain&.canonical_domain_record
+      hostname_brand = Brands::Impegno::HomeController::DOMAIN_BRANDS[domain&.hostname.to_s.sub(/\Awww\./, "")]
+      domain&.auth_slug.presence || domain&.site_key.presence || hostname_brand || domain&.node&.slug || "impegno"
     end
 
     def available_domains
@@ -381,14 +405,9 @@ module Brands
     end
 
     def default_domain_for(brand)
-      hostname = {
-        "posturacorretta" => "posturacorretta.org",
-        "generaimpresa" => "generaimpresa.it",
-        "impegno" => "impegno.it",
-        "personale" => "impegno.it"
-      }[brand]
       domains = @domains || available_domains
-      domains.find { |domain| domain.hostname == hostname } if hostname.present?
+      requested_brand = brand == "personale" ? "impegno" : brand.to_s.tr("_", "-")
+      domains.find { |domain| brand_context_for(domain).to_s.tr("_", "-") == requested_brand }
     end
 
     def find_genera_impresa_context!

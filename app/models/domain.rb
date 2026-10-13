@@ -122,6 +122,24 @@ class Domain < ApplicationRecord
     hostname.to_s.sub(/\Awww\./, "")
   end
 
+  # Le email di accesso devono presentarsi con l'identità del Brand dal quale
+  # parte la richiesta. FlowPulse resta l'infrastruttura comune, non il
+  # mittente visibile dei suoi domini.
+  def authentication_sender_name
+    canonical = canonical_domain_record
+    canonical.site_title.to_s.split(/\s+[—–|]\s+/, 2).first.presence ||
+      canonical.node&.title.presence ||
+      canonical.display_hostname
+  end
+
+  def authentication_email_address
+    "accesso@#{canonical_domain_record.display_hostname}"
+  end
+
+  def authentication_sender
+    "#{authentication_sender_name} <#{authentication_email_address}>"
+  end
+
   def canonical_domain_record
     return self if canonical_host.blank?
 

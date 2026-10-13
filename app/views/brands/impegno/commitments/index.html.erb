@@ -1,5 +1,5 @@
 <% calendar_path = data_commitments_path %>
-<% calendar_url = ->(**params) { data_commitments_path(**params) } %>
+<% calendar_url = ->(**options) { impegno_agenda_path(options.merge(workspace: "1", default_brand: @default_brand)) } %>
 <% content_for :title, "Impegno" %>
 
 <% kind_labels = { "personal" => "Personale", "appointment" => "Appuntamento", "event" => "Evento", "project" => "Progetto", "path" => "Percorso", "content" => "Contenuto", "academy" => "Accademia", "work" => "Lavoro", "service" => "Servizio", "purchase" => "Acquisto", "report" => "Report" } %>
@@ -27,7 +27,7 @@
       <h1 class="mt-6 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">I tuoi impegni, in un solo posto</h1>
       <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-slate-600">Inizia con un elenco semplice: cosa devi fare, in quale dominio e quando.</p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <%= link_to "Registrati", new_user_path(return_to: calendar_path), class: "rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition" %>
+        <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: "impegno" } : {}), class: "rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition" %>
         <%= link_to "Accedi", new_session_path(return_to: calendar_path), class: "rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition" %>
       </div>
     </section>
@@ -111,7 +111,7 @@
           <nav class="flex items-center gap-1" aria-label="Filtro agenda professionista">
             <% { "all" => "Tutti", "events" => "I miei eventi", "booking_slots" => "Slot prenotazione" }.each do |filter, label| %>
               <%= link_to label,
-                          impegno_agenda_path(workspace: "1", area: "agenda", date: params[:date].presence, period: params[:period].presence, agenda_filter: filter, view_mode: params[:view_mode], return_to: params[:return_to].presence),
+                          impegno_agenda_path(workspace: "1", default_brand: @default_brand, area: "agenda", date: params[:date].presence, period: params[:period].presence, agenda_filter: filter, view_mode: params[:view_mode], return_to: params[:return_to].presence),
                           aria: { current: ("page" if @agenda_filter == filter) },
                           class: "whitespace-nowrap border-b-2 px-3 py-2 text-sm font-bold transition #{@agenda_filter == filter ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}" %>
             <% end %>

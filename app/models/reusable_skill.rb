@@ -8,6 +8,7 @@ class ReusableSkill < ApplicationRecord
     "contacts" => "Contatti e richieste",
     "places" => "Luoghi e centri",
     "events" => "Eventi",
+    "commitments" => "Impegni e agenda",
     "bookings" => "Prenotazioni",
     "services" => "Servizi",
     "payments" => "Pagamenti e accessi",
@@ -43,6 +44,12 @@ class ReusableSkill < ApplicationRecord
   validates :status, inclusion: { in: STATUSES }
 
   scope :recent_first, -> { order(updated_at: :desc) }
+
+  def activation_for(node, active_only: true)
+    relation = reusable_skill_nodes.where(node:)
+    relation = relation.where(status: "active") if active_only
+    relation.first
+  end
 
   def category_label
     CATEGORIES.fetch(category)

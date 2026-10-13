@@ -17,8 +17,8 @@ class BrandInvitationsController < ApplicationController
       invited_by_user: Current.user,
       role_code: params[:role_code]
     )
-    BrandInvitationMailer.invite(invitation, raw_token, invitation_url(invitation, raw_token)).deliver_now
-    redirect_back fallback_location: root_path, notice: "Invito inviato a #{invitation.email_address}."
+    flash[:invitation_url] = invitation_url(invitation, raw_token)
+    redirect_back fallback_location: root_path, notice: "Invito generato per #{invitation.email_address}. Copia e invia personalmente il collegamento."
   end
 
   def show

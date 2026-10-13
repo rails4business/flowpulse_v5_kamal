@@ -17,6 +17,7 @@ class Session < ApplicationRecord
 
   def valid_for?(domain)
     return false unless active?
+    return true if user&.superadmin_user?
     return brand_access.nil? if domain.blank?
 
     requested_node = domain.resolved_node

@@ -131,6 +131,28 @@ class ApplicationController < ActionController::Base
       access
     end
 
+    def existing_profile_brand_access(profile, domain)
+      domain = domain&.canonical_domain_record
+      return if profile.blank? || domain&.node_id.blank?
+
+      profile.brand_accesses.active.find_by(brand_node: domain.node)
+    end
+
+    def invitation_or_administration_allows_access?(profile, domain, invitation = nil)
+      return true if existing_profile_brand_access(profile, domain).present?
+      return true if invitation&.pending? && invitation.source_domain&.canonical_domain_record == domain&.canonical_domain_record
+
+      domain&.node&.administered_by?(profile&.user) || false
+    end
+
+    def complete_access_request_for!(invitation)
+      return if invitation.blank?
+
+      Brands::Impegno::Commitment
+        .where("metadata ->> 'brand_invitation_id' = ?", invitation.id.to_s)
+        .update_all(status: "completed", resolved_at: Time.current, updated_at: Time.current)
+    end
+
     def ensure_current_user_site_access!(domain)
       return if Current.user.blank? || domain.blank?
 
