@@ -1,22 +1,9 @@
 #!/bin/sh
 
-# Crea e aggiorna prima i Node dichiarati nel repository: i Domain possono
-# riferirsi a questi Node tramite node_slug.
-bin/kamal app exec "bin/rails nodes:import" || exit 1
-
-# Le Skill versionate possono riferirsi ai Node per slug. L'import aggiorna o
-# crea le definizioni presenti nel catalogo, senza eliminare quelle operative
-# assenti dal file.
-bin/kamal app exec "bin/rails skills:import OWNER=markpostura" || exit 1
-
-# I prodotti vengono importati dopo le definizioni delle Skill e possono
-# leggere il Markdown dai percorsi versionati sotto config/data/.
-if bin/kamal app exec "test -f config/data/rails4b/skill_products.yml"; then
-  bin/kamal app exec "bin/rails skill_products:import OWNER=markpostura" || exit 1
-fi
-
-# Mantiene il routing dei domini di produzione allineato a config/domains.yml.
-bin/kamal app exec "bin/rails domains:import" || exit 1
+# Un solo container e una sola connessione SSH mantengono allineati, in ordine,
+# Node, Skill, prodotti opzionali e Domain. Il task salta senza errore il
+# catalogo Skill Product finche il relativo YAML non viene creato.
+bin/kamal app exec "bin/rails deploy:sync_catalogs OWNER=markpostura" || exit 1
 
 # Questo hook gira sulla macchina da cui lanci `kamal deploy`.
 # Invia soltanto i JSON già messi in storage/data_commitment_exports/pending.
