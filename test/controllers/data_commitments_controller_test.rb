@@ -161,6 +161,58 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_includes update_commitment.publication_note_md, "Aggiornare l’introduzione"
   end
 
+  test "completing a publication commitment applies the latest editorial decision" do
+    previous = DataCommitment.create!(
+      profile: @profile,
+      created_by_profile: @profile,
+      published_by_profile: @profile,
+      domain: @domain,
+      title: "Prima pubblicazione",
+      kind: "content",
+      status: "completed",
+      starts_at: 2.days.ago,
+      actual_started_at: 2.days.ago,
+      actual_ended_at: 2.days.ago + 1.hour,
+      pricing_type: "none",
+      contribution_type: "unpaid",
+      blocks_calendar: false,
+      content_key: "inizia-benefici-postura-corretta",
+      publication_status: "draft",
+      publication_visibility: "public",
+      publication_change_kind: "unpublish",
+      access_modes: ["free"]
+    )
+    commitment = DataCommitment.create!(
+      profile: @profile,
+      created_by_profile: @profile,
+      domain: @domain,
+      title: "Pubblicare i benefici della postura",
+      kind: "content",
+      status: "in_progress",
+      starts_at: 1.hour.ago,
+      actual_started_at: 1.hour.ago,
+      pricing_type: "none",
+      contribution_type: "unpaid",
+      content_key: "inizia-benefici-postura-corretta",
+      publish_on_completion: true,
+      publication_status: "draft",
+      publication_visibility: "public",
+      publication_change_kind: "publish",
+      access_modes: ["free"]
+    )
+
+    patch complete_data_commitment_url(commitment)
+
+    commitment.reload
+    assert_equal "completed", commitment.status
+    assert_equal "published", commitment.publication_status
+    assert_equal @profile, commitment.published_by_profile
+    assert commitment.published_at.present?
+    assert_not commitment.blocks_calendar?
+    assert_equal previous, commitment.previous_publication_commitment
+    assert_equal "Pubblicazione approvata.", flash[:notice]
+  end
+
   test "publication intent requires the content key" do
     commitment = DataCommitment.new(
       profile: @profile,

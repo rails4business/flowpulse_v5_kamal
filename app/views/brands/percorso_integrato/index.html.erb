@@ -16,14 +16,72 @@
           </div>
         </div>
         <div class="rounded-[2rem] border border-teal-200 bg-[#173f43] p-8 text-white shadow-xl shadow-emerald-950/10 sm:p-10">
-          <p class="text-xs font-black uppercase tracking-[.16em] text-teal-200">Si parte da dove sei</p>
-          <p class="mt-5 text-3xl font-black leading-tight">Un percorso personale, non un pacchetto uguale per tutti.</p>
-          <p class="mt-5 leading-7 text-teal-50">Non devi attraversare ogni livello. Il primo passo è riconoscere il bisogno attuale e costruire una proposta sostenibile attorno alla persona.</p>
+          <p class="text-xs font-black uppercase tracking-[.16em] text-teal-200">La persona al centro</p>
+          <p class="mt-5 text-3xl font-black leading-tight">Un percorso può cambiare mentre impari a conoscerti.</p>
+          <p class="mt-5 leading-7 text-teal-50">Si osserva la situazione iniziale, si prova ciò che può essere utile e si verifica insieme che cosa sta davvero cambiando.</p>
         </div>
       </div>
     </section>
 
-    <section id="presa-in-carico" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+    <section id="come-funziona" class="scroll-mt-24 border-b border-emerald-100 bg-white px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="mx-auto max-w-4xl text-center">
+          <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Un percorso che evolve</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Conoscere, provare e capire che cosa funziona.</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-600">Bisogni e obiettivi cambiano. Per questo il percorso non viene deciso una volta per tutte: cresce attraverso esperienza, verifiche e correzioni.</p>
+        </div>
+
+        <% cycle_steps = [
+          ["01", "Conoscere", "Situazione, bisogni e obiettivi"],
+          ["02", "Esplorare", "Risorse e possibili soluzioni"],
+          ["03", "Sperimentare", "Un programma sostenibile"],
+          ["04", "Verificare", "Test, osservazioni e feedback"],
+          ["05", "Migliorare", "Correggere e proseguire"]
+        ] %>
+        <div class="pi-cycle" aria-label="Conoscere, esplorare, sperimentare, verificare e migliorare">
+          <svg class="pi-cycle__track" viewBox="0 0 720 440" aria-hidden="true">
+            <defs><marker id="pi-cycle-arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#34a37a" /></marker></defs>
+            <path d="M360 54 C555 54 654 140 654 220 C654 330 516 386 360 386 C204 386 66 330 66 220 C66 140 165 54 330 54" fill="none" stroke="#a7e4ce" stroke-width="4" stroke-dasharray="8 10" marker-end="url(#pi-cycle-arrow)" />
+          </svg>
+          <div class="pi-cycle__center"><small>Al centro</small><strong>Il percorso<br>della persona</strong></div>
+          <ol class="pi-cycle__steps">
+            <% cycle_steps.each_with_index do |(number, title, description), index| %>
+              <li class="pi-cycle__step pi-cycle__step--<%= index + 1 %>">
+                <span><%= number %></span><div><strong><%= title %></strong><small><%= description %></small></div>
+              </li>
+            <% end %>
+          </ol>
+        </div>
+
+        <div class="mx-auto mt-10 max-w-4xl rounded-3xl border border-dashed border-emerald-300 bg-emerald-50/60 p-6 sm:p-8">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+            <span class="shrink-0 rounded-full bg-emerald-700 px-3 py-1 text-xs font-black uppercase tracking-[.12em] text-white">In sviluppo</span>
+            <p class="leading-7 text-slate-700">Nel tempo test, protocolli e strumenti aiuteranno a osservare e confrontare l’evoluzione dei percorsi, un po’ come PageSpeed Insights rende leggibile l’andamento di un sito. I racconti delle persone resteranno feedback; le evidenze di efficacia richiederanno verifiche adeguate.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modalita" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="mx-auto max-w-4xl text-center">
+          <p class="text-xs font-black uppercase tracking-[.18em] text-orange-700">Un percorso, tre modalità</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Non devi sceglierne una sola.</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-600">Puoi imparare in autonomia, partecipare a un gruppo ed essere seguito da uno o più professionisti nello stesso periodo.</p>
+        </div>
+        <div class="pi-modes">
+          <div class="pi-modes__person"><small>Il tuo</small><strong>percorso</strong></div>
+          <div class="pi-modes__grid">
+            <article><span aria-hidden="true">⌂</span><h3>In autonomia</h3><p>Contenuti, corsi, esercizi, test e strumenti personali.</p></article>
+            <article><span aria-hidden="true">◎</span><h3>In gruppo</h3><p>Corsi, eventi, attività condivise e gruppi di appartenenza.</p></article>
+            <article><span aria-hidden="true">＋</span><h3>Con professionisti</h3><p>Valutazioni, consulenze, trattamenti e accompagnamento personale.</p></article>
+          </div>
+          <p class="pi-modes__note">Le tre modalità si possono intrecciare e cambiare nel tempo.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="presa-in-carico" class="scroll-mt-24 border-y border-emerald-100 bg-white px-5 py-20 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-7xl">
         <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Dalla profilazione al programma</p>
         <h2 class="mt-3 max-w-4xl text-3xl font-black tracking-tight sm:text-5xl">Prima capiamo la situazione. Poi un professionista apre il primo programma.</h2>
@@ -35,10 +93,13 @@
           <article class="rounded-3xl border border-sky-100 bg-white p-7 shadow-sm"><span class="text-xs font-black text-sky-700">03</span><h3 class="mt-3 text-xl font-black">Uno o più programmi</h3><p class="mt-3 leading-7 text-slate-600">Ogni professionista può proporre il proprio programma: consulenze, trattamenti, lavoro individuale o di gruppo, eventi e attività da svolgere in autonomia.</p></article>
         </div>
 
-        <div class="mt-12 rounded-[2rem] bg-[#173f43] p-7 text-white sm:p-10">
-          <p class="text-xs font-black uppercase tracking-[.16em] text-teal-200">Una traccia comune</p>
-          <h3 class="mt-3 text-3xl font-black">Che cosa dovrebbe spiegare ogni programma</h3>
-          <p class="mt-4 max-w-4xl leading-7 text-teal-50">Il programma viene discusso con il cliente o paziente. Quando partecipano più professionisti, questa traccia rende più semplice confrontarsi e capire che cosa sta funzionando.</p>
+        <details class="group mt-12 rounded-[2rem] bg-[#173f43] text-white">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-5 p-7 sm:p-10">
+            <span><small class="text-xs font-black uppercase tracking-[.16em] text-teal-200">Una traccia comune</small><strong class="mt-3 block text-2xl font-black sm:text-3xl">Che cosa dovrebbe spiegare ogni programma</strong></span>
+            <span class="text-3xl text-teal-200 transition group-open:rotate-45" aria-hidden="true">＋</span>
+          </summary>
+          <div class="border-t border-white/15 px-7 pb-7 sm:px-10 sm:pb-10">
+          <p class="mt-6 max-w-4xl leading-7 text-teal-50">Il programma viene discusso con la persona. Se partecipano più professionisti, questa traccia aiuta a confrontarsi e a capire che cosa sta funzionando.</p>
           <% program_fields = [
             ["Problema", "Che cosa sta succedendo e che cosa vuole cambiare la persona."],
             ["Possibili cause", "Quali sistemi sembrano coinvolti e possono aver contribuito al problema."],
@@ -50,7 +111,8 @@
             ["Feedback", "Risultati, difficoltà e modifiche da condividere con la persona e con gli altri professionisti."]
           ] %>
           <dl class="mt-8 grid gap-3 sm:grid-cols-2"><% program_fields.each do |label, text| %><div class="rounded-2xl border border-white/15 bg-white/10 p-5"><dt class="font-black text-white"><%= label %></dt><dd class="mt-2 text-sm leading-6 text-teal-50"><%= text %></dd></div><% end %></dl>
-        </div>
+          </div>
+        </details>
 
         <div class="mt-10 grid gap-5 lg:grid-cols-2">
           <details class="group rounded-3xl border border-blue-100 bg-white shadow-sm">
@@ -99,23 +161,6 @@
             <% end %>
           </div>
         </details>
-      </div>
-    </section>
-
-    <section id="come-funziona" class="scroll-mt-24 border-y border-emerald-100 bg-white px-5 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-7xl">
-        <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">La differenza</p>
-        <h2 class="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">Non una somma di interventi, ma una direzione condivisa.</h2>
-        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Il percorso rende visibili bisogni, programmi, responsabilità, attività e verifiche, affinché la persona e i professionisti sappiano dove stanno andando.</p>
-        <div class="mt-12 grid gap-5 md:grid-cols-2">
-          <% @principles.each do |principle| %>
-            <article class="rounded-2xl border border-emerald-100 bg-white p-7 shadow-sm">
-              <span class="text-xs font-black text-emerald-700"><%= principle.fetch("number") %></span>
-              <h3 class="mt-3 text-xl font-black"><%= principle.fetch("title") %></h3>
-              <p class="mt-3 leading-7 text-slate-600"><%= principle.fetch("description") %></p>
-            </article>
-          <% end %>
-        </div>
       </div>
     </section>
 

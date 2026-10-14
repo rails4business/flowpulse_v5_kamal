@@ -193,8 +193,17 @@ module Brands
     end
     commitment.status = "completed"
     commitment.actual_ended_at = Time.current
+    if commitment.publication_requested?
+      subject = commitment.subject || commitment.domain&.node
+      unless publication_manageable_by_current_user?(commitment.domain, subject)
+        return redirect_to commitment_return_path(commitment), alert: "Non hai i permessi per pubblicare questo contenuto."
+      end
+
+      apply_publication_decision_on_completion(commitment)
+    end
     commitment.save!
-    redirect_to commitment_return_path(commitment), notice: "Attività conclusa."
+    notice = commitment.publication_requested? ? publication_decision_notice(commitment.publication_status) : "Attività conclusa."
+    redirect_to commitment_return_path(commitment), notice: notice
   end
 
   def complete_step
@@ -323,6 +332,15 @@ module Brands
       return "draft" if change_kind == "unpublish"
 
       "published"
+    end
+
+    def apply_publication_decision_on_completion(commitment)
+      now = commitment.actual_ended_at || Time.current
+      commitment.publication_status = publication_status_for(commitment.publication_change_kind)
+      commitment.published_at = commitment.publication_status == "published" ? now : nil
+      commitment.published_by_profile = current_profile
+      commitment.blocks_calendar = false
+      assign_previous_publication_commitment(commitment) unless commitment.previous_publication_commitment_id.present?
     end
 
     def publication_decision_notice(publication_status)
@@ -553,11 +571,11 @@ module Brands
     def assign_previous_publication_commitment(commitment)
       return unless commitment.kind == "content" && commitment.content_key.present? && commitment.domain
 
-      commitment.previous_publication_commitment = Commitment
+      previous_scope = Commitment
         .where(domain: commitment.domain, kind: "content", content_key: commitment.content_key)
         .where(subject: commitment.subject)
-        .order(created_at: :desc, id: :desc)
-        .first
+      previous_scope = previous_scope.where.not(id: commitment.id) if commitment.persisted?
+      commitment.previous_publication_commitment = previous_scope.order(created_at: :desc, id: :desc).first
     end
 
     def project_path(project, step, task)

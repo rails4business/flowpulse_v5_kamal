@@ -5,22 +5,24 @@ page:
   owner_node_slug: markpostura
   kind: landing
   renderer: builder
-  title: Mark Postura — problemi, idee e soluzioni da provare
-  description: "Esploro problemi legati alla salute, allo stile di vita e al lavoro. Immagino una soluzione semplice, la provo con le persone e aiuto a trasformarla in un progetto concreto."
+  title: Mark Postura — salute, risorse ed esplorazione
+  description: "Un piccolo passo alla volta per conoscere ciò che conta, organizzare le risorse e dare spazio a ciò che vogliamo esplorare e far crescere."
   status: published
   visibility: public
 
 components:
-  - id: introduzione
+  - id: inizia
     type: hero
     variant: split
     data:
-      eyebrow: Mark Postura
-      title: Problemi, idee e soluzioni da mettere alla prova
+      eyebrow: Mark Postura · Un piccolo passo alla volta
+      title: Nutri ciò che vuoi far crescere
       description: |-
-        Mi piace osservare ciò che non funziona, immaginare una strada diversa e provare a percorrerla. Entro facilmente in relazione con le persone, raccolgo punti di vista e do il primo impulso ai progetti.
+        Abbiamo davvero tempo, spazio e risorse per ciò che ci fa stare bene e per quello che vogliamo diventare?
 
-        Lavoro su tre ambiti: **salute**, **evoluzione armonica dell'essere umano**, **lavoro e risorse**.
+        Ho costruito molti progetti, ma anch'io faccio fatica a dare spazio a tutto ciò che considero importante. Per questo parto dalle cose reali, proteggo un piccolo spazio e osservo che cosa succede.
+
+        Lo faccio attraversando tre aree che spesso si incontrano: **salute**, **risorse** ed **esplorazione**. Non parto da un mondo perfetto: voglio mettere le idee alla prova nella vita reale e trovare persone con cui costruire il passo successivo.
       image:
         url: markpostura/hero_markpostura-720.webp
         alt: Mark Postura
@@ -31,21 +33,86 @@ components:
           - url: markpostura/hero_markpostura-720.webp
             width: 720
       action:
-        label: Scopri come lavoro
-        href: "#direzioni"
+        label: Scopri le tre aree
+        href: "#aree"
+
+  - id: aree
+    type: feature_grid
+    variant: default
+    data:
+      title: Salute, risorse ed esplorazione
+      description: "Non sono tre vite separate. Sono tre aree per capire dove sto mettendo tempo e attenzione — e che cosa vorrei tornare a nutrire."
+    items:
+      - eyebrow: "01 · Salute"
+        title: Conoscere il corpo e costruire il proprio percorso
+        description: "PosturaCorretta parte dall'educazione al corpo. Percorso Integrato entra in gioco quando serve costruire un programma con uno o più professionisti."
+        href: "#ambiti-salute"
+      - eyebrow: "02 · Risorse"
+        title: Trasformare problemi e idee in qualcosa di concreto
+        description: "Tempo, capacità, persone, strumenti e denaro: cerco ciò che è già disponibile, provo una soluzione piccola e costruisco insieme a chi può realizzarla."
+        href: "#ambiti-risorse"
+      - eyebrow: "03 · Esplorazione"
+        title: Lasciare spazio a ciò che ancora non conosciamo
+        description: "Natura, musica, arte, spiritualità, incontri ed esperienze: non tutto deve avere subito un nome, un programma o una spiegazione definitiva."
+        href: "#ambiti-esplorazione"
+
+  - id: primo-passo
+    type: call_to_action
+    variant: accent
+    data:
+      eyebrow: Il primo passo
+      title: Che cosa vuoi tornare a nutrire?
+      description: |-
+        Prima di costruire un calendario perfetto, voglio partire dagli impegni reali e capire quanto spazio rimane davvero. Poi scegliere una cosa piccola da portare avanti, senza trasformare anche il tempo libero in un altro lavoro.
+
+        Da qui nasce il primo contenuto del percorso: un esperimento personale tra salute, risorse ed esplorazione.
+      action:
+        label: Leggi il primo spunto
+        href: /markpostura/contenuti/nutri-cio-che-vuoi-far-crescere
+
+  - id: centri-gravita
+    type: feature_grid
+    variant: hierarchy
+    data:
+      title: Tre centri di gravità
+      description: "Le aree dicono di che cosa mi sto occupando. Questi tre movimenti mi aiutano a capire che cosa sto facendo: posso usarli nella salute, nelle risorse e nell'esplorazione."
+    items:
+      - eyebrow: "🔵 Azzurro"
+        title: Conoscere
+        description: "Capire dove siamo, che cosa sta accadendo e quale direzione stiamo cercando. Prima di partire servono domande, mappe e punti di riferimento."
+      - eyebrow: "🟢 Verde"
+        title: Costruire
+        description: "Mettere insieme tempo, persone, competenze, strumenti e denaro. Dare a una possibilità una forma abbastanza concreta da poter essere vissuta."
+      - eyebrow: "🔴 Rosso"
+        title: Esplorare
+        description: "Cercare strade ancora sconosciute, incontrare esperienze, provare e verificare. Una mappa incompleta non si completa restando fermi."
+
+  - id: partecipa
+    type: call_to_action
+    variant: accent
+    data:
+      eyebrow: Costruiamo un pezzo insieme
+      title: Non una community da guardare, ma un percorso a cui partecipare
+      description: |-
+        Voglio raccontare ciò che sto provando, scegliere piccoli passi, condividere risultati e difficoltà e incontrare persone con bisogni, capacità e idee differenti.
+
+        Non dobbiamo avere tutti gli stessi nodi o gli stessi progetti. Possiamo partire da ciò che vogliamo far crescere, sperimentare qualcosa di realizzabile e capire insieme che cosa funziona. **Il tempo libero, gli affetti e il riposo restano spazi da proteggere**, non un'altra prestazione da misurare.
+      action:
+        label: Racconta che cosa vuoi far crescere
+        href: "#contatti"
 
   - id: direzioni
     type: method_areas
     variant: default
     data:
-      eyebrow: Tre modi per conoscermi
-      title: Chi sono, come lavoro e dove applico il metodo
-      description: "Indole, metodo e ambiti restano collegati, ma rispondono a tre domande diverse."
+      eyebrow: Per approfondire
+      title: Chi sono, come lavoro e dove prendono forma i progetti
+      description: "Se vuoi approfondire, qui trovi la mia indole, il metodo che uso, i progetti divisi per area e la mappa completa di FlowPulse."
       about:
         eyebrow: Indole e lavoro
         title: Esplorare, comprendere e dare forma alle idee
         paragraphs:
-          - "Non mi propongo soltanto come fisioterapista. Mi piace incontrare un problema, guardarlo da punti di vista diversi e immaginare qualcosa che ancora non c'è."
+          - "Sono fisioterapista, ma il mio lavoro non finisce lì. Mi piace incontrare un problema, guardarlo da punti di vista diversi e immaginare qualcosa che ancora non c'è."
           - "Sono spontaneo, curioso e poco convenzionale. Attacco facilmente bottone, ascolto le storie delle persone e mi muovo tra corpo, tecnologia, arte, natura e spiritualità. È spesso nel passaggio da un mondo all'altro che trovo il collegamento che cercavo."
           - "Poi provo. Comincio da qualcosa di piccolo, possibilmente su di me, e lo porto alle prime persone interessate. Se funziona lo correggo, lo racconto e cerco chi può aiutarlo a crescere."
         strengths:
@@ -179,42 +246,28 @@ components:
           label: Scopri GeneraImpresa
           href: /generaimpresa
       areas:
-        eyebrow: Pubblici e problemi diversi
-        title: Tre ambiti di applicazione
-        description: "Lo stesso metodo viene applicato in contesti differenti. Ogni ambito mantiene linguaggio, responsabilità e confini propri."
+        eyebrow: Salute · Risorse · Esplorazione
+        title: Le tre aree, viste più da vicino
+        description: "Ogni area ha linguaggio, responsabilità e confini propri. I collegamenti restano possibili, senza confondere educazione, professioni, progetti ed esperienze personali."
         items:
           - id: salute
-            label: Salute e metodo scientifico
-            title: Conoscere il corpo e verificare ciò che facciamo
+            label: Salute
+            title: Dal conoscere il corpo al costruire un percorso
             audience: Persone, insegnanti, professionisti ed enti
             color: "#2563eb"
-            description: "Percorsi educativi e professionali nei quali osservazione, esperienza, confronto e verifica aiutano a conoscere il corpo e scegliere come procedere. Educazione, insegnamento e trattamento professionale devono restare distinguibili."
+            description: "PosturaCorretta aiuta a conoscere il corpo e propone un percorso educativo che può essere seguito in autonomia o con un insegnante. Percorso Integrato parte invece dalla persona e costruisce, quando serve, un programma condiviso con uno o più professionisti."
             boundary: "Un percorso educativo non sostituisce diagnosi, cura o trattamento sanitario. Ogni professionista interviene entro le proprie competenze."
             projects:
               - title: PosturaCorretta
                 href: /posturacorretta
               - title: Percorso Integrato
                 href: /percorso-integrato
-          - id: evoluzione
-            label: Evoluzione armonica
-            title: Coltivare corpo, ambiente, arte e relazioni
-            audience: Persone, gruppi e comunità
-            color: "#7c3aed"
-            description: "Esperienze che mettono in relazione stile di vita, natura, musica, arte, consapevolezza e spiritualità. Non tutto ciò che sostiene il benessere deve diventare una prestazione sanitaria."
-            boundary: "Sono esperienze, attività e contenuti dedicati allo stile di vita e alla crescita personale; non vengono presentati come diagnosi o cure."
-            projects:
-              - title: Il Giardino del Corpo
-                href: /il-giardino-del-corpo
-              - title: Canta che ti passa
-                href: /cantachetipassa
-              - title: Inside Adventure
-                href: /generaimpresa/brand/inside-adventure
-          - id: lavoro
-            label: Lavoro e risorse
-            title: Dall'idea al lavoro realizzato
+          - id: risorse
+            label: Risorse
+            title: Dai problemi alle risorse e ai progetti
             audience: Imprenditori, professionisti e collaboratori digitali
-            color: "#ea580c"
-            description: "GeneraImpresa aiuta l'imprenditore a chiarire problema, idea, Brand e progetto. Rails4Business riunisce i professionisti digitali che costruiscono strumenti, contenuti e processi."
+            color: "#16a34a"
+            description: "Tempo, capacità, persone, strumenti e denaro rendono possibile un progetto. GeneraImpresa aiuta chi ha un'idea a darle una direzione. Rails4Business sviluppa strumenti e processi con i professionisti digitali. 1Impegno porta il lavoro nel tempo reale e FlowPulse collega Brand, progetti e persone."
             boundary: "Chi porta l'idea e chi la realizza possono essere la stessa persona, ma i due ruoli devono rimanere riconoscibili."
             projects:
               - title: GeneraImpresa
@@ -225,6 +278,20 @@ components:
                 href: /flowpulse
               - title: 1Impegno
                 href: /impegno
+          - id: esplorazione
+            label: Esplorazione
+            title: Coltivare corpo, ambiente, arte e relazioni
+            audience: Persone, gruppi e comunità
+            color: "#7c3aed"
+            description: "Il Giardino del Corpo raccoglie ciò che riguarda stile di vita, natura, consapevolezza e ricerca. Canta che ti passa porta musica e armonia. Altri progetti possono nascere da ciò che incontriamo lungo il cammino."
+            boundary: "Sono esperienze, attività e contenuti dedicati allo stile di vita e alla crescita personale; non vengono presentati come diagnosi o cure."
+            projects:
+              - title: Il Giardino del Corpo
+                href: /il-giardino-del-corpo
+              - title: Canta che ti passa
+                href: /cantachetipassa
+              - title: Inside Adventure
+                href: /generaimpresa/brand/inside-adventure
 
   - id: approfondisci
     type: feature_grid

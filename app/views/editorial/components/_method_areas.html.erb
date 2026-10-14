@@ -78,12 +78,17 @@
       </div>
 
       <% ecosystem = method.fetch("ecosystem") %>
-      <section class="mark-ecosystem mt-12 border-t border-slate-200 pt-10" aria-labelledby="mark-ecosystem-title">
-        <div class="max-w-3xl">
-          <p class="text-xs font-black uppercase tracking-[.18em] text-amber-700"><%= ecosystem.fetch("eyebrow") %></p>
-          <h4 id="mark-ecosystem-title" class="mt-3 text-2xl font-black tracking-tight sm:text-3xl"><%= ecosystem.fetch("title") %></h4>
-          <p class="mt-4 leading-7 text-slate-600"><%= ecosystem.fetch("description") %></p>
-        </div>
+      <details class="mark-ecosystem mt-12 border-t border-slate-200 pt-10">
+        <summary class="mark-ecosystem__summary">
+          <span class="max-w-3xl">
+            <span class="block text-xs font-black uppercase tracking-[.18em] text-amber-700"><%= ecosystem.fetch("eyebrow") %></span>
+            <strong id="mark-ecosystem-title" class="mt-3 block text-2xl font-black tracking-tight sm:text-3xl"><%= ecosystem.fetch("title") %></strong>
+            <span class="mt-4 block leading-7 text-slate-600"><%= ecosystem.fetch("description") %></span>
+          </span>
+          <span class="mark-ecosystem__summary-action"><span class="mark-ecosystem__summary-label">Apri la mappa completa</span><span class="mark-ecosystem__summary-icon" aria-hidden="true">＋</span></span>
+        </summary>
+
+        <div class="mark-ecosystem__body">
 
         <div class="mark-ecosystem__platform mt-8">
           <span><%= ecosystem.dig("platform", "type") %></span>
@@ -159,7 +164,8 @@
             <a class="mark-ecosystem__consultation-action" href="<%= consultation.dig("action", "href") %>"><%= consultation.dig("action", "label") %></a>
           </div>
         <% end %>
-      </section>
+        </div>
+      </details>
 
       <div class="mt-8 rounded-3xl bg-slate-950 p-7 text-white sm:flex sm:items-center sm:justify-between sm:gap-8">
         <div>
@@ -219,6 +225,12 @@
   .mark-directions__cycle::before{content:"";position:absolute;top:1.25rem;right:3%;left:3%;height:2px;background:#fcd34d}
   .mark-directions__cycle-step{position:relative;min-width:0;padding-right:.25rem}
   .mark-directions__cycle-number{position:relative;z-index:1;display:flex;width:2.5rem;height:2.5rem;align-items:center;justify-content:center;border:3px solid #fff;border-radius:999px;background:#0f172a;color:#fff;font-size:.8rem;font-weight:900;box-shadow:0 0 0 1px #f59e0b}
+  .mark-ecosystem__summary{display:flex;cursor:pointer;list-style:none;align-items:center;justify-content:space-between;gap:1.5rem;border:1px solid #fde68a;border-radius:1.25rem;background:#fffbeb;padding:1.25rem}
+  .mark-ecosystem__summary::-webkit-details-marker{display:none}
+  .mark-ecosystem__summary-action{display:flex;flex:none;align-items:center;gap:.6rem;border-radius:999px;background:#0f172a;color:#fff;padding:.7rem 1rem;font-size:.78rem;font-weight:900}
+  .mark-ecosystem__summary-icon{font-size:1.1rem;line-height:1;transition:transform .2s ease}
+  .mark-ecosystem[open] .mark-ecosystem__summary-icon{transform:rotate(45deg)}
+  .mark-ecosystem__body{padding-top:.25rem}
   .mark-ecosystem__platform{position:relative;margin-inline:auto;max-width:30rem;border-radius:1.25rem;background:#0f172a;padding:1.25rem;text-align:center;color:#fff;box-shadow:0 10px 25px rgb(15 23 42 / 18%)}
   .mark-ecosystem__platform span,.mark-ecosystem small{display:block;font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
   .mark-ecosystem__platform span{color:#fcd34d}.mark-ecosystem__platform a{color:#fff!important;text-decoration:none}.mark-ecosystem__platform strong{display:block;margin-top:.3rem;font-size:1.35rem}.mark-ecosystem__platform a:hover strong{text-decoration:underline}.mark-ecosystem__platform p{margin-top:.4rem;color:#cbd5e1;font-size:.8rem;line-height:1.4}
@@ -233,7 +245,7 @@
   @media(min-width:640px){.mark-directions__panel,.mark-directions__area-panel{padding:2rem}}
   @media(max-width:1023px){.mark-directions__cycle{display:flex;overflow-x:auto;gap:0;padding-bottom:1rem;scroll-snap-type:x proximity}.mark-directions__cycle::before{right:auto;left:1.25rem;width:76rem}.mark-directions__cycle-step{width:12rem;min-width:12rem;padding-right:1.5rem;scroll-snap-align:start}}
   @media(max-width:900px){.mark-ecosystem__example ol{align-items:stretch}}
-  @media(max-width:700px){.mark-ecosystem__brand-types>div{grid-template-columns:1fr}.mark-ecosystem__projects,.mark-ecosystem__people ul{display:flex;overflow-x:auto}.mark-ecosystem__projects article,.mark-ecosystem__people li{width:14rem;min-width:14rem}.mark-ecosystem__skills-flow{display:flex;overflow-x:auto;gap:1.5rem}.mark-ecosystem__skills-flow>div{width:14rem;min-width:14rem}.mark-ecosystem__consultation ul{grid-template-columns:1fr}}
+  @media(max-width:700px){.mark-ecosystem__summary{align-items:flex-start;flex-direction:column}.mark-ecosystem__summary-action{justify-content:space-between;width:100%}.mark-ecosystem__brand-types>div{grid-template-columns:1fr}.mark-ecosystem__projects,.mark-ecosystem__people ul{display:flex;overflow-x:auto}.mark-ecosystem__projects article,.mark-ecosystem__people li{width:14rem;min-width:14rem}.mark-ecosystem__skills-flow{display:flex;overflow-x:auto;gap:1.5rem}.mark-ecosystem__skills-flow>div{width:14rem;min-width:14rem}.mark-ecosystem__consultation ul{grid-template-columns:1fr}}
   .mark-ecosystem__brand-types a,.mark-ecosystem__skills-source a,.mark-ecosystem__example a{color:inherit!important;text-decoration:none}.mark-ecosystem__brand-types a:hover strong,.mark-ecosystem__skills-source a:hover strong,.mark-ecosystem__example a:hover strong{text-decoration:underline}
   @media(max-width:520px){.mark-directions__main-tabs,.mark-directions__area-tabs{margin-right:-1.25rem;padding-right:1.25rem}.mark-directions__tab,.mark-directions__area-tab{padding:.65rem .85rem;font-size:.78rem}.mark-directions__panel,.mark-directions__area-panel{border-radius:1.1rem;padding:1rem}.mark-directions__panel h3,.mark-directions__area-panel h4{font-size:1.55rem;line-height:1.15}.mark-directions__cycle-step{width:10.5rem;min-width:10.5rem}.mark-ecosystem__projects,.mark-ecosystem__people ul,.mark-ecosystem__skills-flow{display:grid;grid-template-columns:1fr;overflow:visible;gap:.65rem}.mark-ecosystem__projects article,.mark-ecosystem__people li,.mark-ecosystem__skills-flow>div{width:auto;min-width:0}.mark-ecosystem__skills-flow>div:not(:last-child)::after{content:"↓";top:auto;right:50%;bottom:-1.05rem;transform:translateX(50%)}.mark-ecosystem__example ol{gap:1rem}.mark-ecosystem__example li{min-width:8.5rem}}
 </style>

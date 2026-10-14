@@ -1,5 +1,9 @@
 # Architettura comune — contenuti, sessioni e servizi
 
+> **Approfondimento tecnico.** Dal 13 ottobre 2026 l’ordine operativo e le
+> decisioni trasversali sono riuniti nel
+> [Piano operativo FlowPulse](2026-10-13-PIANO_OPERATIVO_FLOWPULSE.md).
+
 > **Fonte di verità corrente.** Sostituisce per le decisioni future i modelli
 > `DataEvent`, `EventFormat`, `Occurrence` e `Slot` precedenti. Non vengono
 > reintrodotti modelli soltanto dopo la validazione nella vista. Il

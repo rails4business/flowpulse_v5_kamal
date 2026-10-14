@@ -420,7 +420,7 @@ module Posturacorretta
     [chapter["id"], chapter.fetch("slug")].compact.flat_map do |key|
       publication_commitments_by_scope.fetch([chapter["publication_node_id"], key], []) +
         publication_commitments_by_scope.fetch([nil, key], [])
-    end.uniq.sort_by { |commitment| publication_decision_time(commitment) }.reverse
+    end.uniq.sort_by { |commitment| [publication_decision_time(commitment), commitment.id] }.reverse
   end
 
   def posturacorretta_editorial_preview?

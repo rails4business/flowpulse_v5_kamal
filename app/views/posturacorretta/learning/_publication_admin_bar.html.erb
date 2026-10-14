@@ -7,7 +7,8 @@
     <% if commitment %>
       <% end_time = commitment.actual_ended_at || commitment.ends_at || publication_decision_time(commitment) %>
       <% pill_classes = commitment.publication_status == "published" ? "bg-emerald-100 text-emerald-800 ring-emerald-200" : commitment.publication_status == "archived" ? "bg-slate-200 text-slate-700 ring-slate-300" : "bg-amber-100 text-amber-800 ring-amber-200" %>
-      <button type="button" onclick="document.getElementById('<%= dialog_id %>')?.showModal()" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-black ring-1 <%= pill_classes %>" title="Apri informazioni editoriali"><span aria-hidden="true"><%= commitment.publication_status == 'published' ? '✓' : commitment.publication_status == 'archived' ? '■' : '●' %></span><%= l(end_time, format: :short) %></button>
+      <% status_label = commitment.publication_status == "published" ? "Pubblicato" : commitment.publication_status == "archived" ? "Archiviato" : "Bozza" %>
+      <button type="button" onclick="document.getElementById('<%= dialog_id %>')?.showModal()" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-black ring-1 <%= pill_classes %>" title="Apri informazioni editoriali"><span aria-hidden="true"><%= commitment.publication_status == 'published' ? '✓' : commitment.publication_status == 'archived' ? '■' : '●' %></span><%= status_label %> · <%= l(end_time, format: :short) %></button>
     <% else %>
       <%= link_to "＋ DataCommitment", commitment_path, class: "inline-flex rounded-full bg-violet-50 px-3 py-1 font-black text-violet-700 ring-1 ring-violet-200 hover:bg-violet-100" %>
     <% end %>
