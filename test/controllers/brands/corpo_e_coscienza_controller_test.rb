@@ -55,6 +55,7 @@ module Brands
       assert_select ".cec-sticky-nav", text: /Per le persone|Per i professionisti|Entra nella rete/, count: 0
       assert_select "#formazione a", text: "Sei già formato? Registrati"
       assert_select ".cec-sticky-nav a[href='#richiesta']", text: "Contatti"
+      assert_select ".cec-account a", text: "Accedi"
       assert_select ".cec-training-program h1", text: "Piano di formazione"
       assert_select ".cec-training-program h2", text: "Primo Ciclo"
       assert_select ".cec-training-program", text: /12 meridiani principali.*Ritmologia stagionale.*Posture e autoposture/m
@@ -64,6 +65,19 @@ module Brands
       assert_select "[data-privacy-content='functionality'][hidden]#cec-professionals-map"
       assert_select "script[src*='unpkg.com/leaflet']", count: 0
       assert_select "template[data-privacy-src*='unpkg.com/leaflet']", count: 1
+    end
+
+    test "shows the account menu and brand administration to its owner" do
+      sign_in(@node.role_assignment.profile.user)
+
+      get corpo_e_coscienza_url
+
+      assert_response :success
+      assert_select ".cec-account__trigger[aria-label='Apri menu profilo']"
+      assert_select ".cec-account__menu a[href='#{profile_path}']", text: "Profilo"
+      assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste"
+      assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Amministra Brand"
+      assert_select ".cec-account__menu form[action='#{session_path}'] button", text: "Esci"
     end
 
     test "shows the privacy information for the request form" do
@@ -138,6 +152,42 @@ module Brands
       assert_equal 45.5416, commitment.metadata["latitude"]
       assert_equal 10.2118, commitment.metadata["longitude"]
       assert_equal "osm:R:44881", commitment.metadata["location_ref"]
+    end
+
+    test "keeps a local request attached to the Corpo e Coscienza domain" do
+      other_user = User.create!(
+        email_address: "local-domain-owner@example.com",
+        password: "password123",
+        password_confirmation: "password123"
+      )
+      other_profile = other_user.create_profile!(display_name: "Local Domain Owner")
+      other_assignment = RoleAssignment.create!(profile: other_profile, role: :ideatore)
+      other_node = Node.create!(title: "Local Domain", slug: "local-domain", role_assignment: other_assignment)
+      Domain.create!(
+        hostname: "localhost",
+        locale: "it",
+        target_controller: "domains",
+        target_action: "show",
+        primary: true,
+        active: true,
+        node: other_node
+      )
+
+      post corpo_e_coscienza_requests_url, params: {
+        request: {
+          request_kind: "information",
+          name: "Mario Rossi",
+          email: "mario@example.com",
+          country_code: "IT",
+          city: "Milano",
+          message: "Vorrei ricevere informazioni.",
+          privacy_consent: "1"
+        }
+      }
+
+      commitment = DataCommitment.order(:created_at).last
+      assert_equal @domain, commitment.domain
+      assert_equal @node, commitment.subject
     end
 
     test "requires a contact channel" do

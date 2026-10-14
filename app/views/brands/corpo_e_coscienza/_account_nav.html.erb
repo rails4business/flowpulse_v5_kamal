@@ -1,0 +1,33 @@
+<div class="cec-account">
+  <% if authenticated? %>
+    <details class="cec-account__details" data-close-on-outside>
+      <summary class="cec-account__trigger" aria-label="Apri menu profilo">
+        <span class="cec-account__avatar"><%= (Current.user.profile&.display_name.presence || Current.user.email_address).first.upcase %></span>
+        <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+      </summary>
+      <div class="cec-account__menu">
+        <div class="cec-account__identity">
+          <strong><%= Current.user.profile&.display_name.presence || "Profilo" %></strong>
+          <span><%= Current.user.email_address %></span>
+        </div>
+        <div class="cec-account__divider"></div>
+        <%= link_to "Dashboard", dashboard_home_path %>
+        <%= link_to "Profilo", profile_path %>
+        <%= render "shared/privacy_menu_button" %>
+        <% if @can_administer_brand %>
+          <div class="cec-account__divider"></div>
+          <%= link_to "Richieste", brand_admin_data_commitments_path(@brand_node.slug), class: "cec-account__admin-link" %>
+          <%= link_to "Amministra Brand", brand_admin_nodes_path(@brand_node.slug), class: "cec-account__admin-link" %>
+        <% end %>
+        <% if Current.user.superadmin_user? %>
+          <%= link_to "Superadmin", admin_dashboard_path, class: "cec-account__admin-link" %>
+        <% end %>
+        <%= button_to "Esci", session_path, method: :delete, class: "cec-account__logout" %>
+      </div>
+    </details>
+  <% else %>
+    <% auth_params = authentication_context_link_params(return_to: corpo_e_coscienza_path) %>
+    <% auth_params[:site] ||= "corpoecoscienza" if local_request? %>
+    <%= link_to "Accedi", new_session_path(auth_params), class: "cec-account__login" %>
+  <% end %>
+</div>

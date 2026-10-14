@@ -33,7 +33,7 @@ module Brands
     end
 
     def create_request
-      domain = Domain.find_for_host(request.host) || Domain.find_for_host("corpoecoscienza.org")
+      domain = corpo_e_coscienza_domain
       node = domain&.node || Node.find_by(slug: "corpoecoscienza")
       owner_profile = node&.role_assignment&.profile
       raise ActiveRecord::RecordNotFound, "Brand Corpo e Coscienza non configurato" unless domain && node && owner_profile
@@ -100,6 +100,18 @@ module Brands
 
       def load_site
         CorpoECoscienzaCatalog.load.each { |name, value| instance_variable_set("@#{name}", value) }
+        domain = corpo_e_coscienza_domain
+        @brand_node = domain&.node || Node.find_by(slug: "corpoecoscienza")
+        @can_administer_brand = Current.user.present? && @brand_node&.administered_by?(Current.user)
+      end
+
+      # In locale la pagina vive sotto /corpo-e-coscienza, ma il Domain della
+      # richiesta deve restare quello del Brand. Usare il Domain di localhost
+      # farebbe sparire la richiesta dal relativo pannello amministrativo.
+      def corpo_e_coscienza_domain
+        return Domain.find_for_host("corpoecoscienza.org") if local_request?
+
+        Domain.find_for_host(request.host) || Domain.find_for_host("corpoecoscienza.org")
       end
 
       def request_params

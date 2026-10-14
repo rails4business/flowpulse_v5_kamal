@@ -13,11 +13,14 @@
       <a class="cec-sticky-nav__brand" href="#top" aria-label="Corpo e Coscienza · torna all’inizio">
         <%= image_tag @site.fetch("logo_square_image"), alt: "", width: 36, height: 36 %>
       </a>
-      <a href="#metodo">Il metodo</a>
-      <a href="#partecipa">Inizia un percorso</a>
-      <a href="#professionisti">Trova un professionista</a>
-      <a href="#formazione">Formazione</a>
-      <a href="#richiesta">Contatti</a>
+      <div class="cec-sticky-nav__links">
+        <a href="#metodo">Il metodo</a>
+        <a href="#partecipa">Inizia un percorso</a>
+        <a href="#professionisti">Trova un professionista</a>
+        <a href="#formazione">Formazione</a>
+        <a href="#richiesta">Contatti</a>
+      </div>
+      <%= render "brands/corpo_e_coscienza/account_nav" %>
     </div>
   </nav>
   <section id="top" class="cec-hero">
