@@ -39,6 +39,25 @@ class Brands::Admin::DataCommitmentsControllerTest < ActionDispatch::Integration
     assert_select ".brand-admin-badge--request", text: "Ricerca professionista"
     assert_select ".brand-admin-badge--user", text: "Utente"
     assert_select "form[action='#{brand_admin_data_commitment_state_path(@brand.slug, @brand_request)}'] button", text: "Prendi in carico"
+    assert_select ".brand-admin-site-link[href='#{corpo_e_coscienza_path}']", text: "Torna al sito"
+  end
+
+  test "superadmin sees the Corpo e Coscienza requests" do
+    superadmin = User.create!(
+      email_address: "brand-commitments-superadmin@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      superadmin: true,
+      active_role: :superadmin
+    )
+    superadmin.create_profile!(display_name: "Superadmin")
+    sign_in(superadmin)
+
+    get brand_admin_data_commitments_url(@brand.slug)
+
+    assert_response :success
+    assert_select "#data-commitment-#{@brand_request.id}", text: /Mario Rossi.*mario@example.com/m
+    assert_select ".brand-admin-support", text: "Assistenza superadmin"
   end
 
   test "readable brand slug resolves to the canonical node" do

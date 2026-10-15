@@ -73,11 +73,32 @@ module Brands
       get corpo_e_coscienza_url
 
       assert_response :success
-      assert_select ".cec-account__trigger[aria-label='Apri menu profilo']"
-      assert_select ".cec-account__menu a[href='#{profile_path}']", text: "Profilo"
-      assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste"
-      assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Amministra Brand"
+      assert_select ".cec-account__trigger[aria-label='Apri menu Corpo e Coscienza']"
+      assert_select ".cec-account__identity", text: /Corpo e Coscienza/
+      assert_select ".cec-account__menu a[href='#{dashboard_home_path}']", count: 0
+      assert_select ".cec-account__menu a[href='#{profile_path}']", count: 0
+      assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste ricevute"
+      assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Admin Corpo e Coscienza"
       assert_select ".cec-account__menu form[action='#{session_path}'] button", text: "Esci"
+    end
+
+    test "shows Corpo e Coscienza requests and administration to a superadmin" do
+      superadmin = User.create!(
+        email_address: "corpo-coscienza-superadmin@example.com",
+        password: "password123",
+        password_confirmation: "password123",
+        superadmin: true,
+        active_role: :superadmin
+      )
+      superadmin.create_profile!(display_name: "Superadmin")
+      sign_in(superadmin)
+
+      get corpo_e_coscienza_url
+
+      assert_response :success
+      assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste ricevute"
+      assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Admin Corpo e Coscienza"
+      assert_select ".cec-account__menu a[href='#{admin_dashboard_path}']", text: "Superadmin FlowPulse"
     end
 
     test "shows the privacy information for the request form" do

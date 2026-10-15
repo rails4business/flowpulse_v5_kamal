@@ -18,7 +18,7 @@
         </div>
         <div class="brand-admin-header__actions">
           <% if brand_support_access? %><span class="brand-admin-support">Assistenza superadmin</span><% end %>
-          <%= link_to "Torna al sito", "/#{@brand.slug}", class: "brand-admin-site-link" %>
+          <%= link_to "Torna al sito", brand_public_path, class: "brand-admin-site-link" %>
         </div>
       </div>
       <nav class="brand-admin-nav" aria-label="Amministrazione del Brand">

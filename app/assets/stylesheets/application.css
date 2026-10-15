@@ -5577,10 +5577,12 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .cec-sticky-nav .cec-account__login { border: 1px solid #d6d3ce; padding-inline: .9rem; color: #242424; background: #fff; box-shadow: 0 2px 8px rgb(0 0 0 / 5%); }
 .cec-account__menu { position: absolute; z-index: 950; top: calc(100% + .65rem); right: 0; width: min(16rem, calc(100vw - 2rem)); border: 1px solid #dedbd6; border-radius: 1rem; padding: .5rem; background: #fff; box-shadow: 0 18px 45px rgb(0 0 0 / 16%); }
 .cec-account__identity { padding: .55rem .7rem; }
-.cec-account__identity strong, .cec-account__identity span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cec-account__identity strong, .cec-account__identity span, .cec-account__identity small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cec-account__identity strong { color: #242424; font-size: .85rem; }
 .cec-account__identity span { margin-top: .15rem; color: #77726c; font-size: .7rem; }
+.cec-account__identity small { margin-top: .1rem; color: #96918b; font-size: .65rem; }
 .cec-account__divider { height: 1px; margin: .3rem .2rem; background: #ece9e5; }
+.cec-account__section-label { display: block; padding: .45rem .7rem .2rem; color: #77726c; font-size: .62rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
 .cec-sticky-nav .cec-account__menu a { display: flex; width: 100%; border-radius: .65rem; padding: .65rem .7rem; font-size: .8rem; }
 .cec-sticky-nav .cec-account__menu .cec-account__admin-link { color: #365f57; font-weight: 850; }
 .cec-account__menu form { margin: 0; }

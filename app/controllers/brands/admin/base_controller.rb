@@ -13,7 +13,7 @@ module Brands
       before_action :set_brand
       before_action :require_brand_administrator!
 
-      helper_method :brand_owner?, :brand_support_access?
+      helper_method :brand_owner?, :brand_support_access?, :brand_public_path
 
       private
 
@@ -36,6 +36,14 @@ module Brands
 
         def brand_support_access?
           Current.user&.superadmin_user? && !brand_owner?
+        end
+
+        def brand_public_path
+          return "/" if current_domain&.resolved_node == @brand
+
+          {
+            "corpoecoscienza" => corpo_e_coscienza_path
+          }.fetch(@brand.slug, "/#{@brand.slug}")
         end
     end
   end
