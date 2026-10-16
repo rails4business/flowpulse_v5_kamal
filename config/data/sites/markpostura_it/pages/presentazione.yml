@@ -1,0 +1,104 @@
+schema_version: 1
+
+page:
+  key: presentazione
+  owner_node_slug: markpostura
+  kind: landing
+  renderer: builder
+  title: Presentazione — Mark Postura
+  description: "Un incontro di circa un'ora per conoscere i progetti di MarkPostura, scegliere come partecipare e scoprire come costruire il proprio mondo con FlowPulse."
+  status: published
+  visibility: public
+
+components:
+  - id: inizia
+    type: hero
+    variant: split
+    data:
+      eyebrow: Presentazione · Online e dal vivo
+      title: Un'ora per vedere il quadro completo
+      description: |-
+        Ho costruito progetti che parlano di corpo, salute, lavoro, risorse, natura, arte e tecnologia. Presi uno alla volta sembrano mondi separati. Durante la presentazione mostro il filo che li collega e, soprattutto, da dove si può cominciare davvero.
+
+        Non serve conoscere già FlowPulse o scegliere subito un progetto. Puoi ascoltare, fare domande e capire se vuoi esplorare, collaborare oppure costruire qualcosa di tuo.
+      image:
+        url: markpostura/hero_markpostura-720.webp
+        alt: Mark Postura
+        sizes: "(min-width: 1024px) 42vw, 100vw"
+        srcset:
+          - url: markpostura/hero_markpostura-480.webp
+            width: 480
+          - url: markpostura/hero_markpostura-720.webp
+            width: 720
+      action:
+        label: Chiedi il prossimo incontro
+        href: "mailto:markpostura@gmail.com?subject=Presentazione%20MarkPostura"
+
+  - id: incontro
+    type: steps
+    variant: horizontal
+    data:
+      title: Che cosa vedremo
+      description: "Una traccia semplice. Le domande delle persone possono cambiare il tempo dedicato a ciascuna parte."
+    items:
+      - title: Conoscere
+        description: "Da dove parto: corpo, salute e un nuovo modo di osservare la persona."
+      - title: Costruire
+        description: "Come un problema diventa un progetto con risorse, responsabilità e strumenti."
+      - title: Esplorare
+        description: "Perché natura, arte, esperienze e ciò che non è ancora standardizzato hanno bisogno di uno spazio."
+      - title: Collegare
+        description: "Come FlowPulse organizza il mio mondo e può aiutarti a costruire il tuo."
+
+  - id: dopo
+    type: feature_grid
+    variant: default
+    data:
+      title: Dopo la presentazione puoi scegliere
+      description: "Non sono tre percorsi obbligatori e non devi decidere tutto subito."
+    items:
+      - eyebrow: Esplora
+        title: Conosci il mondo di MarkPostura
+        description: "Entra nei progetti di salute, lavoro e scoperta che ti interessano e segui ciò che viene reso pubblico."
+        href: /flowpulse/progetti?mondo=markpostura
+      - eyebrow: Collabora
+        title: Porta una capacità in un progetto
+        description: "Puoi contribuire come professionista, operatore, responsabile o collaboratore digitale entro un ruolo chiaro."
+        href: /generaimpresa
+      - eyebrow: Crea
+        title: Comincia dal tuo mondo
+        description: "Parti dalla tua professione, da un problema o da un'idea. La prima cosa da costruire non è tutto il sistema: è il prossimo passo verificabile."
+        href: /flowpulse
+
+  - id: filoni
+    type: feature_grid
+    variant: default
+    data:
+      title: I tre ingressi nel mio mondo
+      description: "Sono la mappa che uso oggi. Il tuo FlowPulse potrà partire da altri centri e avere una forma differente."
+    items:
+      - eyebrow: Salute e corpo
+        title: PosturaCorretta e Percorso Integrato
+        description: "Educazione al corpo, percorsi personali e collaborazione con professionisti."
+        href: /posturacorretta
+      - eyebrow: Lavoro e risorse
+        title: Rails4Business, GeneraImpresa e 1Impegno
+        description: "Problemi, progetti, competenze digitali, responsabilità e tempo reale."
+        href: /rails4b
+      - eyebrow: Esperienze e scoperta
+        title: Il Giardino del Corpo
+        description: "Natura, arte, musica, incontri e nuove possibilità da esplorare."
+        href: /il-giardino-del-corpo
+
+  - id: partecipa
+    type: call_to_action
+    variant: contact
+    data:
+      eyebrow: Prossimo incontro da concordare
+      title: Preferisci partecipare online o dal vivo?
+      description: "Scrivimi indicando la modalità che preferisci e, se vuoi, che cosa ti ha portato qui. La presentazione dura circa un'ora."
+      actions:
+        - label: Scrivi su WhatsApp
+          href: https://wa.me/393792891488
+        - label: Invia una email
+          href: mailto:markpostura@gmail.com?subject=Presentazione%20MarkPostura

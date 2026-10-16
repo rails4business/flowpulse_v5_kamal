@@ -5,8 +5,8 @@ page:
   owner_node_slug: markpostura
   kind: landing
   renderer: builder
-  title: Mark Postura — salute, risorse ed esplorazione
-  description: "Un piccolo passo alla volta per conoscere ciò che conta, organizzare le risorse e dare spazio a ciò che vogliamo esplorare e far crescere."
+  title: Mark Postura — conoscere, costruire, esplorare
+  description: "Un incontro per conoscere il mondo che sto costruendo e scoprire come dare forma al tuo attraverso salute, risorse ed esplorazione."
   status: published
   visibility: public
 
@@ -15,14 +15,13 @@ components:
     type: hero
     variant: split
     data:
-      eyebrow: Mark Postura · Un piccolo passo alla volta
-      title: Nutri ciò che vuoi far crescere
+      eyebrow: Mark Postura · Conoscere, costruire, esplorare
+      title: Chi ha costruito il mondo in cui vivi?
       description: |-
-        Abbiamo davvero tempo, spazio e risorse per ciò che ci fa stare bene e per quello che vogliamo diventare?
-
-        Ho costruito molti progetti, ma anch'io faccio fatica a dare spazio a tutto ciò che considero importante. Per questo parto dalle cose reali, proteggo un piccolo spazio e osservo che cosa succede.
-
-        Lo faccio attraversando tre aree che spesso si incontrano: **salute**, **risorse** ed **esplorazione**. Non parto da un mondo perfetto: voglio mettere le idee alla prova nella vita reale e trovare persone con cui costruire il passo successivo.
+        Sono fisioterapista, esploratore. Essere umani ci permetterebbe di avere a disposizione tantissime cose che per lo più non scopriremo mai e ciò che ci separa da questo sono le esperienze. Sono appassionato di corpo, salute, lavoro, tecnologia, natura, arte.
+        Ma come ci hanno insegnato a vivere non permette di vivere tutto questo.
+        Allora perchè non inventare una strada diversa? Perchè non creare mondi con regole diverse.
+        Una volta al mese ti racconto come sto costruendo il mio e ti spiego come puoi collaborare o costruire il tuo con flowpulse!
       image:
         url: markpostura/hero_markpostura-720.webp
         alt: Mark Postura
@@ -33,313 +32,90 @@ components:
           - url: markpostura/hero_markpostura-720.webp
             width: 720
       action:
-        label: Scopri le tre aree
-        href: "#aree"
+        label: Partecipa alla presentazione
+        href: /markpostura/presentazione
 
-  - id: aree
+  - id: presentazione
+    type: call_to_action
+    variant: accent
+    data:
+      eyebrow: Un'ora, online o dal vivo
+      title: Partiamo dalla visione generale, poi scegliamo dove entrare
+      description: |-
+        La presentazione dura circa un'ora. Ti mostro i tre filoni, i progetti già avviati e il modo in cui li sto collegando. Puoi venire per conoscere, collaborare a qualcosa che esiste oppure iniziare a immaginare il tuo FlowPulse.
+
+        Il prossimo incontro viene concordato con le persone interessate: niente calendario finto pieno di date che poi non riusciamo a vivere.
+      action:
+        label: Scopri come partecipare
+        href: /markpostura/presentazione
+
+  - id: percorsi
     type: feature_grid
     variant: default
     data:
-      title: Salute, risorse ed esplorazione
-      description: "Non sono tre vite separate. Sono tre aree per capire dove sto mettendo tempo e attenzione — e che cosa vorrei tornare a nutrire."
+      title: Tre filoni, una stessa ricerca
+      description: "Si parte dalla persona e dalla vita reale. Ogni filone ha linguaggi e confini propri, ma può collegarsi agli altri quando serve."
     items:
-      - eyebrow: "01 · Salute"
+      - eyebrow: "01 · Salute e corpo"
         title: Conoscere il corpo e costruire il proprio percorso
-        description: "PosturaCorretta parte dall'educazione al corpo. Percorso Integrato entra in gioco quando serve costruire un programma con uno o più professionisti."
-        href: "#ambiti-salute"
-      - eyebrow: "02 · Risorse"
-        title: Trasformare problemi e idee in qualcosa di concreto
-        description: "Tempo, capacità, persone, strumenti e denaro: cerco ciò che è già disponibile, provo una soluzione piccola e costruisco insieme a chi può realizzarla."
-        href: "#ambiti-risorse"
-      - eyebrow: "03 · Esplorazione"
-        title: Lasciare spazio a ciò che ancora non conosciamo
-        description: "Natura, musica, arte, spiritualità, incontri ed esperienze: non tutto deve avere subito un nome, un programma o una spiegazione definitiva."
-        href: "#ambiti-esplorazione"
+        description: "PosturaCorretta apre il percorso educativo. Percorso Integrato aiuta a organizzare programmi con uno o più professionisti quando serve una presa in carico personale."
+        href: /posturacorretta
+      - eyebrow: "02 · Lavoro e risorse"
+        title: Portare un problema verso una soluzione concreta
+        description: "Rails4Business, GeneraImpresa e 1Impegno collegano idee, competenze, strumenti, responsabilità e tempo. Il digitale serve a costruire, non è il punto di arrivo."
+        href: /rails4b
+      - eyebrow: "03 · Esperienze e scoperta"
+        title: Lasciare una porta aperta su ciò che ancora non conosciamo
+        description: "Il Giardino del Corpo raccoglie natura, musica, arte, spiritualità, incontri ed esperienze che possono aiutarci a guardare il corpo e la vita da un punto di vista diverso."
+        href: /il-giardino-del-corpo
+
+  - id: flowpulse
+    type: call_to_action
+    variant: default
+    data:
+      eyebrow: Dal mio mondo al tuo
+      title: MarkPostura è un esempio. FlowPulse può accogliere mondi diversi.
+      description: |-
+        Il mondo che sto costruendo collega i progetti qui sopra. Non è una struttura da copiare: puoi esplorarlo, collaborare a un suo Node oppure partire dalla tua professione, da un problema o da un'idea e costruire il tuo.
+
+        I mondi possono poi condividere persone, Skill e Node attraverso collegamenti chiari, senza perdere identità e responsabilità.
+      actions:
+        - label: Guarda il mondo di MarkPostura
+          href: /flowpulse/progetti?mondo=markpostura
+        - label: Esplora tutti i Brand
+          href: /flowpulse/progetti
+        - label: Come funziona FlowPulse
+          href: /flowpulse
+
+  - id: contenuti
+    type: feature_grid
+    variant: default
+    data:
+      title: Se vuoi entrare con calma
+      description: "La home rimane una porta d'ingresso. Qui trovi gli articoli che conservano e approfondiscono la visione, il metodo e la struttura dei progetti."
+    items:
+      - eyebrow: Chi sono
+        title: Esplorare, comprendere e dare forma alle idee
+        description: "Il Matto, l'Eremita e il Mago: la mia indole e ciò che so fare meglio quando un'idea comincia a camminare."
+        href: /markpostura/contenuti/esplorare-comprendere-e-dare-forma-alle-idee
+      - eyebrow: Metodo
+        title: Un problema alla volta
+        description: "La soluzione atomica e il ciclo che uso per distinguere un'intuizione da una soluzione verificata."
+        href: /markpostura/contenuti/un-problema-alla-volta
+      - eyebrow: FlowPulse
+        title: Dal mio mondo a FlowPulse
+        description: "Brand, progetti, Skill e persone: come si costruisce un mondo e come può collegarsi agli altri."
+        href: /markpostura/contenuti/dal-mio-mondo-a-flowpulse
 
   - id: primo-passo
     type: call_to_action
-    variant: accent
-    data:
-      eyebrow: Il primo passo
-      title: Che cosa vuoi tornare a nutrire?
-      description: |-
-        Prima di costruire un calendario perfetto, voglio partire dagli impegni reali e capire quanto spazio rimane davvero. Poi scegliere una cosa piccola da portare avanti, senza trasformare anche il tempo libero in un altro lavoro.
-
-        Da qui nasce il primo contenuto del percorso: un esperimento personale tra salute, risorse ed esplorazione.
-      action:
-        label: Leggi il primo spunto
-        href: /markpostura/contenuti/nutri-cio-che-vuoi-far-crescere
-
-  - id: centri-gravita
-    type: feature_grid
-    variant: hierarchy
-    data:
-      title: Tre centri di gravità
-      description: "Le aree dicono di che cosa mi sto occupando. Questi tre movimenti mi aiutano a capire che cosa sto facendo: posso usarli nella salute, nelle risorse e nell'esplorazione."
-    items:
-      - eyebrow: "🔵 Azzurro"
-        title: Conoscere
-        description: "Capire dove siamo, che cosa sta accadendo e quale direzione stiamo cercando. Prima di partire servono domande, mappe e punti di riferimento."
-      - eyebrow: "🟢 Verde"
-        title: Costruire
-        description: "Mettere insieme tempo, persone, competenze, strumenti e denaro. Dare a una possibilità una forma abbastanza concreta da poter essere vissuta."
-      - eyebrow: "🔴 Rosso"
-        title: Esplorare
-        description: "Cercare strade ancora sconosciute, incontrare esperienze, provare e verificare. Una mappa incompleta non si completa restando fermi."
-
-  - id: partecipa
-    type: call_to_action
-    variant: accent
-    data:
-      eyebrow: Costruiamo un pezzo insieme
-      title: Non una community da guardare, ma un percorso a cui partecipare
-      description: |-
-        Voglio raccontare ciò che sto provando, scegliere piccoli passi, condividere risultati e difficoltà e incontrare persone con bisogni, capacità e idee differenti.
-
-        Non dobbiamo avere tutti gli stessi nodi o gli stessi progetti. Possiamo partire da ciò che vogliamo far crescere, sperimentare qualcosa di realizzabile e capire insieme che cosa funziona. **Il tempo libero, gli affetti e il riposo restano spazi da proteggere**, non un'altra prestazione da misurare.
-      action:
-        label: Racconta che cosa vuoi far crescere
-        href: "#contatti"
-
-  - id: direzioni
-    type: method_areas
-    variant: default
-    data:
-      eyebrow: Per approfondire
-      title: Chi sono, come lavoro e dove prendono forma i progetti
-      description: "Se vuoi approfondire, qui trovi la mia indole, il metodo che uso, i progetti divisi per area e la mappa completa di FlowPulse."
-      about:
-        eyebrow: Indole e lavoro
-        title: Esplorare, comprendere e dare forma alle idee
-        paragraphs:
-          - "Sono fisioterapista, ma il mio lavoro non finisce lì. Mi piace incontrare un problema, guardarlo da punti di vista diversi e immaginare qualcosa che ancora non c'è."
-          - "Sono spontaneo, curioso e poco convenzionale. Attacco facilmente bottone, ascolto le storie delle persone e mi muovo tra corpo, tecnologia, arte, natura e spiritualità. È spesso nel passaggio da un mondo all'altro che trovo il collegamento che cercavo."
-          - "Poi provo. Comincio da qualcosa di piccolo, possibilmente su di me, e lo porto alle prime persone interessate. Se funziona lo correggo, lo racconto e cerco chi può aiutarlo a crescere."
-        strengths:
-          - title: Il Matto · partire
-            description: Esplorare senza sapere già dove porterà la strada, incontrare persone e lasciare spazio all'imprevisto.
-          - title: L'Eremita · comprendere
-            description: Fermarmi, osservare, studiare e isolare ciò che conta davvero nel problema.
-          - title: Il Mago · creare
-            description: Guardare le risorse che ho davanti e combinarle per dare all'idea una prima forma concreta.
-        delegation:
-          title: Quando l'idea comincia a camminare
-          description: "Il mio contributo più forte è accendere il fuoco iniziale. Per farlo durare servono poi persone che amino organizzare, coordinare, amministrare e prendersi cura della continuità quotidiana."
-      method:
-        eyebrow: Metodo di lavoro
-        title: Un problema alla volta, un ciclo da portare a conclusione
-        introduction: "Uso la soluzione atomica per evitare che un'idea incompleta venga scambiata per una soluzione già pronta."
-        atomic:
-          title: Che cos'è una soluzione atomica?
-          paragraphs:
-            - "Nella programmazione un'operazione atomica viene trattata come un insieme unico: o arriva alla conclusione prevista oppure non viene considerata completata. Mi ispiro a questo principio per lavorare sui progetti."
-            - "Una soluzione viene dichiarata **validata soltanto quando tutti i passaggi concordati sono stati completati**. Se il ciclo si ferma, la soluzione rimane aperta oppure viene chiusa senza validazione, conservando ciò che abbiamo imparato."
-            - "Questo permette di applicare il metodo a un servizio, un contenuto, uno strumento digitale o un progetto più ampio senza perdere di vista il problema iniziale."
-        cycle:
-          title: Il mio metodo di lavoro
-          steps:
-            - title: Trova il problema
-              description: Parti da qualcosa di concreto che una persona sta realmente vivendo.
-            - title: Isolalo
-              description: Scegli una parte abbastanza piccola da poter essere affrontata.
-            - title: Immagina la soluzione più semplice
-              description: Usa ciò che hai già, senza costruire subito l'intero sistema.
-            - title: Provala su di te
-              description: Fai esperienza diretta prima di proporla agli altri.
-            - title: Provala con poche persone
-              description: Ascolta, osserva e correggi insieme a chi vive lo stesso problema.
-            - title: Verifica la soluzione
-              description: Chiarisci che cosa ha funzionato, per chi e in quali condizioni.
-            - title: Diffondila
-              description: Passala a chi ha lo stesso problema e lascia che il passaparola la porti più lontano.
-        ecosystem:
-          eyebrow: Un esempio dentro FlowPulse
-          title: Come può funzionare la piattaforma
-          description: "Lo schema racconta un possibile uso di FlowPulse attraverso MarkPostura e PosturaCorretta. Non è un percorso obbligato: ogni creator può partire dalla propria idea, creare un Brand professionista o un Brand progetto e organizzarlo attraverso progetti, Skill, responsabili e operatori."
-          platform:
-            type: Piattaforma
-            title: FlowPulse
-            href: /flowpulse
-            description: Collega Brand, progetti, Skill, responsabili, operatori e utenti.
-          brand_types:
-            title: Due tipi di Brand
-            items:
-              - type: Brand professionista
-                title: MarkPostura
-                href: /markpostura
-                description: Rappresenta il lavoro, l'identità e la rete di una persona.
-              - type: Brand progetto
-                title: PosturaCorretta
-                href: /posturacorretta
-                description: Rappresenta un progetto con una propria identità pubblica e un proprio dominio.
-          brand:
-            title: Un Brand è formato dai suoi progetti
-            description: "Il Brand dà identità e direzione. I progetti realizzano parti concrete del suo scopo e, insieme, formano l'attività dell'impresa."
-            projects:
-              - title: Percorso educativo
-                responsible: Responsabile del progetto
-                roles: Insegnanti · operatori
-              - title: Programma lezioni
-                responsible: Responsabile del progetto
-                roles: Segreteria · responsabili dei centri · insegnanti
-              - title: Contenuti e diffusione
-                responsible: Responsabile del progetto
-                roles: Autori · revisori · professionisti digitali
-          skills:
-            title: Le Skill funzionano come plugin
-            description: "Rails4Business crea e mantiene Skill comuni. Il Brand installa soltanto quelle che gli servono. Ogni Skill contiene il proprio processo, le istruzioni e i materiali necessari: questi elementi restano dentro la Skill e non diventano nuovi rami dell'albero del Brand."
-            source:
-              type: Catalogo delle Skill
-              title: Rails4Business
-              href: /rails4b
-            examples:
-              - Contenuti
-              - Corsi
-              - Eventi
-            targets:
-              - Brand professionista
-              - Brand progetto
-          people:
-            title: Responsabilità e ruoli
-            description: "Ogni progetto ha un responsabile. Per realizzarlo può prevedere più ruoli, ricoperti dagli operatori del Brand. Gli utenti utilizzano ciò che il progetto rende disponibile."
-            items:
-              - type: Responsabile
-                title: Porta il progetto a un risultato
-              - type: Ruoli e operatori
-                title: Insegnante · segreteria · responsabile centro · professionista digitale
-              - type: Utente
-                title: Utilizza corso · lezione · evento · servizio
-          example:
-            title: L'esempio MarkPostura → PosturaCorretta
-            description: "Questa sequenza mostra come sto usando FlowPulse nel mio caso. Serve a rendere concreto il funzionamento della piattaforma: ogni Brand può avere una struttura diversa, attivare altre Skill e coinvolgere ruoli differenti."
-            steps:
-              - type: Piattaforma
-                title: FlowPulse
-                href: /flowpulse
-              - type: Brand professionale
-                title: MarkPostura
-                href: /markpostura
-              - type: Brand progetto
-                title: PosturaCorretta
-                href: /posturacorretta
-              - type: Progetto del Brand
-                title: Percorso educativo
-              - type: Operatore
-                title: Insegnante
-              - type: Fruizione
-                title: Utente
-          consultation:
-            eyebrow: Porta la tua idea in FlowPulse
-            title: Vuoi usarlo per costruire il tuo progetto?
-            description: "Possiamo partire dal problema che vuoi risolvere e capire insieme se ti serve un Brand, quali progetti aprire, quali Skill attivare e chi deve assumersi le responsabilità."
-            paths:
-              - title: Come creator
-                description: Hai un'idea o un problema da trasformare in un progetto e vuoi darle una struttura.
-              - title: Come professionista
-                description: Vuoi mettere una competenza al servizio di uno o più Brand, come operatore o professionista digitale.
-              - title: Come responsabile
-                description: Vuoi prenderti cura di un progetto, coordinarne i ruoli e portarlo a un risultato.
-            action:
-              label: Richiedi una consulenza
-              href: "#contatti"
-        action:
-          label: Scopri GeneraImpresa
-          href: /generaimpresa
-      areas:
-        eyebrow: Salute · Risorse · Esplorazione
-        title: Le tre aree, viste più da vicino
-        description: "Ogni area ha linguaggio, responsabilità e confini propri. I collegamenti restano possibili, senza confondere educazione, professioni, progetti ed esperienze personali."
-        items:
-          - id: salute
-            label: Salute
-            title: Dal conoscere il corpo al costruire un percorso
-            audience: Persone, insegnanti, professionisti ed enti
-            color: "#2563eb"
-            description: "PosturaCorretta aiuta a conoscere il corpo e propone un percorso educativo che può essere seguito in autonomia o con un insegnante. Percorso Integrato parte invece dalla persona e costruisce, quando serve, un programma condiviso con uno o più professionisti."
-            boundary: "Un percorso educativo non sostituisce diagnosi, cura o trattamento sanitario. Ogni professionista interviene entro le proprie competenze."
-            projects:
-              - title: PosturaCorretta
-                href: /posturacorretta
-              - title: Percorso Integrato
-                href: /percorso-integrato
-          - id: risorse
-            label: Risorse
-            title: Dai problemi alle risorse e ai progetti
-            audience: Imprenditori, professionisti e collaboratori digitali
-            color: "#16a34a"
-            description: "Tempo, capacità, persone, strumenti e denaro rendono possibile un progetto. GeneraImpresa aiuta chi ha un'idea a darle una direzione. Rails4Business sviluppa strumenti e processi con i professionisti digitali. 1Impegno porta il lavoro nel tempo reale e FlowPulse collega Brand, progetti e persone."
-            boundary: "Chi porta l'idea e chi la realizza possono essere la stessa persona, ma i due ruoli devono rimanere riconoscibili."
-            projects:
-              - title: GeneraImpresa
-                href: /generaimpresa
-              - title: Rails4Business
-                href: /rails4b
-              - title: FlowPulse
-                href: /flowpulse
-              - title: 1Impegno
-                href: /impegno
-          - id: esplorazione
-            label: Esplorazione
-            title: Coltivare corpo, ambiente, arte e relazioni
-            audience: Persone, gruppi e comunità
-            color: "#7c3aed"
-            description: "Il Giardino del Corpo raccoglie ciò che riguarda stile di vita, natura, consapevolezza e ricerca. Canta che ti passa porta musica e armonia. Altri progetti possono nascere da ciò che incontriamo lungo il cammino."
-            boundary: "Sono esperienze, attività e contenuti dedicati allo stile di vita e alla crescita personale; non vengono presentati come diagnosi o cure."
-            projects:
-              - title: Il Giardino del Corpo
-                href: /il-giardino-del-corpo
-              - title: Canta che ti passa
-                href: /cantachetipassa
-              - title: Inside Adventure
-                href: /generaimpresa/brand/inside-adventure
-
-  - id: approfondisci
-    type: feature_grid
-    variant: default
-    data:
-      title: Approfondisci
-      description: Tre articoli per entrare nella visione attraverso salute, esperienza e organizzazione.
-    items:
-      - eyebrow: MarkPostura
-        title: Dal bio-psico-sociale al vivere, comprendere e costruire
-        description: Una lettura pratica del modello per portarlo nel corpo, nell'esperienza e nei progetti.
-        href: /markpostura/contenuti/dal-bio-psico-sociale-al-vivere-comprendere-costruire
-      - eyebrow: PosturaCorretta
-        title: La salute non è un lusso. E non si compra neppure.
-        description: Perché la salute non è una somma di prodotti, ma un modo di vivere che si ricostruisce.
-        href: /posturacorretta/contenuti/la-salute-non-e-un-lusso
-      - eyebrow: Rails4Business
-        title: Dalla banca alla cellula sociale
-        description: Come persone e progetti possono collegare attività e processi senza perdere identità.
-        href: /rails4b/contenuti/dalla-banca-alla-cellula-sociale
-
-  - id: libro
-    type: hero
-    variant: compact
-    data:
-      eyebrow: Libro guida
-      title: Il corpo, un mondo da scoprire.
-      description: Il filo narrativo che unisce postura, salute, natura, esperienze e tecnologia.
-      image:
-        url: markpostura/il corpo un mondo da scoprire.webp
-        alt: Copertina del libro Il corpo, un mondo da scoprire
-
-  - id: contatti
-    type: call_to_action
     variant: contact
     data:
-      title: Hai un problema da esplorare?
-      description: Raccontami che cosa non funziona, chi lo incontra e che cosa hai già provato. Possiamo cercare insieme il primo esperimento utile.
+      eyebrow: Il primo passo
+      title: Vieni alla presentazione
+      description: "Scrivimi se vuoi partecipare online o dal vivo. Puoi arrivare per curiosità, per conoscere un progetto, per collaborare oppure per raccontarmi che cosa vorresti costruire."
       actions:
         - label: Scrivi su WhatsApp
           href: https://wa.me/393792891488
         - label: Invia una email
-          href: mailto:markpostura@gmail.com
-
-  - id: timeline
-    type: timeline_embed
-    variant: default
-    data:
-      source: 15u53Qb9xAY-6MeT_YC1Daevb8XTSeJGSPpg8Wyj9LuY
-      height: 650
-      deferred: true
+          href: mailto:markpostura@gmail.com?subject=Presentazione%20MarkPostura

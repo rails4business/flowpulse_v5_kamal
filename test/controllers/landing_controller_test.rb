@@ -38,7 +38,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get flowpulse_url
 
     assert_response :success
-    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_projects_path}']", text: "Progetti"
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_projects_path}']", text: "Mondi e Brand"
     assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_professionals_path}']", text: "Professionisti"
     assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{changelog_path}']", text: "Changelog"
     assert_select "footer a[href='https://github.com/rails4business/flowpulse_v5_kamal'][target='_blank']", text: /GitHub/
@@ -48,12 +48,23 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get flowpulse_projects_url
 
     assert_response :success
-    assert_select "h1", text: "Progetti"
+    assert_select "h1", text: "Mondi e Brand"
+    assert_select "nav[aria-label='Scegli quali Brand visualizzare'] a", count: 2
+    assert_select "a[href='#{flowpulse_projects_path(mondo: 'markpostura')}']", text: "Mondo di MarkPostura"
     assert_select "a[href='/posturacorretta']", text: /PosturaCorretta/
     assert_select "a[href='/impegno']", text: /1Impegno/
     assert_select "a[href='/rails4b']", text: /Rails4Business/
     assert_select "a[href='/cantachetipassa']", text: /Canta che ti passa/
     assert_select "a[href='/flowpulse/inside-adventure']", count: 0
+  end
+
+  test "Flowpulse can isolate the Brand in MarkPostura world" do
+    get flowpulse_projects_url(mondo: "markpostura")
+
+    assert_response :success
+    assert_select "h2", text: "Il mondo di MarkPostura"
+    assert_select "a[href='/posturacorretta']", text: /PosturaCorretta/
+    assert_select "a[href='/corpo-e-coscienza']", text: /Corpo e Coscienza/
   end
 
   test "Canta che ti passa links to its four sessions and participation sections" do
@@ -124,46 +135,26 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_url
 
     assert_response :success
-    assert_select "h1", text: "Problemi, idee e soluzioni da mettere alla prova"
-    assert_select "#direzioni [role='tablist'][aria-label='Presentazione di Mark Postura'] [role='tab']", count: 3
-    assert_select "#direzioni [data-main-tab='chi-sono'][aria-selected='true']", text: "Chi sono"
-    assert_select "#direzioni [data-main-tab='metodo']", text: "Metodo di lavoro"
-    assert_select "#direzioni [role='tablist'][aria-label='Ambiti di applicazione'] [role='tab']", count: 3
-    assert_select "#direzioni [data-area-tab='salute']", text: "Salute e metodo scientifico"
-    assert_select "#direzioni [data-area-tab='evoluzione']", text: "Evoluzione armonica"
-    assert_select "#direzioni [data-area-tab='lavoro']", text: "Lavoro e risorse"
-    assert_select "#mark-panel-chi-sono", text: /Il Matto.*L'Eremita.*Il Mago/m
-    assert_select "#mark-panel-metodo", text: /Che cos'è una soluzione atomica/
-    assert_select "#mark-panel-metodo", text: /Il mio metodo di lavoro/
-    assert_select "#mark-panel-metodo [aria-label='Fasi della soluzione atomica'] li", count: 7
-    assert_select "#mark-panel-metodo", text: /Diffondila/
-    assert_select "#mark-panel-metodo .mark-ecosystem__platform", text: /FlowPulse/
-    assert_select "#mark-panel-metodo .mark-ecosystem__platform a[href='#{flowpulse_path}']", text: /FlowPulse/
-    assert_select "#mark-panel-metodo .mark-ecosystem__brand-types a[href='#{markpostura_path}']", text: /MarkPostura/
-    assert_select "#mark-panel-metodo .mark-ecosystem__brand-types a[href='#{posturacorretta_path}']", text: /PosturaCorretta/
-    assert_select "#mark-panel-metodo .mark-ecosystem__skills-source a[href='#{rails4b_path}']", text: /Rails4Business/
-    assert_select "#mark-panel-metodo .mark-ecosystem__brand-types article", count: 2
-    assert_select "#mark-panel-metodo", text: /Brand professionista.*Brand progetto/m
-    assert_select "#mark-panel-metodo .mark-ecosystem__projects article", count: 3
-    assert_select "#mark-panel-metodo .mark-ecosystem__projects article", text: /Responsabile.*Ruoli/m
-    assert_select "#mark-panel-metodo .mark-ecosystem__skills-flow > div", count: 3
-    assert_select "#mark-panel-metodo .mark-ecosystem__skills", text: /Rails4Business.*Contenuti.*Corsi.*Eventi/m
-    assert_select "#mark-panel-metodo .mark-ecosystem__people li", count: 3
-    assert_select "#mark-panel-metodo .mark-ecosystem__people", text: /Responsabile.*operatori.*Utente/m
-    assert_select "#mark-panel-metodo .mark-ecosystem__example", text: /L'esempio MarkPostura.*ogni Brand può avere una struttura diversa/m
-    assert_select "#mark-panel-metodo .mark-ecosystem__consultation", text: /Vuoi usarlo per costruire il tuo progetto.*Come creator.*Come professionista.*Come responsabile/m
-    assert_select "#mark-panel-metodo a[href='#contatti']", text: "Richiedi una consulenza"
-    assert_select "#mark-panel-metodo .mark-ecosystem__example li", count: 6
-    assert_select "#mark-panel-metodo .mark-ecosystem__example", text: /FlowPulse.*Brand professionale.*MarkPostura.*Brand progetto.*PosturaCorretta/m
-    assert_select "#mark-area-panel-lavoro a[href='/generaimpresa']", text: /GeneraImpresa/
-    assert_select "#mark-area-panel-lavoro a[href='/rails4b']", text: /Rails4Business/
-    assert_select "#approfondisci a", count: 3
-    assert_select "#approfondisci a[href='/markpostura/contenuti/dal-bio-psico-sociale-al-vivere-comprendere-costruire']"
-    assert_select "#timeline iframe", count: 0
-    assert_select "#timeline [data-timeline-deferred]"
-    assert_select "#timeline button[data-timeline-trigger]", text: "Carica ora"
+    assert_select "h1", text: "Un mondo da conoscere. Il tuo da costruire."
+    assert_select "a[href='#{markpostura_presentation_path}']", text: /Partecipa alla presentazione/
+    assert_select "#percorsi a", count: 3
+    assert_select "#percorsi", text: /Salute e corpo.*Lavoro e risorse.*Esperienze e scoperta/m
+    assert_select "#flowpulse a[href='#{flowpulse_projects_path(mondo: 'markpostura')}']", text: /mondo di MarkPostura/i
+    assert_select "#flowpulse a[href='#{flowpulse_projects_path}']", text: /tutti i Brand/i
+    assert_select "#contenuti a", count: 3
+    assert_select "#contenuti", text: /Esplorare, comprendere.*Un problema alla volta.*Dal mio mondo a FlowPulse/m
     assert_select "body:not(.posturacorretta-ui)"
-    assert_select ".editorial-action-button", count: 4
+    assert_select ".editorial-action-button", minimum: 5
+  end
+
+  test "MarkPostura has a dedicated presentation page" do
+    get markpostura_presentation_url
+
+    assert_response :success
+    assert_select "h1", text: "Un'ora per vedere il quadro completo"
+    assert_select "#incontro", text: /Conoscere.*Costruire.*Esplorare.*Collegare/m
+    assert_select "#dopo a[href='#{flowpulse_projects_path(mondo: 'markpostura')}']", text: /Conosci il mondo di MarkPostura/
+    assert_select "#partecipa a[href^='mailto:markpostura@gmail.com']"
   end
 
   test "MarkPostura publishes the bio psycho social article" do

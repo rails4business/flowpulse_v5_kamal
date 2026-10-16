@@ -126,6 +126,7 @@ Rails.application.routes.draw do
   get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional
   get "percorso-integrato/luoghi" => "brands/percorso_integrato#places", as: :percorso_integrato_places
   get "markpostura" => "landing#markpostura", as: :markpostura
+  get "markpostura/presentazione" => "landing#markpostura_presentation", as: :markpostura_presentation
   get "markpostura/timeline" => "landing#markpostura_timeline", as: :markpostura_timeline
   get "markpostura/weekplan" => "landing#markpostura_weekplan", as: :markpostura_weekplan
   get "markpostura/eventi" => "landing#markpostura_events", as: :markpostura_events

@@ -2,7 +2,7 @@
   <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-8">
     <%= link_to "Flowpulse", flowpulse_path, class: "text-sm font-black uppercase tracking-[0.2em] text-blue-700" %>
     <div class="flex flex-wrap items-center justify-end gap-1 text-sm font-bold">
-      <%= link_to "Progetti", flowpulse_projects_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_projects_path) ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+      <%= link_to "Mondi e Brand", flowpulse_projects_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_projects_path) ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <%= link_to "Professionisti", flowpulse_professionals_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_professionals_path) ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <% if authenticated? %><%= link_to "La mia rete", flowpulse_network_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_network_path) ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %><% end %>
       <% if Current.user&.superadmin_user? %>

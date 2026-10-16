@@ -24,8 +24,14 @@ class LandingController < ApplicationController
 
   def flowpulse_projects
     projects = FlowpulseProjectRegistry.load.fetch("projects", [])
-    @flowpulse_projects = projects.select do |project|
+    visible_projects = projects.select do |project|
       project.fetch("visibility", "internal") == "public" || Current.user&.superadmin_user?
+    end
+    @flowpulse_projects_scope = params[:mondo] == "markpostura" ? "markpostura" : "all"
+    @flowpulse_projects = if @flowpulse_projects_scope == "markpostura"
+      visible_projects.select { |project| project["world"] == "markpostura" }
+    else
+      visible_projects
     end
   end
 
@@ -152,6 +158,10 @@ class LandingController < ApplicationController
 
   def markpostura
     render_editorial_site("markpostura_it")
+  end
+
+  def markpostura_presentation
+    render_editorial_site("markpostura_it", path: "/presentazione")
   end
 
   def markpostura_timeline
