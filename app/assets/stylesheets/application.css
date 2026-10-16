@@ -5588,6 +5588,25 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .cec-account__menu form { margin: 0; }
 .cec-account__logout { width: 100%; border: 0; border-radius: .65rem; padding: .65rem .7rem; color: #a13a32; background: transparent; text-align: left; font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; }
 .cec-account__logout:hover { background: #fff1f0; }
+.cec-profile-nav-title { min-width: 0; flex: 1; color: #3f3f3f; text-align: center; font-size: .85rem; }
+.cec-profile-page { min-height: 100vh; background: #f7f6f4; }
+.cec-profile-shell { display: grid; gap: 2rem; }
+.cec-profile-heading { max-width: 42rem; }
+.cec-profile-heading h1 { max-width: none; margin: .35rem 0 .8rem; font-size: clamp(2.2rem, 6vw, 4rem); }
+.cec-profile-heading > p:last-child { margin: 0; color: #686868; font-size: 1.05rem; line-height: 1.65; }
+.cec-profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.cec-profile-card { border: 1px solid #dedbd6; border-radius: 1.35rem; padding: clamp(1.25rem, 3vw, 2rem); background: #fff; box-shadow: 0 12px 32px rgb(0 0 0 / 5%); }
+.cec-profile-card--admin { grid-column: 1 / -1; border-color: #cbded8; background: #f4f9f7; }
+.cec-profile-card__label { margin: 0 0 .65rem; color: #5f7770; font-size: .68rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+.cec-profile-card h2 { margin: 0; font-size: clamp(1.25rem, 3vw, 1.65rem); }
+.cec-profile-card > p:not(.cec-profile-card__label) { margin: .55rem 0 0; color: #686868; line-height: 1.55; }
+.cec-profile-facts { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin: 1.25rem 0 0; border-top: 1px solid #ece9e5; padding-top: 1rem; }
+.cec-profile-facts div { display: grid; gap: .15rem; }
+.cec-profile-facts dt { color: #77726c; font-size: .68rem; font-weight: 800; text-transform: uppercase; }
+.cec-profile-facts dd { margin: 0; color: #242424; font-weight: 750; }
+.cec-profile-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.25rem; }
+.cec-profile-back { justify-self: start; color: #3f3f3f; font-weight: 750; text-decoration: none; }
+.cec-profile-back:hover { text-decoration: underline; }
 .cec-page section[id] { scroll-margin-top: 5rem; }
 .cec-hero { padding: clamp(3rem, 8vw, 7rem) 0; background: linear-gradient(135deg, #f3f2f0, #ffffff); }
 .cec-hero__grid, .cec-founder, .cec-request-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(240px, .65fr); align-items: center; gap: clamp(2rem, 6vw, 5rem); }
@@ -5687,7 +5706,7 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .cec-consent { display: flex; gap: .7rem; align-items: flex-start; margin: 0; line-height: 1.45; }
 .cec-consent input { margin-top: .25rem; }
 .cec-hint, .cec-note { margin: 0; color: #5b6f6a; font-size: .9rem; }
-@media (max-width: 720px) { .cec-hero__grid, .cec-founder, .cec-request-grid, .cec-opportunities, .cec-location-fields { grid-template-columns: 1fr; } .cec-logo { grid-row: 1; max-width: 240px; } .cec-form__row { grid-template-columns: 1fr; gap: 1rem; } .cec-request-tabs { display: none; } .cec-request-mobile { display: grid; gap: .4rem; margin: 0; } .cec-request-mobile label { color: var(--cec-ink); font-weight: 750; } .cec-request-mobile select { width: 100%; border: 1px solid #aaa6a0; border-radius: .75rem; padding: .8rem; color: var(--cec-ink); background: #fff; font: inherit; } .cec-card-action { width: 100%; } .cec-sticky-nav__links { justify-content: flex-start; } }
+@media (max-width: 720px) { .cec-hero__grid, .cec-founder, .cec-request-grid, .cec-opportunities, .cec-location-fields, .cec-profile-grid { grid-template-columns: 1fr; } .cec-profile-card--admin { grid-column: auto; } .cec-profile-actions .cec-button { width: 100%; } .cec-logo { grid-row: 1; max-width: 240px; } .cec-form__row { grid-template-columns: 1fr; gap: 1rem; } .cec-request-tabs { display: none; } .cec-request-mobile { display: grid; gap: .4rem; margin: 0; } .cec-request-mobile label { color: var(--cec-ink); font-weight: 750; } .cec-request-mobile select { width: 100%; border: 1px solid #aaa6a0; border-radius: .75rem; padding: .8rem; color: var(--cec-ink); background: #fff; font: inherit; } .cec-card-action { width: 100%; } .cec-sticky-nav__links { justify-content: flex-start; } }
 
 /* Privacy Center condiviso tra i domini */
 .privacy-center { position:relative; z-index:2147483000; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }

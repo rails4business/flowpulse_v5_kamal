@@ -114,6 +114,7 @@ Rails.application.routes.draw do
   direct(:il_giardino_del_corpo) { "/il-giardino-del-corpo" }
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
   get "corpo-e-coscienza" => "brands/corpo_e_coscienza#index", as: :corpo_e_coscienza
+  get "corpo-e-coscienza/profilo" => "brands/corpo_e_coscienza#profile", as: :corpo_e_coscienza_profile
   get "corpo-e-coscienza/privacy" => "brands/corpo_e_coscienza#privacy", as: :corpo_e_coscienza_privacy
   get "corpo-e-coscienza/localita" => "brands/corpo_e_coscienza#locations", as: :corpo_e_coscienza_locations
   post "corpo-e-coscienza/richieste" => "brands/corpo_e_coscienza#create_request", as: :corpo_e_coscienza_requests

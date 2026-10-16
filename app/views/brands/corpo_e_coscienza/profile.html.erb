@@ -1,0 +1,70 @@
+<% content_for :title, "Il mio profilo — Corpo e Coscienza" %>
+<% content_for :description, "Profilo personale e accesso al dominio Corpo e Coscienza." %>
+<% content_for :favicon_url, @site.fetch("logo_square_image") %>
+<% content_for :social_image_url, @site.fetch("logo_square_image") %>
+
+<main class="cec-page cec-profile-page">
+  <nav class="cec-sticky-nav" aria-label="Profilo Corpo e Coscienza">
+    <div class="cec-wrap cec-sticky-nav__inner">
+      <%= link_to corpo_e_coscienza_path, class: "cec-sticky-nav__brand", aria: { label: "Corpo e Coscienza · torna al sito" } do %>
+        <%= image_tag @site.fetch("logo_square_image"), alt: "", width: 36, height: 36 %>
+      <% end %>
+      <strong class="cec-profile-nav-title">Il mio profilo</strong>
+      <%= render "brands/corpo_e_coscienza/account_nav" %>
+    </div>
+  </nav>
+
+  <section class="cec-section">
+    <div class="cec-wrap cec-profile-shell">
+      <header class="cec-profile-heading">
+        <p class="cec-eyebrow">Corpo e Coscienza</p>
+        <h1>Il mio profilo</h1>
+        <p>Qui trovi soltanto le informazioni e le funzioni legate a Corpo e Coscienza.</p>
+      </header>
+
+      <div class="cec-profile-grid">
+        <section class="cec-profile-card">
+          <p class="cec-profile-card__label">Account</p>
+          <h2><%= Current.user.profile&.display_name.presence || Current.user.email_address %></h2>
+          <p><%= Current.user.email_address %></p>
+          <dl class="cec-profile-facts">
+            <div>
+              <dt>Accesso</dt>
+              <dd><%= (@brand_access&.active? || Current.user.superadmin_user?) ? "Attivo" : "Da verificare" %></dd>
+            </div>
+            <% if @brand_access&.joined_at.present? %>
+              <div>
+                <dt>Dal</dt>
+                <dd><%= l(@brand_access.joined_at.to_date, format: :long) %></dd>
+              </div>
+            <% end %>
+          </dl>
+        </section>
+
+        <section class="cec-profile-card">
+          <p class="cec-profile-card__label">Preferenze del sito</p>
+          <h2>Privacy e cookie</h2>
+          <p>Puoi rivedere in qualsiasi momento le preferenze usate su questo dominio.</p>
+          <div class="cec-profile-actions">
+            <button type="button" data-privacy-open class="cec-button cec-button--primary">Gestisci preferenze</button>
+            <%= link_to "Leggi l’informativa", corpo_e_coscienza_privacy_path, class: "cec-button cec-button--light" %>
+          </div>
+        </section>
+
+        <% if @can_administer_brand %>
+          <section class="cec-profile-card cec-profile-card--admin">
+            <p class="cec-profile-card__label">Amministrazione</p>
+            <h2>Gestisci Corpo e Coscienza</h2>
+            <p>Controlla le richieste ricevute e la struttura del Brand.</p>
+            <div class="cec-profile-actions">
+              <%= link_to "Richieste ricevute", brand_admin_data_commitments_path(@brand_node.slug), class: "cec-button cec-button--primary" %>
+              <%= link_to "Admin Corpo e Coscienza", brand_admin_nodes_path(@brand_node.slug), class: "cec-button cec-button--light" %>
+            </div>
+          </section>
+        <% end %>
+      </div>
+
+      <%= link_to "← Torna a Corpo e Coscienza", corpo_e_coscienza_path, class: "cec-profile-back" %>
+    </div>
+  </section>
+</main>

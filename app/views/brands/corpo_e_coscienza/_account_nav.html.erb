@@ -12,17 +12,12 @@
           <% if Current.user.profile&.display_name.present? %><small><%= Current.user.email_address %></small><% end %>
         </div>
         <div class="cec-account__divider"></div>
-        <%= link_to "Home Corpo e Coscienza", corpo_e_coscienza_path %>
-        <%= render "shared/privacy_menu_button" %>
+        <%= link_to "Il mio profilo", corpo_e_coscienza_profile_path %>
         <% if @can_administer_brand %>
           <div class="cec-account__divider"></div>
           <span class="cec-account__section-label">Amministrazione</span>
           <%= link_to "Richieste ricevute", brand_admin_data_commitments_path(@brand_node.slug), class: "cec-account__admin-link" %>
           <%= link_to "Admin Corpo e Coscienza", brand_admin_nodes_path(@brand_node.slug), class: "cec-account__admin-link" %>
-        <% end %>
-        <% if Current.user.superadmin_user? %>
-          <div class="cec-account__divider"></div>
-          <%= link_to "Superadmin FlowPulse", admin_dashboard_path, class: "cec-account__admin-link" %>
         <% end %>
         <%= button_to "Esci", session_path, method: :delete, class: "cec-account__logout" %>
       </div>

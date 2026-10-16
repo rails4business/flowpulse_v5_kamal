@@ -117,6 +117,7 @@ module AuthenticationBrandContext
 
       site = params[:site].to_s.strip.downcase.presence
       site ||= "posturacorretta" if request.path.start_with?("/posturacorretta")
+      site ||= "corpoecoscienza" if request.path.start_with?("/corpo-e-coscienza")
       return if site.blank?
 
       Domain.active.includes(:node).to_a.find do |domain|

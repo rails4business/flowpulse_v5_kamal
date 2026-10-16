@@ -77,6 +77,8 @@ module Brands
       assert_select ".cec-account__identity", text: /Corpo e Coscienza/
       assert_select ".cec-account__menu a[href='#{dashboard_home_path}']", count: 0
       assert_select ".cec-account__menu a[href='#{profile_path}']", count: 0
+      assert_select ".cec-account__menu a[href='#{corpo_e_coscienza_profile_path}']", text: "Il mio profilo"
+      assert_select ".cec-account__menu [data-privacy-open]", count: 0
       assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste ricevute"
       assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Admin Corpo e Coscienza"
       assert_select ".cec-account__menu form[action='#{session_path}'] button", text: "Esci"
@@ -96,9 +98,40 @@ module Brands
       get corpo_e_coscienza_url
 
       assert_response :success
+      assert_select ".cec-account__menu a[href='#{corpo_e_coscienza_profile_path}']", text: "Il mio profilo"
       assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste ricevute"
       assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Admin Corpo e Coscienza"
-      assert_select ".cec-account__menu a[href='#{admin_dashboard_path}']", text: "Superadmin FlowPulse"
+      assert_select ".cec-account__menu a[href='#{admin_dashboard_path}']", count: 0
+    end
+
+    test "shows a domain profile to every user with Corpo e Coscienza access" do
+      user = User.create!(
+        email_address: "corpo-coscienza-member@example.com",
+        password: "password123",
+        password_confirmation: "password123"
+      )
+      profile = user.create_profile!(display_name: "Mario Rossi")
+      BrandAccess.create!(profile: profile, source_domain: @domain, brand_node: @node)
+      sign_in(user)
+
+      get corpo_e_coscienza_profile_url
+
+      assert_response :success
+      assert_select "h1", "Il mio profilo"
+      assert_select ".cec-profile-card", text: /Mario Rossi.*corpo-coscienza-member@example.com.*Attivo/m
+      assert_select "button[data-privacy-open]", text: "Gestisci preferenze"
+      assert_select "a[href='#{corpo_e_coscienza_privacy_path}']", text: "Leggi l’informativa"
+      assert_select "a[href='#{brand_admin_data_commitments_path(@node.slug)}']", count: 0
+      assert_select "a[href='#{brand_admin_nodes_path(@node.slug)}']", count: 0
+    end
+
+    test "requires the Corpo e Coscienza authentication context for its profile" do
+      get corpo_e_coscienza_profile_url
+
+      assert_redirected_to new_session_url(
+        site: "corpoecoscienza",
+        return_to: corpo_e_coscienza_profile_path
+      )
     end
 
     test "shows the privacy information for the request form" do

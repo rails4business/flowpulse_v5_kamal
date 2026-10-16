@@ -1,7 +1,7 @@
 module Brands
   class CorpoECoscienzaController < ApplicationController
     layout "landing"
-    allow_unauthenticated_access
+    allow_unauthenticated_access only: %i[index privacy locations create_request]
 
     REQUEST_KINDS = %w[group_path individual_treatment events information training find_professional professional_application other].freeze
 
@@ -19,6 +19,11 @@ module Brands
 
     def privacy
       load_site
+    end
+
+    def profile
+      load_site
+      @brand_access = Current.user.profile&.brand_accesses&.active&.find_by(brand_node: @brand_node)
     end
 
     def locations
@@ -102,7 +107,9 @@ module Brands
         CorpoECoscienzaCatalog.load.each { |name, value| instance_variable_set("@#{name}", value) }
         domain = corpo_e_coscienza_domain
         @brand_node = domain&.node || Node.find_by(slug: "corpoecoscienza")
-        @can_administer_brand = Current.user.present? && @brand_node&.administered_by?(Current.user)
+        @can_administer_brand = Current.user.present? && (
+          Current.user.superadmin_user? || @brand_node&.administered_by?(Current.user)
+        )
       end
 
       # In locale la pagina vive sotto /corpo-e-coscienza, ma il Domain della

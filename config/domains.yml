@@ -185,6 +185,9 @@ default: &default
     target_action: index
     primary: true
     node_slug: corpoecoscienza
+    auth_enabled: true
+    auth_slug: corpoecoscienza
+    auth_default_path: /corpo-e-coscienza
     operational_roles:
       - segreteria
       - professionista
