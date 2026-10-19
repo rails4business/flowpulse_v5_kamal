@@ -5,24 +5,25 @@
 <% methodologies_tab = params[:tab] == "how" ? "how" : "catalog" %>
 
 <main class="min-h-screen bg-white">
-  <section class="border-b border-slate-200 bg-white pt-8">
+  <!--section class="border-b border-slate-200 bg-white pt-8">
     <div class="mx-auto max-w-7xl px-6">
       <nav class="-mb-px flex gap-1" aria-label="Sezioni Metodiche">
         <%= link_to "Metodiche", posturacorretta_metodiche_path(tab: "catalog"), class: "border-b-2 px-4 py-3 text-sm font-semibold transition #{methodologies_tab == 'catalog' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-800'}", aria: { current: ("page" if methodologies_tab == "catalog") } %>
         <%= link_to "Come funziona", posturacorretta_guida_path(sezione: "metodiche", capitolo: "introduzione"), class: "border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-slate-600 transition hover:text-slate-800" %>
       </nav>
     </div>
-  </section>
+  </section-->
 
   <% if methodologies_tab == "catalog" %>
   <section class="border-b border-slate-200 bg-white">
     <div class="mx-auto max-w-7xl px-6 py-12">
       <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Archivio metodiche</p>
       <h1 class="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
-       Professioni, metodiche posturali e per la guarigione
+        Metodiche posturali
       </h1>
       <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
         Ogni metodica ha una storia, un linguaggio e un modo specifico di osservare postura, movimento e salute.
+        <br>Nella categoria metodiche posturali includiamo: professioni, scuole terapie manuali, tecniche corporee e metodi di guarigione.
       </p>
     </div>
   </section>

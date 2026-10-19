@@ -1,6 +1,7 @@
 <% course_chapter = params[:capitolo].present? && request.path.start_with?("/posturacorretta/corsi/") %>
 <% home_active = request.path == posturacorretta_path || (request.path.start_with?("/posturacorretta/corsi/") && !course_chapter) %>
 <% lessons_active = request.path == posturacorretta_student_dashboard_path %>
+<% methodologies_active = request.path.start_with?(posturacorretta_metodiche_path) %>
 <% profile_active = request.path.start_with?(posturacorretta_profile_path) || request.path.start_with?(posturacorretta_student_appointments_path) %>
 <nav class="pc-mobile-app-nav sm:hidden" aria-label="Navigazione app PosturaCorretta">
   <% if course_chapter %>
@@ -16,6 +17,7 @@
     <% end %>
     <%= link_to posturacorretta_student_dashboard_path, aria: { current: ("page" if lessons_active) }, class: (lessons_active ? "is-active" : nil) do %><span aria-hidden="true">▤</span><small>Lezioni</small><% end %>
   <% end %>
+  <%= link_to posturacorretta_metodiche_path, aria: { current: ("page" if methodologies_active) }, class: (methodologies_active ? "is-active" : nil) do %><span aria-hidden="true">◎</span><small>Metodiche</small><% end %>
   <details class="pc-app-explore group [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
     <summary aria-label="Apri Esplora"><span aria-hidden="true">•••</span><small>Esplora</small></summary>
     <div class="pc-app-explore-menu" aria-label="Esplora PosturaCorretta">

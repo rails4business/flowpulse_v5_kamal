@@ -110,7 +110,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "nav[aria-label='Indice generale']", count: 0
     assert_select "h1", text: "Percorso educativo PosturaCorretta"
-    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 2
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 3
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}']", text: /Metodiche/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details summary", text: /Esplora/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details.pc-app-account summary", text: /Profilo/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] .pc-app-account-menu a[href*='session/new']", text: "Accedi"
@@ -136,7 +137,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "div", text: /La storia comune e i benefici della postura/m
     assert_not_includes response.body, "Uscita "
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
+    assert_equal ["Percorso", "Lezioni", "Metodiche"], css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Come funziona", count: 0
+    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", count: 0
     assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
   end
 

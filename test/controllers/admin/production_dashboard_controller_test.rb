@@ -132,7 +132,151 @@ module Admin
       assert_includes response.body, @product.title
     end
 
+    test "personal planning exposes the three tabs and filters unfinished commitments" do
+      unfinished = create_planning_commitment(
+        title: "Rivedere il capitolo",
+        status: "planned",
+        starts_at: Time.zone.local(2026, 10, 20, 9, 0)
+      )
+      create_planning_commitment(
+        title: "Capitolo completato",
+        status: "completed",
+        starts_at: Time.zone.local(2026, 10, 19, 9, 0)
+      )
+      create_planning_commitment(
+        title: "Attività annullata",
+        status: "cancelled",
+        starts_at: Time.zone.local(2026, 10, 21, 9, 0)
+      )
+      workbench_item = create_workbench_item
+      other_profile_item = create_planning_commitment(
+        profile: create_other_profile,
+        title: "Impegno di un'altra persona",
+        status: "planned",
+        starts_at: Time.zone.local(2026, 10, 20, 11, 0)
+      )
+
+      get flowpulse_admin_production_url(view: "planning", planning_tab: "unfinished")
+
+      assert_response :success
+      assert_select "nav[aria-label='Pianificazione personale']" do
+        assert_select "a[href*='planning_tab=unfinished']", text: /Da completare/
+        assert_select "a[href*='planning_tab=agenda']", text: /Agenda/
+        assert_select "a[href*='planning_tab=week']", text: "Settimana"
+        assert_select "a[aria-current='page']", text: /Da completare/
+      end
+      assert_includes response.body, unfinished.title
+      assert_not_includes response.body, "Capitolo completato"
+      assert_not_includes response.body, "Attività annullata"
+      assert_not_includes response.body, workbench_item.title
+      assert_not_includes response.body, other_profile_item.title
+    end
+
+    test "agenda groups the current profile commitments by day" do
+      morning = create_planning_commitment(
+        title: "Preparare il materiale",
+        status: "planned",
+        starts_at: Time.zone.local(2026, 10, 20, 9, 0)
+      )
+      afternoon = create_planning_commitment(
+        title: "Presentazione del percorso",
+        kind: "event",
+        status: "confirmed",
+        starts_at: Time.zone.local(2026, 10, 23, 17, 0),
+        ends_at: Time.zone.local(2026, 10, 23, 18, 0)
+      )
+      create_planning_commitment(
+        profile: create_other_profile,
+        title: "Agenda privata di un'altra persona",
+        status: "planned",
+        starts_at: Time.zone.local(2026, 10, 20, 10, 0)
+      )
+
+      get flowpulse_admin_production_url(
+        view: "planning",
+        planning_tab: "agenda",
+        date: "2026-10-19"
+      )
+
+      assert_response :success
+      assert_select "nav[aria-label='Pianificazione personale'] a[aria-current='page']", text: /Agenda/
+      assert_select "section[data-planning-day='2026-10-20']", text: /#{Regexp.escape(morning.title)}/ do
+        assert_select "time[datetime='2026-10-20T09:00:00+02:00']"
+      end
+      assert_select "section[data-planning-day='2026-10-23']", text: /#{Regexp.escape(afternoon.title)}/ do
+        assert_select "time[datetime='2026-10-23T17:00:00+02:00']"
+      end
+      assert_not_includes response.body, "Agenda privata di un'altra persona"
+    end
+
+    test "week planning uses the monday to sunday range around the selected date" do
+      monday = create_planning_commitment(
+        title: "Revisione del lunedì",
+        status: "planned",
+        starts_at: Time.zone.local(2026, 10, 19, 9, 0)
+      )
+      sunday = create_planning_commitment(
+        title: "Evento della domenica",
+        kind: "event",
+        status: "confirmed",
+        starts_at: Time.zone.local(2026, 10, 25, 17, 0),
+        ends_at: Time.zone.local(2026, 10, 25, 18, 0)
+      )
+      outside_week = create_planning_commitment(
+        title: "Attività della settimana successiva",
+        status: "planned",
+        starts_at: Time.zone.local(2026, 10, 26, 9, 0)
+      )
+      other_profile_item = create_planning_commitment(
+        profile: create_other_profile,
+        title: "Settimana di un'altra persona",
+        status: "planned",
+        starts_at: Time.zone.local(2026, 10, 21, 10, 0)
+      )
+
+      get flowpulse_admin_production_url(
+        view: "planning",
+        planning_tab: "week",
+        date: "2026-10-21"
+      )
+
+      assert_response :success
+      assert_select "nav[aria-label='Pianificazione personale'] a[aria-current='page']", text: "Settimana"
+      assert_select "[data-week-start='2026-10-19'][data-week-end='2026-10-25']", count: 1
+      assert_includes response.body, monday.title
+      assert_includes response.body, sunday.title
+      assert_not_includes response.body, outside_week.title
+      assert_not_includes response.body, other_profile_item.title
+    end
+
     private
+
+      def create_planning_commitment(profile: @profile, title:, status:, starts_at:, ends_at: nil, kind: "work")
+        profile.data_commitments.create!(
+          created_by_profile: profile,
+          domain: @domain,
+          assignee_profile: profile,
+          title: title,
+          kind: kind,
+          status: status,
+          starts_at: starts_at,
+          ends_at: ends_at,
+          blocks_calendar: false,
+          pricing_type: "none",
+          contribution_type: "unpaid"
+        )
+      end
+
+      def create_other_profile
+        @other_profile ||= begin
+          user = User.create!(
+            email_address: "other-production-dashboard@example.com",
+            password: "password123",
+            password_confirmation: "password123"
+          )
+          user.create_profile!(display_name: "Other Production", username: "other_production")
+        end
+      end
 
       def create_workbench_item
         @profile.data_commitments.create!(

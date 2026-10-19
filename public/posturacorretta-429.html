@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="color-scheme" content="light dark">
+    <title>Una breve pausa · PosturaCorretta</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 1.5rem;
+        background:
+          radial-gradient(circle at 15% 10%, rgb(219 234 254 / .9), transparent 32rem),
+          linear-gradient(160deg, #fff 0%, #f8fafc 55%, #eff6ff 100%);
+      }
+
+      main {
+        width: min(100%, 44rem);
+        padding: clamp(1.5rem, 5vw, 3.5rem);
+        border: 1px solid #dbeafe;
+        border-radius: 2rem;
+        background: rgb(255 255 255 / .94);
+        box-shadow: 0 24px 70px rgb(15 23 42 / .12);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        color: #1d4ed8;
+        font-size: .8rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+
+      .mark {
+        display: grid;
+        width: 2.75rem;
+        height: 2.75rem;
+        place-items: center;
+        border-radius: 999px;
+        background: #2563eb;
+        color: #fff;
+        font-size: 1.3rem;
+        box-shadow: 0 8px 20px rgb(37 99 235 / .24);
+      }
+
+      h1 {
+        margin: 1.5rem 0 .85rem;
+        font-size: clamp(2rem, 7vw, 3.5rem);
+        line-height: 1.02;
+        letter-spacing: -.045em;
+      }
+
+      p {
+        margin: 0;
+        color: #475569;
+        font-size: 1.05rem;
+        line-height: 1.7;
+      }
+
+      .notice {
+        margin-top: 1.5rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid #bfdbfe;
+        border-radius: 1rem;
+        background: #eff6ff;
+        color: #1e3a8a;
+        font-size: .95rem;
+        font-weight: 700;
+        line-height: 1.55;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .75rem;
+        margin-top: 1.75rem;
+      }
+
+      a {
+        display: inline-flex;
+        min-height: 3rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: .9rem;
+        padding: .75rem 1.1rem;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      a:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+      .primary { background: #2563eb; color: #fff; }
+      .primary:hover { background: #1d4ed8; }
+      .secondary { border: 1px solid #cbd5e1; background: #fff; color: #334155; }
+      .secondary:hover { border-color: #93c5fd; color: #1d4ed8; }
+
+      @media (max-width: 32rem) {
+        .actions { display: grid; }
+        a { width: 100%; }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root { background: #020617; color: #f8fafc; }
+        body { background: radial-gradient(circle at 15% 10%, #172554, transparent 28rem), #020617; }
+        main { border-color: #1e3a8a; background: rgb(15 23 42 / .96); }
+        p { color: #cbd5e1; }
+        .notice { border-color: #1e40af; background: #172554; color: #dbeafe; }
+        .secondary { border-color: #475569; background: #0f172a; color: #e2e8f0; }
+      }
+    </style>
+  </head>
+  <body>
+    <main aria-labelledby="page-title">
+      <div class="brand"><span class="mark" aria-hidden="true">●</span> PosturaCorretta</div>
+      <h1 id="page-title">Ci prendiamo un piccolo respiro.</h1>
+      <p>Il sito ha ricevuto molte richieste tutte insieme e si è protetto per continuare a funzionare bene. Non hai fatto nulla di sbagliato e non hai perso il tuo percorso.</p>
+      <div class="notice" role="status">È una pausa temporanea: di solito basta attendere meno di un minuto.</div>
+      <div class="actions">
+        <a class="primary" href="">Riprova questa pagina</a>
+        <a class="secondary" href="/posturacorretta">Torna al percorso</a>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comune · Percorso Integrato</title>
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { salute: {
+        rosso:'#d32f2f', arancio:'#f57c00', giallo:'#fbc02d', verde:'#388e3c'
+      }}}}
+    }
+  </script>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    #mappa { height: 460px; }
+    @media (max-width: 640px) { #mappa { height: 320px; } }
+    .leaflet-popup-content { margin: 0.6rem 0.9rem; }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased">
+<div class="max-w-6xl mx-auto px-4 py-6">
+
+  <!-- HEADER -->
+  <header class="bg-white rounded-2xl shadow-sm border-l-4 border-salute-verde p-6 mb-4">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Comune · Rete dei professionisti locali</h1>
+    <p class="text-gray-600 mt-2">
+      Trova professionisti e servizi sul territorio, scopri le attività di gruppo,
+      i servizi a domicilio e gli eventi patrocinati dal Comune.
+    </p>
+  </header>
+
+  <!-- ============ BARRA FILTRO SEMAFORO (sopra le tab) ============ -->
+  <div class="bg-white rounded-2xl shadow-sm px-4 py-3 mb-4 flex flex-wrap items-center gap-2">
+    <span class="text-sm font-semibold text-gray-700 mr-2">Stato di salute:</span>
+    <div class="flex flex-wrap gap-2" id="filtri-stato">
+      <button data-stato="" class="stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white">Tutti</button>
+      <button data-stato="rosso" class="stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border-2 border-salute-rosso text-salute-rosso hover:bg-red-50">🔴 Rosso</button>
+      <button data-stato="arancio" class="stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border-2 border-salute-arancio text-salute-arancio hover:bg-orange-50">🟠 Arancio</button>
+      <button data-stato="giallo" class="stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border-2 border-salute-giallo text-yellow-700 hover:bg-yellow-50">🟡 Giallo</button>
+      <button data-stato="verde" class="stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border-2 border-salute-verde text-salute-verde hover:bg-green-50">🟢 Verde</button>
+    </div>
+    <span id="filtro-nota" class="text-xs text-gray-400 ml-auto hidden sm:inline">
+      Filtro attivo su professionisti e gruppi
+    </span>
+  </div>
+
+  <!-- TABS -->
+  <nav class="flex flex-wrap gap-2 mb-4" role="tablist">
+    <button data-tab="professionisti" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm bg-salute-verde text-white shadow">
+      👤 Professionisti e servizi
+    </button>
+    <button data-tab="gruppi" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-100">
+      👥 Attività in gruppi
+    </button>
+    <button data-tab="domicilio" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-100">
+      🏠 A domicilio
+    </button>
+    <button data-tab="eventi" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-100">
+      📅 Eventi patrocinati
+    </button>
+  </nav>
+
+  <!-- ============ TAB 1: PROFESSIONISTI E SERVIZI (con mappa) ============ -->
+  <section id="tab-professionisti" class="tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-2">
+        <div id="mappa" class="rounded-xl"></div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm p-3 max-h-[460px] overflow-y-auto" id="lista-professionisti"></div>
+    </div>
+    <p class="text-xs text-gray-500 mt-3">
+      Dati di esempio · Mappa © OpenStreetMap contributors © CARTO · Leaflet
+    </p>
+  </section>
+
+  <!-- ============ TAB 2: ATTIVITÀ IN GRUPPI (con mappa) ============ -->
+  <section id="tab-gruppi" class="tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-2">
+        <div id="mappa-gruppi" class="rounded-xl" style="height:460px;"></div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm p-3 max-h-[460px] overflow-y-auto" id="lista-gruppi"></div>
+    </div>
+    <p class="text-xs text-gray-500 mt-3">
+      Classi settimanali con luogo e orario · Mappa © OpenStreetMap contributors © CARTO
+    </p>
+  </section>
+
+  <!-- ============ TAB 3: A DOMICILIO (senza mappa) ============ -->
+  <section id="tab-domicilio" class="tab-panel hidden">
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+      <h2 class="text-xl font-bold mb-1">🏠 Servizi a domicilio</h2>
+      <p class="text-sm text-gray-500 mb-5">Interventi presso casa, ufficio o sede richiesta, con zona coperta indicata.</p>
+
+      <div class="space-y-3">
+        <div class="border-l-4 border-salute-rosso bg-red-50/40 rounded-xl p-4 flex flex-wrap justify-between gap-2">
+          <div>
+            <p class="font-bold">Fisioterapia domiciliare</p>
+            <p class="text-sm text-gray-600">Lun–Ven · su appuntamento</p>
+            <p class="text-xs text-blue-700 mt-1">📍 Zona coperta: Centro e limitrofi</p>
+          </div>
+          <span class="bg-salute-rosso text-white text-xs font-semibold px-2 py-0.5 rounded-full self-start">Rosso</span>
+        </div>
+
+        <div class="border-l-4 border-salute-arancio bg-orange-50/40 rounded-xl p-4 flex flex-wrap justify-between gap-2">
+          <div>
+            <p class="font-bold">Valutazione posturale a domicilio</p>
+            <p class="text-sm text-gray-600">Mar e Gio · 15:00–19:00</p>
+            <p class="text-xs text-blue-700 mt-1">📍 Zona coperta: Quartiere Nord</p>
+          </div>
+          <span class="bg-salute-arancio text-white text-xs font-semibold px-2 py-0.5 rounded-full self-start">Arancio</span>
+        </div>
+
+        <div class="border-l-4 border-salute-verde bg-green-50/40 rounded-xl p-4 flex flex-wrap justify-between gap-2">
+          <div>
+            <p class="font-bold">Yoga individuale a casa</p>
+            <p class="text-sm text-gray-600">Lun–Sab · mattina</p>
+            <p class="text-xs text-blue-700 mt-1">📍 Zona coperta: tutta la città</p>
+          </div>
+          <span class="bg-salute-verde text-white text-xs font-semibold px-2 py-0.5 rounded-full self-start">Verde</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB 4: EVENTI PATROCINATI (senza mappa) ============ -->
+  <section id="tab-eventi" class="tab-panel hidden">
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+      <h2 class="text-xl font-bold mb-1">📅 Eventi patrocinati</h2>
+      <p class="text-sm text-gray-500 mb-5">
+        Eventi comunicati al Comune e patrocinati dall'Amministrazione, organizzati dalla rete dei professionisti locali.
+      </p>
+
+      <ul class="space-y-4">
+        <li class="flex gap-4 border-b border-gray-100 pb-4">
+          <div class="shrink-0 w-16 text-center bg-salute-verde text-white rounded-xl py-2">
+            <p class="text-xs font-semibold">NOV</p><p class="text-xl font-bold leading-none">12</p>
+          </div>
+          <div>
+            <p class="font-semibold">Giornata della postura</p>
+            <p class="text-sm text-gray-600">Screening gratuiti e consulenze aperte al pubblico.</p>
+            <p class="text-xs text-blue-700 mt-1">📍 Centro · 9:00–18:00 · Ingresso libero</p>
+            <p class="text-xs text-gray-500">Patrocinio del Comune</p>
+          </div>
+        </li>
+        <li class="flex gap-4 border-b border-gray-100 pb-4">
+          <div class="shrink-0 w-16 text-center bg-salute-arancio text-white rounded-xl py-2">
+            <p class="text-xs font-semibold">NOV</p><p class="text-xl font-bold leading-none">20</p>
+          </div>
+          <div>
+            <p class="font-semibold">Prevenzione in movimento</p>
+            <p class="text-sm text-gray-600">Laboratorio pratico su postura e stile di vita al lavoro.</p>
+            <p class="text-xs text-blue-700 mt-1">📍 Quartiere Nord · 17:00–19:00 · Su iscrizione</p>
+            <p class="text-xs text-gray-500">Patrocinio del Comune</p>
+          </div>
+        </li>
+        <li class="flex gap-4 border-b border-gray-100 pb-4">
+          <div class="shrink-0 w-16 text-center bg-salute-giallo text-gray-900 rounded-xl py-2">
+            <p class="text-xs font-semibold">DIC</p><p class="text-xl font-bold leading-none">03</p>
+          </div>
+          <div>
+            <p class="font-semibold">Performance e recupero</p>
+            <p class="text-sm text-gray-600">Incontro con medico dello sport e nutrizionista.</p>
+            <p class="text-xs text-blue-700 mt-1">📍 Centro sportivo · 18:30–20:00 · Posti limitati</p>
+            <p class="text-xs text-gray-500">Patrocinio del Comune</p>
+          </div>
+        </li>
+        <li class="flex gap-4">
+          <div class="shrink-0 w-16 text-center bg-salute-verde text-white rounded-xl py-2">
+            <p class="text-xs font-semibold">DIC</p><p class="text-xl font-bold leading-none">15</p>
+          </div>
+          <div>
+            <p class="font-semibold">Benessere d'inverno</p>
+            <p class="text-sm text-gray-600">Yoga, respiro e mindfulness con i professionisti della rete.</p>
+            <p class="text-xs text-blue-700 mt-1">📍 Quartiere Sud · 10:00–12:00 · Ingresso libero</p>
+            <p class="text-xs text-gray-500">Patrocinio del Comune</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="text-center text-xs text-gray-500 py-8">
+    Pagina dimostrativa per <a href="https://percorsointegrato.it/" target="_blank" rel="noopener" class="text-salute-verde underline">Percorso Integrato</a> ·
+    Dati di esempio · Mappa © OpenStreetMap contributors © CARTO
+  </footer>
+
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============================================================
+   DATI DI ESEMPIO
+   ============================================================ */
+const professionisti = [
+  { id:1, nome:"Dott.ssa Laura Bianchi", ruolo:"Fisioterapista", stato:"rosso",
+    servizi:["Fisioterapia","Posturologia"], luogo:"Centro · Via Roma 12",
+    lat:41.9028, lng:12.4964, orari:"Lun–Ven 9:00–19:00 · Sab 9:00–13:00",
+    tel:"333 1234567", email:"l.bianchi@esempio.it" },
+  { id:2, nome:"Marco Verdi", ruolo:"Osteopata", stato:"arancio",
+    servizi:["Osteopatia","Posturologia"], luogo:"Quartiere Nord · Via dei Pini 4",
+    lat:41.9200, lng:12.4700, orari:"Lun, Mer, Ven 14:00–20:00",
+    tel:"347 9876543", email:"m.verdi@esempio.it" },
+  { id:3, nome:"Dott. Andrea Neri", ruolo:"Medico dello sport", stato:"giallo",
+    servizi:["Medicina dello sport","Nutrizione"], luogo:"Centro · Piazza Sport 1",
+    lat:41.8950, lng:12.5150, orari:"Mar–Gio 10:00–18:00",
+    tel:"320 5551234", email:"a.neri@esempio.it" },
+  { id:4, nome:"Dott.ssa Giulia Rosa", ruolo:"Psicologa", stato:"verde",
+    servizi:["Psicologia","Yoga e movimento"], luogo:"Quartiere Sud · Via del Benessere 8",
+    lat:41.8700, lng:12.5100, orari:"Lun–Ven 9:00–17:00",
+    tel:"349 1112233", email:"g.rosa@esempio.it" },
+  { id:5, nome:"Luca Gialli", ruolo:"Chinesiologo", stato:"verde",
+    servizi:["Yoga e movimento","Posturologia"], luogo:"Centro · Via delle Erbe 3",
+    lat:41.9080, lng:12.4850, orari:"Lun–Sab 8:00–12:00",
+    tel:"328 4445566", email:"l.gialli@esempio.it" }
+];
+
+const gruppi = [
+  { id:"g1", nome:"Yoga dolce", stato:"verde", orari:"Martedì e giovedì · 18:00–19:00",
+    luogo:"Centro · Via delle Erbe 3", lat:41.9080, lng:12.4850,
+    docente:"Luca Gialli", posti:"max 10 persone" },
+  { id:"g2", nome:"Ginnastica posturale di gruppo", stato:"arancio", orari:"Mercoledì · 10:00–11:00",
+    luogo:"Centro · Via Roma 12", lat:41.9028, lng:12.4964,
+    docente:"Dott.ssa Laura Bianchi", posti:"max 8 persone" },
+  { id:"g3", nome:"Preparazione atletica di gruppo", stato:"giallo", orari:"Sabato · 9:00–10:30",
+    luogo:"Centro sportivo · Piazza Sport 1", lat:41.8950, lng:12.5150,
+    docente:"Dott. Andrea Neri", posti:"max 12 persone" },
+  { id:"g4", nome:"Mindfulness e respiro", stato:"verde", orari:"Venerdì · 17:30–18:30",
+    luogo:"Quartiere Sud · Via del Benessere 8", lat:41.8700, lng:12.5100,
+    docente:"Dott.ssa Giulia Rosa", posti:"max 15 persone" }
+];
+
+const colori = { rosso:'#d32f2f', arancio:'#f57c00', giallo:'#fbc02d', verde:'#388e3c' };
+
+/* ============================================================
+   TABS
+   ============================================================ */
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabBtns.forEach(b => {
+      b.classList.remove('bg-salute-verde','text-white','shadow');
+      b.classList.add('bg-white','text-gray-700','border','border-gray-200');
+    });
+    btn.classList.remove('bg-white','text-gray-700','border','border-gray-200');
+    btn.classList.add('bg-salute-verde','text-white','shadow');
+
+    tabPanels.forEach(p => p.classList.add('hidden'));
+    document.getElementById('tab-' + target).classList.remove('hidden');
+
+    // Ridimensiona la mappa della tab appena mostrata
+    if (target === 'professionisti') setTimeout(() => mappaProf.invalidateSize(), 60);
+    if (target === 'gruppi') setTimeout(() => mappaGruppi.invalidateSize(), 60);
+  });
+});
+
+/* ============================================================
+   TILE LAYER (CartoDB + fallback OSM)
+   ============================================================ */
+function creaTileLayer() {
+  const carto = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    { attribution:'© OpenStreetMap contributors © CARTO', subdomains:'abcd', maxZoom:19 }
+  );
+  const osm = L.tileLayer(
+    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    { maxZoom:19, attribution:'© OpenStreetMap contributors' }
+  );
+  return { carto, osm };
+}
+
+/* ============================================================
+   ICONE PIN
+   ============================================================ */
+function creaIcona(stato) {
+  const c = colori[stato] || '#555';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="42" viewBox="0 0 30 42">
+    <path d="M15 0C6.7 0 0 6.7 0 15c0 11 15 27 15 27s15-16 15-27C30 6.7 23.3 0 15 0z"
+          fill="${c}" stroke="#fff" stroke-width="2"/>
+    <circle cx="15" cy="15" r="6" fill="#fff"/></svg>`;
+  return L.divIcon({ html:svg, className:"", iconSize:[30,42], iconAnchor:[15,42], popupAnchor:[0,-38] });
+}
+
+/* ============================================================
+   MAPPA 1 — PROFESSIONISTI
+   ============================================================ */
+const mappaProf = L.map('mappa').setView([41.9000,12.4950],13);
+(function initTile(map) {
+  const { carto, osm } = creaTileLayer();
+  carto.on('tileerror', () => { if (map.hasLayer(carto)) { map.removeLayer(carto); osm.addTo(map); } });
+  carto.addTo(map);
+})(mappaProf);
+
+const markersProf = {}, schedeProfDOM = {};
+
+function popupProf(p) {
+  const serv = p.servizi.map(s=>`<span class="inline-block bg-green-50 text-green-800 text-[11px] px-2 py-0.5 rounded mr-1">${s}</span>`).join('');
+  return `<div class="text-sm">
+    <p class="font-bold">${p.nome}</p>
+    <p class="text-gray-500 text-xs mb-1">${p.ruolo}</p>
+    <p class="mb-1">${serv}</p>
+    <p class="text-xs text-blue-700 mb-1">${p.luogo}</p>
+    <p class="text-xs"><b>Orari:</b> ${p.orari}</p>
+    <p class="text-xs"><b>Tel:</b> ${p.tel}</p>
+    <p class="text-xs"><b>Email:</b> <a href="mailto:${p.email}" class="text-blue-600">${p.email}</a></p>
+  </div>`;
+}
+
+function schedaProfHTML(p) {
+  const serv = p.servizi.map(s=>`<span class="inline-block bg-green-50 text-green-800 text-[11px] px-2 py-0.5 rounded mr-1 mb-1">${s}</span>`).join('');
+  return `<p class="font-semibold text-sm">${p.nome}</p>
+    <p class="text-xs text-gray-500">${p.ruolo}</p>
+    <p class="text-xs text-blue-700 mt-1">${p.luogo}</p>
+    <p class="mt-1">${serv}</p>
+    <p class="text-xs text-gray-600 mt-1"><b>Orari:</b> ${p.orari}</p>
+    <p class="text-xs text-gray-600"><b>Tel:</b> ${p.tel}</p>`;
+}
+
+professionisti.forEach(p => {
+  const marker = L.marker([p.lat,p.lng],{icon:creaIcona(p.stato)}).addTo(mappaProf).bindPopup(popupProf(p));
+  markersProf[p.id] = marker;
+
+  const scheda = document.createElement('div');
+  scheda.className = 'border-l-4 rounded-lg border border-gray-100 p-3 mb-2 cursor-pointer hover:shadow';
+  scheda.style.borderLeftColor = colori[p.stato];
+  scheda.innerHTML = schedaProfHTML(p);
+  scheda.addEventListener('click', () => {
+    mappaProf.setView([p.lat,p.lng],15,{animate:true});
+    marker.openPopup();
+  });
+  schedeProfDOM[p.id] = scheda;
+  document.getElementById('lista-professionisti').appendChild(scheda);
+});
+
+/* ============================================================
+   MAPPA 2 — GRUPPI
+   ============================================================ */
+const mappaGruppi = L.map('mappa-gruppi').setView([41.9000,12.4950],13);
+(function initTile(map) {
+  const { carto, osm } = creaTileLayer();
+  carto.on('tileerror', () => { if (map.hasLayer(carto)) { map.removeLayer(carto); osm.addTo(map); } });
+  carto.addTo(map);
+})(mappaGruppi);
+
+const markersGruppi = {}, schedeGruppiDOM = {};
+
+function popupGruppo(g) {
+  return `<div class="text-sm">
+    <p class="font-bold">${g.nome}</p>
+    <p class="text-xs text-gray-600 mb-1">${g.orari}</p>
+    <p class="text-xs text-blue-700 mb-1">${g.luogo}</p>
+    <p class="text-xs"><b>Docente:</b> ${g.docente}</p>
+    <p class="text-xs"><b>Posti:</b> ${g.posti}</p>
+  </div>`;
+}
+
+function schedaGruppoHTML(g) {
+  return `<p class="font-semibold text-sm">${g.nome}</p>
+    <p class="text-xs text-gray-600">${g.orari}</p>
+    <p class="text-xs text-blue-700 mt-1">${g.luogo}</p>
+    <p class="text-xs text-gray-500 mt-1">${g.docente} · ${g.posti}</p>`;
+}
+
+gruppi.forEach(g => {
+  const marker = L.marker([g.lat,g.lng],{icon:creaIcona(g.stato)}).addTo(mappaGruppi).bindPopup(popupGruppo(g));
+  markersGruppi[g.id] = marker;
+
+  const scheda = document.createElement('div');
+  scheda.className = 'border-l-4 rounded-lg border border-gray-100 p-3 mb-2 cursor-pointer hover:shadow';
+  scheda.style.borderLeftColor = colori[g.stato];
+  scheda.innerHTML = schedaGruppoHTML(g);
+  scheda.addEventListener('click', () => {
+    mappaGruppi.setView([g.lat,g.lng],15,{animate:true});
+    marker.openPopup();
+  });
+  schedeGruppiDOM[g.id] = scheda;
+  document.getElementById('lista-gruppi').appendChild(scheda);
+});
+
+/* ============================================================
+   FILTRO SEMAFORO (agisce su professionisti e gruppi)
+   ============================================================ */
+let statoAttivo = '';
+const statoBtns = document.querySelectorAll('.stato-btn');
+
+statoBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    statoAttivo = btn.dataset.stato;
+    statoBtns.forEach(b => {
+      b.className = 'stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border-2 hover:bg-gray-50';
+    });
+    btn.className = 'stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white';
+    if (statoAttivo) {
+      btn.classList.remove('bg-gray-900','text-white');
+      const m = { rosso:'bg-salute-rosso text-white', arancio:'bg-salute-arancio text-white',
+                  giallo:'bg-salute-giallo text-gray-900', verde:'bg-salute-verde text-white' };
+      btn.className = 'stato-btn px-3 py-1.5 rounded-lg text-xs font-semibold ' + m[statoAttivo];
+    }
+    applicaFiltro();
+  });
+});
+
+function applicaFiltro() {
+  // Professionisti
+  professionisti.forEach(p => {
+    const visibile = !statoAttivo || p.stato === statoAttivo;
+    if (visibile) {
+      if (!mappaProf.hasLayer(markersProf[p.id])) mappaProf.addLayer(markersProf[p.id]);
+      schedeProfDOM[p.id].style.display = '';
+    } else {
+      if (mappaProf.hasLayer(markersProf[p.id])) mappaProf.removeLayer(markersProf[p.id]);
+      schedeProfDOM[p.id].style.display = 'none';
+    }
+  });
+
+  // Gruppi
+  gruppi.forEach(g => {
+    const visibile = !statoAttivo || g.stato === statoAttivo;
+    if (visibile) {
+      if (!mappaGruppi.hasLayer(markersGruppi[g.id])) mappaGruppi.addLayer(markersGruppi[g.id]);
+      schedeGruppiDOM[g.id].style.display = '';
+    } else {
+      if (mappaGruppi.hasLayer(markersGruppi[g.id])) mappaGruppi.removeLayer(markersGruppi[g.id]);
+      schedeGruppiDOM[g.id].style.display = 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>

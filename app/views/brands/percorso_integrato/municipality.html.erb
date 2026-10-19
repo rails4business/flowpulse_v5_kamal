@@ -1,0 +1,568 @@
+<% content_for :title, "#{@comune['title'].presence || "Comune di #{@comune['name']}"} — Percorso Integrato" %>
+<% content_for :landing_nav do %><%= render "brands/percorso_integrato/header" %><% end %>
+
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    .pi-map-container { height: 480px; }
+    @media (max-width: 768px) { .pi-map-container { height: 330px; } }
+    .leaflet-popup-content-wrapper { border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+    .leaflet-popup-content { margin: 0.75rem 1rem; line-height: 1.4; }
+  </style>
+<% end %>
+
+<main class="min-h-screen bg-[#f8fbf8] px-4 py-8 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl">
+
+    <!-- BREADCRUMB / NAV SUPERIORE -->
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-bold text-slate-500" aria-label="Breadcrumb">
+      <%= link_to "Percorso Integrato", percorso_integrato_path, class: "hover:text-emerald-700" %>
+      <span>/</span>
+      <%= link_to "Comuni", percorso_integrato_municipalities_path, class: "hover:text-emerald-700" %>
+      <span>/</span>
+      <span class="text-emerald-800"><%= @comune["name"] %></span>
+    </nav>
+
+    <!-- HEADER DEL COMUNE -->
+    <header class="rounded-3xl border border-emerald-100 bg-white p-6 sm:p-10 shadow-sm mb-6">
+      <div class="flex flex-wrap items-start justify-between gap-6">
+        <div class="max-w-3xl">
+          <span class="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-wider text-emerald-800">
+            <%= @comune["eyebrow"].presence || "Presidio Territoriale · Provincia di #{@comune['province']}" %>
+          </span>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">
+            <%= @comune["title"].presence || "Comune di #{@comune['name']} · Rete dei professionisti locali" %>
+          </h1>
+          <p class="mt-4 text-base sm:text-lg leading-relaxed text-slate-600">
+            <%= @comune["population_intro"].presence || @comune["description"] %>
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-2 shrink-0">
+          <%= link_to percorso_integrato_municipality_professionals_path(@comune["slug"]), class: "rounded-2xl border border-emerald-200 bg-emerald-50/60 px-5 py-3 text-xs sm:text-sm font-bold text-emerald-900 transition hover:bg-emerald-100 flex items-center justify-center gap-2 shadow-sm" do %>
+            <span>🏛️ Spazi per Professionisti</span>
+            <span class="text-emerald-700">→</span>
+          <% end %>
+          <% if @comune["whatsapp_number"].present? %>
+            <a href="https://wa.me/<%= @comune['whatsapp_number'] %>?text=<%= ERB::Util.url_encode(@comune['whatsapp_message'] || "Buongiorno, vorrei informazioni sul Percorso Integrato a #{@comune['name']}.") %>" target="_blank" rel="noopener" class="pi-button pi-button--primary rounded-2xl px-5 py-3 text-xs sm:text-sm font-bold shadow-sm flex items-center justify-center gap-2">
+              <span>💬 Contatta il Presidio</span>
+            </a>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <!-- BARRA FILTRO STATO DI SALUTE (SEMAFORO) -->
+    <div class="rounded-2xl border border-emerald-100 bg-white p-4 sm:p-5 shadow-sm mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-700 mr-1">Filtro Stato di salute:</span>
+        <div class="flex flex-wrap gap-2" id="filtri-stato">
+          <button type="button" data-stato="" class="stato-btn rounded-xl px-3.5 py-1.5 text-xs font-bold transition bg-slate-900 text-white shadow-sm">
+            Tutti
+          </button>
+          <button type="button" data-stato="rosso" class="stato-btn rounded-xl border border-rose-200 bg-rose-50/70 px-3.5 py-1.5 text-xs font-bold text-rose-700 transition hover:bg-rose-100">
+            🔴 Rosso <span class="hidden sm:inline font-normal opacity-80">(acuto)</span>
+          </button>
+          <button type="button" data-stato="arancio" class="stato-btn rounded-xl border border-amber-200 bg-amber-50/70 px-3.5 py-1.5 text-xs font-bold text-amber-800 transition hover:bg-amber-100">
+            🟠 Arancio <span class="hidden sm:inline font-normal opacity-80">(rieducazione)</span>
+          </button>
+          <button type="button" data-stato="giallo" class="stato-btn rounded-xl border border-yellow-200 bg-yellow-50/70 px-3.5 py-1.5 text-xs font-bold text-yellow-800 transition hover:bg-yellow-100">
+            🟡 Giallo <span class="hidden sm:inline font-normal opacity-80">(prevenzione)</span>
+          </button>
+          <button type="button" data-stato="verde" class="stato-btn rounded-xl border border-emerald-200 bg-emerald-50/70 px-3.5 py-1.5 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100">
+            🟢 Verde <span class="hidden sm:inline font-normal opacity-80">(benessere)</span>
+          </button>
+        </div>
+      </div>
+      <p id="filtro-counter" class="text-xs font-semibold text-slate-500 hidden sm:block">
+        Filtro interattivo applicato su professionisti e corsi
+      </p>
+    </div>
+
+    <!-- TABS DI NAVIGAZIONE -->
+    <nav class="flex flex-wrap gap-2 sm:gap-3 mb-6" role="tablist" aria-label="Sezioni del Comune">
+      <button type="button" data-tab="professionisti" class="tab-btn inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-xs sm:text-sm font-black transition bg-emerald-800 text-white shadow-md">
+        <span>👤</span>
+        <span>Professionisti e Servizi</span>
+        <span class="rounded-full bg-emerald-950/30 px-2 py-0.5 text-[11px]"><%= @comune_professionals.size %></span>
+      </button>
+
+      <button type="button" data-tab="gruppi" class="tab-btn inline-flex items-center gap-2 rounded-2xl border border-emerald-100 bg-white px-5 py-3 text-xs sm:text-sm font-bold text-slate-700 transition hover:bg-emerald-50">
+        <span>👥</span>
+        <span>Attività in gruppi</span>
+        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px]"><%= @comune_groups.size %></span>
+      </button>
+
+      <button type="button" data-tab="domicilio" class="tab-btn inline-flex items-center gap-2 rounded-2xl border border-emerald-100 bg-white px-5 py-3 text-xs sm:text-sm font-bold text-slate-700 transition hover:bg-emerald-50">
+        <span>🏠</span>
+        <span>A domicilio</span>
+        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px]"><%= @comune_home_services.size %></span>
+      </button>
+
+      <button type="button" data-tab="eventi" class="tab-btn inline-flex items-center gap-2 rounded-2xl border border-emerald-100 bg-white px-5 py-3 text-xs sm:text-sm font-bold text-slate-700 transition hover:bg-emerald-50">
+        <span>📅</span>
+        <span>Eventi patrocinati</span>
+        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px]"><%= @comune_events.size %></span>
+      </button>
+    </nav>
+
+    <!-- ============ TAB 1: PROFESSIONISTI E SERVIZI (CON MAPPA) ============ -->
+    <section id="tab-professionisti" class="tab-panel">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Mappa Leaflet -->
+        <div class="lg:col-span-7 rounded-3xl border border-emerald-100 bg-white p-3 shadow-sm">
+          <div id="mappa" class="pi-map-container rounded-2xl overflow-hidden z-10"></div>
+          <div class="p-3 text-[11px] text-slate-500 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 mt-2">
+            <span>📍 Clicca sui pin o sulle schede per centrare la mappa e vedere orari e contatti.</span>
+            <span>Mappa © OpenStreetMap contributors © CARTO</span>
+          </div>
+        </div>
+
+        <!-- Lista professionisti cliccabile -->
+        <div class="lg:col-span-5 flex flex-col gap-3 max-h-[560px] overflow-y-auto pr-1" id="lista-professionisti">
+          <!-- Popolato dinamicamente da JS per sincronizzazione immediata con mappa e filtri -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB 2: ATTIVITÀ IN GRUPPI (CON MAPPA) ============ -->
+    <section id="tab-gruppi" class="tab-panel hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-7 rounded-3xl border border-emerald-100 bg-white p-3 shadow-sm">
+          <div id="mappa-gruppi" class="pi-map-container rounded-2xl overflow-hidden z-10"></div>
+          <div class="p-3 text-[11px] text-slate-500 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 mt-2">
+            <span>👥 Classi settimanali a numero chiuso nei centri del territorio di <%= @comune["name"] %>.</span>
+            <span>Mappa © OpenStreetMap contributors © CARTO</span>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col gap-3 max-h-[560px] overflow-y-auto pr-1" id="lista-gruppi">
+          <!-- Popolato dinamicamente da JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB 3: A DOMICILIO ============ -->
+    <section id="tab-domicilio" class="tab-panel hidden">
+      <div class="rounded-3xl border border-emerald-100 bg-white p-6 sm:p-8 shadow-sm">
+        <div class="max-w-2xl">
+          <span class="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-wider text-emerald-800">
+            Assistenza Territoriale
+          </span>
+          <h2 class="mt-3 text-2xl sm:text-3xl font-black text-slate-950">Servizi a domicilio a <%= @comune["name"] %></h2>
+          <p class="mt-2 text-sm sm:text-base text-slate-600">
+            Interventi riabilitativi, posturali o consulenze dedicate direttamente presso abitazioni o uffici, per persone con mobilità limitata o bisogni specifici.
+          </p>
+        </div>
+
+        <div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <% @comune_home_services.each do |serv| %>
+            <% border_color = case serv["stato"]
+               when "rosso" then "border-rose-400 bg-rose-50/30"
+               when "arancio" then "border-amber-400 bg-amber-50/30"
+               when "giallo" then "border-yellow-400 bg-yellow-50/30"
+               else "border-emerald-400 bg-emerald-50/30"
+               end %>
+            <% badge_class = case serv["stato"]
+               when "rosso" then "bg-rose-100 text-rose-800"
+               when "arancio" then "bg-amber-100 text-amber-800"
+               when "giallo" then "bg-yellow-100 text-yellow-800"
+               else "bg-emerald-100 text-emerald-800"
+               end %>
+            <article class="flex flex-col justify-between rounded-2xl border-l-4 <%= border_color %> border border-slate-100 bg-white p-5 shadow-sm">
+              <div>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="rounded-full <%= badge_class %> px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider">
+                    <%= serv["stato"] %>
+                  </span>
+                  <% if serv["schedule"].present? %>
+                    <span class="text-xs font-semibold text-slate-500"><%= serv["schedule"] %></span>
+                  <% end %>
+                </div>
+                <h3 class="mt-3 text-base font-black text-slate-950"><%= serv["title"] %></h3>
+                <p class="mt-2 text-xs font-bold text-emerald-800">📍 <%= serv["area"] %></p>
+                <% if serv["provider"].present? %>
+                  <p class="mt-2 text-xs text-slate-500">Operatore: <%= serv["provider"] %></p>
+                <% end %>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100">
+                <a href="https://wa.me/<%= @comune['whatsapp_number'] %>?text=<%= ERB::Util.url_encode("Buongiorno, vorrei informazioni sul servizio a domicilio '#{serv['title']}' a #{@comune['name']}.") %>" target="_blank" rel="noopener" class="text-xs font-bold text-emerald-700 hover:text-emerald-950 underline">
+                  Richiedi disponibilità a domicilio →
+                </a>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB 4: EVENTI PATROCINATI ============ -->
+    <section id="tab-eventi" class="tab-panel hidden">
+      <div class="rounded-3xl border border-emerald-100 bg-white p-6 sm:p-8 shadow-sm">
+        <div class="max-w-2xl">
+          <span class="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-wider text-emerald-800">
+            Territorio & Comunità
+          </span>
+          <h2 class="mt-3 text-2xl sm:text-3xl font-black text-slate-950">Eventi patrocinati a <%= @comune["name"] %></h2>
+          <p class="mt-2 text-sm sm:text-base text-slate-600">
+            Incontri pubblici, screening posturali, laboratori pratici e conferenze organizzati in sinergia con l'Amministrazione comunale e la rete locale.
+          </p>
+        </div>
+
+        <div class="mt-8 space-y-4">
+          <% @comune_events.each do |evt| %>
+            <article class="flex flex-col sm:flex-row items-start sm:items-center gap-5 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition hover:border-emerald-300">
+              <div class="shrink-0 rounded-2xl bg-emerald-800 px-4 py-3 text-center text-white min-w-[72px]">
+                <p class="text-[11px] font-black uppercase tracking-wider text-emerald-200"><%= evt["month"] %></p>
+                <p class="text-2xl font-black leading-none mt-0.5"><%= evt["day"] %></p>
+              </div>
+
+              <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-lg font-black text-slate-950"><%= evt["title"] %></h3>
+                  <span class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
+                    <%= evt["patrocinio"] %>
+                  </span>
+                </div>
+                <p class="mt-1 text-sm text-slate-600"><%= evt["description"] %></p>
+                <p class="mt-2 text-xs font-bold text-emerald-900">
+                  📍 <%= evt["details"] %>
+                </p>
+              </div>
+
+              <div class="shrink-0 mt-3 sm:mt-0">
+                <a href="https://wa.me/<%= @comune['whatsapp_number'] %>?text=<%= ERB::Util.url_encode("Buongiorno, vorrei prenotare / avere informazioni per l'evento '#{evt['title']}' a #{@comune['name']}.") %>" target="_blank" rel="noopener" class="pi-button pi-button--secondary rounded-xl px-4 py-2 text-xs font-bold">
+                  Info & Iscrizione
+                </a>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOX SPAZI E STRUTTURE PER PROFESSIONISTI -->
+    <div class="mt-12 rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-900 to-[#173f43] p-8 sm:p-10 text-white shadow-lg">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div class="max-w-2xl">
+          <span class="rounded-full bg-emerald-800 px-3 py-1 text-xs font-black uppercase tracking-wider text-emerald-200">
+            Per i Professionisti
+          </span>
+          <h2 class="mt-3 text-2xl sm:text-3xl font-black">Sei un professionista della salute o del movimento?</h2>
+          <p class="mt-2 text-sm sm:text-base text-emerald-100">
+            Nel Comune di <%= @comune["name"] %> sono disponibili <strong><%= @comune_spaces.size %> strutture e spazi attrezzati</strong> (studi privati, palestre per attività motoria, ambulatori) pronti per ospitare visite, percorsi e corsi.
+          </p>
+        </div>
+        <%= link_to percorso_integrato_municipality_professionals_path(@comune["slug"]), class: "pi-button pi-button--secondary rounded-2xl px-6 py-3.5 text-sm font-black whitespace-nowrap shadow-md text-emerald-950" do %>
+          Vedi strutture libere a <%= @comune["name"] %> →
+        <% end %>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<%= render "posturacorretta/footer" %>
+
+<!-- SCRIPT MAPPE, TAB E FILTRI -->
+<script>
+(function() {
+  const mapCenter = <%= raw (@comune["map_center"] || [45.3486, 10.3475]).to_json %>;
+  const mapZoom = <%= @comune["map_zoom"] || 14 %>;
+
+  const professionisti = <%= raw @comune_professionals.map { |p|
+    {
+      id: p["slug"],
+      nome: p["name"] || p["slug"].titleize,
+      ruolo: p["role_in_comune"] || p["profession"] || "Professionista della salute",
+      stato: p["stato"] || "verde",
+      servizi: Array(p["servizi"].presence || p["services"]&.map { |s| s["title"] } || ["Consulenza personalizzata"]),
+      luogo: p["luogo"] || p["address"] || "#{@comune['name']} (BS)",
+      lat: (p["lat"] || mapCenter[0] + (rand - 0.5) * 0.01).to_f,
+      lng: (p["lng"] || mapCenter[1] + (rand - 0.5) * 0.01).to_f,
+      orari: p["orari"] || "Su appuntamento",
+      tel: p["tel"] || @comune["whatsapp_number"],
+      email: p["email"] || "info@percorsointegrato.it",
+      profile_url: "/percorso-integrato/professionisti/#{p['slug']}"
+    }
+  }.to_json %>;
+
+  const gruppi = <%= raw @comune_groups.map { |g|
+    {
+      id: g["id"] || g["nome"].parameterize,
+      nome: g["nome"],
+      stato: g["stato"] || "verde",
+      orari: g["orari"],
+      luogo: g["luogo"],
+      lat: (g["lat"] || mapCenter[0] + (rand - 0.5) * 0.01).to_f,
+      lng: (g["lng"] || mapCenter[1] + (rand - 0.5) * 0.01).to_f,
+      docente: g["docente"],
+      posti: g["posti"]
+    }
+  }.to_json %>;
+
+  const colori = {
+    rosso: '#e11d48',
+    arancio: '#f59e0b',
+    giallo: '#eab308',
+    verde: '#059669'
+  };
+
+  function creaIcona(stato) {
+    const c = colori[stato] || '#059669';
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 30 42">' +
+      '<path d="M15 0C6.7 0 0 6.7 0 15c0 11 15 27 15 27s15-16 15-27C30 6.7 23.3 0 15 0z" fill="' + c + '" stroke="#ffffff" stroke-width="2"/>' +
+      '<circle cx="15" cy="15" r="5.5" fill="#ffffff"/>' +
+      '</svg>';
+    return L.divIcon({ html: svg, className: "", iconSize: [32, 44], iconAnchor: [16, 44], popupAnchor: [0, -40] });
+  }
+
+  function creaTileLayer() {
+    const carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19
+    });
+    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    });
+    return { carto, osm };
+  }
+
+  // ===== MAPPA PROFESSIONISTI =====
+  let mappaProf = null;
+  const markersProf = {};
+  const schedeProfDOM = {};
+
+  function initMappaProf() {
+    if (mappaProf) return;
+    const el = document.getElementById('mappa');
+    if (!el || typeof L === 'undefined') return;
+
+    mappaProf = L.map('mappa').setView(mapCenter, mapZoom);
+    const { carto, osm } = creaTileLayer();
+    carto.on('tileerror', () => {
+      if (mappaProf.hasLayer(carto)) {
+        mappaProf.removeLayer(carto);
+        osm.addTo(mappaProf);
+      }
+    });
+    carto.addTo(mappaProf);
+
+    const listaEl = document.getElementById('lista-professionisti');
+    if (listaEl) listaEl.innerHTML = '';
+
+    professionisti.forEach(p => {
+      const popupHTML = '<div class="text-xs sm:text-sm font-sans">' +
+        '<p class="font-black text-slate-900 text-sm">' + p.nome + '</p>' +
+        '<p class="text-emerald-700 font-bold text-xs mb-1.5">' + p.ruolo + '</p>' +
+        '<p class="text-slate-600 mb-1 text-[11px]">📍 ' + p.luogo + '</p>' +
+        '<p class="text-slate-500 mb-2 text-[11px]">🕒 ' + p.orari + '</p>' +
+        '<div class="flex flex-wrap gap-1 mb-2">' +
+        p.servizi.map(s => '<span class="bg-emerald-50 text-emerald-900 border border-emerald-100 text-[10px] font-bold px-2 py-0.5 rounded-md">' + s + '</span>').join('') +
+        '</div>' +
+        '<a href="' + p.profile_url + '" class="inline-block rounded-lg bg-emerald-800 text-white font-bold text-xs px-3 py-1.5 hover:bg-emerald-900 transition">Visualizza Profilo →</a>' +
+        '</div>';
+
+      const marker = L.marker([p.lat, p.lng], { icon: creaIcona(p.stato) })
+        .addTo(mappaProf)
+        .bindPopup(popupHTML);
+      markersProf[p.id] = marker;
+
+      const borderColor = p.stato === 'rosso' ? 'border-l-rose-500' :
+                          p.stato === 'arancio' ? 'border-l-amber-500' :
+                          p.stato === 'giallo' ? 'border-l-yellow-400' : 'border-l-emerald-600';
+
+      const badgeStato = p.stato === 'rosso' ? '<span class="rounded-full bg-rose-100 text-rose-800 text-[10px] font-black uppercase px-2 py-0.5">Rosso</span>' :
+                         p.stato === 'arancio' ? '<span class="rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2 py-0.5">Arancio</span>' :
+                         p.stato === 'giallo' ? '<span class="rounded-full bg-yellow-100 text-yellow-800 text-[10px] font-black uppercase px-2 py-0.5">Giallo</span>' :
+                         '<span class="rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase px-2 py-0.5">Verde</span>';
+
+      const card = document.createElement('article');
+      card.className = 'border-l-4 ' + borderColor + ' rounded-2xl border border-emerald-100 bg-white p-4 cursor-pointer shadow-sm transition hover:shadow-md hover:border-emerald-300';
+      card.innerHTML = '<div class="flex items-center justify-between gap-2 mb-1">' +
+        '<p class="font-black text-slate-900 text-sm sm:text-base">' + p.nome + '</p>' +
+        badgeStato +
+        '</div>' +
+        '<p class="text-xs font-bold text-emerald-800">' + p.ruolo + '</p>' +
+        '<p class="text-xs text-slate-600 mt-1">📍 ' + p.luogo + '</p>' +
+        '<div class="flex flex-wrap gap-1 mt-2">' +
+        p.servizi.map(s => '<span class="bg-emerald-50 text-emerald-900 text-[10px] font-semibold px-2 py-0.5 rounded-md">' + s + '</span>').join('') +
+        '</div>' +
+        '<div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">' +
+        '<span class="text-slate-500">🕒 ' + p.orari + '</span>' +
+        '<a href="' + p.profile_url + '" class="font-bold text-emerald-700 hover:text-emerald-950 underline">Scheda →</a>' +
+        '</div>';
+
+      card.addEventListener('click', (e) => {
+        if (e.target.tagName.toLowerCase() === 'a') return;
+        mappaProf.setView([p.lat, p.lng], 15, { animate: true });
+        marker.openPopup();
+      });
+
+      schedeProfDOM[p.id] = card;
+      if (listaEl) listaEl.appendChild(card);
+    });
+  }
+
+  // ===== MAPPA GRUPPI =====
+  let mappaGruppi = null;
+  const markersGruppi = {};
+  const schedeGruppiDOM = {};
+
+  function initMappaGruppi() {
+    if (mappaGruppi) return;
+    const el = document.getElementById('mappa-gruppi');
+    if (!el || typeof L === 'undefined') return;
+
+    mappaGruppi = L.map('mappa-gruppi').setView(mapCenter, mapZoom);
+    const { carto, osm } = creaTileLayer();
+    carto.on('tileerror', () => {
+      if (mappaGruppi.hasLayer(carto)) {
+        mappaGruppi.removeLayer(carto);
+        osm.addTo(mappaGruppi);
+      }
+    });
+    carto.addTo(mappaGruppi);
+
+    const listaEl = document.getElementById('lista-gruppi');
+    if (listaEl) listaEl.innerHTML = '';
+
+    gruppi.forEach(g => {
+      const popupHTML = '<div class="text-xs sm:text-sm font-sans">' +
+        '<p class="font-black text-slate-900 text-sm">' + g.nome + '</p>' +
+        '<p class="text-slate-600 text-xs mb-1">📍 ' + g.luogo + '</p>' +
+        '<p class="text-xs text-slate-500 mb-1">🕒 ' + g.orari + '</p>' +
+        '<p class="text-xs font-semibold text-emerald-800">Docente: ' + g.docente + ' · ' + g.posti + '</p>' +
+        '</div>';
+
+      const marker = L.marker([g.lat, g.lng], { icon: creaIcona(g.stato) })
+        .addTo(mappaGruppi)
+        .bindPopup(popupHTML);
+      markersGruppi[g.id] = marker;
+
+      const borderColor = g.stato === 'rosso' ? 'border-l-rose-500' :
+                          g.stato === 'arancio' ? 'border-l-amber-500' :
+                          g.stato === 'giallo' ? 'border-l-yellow-400' : 'border-l-emerald-600';
+
+      const card = document.createElement('article');
+      card.className = 'border-l-4 ' + borderColor + ' rounded-2xl border border-emerald-100 bg-white p-4 cursor-pointer shadow-sm transition hover:shadow-md hover:border-emerald-300';
+      card.innerHTML = '<p class="font-black text-slate-900 text-sm sm:text-base">' + g.nome + '</p>' +
+        '<p class="text-xs text-slate-600 mt-1">📍 ' + g.luogo + '</p>' +
+        '<p class="text-xs font-semibold text-slate-500 mt-1">🕒 ' + g.orari + '</p>' +
+        '<p class="text-xs font-bold text-emerald-800 mt-2">Docente: ' + g.docente + ' · ' + g.posti + '</p>';
+
+      card.addEventListener('click', () => {
+        mappaGruppi.setView([g.lat, g.lng], 15, { animate: true });
+        marker.openPopup();
+      });
+
+      schedeGruppiDOM[g.id] = card;
+      if (listaEl) listaEl.appendChild(card);
+    });
+  }
+
+  // ===== GESTIONE TABS =====
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+
+      tabBtns.forEach(b => {
+        b.classList.remove('bg-emerald-800', 'text-white', 'shadow-md');
+        b.classList.add('bg-white', 'text-slate-700', 'border', 'border-emerald-100');
+      });
+      btn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-emerald-100');
+      btn.classList.add('bg-emerald-800', 'text-white', 'shadow-md');
+
+      tabPanels.forEach(p => p.classList.add('hidden'));
+      const activePanel = document.getElementById('tab-' + target);
+      if (activePanel) activePanel.classList.remove('hidden');
+
+      if (target === 'professionisti') {
+        initMappaProf();
+        setTimeout(() => mappaProf && mappaProf.invalidateSize(), 80);
+      } else if (target === 'gruppi') {
+        initMappaGruppi();
+        setTimeout(() => mappaGruppi && mappaGruppi.invalidateSize(), 80);
+      }
+    });
+  });
+
+  // ===== FILTRO SEMAFORO =====
+  let statoAttivo = '';
+  const statoBtns = document.querySelectorAll('.stato-btn');
+
+  statoBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      statoAttivo = btn.dataset.stato;
+
+      statoBtns.forEach(b => {
+        b.classList.remove('ring-2', 'ring-offset-2', 'ring-slate-900', 'shadow-sm');
+        if (b.dataset.stato === '') {
+          b.className = 'stato-btn rounded-xl px-3.5 py-1.5 text-xs font-bold transition bg-slate-100 text-slate-700 hover:bg-slate-200';
+        }
+      });
+
+      if (!statoAttivo) {
+        btn.className = 'stato-btn rounded-xl px-3.5 py-1.5 text-xs font-bold transition bg-slate-900 text-white shadow-sm';
+      } else {
+        btn.classList.add('ring-2', 'ring-offset-2', 'ring-slate-900', 'shadow-sm');
+      }
+
+      applicaFiltro();
+    });
+  });
+
+  function applicaFiltro() {
+    // Filtro su professionisti
+    let countProf = 0;
+    professionisti.forEach(p => {
+      const visibile = !statoAttivo || p.stato === statoAttivo;
+      if (visibile) {
+        countProf++;
+        if (mappaProf && !mappaProf.hasLayer(markersProf[p.id])) mappaProf.addLayer(markersProf[p.id]);
+        if (schedeProfDOM[p.id]) schedeProfDOM[p.id].style.display = '';
+      } else {
+        if (mappaProf && mappaProf.hasLayer(markersProf[p.id])) mappaProf.removeLayer(markersProf[p.id]);
+        if (schedeProfDOM[p.id]) schedeProfDOM[p.id].style.display = 'none';
+      }
+    });
+
+    // Filtro su gruppi
+    let countGruppi = 0;
+    gruppi.forEach(g => {
+      const visibile = !statoAttivo || g.stato === statoAttivo;
+      if (visibile) {
+        countGruppi++;
+        if (mappaGruppi && !mappaGruppi.hasLayer(markersGruppi[g.id])) mappaGruppi.addLayer(markersGruppi[g.id]);
+        if (schedeGruppiDOM[g.id]) schedeGruppiDOM[g.id].style.display = '';
+      } else {
+        if (mappaGruppi && mappaGruppi.hasLayer(markersGruppi[g.id])) mappaGruppi.removeLayer(markersGruppi[g.id]);
+        if (schedeGruppiDOM[g.id]) schedeGruppiDOM[g.id].style.display = 'none';
+      }
+    });
+
+    const counterEl = document.getElementById('filtro-counter');
+    if (counterEl) {
+      if (statoAttivo) {
+        counterEl.textContent = 'Filtro attivo (' + statoAttivo + '): ' + countProf + ' professionisti, ' + countGruppi + ' corsi';
+      } else {
+        counterEl.textContent = 'Filtro interattivo applicato su professionisti e corsi';
+      }
+    }
+  }
+
+  // Avvio al caricamento del DOM
+  document.addEventListener('DOMContentLoaded', () => {
+    initMappaProf();
+  });
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initMappaProf();
+  }
+})();
+</script>

@@ -1,0 +1,57 @@
+<% type_labels = { commitment: "Impegno", session: "Sessione", slot: "Slot" } %>
+<% color_classes = {
+  "blue" => "border-blue-200 bg-blue-50 text-blue-800",
+  "sky" => "border-sky-200 bg-sky-50 text-sky-800",
+  "teal" => "border-teal-200 bg-teal-50 text-teal-800",
+  "emerald" => "border-emerald-200 bg-emerald-50 text-emerald-800",
+  "amber" => "border-amber-200 bg-amber-50 text-amber-800",
+  "violet" => "border-violet-200 bg-violet-50 text-violet-800",
+  "rose" => "border-rose-200 bg-rose-50 text-rose-800",
+  "orange" => "border-orange-200 bg-orange-50 text-orange-800",
+  "slate" => "border-slate-200 bg-slate-50 text-slate-700"
+} %>
+
+<% if entries_by_day.any? %>
+  <div class="grid gap-5">
+    <% entries_by_day.sort_by { |day, _entries| day }.each do |day, entries| %>
+      <section data-planning-day="<%= day.iso8601 %>" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="planning-day-<%= day.iso8601 %>">
+        <header class="flex items-center justify-between gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
+          <div>
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-400"><%= day == Date.current ? "Oggi" : l(day, format: "%A") %></p>
+            <h3 id="planning-day-<%= day.iso8601 %>" class="mt-0.5 text-lg font-black text-slate-950"><%= l(day, format: "%d %B %Y") %></h3>
+          </div>
+          <span class="rounded-full bg-white px-2.5 py-1 text-xs font-extrabold text-slate-500 ring-1 ring-slate-200"><%= entries.size %></span>
+        </header>
+
+        <ol class="divide-y divide-slate-100">
+          <% entries.each do |entry| %>
+            <% starts_at = entry[:starts_at]&.in_time_zone %>
+            <% ends_at = entry[:ends_at]&.in_time_zone %>
+            <% entry_color = color_classes.fetch(entry[:color].to_s, color_classes.fetch("slate")) %>
+            <li class="grid gap-3 px-4 py-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:px-5">
+              <div class="font-mono text-sm font-black text-slate-900">
+                <% if starts_at.present? %>
+                  <time datetime="<%= starts_at.iso8601 %>"><%= starts_at.strftime("%H:%M") %></time><span class="mx-1 text-slate-300">–</span><% if ends_at.present? %><time datetime="<%= ends_at.iso8601 %>"><%= ends_at.strftime("%H:%M") %></time><% else %>—<% end %>
+                <% else %>
+                  <span class="font-sans text-xs text-slate-400">Orario da definire</span>
+                <% end %>
+              </div>
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="rounded-full border px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide <%= entry_color %>"><%= type_labels.fetch(entry[:record_type].to_sym, entry[:record_type].to_s.humanize) %></span>
+                  <h4 class="font-black text-slate-950"><%= entry[:title] %></h4>
+                </div>
+                <% if entry[:context].present? %><p class="mt-1 text-sm leading-5 text-slate-500"><%= entry[:context] %></p><% end %>
+              </div>
+            </li>
+          <% end %>
+        </ol>
+      </section>
+    <% end %>
+  </div>
+<% else %>
+  <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center">
+    <h3 class="font-black text-slate-950">Nessun appuntamento in questa settimana</h3>
+    <p class="mt-1 text-sm text-slate-500">Le attività con data saranno raccolte qui, giorno per giorno.</p>
+  </div>
+<% end %>

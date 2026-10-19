@@ -77,6 +77,20 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Percorso educativo PosturaCorretta"
   end
 
+  test "orders the primary navigation around path lessons methodologies and explore" do
+    get posturacorretta_url
+
+    assert_response :success
+    desktop_links = css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
+    assert_equal ["Percorso", "Lezioni", "Metodiche"], desktop_links
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/
+
+    mobile_links = css_select("nav[aria-label='Navigazione app PosturaCorretta'] > a small").map { |label| label.text.squish }
+    assert_equal ["Percorso", "Lezioni", "Metodiche"], mobile_links
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > details.pc-app-explore > summary", text: /Esplora/
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > details.pc-app-account > summary", text: /Profilo/
+  end
+
   test "keeps the legacy academy curriculum available" do
     get posturacorretta_accademia_url
     assert_response :success
@@ -246,6 +260,30 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Professioni, metodiche posturali e per la guarigione"
     assert_includes response.body, "Biomeccanica Comportamentale GDS"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}'][aria-current='page']", text: "Metodiche"
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}'].is-active", text: /Metodiche/
+    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", count: 0
+  end
+
+  test "reassures visitors when a public listing is temporarily rate limited" do
+    store = PosturacorrettaController.cache_store
+    original_increment = store.method(:increment)
+    store.define_singleton_method(:increment) { |*, **| 25 }
+
+    begin
+      get posturacorretta_metodiche_url
+    ensure
+      store.define_singleton_method(:increment, original_increment)
+    end
+
+    assert_response :too_many_requests
+    assert_equal "text/html", response.media_type
+    assert_equal "60", response.headers["Retry-After"]
+    assert_includes response.headers["Cache-Control"], "no-store"
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+    assert_select "h1", text: "Ci prendiamo un piccolo respiro."
+    assert_select "a[href='']", text: "Riprova questa pagina"
+    assert_select "a[href='/posturacorretta']", text: "Torna al percorso"
   end
 
   test "should get metodica show" do

@@ -1,0 +1,68 @@
+<%
+  planning_tabs = [
+    ["Da completare", "unfinished", @unfinished_commitments.size],
+    ["Agenda", "agenda", @planning_entries_by_day.values.sum(&:size)],
+    ["Settimana", "week", nil]
+  ]
+  selected_date = @selected_date || Date.current
+  week_start = @week_start || selected_date.beginning_of_week
+  week_end = @week_end || week_start + 6.days
+  planning_path = lambda do |tab, date = selected_date|
+    flowpulse_admin_production_path(view: "planning", planning_tab: tab, date: date.iso8601)
+  end
+%>
+
+<section class="mt-7" aria-labelledby="personal-planning-title">
+  <div class="flex flex-col gap-3 border-b border-slate-200 pb-5 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-emerald-700">1impegno · piano personale</p>
+      <h2 id="personal-planning-title" class="mt-1 text-2xl font-black text-slate-950">La mia settimana</h2>
+      <p class="mt-1 max-w-2xl text-sm leading-6 text-slate-600">Prima raccogli ciò che devi concludere, poi guarda gli appuntamenti in ordine e infine controlla come occupano la settimana.</p>
+    </div>
+    <%= link_to "Apri 1impegno", impegno_path(area: "agenda", view: "agenda"), class: "inline-flex w-fit items-center justify-center rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-extrabold text-emerald-800 shadow-sm transition hover:bg-emerald-50" %>
+  </div>
+
+  <nav class="mt-5 flex gap-2 overflow-x-auto pb-1" aria-label="Pianificazione personale" role="tablist">
+    <% planning_tabs.each do |label, tab, count| %>
+      <% active = @planning_tab == tab %>
+      <%= link_to planning_path.call(tab),
+                  role: "tab",
+                  aria: { selected: active, current: ("page" if active) },
+                  class: [
+                    "inline-flex min-w-max items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-extrabold transition",
+                    active ? "border-slate-900 bg-slate-900 text-white shadow-sm" : "border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50 hover:text-slate-950"
+                  ].join(" ") do %>
+        <span><%= label %></span>
+        <% if count.present? %><span class="rounded-full bg-current/10 px-2 py-0.5 text-xs"><%= count %></span><% end %>
+      <% end %>
+    <% end %>
+  </nav>
+
+  <% if %w[agenda week].include?(@planning_tab) %>
+    <div class="mt-4 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-400">Settimana selezionata</p>
+        <p class="mt-0.5 text-sm font-black text-slate-950"><%= l(week_start, format: "%d %B") %> – <%= l(week_end, format: "%d %B %Y") %></p>
+      </div>
+      <nav class="flex items-center gap-1" aria-label="Cambia settimana">
+        <%= link_to "‹", planning_path.call(@planning_tab, week_start - 1.week), class: "flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-black text-slate-700 hover:bg-slate-50", aria: { label: "Settimana precedente" } %>
+        <%= link_to "Questa settimana", planning_path.call(@planning_tab, Date.current), class: "h-9 rounded-lg px-3 text-xs font-extrabold leading-9 text-blue-700 hover:bg-blue-50" %>
+        <%= link_to "›", planning_path.call(@planning_tab, week_start + 1.week), class: "flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-black text-slate-700 hover:bg-slate-50", aria: { label: "Settimana successiva" } %>
+      </nav>
+    </div>
+  <% end %>
+
+  <div class="mt-5" role="tabpanel">
+    <% case @planning_tab %>
+    <% when "agenda" %>
+      <%= render "admin/production_dashboard/planning_agenda", entries_by_day: @planning_entries_by_day %>
+    <% when "week" %>
+      <%= render "admin/production_dashboard/planning_week",
+                 week_days: @week_days,
+                 week_hours: @week_hours,
+                 entries_by_slot: @week_entries_by_slot %>
+    <% else %>
+      <%= render "admin/production_dashboard/planning_unfinished", commitments: @unfinished_commitments %>
+    <% end %>
+  </div>
+</section>

@@ -3,7 +3,8 @@
   is_contents = request.path.start_with?(posturacorretta_contenuti_path)
   is_program = request.path.start_with?(posturacorretta_student_dashboard_path)
   is_appointments = request.path.start_with?(posturacorretta_student_appointments_path)
-  explore_active = !is_path && !is_program && !is_appointments
+  is_methodologies = request.path.start_with?(posturacorretta_metodiche_path)
+  explore_active = !is_path && !is_program && !is_appointments && !is_methodologies
 %>
 
 <header class="pc-site-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
@@ -16,6 +17,7 @@
     <nav class="flex min-w-0 items-center justify-center gap-2 sm:gap-4" aria-label="Navigazione principale PosturaCorretta">
       <%= link_to "Percorso", posturacorretta_path, aria: { current: ("page" if is_path) }, class: "border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm #{is_path ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950'}" %>
       <%= link_to "Lezioni", posturacorretta_student_dashboard_path, aria: { current: ("page" if is_program) }, class: "border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm #{is_program ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950'}" %>
+      <%= link_to "Metodiche", posturacorretta_metodiche_path, aria: { current: ("page" if is_methodologies) }, class: "border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm #{is_methodologies ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950'}" %>
       <details class="group relative [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
         <summary class="flex cursor-pointer list-none items-center gap-1 border-b-2 px-1 py-2 text-xs font-bold transition sm:text-sm <%= explore_active ? 'border-blue-600 text-slate-950' : 'border-transparent text-slate-600 hover:border-blue-500 hover:text-slate-950' %>" aria-label="Apri Esplora">Esplora <span class="text-[9px] transition group-open:rotate-180">▼</span></summary>
         <div class="absolute left-1/2 z-[80] mt-2 max-h-[calc(100vh-5rem)] w-64 -translate-x-1/2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-xl" aria-label="Esplora PosturaCorretta">

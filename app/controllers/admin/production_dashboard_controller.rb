@@ -30,13 +30,14 @@ module Admin
     ].freeze
 
     def index
-      @active_view = params[:view].presence_in(%w[table projects]) || "table"
+      @active_view = params[:view].presence_in(%w[table projects planning]) || "table"
       load_dashboard_options
       @workbench_items = current_profile.data_commitments
         .workbench_items
         .includes(:domain, :subject, :skill_product, :responsible_profile)
         .order(created_at: :desc, id: :desc)
       @production_rows = build_production_rows if @active_view == "projects"
+      load_personal_planning if @active_view == "planning"
     end
 
     def show
@@ -211,6 +212,117 @@ module Admin
         @item_type_options = ITEM_TYPE_OPTIONS
         @organization_options = ORGANIZATION_OPTIONS
         @classification_status_options = CLASSIFICATION_STATUS_OPTIONS
+      end
+
+      def load_personal_planning
+        @planning_tab = params[:planning_tab].presence_in(%w[unfinished agenda week]) || "unfinished"
+        @selected_date = parse_planning_date
+        @week_start = @selected_date.beginning_of_week
+        @week_end = @week_start + 6.days
+
+        commitments = current_profile.data_commitments
+          .where.not(status: "cancelled")
+          .where.not("metadata @> ?", { workbench: { inbox: true } }.to_json)
+          .includes(:domain, :subject, :skill_product, :responsible_profile, :data_experience, :data_session, :data_slot, :parent)
+
+        @unfinished_commitments = commitments
+          .where.not(status: "completed")
+          .to_a
+          .sort_by do |commitment|
+            start_time = commitment.actual_started_at || commitment.starts_at
+            [start_time.present? ? 1 : 0, start_time || Time.zone.at(0), commitment.position, commitment.id]
+          end
+
+        range = @week_start.in_time_zone.beginning_of_day..@week_end.in_time_zone.end_of_day
+        top_level_commitments = commitments
+          .where(parent_id: nil, data_session_id: nil, data_slot_id: nil)
+          .where("COALESCE(data_commitments.actual_started_at, data_commitments.starts_at) BETWEEN ? AND ?", range.begin, range.end)
+
+        sessions = personal_sessions_for(range)
+        @planning_entries = build_planning_entries(top_level_commitments, sessions)
+        @planning_entries_by_day = @planning_entries.group_by { |entry| entry.fetch(:starts_at).in_time_zone.to_date }
+        @week_days = (0..6).map { |offset| @week_start + offset.days }
+        @week_hours = planning_hours_for(@planning_entries)
+        @week_entries_by_slot = @planning_entries.group_by do |entry|
+          starts_at = entry.fetch(:starts_at).in_time_zone
+          [starts_at.to_date, starts_at.hour]
+        end
+      end
+
+      def parse_planning_date
+        return Date.current if params[:date].blank?
+
+        Date.iso8601(params[:date])
+      rescue Date::Error
+        Date.current
+      end
+
+      def personal_sessions_for(range)
+        created_session_ids = DataSession.where(created_by_profile_id: current_profile.id).select(:id)
+        linked_session_ids = current_profile.data_commitments.where.not(data_session_id: nil).select(:data_session_id)
+        calendar_ids = ProfessionalCalendar.where(created_by_user_id: Current.user.id).select(:id)
+
+        DataSession
+          .where(id: created_session_ids)
+          .or(DataSession.where(id: linked_session_ids))
+          .or(DataSession.where(professional_calendar_id: calendar_ids))
+          .where(starts_at: range)
+          .where.not(status: "cancelled")
+          .includes(:data_experience, professional_calendar: %i[context_node professional_node])
+          .order(:starts_at, :position, :id)
+      end
+
+      def build_planning_entries(commitments, sessions)
+        commitment_entries = commitments.map do |commitment|
+          starts_at = commitment.actual_started_at || commitment.starts_at
+          ends_at = commitment.actual_ended_at || commitment.ends_at
+          {
+            record_type: "commitment",
+            record: commitment,
+            title: commitment.title,
+            starts_at: starts_at,
+            ends_at: ends_at,
+            context: [commitment.domain&.display_hostname, commitment.data_experience&.title].compact_blank.join(" · "),
+            color: planning_color_for(commitment.domain&.auth_slug)
+          }
+        end
+
+        session_entries = sessions.map do |session|
+          calendar = session.professional_calendar
+          {
+            record_type: "session",
+            record: session,
+            title: session.title,
+            starts_at: session.starts_at,
+            ends_at: session.ends_at,
+            context: [calendar&.display_label, session.data_experience&.title].compact_blank.join(" · "),
+            color: calendar&.color.presence || "slate"
+          }
+        end
+
+        (commitment_entries + session_entries).sort_by do |entry|
+          [entry.fetch(:starts_at), entry.fetch(:record_type), entry.fetch(:record).id]
+        end
+      end
+
+      def planning_hours_for(entries)
+        start_hours = entries.filter_map { |entry| entry[:starts_at]&.in_time_zone&.hour }
+        end_hours = entries.filter_map { |entry| entry[:ends_at]&.in_time_zone&.hour }
+        first_hour = [8, start_hours.min || 8].min.clamp(0, 23)
+        last_hour = [20, end_hours.max || start_hours.max || 20].max.clamp(first_hour, 23)
+
+        (first_hour..last_hour).to_a
+      end
+
+      def planning_color_for(domain_slug)
+        case domain_slug.to_s
+        when /posturacorretta/ then "blue"
+        when /percorso-?integrato/ then "teal"
+        when /cantachetipassa/ then "orange"
+        when /giardino/ then "violet"
+        when /generaimpresa|rails4b|rails4business/ then "amber"
+        else "slate"
+        end
       end
 
       def build_production_rows

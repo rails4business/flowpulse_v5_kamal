@@ -4,11 +4,12 @@ class PosturacorrettaController < ApplicationController
 
   TRIATHLON_HANDOUT_PATH = Rails.root.join("docs/handouts/Presentazione PosturaCorretta.pdf").freeze
   SPORT_EVENTS_PRESENTATION_PATH = Rails.root.join("docs/handouts/PosturaCorretta per eventi sportivi.pdf").freeze
+  PUBLIC_LISTING_RATE_WINDOW = 1.minute
 
   # These listings load and filter a sizeable YAML catalog. Keep abusive crawls from
   # occupying every Puma thread before the expensive callbacks below are reached.
-  rate_limit to: 24, within: 1.minute, only: %i[contenuti metodiche], by: -> { request.remote_ip }, with: -> { throttled_public_listing }
-  rate_limit to: 120, within: 1.minute, only: %i[contenuti metodiche], by: -> { "posturacorretta-public-listings" }, with: -> { throttled_public_listing }
+  rate_limit to: 24, within: PUBLIC_LISTING_RATE_WINDOW, name: "public-listings-per-ip", only: %i[contenuti metodiche], by: -> { request.remote_ip }, with: -> { throttled_public_listing(limit: "per_ip") }
+  rate_limit to: 120, within: PUBLIC_LISTING_RATE_WINDOW, name: "public-listings-global", only: %i[contenuti metodiche], by: -> { "posturacorretta-public-listings" }, with: -> { throttled_public_listing(limit: "global") }
 
   before_action :load_academy_curriculum, only: %i[accademia accademia_modulo accademia_recensioni]
   before_action :load_methodologies, only: %i[metodiche metodica]
@@ -416,16 +417,24 @@ class PosturacorrettaController < ApplicationController
     )
   end
 
-  def throttled_public_listing
+  def throttled_public_listing(limit:)
     payload = {
       event: "public_listing_throttled",
+      limit:,
       path: request.path,
       ip_hash: anonymized_request_ip,
       user_agent: request.user_agent.to_s.first(180)
     }
     Rails.logger.warn(payload.to_json)
 
-    render plain: "Troppe richieste. Riprova tra poco.", status: :too_many_requests
+    response.headers["Retry-After"] = PUBLIC_LISTING_RATE_WINDOW.to_i.to_s
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Content-Language"] = "it"
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    render file: Rails.public_path.join("posturacorretta-429.html"),
+           layout: false,
+           status: :too_many_requests,
+           content_type: "text/html"
   end
 
   def log_public_listing_request

@@ -3,6 +3,7 @@
 **Data:** 19 ottobre 2026  
 **Stato:** prima implementazione superadmin avviata
 **Prototipo:** `docs/private_prototypes/viste_html/Dashboard · generaimpresa.html`
+**Modello precedente congelato:** `docs/private_prototypes/viste_html/Dashboard · generaimpresa · originale 2026-10-19.html` (versione precedente al Tavolo; non modificare)
 **Dashboard Rails:** `/flowpulse/admin/production`
 
 ## Obiettivo
@@ -266,15 +267,23 @@ Non sostituisce la Dima attiva.
 
 ### Persona
 
-Ogni persona coinvolta apre una pagina personale contestualizzata al lavoro
-che l'utente può vedere:
+La prima vista personale implementata riguarda il profilo corrente e usa tre
+lenti sugli stessi dati:
 
 ```text
-Impegni da finire | Eventi | Eventi ripetuti | Settimana
+Da completare | Agenda | Settimana
 ```
 
-La pagina non espone automaticamente l'intero calendario privato. Mostra solo
-record autorizzati nel contesto dei Node correnti.
+- **Da completare** mostra gli impegni ancora aperti e tiene fuori le voci del
+  Tavolo;
+- **Agenda** presenta la settimana giorno per giorno, come un programma;
+- **Settimana** colloca gli stessi appuntamenti nella griglia oraria e rende
+  visibili anche gli spazi liberi.
+
+Agenda e Settimana mostrano il contenitore superiore: una `DataSession` non
+viene duplicata attraverso i Commitment che le appartengono. La pagina non
+espone calendari di altri profili. Le vere regole di ricorrenza restano da
+modellare: per ora la griglia mostra soltanto occorrenze con una data reale.
 
 ## Mappatura sui modelli esistenti
 
@@ -443,9 +452,11 @@ presenti. L'apertura ai Creator resterà separata dall'accesso superadmin.
       classificazione;
 - [ ] definire e testare la query delle persone coinvolte;
 - [ ] mostrare ultimo impegno senza duplicare l'agenda;
-- [ ] costruire pagina persona e settimana personale;
-- [ ] distinguere impegno, evento con data e occorrenza ricorrente;
-- [ ] proteggere calendari e dati personali estranei al Node;
+- [x] costruire per il profilo corrente le viste Da completare, Agenda e
+      Settimana;
+- [ ] modellare e distinguere la regola di ricorrenza dalle sue occorrenze;
+- [x] proteggere la prima vista personale dai dati appartenenti ad altri
+      profili;
 - [ ] collegare ogni elemento alla pagina operativa di 1impegno.
 
 ### Fase 6 — Dima e cicli

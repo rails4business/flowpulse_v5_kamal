@@ -117,6 +117,9 @@ module Brands
       @comune_centers = Array(@comune["centers"])
       @comune_services = Array(@comune["services"])
       @comune_spaces = Array(@comune["available_spaces"])
+      @comune_groups = Array(@comune["groups"])
+      @comune_home_services = Array(@comune["home_services"])
+      @comune_events = Array(@comune["events"])
     end
 
     def municipality_professionals

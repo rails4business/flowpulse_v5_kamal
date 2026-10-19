@@ -6,7 +6,7 @@ module Brands
       get percorso_integrato_path
 
       assert_response :success
-      assert_select "h1", text: "Costruisci un percorso personale, leggibile e coordinato."
+      assert_select "h1", text: "Costruisci e migliora il tuo percorso, un passo alla volta."
       assert_select "nav[aria-label='Navigazione Percorso Integrato']"
       assert_select "details.pi-mobile-menu summary[aria-label='Apri il menu di Percorso Integrato']", text: /Menu/
       assert_select "nav[aria-label='Navigazione mobile Percorso Integrato']" do
@@ -35,7 +35,7 @@ module Brands
       assert_select "details.pi-upgrade__deep"
       assert_select "#ruoli"
       assert_select "#inizia"
-      assert_select "h3", text: "Scegliere il primo professionista"
+      assert_select "h3", text: "Conosci il primo professionista"
       assert_select "a[href^='https://wa.me/393792891488']", text: "Scrivi su WhatsApp"
     end
 
@@ -129,11 +129,34 @@ module Brands
 
       get percorso_integrato_places_path
       assert_response :success
-      assert_select "h1", text: "Luoghi del Percorso Integrato"
+      assert_select "h1", text: "Centri del Percorso Integrato"
       assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala"
-      assert_select "p", text: "Viadana di Calvisano · Brescia"
       assert_select "h2", text: "Studio Movimento"
       assert_select "h2", text: "Giardino del Corpo", count: 0
+
+      get percorso_integrato_services_path
+      assert_response :success
+      assert_select "h1", text: "Servizi del Percorso Integrato"
+
+      get percorso_integrato_municipalities_path
+      assert_response :success
+      assert_select "h1", text: "Comuni del Percorso Integrato"
+      assert_select "h2", text: "Comune di Calvisano"
+
+      get percorso_integrato_municipality_path("calvisano")
+      assert_response :success
+      assert_select "h1", text: /Calvisano/
+      assert_select "#mappa"
+      assert_select "#filtri-stato"
+      assert_select "#tab-professionisti"
+      assert_select "#tab-gruppi"
+      assert_select "#tab-domicilio"
+      assert_select "#tab-eventi"
+
+      get percorso_integrato_municipality_professionals_path("calvisano")
+      assert_response :success
+      assert_select "h1", text: /Strutture libere e spazi operativi a Calvisano/
+      assert_select "h2", text: "Studio Trattamenti & Colloqui Clinici"
     end
   end
 end

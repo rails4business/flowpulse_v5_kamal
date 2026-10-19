@@ -25,6 +25,10 @@
       "whitespace-nowrap rounded-full px-4 py-2 text-sm font-extrabold transition",
       @active_view == "projects" ? "bg-blue-600 text-white shadow-sm" : "border border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
     ].join(" ") %>
+    <%= link_to "La mia settimana", flowpulse_admin_production_path(view: "planning"), class: [
+      "whitespace-nowrap rounded-full px-4 py-2 text-sm font-extrabold transition",
+      @active_view == "planning" ? "bg-blue-600 text-white shadow-sm" : "border border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+    ].join(" ") %>
   </nav>
 
   <% if @active_view == "table" %>
@@ -112,7 +116,7 @@
 
       <p class="mt-4 rounded-xl border-l-4 border-blue-500 bg-blue-50 px-4 py-3 text-sm leading-6 text-slate-700"><strong>Ogni cosa al suo posto:</strong> una voce personale rimarrà in 1impegno; un prodotto confluirà nel suo progetto; una Skill verrà seguita da Rails4Business. La collocazione automatica sarà il passaggio successivo.</p>
     </section>
-  <% else %>
+  <% elsif @active_view == "projects" %>
     <section class="mt-7">
       <div>
         <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Visione generale</p>
@@ -152,5 +156,7 @@
         <div class="mt-5 rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center text-sm text-slate-500">Nessun progetto produttivo collegato ai dati correnti.</div>
       <% end %>
     </section>
+  <% else %>
+    <%= render "personal_planning" %>
   <% end %>
 </div>

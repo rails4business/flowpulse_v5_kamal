@@ -10,13 +10,31 @@ comuni:
     population_intro: "Un punto di riferimento concreto per i residenti di Calvisano, Viadana, Mezzane e territori limitrofi. Qui trovi professionisti accreditati, centri attivi e percorsi coordinati per prenderti cura della tua salute."
     whatsapp_number: "393792891488"
     whatsapp_message: "Buongiorno, vorrei informazioni sui percorsi attivi nel Comune di Calvisano."
+    map_center: [45.3486, 10.3475]
+    map_zoom: 14
     professionals:
       - slug: "davide-cattaneo"
         role_in_comune: "Insegnante PosturaCorretta & Operatore del Benessere"
         availability_note: "Riceve in presenza a Viadana di Calvisano per percorsi educativi e benessere"
+        stato: "verde"
+        servizi: ["Educazione Posturale", "Igiene Vertebrale", "Rieducazione Motoria"]
+        luogo: "Cascina Bordonala · Via A. Vespucci 18"
+        lat: 45.3340
+        lng: 10.3550
+        orari: "Lun–Ven 9:00–19:00"
+        tel: "379 2891488"
+        email: "davide@posturacorretta.org"
       - slug: "marco-belleri"
         role_in_comune: "Osteopata bio-olistico"
         availability_note: "Trattamenti individuali e riequilibrio posturale su appuntamento"
+        stato: "arancio"
+        servizi: ["Osteopatia", "Riequilibrio Posturale", "Valutazione Biomeccanica"]
+        luogo: "Studio Movimento · Calvisano"
+        lat: 45.3490
+        lng: 10.3470
+        orari: "Mar, Gio, Sab su appuntamento"
+        tel: "379 2891488"
+        email: "info@percorsointegrato.it"
     centers:
       - slug: "centro-posturacorretta"
         name: "Sede PosturaCorretta · Cascina Bordonala"
@@ -46,6 +64,76 @@ comuni:
         category: "Orientamento"
         description: "Incontro iniziale per definire bisogni, priorità e individuare il professionista o il programma più appropriato."
         provider: "Responsabile di Percorso"
+    groups:
+      - id: "g1"
+        nome: "Ginnastica Posturale & Movimento Consapevole"
+        stato: "arancio"
+        orari: "Mercoledì · 10:00–11:00 e 18:30–19:30"
+        luogo: "Studio Movimento · Calvisano"
+        lat: 45.3490
+        lng: 10.3470
+        docente: "Davide Cattaneo"
+        posti: "max 8 persone"
+      - id: "g2"
+        nome: "Rilassamento, Respiro & Postura Dolce"
+        stato: "verde"
+        orari: "Martedì · 18:30–19:45"
+        luogo: "Cascina Bordonala · Viadana di Calvisano"
+        lat: 45.3340
+        lng: 10.3550
+        docente: "Equipe Percorso Integrato"
+        posti: "max 10 persone"
+      - id: "g3"
+        nome: "Laboratorio di Rieducazione della Schiena"
+        stato: "giallo"
+        orari: "Sabato mattina · 09:30–11:00"
+        luogo: "Studio Movimento · Calvisano"
+        lat: 45.3490
+        lng: 10.3470
+        docente: "Marco Belleri"
+        posti: "max 6 persone"
+    home_services:
+      - title: "Fisioterapia e Valutazione Posturale a Domicilio"
+        schedule: "Lun–Ven · su appuntamento"
+        area: "Calvisano centro, Viadana, Mezzane e comuni limitrofi"
+        stato: "rosso"
+      - title: "Rieducazione Posturale e Mobilizzazione a Casa"
+        schedule: "Mar e Gio · 15:00–19:00"
+        area: "Frazioni e territorio comunale di Calvisano"
+        stato: "arancio"
+      - title: "Movimento Funzionale e Igiene Posturale Individuale"
+        schedule: "Lun–Sab · mattina su prenotazione"
+        area: "Tutto il comune di Calvisano"
+        stato: "verde"
+    events:
+      - month: "NOV"
+        day: "12"
+        title: "Giornata della Postura e della Prevenzione"
+        description: "Screening posturali gratuiti e brevi consulenze di orientamento aperte a tutti i residenti."
+        details: "Cascina Bordonala · 09:00–18:00 · Ingresso libero"
+        patrocinio: "Patrocinio del Comune di Calvisano"
+        stato: "verde"
+      - month: "NOV"
+        day: "26"
+        title: "Prevenzione in Movimento: Schiena e Lavoro"
+        description: "Laboratorio pratico per migliorare la postura sul luogo di lavoro e nella vita quotidiana."
+        details: "Studio Movimento · 17:30–19:30 · Su iscrizione"
+        patrocinio: "Patrocinio del Comune di Calvisano"
+        stato: "arancio"
+      - month: "DIC"
+        day: "03"
+        title: "Movimento, Nutrizione e Stili di Vita"
+        description: "Incontro aperto con i professionisti della rete per parlare di prevenzione e salute integrata."
+        details: "Sala Civica · 18:30–20:00 · Posti limitati"
+        patrocinio: "Patrocinio del Comune di Calvisano"
+        stato: "giallo"
+      - month: "DIC"
+        day: "15"
+        title: "Benessere d'Inverno: Respiro e Flessibilità"
+        description: "Pratica di gruppo per affrontare l'inverno con vitalità e senza tensioni muscolari."
+        details: "Cascina Bordonala · 10:00–12:00 · Ingresso libero"
+        patrocinio: "Patrocinio del Comune di Calvisano"
+        stato: "verde"
     available_spaces:
       - id: "studio-bordonala-1"
         name: "Studio Trattamenti & Colloqui Clinici"
@@ -91,13 +179,31 @@ comuni:
     population_intro: "Per i cittadini residenti nel comune di Brescia: un'offerta qualificata di professionisti che collaborano stabilmente per offrire risposte coordinate e non frammentate."
     whatsapp_number: "393792891488"
     whatsapp_message: "Buongiorno, vorrei informazioni sui percorsi attivi a Brescia."
+    map_center: [45.5416, 10.2118]
+    map_zoom: 13
     professionals:
       - slug: "giovanni-damiata"
         role_in_comune: "Medico di medicina generale & Fitoterapeuta europeo"
         availability_note: "Visite mediche e percorsi di fitoterapia europea in studio a Brescia"
+        stato: "verde"
+        servizi: ["Medicina Generale", "Fitoterapia Europea"]
+        luogo: "Studio Medico · Brescia Centro"
+        lat: 45.5385
+        lng: 10.2180
+        orari: "Lun–Ven su appuntamento"
+        tel: "379 2891488"
+        email: "damiata@percorsointegrato.it"
       - slug: "marco-belleri"
         role_in_comune: "Osteopata bio-olistico"
         availability_note: "Trattamenti manuali e percorsi integrati su prenotazione a Brescia"
+        stato: "arancio"
+        servizi: ["Osteopatia", "Valutazione Posturale"]
+        luogo: "Studio Brescia Due"
+        lat: 45.5250
+        lng: 10.2100
+        orari: "Mer e Ven 14:00–19:30"
+        tel: "379 2891488"
+        email: "belleri@percorsointegrato.it"
     centers:
       - slug: "studio-brescia-centro"
         name: "Studio Medico & Terapeutico Brescia"
@@ -117,6 +223,29 @@ comuni:
         category: "Integrazione & Rete"
         description: "Confronto interdisciplinare per persone che necessitano di integrare cure mediche, nutrizione e rieducazione corporea."
         provider: "Equipe Percorso Integrato Brescia"
+    groups:
+      - id: "gb1"
+        nome: "Incontri Educativi su Fitoterapia e Nutrizione"
+        stato: "verde"
+        orari: "Giovedì · 18:30–20:00"
+        luogo: "Studio Medico Brescia Centro"
+        lat: 45.5385
+        lng: 10.2180
+        docente: "Dott. Giovanni Damiata"
+        posti: "max 10 persone"
+    home_services:
+      - title: "Consulenza Medica Integrata Domiciliare"
+        schedule: "Su richiesta motivata"
+        area: "Città di Brescia e prima cintura"
+        stato: "rosso"
+    events:
+      - month: "DIC"
+        day: "05"
+        title: "Tavola Rotonda: La Medicina Integrata nel Territorio"
+        description: "Confronto tra medici, osteopati e professionisti del movimento."
+        details: "Brescia Centro · 18:00–20:30"
+        patrocinio: "Iniziativa patrocinata e condivisa"
+        stato: "verde"
     available_spaces:
       - id: "ambulatorio-brescia-1"
         name: "Ambulatorio Medico / Studio Specialistico Brescia"
