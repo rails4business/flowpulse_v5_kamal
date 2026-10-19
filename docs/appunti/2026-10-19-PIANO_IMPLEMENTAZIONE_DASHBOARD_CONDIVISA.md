@@ -1,8 +1,9 @@
 # Piano — Dashboard condivisa Flowpulse
 
 **Data:** 19 ottobre 2026  
-**Stato:** piano di implementazione da eseguire per fasi  
+**Stato:** prima implementazione superadmin avviata
 **Prototipo:** `docs/private_prototypes/viste_html/Dashboard · generaimpresa.html`
+**Dashboard Rails:** `/flowpulse/admin/production`
 
 ## Obiettivo
 
@@ -191,6 +192,27 @@ Il Tavolo non è quindi un quarto archivio. È una coda di raccolta e
 classificazione che porta ai modelli proprietari quando la collocazione viene
 confermata.
 
+La prima implementazione reale usa un `DataCommitment` con:
+
+```text
+status: draft
+starts_at: nil
+blocks_calendar: false
+metadata.workbench.inbox: true
+```
+
+La classificazione progressiva viene conservata in
+`metadata.workbench` (`item_type`, `organization`,
+`classification_status`, `reusable_skill_id`, `product_name`). I collegamenti
+reali già disponibili rimangono nelle loro colonne relazionali:
+
+- `domain_id` per il primo contesto Brand;
+- `subject` per il Progetto / Node;
+- `skill_product_id` per un prodotto già esistente;
+- `responsible_profile_id` per la persona responsabile.
+
+Non è stata aggiunta una nuova tabella.
+
 ### Vista generale
 
 Una riga rappresenta un prodotto o una lavorazione concreta e viene
@@ -335,6 +357,31 @@ Il controller può ricevere `node_id`, `skill_product_id` o
 `data_experience_id` come chiavi esplicite finché il dominio non richiederà
 un'entità aggregata persistente.
 
+### Rotte già implementate per il superadmin
+
+```text
+/flowpulse/admin/production
+/flowpulse/admin/production/nodes/:id
+/flowpulse/admin/production/tavolo
+/flowpulse/admin/production/tavolo/:id
+```
+
+L'index ha quattro ingressi di sistema:
+
+```text
+Flowpulse | Generaimpresa | Rails4Business | 1impegno
+```
+
+**Flowpulse** è la lettura generale e contiene Tavolo e Progetti/prodotti. Nel
+dettaglio di un Node le tab rimangono soltanto:
+
+```text
+Generaimpresa | Rails4Business | 1impegno
+```
+
+Nella prima fase le tre aree rimandano anche alle dashboard specialistiche già
+presenti. L'apertura ai Creator resterà separata dall'accesso superadmin.
+
 ## Fasi di implementazione
 
 ### Fase 0 — Terminologia e documentazione
@@ -358,8 +405,11 @@ un'entità aggregata persistente.
 
 ### Fase 2 — Shell Rails in sola lettura
 
-- [ ] aggiungere la voce “Produzione” al menu Creator;
-- [ ] creare controller e viste nel namespace `CreatorWorld`;
+- [x] aggiungere la voce “Dashboard Flowpulse” al menu superadmin;
+- [x] creare controller e viste iniziali nel namespace `Admin`;
+- [x] mantenere separata la Regia tecnica dalla dashboard produttiva;
+- [ ] aggiungere in seguito la voce “Produzione” al menu Creator;
+- [ ] estrarre query e autorizzazioni condivise prima dell'apertura ai Creator;
 - [ ] usare `flowtree_dashboard` e partial condivisi;
 - [ ] limitare inizialmente l'accesso a superadmin e ideatore autorizzato;
 - [ ] mantenere le pagine specialistiche come destinazioni dei link.
@@ -384,10 +434,10 @@ un'entità aggregata persistente.
 
 ### Fase 5 — 1impegno reale
 
-- [ ] consentire un Commitment personale in bozza, senza data, che non blocca
+- [x] consentire un Commitment personale in bozza, senza data, che non blocca
       il calendario e rappresenta una voce ancora da organizzare;
-- [ ] costruire il filtro e il form rapido del Tavolo;
-- [ ] permettere di assegnare progressivamente Node, Skill, prodotto,
+- [x] costruire il filtro e il form rapido del Tavolo;
+- [x] permettere di assegnare progressivamente Node, Skill, prodotto,
       responsabile e forma di organizzazione;
 - [ ] spostare la voce dalla raccolta alla vista corretta soltanto dopo la
       classificazione;

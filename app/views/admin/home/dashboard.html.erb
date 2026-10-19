@@ -42,6 +42,7 @@
     <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Gestione</p>
     <h2 class="mt-1 text-xl font-black text-slate-950">Cosa vuoi gestire?</h2>
     <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <%= render "admin/home/dashboard_link", path: flowpulse_admin_production_path, title: "Dashboard Flowpulse", description: "Tavolo di raccolta e visione condivisa tra Brand, produzione e impegni.", code: "FP" %>
       <%= render "admin/home/dashboard_link", path: admin_brands_path, title: "Brand e domini", description: "Albero dei brand, progetti collegati e configurazione dei domini.", code: "BRD" %>
       <%= render "admin/home/dashboard_link", path: admin_assigned_role_map_path, title: "Ruoli assegnati", description: "Ideatori, creator, digital e responsabili collegati agli utenti.", code: "ROL" %>
       <%= render "admin/home/dashboard_link", path: admin_risorse_index_path, title: "Risorse", description: "Consultazione delle risorse e dei dati interni.", code: "DAT" %>

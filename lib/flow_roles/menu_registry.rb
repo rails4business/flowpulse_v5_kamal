@@ -43,6 +43,16 @@ module FlowRoles
           mutating: true
         ),
         MenuItem.build(
+          key: :production,
+          title: "Dashboard Flowpulse",
+          subtitle: "Tavolo, progetti e produzione",
+          path: :flowpulse_admin_production_path,
+          roles: %w[superadmin],
+          group: :admin,
+          badge: "FP",
+          mutating: true
+        ),
+        MenuItem.build(
           key: :resources,
           title: "Risorse",
           subtitle: "Eventi, transazioni, contatti",
@@ -139,7 +149,7 @@ module FlowRoles
     end
 
     def admin_items
-      admin_keys = %i[dashboard resources pages notes didactic_path content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
+      admin_keys = %i[dashboard production resources pages notes didactic_path content_taxonomy role_map assigned_role_map password_reset_requests data_commitment_imports weekplan]
       items.select { |item| admin_keys.include?(item.key) }
     end
 

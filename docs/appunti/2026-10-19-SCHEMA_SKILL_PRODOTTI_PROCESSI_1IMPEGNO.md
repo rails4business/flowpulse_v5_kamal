@@ -389,6 +389,17 @@ Finché questi dati non sono sufficienti, la voce resta sul Tavolo. Non deve
 comparire come una riga vuota nella vista produttiva e non deve generare
 automaticamente un Node, uno SkillProduct o un evento.
 
+Prima implementazione (superadmin):
+
+```text
+/flowpulse/admin/production?view=table
+```
+
+Il record resta un `DataCommitment` in bozza senza data e senza blocco del
+calendario. La classificazione vive in `metadata.workbench`; Node, prodotto e
+responsabile usano le associazioni reali esistenti. Il passaggio automatico
+dallo stato “Pronto da collocare” al sistema proprietario non è ancora attivo.
+
 Questa area non è una raccolta generica di idee: deve aiutare a trasformare
 ciò che si vuole fare in lavoro assegnabile e, quando serve, in una catena
 ripetibile.

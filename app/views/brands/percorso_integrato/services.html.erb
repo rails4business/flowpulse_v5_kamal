@@ -1,0 +1,83 @@
+<% content_for :title, "Servizi — Percorso Integrato" %>
+<% content_for :landing_nav do %><%= render "brands/percorso_integrato/header" %><% end %>
+
+<main class="min-h-screen bg-[#f8fbf8] px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="flex flex-wrap items-end justify-between gap-6 border-b border-emerald-100 pb-8">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Proposte e attività</p>
+        <h1 class="mt-3 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Servizi del Percorso Integrato</h1>
+        <p class="mt-4 max-w-3xl text-lg text-slate-600">Dalle prime valutazioni posturali ai trattamenti individuali, fino alle attività in gruppo e ai percorsi specialistici coordinati.</p>
+      </div>
+      <div class="flex gap-3">
+        <%= link_to "Vedi per Comune", percorso_integrato_municipalities_path, class: "rounded-xl border border-emerald-200 bg-white px-5 py-3 text-sm font-bold text-emerald-800 shadow-sm hover:bg-emerald-50" %>
+        <%= link_to "I Professionisti", percorso_integrato_professionals_path, class: "rounded-xl bg-emerald-800 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-900" %>
+      </div>
+    </div>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <% @services.each do |service| %>
+        <article class="flex flex-col justify-between rounded-3xl border border-emerald-100 bg-white p-7 shadow-sm transition hover:border-emerald-300 hover:shadow-md">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-wider text-emerald-800">
+                <%= service["label"].presence || "Servizio" %>
+              </span>
+              <% if service["duration"].present? %>
+                <span class="text-xs font-bold text-slate-500"><%= service["duration"] %></span>
+              <% end %>
+            </div>
+
+            <h2 class="mt-4 text-xl font-black text-slate-950"><%= service["title"] %></h2>
+            <p class="mt-3 text-sm leading-6 text-slate-600"><%= service["description"] %></p>
+
+            <% if service["audience"].present? && service["audience"] != service["description"] %>
+              <div class="mt-4 rounded-xl bg-slate-50 p-3 text-xs text-slate-700">
+                <span class="font-bold text-slate-900">Per chi:</span> <%= service["audience"] %>
+              </div>
+            <% end %>
+
+            <% if service["boundary"].present? %>
+              <p class="mt-3 text-xs italic text-slate-500">Nota: <%= service["boundary"] %></p>
+            <% end %>
+
+            <% if service["includes"].present? %>
+              <div class="mt-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Include:</p>
+                <ul class="mt-2 space-y-1 text-xs text-slate-600">
+                  <% Array(service["includes"]).each do |item| %>
+                    <li class="flex items-start gap-1.5">
+                      <span class="text-emerald-600">✓</span>
+                      <span><%= item %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mt-6 border-t border-slate-100 pt-5">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500">Proposto da:</p>
+                <% if service["professional_slug"].present? %>
+                  <%= link_to service["professional_name"], percorso_integrato_professional_path(service["professional_slug"]), class: "font-bold text-emerald-900 hover:underline text-sm" %>
+                <% else %>
+                  <p class="font-bold text-slate-800 text-sm"><%= service["professional_name"] %></p>
+                <% end %>
+                <% if service["professional_role"].present? %>
+                  <p class="text-xs text-slate-500"><%= service["professional_role"] %></p>
+                <% end %>
+              </div>
+              <% if service["professional_slug"].present? %>
+                <%= link_to "Dettagli →", percorso_integrato_professional_path(service["professional_slug"], tab: "servizi"), class: "text-xs font-bold text-emerald-700 hover:text-emerald-900" %>
+              <% end %>
+            </div>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </div>
+</main>
+
+<%= render "posturacorretta/footer" %>
