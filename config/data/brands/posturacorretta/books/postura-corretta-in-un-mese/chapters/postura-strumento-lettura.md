@@ -22,4 +22,4 @@ ascolto, quindi **agisce** attraverso il movimento. Massaggio, meditazione e
 movimento diventano tre porte per osservare lo stesso processo da prospettive
 differenti.
 
-Per approfondire: [Postura e fisiologia](/posturacorretta/guida?sezione=percorso&capitolo=postura-fisiologia)
+Per approfondire: [Percorso integrato ed educazione alla salute](/posturacorretta/guida?sezione=percorso&capitolo=postura-fisiologia)

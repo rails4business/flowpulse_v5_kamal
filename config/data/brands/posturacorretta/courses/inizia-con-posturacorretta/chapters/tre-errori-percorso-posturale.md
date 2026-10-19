@@ -4,89 +4,66 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
+# Tre errori quando si inizia un percorso posturale
 
+Fin qui abbiamo parlato di postura, osservato il corpo e provato una prima scheda. È un buon inizio. Il rischio, adesso, è pensare che una manciata di esercizi possa contenere tutto ciò che riguarda la salute.
 
-## Perché nasce PosturaCorretta?
+La postura è una porta d'ingresso. Dietro quella porta c'è parecchia roba.
 
-PosturaCorretta usa la postura come punto di partenza per conoscere la fisiologia, osservare come corpo e ambiente interagiscono e sperimentare pratiche semplici.
+PosturaCorretta nasce come **percorso educativo**: aiuta a conoscere il corpo, fare esperienza e orientarsi. Non formula diagnosi e non sostituisce cure, valutazioni o indicazioni sanitarie. Quando c'è un problema o una patologia serve il professionista adatto.
 
-Puoi seguire il percorso online per informarti, praticare con un insegnante oppure approfondirlo per imparare a trasmetterlo. 
+Chiarito questo, vediamo i tre errori.
 
-Il percorso è educativo ciò vuol dire che se ti trovi in presenza di un problema o una patologia devi rivolgerti a un professionista della salute 
-Quando serve una valutazione clinica, un trattamento o un programma personalizzato.
+## 1. Pensare che la postura sia tutta la salute
 
-Questo programma educativo non sostituisce diagnosi, cure o indicazioni sanitarie.
+Una spalla più alta, il bacino ruotato o la testa in avanti possono essere elementi interessanti da osservare. Non raccontano da soli l'intera persona.
 
+La postura dipende dalla struttura, ma anche dal movimento, dal respiro, dal recupero, dal sistema nervoso, dalle abitudini e dall'ambiente in cui viviamo. Correggere una posizione senza capire che cosa la produce può diventare l'ennesimo comando dato al corpo: petto in fuori, pancia in dentro e resisti fino a sera. Non è proprio questa la meta.
 
-Il percorso può aiutarti ad orientarti, anche per avere una panoramica più ampia sul mondo del benessere.
+Il primo lavoro è educativo:
 
+- conoscere come funziona il corpo;
+- accorgersi di ciò che cambia;
+- scoprire esercizi, metodiche e strumenti che possono essere utili;
+- capire quali risorse abbiamo già e quali dobbiamo cercare;
+- riconoscere quando possiamo procedere in autonomia e quando occorre aiuto.
 
+Questo è il percorso **azzurro** di PosturaCorretta. Si impara facendo esperienza, un poco alla volta.
 
+## 2. Confondere un percorso con una collezione di trattamenti
 
+Quando compare un problema possiamo passare da una visita a un trattamento, poi a un corso, a un esercizio trovato online e magari a un altro professionista. Ogni intervento può avere un senso, ma la somma non crea automaticamente un percorso.
 
-I 3 errori che tutti fanno quando iniziano un percorso posturale
-Scritto da Mark Postura · pubblicato su PosturaCorretta
+Serve qualcuno che chiarisca almeno quattro cose: da dove partiamo, che cosa vogliamo ottenere, chi è responsabile dei diversi passaggi e come verifichiamo ciò che cambia.
 
-I 3 errori che tutti fanno quando iniziano un percorso posturale
-La ginnastica posturale è sempre più diffusa e viene spesso affiancata ai percorsi per la salute e il benessere. Le metodiche disponibili, però, sono numerose e utilizzano linguaggi, interpretazioni e strumenti differenti.
+Qui entra **Percorso Integrato**:
 
-Molte cercano di considerare la persona nella sua globalità, ma non sempre è facile misurarne e riprodurne i risultati. Ciò che funziona nel rapporto individuale tra un professionista e la persona può essere difficile da trasformare in conoscenze condivise e accessibili a tutti.
+- i professionisti della **salute**, rappresentati dal rosso, intervengono negli ambiti sanitari secondo le proprie competenze;
+- i professionisti del **benessere**, rappresentati dal verde, lavorano sul benessere, sulla pratica e sull'accompagnamento entro i limiti della propria professione;
+- la persona partecipa al percorso, porta la propria esperienza e non viene ridotta a un problema da consegnare a qualcun altro.
 
-Per orientarsi è utile partire da tre errori frequenti. Possono comparire quando si inizia un percorso posturale o fisioterapico, ma anche quando ci si avvicina a discipline corporee come lo yoga.
+Il percorso educativo azzurro offre una base comune. Se conosci un po' meglio il corpo, riesci anche a fare domande migliori, comprendere le proposte e dare feedback più utili ai professionisti.
 
-Educazione, benessere e intervento professionale
-I confini dipendono dalla situazione. In presenza di patologia o pericolo la responsabilità appartiene ai professionisti sanitari; quando esistono rischio o difficoltà quotidiane servono valutazione e prevenzione appropriate; la formazione offre strumenti per conoscere il corpo; il benessere coltiva equilibrio e armonia. Possiamo ricordare questi passaggi come una scala dal rosso all'arancione, al giallo e al verde.
+Autonomia e professionisti, quindi, possono lavorare insieme.
 
-Autonomia e professionisti non sono alternative. La persona impara a partecipare al proprio percorso, mentre ogni professionista conserva competenze e responsabilità specifiche.
+## 3. Fermarsi a ciò che conosciamo già
 
-1. Ridurre la postura a muscoli, articolazioni e allineamento
-Avere una PosturaCorretta non significa soltanto stare dritti con la schiena. L’allineamento può essere un risultato, ma la postura è anche uno strumento per osservare come il corpo si adatta e come i suoi sistemi collaborano.
+Cura, prevenzione e benessere sono importanti. L'essere umano, però, non finisce lì.
 
-Pensare di correggerla agendo soltanto su leve meccaniche, come se il corpo fosse un oggetto inanimato, rischia di farci perdere di vista la persona.
+Ci sono il modo in cui abitiamo, il lavoro, le relazioni, la natura, la musica, l'arte, il silenzio, la curiosità e tutto ciò che ancora non sappiamo spiegare bene. Possiamo ignorare queste cose oppure esplorarle con attenzione, distinguendo un'esperienza personale da una prova di efficacia.
 
-Forma e funzione sono collegate. Un torace rigido può limitare la libertà del respiro; la mobilità del diaframma partecipa anche alle dinamiche pressorie e circolatorie; articolazioni e tessuti poco mobili possono modificare il modo in cui ci muoviamo e distribuiamo i carichi. Tensioni, sensibilità e informazioni nervose contribuiscono inoltre al modo in cui il corpo organizza le proprie risposte.
+È qui che si apre **Il Giardino del Corpo**. Il corpo non viene visto soltanto come una macchina da riparare, ma come una parte di un essere umano che vive dentro un ambiente. Un giardino cambia con il terreno, le stagioni, ciò che riceve e la cura che gli dedichiamo.
 
-Il respiro, il recupero, il sistema nervoso, i pensieri, le emozioni, le abitudini e il modo in cui apprendiamo partecipano alla nostra organizzazione. Per questo una seduta non dovrebbe limitarsi a “rimettere in posizione” il corpo: dovrebbe aiutare anche a conoscerlo, ascoltarlo e comprendere ciò che si sta facendo.
+Non occorre credere a tutto. Occorre poter osservare, fare esperienza e imparare a distinguere.
 
-Una PosturaCorretta è quindi anche un nuovo punto di vista sulla salute. Conoscere meglio il corpo aiuta a orientarsi tra professioni e metodiche e a partecipare con maggiore consapevolezza alle decisioni che riguardano il proprio percorso.
+## Tre direzioni che possono comunicare
 
-Dalla spiegazione alla pratica
-Conoscere un esercizio o ricevere una spiegazione non basta sempre a cambiare un’abitudine. Servono una pratica semplice, continuità e il tempo necessario per imparare ad ascoltarsi.
+Possiamo riassumere il filo in questo modo:
 
-PosturaCorretta in un mese nasce come primo programma educativo e pratico: pochi minuti al giorno per iniziare a osservare il corpo e applicare alcuni principi delle metodiche posturali. Può essere svolto in autonomia quando la situazione lo consente oppure affiancato al lavoro dei professionisti.
+1. **PosturaCorretta · azzurro:** conosco il corpo e costruisco una base educativa.
+2. **Percorso Integrato · rosso e verde:** quando serve, lavoro con professionisti della salute e del benessere.
+3. **Il Giardino del Corpo:** allargo lo sguardo e continuo a esplorare l'essere umano e il suo ambiente.
 
-Gli insegnanti svolgono una funzione educativa orizzontale: aiutano a conoscere il corpo e la fisiologia, mettere in pratica ciò che si apprende e orientarsi tra professionisti e metodiche. I professionisti mantengono invece la propria competenza verticale, specifica e specialistica.
+Non devi scegliere una direzione ed eliminare le altre. Puoi continuare a imparare, essere seguito da un professionista e mantenere aperta la curiosità.
 
-Continua con i benefici di una PosturaCorretta →
-
-2. Confondere la globalità con la somma di molti trattamenti
-Quando ti affidi a professionisti sanitari e professionisti del benessere puoi ricevere indicazioni differenti o apparentemente contrastanti. Può accadere anche tra professionisti della stessa area che hanno specializzazioni e approcci diversi.
-
-Il problema non è la pluralità delle competenze. Il problema nasce quando manca una visione condivisa: ogni professionista interviene sul proprio ambito senza sapere come il suo lavoro si inserisce nel percorso complessivo.
-
-Anche parlare di globalità non è sufficiente. Alcuni percorsi si concentrano sul singolo problema e rischiano di perdere di vista la persona; altri dichiarano di considerare tutto, ma rimangono legati a una sola tecnica o ai dogmi di una scuola. Un Percorso Integrato non consiste nell’aggiungere il maggior numero possibile di trattamenti.
-
-Per questo, partendo dalle metodiche posturali, abbiamo elaborato le Linee guida del Percorso Integrato. Ogni professionista mantiene ruolo, competenze e responsabilità, ma rende comprensibili la propria valutazione, l’interpretazione fisiologica e le ragioni per cui propone uno strumento.
-
-Costruire un linguaggio comune
-Metodiche differenti possono descrivere fenomeni simili con parole molto lontane. Un linguaggio tradizionale può parlare, per esempio, di direzioni energetiche; un professionista sanitario può descrivere pressioni, circolazione dei liquidi, tensioni meccaniche o risposte nervose.
-
-Non significa che le spiegazioni siano automaticamente equivalenti. Significa che vale la pena confrontarle, chiarire che cosa viene osservato e verificare insieme risultati e limiti. È così che professionisti diversi possono capire quando stanno lavorando sullo stesso problema da punti di vista differenti e diventare complementari invece di ostacolarsi.
-
-PosturaCorretta propone sette ambiti per collegare il problema concreto alla persona nel suo insieme. I primi riguardano più direttamente salute, prevenzione e attività; gli altri ampliano progressivamente lo sguardo verso relazioni, espressione, apprendimento e consapevolezza.
-
-Inizia il tuo Percorso Integrato →
-
-3. Delegare completamente la propria salute al professionista
-Il professionista è una guida esperta. Come direbbe Georges Courchinoux, può accompagnarti lungo un percorso difficile come una guida di montagna, ma sei tu a dover percorrere la strada.
-
-Questo non significa curarsi da soli. Significa comprendere che alimentazione, movimento, recupero, terapie, abitudini, relazioni e ambiente fanno parte della vita quotidiana e non possono essere affidati interamente a una seduta.
-
-Il professionista porta competenze, valutazioni e responsabilità. La persona porta osservazioni, continuità, disponibilità al cambiamento e conoscenza della propria esperienza. Senza questa collaborazione, anche una proposta valida rischia di rimanere isolata o di non essere messa in pratica.
-
-Dalla salute alla conoscenza dell’essere umano
-La salute non riguarda soltanto cibo, movimento e terapie. Comprende anche il rapporto con l’ambiente esterno e interno, le relazioni, il lavoro, l’apprendimento e la possibilità di esprimere le proprie capacità.
-
-Una volta affinata la sensibilità attraverso il corpo, servono spazi e tempi nei quali coltivarla: recupero, natura, musica, arte, teatro, relazioni e attività formative. È la direzione che PosturaCorretta chiama Giardino del Corpo: non la crescita di una maschera, ma la cura delle condizioni nelle quali la persona può svilupparsi.
-
-Gli insegnanti di PosturaCorretta iniziano dall’educazione al corpo e alla salute e accompagnano progressivamente questa visione più ampia. Il Percorso Integrato, il programma PosturaCorretta in un mese e l’Accademia svolgono funzioni differenti, ma possono sostenersi a vicenda.
+Nel prossimo capitolo faremo ordine e sceglierai da quale passo continuare.

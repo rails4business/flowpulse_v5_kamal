@@ -6,6 +6,7 @@ class BrandInvitation < ApplicationRecord
   belongs_to :source_domain, class_name: "Domain", optional: true
   belongs_to :invited_by_user, class_name: "User"
   belongs_to :accepted_by_user, class_name: "User", optional: true
+  belongs_to :brand_request, optional: true
 
   normalizes :email_address, with: ->(email) { email.strip.downcase }
 
@@ -18,7 +19,7 @@ class BrandInvitation < ApplicationRecord
 
   scope :pending, -> { where(status: "pending").where("expires_at > ?", Time.current) }
 
-  def self.issue!(brand_node:, email_address:, invited_by_user:, source_domain: nil, role_code: nil)
+  def self.issue!(brand_node:, email_address:, invited_by_user:, source_domain: nil, role_code: nil, brand_request: nil)
     raw_token = SecureRandom.urlsafe_base64(32)
     invitation = create!(
       brand_node:,
@@ -26,6 +27,7 @@ class BrandInvitation < ApplicationRecord
       email_address:,
       invited_by_user:,
       role_code:,
+      brand_request:,
       token_digest: digest(raw_token),
       expires_at: EXPIRATION.from_now
     )

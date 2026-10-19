@@ -19,24 +19,23 @@ class BrandAccessRequestsControllerTest < ActionDispatch::IntegrationTest
 
   test "creates an unscheduled brand request and contact" do
     host! "localhost"
-    assert_difference [-> { Brands::Impegno::Contact.count }, -> { Brands::Impegno::Commitment.count }], 1 do
+    assert_difference [-> { Brands::Impegno::Contact.count }, -> { BrandRequest.count }], 1 do
       post brand_access_request_path, params: {
         site: "posturacorretta",
         access_request: { name: "Mario Rossi", email: "mario@example.com", phone: "333123456", message: "Vorrei partecipare.", privacy_consent: "1" }
       }
     end
-    commitment = Brands::Impegno::Commitment.order(:created_at).last
-    assert_equal "requested", commitment.status
-    assert_equal "access_invitation", commitment.metadata["request_kind"]
-    assert_not commitment.blocks_calendar?
-    assert_nil commitment.starts_at
-    assert_equal @node, commitment.subject
+    brand_request = BrandRequest.order(:created_at).last
+    assert_equal "open", brand_request.status
+    assert_equal "access", brand_request.kind
+    assert_equal @node, brand_request.brand_node
+    assert_equal @node, brand_request.subject
   end
 
   test "does not duplicate an open request for the same email and brand" do
     request_params = { site: "posturacorretta", access_request: { name: "Mario", email: "mario@example.com", privacy_consent: "1" } }
     post brand_access_request_path, params: request_params
-    assert_no_difference -> { Brands::Impegno::Commitment.count } do
+    assert_no_difference -> { BrandRequest.count } do
       post brand_access_request_path, params: request_params
     end
   end

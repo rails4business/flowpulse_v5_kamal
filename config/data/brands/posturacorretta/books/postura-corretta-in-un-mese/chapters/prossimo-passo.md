@@ -38,7 +38,7 @@ La matrice di PosturaCorretta aiuta inoltre a orientarsi tra ambiti, aree e para
 
 Dopo avere iniziato a osservare e sperimentare il corpo, il passo successivo è
 comprendere meglio la relazione tra postura, fisiologia e cinque aree della
-salute. È il tema del corso **Postura e Fisiologia**.
+salute. È il tema del corso **Percorso integrato ed educazione alla salute**.
 
 - [Vai all’indice di PosturaCorretta in un mese →](/books/postura-corretta-in-un-mese/copertina)
 - [Inizia il Percorso Integrato →](/posturacorretta/guida?sezione=percorso&capitolo=inizia)

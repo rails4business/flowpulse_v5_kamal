@@ -38,6 +38,10 @@ class Node < ApplicationRecord
            foreign_key: :brand_node_id,
            inverse_of: :brand_node,
            dependent: :destroy
+  has_many :brand_requests,
+    foreign_key: :brand_node_id,
+    inverse_of: :brand_node,
+    dependent: :restrict_with_error
   has_many :professionally_owned_nodes,
     class_name: "Node",
     foreign_key: :professional_owner_node_id,

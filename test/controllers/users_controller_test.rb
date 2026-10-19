@@ -24,15 +24,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "invited person creates active account profile access and session without email delivery" do
-    invitation, raw_token = BrandInvitation.issue!(brand_node: @node, source_domain: @domain, email_address: "invited-new@example.com", invited_by_user: @owner)
     contact = @owner.profile.impegno_contacts.create!(name: "Invited New", email: "invited-new@example.com")
-    access_request = @owner.profile.data_commitments.create!(
-      created_by_profile: @owner.profile, domain: @domain, subject: @node, participant_contact: contact,
-      title: "Richiesta accesso", kind: "service", status: "in_progress", starts_at: nil,
-      blocks_calendar: false, pricing_type: "none", contribution_type: "unpaid",
-      calendar_key: "brand:#{@node.id}:requests", calendar_label: "Richieste · PosturaCorretta",
-      metadata: { "request_kind" => "access_invitation", "brand_invitation_id" => invitation.id }
+    access_request = BrandRequest.create!(
+      domain: @domain, brand_node: @node, subject: @node, participant_contact: contact,
+      title: "Richiesta accesso", kind: "access", status: "invited"
     )
+    invitation, raw_token = BrandInvitation.issue!(brand_node: @node, source_domain: @domain, email_address: "invited-new@example.com", invited_by_user: @owner, brand_request: access_request)
     get brand_invitation_path(raw_token)
 
     assert_no_emails do
@@ -49,7 +46,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "accepted", invitation.reload.status
     assert_equal @node, user.profile.brand_accesses.active.first.brand_node
     assert_equal "invitation", user.sessions.last.authentication_method
-    assert_equal "completed", access_request.reload.status
+    assert_equal "accepted", access_request.reload.status
     assert access_request.resolved_at.present?
     assert_redirected_to "/posturacorretta/dashboard"
   end

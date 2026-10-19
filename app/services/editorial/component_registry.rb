@@ -39,6 +39,12 @@ module Editorial
         required_data: %w[title about method areas],
         items: false
       ),
+      "markpostura_sales" => Definition.new(
+        partial: "editorial/components/markpostura_sales",
+        variants: %w[default],
+        required_data: %w[hero problem movements world paths offer about contents faqs contact],
+        items: false
+      ),
       "image" => Definition.new(
         partial: "editorial/components/image",
         variants: %w[default portrait cover],

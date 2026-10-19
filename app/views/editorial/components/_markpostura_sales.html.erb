@@ -1,0 +1,247 @@
+<%
+  hero = data.fetch("hero")
+  problem = data.fetch("problem")
+  movements = data.fetch("movements")
+  world = data.fetch("world")
+  paths = data.fetch("paths")
+  offer = data.fetch("offer")
+  about = data.fetch("about")
+  contents = data.fetch("contents")
+  faqs = data.fetch("faqs")
+  contact = data.fetch("contact")
+%>
+
+<div class="mp-sales">
+  <header id="inizia" class="mp-sales__hero scroll-mt-24">
+    <div class="mp-sales__shell mp-sales__hero-grid">
+      <div class="mp-sales__hero-copy">
+        <p class="mp-sales__eyebrow"><%= hero.fetch("eyebrow") %></p>
+        <h1><%= hero.fetch("title") %></h1>
+        <div class="mp-sales__lead <%= editorial_markdown_classes %>"><%= editorial_markdown(hero.fetch("description")) %></div>
+        <div class="mp-sales__actions">
+          <a class="mp-sales__button mp-sales__button--primary" href="<%= hero.dig("primary_action", "href") %>"><%= hero.dig("primary_action", "label") %><span aria-hidden="true">↓</span></a>
+          <a class="mp-sales__button mp-sales__button--secondary" href="<%= hero.dig("secondary_action", "href") %>"><%= hero.dig("secondary_action", "label") %><span aria-hidden="true">→</span></a>
+        </div>
+        <p class="mp-sales__microcopy">Puoi esplorare senza registrarti e senza scegliere subito un progetto.</p>
+      </div>
+
+      <figure class="mp-sales__hero-world">
+        <span class="mp-sales__orbit mp-sales__orbit--one" aria-hidden="true"></span>
+        <span class="mp-sales__orbit mp-sales__orbit--two" aria-hidden="true"></span>
+        <a href="<%= hero.dig("image", "full_url") %>" target="_blank" rel="noopener noreferrer">
+          <%= image_tag hero.dig("image", "url"), alt: hero.dig("image", "alt"), width: 760, height: 1110, fetchpriority: "high" %>
+        </a>
+        <figcaption>Il FlowPulse di MarkPostura · apri la mappa</figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <section class="mp-sales__problem">
+    <div class="mp-sales__shell">
+      <div class="mp-sales__section-heading">
+        <p class="mp-sales__eyebrow"><%= problem.fetch("eyebrow") %></p>
+        <h2><%= problem.fetch("title") %></h2>
+        <p><%= problem.fetch("description") %></p>
+      </div>
+      <div class="mp-sales__problem-list">
+        <% problem.fetch("items").each_with_index do |item, index| %>
+          <article>
+            <span><%= format("%02d", index + 1) %></span>
+            <div><h3><%= item.fetch("title") %></h3><p><%= item.fetch("description") %></p></div>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section id="percorsi" class="mp-sales__movements scroll-mt-24">
+    <div class="mp-sales__shell">
+      <div class="mp-sales__section-heading mp-sales__section-heading--light">
+        <p class="mp-sales__eyebrow"><%= movements.fetch("eyebrow") %></p>
+        <h2><%= movements.fetch("title") %></h2>
+        <p><%= movements.fetch("description") %></p>
+      </div>
+      <ol class="mp-sales__movement-track">
+        <% movements.fetch("items").each do |item| %>
+          <li class="mp-sales__movement mp-sales__movement--<%= item.fetch("color") %>">
+            <span class="mp-sales__movement-number"><%= item.fetch("number") %></span>
+            <div><h3><%= item.fetch("title") %></h3><p><%= item.fetch("description") %></p></div>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  </section>
+
+  <section id="mondo-markpostura" class="mp-sales__world scroll-mt-24">
+    <div class="mp-sales__shell">
+      <div class="mp-sales__world-intro">
+        <div class="mp-sales__section-heading">
+          <p class="mp-sales__eyebrow"><%= world.fetch("eyebrow") %></p>
+          <h2><%= world.fetch("title") %></h2>
+          <div class="<%= editorial_markdown_classes %>"><%= editorial_markdown(world.fetch("description")) %></div>
+        </div>
+        <div class="mp-sales__world-note"><span aria-hidden="true">↗</span><p><strong>Una mappa viva.</strong><br>Può ampliarsi, cambiare e collegarsi ai mondi costruiti dagli altri.</p></div>
+      </div>
+
+      <figure class="mp-sales__world-map">
+        <a href="<%= world.dig("image", "full_url") %>" target="_blank" rel="noopener noreferrer">
+          <%= image_tag world.dig("image", "url"), alt: world.dig("image", "alt"), width: 1100, height: 1608, loading: "lazy" %>
+        </a>
+        <figcaption>Il mondo di MarkPostura, fotografato nel suo stato attuale. Tocca l’immagine per ingrandirla.</figcaption>
+      </figure>
+
+      <div class="mp-sales__entrances">
+        <% world.fetch("entrances").each do |entrance| %>
+          <a class="mp-sales__entrance mp-sales__entrance--<%= entrance.fetch("color") %>" href="<%= entrance.fetch("href") %>">
+            <span><%= entrance.fetch("eyebrow") %></span>
+            <h3><%= entrance.fetch("title") %></h3>
+            <p><%= entrance.fetch("description") %></p>
+            <strong>Entra da qui <span aria-hidden="true">→</span></strong>
+          </a>
+        <% end %>
+      </div>
+
+      <div class="mp-sales__inline-actions">
+        <% world.fetch("actions").each do |action| %><a href="<%= action.fetch("href") %>"><%= action.fetch("label") %> <span aria-hidden="true">→</span></a><% end %>
+      </div>
+    </div>
+  </section>
+
+  <section class="mp-sales__paths">
+    <div class="mp-sales__shell">
+      <div class="mp-sales__section-heading mp-sales__section-heading--center">
+        <p class="mp-sales__eyebrow"><%= paths.fetch("eyebrow") %></p>
+        <h2><%= paths.fetch("title") %></h2>
+        <p><%= paths.fetch("description") %></p>
+      </div>
+      <div class="mp-sales__path-grid">
+        <% paths.fetch("items").each do |item| %>
+          <article>
+            <span class="mp-sales__path-icon" aria-hidden="true"><%= { "compass" => "⌖", "people" => "◎", "spark" => "✦" }.fetch(item.fetch("icon"), "•") %></span>
+            <h3><%= item.fetch("title") %></h3>
+            <p><%= item.fetch("description") %></p>
+            <a href="<%= item.dig("action", "href") %>"><%= item.dig("action", "label") %> <span aria-hidden="true">→</span></a>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section id="presentazione" class="mp-sales__offer scroll-mt-24">
+    <div class="mp-sales__shell mp-sales__offer-shell">
+      <div class="mp-sales__offer-main">
+        <p class="mp-sales__eyebrow"><%= offer.fetch("eyebrow") %></p>
+        <h2><%= offer.fetch("title") %></h2>
+        <div class="mp-sales__offer-description <%= editorial_markdown_classes %>"><%= editorial_markdown(offer.fetch("description")) %></div>
+        <p class="mp-sales__format"><span aria-hidden="true">●</span><%= offer.fetch("format") %></p>
+        <h3><%= offer.fetch("takeaways_title") %></h3>
+        <ul class="mp-sales__check-list">
+          <% offer.fetch("takeaways").each do |takeaway| %><li><span aria-hidden="true">✓</span><%= takeaway %></li><% end %>
+        </ul>
+        <div class="mp-sales__actions">
+          <a class="mp-sales__button mp-sales__button--light" href="<%= offer.dig("primary_action", "href") %>"><%= offer.dig("primary_action", "label") %><span aria-hidden="true">→</span></a>
+          <a class="mp-sales__button mp-sales__button--ghost" href="<%= offer.dig("secondary_action", "href") %>"><%= offer.dig("secondary_action", "label") %></a>
+        </div>
+      </div>
+      <aside class="mp-sales__program" aria-labelledby="mp-program-title">
+        <p>Circa 60 minuti</p>
+        <h3 id="mp-program-title"><%= offer.fetch("program_title") %></h3>
+        <ol>
+          <% offer.fetch("program").each_with_index do |step, index| %>
+            <li><span><%= index + 1 %></span><div><strong><%= step.fetch("title") %></strong><p><%= step.fetch("description") %></p></div></li>
+          <% end %>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <section class="mp-sales__about">
+    <div class="mp-sales__shell mp-sales__about-grid">
+      <div class="mp-sales__portrait"><%= image_tag about.dig("image", "url"), alt: about.dig("image", "alt"), width: 480, height: 600, loading: "lazy" %></div>
+      <div>
+        <p class="mp-sales__eyebrow"><%= about.fetch("eyebrow") %></p>
+        <h2><%= about.fetch("title") %></h2>
+        <div class="mp-sales__about-copy <%= editorial_markdown_classes %>"><%= editorial_markdown(about.fetch("description")) %></div>
+        <div class="mp-sales__traits">
+          <% about.fetch("traits").each do |trait| %><article><strong><%= trait.fetch("title") %></strong><p><%= trait.fetch("description") %></p></article><% end %>
+        </div>
+        <a class="mp-sales__text-link" href="<%= about.dig("action", "href") %>"><%= about.dig("action", "label") %> <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contenuti" class="mp-sales__contents scroll-mt-24">
+    <div class="mp-sales__shell">
+      <div class="mp-sales__section-heading">
+        <p class="mp-sales__eyebrow"><%= contents.fetch("eyebrow") %></p>
+        <h2><%= contents.fetch("title") %></h2>
+        <p><%= contents.fetch("description") %></p>
+      </div>
+      <div class="mp-sales__content-list">
+        <% contents.fetch("items").each_with_index do |item, index| %>
+          <a href="<%= item.fetch("href") %>"><span><%= format("%02d", index + 1) %></span><div><small><%= item.fetch("label") %></small><h3><%= item.fetch("title") %></h3><p><%= item.fetch("description") %></p></div><strong aria-hidden="true">↗</strong></a>
+        <% end %>
+      </div>
+      <a class="mp-sales__text-link" href="<%= contents.dig("action", "href") %>"><%= contents.dig("action", "label") %> <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="mp-sales__faqs">
+    <div class="mp-sales__shell mp-sales__faq-grid">
+      <div class="mp-sales__section-heading">
+        <p class="mp-sales__eyebrow"><%= faqs.fetch("eyebrow") %></p>
+        <h2><%= faqs.fetch("title") %></h2>
+      </div>
+      <div class="mp-sales__faq-list">
+        <% faqs.fetch("items").each_with_index do |faq, index| %>
+          <details <%= "open" if index.zero? %>><summary><%= faq.fetch("question") %><span aria-hidden="true"></span></summary><p><%= faq.fetch("answer") %></p></details>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section id="lista-attesa" class="mp-sales__contact scroll-mt-24">
+    <div class="mp-sales__shell">
+      <div class="mp-sales__contact-card">
+        <p class="mp-sales__eyebrow"><%= contact.fetch("eyebrow") %></p>
+        <h2><%= contact.fetch("title") %></h2>
+        <p><%= contact.fetch("description") %></p>
+        <%= form_with url: public_brand_requests_path, scope: :brand_request, class: "mp-sales__waitlist" do |form| %>
+          <%= form.hidden_field :brand_slug, value: "markpostura" %>
+          <%= form.hidden_field :kind, value: "waitlist" %>
+          <%= form.hidden_field :title, value: "Lista d’attesa · Presentazione MarkPostura" %>
+          <%= form.hidden_field :return_to, value: "/markpostura#lista-attesa" %>
+          <div class="mp-sales__waitlist-grid">
+            <label><span>Come ti chiami?</span><%= form.text_field :name, required: true, autocomplete: "name", placeholder: "Nome" %></label>
+            <label><span>La tua email</span><%= form.email_field :email, required: true, autocomplete: "email", placeholder: "nome@email.it" %></label>
+          </div>
+          <label><span>Che cosa vorresti far crescere? <small>Facoltativo</small></span><%= form.text_area :message, rows: 3, placeholder: "Un problema, un progetto o una curiosità…" %></label>
+          <label class="mp-sales__consent"><%= form.check_box :privacy_consent, required: true %><span>Puoi usare questi dati per ricontattarmi riguardo alla presentazione. <button type="button" data-privacy-open>Informativa privacy</button></span></label>
+          <div class="mp-sales__waitlist-actions">
+            <%= form.submit "Entra nella lista d’attesa", class: "mp-sales__button mp-sales__button--primary" %>
+            <% contact.fetch("actions").each do |action| %><a class="mp-sales__text-link" href="<%= action.fetch("href") %>"><%= action.fetch("label") %> <span aria-hidden="true">→</span></a><% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <a class="mp-sales__mobile-cta" href="#lista-attesa"><span>Presentazione MarkPostura</span><strong>Lista d’attesa →</strong></a>
+</div>
+
+<style>
+  .mp-sales{--ink:#101828;--muted:#526177;--paper:#fff;--soft:#f5f7fa;--blue:#1d64d8;--green:#16845b;--red:#c7443e;overflow:hidden;color:var(--ink);background:var(--paper)}
+  .mp-sales *{box-sizing:border-box}.mp-sales__shell{width:min(1160px,calc(100% - 2.5rem));margin-inline:auto}.mp-sales__eyebrow{margin:0;color:#8a4c08;font-size:.73rem;font-weight:900;letter-spacing:.17em;text-transform:uppercase}.mp-sales h1,.mp-sales h2,.mp-sales h3,.mp-sales p{margin-top:0}.mp-sales h2{font-size:clamp(2rem,4.8vw,4.15rem);line-height:1.02;letter-spacing:-.052em}.mp-sales__section-heading{max-width:760px}.mp-sales__section-heading>p:last-child,.mp-sales__section-heading>div{color:var(--muted);font-size:1.08rem;line-height:1.8}.mp-sales__section-heading--center{text-align:center;margin-inline:auto}.mp-sales__hero{position:relative;background:radial-gradient(circle at 78% 30%,#dbeafe 0,transparent 34%),linear-gradient(145deg,#fff 20%,#f7f5ef 100%)}.mp-sales__hero-grid{display:grid;min-height:min(820px,90vh);align-items:center;gap:4rem;padding-block:5.5rem}.mp-sales__hero-copy{position:relative;z-index:2}.mp-sales__hero h1{max-width:780px;margin:1.15rem 0 1.7rem;font-size:clamp(3rem,7vw,6.6rem);line-height:.92;letter-spacing:-.068em}.mp-sales__lead{max-width:680px;color:var(--muted);font-size:clamp(1.05rem,2vw,1.3rem);line-height:1.75}.mp-sales__lead strong{color:var(--ink)}.mp-sales__actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}.mp-sales__button{display:inline-flex;align-items:center;justify-content:center;gap:.8rem;min-height:3.2rem;border:1px solid transparent;border-radius:999px;padding:.75rem 1.3rem;font-size:.9rem;font-weight:900;text-decoration:none!important;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.mp-sales__button:hover{transform:translateY(-2px)}.mp-sales__button--primary{background:#162238!important;color:#fff!important;box-shadow:0 12px 26px rgb(16 24 40 / 18%)}.mp-sales__button--secondary{border-color:#cad3df;background:#fff!important;color:#1f2b3d!important}.mp-sales__microcopy{margin-top:1rem;color:#6b7789;font-size:.78rem}.mp-sales__hero-world{position:relative;margin:0 auto;width:min(100%,410px);isolation:isolate}.mp-sales__hero-world a{position:relative;z-index:2;display:block;overflow:hidden;border:1px solid rgb(255 255 255 / 70%);border-radius:2rem;background:rgb(255 255 255 / 70%);padding:.55rem;box-shadow:0 35px 80px rgb(37 99 235 / 19%);transform:rotate(2deg)}.mp-sales__hero-world img{display:block;width:100%;max-height:590px;border-radius:1.55rem;object-fit:contain}.mp-sales__hero-world figcaption{position:relative;z-index:3;margin-top:1rem;text-align:center;color:#526177;font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.mp-sales__orbit{position:absolute;z-index:0;border:1px solid rgb(37 99 235 / 20%);border-radius:50%}.mp-sales__orbit--one{inset:5% -18% 20%;animation:mp-orbit 12s ease-in-out infinite}.mp-sales__orbit--two{inset:20% -32% 5%;animation:mp-orbit 15s ease-in-out infinite reverse}@keyframes mp-orbit{50%{transform:rotate(7deg) scale(1.04)}}
+  .mp-sales__problem{padding-block:6rem;background:#fff}.mp-sales__problem-list{margin-top:3rem;border-top:1px solid #dce2ea}.mp-sales__problem-list article{display:grid;grid-template-columns:4rem 1fr;gap:1.25rem;padding:1.7rem 0;border-bottom:1px solid #dce2ea}.mp-sales__problem-list article>span{color:#a0aabc;font-size:.8rem;font-weight:900}.mp-sales__problem-list h3{margin-bottom:.45rem;font-size:1.25rem}.mp-sales__problem-list p{margin-bottom:0;color:var(--muted);line-height:1.65}
+  .mp-sales__movements{padding-block:6rem;background:#101828;color:#fff}.mp-sales__section-heading--light>p:last-child{color:#b9c3d1}.mp-sales__section-heading--light .mp-sales__eyebrow{color:#f4bf73}.mp-sales__movement-track{position:relative;display:grid;gap:0;margin:3.5rem 0 0;padding:0;list-style:none}.mp-sales__movement{position:relative;display:grid;grid-template-columns:5rem 1fr;gap:1.2rem;padding:1.7rem 0;border-top:1px solid #344054}.mp-sales__movement:last-child{border-bottom:1px solid #344054}.mp-sales__movement-number{font-weight:900}.mp-sales__movement h3{margin-bottom:.5rem;font-size:1.65rem}.mp-sales__movement p{margin:0;color:#c5ceda;line-height:1.65}.mp-sales__movement--blue .mp-sales__movement-number,.mp-sales__movement--blue h3{color:#72a7ff}.mp-sales__movement--green .mp-sales__movement-number,.mp-sales__movement--green h3{color:#71d6ac}.mp-sales__movement--red .mp-sales__movement-number,.mp-sales__movement--red h3{color:#ff8b83}
+  .mp-sales__world{padding-block:7rem;background:#f7f4ed}.mp-sales__world-intro{display:grid;gap:2rem}.mp-sales__world-note{align-self:end;display:flex;gap:1rem;border-left:3px solid #7c3aed;padding-left:1rem;color:#5d526b}.mp-sales__world-note>span{font-size:1.5rem}.mp-sales__world-note p{margin:0;line-height:1.55}.mp-sales__world-map{max-width:740px;margin:4rem auto 0;text-align:center}.mp-sales__world-map a{display:block;overflow:hidden;border-radius:2.5rem;background:#fff;padding:.7rem;box-shadow:0 24px 70px rgb(64 45 89 / 16%)}.mp-sales__world-map img{display:block;width:100%;max-height:820px;border-radius:2rem;object-fit:contain}.mp-sales__world-map figcaption{margin-top:1rem;color:#746d7b;font-size:.78rem;line-height:1.55}.mp-sales__entrances{display:grid;gap:1rem;margin-top:4rem}.mp-sales__entrance{display:flex;flex-direction:column;min-height:270px;border:1px solid #d8d2c8;border-radius:1.6rem;background:#fff;padding:1.55rem;color:var(--ink)!important;text-decoration:none!important;transition:transform .18s ease,box-shadow .18s ease}.mp-sales__entrance:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgb(30 41 59 / 10%)}.mp-sales__entrance>span{font-size:.7rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.mp-sales__entrance h3{margin:.75rem 0;font-size:1.55rem}.mp-sales__entrance p{flex:1;color:var(--muted);line-height:1.6}.mp-sales__entrance strong{font-size:.85rem}.mp-sales__entrance--blue>span,.mp-sales__entrance--blue strong{color:var(--blue)}.mp-sales__entrance--green>span,.mp-sales__entrance--green strong{color:var(--green)}.mp-sales__entrance--red>span,.mp-sales__entrance--red strong{color:var(--red)}.mp-sales__inline-actions{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:2rem;justify-content:center}.mp-sales__inline-actions a,.mp-sales__text-link{color:#4338ca!important;font-weight:900;text-decoration:none!important}.mp-sales__inline-actions a:hover,.mp-sales__text-link:hover{text-decoration:underline!important;text-underline-offset:.3rem}
+  .mp-sales__paths{padding-block:7rem;background:#fff}.mp-sales__path-grid{display:grid;gap:1rem;margin-top:3rem}.mp-sales__path-grid article{display:flex;flex-direction:column;border:1px solid #dce2ea;border-radius:1.6rem;padding:1.7rem}.mp-sales__path-icon{display:grid;width:3rem;height:3rem;place-items:center;border-radius:50%;background:#eef2ff;color:#4338ca;font-size:1.45rem;font-weight:900}.mp-sales__path-grid h3{margin:1.4rem 0 .7rem;font-size:1.6rem}.mp-sales__path-grid p{flex:1;color:var(--muted);line-height:1.65}.mp-sales__path-grid a{margin-top:1rem;color:#4338ca!important;font-size:.85rem;font-weight:900;text-decoration:none!important}
+  .mp-sales__offer{padding-block:7rem;background:linear-gradient(145deg,#15233c,#101828);color:#fff}.mp-sales__offer-shell{display:grid;gap:3rem}.mp-sales__offer .mp-sales__eyebrow{color:#f4bf73}.mp-sales__offer-main h2{max-width:720px;margin:1rem 0 1.5rem}.mp-sales__offer-description{max-width:720px;color:#c9d2df;font-size:1.1rem;line-height:1.75}.mp-sales__format{display:inline-flex;align-items:center;gap:.6rem;margin:1.4rem 0 2.4rem;border-radius:999px;background:#27354d;padding:.65rem 1rem;color:#dbe4ef;font-size:.78rem;font-weight:800}.mp-sales__format span{color:#63dda7;font-size:.55rem}.mp-sales__offer-main>h3{font-size:1rem}.mp-sales__check-list{display:grid;gap:.8rem;margin:1rem 0 0;padding:0;list-style:none}.mp-sales__check-list li{display:flex;gap:.8rem;color:#dbe4ef}.mp-sales__check-list span{display:grid;flex:none;width:1.35rem;height:1.35rem;place-items:center;border-radius:50%;background:#147a55;color:#fff;font-size:.72rem;font-weight:900}.mp-sales__button--light{background:#fff!important;color:#15233c!important}.mp-sales__button--ghost{border-color:#4b5c74;background:transparent!important;color:#fff!important}.mp-sales__program{border:1px solid #3b4960;border-radius:2rem;background:rgb(255 255 255 / 5%);padding:1.6rem}.mp-sales__program>p{color:#91a1b6;font-size:.7rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase}.mp-sales__program>h3{font-size:1.8rem}.mp-sales__program ol{margin:1.5rem 0 0;padding:0;list-style:none}.mp-sales__program li{display:grid;grid-template-columns:2.2rem 1fr;gap:.8rem;padding:1.1rem 0;border-top:1px solid #344258}.mp-sales__program li>span{display:grid;width:1.8rem;height:1.8rem;place-items:center;border-radius:50%;background:#fff;color:#142139;font-size:.72rem;font-weight:900}.mp-sales__program li strong{font-size:1rem}.mp-sales__program li p{margin:.35rem 0 0;color:#aeb9c9;font-size:.85rem;line-height:1.55}
+  .mp-sales__about{padding-block:7rem;background:#fff}.mp-sales__about-grid{display:grid;gap:3rem;align-items:center}.mp-sales__portrait{max-width:390px;overflow:hidden;border-radius:2rem;background:#f4f1eb;box-shadow:18px 18px 0 #dbeafe}.mp-sales__portrait img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}.mp-sales__about h2{margin:1rem 0 1.5rem}.mp-sales__about-copy{color:var(--muted);font-size:1.05rem;line-height:1.75}.mp-sales__traits{display:grid;gap:.65rem;margin:2rem 0}.mp-sales__traits article{display:grid;grid-template-columns:6rem 1fr;gap:1rem;border-top:1px solid #dce2ea;padding-top:.85rem}.mp-sales__traits p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55}
+  .mp-sales__contents{padding-block:7rem;background:#f6f8fb}.mp-sales__content-list{margin:3rem 0 2rem;border-top:1px solid #cfd7e3}.mp-sales__content-list>a{display:grid;grid-template-columns:2.8rem 1fr auto;gap:1rem;padding:1.6rem 0;border-bottom:1px solid #cfd7e3;color:var(--ink)!important;text-decoration:none!important}.mp-sales__content-list>a>span{color:#8895a8;font-size:.75rem;font-weight:900}.mp-sales__content-list small{color:#8a4c08;font-size:.68rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.mp-sales__content-list h3{margin:.35rem 0;font-size:1.35rem}.mp-sales__content-list p{margin:0;color:var(--muted);line-height:1.55}.mp-sales__content-list>a>strong{font-size:1.35rem;transition:transform .18s ease}.mp-sales__content-list>a:hover>strong{transform:translate(.2rem,-.2rem)}
+  .mp-sales__faqs{padding-block:7rem;background:#fff}.mp-sales__faq-grid{display:grid;gap:3rem}.mp-sales__faq-list{border-top:1px solid #dce2ea}.mp-sales__faq-list details{border-bottom:1px solid #dce2ea}.mp-sales__faq-list summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.4rem 0;cursor:pointer;font-weight:900;list-style:none}.mp-sales__faq-list summary::-webkit-details-marker{display:none}.mp-sales__faq-list summary span{position:relative;width:1.2rem;height:1.2rem;flex:none}.mp-sales__faq-list summary span::before,.mp-sales__faq-list summary span::after{content:"";position:absolute;inset:50% 0 auto;height:2px;background:#334155;transition:transform .18s ease}.mp-sales__faq-list summary span::after{transform:rotate(90deg)}.mp-sales__faq-list details[open] summary span::after{transform:rotate(0)}.mp-sales__faq-list details>p{max-width:650px;margin:-.3rem 0 1.5rem;color:var(--muted);line-height:1.7}
+  .mp-sales__contact{padding:2rem 0 7rem;background:#fff}.mp-sales__contact-card{border-radius:2.3rem;background:#f4c46f;padding:clamp(2rem,7vw,5rem);text-align:center}.mp-sales__contact-card h2{max-width:820px;margin:1rem auto 1.4rem}.mp-sales__contact-card>p:not(.mp-sales__eyebrow){max-width:650px;margin-inline:auto;color:#584216;font-size:1.05rem;line-height:1.7}.mp-sales__waitlist{display:grid;gap:1rem;max-width:720px;margin:2rem auto 0;text-align:left}.mp-sales__waitlist-grid{display:grid;gap:1rem}.mp-sales__waitlist label>span{display:block;margin:0 0 .4rem;color:#493716;font-size:.78rem;font-weight:900}.mp-sales__waitlist label small{font-weight:600}.mp-sales__waitlist input[type="text"],.mp-sales__waitlist input[type="email"],.mp-sales__waitlist textarea{display:block;width:100%;border:1px solid rgb(73 55 22 / 24%);border-radius:1rem;background:#fff!important;padding:.9rem 1rem;color:#172033;box-shadow:none}.mp-sales__waitlist textarea{resize:vertical}.mp-sales__consent{display:flex!important;align-items:flex-start;gap:.7rem}.mp-sales__consent>input{flex:none;margin-top:.18rem}.mp-sales__consent>span{margin:0!important;font-weight:600!important;line-height:1.5}.mp-sales__consent button{border:0;background:transparent;color:#4338ca;font:inherit;font-weight:900;text-decoration:underline;cursor:pointer}.mp-sales__waitlist-actions{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;margin-top:.3rem}.mp-sales__waitlist-actions input{cursor:pointer}.mp-sales__mobile-cta{display:none}
+  @media(min-width:760px){.mp-sales__hero-grid{grid-template-columns:minmax(0,1.15fr) minmax(300px,.6fr)}.mp-sales__problem-list article{grid-template-columns:5rem 18rem 1fr}.mp-sales__problem-list article div{display:contents}.mp-sales__problem-list article h3{grid-column:2}.mp-sales__problem-list article p{grid-column:3}.mp-sales__movement-track{grid-template-columns:repeat(3,1fr)}.mp-sales__movement{display:block;padding:1.8rem;border-right:1px solid #344054;border-bottom:1px solid #344054}.mp-sales__movement:first-child{border-left:1px solid #344054}.mp-sales__movement-number{display:block;margin-bottom:3.5rem}.mp-sales__world-intro{grid-template-columns:1fr 280px}.mp-sales__entrances,.mp-sales__path-grid{grid-template-columns:repeat(3,1fr)}.mp-sales__offer-shell{grid-template-columns:minmax(0,1.2fr) minmax(320px,.7fr)}.mp-sales__about-grid{grid-template-columns:minmax(280px,.65fr) minmax(0,1fr)}.mp-sales__faq-grid{grid-template-columns:.65fr 1fr}.mp-sales__waitlist-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:759px){.mp-sales__shell{width:min(100% - 1.5rem,1160px)}.mp-sales__hero-grid{min-height:auto;padding-block:3.2rem 4rem}.mp-sales__hero h1{font-size:3.05rem}.mp-sales__hero-world{width:min(86%,360px)}.mp-sales__hero-world img{max-height:480px}.mp-sales__problem,.mp-sales__movements,.mp-sales__world,.mp-sales__paths,.mp-sales__offer,.mp-sales__about,.mp-sales__contents,.mp-sales__faqs{padding-block:4.6rem}.mp-sales h2{font-size:2.35rem}.mp-sales__actions{display:grid}.mp-sales__button{width:100%}.mp-sales__world-map{margin-top:2.7rem}.mp-sales__world-map a{border-radius:1.6rem;padding:.4rem}.mp-sales__world-map img{border-radius:1.25rem}.mp-sales__program{padding:1.25rem}.mp-sales__portrait{max-width:280px;margin-inline:auto}.mp-sales__traits article{grid-template-columns:5.5rem 1fr}.mp-sales__content-list>a{grid-template-columns:2rem 1fr auto}.mp-sales__content-list p{font-size:.88rem}.mp-sales__contact{padding-bottom:6.5rem}.mp-sales__contact-card{border-radius:1.7rem}.mp-sales__mobile-cta{position:fixed;z-index:45;right:.75rem;bottom:.75rem;left:.75rem;display:flex;align-items:center;justify-content:space-between;border:1px solid rgb(255 255 255 / 20%);border-radius:999px;background:#101828!important;padding:.8rem 1rem .8rem 1.2rem;box-shadow:0 18px 45px rgb(15 23 42 / 35%);color:#fff!important;font-size:.8rem;font-weight:900;text-decoration:none!important}.mp-sales__mobile-cta strong{border-radius:999px;background:#f4c46f;padding:.55rem .85rem;color:#35270f}}
+  @media(prefers-reduced-motion:reduce){.mp-sales__orbit{animation:none}.mp-sales a{transition:none!important}}
+</style>

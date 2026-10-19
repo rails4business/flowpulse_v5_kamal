@@ -20,10 +20,9 @@ class BrandAccessRequestsController < ApplicationController
     end
 
     owner_profile = @request_domain.node.role_assignment.profile
-    open_request = owner_profile.data_commitments
+    open_request = BrandRequest
       .joins(:participant_contact)
-      .where(domain: @request_domain, status: %w[requested in_progress])
-      .where("data_commitments.metadata ->> 'request_kind' = ?", "access_invitation")
+      .where(domain: @request_domain, kind: "access", status: BrandRequest::ACTIVE_STATUSES)
       .where("LOWER(impegno_contacts.email) = ?", attributes[:email].downcase)
       .first
 
@@ -39,24 +38,18 @@ class BrandAccessRequestsController < ApplicationController
             "privacy_notice_version" => "2026-10-13"
           }
         )
-        owner_profile.data_commitments.create!(
-          created_by_profile: owner_profile,
+        BrandRequest.create!(
           domain: @request_domain,
+          brand_node: @request_domain.node,
           subject: @request_domain.node,
           participant_contact: contact,
           title: "Richiesta di accesso a #{@request_domain.authentication_sender_name}",
-          description: attributes[:message],
-          kind: "service",
-          status: "requested",
-          starts_at: nil,
-          blocks_calendar: false,
-          pricing_type: "none",
-          contribution_type: "unpaid",
-          calendar_key: "brand:#{@request_domain.node_id}:requests",
-          calendar_label: "Richieste · #{@request_domain.authentication_sender_name}",
+          message: attributes[:message],
+          kind: "access",
+          status: "open",
+          audience: "user",
+          source_url: request.referer,
           metadata: {
-            "request_kind" => "access_invitation",
-            "request_audience" => "user",
             "source_domain" => @request_domain.hostname
           }
         )

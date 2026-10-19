@@ -38,7 +38,7 @@ module Brands
         assert_redirected_to impegno_experience_url(experience)
         assert_equal "planned", commitment.status
         assert_equal @user.profile, commitment.profile
-        assert_equal 1, commitment.position
+        assert_equal 10, commitment.position
 
         get impegno_experience_url(experience)
         assert_response :success
@@ -96,7 +96,7 @@ module Brands
         direct_commitment = experience.data_commitments.order(:created_at).last
         assert_nil direct_commitment.data_session
         assert_nil direct_commitment.data_slot
-        assert_equal 1, direct_commitment.position
+        assert_equal 20, direct_commitment.position
 
         get impegno_experience_url(experience)
         assert_response :success

@@ -1,0 +1,156 @@
+<% content_for :title, "Dashboard produttiva · Flowpulse" %>
+
+<div class="mx-auto max-w-[1600px]">
+  <header class="border-b border-slate-200 pb-6">
+    <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700">Flowpulse</p>
+    <div class="mt-2 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Dashboard produttiva</h1>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Raccogli quello che hai in testa, dagli un posto e seguilo tra Brand, produzione e impegni.</p>
+      </div>
+      <%= link_to "Regia tecnica", admin_dashboard_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 shadow-sm transition hover:bg-slate-50" %>
+    </div>
+  </header>
+
+  <%= render "system_tabs", active_system: :flowpulse %>
+
+  <nav class="mt-6 flex gap-2 overflow-x-auto" aria-label="Viste Flowpulse">
+    <%= link_to flowpulse_admin_production_path(view: "table"), class: [
+      "whitespace-nowrap rounded-full px-4 py-2 text-sm font-extrabold transition",
+      @active_view == "table" ? "bg-blue-600 text-white shadow-sm" : "border border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+    ].join(" ") do %>
+      Tavolo <span class="ml-1 rounded-full bg-white/20 px-2 py-0.5 text-xs"><%= @workbench_items.size %></span>
+    <% end %>
+    <%= link_to "Progetti e prodotti", flowpulse_admin_production_path(view: "projects"), class: [
+      "whitespace-nowrap rounded-full px-4 py-2 text-sm font-extrabold transition",
+      @active_view == "projects" ? "bg-blue-600 text-white shadow-sm" : "border border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+    ].join(" ") %>
+  </nav>
+
+  <% if @active_view == "table" %>
+    <section class="mt-7">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-emerald-700">1impegno · raccolta</p>
+          <h2 class="mt-1 text-2xl font-black text-slate-950">Il Tavolo</h2>
+          <p class="mt-1 text-sm text-slate-600">Per iniziare basta un titolo. Tutto il resto può essere deciso in seguito.</p>
+        </div>
+        <span class="inline-flex w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-extrabold text-amber-700 ring-1 ring-amber-200"><%= @workbench_items.count { |item| item.workbench_data["classification_status"] != "ready" } %> da sistemare</span>
+      </div>
+
+      <%= form_with url: flowpulse_admin_production_inbox_items_path, scope: :workbench_item, class: "mt-5 grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm sm:grid-cols-[minmax(0,1fr)_auto]" do |form| %>
+        <%= form.text_field :title,
+          required: true,
+          autocomplete: "off",
+          placeholder: "Scrivi un'attività, un'idea, un evento o qualcosa da costruire…",
+          class: "min-h-11 w-full rounded-xl border border-emerald-200 bg-white px-4 text-sm text-slate-950 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200" %>
+        <%= form.submit "＋ Metti sul Tavolo", class: "cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-emerald-800" %>
+        <p class="text-xs leading-5 text-slate-600 sm:col-span-2">La voce nasce come bozza senza data e non occupa il calendario.</p>
+      <% end %>
+
+      <% if @workbench_items.any? %>
+        <div class="mt-5 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table class="w-full min-w-[1500px] border-collapse text-left text-sm">
+            <thead>
+              <tr class="text-center text-[11px] font-black uppercase tracking-[0.12em]">
+                <th colspan="2" class="border-b border-r border-slate-200 bg-emerald-50 px-4 py-3 text-emerald-800">Raccolta</th>
+                <th colspan="2" class="border-b border-r border-slate-200 bg-blue-50 px-4 py-3 text-blue-800">Generaimpresa · dove vive</th>
+                <th colspan="2" class="border-b border-r border-slate-200 bg-amber-50 px-4 py-3 text-amber-800">Rails4Business · cosa costruisce</th>
+                <th colspan="3" class="border-b border-slate-200 bg-emerald-50 px-4 py-3 text-emerald-800">1impegno · chi e quando</th>
+              </tr>
+              <tr class="bg-slate-50 text-xs font-extrabold text-slate-500">
+                <th class="border-b border-slate-200 px-3 py-2">Voce</th>
+                <th class="border-b border-slate-200 px-3 py-2">Che cos'è</th>
+                <th class="border-b border-slate-200 px-3 py-2">Brand</th>
+                <th class="border-b border-slate-200 px-3 py-2">Progetto / Node</th>
+                <th class="border-b border-slate-200 px-3 py-2">Skill</th>
+                <th class="border-b border-slate-200 px-3 py-2">Prodotto</th>
+                <th class="border-b border-slate-200 px-3 py-2">Responsabile</th>
+                <th class="border-b border-slate-200 px-3 py-2">Organizzazione</th>
+                <th class="border-b border-slate-200 px-3 py-2">Stato</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% @workbench_items.each do |item| %>
+                <% data = item.workbench_data %>
+                <% form_id = "workbench-item-#{item.id}" %>
+                <tr class="align-top hover:bg-slate-50/70">
+                  <td class="w-72 px-3 py-3">
+                    <%= form_with url: flowpulse_admin_production_inbox_item_path(item), method: :patch, id: form_id, class: "grid gap-2" do %>
+                      <%= text_field_tag "workbench_item[title]", item.title, required: true, class: "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-slate-950 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" %>
+                    <% end %>
+                    <p class="mt-1 text-[11px] font-semibold text-slate-400">Raccolto <%= l(item.created_at.to_date, format: :short) %></p>
+                  </td>
+                  <td class="px-3 py-3"><%= select_tag "workbench_item[item_type]", options_for_select(@item_type_options, data["item_type"]), form: form_id, class: "w-40 rounded-lg border-slate-300 bg-white text-xs font-semibold" %></td>
+                  <td class="px-3 py-3"><%= select_tag "workbench_item[domain_id]", options_for_select(@domains.map { |domain| [domain.node&.title.presence || domain.display_hostname, domain.id] }, item.domain_id), form: form_id, class: "w-44 rounded-lg border-slate-300 bg-white text-xs font-semibold" %></td>
+                  <td class="px-3 py-3"><%= select_tag "workbench_item[subject_node_id]", options_for_select(@nodes.map { |node| ["#{node.title} · #{node.slug}", node.id] }, item.subject_type == "Node" ? item.subject_id : nil), include_blank: "Da definire", form: form_id, class: "w-52 rounded-lg border-slate-300 bg-white text-xs font-semibold" %></td>
+                  <td class="px-3 py-3"><%= select_tag "workbench_item[reusable_skill_id]", options_for_select(@skills.map { |skill| [skill.title, skill.id] }, data["reusable_skill_id"]), include_blank: "Da definire", form: form_id, class: "w-44 rounded-lg border-slate-300 bg-white text-xs font-semibold" %></td>
+                  <td class="w-64 px-3 py-3">
+                    <%= text_field_tag "workbench_item[product_name]", data["product_name"], placeholder: "Nome del prodotto", form: form_id, class: "w-full rounded-lg border-slate-300 px-3 py-2 text-xs" %>
+                    <%= select_tag "workbench_item[skill_product_id]", options_for_select(@products.map { |product| ["#{product.title} · #{product.node.title}", product.id] }, item.skill_product_id), include_blank: "Oppure collega un prodotto", form: form_id, class: "mt-2 w-full rounded-lg border-slate-300 bg-white text-xs font-semibold" %>
+                  </td>
+                  <td class="px-3 py-3"><%= select_tag "workbench_item[responsible_profile_id]", options_for_select(@profiles.map { |profile| [profile.display_name.presence || "@#{profile.username}", profile.id] }, item.responsible_profile_id), include_blank: "Da assegnare", form: form_id, class: "w-44 rounded-lg border-slate-300 bg-white text-xs font-semibold" %></td>
+                  <td class="px-3 py-3"><%= select_tag "workbench_item[organization]", options_for_select(@organization_options, data["organization"]), form: form_id, class: "w-44 rounded-lg border-slate-300 bg-white text-xs font-semibold" %></td>
+                  <td class="w-52 px-3 py-3">
+                    <%= select_tag "workbench_item[classification_status]", options_for_select(@classification_status_options, data["classification_status"]), form: form_id, class: "w-full rounded-lg border-slate-300 bg-white text-xs font-semibold" %>
+                    <div class="mt-2 flex gap-2">
+                      <%= submit_tag "Salva", form: form_id, class: "cursor-pointer rounded-lg bg-blue-600 px-3 py-2 text-xs font-extrabold text-white hover:bg-blue-700" %>
+                      <%= link_to "Elimina", flowpulse_admin_production_inbox_item_path(item), data: { turbo_method: :delete, turbo_confirm: "Rimuovere questa voce dal Tavolo?" }, class: "rounded-lg px-3 py-2 text-xs font-extrabold text-red-600 hover:bg-red-50" %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="mt-5 rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center">
+          <h3 class="font-black text-slate-950">Il Tavolo è libero</h3>
+          <p class="mt-1 text-sm text-slate-500">Aggiungi la prima cosa che vuoi ricordare, capire o costruire.</p>
+        </div>
+      <% end %>
+
+      <p class="mt-4 rounded-xl border-l-4 border-blue-500 bg-blue-50 px-4 py-3 text-sm leading-6 text-slate-700"><strong>Ogni cosa al suo posto:</strong> una voce personale rimarrà in 1impegno; un prodotto confluirà nel suo progetto; una Skill verrà seguita da Rails4Business. La collocazione automatica sarà il passaggio successivo.</p>
+    </section>
+  <% else %>
+    <section class="mt-7">
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Visione generale</p>
+        <h2 class="mt-1 text-2xl font-black text-slate-950">Progetti e prodotti</h2>
+        <p class="mt-1 text-sm text-slate-600">Ogni riga parte dal Brand e collega ciò che esiste nei tre sistemi operativi.</p>
+      </div>
+
+      <% if @production_rows.any? %>
+        <div class="mt-5 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table class="w-full min-w-[1200px] border-collapse text-left text-sm">
+            <thead>
+              <tr class="text-center text-[11px] font-black uppercase tracking-[0.12em]">
+                <th colspan="3" class="border-b border-r border-slate-200 bg-blue-50 px-4 py-3 text-blue-800">Generaimpresa</th>
+                <th colspan="2" class="border-b border-r border-slate-200 bg-amber-50 px-4 py-3 text-amber-800">Rails4Business</th>
+                <th colspan="2" class="border-b border-slate-200 bg-emerald-50 px-4 py-3 text-emerald-800">1impegno</th>
+              </tr>
+              <tr class="bg-slate-50 text-xs font-extrabold text-slate-500">
+                <th class="px-3 py-2">Brand</th><th class="px-3 py-2">Progetto / Node</th><th class="px-3 py-2">Prodotti</th><th class="px-3 py-2">Skill</th><th class="px-3 py-2">Catene</th><th class="px-3 py-2">Persone</th><th class="px-3 py-2">Ultimo impegno</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% @production_rows.each do |row| %>
+                <tr class="align-top hover:bg-blue-50/40">
+                  <td class="px-3 py-4"><%= link_to row[:brand].title, flowpulse_admin_production_node_path(row[:node]), class: "font-black text-slate-950 hover:text-blue-700" %><span class="mt-1 block text-xs text-slate-500"><%= row[:domain]&.display_hostname || "Nessun dominio" %></span></td>
+                  <td class="px-3 py-4"><%= link_to(row[:node] == row[:brand] ? "Brand principale" : row[:node].title, flowpulse_admin_production_node_path(row[:node]), class: "font-extrabold text-blue-700 hover:text-blue-500") %></td>
+                  <td class="px-3 py-4"><% if row[:products].any? %><span class="font-extrabold text-slate-900"><%= row[:products].size %></span><span class="mt-1 block max-w-64 text-xs leading-5 text-slate-500"><%= row[:products].first(3).map(&:title).join(" · ") %></span><% else %><span class="text-slate-400">—</span><% end %></td>
+                  <td class="px-3 py-4"><div class="flex max-w-64 flex-wrap gap-1"><% row[:activations].each do |activation| %><span class="rounded-full bg-blue-50 px-2 py-1 text-[11px] font-extrabold text-blue-700 ring-1 ring-blue-100"><%= activation.reusable_skill.title %></span><% end %><%= tag.span("—", class: "text-slate-400") if row[:activations].empty? %></div></td>
+                  <td class="px-3 py-4"><% if row[:processes].any? %><span class="font-extrabold text-slate-900"><%= row[:processes].size %></span><span class="mt-1 block max-w-64 text-xs leading-5 text-slate-500"><%= row[:processes].first(3).map(&:title).join(" · ") %></span><% else %><span class="text-slate-400">—</span><% end %></td>
+                  <td class="px-3 py-4"><div class="flex max-w-64 flex-wrap gap-1"><% row[:people].first(4).each do |profile| %><span class="rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-extrabold text-emerald-700 ring-1 ring-emerald-100"><%= profile.display_name.presence || "@#{profile.username}" %></span><% end %><%= tag.span("—", class: "text-slate-400") if row[:people].empty? %></div></td>
+                  <td class="px-3 py-4"><% if row[:last_commitment] %><span class="font-extrabold text-slate-900"><%= row[:last_commitment].title %></span><span class="mt-1 block text-xs text-slate-500"><%= l(row[:last_commitment].updated_at, format: :short) %></span><% else %><span class="text-slate-400">—</span><% end %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="mt-5 rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center text-sm text-slate-500">Nessun progetto produttivo collegato ai dati correnti.</div>
+      <% end %>
+    </section>
+  <% end %>
+</div>

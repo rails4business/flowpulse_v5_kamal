@@ -1,0 +1,17 @@
+<nav class="flex gap-1 overflow-x-auto border-b border-slate-200" aria-label="Sistemi della dashboard produttiva">
+  <% tabs = [
+    ["Flowpulse", flowpulse_admin_production_path, local_assigns[:active_system] == :flowpulse],
+    ["Generaimpresa", flowpulse_admin_brands_path, local_assigns[:active_system] == :genera],
+    ["Rails4Business", rails4b_skills_path, local_assigns[:active_system] == :rails],
+    ["1impegno", impegno_path(area: "user", view: "agenda"), local_assigns[:active_system] == :impegno]
+  ] %>
+
+  <% tabs.each do |label, path, active| %>
+    <%= link_to label,
+      path,
+      class: [
+        "whitespace-nowrap border-b-2 px-4 py-3 text-sm font-extrabold transition",
+        active ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-900"
+      ].join(" ") %>
+  <% end %>
+</nav>

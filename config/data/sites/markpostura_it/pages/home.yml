@@ -5,117 +5,213 @@ page:
   owner_node_slug: markpostura
   kind: landing
   renderer: builder
-  title: Mark Postura — conoscere, costruire, esplorare
-  description: "Un incontro per conoscere il mondo che sto costruendo e scoprire come dare forma al tuo attraverso salute, risorse ed esplorazione."
+  title: Mark Postura — costruisci la mappa del tuo mondo
+  description: "Conoscere il corpo, trovare le risorse ed esplorare nuove possibilità: scopri il mondo di MarkPostura e comincia a costruire il tuo con FlowPulse."
   status: published
   visibility: public
 
 components:
-  - id: inizia
-    type: hero
-    variant: split
-    data:
-      eyebrow: Mark Postura · Conoscere, costruire, esplorare
-      title: Chi ha costruito il mondo in cui vivi?
-      description: |-
-        Sono fisioterapista, esploratore. Essere umani ci permetterebbe di avere a disposizione tantissime cose che per lo più non scopriremo mai e ciò che ci separa da questo sono le esperienze. Sono appassionato di corpo, salute, lavoro, tecnologia, natura, arte.
-        Ma come ci hanno insegnato a vivere non permette di vivere tutto questo.
-        Allora perchè non inventare una strada diversa? Perchè non creare mondi con regole diverse.
-        Una volta al mese ti racconto come sto costruendo il mio e ti spiego come puoi collaborare o costruire il tuo con flowpulse!
-      image:
-        url: markpostura/hero_markpostura-720.webp
-        alt: Mark Postura
-        sizes: "(min-width: 1024px) 42vw, 100vw"
-        srcset:
-          - url: markpostura/hero_markpostura-480.webp
-            width: 480
-          - url: markpostura/hero_markpostura-720.webp
-            width: 720
-      action:
-        label: Partecipa alla presentazione
-        href: /markpostura/presentazione
-
-  - id: presentazione
-    type: call_to_action
-    variant: accent
-    data:
-      eyebrow: Un'ora, online o dal vivo
-      title: Partiamo dalla visione generale, poi scegliamo dove entrare
-      description: |-
-        La presentazione dura circa un'ora. Ti mostro i tre filoni, i progetti già avviati e il modo in cui li sto collegando. Puoi venire per conoscere, collaborare a qualcosa che esiste oppure iniziare a immaginare il tuo FlowPulse.
-
-        Il prossimo incontro viene concordato con le persone interessate: niente calendario finto pieno di date che poi non riusciamo a vivere.
-      action:
-        label: Scopri come partecipare
-        href: /markpostura/presentazione
-
-  - id: percorsi
-    type: feature_grid
+  - id: markpostura
+    type: markpostura_sales
     variant: default
     data:
-      title: Tre filoni, una stessa ricerca
-      description: "Si parte dalla persona e dalla vita reale. Ogni filone ha linguaggi e confini propri, ma può collegarsi agli altri quando serve."
-    items:
-      - eyebrow: "01 · Salute e corpo"
-        title: Conoscere il corpo e costruire il proprio percorso
-        description: "PosturaCorretta apre il percorso educativo. Percorso Integrato aiuta a organizzare programmi con uno o più professionisti quando serve una presa in carico personale."
-        href: /posturacorretta
-      - eyebrow: "02 · Lavoro e risorse"
-        title: Portare un problema verso una soluzione concreta
-        description: "Rails4Business, GeneraImpresa e 1Impegno collegano idee, competenze, strumenti, responsabilità e tempo. Il digitale serve a costruire, non è il punto di arrivo."
-        href: /rails4b
-      - eyebrow: "03 · Esperienze e scoperta"
-        title: Lasciare una porta aperta su ciò che ancora non conosciamo
-        description: "Il Giardino del Corpo raccoglie natura, musica, arte, spiritualità, incontri ed esperienze che possono aiutarci a guardare il corpo e la vita da un punto di vista diverso."
-        href: /il-giardino-del-corpo
+      hero:
+        eyebrow: Mark Postura · Fisioterapista e creatore di progetti
+        title: Ho provato a mettere su una mappa tutto ciò che sto costruendo.
+        description: |-
+          Salute, lavoro, risorse, natura, musica, tecnologia e relazioni sembravano progetti separati. Poi ho iniziato a collegarli.
 
-  - id: flowpulse
-    type: call_to_action
-    variant: default
-    data:
-      eyebrow: Dal mio mondo al tuo
-      title: MarkPostura è un esempio. FlowPulse può accogliere mondi diversi.
-      description: |-
-        Il mondo che sto costruendo collega i progetti qui sopra. Non è una struttura da copiare: puoi esplorarlo, collaborare a un suo Node oppure partire dalla tua professione, da un problema o da un'idea e costruire il tuo.
+          Da qui è nato il mio **FlowPulse**: un mondo ancora in costruzione che puoi esplorare, aiutare a far crescere oppure usare come punto di partenza per costruire il tuo.
+        primary_action:
+          label: Esplora il mio mondo
+          href: "#mondo-markpostura"
+        secondary_action:
+          label: Costruisci il tuo
+          href: "#presentazione"
+        image:
+          url: https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png?tr=w-760,q-86,f-webp
+          full_url: https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png
+          alt: Il mondo FlowPulse costruito da MarkPostura
 
-        I mondi possono poi condividere persone, Skill e Node attraverso collegamenti chiari, senza perdere identità e responsabilità.
-      actions:
-        - label: Guarda il mondo di MarkPostura
-          href: /flowpulse/progetti?mondo=markpostura
-        - label: Esplora tutti i Brand
-          href: /flowpulse/progetti
-        - label: Come funziona FlowPulse
-          href: /flowpulse
+      problem:
+        eyebrow: Tante cose importanti, tutte separate
+        title: A volte non manca un'altra idea. Manca una mappa.
+        description: "Abbiamo problemi da risolvere, capacità che usiamo poco e progetti che continuano a tornare. Intanto gli impegni riempiono le giornate e tutto rimane sparso tra testa, quaderni, social e schede aperte nel browser. Ne so qualcosa."
+        items:
+          - title: Non sai da dove partire
+            description: "Vedi molte direzioni possibili, ma nessun primo passo abbastanza chiaro."
+          - title: Apri senza concludere
+            description: "Le idee crescono più velocemente del tempo e dell'attenzione disponibili."
+          - title: Non vedi ciò che puoi collegare
+            description: "Persone, competenze e strumenti esistono già, ma spesso rimangono in mondi separati."
 
-  - id: contenuti
-    type: feature_grid
-    variant: default
-    data:
-      title: Se vuoi entrare con calma
-      description: "La home rimane una porta d'ingresso. Qui trovi gli articoli che conservano e approfondiscono la visione, il metodo e la struttura dei progetti."
-    items:
-      - eyebrow: Chi sono
-        title: Esplorare, comprendere e dare forma alle idee
-        description: "Il Matto, l'Eremita e il Mago: la mia indole e ciò che so fare meglio quando un'idea comincia a camminare."
-        href: /markpostura/contenuti/esplorare-comprendere-e-dare-forma-alle-idee
-      - eyebrow: Metodo
-        title: Un problema alla volta
-        description: "La soluzione atomica e il ciclo che uso per distinguere un'intuizione da una soluzione verificata."
-        href: /markpostura/contenuti/un-problema-alla-volta
-      - eyebrow: FlowPulse
-        title: Dal mio mondo a FlowPulse
-        description: "Brand, progetti, Skill e persone: come si costruisce un mondo e come può collegarsi agli altri."
-        href: /markpostura/contenuti/dal-mio-mondo-a-flowpulse
+      movements:
+        eyebrow: Tre movimenti
+        title: Conoscere. Costruire. Esplorare.
+        description: "Non sono tre scatole e non devono avvenire sempre nello stesso ordine. Sono tre modi per capire che cosa stiamo facendo e quale passo manca."
+        items:
+          - number: "01"
+            color: blue
+            title: Conoscere
+            description: "Capire dove siamo, che cosa sta accadendo e quale direzione stiamo cercando."
+          - number: "02"
+            color: green
+            title: Costruire
+            description: "Mettere insieme tempo, persone, competenze e strumenti per rendere possibile un passo reale."
+          - number: "03"
+            color: red
+            title: Esplorare
+            description: "Provare strade nuove, fare esperienza e verificare ciò che incontriamo."
 
-  - id: primo-passo
-    type: call_to_action
-    variant: contact
-    data:
-      eyebrow: Il primo passo
-      title: Vieni alla presentazione
-      description: "Scrivimi se vuoi partecipare online o dal vivo. Puoi arrivare per curiosità, per conoscere un progetto, per collaborare oppure per raccontarmi che cosa vorresti costruire."
-      actions:
-        - label: Scrivi su WhatsApp
+      world:
+        eyebrow: Un esempio reale
+        title: Questo è il mondo che sto costruendo.
+        description: |-
+          Non è un organigramma definitivo e non è il modello che tutti devono copiare. È la mappa provvisoria con cui sto collegando ciò che conosco, ciò che sto creando e ciò che voglio ancora esplorare.
+
+          Ogni sfera può diventare un ingresso. I collegamenti permettono ai progetti di collaborare senza perdere il proprio nome.
+        image:
+          url: https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png?tr=w-1100,q-88,f-webp
+          full_url: https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png
+          alt: Mappa completa del mondo FlowPulse di MarkPostura
+        entrances:
+          - color: blue
+            eyebrow: Salute e corpo
+            title: Conoscere il corpo
+            description: "PosturaCorretta, Percorso Integrato e i progetti dedicati all'educazione e alla salute."
+            href: /posturacorretta
+          - color: green
+            eyebrow: Lavoro e risorse
+            title: Dare forma alle idee
+            description: "Rails4Business, GeneraImpresa e 1Impegno collegano problemi, competenze, responsabilità e tempo."
+            href: /rails4b
+          - color: red
+            eyebrow: Esperienze e scoperta
+            title: Aprire nuove strade
+            description: "Il Giardino del Corpo crea spazio per natura, musica, arte, incontri e ciò che ancora non conosciamo."
+            href: /il-giardino-del-corpo
+        actions:
+          - label: Guarda tutti i Brand
+            href: /flowpulse/progetti
+          - label: Isola il mondo di MarkPostura
+            href: /flowpulse/progetti?mondo=markpostura
+
+      paths:
+        eyebrow: Puoi entrare in modi diversi
+        title: Non devi costruire tutto per partecipare.
+        description: "Puoi iniziare dal punto che ti riguarda oggi. Il resto della mappa può aspettare."
+        items:
+          - icon: compass
+            title: Esplora
+            description: "Conosci un progetto, segui un contenuto o prova un'esperienza già disponibile."
+            action:
+              label: Scopri i progetti
+              href: /flowpulse/progetti?mondo=markpostura
+          - icon: people
+            title: Collabora
+            description: "Porta una competenza in un progetto come professionista, operatore, responsabile o collaboratore digitale."
+            action:
+              label: Dai forma a un'idea
+              href: /generaimpresa
+          - icon: spark
+            title: Crea
+            description: "Parti dalla tua professione, da un problema o da qualcosa che vuoi far crescere e costruisci il tuo mondo."
+            action:
+              label: Scopri FlowPulse
+              href: /flowpulse
+
+      offer:
+        eyebrow: Il primo incontro
+        title: Costruisci la prima mappa del tuo mondo.
+        description: |-
+          In circa un'ora partiamo da ciò che vuoi far crescere, guardiamo le risorse che hai già e scegliamo un primo punto concreto da cui cominciare.
+
+          Non prometto di sistemare tutta la vita in sessanta minuti. Possiamo però uscire dalla nebbia con una direzione leggibile e un passo da mettere alla prova.
+        format: Online o dal vivo · circa 60 minuti · prossimo incontro da concordare
+        takeaways_title: Alla fine avrai
+        takeaways:
+          - Una prima mappa di ciò che vuoi costruire
+          - Un problema o progetto su cui concentrare l'attenzione
+          - Le persone e le risorse già disponibili
+          - Un primo passo piccolo, concreto e verificabile
+        program_title: Il programma
+        program:
+          - title: Dove sei
+            description: "Che cosa sta succedendo e che cosa vorresti cambiare o far crescere."
+          - title: Che cosa hai già
+            description: "Tempo, capacità, persone, strumenti e collegamenti disponibili."
+          - title: Quali strade puoi esplorare
+            description: "Soluzioni possibili prima di scegliere quella più semplice da provare."
+          - title: Da dove cominci
+            description: "Un punto della mappa, una responsabilità e il prossimo passo."
+        primary_action:
+          label: Entra nella lista d'attesa
+          href: "#lista-attesa"
+        secondary_action:
+          label: Scrivimi su WhatsApp
           href: https://wa.me/393792891488
-        - label: Invia una email
-          href: mailto:markpostura@gmail.com?subject=Presentazione%20MarkPostura
+
+      about:
+        eyebrow: Chi trovi dall'altra parte
+        title: Sono Mark. Il mio lavoro comincia spesso da una domanda.
+        description: |-
+          Sono fisioterapista, ma passo con una certa facilità dal corpo alla programmazione, da una conversazione a un progetto, dalla natura a una nuova idea. Mi piace incontrare problemi, guardarli da punti di vista diversi e costruire qualcosa che si possa provare davvero.
+
+          Il mio contributo più forte è accendere il fuoco iniziale. Quando un progetto comincia a camminare, cerco persone che sappiano organizzarlo, migliorarlo e portarlo più lontano.
+        image:
+          url: markpostura/hero_markpostura-480.webp
+          alt: Mark Postura
+        traits:
+          - title: Il Matto
+            description: "Parte, incontra e lascia spazio all'imprevisto."
+          - title: L'Eremita
+            description: "Si ferma, osserva e prova a capire ciò che conta."
+          - title: Il Mago
+            description: "Usa le risorse presenti per dare all'idea una prima forma."
+        action:
+          label: Leggi chi sono davvero
+          href: /markpostura/contenuti/esplorare-comprendere-e-dare-forma-alle-idee
+
+      contents:
+        eyebrow: Il programma cresce pubblicamente
+        title: Un contenuto alla volta.
+        description: "Articoli, video e piccoli esperimenti diventeranno i capitoli della presentazione. Gli stessi temi verranno adattati anche per Instagram, senza inventare ogni settimana un discorso diverso."
+        items:
+          - label: Visione
+            title: Nutri ciò che vuoi far crescere
+            description: "Salute, risorse ed esplorazione personale nella settimana reale."
+            href: /markpostura/contenuti/nutri-cio-che-vuoi-far-crescere
+          - label: Metodo
+            title: Un problema alla volta
+            description: "Dalle soluzioni possibili a un passo da provare e verificare."
+            href: /markpostura/contenuti/un-problema-alla-volta
+          - label: Piattaforma
+            title: Dal mio mondo a FlowPulse
+            description: "Brand, progetti, Skill e persone dentro una rete di mondi collegati."
+            href: /markpostura/contenuti/dal-mio-mondo-a-flowpulse
+        action:
+          label: Leggi tutti i contenuti
+          href: /markpostura/contenuti
+
+      faqs:
+        eyebrow: Domande normali
+        title: Prima di scrivermi
+        items:
+          - question: Devo avere già un progetto?
+            answer: "No. Puoi partire da un problema, da una capacità che vuoi usare meglio oppure da qualcosa a cui desideri finalmente dare spazio."
+          - question: È una consulenza sanitaria?
+            answer: "No. La presentazione introduce la visione e il metodo di lavoro. Eventuali valutazioni o prestazioni sanitarie appartengono a percorsi professionali distinti."
+          - question: Devo conoscere FlowPulse?
+            answer: "No. Il mio mondo serve proprio come esempio visivo. Gli strumenti tecnici vengono dopo, soltanto se aiutano davvero il progetto."
+          - question: Posso partecipare soltanto per curiosità?
+            answer: "Certo. Non devi iscriverti a un progetto, diventare creator o arrivare con una decisione già presa."
+          - question: Quanto costa?
+            answer: "Il formato e le condizioni dei primi incontri verranno indicati insieme alla data. Prima voglio costruire e verificare bene la presentazione."
+
+      contact:
+        eyebrow: Lista d'attesa
+        title: Vuoi partecipare al primo incontro?
+        description: "Non ho ancora fissato data e formato. Lascia il tuo contatto: ti avviserò quando la presentazione sarà pronta, senza iscriverti automaticamente ad altro."
+        actions:
+          - label: Preferisci scrivermi su WhatsApp?
+            href: https://wa.me/393792891488

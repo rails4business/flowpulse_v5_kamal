@@ -381,7 +381,21 @@ module Posturacorretta
     return if params[:capitolo].blank?
 
     @lesson = @course_lessons.find { |lesson| lesson.fetch("slug") == params[:capitolo] }
-    return redirect_to(posturacorretta_course_chapters_path(corso: @reader_course_slug), alert: "Capitolo non trovato") unless @lesson
+    unless @lesson
+      canonical_matches = @all_didactic_courses.filter_map do |course|
+        chapter = course.fetch("chapters", []).find { |item| item.fetch("slug") == params[:capitolo] }
+        [course, chapter] if chapter
+      end
+      if canonical_matches.one?
+        canonical_course, canonical_chapter = canonical_matches.first
+        return redirect_to(
+          posturacorretta_course_chapter_path(corso: canonical_course.fetch("slug"), capitolo: canonical_chapter.fetch("slug")),
+          status: :moved_permanently
+        )
+      end
+
+      return redirect_to(posturacorretta_course_chapters_path(corso: @reader_course_slug), alert: "Capitolo non trovato")
+    end
     unless @lesson.fetch("show_available", false)
       return redirect_to(
         posturacorretta_course_path(corso: @reader_course_slug),
@@ -503,7 +517,7 @@ module Posturacorretta
     {
       "number" => "02",
       "slug" => "postura-e-fisiologia",
-      "title" => "Postura e Fisiologia",
+      "title" => "Educazione alla salute con la postura",
       "description" => "Le cinque aree della salute spiegate attraverso postura, fisiologia e relazioni tra i sistemi del corpo.",
       "lessons" => [],
       "status" => "draft"
@@ -528,11 +542,13 @@ module Posturacorretta
     @dashboard_view = view.presence_in(%w[programma calendario]) || params[:vista].presence_in(%w[programma calendario]) || "programma"
     dashboard_courses_by_slug = @dashboard_courses.index_by { |course| course.fetch("slug") }
     @dashboard_sections = []
-    @dashboard_sections << {
-      "title" => "Corsi iniziali",
-      "description" => "Le basi del percorso educativo PosturaCorretta.",
-      "courses" => @didactic_courses.filter_map { |course| dashboard_courses_by_slug[course.fetch("slug")] }
-    }
+    if @didactic_courses.any?
+      @dashboard_sections << {
+        "title" => "Corsi iniziali",
+        "description" => "Le basi del percorso educativo PosturaCorretta.",
+        "courses" => @didactic_courses.filter_map { |course| dashboard_courses_by_slug[course.fetch("slug")] }
+      }
+    end
     @dashboard_sections.concat(@didactic_sections.map do |section|
       section.slice("slug", "title", "description").merge(
         "courses" => section.fetch("courses", []).filter_map { |course| dashboard_courses_by_slug[course.fetch("slug")] }
@@ -567,7 +583,7 @@ module Posturacorretta
             end
           )
         end,
-        "release_locked" => false
+        "release_locked" => course.fetch("release_locked", false)
       )
     end
 

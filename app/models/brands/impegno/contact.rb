@@ -15,6 +15,10 @@ module Brands
                foreign_key: :participant_contact_id,
                inverse_of: :participant_contact,
                dependent: :restrict_with_error
+      has_many :brand_requests,
+               foreign_key: :participant_contact_id,
+               inverse_of: :participant_contact,
+               dependent: :restrict_with_error
 
       validates :name, presence: true
       validates :kind, inclusion: { in: KINDS }

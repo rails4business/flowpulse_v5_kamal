@@ -78,20 +78,35 @@ Uno User sospeso non può creare Session.
 
 ## Richiesta di invito
 
-Il modulo pubblico crea un `Contact` e un `DataCommitment` non calendarizzato:
+Dal 16 ottobre 2026 il modulo pubblico crea un `Contact` e una `BrandRequest`:
 
 ```text
-status: requested
-blocks_calendar: false
-request_kind: access_invitation
+status: open
+kind: access
 subject: Node del Brand
 domain: dominio dal quale arriva la richiesta
 ```
 
 Il responsabile lo vede tra le richieste aperte, approva e genera una
-`BrandInvitation`. Il link viene mostrato una sola volta per essere copiato.
-Rigenerarlo revoca l'invito precedente. Quando l'invito viene accettato, la
-richiesta collegata viene chiusa come `completed`.
+`BrandInvitation` collegata esplicitamente alla richiesta. Il link viene
+mostrato una sola volta per essere copiato. Rigenerarlo revoca l'invito
+precedente. Quando l'invito viene accettato, la richiesta passa ad `accepted`.
+
+`BrandRequest` è indipendente dal login e raccoglie anche contatti, liste
+d'attesa, candidature e domande su eventi o servizi. Può essere chiusa senza
+altri effetti oppure produrre una risorsa operativa:
+
+```text
+BrandRequest
+├── BrandInvitation → BrandAccess
+├── DataCommitment
+├── partecipazione a evento o servizio
+└── chiusura senza conversione
+```
+
+Una persona già conosciuta può essere invitata direttamente senza creare prima
+una richiesta. Il recupero password resta invece un flusso di sicurezza
+separato.
 
 ## Domain e Site
 
@@ -149,7 +164,8 @@ Node
 - `DataSession`, `DataSlot` e `DataCommitment` possono collegarsi
   facoltativamente a uno `SkillProduct`;
 - possono continuare a esistere senza SkillProduct per attività personali,
-  richieste, impegni generici e dati storici;
+  impegni generici e dati storici; le richieste preliminari appartengono invece
+  a `BrandRequest`;
 - 1Impegno non compare nel catalogo delle Skill e non richiede una propria
   attivazione `ReusableSkillNode` sul Brand;
 - il Domain e il Node definiscono il contesto e i permessi; la Session resta

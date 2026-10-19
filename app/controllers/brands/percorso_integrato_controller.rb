@@ -61,7 +61,86 @@ module Brands
       @places = data.fetch("centers", {}).values.select { |place| Array(place["projects"]).include?("percorso-integrato") }
     end
 
+    def services
+      load_site
+      @professionals = public_professionals
+      catalog_services = []
+      @professionals.each do |prof|
+        Array(prof["services"]).each do |serv|
+          next unless serv["public"] != false
+          catalog_services << {
+            "title" => serv["title"],
+            "label" => serv["label"],
+            "audience" => serv["audience"],
+            "description" => serv["description"],
+            "boundary" => serv["boundary"],
+            "professional_slug" => prof["slug"],
+            "professional_name" => prof["name"],
+            "professional_role" => prof["profession"]
+          }
+        end
+      end
+      load_connections("servizi.yml", "paths").each do |serv|
+        prof = @professionals.find { |p| p["slug"] == serv["professional_slug"] }
+        catalog_services << {
+          "title" => serv["title"],
+          "label" => "Percorso Specialistico",
+          "audience" => serv["description"],
+          "description" => serv["description"],
+          "duration" => serv["duration_label"],
+          "includes" => serv["includes"],
+          "city" => serv["city"],
+          "professional_slug" => serv["professional_slug"],
+          "professional_name" => prof&.fetch("name", "Professionista accreditato"),
+          "professional_role" => prof&.fetch("profession", "")
+        }
+      end
+      @services = catalog_services.uniq { |s| [s["title"], s["professional_slug"]] }
+    end
+
+    def municipalities
+      load_site
+      @comuni = load_comuni_data
+    end
+
+    def municipality
+      load_site
+      @comuni = load_comuni_data
+      @comune = @comuni[params[:slug]]
+      return redirect_to(percorso_integrato_municipalities_path, alert: "Comune non trovato") unless @comune
+
+      all_profs = public_professionals
+      @comune_professionals = Array(@comune["professionals"]).map do |item|
+        prof = all_profs.find { |p| p["slug"] == item["slug"] } || {}
+        item.reverse_merge(prof)
+      end
+      @comune_centers = Array(@comune["centers"])
+      @comune_services = Array(@comune["services"])
+      @comune_spaces = Array(@comune["available_spaces"])
+    end
+
+    def municipality_professionals
+      load_site
+      @comuni = load_comuni_data
+      @comune = @comuni[params[:slug]]
+      return redirect_to(percorso_integrato_municipalities_path, alert: "Comune non trovato") unless @comune
+
+      all_profs = public_professionals
+      @comune_professionals = Array(@comune["professionals"]).map do |item|
+        prof = all_profs.find { |p| p["slug"] == item["slug"] } || {}
+        item.reverse_merge(prof)
+      end
+      @comune_spaces = Array(@comune["available_spaces"])
+    end
+
     private
+
+    def load_comuni_data
+      path = Rails.root.join("config/data/percorso_integrato/comuni.yml")
+      return {} unless path.file?
+
+      (YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}).fetch("comuni", {})
+    end
 
     def load_site
       data = PercorsoIntegratoCatalog.load

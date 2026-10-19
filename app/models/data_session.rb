@@ -1,5 +1,8 @@
 class DataSession < ApplicationRecord
-  belongs_to :data_experience
+  STATUSES = Brands::Impegno::Commitment::STATUSES
+
+  belongs_to :data_experience, optional: true, inverse_of: :data_sessions
+  belongs_to :created_by_profile, class_name: "Profile", optional: true
   belongs_to :professional_calendar, optional: true
   belongs_to :service, optional: true
   belongs_to :skill_product, optional: true, inverse_of: :data_sessions
@@ -8,6 +11,7 @@ class DataSession < ApplicationRecord
 
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :status, inclusion: { in: STATUSES }
   validates :visibility, inclusion: { in: %w[public private] }
   validates :professional_calendar, presence: true, if: :public_calendar_entry?
   validate :ends_after_start

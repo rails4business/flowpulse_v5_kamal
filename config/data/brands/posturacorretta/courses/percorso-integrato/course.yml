@@ -1,0 +1,53 @@
+schema_version: 1
+
+contents:
+  - id: percorso-integrato
+    format: course
+    slug: percorso-integrato
+    position: 2
+    status: published
+    visibility: public
+    access: free
+    title: Percorso Integrato
+    description: Orientarsi tra bisogni, obiettivi, aree della salute e professionisti senza perdere di vista la persona.
+    image: https://ik.imagekit.io/posturacorretta/percorso%20integrato.png?updatedAt=1788608704470
+    level: base
+    author_node_slug: markpostura
+    publisher_node_slug: posturacorretta
+
+  - id: fisiologia-ambiti-percorsi-chakra
+    parent_id: percorso-integrato
+    format: chapter
+    chapter_type: theory
+    slug: ambiti-percorsi-chakra
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    title: Ambiti della salute e percorsi
+    description: "Sicurezza, prevenzione, preparazione e benessere: quattro intenzioni per orientare il percorso."
+    content_path: brands/posturacorretta/courses/postura-e-fisiologia/chapters/ambiti-percorsi-chakra.md
+
+  - id: fisiologia-matrice-ambiti
+    parent_id: percorso-integrato
+    format: chapter
+    chapter_type: theory
+    slug: matrice-ambiti-aree-paradigmi
+    position: 2
+    status: published
+    visibility: public
+    access: free
+    title: Matrice, ambiti, aree e paradigmi
+    content_path: brands/posturacorretta/courses/postura-e-fisiologia/chapters/matrice-ambiti-aree-paradigmi.md
+
+  - id: fisiologia-professionisti-insegnanti-blu
+    parent_id: percorso-integrato
+    format: chapter
+    chapter_type: practical
+    slug: professionisti-salute-benessere-insegnanti-blu
+    position: 3
+    status: published
+    visibility: public
+    access: free
+    title: Professionisti della salute, del benessere e insegnanti blu
+    content_path: brands/posturacorretta/courses/postura-e-fisiologia/chapters/professionisti-salute-benessere-insegnanti-blu.md

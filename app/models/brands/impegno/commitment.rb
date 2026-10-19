@@ -15,6 +15,9 @@ module Brands
   PUBLICATION_VISIBILITIES = %w[public member private].freeze
   ACCESS_MODES = %w[free subscription purchase].freeze
   PUBLICATION_CHANGE_KINDS = %w[publish update fix unpublish archive].freeze
+  WORKBENCH_ITEM_TYPES = %w[undecided activity project skill product event recurring_event].freeze
+  WORKBENCH_ORGANIZATIONS = %w[undecided todo dated_event recurring_event production_chain].freeze
+  WORKBENCH_CLASSIFICATION_STATUSES = %w[unclassified partial ready].freeze
 
   belongs_to :profile
   belongs_to :created_by_profile, class_name: "Profile", inverse_of: :created_data_commitments
@@ -31,12 +34,13 @@ module Brands
   belongs_to :data_session, optional: true
   belongs_to :data_slot, optional: true
   belongs_to :skill_product, optional: true, inverse_of: :data_commitments
+  belongs_to :brand_request, optional: true, inverse_of: :data_commitments
   has_many :children, class_name: "Brands::Impegno::Commitment", foreign_key: :parent_id,
            inverse_of: :parent, dependent: :restrict_with_error
 
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :starts_at, presence: true, unless: -> { experience_tree_draft? || external_request? }
+  validates :starts_at, presence: true, unless: -> { experience_tree_draft? || external_request? || workbench_draft? }
   validates :calendar_key, :calendar_label, presence: true
   validates :kind, inclusion: { in: KINDS }
   validates :status, inclusion: { in: STATUSES }
@@ -54,6 +58,7 @@ module Brands
   validate :requested_contact_has_a_channel
   validate :access_modes_are_valid
   validate :free_access_is_exclusive
+  validate :workbench_metadata_is_valid
 
   before_validation :normalize_access_modes
   before_validation :set_default_calendar_identity
@@ -62,6 +67,15 @@ module Brands
   scope :for_genera_impresa_project, ->(slug) {
     where("genera_impresa @> ?", { project_slug: slug }.to_json)
   }
+  scope :workbench_items, -> { where("metadata @> ?", { workbench: { inbox: true } }.to_json) }
+
+  def workbench_item?
+    ActiveModel::Type::Boolean.new.cast(workbench_data["inbox"])
+  end
+
+  def workbench_data
+    metadata.to_h.fetch("workbench", {}).to_h
+  end
 
   def duration_minutes
     if actual_started_at.present?
@@ -110,6 +124,21 @@ module Brands
       return unless access_modes.include?("free") && access_modes.many?
 
       errors.add(:access_modes, "non può combinare l’accesso libero con abbonamento o acquisto")
+    end
+
+    def workbench_metadata_is_valid
+      return unless workbench_item?
+
+      validate_workbench_value("item_type", WORKBENCH_ITEM_TYPES)
+      validate_workbench_value("organization", WORKBENCH_ORGANIZATIONS)
+      validate_workbench_value("classification_status", WORKBENCH_CLASSIFICATION_STATUSES)
+    end
+
+    def validate_workbench_value(key, allowed_values)
+      value = workbench_data[key].to_s
+      return if allowed_values.include?(value)
+
+      errors.add(:metadata, "contiene #{key} non valido")
     end
 
     def calculate_hourly_total
@@ -175,6 +204,10 @@ module Brands
 
     def experience_tree_draft?
       data_experience_id.present? && starts_at.blank?
+    end
+
+    def workbench_draft?
+      workbench_item? && status == "draft" && starts_at.blank? && !blocks_calendar?
     end
     end
   end

@@ -10,7 +10,10 @@ module Brands
 
       def create_experience
         load_process
-        experience = @process.data_experiences.new(experience_params.merge(created_by_user: Current.user))
+        experience = @process.data_experiences.new(experience_params.merge(
+          created_by_user: Current.user,
+          created_by_profile: Current.user.profile
+        ))
         if experience.save
           redirect_to brand_admin_node_process_path(@brand.slug, @node, @process, anchor: "process-experiences"), notice: "DataExperience aggiunta."
         else
@@ -35,11 +38,13 @@ module Brands
         end
 
         def experience_params
-          params.require(:data_experience).permit(:title, :description)
+          params.require(:data_experience).permit(:title, :description, :responsible_profile_id, :status)
         end
 
         def process_params
-          params.require(:node_process).permit(:title, :slug, :description, :status)
+          params.require(:node_process).permit(
+            :title, :slug, :description, :status, :responsible_profile_id, :reference_data_experience_id
+          )
         end
     end
   end

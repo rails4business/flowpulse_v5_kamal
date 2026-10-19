@@ -1,0 +1,40 @@
+schema_version: 1
+
+contents:
+  - id: corpo-come-un-giardino
+    format: course
+    slug: corpo-come-un-giardino
+    position: 4
+    status: published
+    visibility: public
+    access: free
+    title: Postura e potenziale umano
+    description: Alla scoperta del potenziale dell'essere umano e della sua evoluzione armonica, osservando il corpo come un giardino.
+    image: https://ik.imagekit.io/posturacorretta/giusta_posizione.png?updatedAt=1786699701209
+    level: base
+    author_node_slug: markpostura
+    publisher_node_slug: posturacorretta
+
+  - id: fisiologia-metodiche-paradigmi-esperienza
+    parent_id: corpo-come-un-giardino
+    format: chapter
+    chapter_type: practical
+    slug: metodiche-paradigmi-esperienza
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    title: Le metodiche posturali, paradigmi ed esperienza
+    content_path: brands/posturacorretta/courses/postura-e-fisiologia/chapters/metodiche-paradigmi-esperienza.md
+
+  - id: fisiologia-tre-possibilita
+    parent_id: corpo-come-un-giardino
+    format: chapter
+    chapter_type: theory
+    slug: tre-possibilita-per-continuare
+    position: 2
+    status: published
+    visibility: public
+    access: free
+    title: Tre possibilità per continuare
+    content_path: brands/posturacorretta/courses/postura-e-fisiologia/chapters/tre-possibilita-per-continuare.md

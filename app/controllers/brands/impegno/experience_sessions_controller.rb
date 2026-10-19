@@ -5,7 +5,10 @@ module Brands
       before_action :ensure_experience_access!
 
       def create
-        data_session = @experience.data_sessions.build(session_params.merge(position: @experience.data_sessions.maximum(:position).to_i + 1))
+        data_session = @experience.data_sessions.build(session_params.merge(
+          created_by_profile: current_profile,
+          position: DataExperiences::OrderedSteps.new(@experience).next_position
+        ))
         if data_session.save
           respond_with_workbench(notice: "Session aggiunta.")
         else
@@ -40,7 +43,7 @@ module Brands
 
         def session_params
           params.require(:data_session).permit(
-            :title, :starts_at, :ends_at, :position, :professional_calendar_id, :service_id, :visibility
+            :title, :starts_at, :ends_at, :position, :professional_calendar_id, :service_id, :visibility, :status
           )
         end
     end

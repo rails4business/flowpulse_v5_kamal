@@ -1,370 +1,196 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Template Dashboard</title>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              blue: '#2563eb',
-              dark: '#0f172a'
-            }
-          }
-        }
-      }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prototipo della cabina di regia produttiva di FlowPulse.">
+  <title>FlowPulse · Cabina di regia</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18211d; --muted: #66716b; --line: #dfe5e1; --paper: #f5f7f4; --card: #fff;
+      --forest: #214f3b; --forest-soft: #e8f2ec; --blue: #315e98; --blue-soft: #eaf1fa;
+      --amber: #9a6515; --amber-soft: #fff3dc; --red: #a3483f; --red-soft: #fbecea;
+      --shadow: 0 18px 55px rgba(27, 49, 39, .08);
     }
-  </script>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, select { font: inherit; } button { cursor: pointer; } a { color: inherit; }
+    .shell { min-height: 100vh; }
+    .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; min-height: 70px; padding: 12px clamp(18px, 4vw, 54px); border-bottom: 1px solid rgba(223,229,225,.9); background: rgba(255,255,255,.9); backdrop-filter: blur(16px); }
+    .identity, .top-actions, .brand-picker, .person, .section-title, .metric-head, .line-head, .station-top, .calendar-row, .legend, .tool-map { display: flex; align-items: center; }
+    .identity { gap: 11px; font-weight: 800; letter-spacing: -.02em; }
+    .mark { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 13px; background: var(--forest); color: #fff; box-shadow: 0 7px 18px rgba(33,79,59,.22); }
+    .identity small { display: block; color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .03em; }
+    .top-actions { gap: 10px; }
+    .icon-button, .person { min-height: 42px; border: 1px solid var(--line); background: #fff; color: var(--ink); }
+    .icon-button { width: 42px; border-radius: 13px; }
+    .person { gap: 9px; padding: 5px 10px 5px 6px; border-radius: 14px; }
+    .avatar { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 10px; background: #eff1ef; font-size: 12px; font-weight: 850; }
+    main { width: min(1500px, 100%); margin: 0 auto; padding: 30px clamp(16px, 4vw, 54px) 64px; }
+    .eyebrow { margin: 0 0 5px; color: var(--forest); font-size: 11px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 820px; margin-bottom: 9px; font-size: clamp(30px, 5vw, 48px); line-height: 1.06; letter-spacing: -.045em; }
+    .intro { max-width: 720px; margin-bottom: 0; color: var(--muted); font-size: 16px; }
+    .hero { display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; margin-bottom: 24px; }
+    .brand-picker { min-width: 290px; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: var(--shadow); }
+    .brand-dot { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(145deg,#3694d1,#245f9d); }
+    .brand-picker label { display: block; color: var(--muted); font-size: 11px; font-weight: 750; }
+    .brand-picker select { width: 100%; padding: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-weight: 750; }
+    .tool-map { align-items: stretch; margin-bottom: 22px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--card); }
+    .tool { flex: 1; min-width: 0; padding: 18px 22px; }
+    .tool + .tool { border-left: 1px solid var(--line); }
+    .tool-number { color: #9ca59f; font-size: 11px; font-weight: 900; }
+    .tool strong { display: block; margin: 4px 0 2px; font-size: 17px; }
+    .tool p { margin: 0; color: var(--muted); font-size: 13px; }
+    .tool--genera { box-shadow: inset 0 4px 0 #c79037; } .tool--rails { box-shadow: inset 0 4px 0 var(--blue); } .tool--impegno { box-shadow: inset 0 4px 0 var(--forest); }
+    .metrics { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-bottom: 28px; }
+    .metric { padding: 18px; border: 1px solid var(--line); border-radius: 17px; background: var(--card); }
+    .metric-head { justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 750; }
+    .metric strong { display: block; margin-top: 6px; font-size: 28px; line-height: 1; letter-spacing: -.035em; }
+    .metric small { color: var(--muted); } .metric-alert { color: var(--red); font-weight: 850; }
+    .workspace { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 20px; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: 22px; background: var(--card); box-shadow: 0 9px 30px rgba(26,45,36,.045); }
+    .panel-pad { padding: 21px; }
+    .section-title { justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+    .section-title h2 { margin: 0; font-size: 20px; letter-spacing: -.025em; }
+    .section-title p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+    .filters { display: flex; gap: 6px; padding: 4px; border-radius: 12px; background: var(--paper); }
+    .filter { padding: 7px 10px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 750; }
+    .filter[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(28,43,35,.08); }
+    .production-lines { display: grid; gap: 13px; }
+    .production-line { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; }
+    .line-head { justify-content: space-between; gap: 20px; padding: 15px 17px; background: #fbfcfb; }
+    .line-title { min-width: 0; } .line-title strong { display: block; font-size: 15px; } .line-title span { color: var(--muted); font-size: 12px; }
+    .line-stats { display: flex; gap: 18px; white-space: nowrap; } .line-stats span { color: var(--muted); font-size: 11px; } .line-stats b { display: block; color: var(--ink); font-size: 14px; }
+    .stations-wrap { position: relative; overflow-x: auto; padding: 17px; scrollbar-width: thin; }
+    .stations { display: flex; min-width: 760px; align-items: stretch; gap: 20px; }
+    .station { position: relative; flex: 1 0 155px; min-height: 142px; padding: 13px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+    .station:not(:last-child)::after { content: "→"; position: absolute; top: 50%; right: -17px; color: #aeb7b1; font-weight: 900; transform: translateY(-50%); }
+    .station-top { justify-content: space-between; gap: 7px; } .station-index { color: #8e9992; font-size: 10px; font-weight: 900; }
+    .status { padding: 3px 7px; border-radius: 99px; font-size: 10px; font-weight: 850; }
+    .status--doing { background: var(--blue-soft); color: var(--blue); } .status--ready { background: var(--forest-soft); color: var(--forest); }
+    .status--waiting { background: var(--amber-soft); color: var(--amber); } .status--blocked { background: var(--red-soft); color: var(--red); }
+    .station h3 { margin: 11px 0 4px; font-size: 14px; line-height: 1.2; } .station p { min-height: 34px; margin: 0 0 10px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .owner { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+    .owner-dot { width: 20px; height: 20px; border-radius: 7px; background: #ecefed; text-align: center; font-size: 8px; font-weight: 900; line-height: 20px; }
+    .empty-owner { color: var(--red); font-weight: 800; }
+    .progress { height: 4px; margin-top: 11px; overflow: hidden; border-radius: 99px; background: #edf0ee; } .progress span { display: block; height: 100%; border-radius: inherit; background: var(--forest); }
+    .attention { position: sticky; top: 90px; } .attention-list { display: grid; gap: 9px; }
+    .attention-item { padding: 13px; border-radius: 14px; background: var(--paper); } .attention-item strong { display: block; font-size: 13px; }
+    .attention-item p { margin: 3px 0 10px; color: var(--muted); font-size: 12px; }
+    .text-button { padding: 0; border: 0; background: transparent; color: var(--blue); font-size: 12px; font-weight: 800; }
+    .load { margin-top: 21px; padding-top: 17px; border-top: 1px solid var(--line); } .load h3 { margin-bottom: 11px; font-size: 14px; }
+    .load-person { display: grid; grid-template-columns: 30px 1fr auto; gap: 9px; align-items: center; margin-top: 9px; } .load-person small { display: block; color: var(--muted); }
+    .load-pill { padding: 3px 7px; border-radius: 99px; background: var(--amber-soft); color: var(--amber); font-size: 10px; font-weight: 850; }
+    .calendar { margin-top: 20px; } .calendar-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 11px; }
+    .calendar-column { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 15px; background: #fbfcfb; } .calendar-column h3 { margin-bottom: 10px; font-size: 13px; }
+    .calendar-row { align-items: flex-start; gap: 9px; padding: 9px 0; border-top: 1px solid #e7ebe8; } .calendar-row:first-of-type { border-top: 0; }
+    .calendar-icon { display: grid; flex: 0 0 28px; height: 28px; place-items: center; border-radius: 9px; background: #fff; border: 1px solid var(--line); font-size: 11px; font-weight: 900; }
+    .calendar-row strong { display: block; font-size: 12px; } .calendar-row span { display: block; color: var(--muted); font-size: 11px; } .calendar-row b { margin-left: auto; color: var(--forest); font-size: 10px; white-space: nowrap; }
+    .legend { flex-wrap: wrap; gap: 11px; margin-top: 16px; color: var(--muted); font-size: 11px; } .legend span { display: flex; align-items: center; gap: 5px; } .legend i { width: 8px; height: 8px; border-radius: 50%; }
+    [hidden] { display: none !important; }
+    @media (max-width:1050px) { .workspace { grid-template-columns: 1fr; } .attention { position: static; } .metrics { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width:720px) {
+      .topbar { min-height: 62px; } .identity small, .person span, .desktop-only { display: none; } main { padding-top: 23px; }
+      .hero { display: block; } .brand-picker { width: 100%; min-width: 0; margin-top: 20px; } .tool-map { display: block; }
+      .tool + .tool { border-top: 1px solid var(--line); border-left: 0; } .tool { padding: 14px 17px; } .tool p { display: inline; }
+      .metrics { grid-template-columns: 1fr 1fr; } .metric { padding: 14px; } .metric strong { font-size: 23px; } .section-title { display: block; }
+      .filters { margin-top: 13px; overflow-x: auto; } .line-head { display: block; } .line-stats { margin-top: 11px; }
+      .calendar-grid { grid-template-columns: 1fr; } .panel-pad { padding: 16px; }
+    }
+    @media (max-width:420px) { .metrics { grid-template-columns: 1fr; } .metric { display: grid; grid-template-columns: 1fr auto; align-items: end; } .metric-head { grid-column: 1/-1; } .metric strong { margin-top: 4px; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
+  </style>
 </head>
-
-<body class="bg-slate-50 text-slate-900">
-  <div class="min-h-screen">
-
-    <!-- Mobile overlay -->
-    <div
-      id="sidebarOverlay"
-      class="fixed inset-0 z-30 hidden bg-slate-900/50 lg:hidden"
-      aria-hidden="true"
-    ></div>
-
-    <!-- Sidebar -->
-    <aside
-      id="sidebar"
-      class="fixed inset-y-0 left-0 z-40 w-72 -translate-x-full border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0"
-      aria-label="Sidebar"
-    >
-      <div class="flex h-16 items-center justify-between border-b border-slate-200 px-5">
-        <a href="#" class="flex items-center gap-3">
-          <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold">
-            FP
-          </div>
-          <div>
-            <p class="font-bold leading-none">FlowPulse</p>
-            <p class="text-xs text-slate-500">Dashboard</p>
-          </div>
-        </a>
-
-        <button
-          id="closeSidebarButton"
-          type="button"
-          class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
-          aria-label="Chiudi menu"
-        >
-          ✕
-        </button>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="identity"><span class="mark" aria-hidden="true">FP</span><span>FlowPulse<small>Cabina di regia</small></span></div>
+      <div class="top-actions">
+        <button class="icon-button" type="button" aria-label="Cerca">⌕</button>
+        <button class="icon-button desktop-only" type="button" aria-label="Notifiche">○</button>
+        <button class="person" type="button" aria-label="Apri profilo"><span class="avatar">MP</span><span>Mark Postura</span><span aria-hidden="true">⌄</span></button>
       </div>
-
-      <nav class="h-[calc(100vh-4rem)] overflow-y-auto p-4">
-        <div class="mb-6">
-          <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Generale
-          </p>
-
-          <a href="#" class="flex items-center gap-3 rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-semibold text-blue-700">
-            <span>🏠</span>
-            Dashboard
-          </a>
-
-          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>🌳</span>
-            Alberi / Cards
-          </a>
-
-          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>🧭</span>
-            Journeys
-          </a>
-
-          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>📅</span>
-            Eventi
-          </a>
-        </div>
-
-        <div class="mb-6">
-          <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Accademia
-          </p>
-
-          <a href="#" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>🎓</span>
-            Corsi
-          </a>
-
-          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>📘</span>
-            Lezioni
-          </a>
-
-          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>✅</span>
-            Progressi
-          </a>
-        </div>
-
-        <div class="mb-6">
-          <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Salute
-          </p>
-
-          <a href="#" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>💙</span>
-            Postura e Fisiologia
-          </a>
-
-          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>❤️</span>
-            Stop al Dolore
-          </a>
-
-          <a href="#" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
-            <span>💚</span>
-            Benessere Integrato
-          </a>
-        </div>
-
-        <div class="rounded-2xl bg-slate-50 p-4">
-          <p class="text-sm font-semibold">Hai un nuovo progetto?</p>
-          <p class="mt-1 text-xs text-slate-500">
-            Crea una nuova card, un journey o un evento operativo.
-          </p>
-          <button class="mt-3 w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-            + Nuovo
-          </button>
-        </div>
-      </nav>
-    </aside>
-
-    <!-- Main wrapper -->
-    <div class="lg:pl-72">
-
-      <!-- Navbar -->
-      <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur lg:px-8">
-        <div class="flex items-center gap-3">
-          <button
-            id="openSidebarButton"
-            type="button"
-            class="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
-            aria-label="Apri menu"
-          >
-            ☰
-          </button>
-
-          <div>
-            <p class="text-sm text-slate-500">Template</p>
-            <h1 class="text-lg font-bold leading-tight">Dashboard</h1>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button class="hidden rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 sm:block">
-            Cerca
-          </button>
-
-          <button class="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100" aria-label="Notifiche">
-            🔔
-          </button>
-
-          <button class="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100" aria-label="Impostazioni">
-            ⚙️
-          </button>
-
-          <div class="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">
-            M
-          </div>
-        </div>
-      </header>
-
-      <!-- Main content -->
-      <main class="p-4 lg:p-8">
-
-        <!-- Breadcrumb -->
-        <div class="mb-6 text-sm text-slate-500">
-          Home / Dashboard
-        </div>
-
-        <!-- Page heading -->
-        <section class="mb-8 flex flex-col justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-center">
-          <div>
-            <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Pannello operativo
-            </p>
-            <h2 class="text-2xl font-bold tracking-tight lg:text-3xl">
-              Gestisci percorsi, card, eventi e utenti
-            </h2>
-            <p class="mt-2 max-w-2xl text-slate-500">
-              Una base pulita per costruire dashboard Rails, Hotwire, FlowPulse o PosturaCorretta.
-            </p>
-          </div>
-
-          <div class="flex flex-col gap-2 sm:flex-row">
-            <button class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">
-              Esporta
-            </button>
-            <button class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-              + Crea nuovo
-            </button>
+    </header>
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div><p class="eyebrow">Produzione e organizzazione</p><h1 id="page-title">Dal progetto al lavoro di oggi.</h1><p class="intro">Una sola vista per capire cosa vogliamo costruire, dove si ferma la produzione e chi deve occuparsene.</p></div>
+        <div class="brand-picker"><span class="brand-dot" aria-hidden="true"></span><div style="flex:1"><label for="brand">Brand</label><select id="brand"><option>PosturaCorretta</option><option>Mark Postura</option><option>FlowPulse</option></select></div></div>
+      </section>
+      <section class="tool-map" aria-label="Ruolo degli strumenti">
+        <article class="tool tool--genera"><span class="tool-number">01</span><strong>Generaimpresa</strong><p>Brand, progetti e obiettivi.</p></article>
+        <article class="tool tool--rails"><span class="tool-number">02</span><strong>Rails4Business</strong><p>Catene, stazioni, pezzi e costi.</p></article>
+        <article class="tool tool--impegno"><span class="tool-number">03</span><strong>1impegno</strong><p>Persone, calendari e lavoro reale.</p></article>
+      </section>
+      <section class="metrics" aria-label="Riepilogo del brand">
+        <article class="metric"><div class="metric-head"><span>Progetti attivi</span><span>Generaimpresa</span></div><strong>3</strong><small>su 5 totali</small></article>
+        <article class="metric"><div class="metric-head"><span>Pezzi questa settimana</span><span>Rails4B</span></div><strong>7</strong><small>obiettivo: 10</small></article>
+        <article class="metric"><div class="metric-head"><span>Ore programmate</span><span>1impegno</span></div><strong>12h</strong><small>4 sessioni</small></article>
+        <article class="metric"><div class="metric-head"><span>Richiedono attenzione</span><span class="metric-alert">!</span></div><strong>2</strong><small>1 blocco · 1 senza responsabile</small></article>
+      </section>
+      <div class="workspace">
+        <section class="panel panel-pad" aria-labelledby="lines-title">
+          <div class="section-title"><div><h2 id="lines-title">Catene di montaggio</h2><p>Ogni progetto produce qualcosa attraverso una sequenza di stazioni.</p></div><div class="filters" role="group" aria-label="Filtra catene"><button class="filter" type="button" data-filter="all" aria-pressed="true">Tutte</button><button class="filter" type="button" data-filter="active" aria-pressed="false">Attive</button><button class="filter" type="button" data-filter="attention" aria-pressed="false">Da seguire</button></div></div>
+          <div class="production-lines">
+            <article class="production-line" data-state="active">
+              <header class="line-head"><div class="line-title"><strong>Sviluppo FlowPulse</strong><span>Progetto tecnico · prodotto: Skill funzionanti</span></div><div class="line-stats"><span>Pezzi<b>2 / 4</b></span><span>Costo<b>6 ore</b></span><span>Ciclo<b>17–23 ott</b></span></div></header>
+              <div class="stations-wrap" tabindex="0" aria-label="Stazioni della catena Sviluppo FlowPulse"><div class="stations">
+                <section class="station"><div class="station-top"><span class="station-index">01</span><span class="status status--ready">Pronto</span></div><h3>Definizione</h3><p>Requisiti minimi della Skill.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:100%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">02</span><span class="status status--doing">In corso</span></div><h3>Sviluppo</h3><p>Model, interfaccia e collegamento Node.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:55%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">03</span><span class="status status--waiting">In attesa</span></div><h3>Test</h3><p>Verifica del flusso completo.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:8%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">04</span><span class="status status--waiting">In attesa</span></div><h3>Rilascio</h3><p>Deploy e nota di aggiornamento.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:0%"></span></div></section>
+              </div></div>
+            </article>
+            <article class="production-line" data-state="active">
+              <header class="line-head"><div class="line-title"><strong>Storia da raccontare</strong><span>Produzione editoriale · prodotto: contenuto pubblicato</span></div><div class="line-stats"><span>Pezzi<b>4 / 5</b></span><span>Costo<b>3 ore</b></span><span>Ciclo<b>settimanale</b></span></div></header>
+              <div class="stations-wrap" tabindex="0" aria-label="Stazioni della catena Storia da raccontare"><div class="stations">
+                <section class="station"><div class="station-top"><span class="station-index">01</span><span class="status status--ready">Pronto</span></div><h3>Idea</h3><p>Problema e messaggio centrale.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:100%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">02</span><span class="status status--ready">Pronto</span></div><h3>Scrittura</h3><p>Prima versione del contenuto.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:100%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">03</span><span class="status status--doing">In corso</span></div><h3>Revisione</h3><p>Forma, fonti e collegamenti.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:70%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">04</span><span class="status status--waiting">In attesa</span></div><h3>Pubblicazione</h3><p>Catalogo, data e diffusione.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:0%"></span></div></section>
+              </div></div>
+            </article>
+            <article class="production-line" data-state="attention">
+              <header class="line-head"><div class="line-title"><strong>Canale YouTube PosturaCorretta</strong><span>Comunicazione · prodotto: video e contenuti derivati</span></div><div class="line-stats"><span>Pezzi<b>1 / 4</b></span><span>Costo<b>da stimare</b></span><span>Ciclo<b>da avviare</b></span></div></header>
+              <div class="stations-wrap" tabindex="0" aria-label="Stazioni della catena YouTube PosturaCorretta"><div class="stations">
+                <section class="station"><div class="station-top"><span class="station-index">01</span><span class="status status--ready">Pronto</span></div><h3>Problema</h3><p>Scegliere una domanda concreta.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:100%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">02</span><span class="status status--doing">In corso</span></div><h3>Scaletta</h3><p>Soluzione, esempio e invito finale.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:35%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">03</span><span class="status status--blocked">Scoperto</span></div><h3>Produzione</h3><p>Ripresa, montaggio e copertina.</p><div class="owner empty-owner">＋ Assegna responsabile</div><div class="progress"><span style="width:0%"></span></div></section>
+                <section class="station"><div class="station-top"><span class="station-index">04</span><span class="status status--waiting">In attesa</span></div><h3>Diffusione</h3><p>YouTube, Instagram e sito.</p><div class="owner"><span class="owner-dot">MP</span>Mark</div><div class="progress"><span style="width:0%"></span></div></section>
+              </div></div>
+            </article>
           </div>
         </section>
-
-        <!-- Stats -->
-        <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-medium text-slate-500">Utenti</p>
-              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">+12%</span>
-            </div>
-            <p class="mt-3 text-3xl font-bold">124</p>
-            <p class="mt-1 text-sm text-slate-500">Totali registrati</p>
-          </article>
-
-          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-medium text-slate-500">Card</p>
-              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">+34</span>
-            </div>
-            <p class="mt-3 text-3xl font-bold">432</p>
-            <p class="mt-1 text-sm text-slate-500">Contenuti e step</p>
-          </article>
-
-          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-medium text-slate-500">Eventi</p>
-              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">oggi</span>
-            </div>
-            <p class="mt-3 text-3xl font-bold">26</p>
-            <p class="mt-1 text-sm text-slate-500">In calendario</p>
-          </article>
-
-          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-medium text-slate-500">Percorsi</p>
-              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs">attivi</span>
-            </div>
-            <p class="mt-3 text-3xl font-bold">18</p>
-            <p class="mt-1 text-sm text-slate-500">Journey aperti</p>
-          </article>
-        </section>
-
-        <!-- Content grid -->
-        <section class="grid grid-cols-1 gap-6 xl:grid-cols-3">
-
-          <!-- Main panel -->
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2">
-            <div class="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <h3 class="text-lg font-bold">Attività recenti</h3>
-                <p class="text-sm text-slate-500">Ultimi movimenti del sistema</p>
-              </div>
-              <button class="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium hover:bg-slate-100">
-                Vedi tutto
-              </button>
-            </div>
-
-            <div class="overflow-hidden rounded-2xl border border-slate-200">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
-                  <tr>
-                    <th class="px-4 py-3">Nome</th>
-                    <th class="px-4 py-3">Tipo</th>
-                    <th class="px-4 py-3">Stato</th>
-                    <th class="px-4 py-3 text-right">Azioni</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200 bg-white">
-                  <tr>
-                    <td class="px-4 py-4 font-medium">Igiene Posturale</td>
-                    <td class="px-4 py-4 text-slate-500">Programma</td>
-                    <td class="px-4 py-4"><span class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">Attivo</span></td>
-                    <td class="px-4 py-4 text-right"><a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Apri</a></td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-4 font-medium">Stop al Dolore</td>
-                    <td class="px-4 py-4 text-slate-500">Percorso</td>
-                    <td class="px-4 py-4"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">Bozza</span></td>
-                    <td class="px-4 py-4 text-right"><a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Apri</a></td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-4 font-medium">Diario della Salute</td>
-                    <td class="px-4 py-4 text-slate-500">Modulo</td>
-                    <td class="px-4 py-4"><span class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">Test</span></td>
-                    <td class="px-4 py-4 text-right"><a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Apri</a></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <aside class="panel panel-pad attention" aria-labelledby="attention-title">
+          <div class="section-title"><div><h2 id="attention-title">Da sbloccare</h2><p>Prima di aggiungere altro lavoro.</p></div></div>
+          <div class="attention-list">
+            <article class="attention-item"><strong>Produzione video senza responsabile</strong><p>La catena YouTube non può completare il primo ciclo.</p><button class="text-button" type="button">Assegna o rimanda →</button></article>
+            <article class="attention-item"><strong>Test Skill non calendarizzato</strong><p>La stazione è pronta, ma non ha ancora uno spazio di lavoro.</p><button class="text-button" type="button">Apri in 1impegno →</button></article>
           </div>
-
-          <!-- Side panel -->
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 class="text-lg font-bold">Prossimi step</h3>
-            <p class="mt-1 text-sm text-slate-500">Mini roadmap operativa</p>
-
-            <div class="mt-6 space-y-4">
-              <div class="flex gap-3">
-                <div class="mt-1 h-3 w-3 rounded-full bg-blue-600"></div>
-                <div>
-                  <p class="font-semibold">Creare le prime card</p>
-                  <p class="text-sm text-slate-500">Struttura contenuti e sezioni.</p>
-                </div>
-              </div>
-
-              <div class="flex gap-3">
-                <div class="mt-1 h-3 w-3 rounded-full bg-slate-300"></div>
-                <div>
-                  <p class="font-semibold">Collegare eventi</p>
-                  <p class="text-sm text-slate-500">Ogni evento nasce da una card.</p>
-                </div>
-              </div>
-
-              <div class="flex gap-3">
-                <div class="mt-1 h-3 w-3 rounded-full bg-slate-300"></div>
-                <div>
-                  <p class="font-semibold">Aggiungere Hotwire</p>
-                  <p class="text-sm text-slate-500">Turbo Frame e Stimulus controller.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
+          <div class="load"><h3>Carico delle persone</h3><div class="load-person"><span class="avatar">MP</span><span><strong>Mark</strong><small>12 ore · 7 stazioni</small></span><span class="load-pill">Pieno</span></div><div class="load-person"><span class="avatar">—</span><span><strong>Non assegnato</strong><small>1 stazione</small></span><span class="load-pill">Aperto</span></div></div>
+        </aside>
+      </div>
+      <section class="panel panel-pad calendar" aria-labelledby="calendar-title">
+        <div class="section-title"><div><h2 id="calendar-title">Dal ciclo produttivo al calendario</h2><p>1impegno trasforma le stazioni in tempo, incontri e responsabilità.</p></div><button class="text-button" type="button">Apri il planning →</button></div>
+        <div class="calendar-grid">
+          <article class="calendar-column"><h3>DataCommitment · responsabilità</h3><div class="calendar-row"><span class="calendar-icon">C</span><span><strong>Completare revisione articolo</strong><span>Storia da raccontare · Mark</span></span><b>entro ven</b></div><div class="calendar-row"><span class="calendar-icon">C</span><span><strong>Validare la Skill</strong><span>Sviluppo FlowPulse · Mark</span></span><b>entro dom</b></div></article>
+          <article class="calendar-column"><h3>DataSession · lavoro insieme</h3><div class="calendar-row"><span class="calendar-icon">S</span><span><strong>Revisione percorso online</strong><span>PosturaCorretta · 2 persone</span></span><b>gio 15:00</b></div><div class="calendar-row"><span class="calendar-icon">S</span><span><strong>Registrazione primo video</strong><span>Canale YouTube</span></span><b>da fissare</b></div></article>
+          <article class="calendar-column"><h3>DataSlot · spazio disponibile</h3><div class="calendar-row"><span class="calendar-icon">T</span><span><strong>Lavoro tecnico</strong><span>Blocco protetto · 90 minuti</span></span><b>ven 09:00</b></div><div class="calendar-row"><span class="calendar-icon">T</span><span><strong>Produzione contenuti</strong><span>Blocco protetto · 60 minuti</span></span><b>sab 10:30</b></div></article>
+        </div>
+        <div class="legend" aria-label="Legenda stati"><span><i style="background:#315e98"></i>in lavorazione</span><span><i style="background:#214f3b"></i>completato</span><span><i style="background:#c79037"></i>in attesa</span><span><i style="background:#a3483f"></i>bloccato o senza responsabile</span></div>
+      </section>
+    </main>
   </div>
-
   <script>
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const openButton = document.getElementById('openSidebarButton');
-    const closeButton = document.getElementById('closeSidebarButton');
-
-    function openSidebar() {
-      sidebar.classList.remove('-translate-x-full');
-      overlay.classList.remove('hidden');
-      document.body.classList.add('overflow-hidden');
-    }
-
-    function closeSidebar() {
-      sidebar.classList.add('-translate-x-full');
-      overlay.classList.add('hidden');
-      document.body.classList.remove('overflow-hidden');
-    }
-
-    openButton.addEventListener('click', openSidebar);
-    closeButton.addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeSidebar();
-      }
-    });
+    const filters = document.querySelectorAll('[data-filter]');
+    const lines = document.querySelectorAll('.production-line');
+    filters.forEach((button) => button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+      filters.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      lines.forEach((line) => { line.hidden = filter !== 'all' && line.dataset.state !== filter; });
+    }));
   </script>
 </body>
 </html>

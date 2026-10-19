@@ -29,6 +29,7 @@ class Domain < ApplicationRecord
            foreign_key: :source_domain_id,
            dependent: :nullify
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
+  has_many :brand_requests, dependent: :restrict_with_error
 
   before_validation :normalize_hosts
   before_validation :normalize_brand_settings

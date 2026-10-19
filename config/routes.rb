@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get "posturacorrettastart/1mese", to: redirect("/posturacorrettastart/primo_mese", status: 301)
   resource :session
   resource :brand_access_request, path: "accesso/richiesta", only: %i[new create]
+  resources :public_brand_requests, path: "richieste", only: :create
   get "email-verification/sent", to: "email_verifications#sent", as: :email_verification_sent
   get "email-verification/:token", to: "email_verifications#show", as: :email_verification
   patch "email-verification/:token", to: "email_verifications#update"
@@ -124,7 +125,13 @@ Rails.application.routes.draw do
   get "percorso-integrato/professionisti/:slug/schede/:material/esercizi/:position" => "brands/percorso_integrato#professional_exercise", as: :percorso_integrato_professional_exercise
   get "percorso-integrato/professionisti/:slug/schede/:material/immagini/:position" => "brands/percorso_integrato#professional_material_image", as: :percorso_integrato_professional_material_image
   get "percorso-integrato/professionisti/:slug" => "brands/percorso_integrato#professional", as: :percorso_integrato_professional
+  get "percorso-integrato/centri" => "brands/percorso_integrato#places", as: :percorso_integrato_centers
   get "percorso-integrato/luoghi" => "brands/percorso_integrato#places", as: :percorso_integrato_places
+  get "percorso-integrato/servizi" => "brands/percorso_integrato#services", as: :percorso_integrato_services
+  get "percorso-integrato/comuni" => "brands/percorso_integrato#municipalities", as: :percorso_integrato_municipalities
+  get "percorso-integrato/comuni/:slug" => "brands/percorso_integrato#municipality", as: :percorso_integrato_municipality
+  get "percorso-integrato/comuni/:slug/professionisti" => "brands/percorso_integrato#municipality_professionals", as: :percorso_integrato_municipality_professionals
+  get "percorso-integrato/comuni/:slug/strutture-libere" => "brands/percorso_integrato#municipality_professionals", as: :percorso_integrato_municipality_spaces
   get "markpostura" => "landing#markpostura", as: :markpostura
   get "markpostura/presentazione" => "landing#markpostura_presentation", as: :markpostura_presentation
   get "markpostura/timeline" => "landing#markpostura_timeline", as: :markpostura_timeline
@@ -327,6 +334,11 @@ Rails.application.routes.draw do
   # Alias esplicito: la mappa globale di Brand e Node appartiene a FlowPulse.
   get "flowpulse/admin/brands", to: "admin/brands#index", as: :flowpulse_admin_brands
   get "flowpulse/admin/brands/:id", to: "admin/brands#show", as: :flowpulse_admin_brand
+  get "flowpulse/admin/production", to: "admin/production_dashboard#index", as: :flowpulse_admin_production
+  get "flowpulse/admin/production/nodes/:id", to: "admin/production_dashboard#show", as: :flowpulse_admin_production_node
+  post "flowpulse/admin/production/tavolo", to: "admin/production_dashboard#create_inbox", as: :flowpulse_admin_production_inbox_items
+  patch "flowpulse/admin/production/tavolo/:id", to: "admin/production_dashboard#update_inbox", as: :flowpulse_admin_production_inbox_item
+  delete "flowpulse/admin/production/tavolo/:id", to: "admin/production_dashboard#destroy_inbox"
 
   scope ":brand_slug/admin", module: "brands/admin", as: :brand_admin,
       constraints: { brand_slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ } do
@@ -346,9 +358,10 @@ Rails.application.routes.draw do
     get "development/:slug", to: "development#show", as: :development_entry,
         constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
     get "privacy", to: "privacy#index", as: :privacy
+    get "requests", to: "brand_requests#index", as: :requests
+    patch "requests/:id/state", to: "brand_requests#update_state", as: :request_state
+    post "requests/:id/invitation", to: "brand_requests#create_invitation", as: :request_invitation
     get "data-commitments", to: "data_commitments#index", as: :data_commitments
-    patch "data-commitments/:id/state", to: "data_commitments#update_state", as: :data_commitment_state
-    post "data-commitments/:id/invitation", to: "data_commitments#create_invitation", as: :data_commitment_invitation
   end
 
   namespace :sync do

@@ -11,6 +11,7 @@ Gli approfondimenti tecnici restano disponibili in:
 - [Autenticazione FlowPulse](update_authentication.md);
 - [Architettura di contenuti, sessioni e servizi](ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md);
 - [Architettura Brand, Node, Domain e Site](ARCHITETTURA_BRAND_NODE_DOMAIN_SITE.md);
+- [Dashboard produttiva per Creator](2026-10-17-PIANO_DASHBOARD_PRODUTTIVA_CREATOR.md);
 - [Audit AI e discovery pubblica](../architecture/flowpulse-ai-discovery-audit.md).
 
 ## Direzione generale

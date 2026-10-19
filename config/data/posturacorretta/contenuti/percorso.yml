@@ -4,14 +4,22 @@ path:
   eyebrow: Scopri come funziona il tuo corpo, e riattiva i tuoi sistemi!
   description:  L'educazione alla salute che inizia dalle metodiche posturali, percorso online.
 
-  courses:
-    - content_id: inizia-con-posturacorretta
-    - content_id: postura-e-fisiologia
+  courses: []
 
   sections:
+    - slug: postura-e-fisiologia
+      title: Postura e fisiologia
+      description: Le basi educative per iniziare a conoscere il corpo, la salute e la costruzione di un percorso integrato.
+      level: base
+      courses:
+        - content_id: inizia-con-posturacorretta
+        - content_id: percorso-integrato
+        - content_id: postura-e-fisiologia
+        - content_id: corpo-come-un-giardino
+
     - slug: recupera-con-la-terapia-manuale
-      title: Recupera con la terapia manuale
-      description: Principi e pratiche delle metodiche posturali per conoscere il corpo e sostenerne il recupero.
+      title: Postura, recupero e coscienza corporea
+      description: Recupera con la terapia manuale e scopri principi e pratiche delle metodiche posturali.
       level: base_advanced
       courses:
         - slug: igiene-posturale

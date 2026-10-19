@@ -6,26 +6,26 @@ publisher_node_slug: posturacorretta
 
 # I benefici di una postura corretta
 
-**Scendi dall'auto dopo il solito tragitto, quaranta minuti, magari meno. Senti che la schiena è rigida e dolente e mentre scendi la schiena che ci mette un attimo e "risponde" a fatica, anche, collo e spallesono rigide  tirate in avanti**
+Scendi dall'auto dopo il solito tragitto: quaranta minuti, magari meno. Quando ti alzi senti la schiena rigida, il collo contratto e le spalle tirate in avanti. Il corpo ci mette un attimo a rispondere.
 
-Pensi: *"Sarà l'età, sarà lo stress. È normale. E' un periodo impegnativo."*
+Pensi: *«Sarà l'età, sarà lo stress. È un periodo impegnativo.»*
 
 L'età e lo stress contano, ma c'è un fattore che di solito non consideri: per tutto il viaggio sei rimasto fermo nella stessa posizione. Testa spinta in avanti, mani sul volante, bacino incassato nel sedile, un piede sempre in tensione sul pedale. E su un corpo che non cambia mai posizione, la forza di gravità lavora senza pause.  
 
-Il tuo corpo risponde costantemente alla forza di gravità con la postura, cioè trovando una posizione che medi le esigenze del mondo esterno e quelle del mondo interno. 
+Il corpo risponde continuamente alla gravità attraverso la postura: cerca un'organizzazione che tenga insieme ciò che succede fuori e ciò che accade dentro di noi.
 
-Mondo interno perchè c'è da considerare che oltre agli stimoli esterni arrivanodai tuoi organi e dai tuoi sistemi, anche stimoli interni perchè anche organi e sistemi hanno delle necessità, in oltre non abbiamo solo aspetti fisici tangibili, dobbiamo considerare che interagiamo anche con energie, emozioni e pensieri. 
+Non ci adattiamo soltanto alla sedia, al terreno o al peso che portiamo. Anche respiro, organi, sistema nervoso, emozioni, pensieri ed esperienza influenzano il modo in cui ci organizziamo.
 
-Quando tutto questo è in armonia tutto funziona per il meglio altrimenti il corpo ti presenta il conto, di solito proprio quando hai meno tempo per pagarlo.
+Quando le richieste si accumulano e il recupero non basta, prima o poi il corpo presenta il conto. Di solito proprio quando abbiamo meno tempo per pagarlo.
 
 Ecco perchè val la pena di approfondire quali benefici si possono trarre dalla postura ma prima iniziamo chiarendo alcuni punti:
 
 - che cos'è la postura;
-- la postura e automatismi;
-- Educazione e cultura del corpo;
-- Cattive abitudini e problemi;
-- Esiste una PosturaCorretta?;
-- I benefici di un lavoro sulla postura
+- postura e automatismi;
+- educazione e cultura del corpo;
+- abitudini e problemi;
+- l'idea di una postura corretta;
+- benefici possibili di un lavoro sulla postura.
 
 
 ## Che cos'è la postura?
@@ -35,13 +35,12 @@ Abbiamo visto che la postura è il modo in cui il corpo si organizza nello spazi
 Non dipende soltanto dalla forma delle ossa o dalla forza dei muscoli. Entrano in gioco almeno tre aspetti:
 
 1. **La struttura:** ossa, articolazioni, muscoli, fasce e legamenti. È il corpo osservato in un momento, quasi come in una fotografia.
-2. **La funzione:** equilibrio, tono muscolare, propriocezione, coordinazione e controllo del movimento. È il modo in cui il corpo si regola e si muove. La funzione dipende da:
-- **Fisiologica (neurofisiologica):** tono posturale, propriocezione, vestibolo, riflessi, controllo motorio. È il *come si regola*.
-- **L'esperienza:** percezione del corpo, emozioni, stress e abitudini. È il modo in cui viviamo e utilizziamo il corpo ogni giorno.
+2. **La funzione:** equilibrio, tono muscolare, propriocezione, sistema vestibolare, riflessi, coordinazione e controllo del movimento. È il modo in cui il corpo si regola e si muove.
+3. **L'esperienza:** percezione del corpo, emozioni, stress e abitudini. È il modo in cui viviamo e utilizziamo il corpo ogni giorno.
 
 Anche l'ambiente ha il suo peso. Una giornata passata davanti allo schermo richiede al corpo un adattamento diverso da una giornata trascorsa camminando, lavorando all'aperto o cambiando spesso posizione.
 
-La postura, quindi, non è soltanto stare ben dritti con la schiena l'allineamento è solo una delle caratteristihe che si prendono in considerazione.
+La postura, quindi, non significa soltanto stare ben dritti. L'allineamento è una delle caratteristiche che possiamo osservare, non l'intera storia.
 
 ## Postura e automatismi
 
@@ -111,7 +110,7 @@ Allineamento e mobilità sono importanti ed è importante anche rendersi conto d
 
 Le posture che assumiamo durante il giorno sono molte e ogni persona è diversa e risponde con i suoi adattamenti.
 
-**Per questo la postura non è una cosa da correggere, ma una cosa che possiamo imparare a leggerle.**
+**Per questo la postura non è soltanto qualcosa da correggere: prima di tutto possiamo imparare a leggerla.**
 
 
 Si può imparare la capacità di ascoltare il corpo, adattarsi, respirare, distribuire i carichi e sentire che passare da il passaggio da una posizione all'altra dipende anche da fattori comportamentali.
@@ -150,4 +149,4 @@ Prima di passare agli esercizi, fermiamoci un momento. Non serve misurare tutto 
 
 Non cercare subito la posizione giusta. Per il momento osserva ciò che sta accadendo.
 
-**Imparare a leggere il corpo è già l'inizio del percorso.**
+**Imparare a leggere il corpo è già l'inizio del percorso.** Nel prossimo capitolo faremo proprio questo: una prima esperienza guidata, senza formulare diagnosi e senza cercare la posizione perfetta.

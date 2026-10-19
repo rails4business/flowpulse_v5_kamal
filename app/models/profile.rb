@@ -3,6 +3,14 @@ class Profile < ApplicationRecord
   belongs_to :primary_node, class_name: "Node", optional: true, inverse_of: :primary_professional_profile
   has_many :role_assignments, dependent: :destroy
   has_many :brand_accesses, dependent: :destroy
+  has_many :submitted_brand_requests,
+           class_name: "BrandRequest",
+           foreign_key: :requester_profile_id,
+           dependent: :nullify
+  has_many :assigned_brand_requests,
+           class_name: "BrandRequest",
+           foreign_key: :assigned_to_profile_id,
+           dependent: :nullify
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :destroy
   has_many :created_data_commitments,
            class_name: "Brands::Impegno::Commitment",
@@ -27,6 +35,30 @@ class Profile < ApplicationRecord
            foreign_key: :created_by_profile_id,
            inverse_of: :created_by_profile,
            dependent: :restrict_with_error
+  has_many :created_node_processes,
+           class_name: "NodeProcess",
+           foreign_key: :created_by_profile_id,
+           dependent: :nullify
+  has_many :responsible_node_processes,
+           class_name: "NodeProcess",
+           foreign_key: :responsible_profile_id,
+           dependent: :nullify
+  has_many :created_data_experiences,
+           class_name: "DataExperience",
+           foreign_key: :created_by_profile_id,
+           dependent: :nullify
+  has_many :responsible_data_experiences,
+           class_name: "DataExperience",
+           foreign_key: :responsible_profile_id,
+           dependent: :nullify
+  has_many :created_data_sessions,
+           class_name: "DataSession",
+           foreign_key: :created_by_profile_id,
+           dependent: :nullify
+  has_many :created_data_slots,
+           class_name: "DataSlot",
+           foreign_key: :created_by_profile_id,
+           dependent: :nullify
 
   validates :user_id, uniqueness: true
   validates :username, presence: true,

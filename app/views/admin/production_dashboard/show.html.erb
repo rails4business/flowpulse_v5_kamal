@@ -1,0 +1,71 @@
+<% content_for :title, "#{@node.title} · Dashboard produttiva" %>
+
+<div class="mx-auto max-w-7xl">
+  <nav class="flex items-center gap-2 overflow-x-auto text-sm font-semibold text-slate-500" aria-label="Percorso">
+    <%= link_to "Flowpulse", flowpulse_admin_production_path(view: "projects"), class: "text-blue-700 hover:text-blue-500" %>
+    <span aria-hidden="true">›</span>
+    <% if @brand_node && @brand_node != @node %><span><%= @brand_node.title %></span><span aria-hidden="true">›</span><% end %>
+    <strong class="text-slate-950"><%= @node.title %></strong>
+  </nav>
+
+  <header class="mt-5 border-b border-slate-200 pb-6">
+    <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Node selezionato</p>
+    <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl"><%= @node.title %></h1>
+    <div class="mt-3 flex flex-wrap gap-2">
+      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-slate-600"><%= @node.node_type.humanize %></span>
+      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-slate-600"><%= @node.status.humanize %></span>
+      <% @node.domains.select(&:active?).each do |domain| %><span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-blue-700"><%= domain.display_hostname %></span><% end %>
+    </div>
+  </header>
+
+  <nav class="mt-6 flex gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1" aria-label="Dettaglio operativo">
+    <% [["Generaimpresa", "genera"], ["Rails4Business", "rails"], ["1impegno", "impegno"]].each do |label, area| %>
+      <%= link_to label, flowpulse_admin_production_node_path(@node, area: area), class: [
+        "min-w-max flex-1 rounded-lg px-4 py-2.5 text-center text-sm font-extrabold transition",
+        @area == area ? "bg-slate-900 text-white shadow-sm" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+      ].join(" ") %>
+    <% end %>
+  </nav>
+
+  <% if @area == "genera" %>
+    <section class="mt-5 rounded-2xl border border-blue-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div><p class="text-xs font-extrabold uppercase tracking-[0.14em] text-blue-700">Generaimpresa</p><h2 class="mt-1 text-xl font-black text-slate-950">Dove vive il progetto</h2></div>
+        <%= link_to "Apri gestione del Node", flowpulse_admin_brand_path(@node), class: "inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-extrabold text-white hover:bg-blue-700" %>
+      </div>
+      <dl class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-extrabold uppercase tracking-wide text-slate-500">Brand</dt><dd class="mt-1 font-black text-slate-950"><%= @brand_node&.title || "Da collegare" %></dd></div>
+        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-extrabold uppercase tracking-wide text-slate-500">Nodo padre</dt><dd class="mt-1 font-black text-slate-950"><%= @node.parent&.title || "Nodo radice" %></dd></div>
+        <div class="rounded-xl bg-slate-50 p-4"><dt class="text-xs font-extrabold uppercase tracking-wide text-slate-500">Responsabile del ramo</dt><dd class="mt-1 font-black text-slate-950"><%= @node.role_assignment&.profile&.display_name || "Da assegnare" %></dd></div>
+      </dl>
+    </section>
+  <% elsif @area == "rails" %>
+    <section class="mt-5 rounded-2xl border border-amber-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div><p class="text-xs font-extrabold uppercase tracking-[0.14em] text-amber-700">Rails4Business</p><h2 class="mt-1 text-xl font-black text-slate-950">Skill, catene e prodotti</h2></div>
+        <%= link_to "Apri Rails4Business", rails4b_skills_path, class: "inline-flex items-center justify-center rounded-xl bg-amber-600 px-4 py-2 text-sm font-extrabold text-white hover:bg-amber-700" %>
+      </div>
+      <div class="mt-6 grid gap-4 lg:grid-cols-3">
+        <article class="rounded-xl border border-slate-200 p-4"><h3 class="font-black text-slate-950">Skill attive <span class="text-slate-400"><%= @skill_activations.size %></span></h3><div class="mt-3 flex flex-wrap gap-2"><% @skill_activations.each do |activation| %><span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-blue-700"><%= activation.reusable_skill.title %></span><% end %><%= tag.p("Nessuna Skill attiva.", class: "text-sm text-slate-500") if @skill_activations.empty? %></div></article>
+        <article class="rounded-xl border border-slate-200 p-4"><h3 class="font-black text-slate-950">Catene <span class="text-slate-400"><%= @processes.size %></span></h3><div class="mt-3 grid gap-2"><% @processes.each do |process| %><div class="rounded-lg bg-slate-50 px-3 py-2"><strong class="text-sm text-slate-900"><%= process.title %></strong><span class="block text-xs text-slate-500"><%= process.reference_data_experience ? "Dima attiva collegata" : "Dima da scegliere" %></span></div><% end %><%= tag.p("Nessuna catena registrata.", class: "text-sm text-slate-500") if @processes.empty? %></div></article>
+        <article class="rounded-xl border border-slate-200 p-4"><h3 class="font-black text-slate-950">Prodotti <span class="text-slate-400"><%= @products.size %></span></h3><div class="mt-3 grid gap-2"><% @products.first(12).each do |product| %><div class="rounded-lg bg-slate-50 px-3 py-2"><strong class="text-sm text-slate-900"><%= product.title %></strong><span class="block text-xs text-slate-500"><%= product.status.humanize %> · <%= product.reusable_skill.title %></span></div><% end %><%= tag.p("Nessun prodotto registrato.", class: "text-sm text-slate-500") if @products.empty? %></div></article>
+      </div>
+    </section>
+  <% else %>
+    <section class="mt-5 rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div><p class="text-xs font-extrabold uppercase tracking-[0.14em] text-emerald-700">1impegno</p><h2 class="mt-1 text-xl font-black text-slate-950">Persone e lavoro concreto</h2></div>
+        <%= link_to "Apri 1impegno", impegno_path(area: "user", view: "agenda"), class: "inline-flex items-center justify-center rounded-xl bg-emerald-700 px-4 py-2 text-sm font-extrabold text-white hover:bg-emerald-800" %>
+      </div>
+      <div class="mt-6 grid gap-3">
+        <% @commitments.each do |commitment| %>
+          <article class="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div><h3 class="font-extrabold text-slate-950"><%= commitment.title %></h3><p class="mt-1 text-xs text-slate-500"><%= commitment.responsible_profile&.display_name || commitment.assignee_profile&.display_name || commitment.profile.display_name %> · <%= commitment.starts_at ? l(commitment.starts_at, format: :short) : "Da programmare" %></p></div>
+            <span class="w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-slate-600"><%= commitment.status.humanize %></span>
+          </article>
+        <% end %>
+        <% if @commitments.empty? %><p class="rounded-xl border border-dashed border-slate-300 px-4 py-10 text-center text-sm text-slate-500">Nessun impegno collegato direttamente a questo Node o ai suoi prodotti.</p><% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

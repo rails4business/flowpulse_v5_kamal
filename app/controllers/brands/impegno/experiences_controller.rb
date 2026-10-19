@@ -14,7 +14,10 @@ module Brands
       end
 
       def create
-        @experience = DataExperience.new(experience_params.merge(created_by_user: Current.user))
+        @experience = DataExperience.new(experience_params.merge(
+          created_by_user: Current.user,
+          created_by_profile: current_profile
+        ))
         if @experience.save
           redirect_to impegno_experience_path(@experience), notice: "Esperienza creata."
         else
@@ -43,7 +46,9 @@ module Brands
       private
 
         def experience_params
-          params.require(:data_experience).permit(:title, :description, :node_process_id)
+          params.require(:data_experience).permit(
+            :title, :description, :node_process_id, :responsible_profile_id, :status
+          )
         end
 
         def load_processes

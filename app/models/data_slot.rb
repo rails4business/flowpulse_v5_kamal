@@ -1,11 +1,15 @@
 class DataSlot < ApplicationRecord
-  belongs_to :data_experience
+  STATUSES = Brands::Impegno::Commitment::STATUSES
+
+  belongs_to :data_experience, inverse_of: :data_slots
   belongs_to :data_session, optional: true
+  belongs_to :created_by_profile, class_name: "Profile", optional: true
   belongs_to :skill_product, optional: true, inverse_of: :data_slots
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :restrict_with_error
 
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :status, inclusion: { in: STATUSES }
   validate :ends_after_start
 
   private

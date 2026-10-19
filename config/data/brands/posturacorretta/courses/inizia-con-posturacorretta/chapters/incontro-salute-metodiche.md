@@ -6,9 +6,9 @@ publisher_node_slug: posturacorretta
 
 # L'incontro con la salute e la postura
 
-## Chi ti ha insegnatato come si resta in salute?
+## Chi ti ha insegnato come si resta in salute?
 
-Ci hanno insegnato a leggere, a scrivere, a fare le divisioni. Ma come si cura un corpo, come si recupera dopo una giornata pesante, come si capisce perchè cos'è il dolore e perchè arriva? Quasi sempre questo lo scopri quando qualcosa smette di funzionare.
+Ci hanno insegnato a leggere, a scrivere, a fare le divisioni. Ma come si conosce il proprio corpo? Come si recupera dopo una giornata pesante? Come si comincia a capire un dolore e perché arriva? Quasi sempre iniziamo a farci queste domande quando qualcosa smette di funzionare.
 
 Se sei qui, probabilmente è successo anche a te. Prima di cercare risposte, però, vale la pena fare un passo indietro e capire come abbiamo imparato ad usare il nostro corpo. Da lì poi sarà più facile capire dove vuoi andare.
 
@@ -106,3 +106,5 @@ Siamo arrivati alla tua storia. Prima di procedere, prova a rispondere a queste 
 3. In questo momento vuoi soprattutto recuperare, mantenere o migliorare la tua salute?
 4. Hai già incontrato una metodica posturale o una disciplina corporea? Che cosa ti ha lasciato?
 5. Ti interessa usare questa guida per te o per aiutare altre persone?
+
+Nel prossimo capitolo partiamo da una parola che usiamo spesso, ma che può voler dire molte cose diverse: **postura**. Vedremo che cosa comprende davvero, quali problemi ci permette di osservare e quali benefici possiamo cercare senza inseguire una posizione perfetta uguale per tutti.

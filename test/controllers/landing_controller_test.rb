@@ -135,16 +135,21 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_url
 
     assert_response :success
-    assert_select "h1", text: "Un mondo da conoscere. Il tuo da costruire."
-    assert_select "a[href='#{markpostura_presentation_path}']", text: /Partecipa alla presentazione/
-    assert_select "#percorsi a", count: 3
-    assert_select "#percorsi", text: /Salute e corpo.*Lavoro e risorse.*Esperienze e scoperta/m
-    assert_select "#flowpulse a[href='#{flowpulse_projects_path(mondo: 'markpostura')}']", text: /mondo di MarkPostura/i
-    assert_select "#flowpulse a[href='#{flowpulse_projects_path}']", text: /tutti i Brand/i
-    assert_select "#contenuti a", count: 3
-    assert_select "#contenuti", text: /Esplorare, comprendere.*Un problema alla volta.*Dal mio mondo a FlowPulse/m
+    assert_select "h1", text: "Ho provato a mettere su una mappa tutto ciò che sto costruendo."
+    assert_select ".mp-sales__hero-world img[alt='Il mondo FlowPulse costruito da MarkPostura']"
+    assert_select "#percorsi .mp-sales__movement", count: 3
+    assert_select "#percorsi", text: /Conoscere.*Costruire.*Esplorare/m
+    assert_select "#mondo-markpostura .mp-sales__entrance", count: 3
+    assert_select "#mondo-markpostura a[href='#{flowpulse_projects_path(mondo: 'markpostura')}']", text: /MarkPostura/i
+    assert_select "#mondo-markpostura a[href='#{flowpulse_projects_path}']", text: /tutti i Brand/i
+    assert_select "#presentazione .mp-sales__program li", count: 4
+    assert_select "#presentazione", text: /Costruisci la prima mappa del tuo mondo/
+    assert_select "#contenuti .mp-sales__content-list > a", count: 3
+    assert_select ".mp-sales__faq-list details", count: 5
+    assert_select "#lista-attesa form[action='#{public_brand_requests_path}']"
+    assert_select "#lista-attesa input[name='brand_request[kind]'][value='waitlist']"
+    assert_select ".mp-sales__mobile-cta[href='#lista-attesa']"
     assert_select "body:not(.posturacorretta-ui)"
-    assert_select ".editorial-action-button", minimum: 5
   end
 
   test "MarkPostura has a dedicated presentation page" do

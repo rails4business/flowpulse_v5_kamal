@@ -5,6 +5,7 @@ class SkillProduct < ApplicationRecord
 
   belongs_to :reusable_skill_node, inverse_of: :skill_products
   belongs_to :created_by_profile, class_name: "Profile", inverse_of: :created_skill_products
+  belongs_to :data_experience, optional: true, inverse_of: :skill_product
   has_one :reusable_skill, through: :reusable_skill_node
   has_one :node, through: :reusable_skill_node
   has_many :data_sessions, dependent: :restrict_with_error, inverse_of: :skill_product
@@ -39,7 +40,9 @@ class SkillProduct < ApplicationRecord
   validates :visibility, inclusion: { in: VISIBILITIES }
   validates :format, inclusion: { in: FORMATS }
   validates :source_path, uniqueness: true, allow_nil: true
+  validates :data_experience_id, uniqueness: true, allow_nil: true
   validate :source_path_is_relative_and_safe
+  validate :experience_process_uses_same_node
 
   scope :recent_first, -> { order(updated_at: :desc) }
   scope :publicly_available, -> { where(status: "published", visibility: "public") }
@@ -65,5 +68,12 @@ class SkillProduct < ApplicationRecord
       errors.add(:source_path, "deve essere relativo alla repository") if pathname.absolute?
       errors.add(:source_path, "non può uscire dalla repository") if pathname.each_filename.include?("..")
       errors.add(:source_path, "deve trovarsi sotto config/data/") unless source_path.start_with?("config/data/")
+    end
+
+    def experience_process_uses_same_node
+      return if data_experience&.node_process.blank?
+      return if data_experience.node_process.node_id == reusable_skill_node.node_id
+
+      errors.add(:data_experience, "deve appartenere allo stesso nodo del prodotto")
     end
 end

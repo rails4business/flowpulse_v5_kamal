@@ -6,9 +6,15 @@ module Brands
 
       def create
         slots = @data_session ? @data_session.data_slots : @experience.data_slots
+        position = if @data_session
+          slots.maximum(:position).to_i + 10
+        else
+          DataExperiences::OrderedSteps.new(@experience).next_position
+        end
         slot = slots.build(slot_params.merge(
           data_experience: @experience,
-          position: slots.maximum(:position).to_i + 1
+          created_by_profile: current_profile,
+          position: position
         ))
         if slot.save
           respond_with_workbench(notice: "Slot aggiunto.")
@@ -43,7 +49,7 @@ module Brands
         end
 
         def slot_params
-          params.require(:data_slot).permit(:title, :starts_at, :ends_at, :position)
+          params.require(:data_slot).permit(:title, :starts_at, :ends_at, :position, :status)
         end
     end
   end

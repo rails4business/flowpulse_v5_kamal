@@ -193,6 +193,9 @@ body {
 }
 
 .pi-mobile-menu { flex: 0 0 auto; position: relative; }
+@media (min-width: 768px) {
+  .pi-mobile-menu { display: none !important; }
+}
 .pi-mobile-menu__trigger {
   align-items: center;
   background: #ecfdf5;

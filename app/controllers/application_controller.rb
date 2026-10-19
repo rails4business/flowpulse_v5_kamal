@@ -148,6 +148,7 @@ class ApplicationController < ActionController::Base
     def complete_access_request_for!(invitation)
       return if invitation.blank?
 
+      invitation.brand_request&.close_as!("accepted")
       Brands::Impegno::Commitment
         .where("metadata ->> 'brand_invitation_id' = ?", invitation.id.to_s)
         .update_all(status: "completed", resolved_at: Time.current, updated_at: Time.current)

@@ -6,7 +6,11 @@ module Brands
 
       def create
         owner = @data_slot || @data_session || @experience
-        position = owner.data_commitments.maximum(:position).to_i + 1
+        position = if owner == @experience
+          DataExperiences::OrderedSteps.new(@experience).next_position
+        else
+          owner.data_commitments.maximum(:position).to_i + 10
+        end
         commitment = owner.data_commitments.build(commitment_params.merge(commitment_defaults).merge(position: position))
         if commitment.save
           respond_with_workbench(notice: "DataCommitment aggiunto.")

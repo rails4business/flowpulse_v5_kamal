@@ -5,7 +5,10 @@ module Admin
     before_action :set_process, only: %i[update destroy]
 
     def create
-      process_record = @brand.node_processes.new(process_params.merge(created_by_user: Current.user))
+      process_record = @brand.node_processes.new(process_params.merge(
+        created_by_user: Current.user,
+        created_by_profile: Current.user.profile
+      ))
       if process_record.save
         redirect_to admin_brand_path(@brand, tab: "processes"), notice: "Processo aggiunto."
       else
@@ -37,7 +40,9 @@ module Admin
       end
 
       def process_params
-        params.require(:node_process).permit(:title, :slug, :description, :status)
+        params.require(:node_process).permit(
+          :title, :slug, :description, :status, :responsible_profile_id, :reference_data_experience_id
+        )
       end
   end
 end

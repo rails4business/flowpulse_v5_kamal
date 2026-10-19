@@ -1,5 +1,5 @@
 class SkillProductLink < ApplicationRecord
-  RELATION_KINDS = %w[contains uses presents schedules related].freeze
+  RELATION_KINDS = %w[contains uses presents schedules related derived_from].freeze
 
   belongs_to :source_product, class_name: "SkillProduct", inverse_of: :outgoing_links
   belongs_to :target_product, class_name: "SkillProduct", inverse_of: :incoming_links

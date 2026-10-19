@@ -53,6 +53,7 @@
   background-color:#17634d !important;
   color:#fff !important;
 }
+.brand-admin-filter--secondary { padding:.3rem .65rem; font-size:.7rem; }
 .brand-admin-badge { display:inline-flex; align-items:center; border-radius:999px; padding:.25rem .625rem; font-size:.6875rem; font-weight:800; letter-spacing:.025em; }
 .brand-admin-badge--status { background-color:#e4dcfa !important; color:#553c9a !important; }
 .brand-admin-badge--kind { background-color:#e6eceb !important; color:#465b60 !important; }
@@ -63,6 +64,13 @@
 .brand-admin-action:hover { border-color:var(--ba-green) !important; background-color:#eef8f4 !important; }
 .brand-admin-action--primary { border-color:#17634d !important; background-color:#17634d !important; color:#fff !important; }
 .brand-admin-action--danger { border-color:#e4b3ae !important; color:#8d3932 !important; }
+.brand-admin-table-wrap { overflow-x:auto; }
+.brand-admin-table { width:100%; min-width:62rem; border-collapse:collapse; text-align:left; font-size:.8rem; }
+.brand-admin-table th { border-bottom:1px solid var(--ba-line); background-color:#eef4f2; color:var(--ba-muted); padding:.75rem 1rem; font-size:.68rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.brand-admin-table td { border-bottom:1px solid #dce5e3; color:var(--ba-ink); padding:.85rem 1rem; vertical-align:middle; }
+.brand-admin-table tbody tr:last-child td { border-bottom:0; }
+.brand-admin-table tbody tr:hover { background-color:#f0f7f5; }
+.brand-admin-table td small { display:block; max-width:18rem; margin-top:.2rem; overflow:hidden; color:var(--ba-muted); text-overflow:ellipsis; white-space:nowrap; }
 
 .brand-cell-map { --cell-status:#809391; }
 .brand-cell-map__canvas { overflow:auto; border:1px solid var(--ba-line); border-radius:1rem; background:var(--ba-paper); }
@@ -86,4 +94,5 @@
   .brand-admin-header__inner { align-items:flex-start; }
   .brand-admin-support { display:none; }
   .brand-admin-name { font-size:1.25rem; }
+  .brand-admin-table-wrap { margin-right:-1rem; border-bottom-right-radius:0; border-top-right-radius:0; }
 }

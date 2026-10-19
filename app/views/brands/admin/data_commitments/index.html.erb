@@ -1,4 +1,4 @@
-<% content_for :title, "#{@brand.title} · Impegni e richieste" %>
+<% content_for :title, "#{@brand.title} · Impegni" %>
 <%
   status_labels = {
     "draft" => "Bozza", "requested" => "Richiesto", "planned" => "Pianificato",
@@ -24,13 +24,13 @@
 <main class="brand-admin-shell max-w-6xl">
   <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">
     <%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "font-semibold text-teal-700" %>
-    <span>/</span><span>Impegni e richieste</span>
+    <span>/</span><span>Impegni</span>
   </nav>
 
   <header class="brand-admin-card p-6">
     <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-violet-700">Amministrazione del Brand</p>
-    <h1 class="brand-admin-title mt-2 text-3xl"><%= @brand.title %> · Impegni e richieste</h1>
-    <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">DataCommitment collegati ai domini del Brand o a uno dei suoi nodi. Le richieste inviate da persone non registrate compaiono qui con i loro recapiti.</p>
+    <h1 class="brand-admin-title mt-2 text-3xl"><%= @brand.title %> · Impegni</h1>
+    <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">DataCommitment collegati ai domini del Brand o a uno dei suoi nodi. Contatti e liste d’attesa sono gestiti separatamente nella sezione Richieste.</p>
 
     <nav class="mt-5 flex flex-wrap gap-2" aria-label="Filtra richieste aperte e chiuse">
       <%= link_to "Aperte · #{@state_counts.fetch('open')}", brand_admin_data_commitments_path(@brand.slug, state: "open"), aria: { current: ("page" if @active_state == "open") }, class: "brand-admin-filter" %>
@@ -45,18 +45,6 @@
       <% end %>
     </nav>
   </header>
-
-  <% if flash[:invitation_url].present? %>
-    <section class="brand-admin-card mt-6 border-teal-200 bg-teal-50 p-5" aria-label="Collegamento di invito">
-      <p class="text-xs font-extrabold uppercase tracking-wide text-teal-700">Invito pronto</p>
-      <h2 class="mt-2 text-xl font-extrabold text-slate-950">Copia e invia personalmente questo collegamento</h2>
-      <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-        <input id="brand-invitation-url" type="text" readonly value="<%= flash[:invitation_url] %>" class="min-w-0 flex-1 rounded-lg border border-teal-200 bg-white px-3 py-2 font-mono text-xs text-slate-800">
-        <button type="button" class="brand-admin-action brand-admin-action--primary" data-controller="clipboard" data-clipboard-text-value="<%= flash[:invitation_url] %>" data-action="clipboard#copy">Copia link</button>
-      </div>
-      <p class="mt-3 text-xs leading-5 text-slate-600">Il collegamento è personale, monouso e scade dopo sette giorni. Per sicurezza viene mostrato soltanto ora; rigenerandolo, il precedente verrà revocato.</p>
-    </section>
-  <% end %>
 
   <% if @commitments.any? %>
     <section class="mt-6 space-y-4" aria-label="DataCommitment del Brand">
@@ -100,18 +88,10 @@
             <span class="font-mono">ID <%= commitment.id %></span>
           </footer>
 
-          <% if contact %>
-            <div class="mt-4 flex flex-wrap gap-2 border-t border-slate-200 pt-4">
-              <% if metadata["request_kind"] == "access_invitation" && %w[requested in_progress].include?(commitment.status) %><%= button_to(metadata["brand_invitation_id"].present? ? "Rigenera invito" : "Approva e genera invito", brand_admin_data_commitment_invitation_path(@brand.slug, commitment), method: :post, class: "brand-admin-action brand-admin-action--primary") %><% end %>
-              <% if commitment.status == "requested" %><%= button_to "Prendi in carico", brand_admin_data_commitment_state_path(@brand.slug, commitment), method: :patch, params: { transition: "take_charge" }, class: "brand-admin-action brand-admin-action--primary" %><% end %>
-              <% if %w[requested in_progress planned confirmed].include?(commitment.status) %><%= button_to "Chiudi", brand_admin_data_commitment_state_path(@brand.slug, commitment), method: :patch, params: { transition: "complete" }, class: "brand-admin-action" %><%= button_to "Annulla", brand_admin_data_commitment_state_path(@brand.slug, commitment), method: :patch, params: { transition: "cancel" }, class: "brand-admin-action brand-admin-action--danger" %><% end %>
-              <% if %w[completed cancelled].include?(commitment.status) %><%= button_to "Riapri", brand_admin_data_commitment_state_path(@brand.slug, commitment), method: :patch, params: { transition: "reopen" }, class: "brand-admin-action" %><% end %>
-            </div>
-          <% end %>
         </article>
       <% end %>
     </section>
   <% else %>
-    <p class="brand-admin-card mt-6 border-dashed p-10 text-center text-sm text-slate-500">Non ci sono DataCommitment<%= " con stato #{status_labels.fetch(@active_status)}" if @active_status %> per questo Brand.</p>
+    <p class="brand-admin-card mt-6 border-dashed p-10 text-center text-sm text-slate-500">Non ci sono impegni<%= " con stato #{status_labels.fetch(@active_status)}" if @active_status %> per questo Brand.</p>
   <% end %>
 </main>

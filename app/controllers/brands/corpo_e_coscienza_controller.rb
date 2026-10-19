@@ -67,26 +67,19 @@ module Brands
           }
         )
 
-        owner_profile.data_commitments.create!(
-          created_by_profile: owner_profile,
+        BrandRequest.create!(
           domain: domain,
+          brand_node: node,
           subject: node,
           participant_contact: contact,
           title: request_title(attributes.fetch(:request_kind)),
-          description: attributes.fetch(:message),
-          kind: "service",
-          status: "requested",
-          starts_at: nil,
-          blocks_calendar: false,
-          pricing_type: "none",
-          contribution_type: "unpaid",
-          calendar_key: "brand:#{node.id}:requests",
-          calendar_label: "Richieste · Corpo e Coscienza",
+          message: attributes.fetch(:message),
+          kind: attributes.fetch(:request_kind),
+          status: "open",
+          audience: request_audience(attributes.fetch(:request_kind)),
+          source_url: request.referer.to_s.presence || corpo_e_coscienza_url,
           metadata: {
-            "request_kind" => attributes.fetch(:request_kind),
-            "request_audience" => request_audience(attributes.fetch(:request_kind)),
             "source_domain" => domain.hostname,
-            "source_url" => request.referer.to_s.presence || corpo_e_coscienza_url,
             "city" => attributes[:city].to_s.strip.presence,
             "country_code" => attributes[:country_code],
             "latitude" => decimal_or_nil(attributes[:latitude]),

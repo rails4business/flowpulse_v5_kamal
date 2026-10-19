@@ -52,7 +52,7 @@
 
                 <nav class="mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-4" aria-label="Gestione di <%= brand.title %>">
                   <%= link_to "Nodi", brand_admin_nodes_path(brand.slug), class: "rounded-lg bg-white px-3 py-2 text-xs font-black text-slate-900 hover:bg-orange-50" %>
-                  <%= link_to "Richieste", brand_admin_data_commitments_path(brand.slug), class: "rounded-lg border border-white/20 px-3 py-2 text-xs font-black text-white hover:bg-white/10" %>
+                  <%= link_to "Richieste", brand_admin_requests_path(brand.slug), class: "rounded-lg border border-white/20 px-3 py-2 text-xs font-black text-white hover:bg-white/10" %>
                   <%= link_to "Privacy", brand_admin_privacy_path(brand.slug), class: "rounded-lg border border-white/20 px-3 py-2 text-xs font-black text-white hover:bg-white/10" %>
                   <% if primary_domain %><%= link_to "Apri il sito ↗", "https://#{primary_domain.hostname}", target: "_blank", rel: "noopener", class: "ml-auto rounded-lg px-3 py-2 text-xs font-black text-orange-300 hover:bg-white/10" %><% end %>
                 </nav>

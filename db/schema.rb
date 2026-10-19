@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,12 +43,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
     t.datetime "accepted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "brand_request_id"
     t.index ["accepted_by_user_id"], name: "index_brand_invitations_on_accepted_by_user_id"
     t.index ["brand_node_id", "email_address", "status"], name: "index_brand_invitations_lookup"
     t.index ["brand_node_id"], name: "index_brand_invitations_on_brand_node_id"
+    t.index ["brand_request_id"], name: "index_brand_invitations_on_brand_request_id"
     t.index ["invited_by_user_id"], name: "index_brand_invitations_on_invited_by_user_id"
     t.index ["source_domain_id"], name: "index_brand_invitations_on_source_domain_id"
     t.index ["token_digest"], name: "index_brand_invitations_on_token_digest", unique: true
+  end
+
+  create_table "brand_requests", force: :cascade do |t|
+    t.bigint "domain_id", null: false
+    t.bigint "brand_node_id", null: false
+    t.bigint "requester_profile_id"
+    t.bigint "participant_contact_id"
+    t.bigint "assigned_to_profile_id"
+    t.string "subject_type"
+    t.bigint "subject_id"
+    t.string "kind", null: false
+    t.string "audience", default: "user", null: false
+    t.string "status", default: "open", null: false
+    t.string "title", null: false
+    t.text "message"
+    t.string "source_url"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "resolved_at"
+    t.bigint "legacy_data_commitment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_to_profile_id"], name: "index_brand_requests_on_assigned_to_profile_id"
+    t.index ["brand_node_id", "status"], name: "index_brand_requests_on_brand_node_id_and_status"
+    t.index ["brand_node_id"], name: "index_brand_requests_on_brand_node_id"
+    t.index ["domain_id", "kind", "status"], name: "index_brand_requests_on_domain_id_and_kind_and_status"
+    t.index ["domain_id"], name: "index_brand_requests_on_domain_id"
+    t.index ["legacy_data_commitment_id"], name: "index_brand_requests_on_legacy_data_commitment_id", unique: true
+    t.index ["participant_contact_id"], name: "index_brand_requests_on_participant_contact_id"
+    t.index ["requester_profile_id"], name: "index_brand_requests_on_requester_profile_id"
+    t.index ["subject_type", "subject_id"], name: "index_brand_requests_on_subject"
+    t.index ["subject_type", "subject_id"], name: "index_brand_requests_on_subject_type_and_subject_id"
   end
 
   create_table "data_commitment_imports", force: :cascade do |t|
@@ -123,9 +156,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
     t.bigint "previous_publication_commitment_id"
     t.datetime "resolved_at"
     t.bigint "skill_product_id"
+    t.bigint "brand_request_id"
     t.index ["access_modes"], name: "index_data_commitments_on_access_modes", using: :gin
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
+    t.index ["brand_request_id"], name: "index_data_commitments_on_brand_request_id"
     t.index ["created_by_profile_id"], name: "index_data_commitments_on_created_by_profile_id"
     t.index ["data_experience_id", "position"], name: "index_data_commitments_on_data_experience_id_and_position"
     t.index ["data_experience_id", "starts_at"], name: "index_data_commitments_on_data_experience_id_and_starts_at"
@@ -165,12 +200,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "node_process_id"
+    t.bigint "created_by_profile_id"
+    t.bigint "responsible_profile_id"
+    t.string "status", default: "draft", null: false
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.index ["created_by_profile_id"], name: "index_data_experiences_on_created_by_profile_id"
     t.index ["created_by_user_id"], name: "index_data_experiences_on_created_by_user_id"
     t.index ["node_process_id"], name: "index_data_experiences_on_node_process_id"
+    t.index ["responsible_profile_id"], name: "index_data_experiences_on_responsible_profile_id"
   end
 
   create_table "data_sessions", force: :cascade do |t|
-    t.bigint "data_experience_id", null: false
+    t.bigint "data_experience_id"
     t.string "title", null: false
     t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
@@ -181,6 +223,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
     t.string "visibility", default: "private", null: false
     t.bigint "service_id"
     t.bigint "skill_product_id"
+    t.bigint "created_by_profile_id"
+    t.string "status", default: "draft", null: false
+    t.index ["created_by_profile_id"], name: "index_data_sessions_on_created_by_profile_id"
     t.index ["data_experience_id", "position"], name: "index_data_sessions_on_data_experience_id_and_position"
     t.index ["data_experience_id", "starts_at"], name: "index_data_sessions_on_data_experience_id_and_starts_at"
     t.index ["data_experience_id"], name: "index_data_sessions_on_data_experience_id"
@@ -199,6 +244,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.bigint "skill_product_id"
+    t.bigint "created_by_profile_id"
+    t.string "status", default: "draft", null: false
+    t.index ["created_by_profile_id"], name: "index_data_slots_on_created_by_profile_id"
     t.index ["data_experience_id", "starts_at"], name: "index_data_slots_on_data_experience_id_and_starts_at"
     t.index ["data_experience_id"], name: "index_data_slots_on_data_experience_id"
     t.index ["data_session_id", "position"], name: "index_data_slots_on_data_session_id_and_position"
@@ -332,10 +380,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
     t.string "status", default: "draft", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "created_by_profile_id"
+    t.bigint "responsible_profile_id"
+    t.bigint "reference_data_experience_id"
+    t.index ["created_by_profile_id"], name: "index_node_processes_on_created_by_profile_id"
     t.index ["created_by_user_id"], name: "index_node_processes_on_created_by_user_id"
     t.index ["node_id", "slug"], name: "index_node_processes_on_node_id_and_slug", unique: true
     t.index ["node_id", "status"], name: "index_node_processes_on_node_id_and_status"
     t.index ["node_id"], name: "index_node_processes_on_node_id"
+    t.index ["reference_data_experience_id"], name: "index_node_processes_on_reference_data_experience_id"
+    t.index ["responsible_profile_id"], name: "index_node_processes_on_responsible_profile_id"
   end
 
   create_table "nodes", force: :cascade do |t|
@@ -614,7 +668,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "data_experience_id"
     t.index ["created_by_profile_id"], name: "index_skill_products_on_created_by_profile_id"
+    t.index ["data_experience_id"], name: "index_skill_products_on_data_experience_id", unique: true
     t.index ["reusable_skill_node_id", "slug"], name: "index_skill_products_on_activation_and_slug", unique: true
     t.index ["reusable_skill_node_id"], name: "index_skill_products_on_reusable_skill_node_id"
     t.index ["source_path"], name: "index_skill_products_on_source_path", unique: true, where: "(source_path IS NOT NULL)"
@@ -640,12 +696,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
   add_foreign_key "brand_accesses", "domains", column: "source_domain_id"
   add_foreign_key "brand_accesses", "nodes", column: "brand_node_id"
   add_foreign_key "brand_accesses", "profiles"
+  add_foreign_key "brand_invitations", "brand_requests"
   add_foreign_key "brand_invitations", "domains", column: "source_domain_id"
   add_foreign_key "brand_invitations", "nodes", column: "brand_node_id"
   add_foreign_key "brand_invitations", "users", column: "accepted_by_user_id"
   add_foreign_key "brand_invitations", "users", column: "invited_by_user_id"
+  add_foreign_key "brand_requests", "data_commitments", column: "legacy_data_commitment_id"
+  add_foreign_key "brand_requests", "domains"
+  add_foreign_key "brand_requests", "impegno_contacts", column: "participant_contact_id"
+  add_foreign_key "brand_requests", "nodes", column: "brand_node_id"
+  add_foreign_key "brand_requests", "profiles", column: "assigned_to_profile_id"
+  add_foreign_key "brand_requests", "profiles", column: "requester_profile_id"
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
+  add_foreign_key "data_commitments", "brand_requests"
   add_foreign_key "data_commitments", "data_commitments", column: "parent_id"
   add_foreign_key "data_commitments", "data_commitments", column: "previous_publication_commitment_id"
   add_foreign_key "data_commitments", "data_experiences"
@@ -660,13 +724,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
   add_foreign_key "data_commitments", "profiles", column: "responsible_profile_id"
   add_foreign_key "data_commitments", "skill_products"
   add_foreign_key "data_experiences", "node_processes"
+  add_foreign_key "data_experiences", "profiles", column: "created_by_profile_id"
+  add_foreign_key "data_experiences", "profiles", column: "responsible_profile_id"
   add_foreign_key "data_experiences", "users", column: "created_by_user_id"
   add_foreign_key "data_sessions", "data_experiences"
   add_foreign_key "data_sessions", "professional_calendars"
+  add_foreign_key "data_sessions", "profiles", column: "created_by_profile_id"
   add_foreign_key "data_sessions", "services", name: "fk_data_sessions_service"
   add_foreign_key "data_sessions", "skill_products"
   add_foreign_key "data_slots", "data_experiences"
   add_foreign_key "data_slots", "data_sessions"
+  add_foreign_key "data_slots", "profiles", column: "created_by_profile_id"
   add_foreign_key "data_slots", "skill_products"
   add_foreign_key "domains", "nodes"
   add_foreign_key "domains", "role_assignments"
@@ -679,7 +747,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
   add_foreign_key "node_contents", "nodes"
   add_foreign_key "node_events", "nodes"
   add_foreign_key "node_events", "users", column: "performed_by_user_id"
+  add_foreign_key "node_processes", "data_experiences", column: "reference_data_experience_id"
   add_foreign_key "node_processes", "nodes"
+  add_foreign_key "node_processes", "profiles", column: "created_by_profile_id"
+  add_foreign_key "node_processes", "profiles", column: "responsible_profile_id"
   add_foreign_key "node_processes", "users", column: "created_by_user_id"
   add_foreign_key "nodes", "nodes", column: "link_node_id"
   add_foreign_key "nodes", "nodes", column: "parent_id"
@@ -715,6 +786,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_161000) do
   add_foreign_key "sessions", "users"
   add_foreign_key "skill_product_links", "skill_products", column: "source_product_id"
   add_foreign_key "skill_product_links", "skill_products", column: "target_product_id"
+  add_foreign_key "skill_products", "data_experiences"
   add_foreign_key "skill_products", "profiles", column: "created_by_profile_id"
   add_foreign_key "skill_products", "reusable_skill_nodes"
   add_foreign_key "users", "role_assignments", column: "current_role_assignment_id"

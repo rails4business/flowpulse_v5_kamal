@@ -139,7 +139,7 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_select "#i-miei-brand h3", "Brand del proprietario"
     assert_select "a[href='https://brand-proprietario.test']", text: /brand-proprietario\.test/
     assert_select "a[href='#{brand_admin_nodes_path(brand.slug)}']", text: "Nodi"
-    assert_select "a[href='#{brand_admin_data_commitments_path(brand.slug)}']", text: "Richieste"
+    assert_select "a[href='#{brand_admin_requests_path(brand.slug)}']", text: "Richieste"
     assert_select "a[href='#{brand_admin_privacy_path(brand.slug)}']", text: "Privacy"
   end
 

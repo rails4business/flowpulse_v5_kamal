@@ -47,8 +47,8 @@
           <h2 id="selected-course-title" class="mt-1 text-2xl font-bold tracking-tight text-slate-950"><%= @selected_student_course.fetch("title") %></h2>
           <p class="mt-1 text-sm text-slate-500"><%= pluralize(@selected_student_course.fetch("lessons").size, "lezione", "lezioni") %> · ogni lezione contiene una o più schede</p>
         </div>
-        <% if locked && @selected_student_course["release_at"].present? %>
-          <span class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">Disponibile dal <%= Time.zone.parse(@selected_student_course.fetch("release_at")).strftime("%d/%m/%Y") %></span>
+        <% if locked %>
+          <span class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"><%= @selected_student_course["release_at"].present? ? "Disponibile dal #{Time.zone.parse(@selected_student_course.fetch('release_at')).strftime('%d/%m/%Y')}" : "In preparazione" %></span>
         <% else %>
           <span class="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-800">Disponibile</span>
         <% end %>

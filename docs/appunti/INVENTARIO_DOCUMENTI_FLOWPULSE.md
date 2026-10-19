@@ -13,6 +13,7 @@
 | `PRINCIPI_FLOWPULSE_E_ORGANIZZAZIONE_SETTIMANALE.md` | Ecosistema | Principi, responsabilità, tre canali, ordine del lavoro e week plan |
 | `ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md` | Flowpulse / 1Impegno | DataExperience, DataSession, DataSlot, DataCommitment, calendari e servizi; non governa Domain e Site |
 | `METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md` | GeneraImpresa / Rails4Business / Flowpulse | ProblemSolving, Skill, metodo di lavoro e mappa amministrativa dei Brand |
+| `2026-10-19-PIANO_IMPLEMENTAZIONE_DASHBOARD_CONDIVISA.md` | Flowpulse / GeneraImpresa / Rails4Business / 1impegno | Fonte operativa per UX, query condivise, autorizzazioni e implementazione progressiva della dashboard produttiva |
 | `REGISTRO_PROGETTI_YML.md` | Flowpulse | Fonte YAML e priorità dei progetti |
 | `ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md` | PosturaCorretta | Sequenza operativa del pilota |
 | `vocabolario_impegno_e_brand.md` | 1Impegno | Vocabolario sintetico coerente con l'architettura corrente |

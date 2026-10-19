@@ -75,11 +75,10 @@ module Brands
       assert_response :success
       assert_select ".cec-account__trigger[aria-label='Apri menu Corpo e Coscienza']"
       assert_select ".cec-account__identity", text: /Corpo e Coscienza/
-      assert_select ".cec-account__menu a[href='#{dashboard_home_path}']", count: 0
       assert_select ".cec-account__menu a[href='#{profile_path}']", count: 0
       assert_select ".cec-account__menu a[href='#{corpo_e_coscienza_profile_path}']", text: "Il mio profilo"
       assert_select ".cec-account__menu [data-privacy-open]", count: 0
-      assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste ricevute"
+      assert_select ".cec-account__menu a[href='#{brand_admin_requests_path(@node.slug)}']", text: "Richieste ricevute"
       assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Admin Corpo e Coscienza"
       assert_select ".cec-account__menu form[action='#{session_path}'] button", text: "Esci"
     end
@@ -99,7 +98,7 @@ module Brands
 
       assert_response :success
       assert_select ".cec-account__menu a[href='#{corpo_e_coscienza_profile_path}']", text: "Il mio profilo"
-      assert_select ".cec-account__menu a[href='#{brand_admin_data_commitments_path(@node.slug)}']", text: "Richieste ricevute"
+      assert_select ".cec-account__menu a[href='#{brand_admin_requests_path(@node.slug)}']", text: "Richieste ricevute"
       assert_select ".cec-account__menu a[href='#{brand_admin_nodes_path(@node.slug)}']", text: "Admin Corpo e Coscienza"
       assert_select ".cec-account__menu a[href='#{admin_dashboard_path}']", count: 0
     end
@@ -121,7 +120,7 @@ module Brands
       assert_select ".cec-profile-card", text: /Mario Rossi.*corpo-coscienza-member@example.com.*Attivo/m
       assert_select "button[data-privacy-open]", text: "Gestisci preferenze"
       assert_select "a[href='#{corpo_e_coscienza_privacy_path}']", text: "Leggi l’informativa"
-      assert_select "a[href='#{brand_admin_data_commitments_path(@node.slug)}']", count: 0
+      assert_select "a[href='#{brand_admin_requests_path(@node.slug)}']", count: 0
       assert_select "a[href='#{brand_admin_nodes_path(@node.slug)}']", count: 0
     end
 
@@ -129,7 +128,6 @@ module Brands
       get corpo_e_coscienza_profile_url
 
       assert_redirected_to new_session_url(
-        site: "corpoecoscienza",
         return_to: corpo_e_coscienza_profile_path
       )
     end
@@ -172,40 +170,39 @@ module Brands
       assert_select "input[type='hidden'][name='request[request_kind]'][value='professional_application']"
     end
 
-    test "records an anonymous request as contact and unscheduled commitment" do
+    test "records an anonymous request without creating a calendar commitment" do
       assert_difference -> { Brands::Impegno::Contact.count }, 1 do
-        assert_difference -> { DataCommitment.count }, 1 do
-          post corpo_e_coscienza_requests_url, params: {
-            request: {
-              request_kind: "find_professional",
-              name: "Mario Rossi",
-              email: "mario@example.com",
-              phone: "",
-              country_code: "IT",
-              city: "Brescia",
-              latitude: "45.5416",
-              longitude: "10.2118",
-              location_ref: "osm:R:44881",
-              message: "Cerco un professionista nella mia zona.",
-              privacy_consent: "1"
+        assert_difference -> { BrandRequest.count }, 1 do
+          assert_no_difference -> { DataCommitment.count } do
+            post corpo_e_coscienza_requests_url, params: {
+              request: {
+                request_kind: "find_professional",
+                name: "Mario Rossi",
+                email: "mario@example.com",
+                phone: "",
+                country_code: "IT",
+                city: "Brescia",
+                latitude: "45.5416",
+                longitude: "10.2118",
+                location_ref: "osm:R:44881",
+                message: "Cerco un professionista nella mia zona.",
+                privacy_consent: "1"
+              }
             }
-          }
+          end
         end
       end
 
-      commitment = DataCommitment.order(:created_at).last
+      brand_request = BrandRequest.order(:created_at).last
       assert_redirected_to corpo_e_coscienza_path(anchor: "richiesta")
-      assert_equal "requested", commitment.status
-      assert_equal "service", commitment.kind
-      assert_nil commitment.starts_at
-      assert_not commitment.blocks_calendar?
-      assert_equal @node, commitment.subject
-      assert_equal "mario@example.com", commitment.participant_contact.email
-      assert_equal "find_professional", commitment.metadata["request_kind"]
-      assert_equal "IT", commitment.metadata["country_code"]
-      assert_equal 45.5416, commitment.metadata["latitude"]
-      assert_equal 10.2118, commitment.metadata["longitude"]
-      assert_equal "osm:R:44881", commitment.metadata["location_ref"]
+      assert_equal "open", brand_request.status
+      assert_equal "find_professional", brand_request.kind
+      assert_equal @node, brand_request.subject
+      assert_equal "mario@example.com", brand_request.participant_contact.email
+      assert_equal "IT", brand_request.metadata["country_code"]
+      assert_equal 45.5416, brand_request.metadata["latitude"]
+      assert_equal 10.2118, brand_request.metadata["longitude"]
+      assert_equal "osm:R:44881", brand_request.metadata["location_ref"]
     end
 
     test "keeps a local request attached to the Corpo e Coscienza domain" do
@@ -239,13 +236,13 @@ module Brands
         }
       }
 
-      commitment = DataCommitment.order(:created_at).last
-      assert_equal @domain, commitment.domain
-      assert_equal @node, commitment.subject
+      brand_request = BrandRequest.order(:created_at).last
+      assert_equal @domain, brand_request.domain
+      assert_equal @node, brand_request.subject
     end
 
     test "requires a contact channel" do
-      assert_no_difference [-> { Brands::Impegno::Contact.count }, -> { DataCommitment.count }] do
+      assert_no_difference [-> { Brands::Impegno::Contact.count }, -> { BrandRequest.count }] do
         post corpo_e_coscienza_requests_url, params: {
           request: {
             request_kind: "information",
@@ -280,6 +277,10 @@ module Brands
     end
 
     private
+
+      def sign_in(user)
+        post session_url, params: { email_address: user.email_address, password: "password123" }
+      end
 
       def with_location_search(replacement)
         original = LocationSearch.method(:call)

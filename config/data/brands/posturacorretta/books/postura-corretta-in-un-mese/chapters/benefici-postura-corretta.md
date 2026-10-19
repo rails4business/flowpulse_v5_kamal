@@ -18,4 +18,4 @@ Possiamo immaginarlo come imparare a guidare e conoscere la propria macchina:
 comprenderne i segnali non sostituisce il meccanico, ma permette di usarla
 meglio e di chiedere aiuto con maggiore consapevolezza quando è necessario.
 
-Per approfondire: [Postura e fisiologia](/posturacorretta/guida?sezione=percorso&capitolo=postura-fisiologia)
+Per approfondire: [Percorso integrato ed educazione alla salute](/posturacorretta/guida?sezione=percorso&capitolo=postura-fisiologia)
