@@ -91,6 +91,18 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > details.pc-app-account > summary", text: /Profilo/
   end
 
+  test "presents the educational introduction as three readable steps" do
+    get posturacorretta_url
+
+    assert_response :success
+    assert_select "ol[aria-label='Come iniziare il percorso educativo'] > li", count: 3
+    assert_select "ol[aria-label='Come iniziare il percorso educativo'] h2", text: "Scopri"
+    assert_select "ol[aria-label='Come iniziare il percorso educativo'] h2", text: "Pratica"
+    assert_select "ol[aria-label='Come iniziare il percorso educativo'] h2", text: "Approfondisci"
+    assert_select "ol[aria-label='Come iniziare il percorso educativo']", text: /insegnante PosturaCorretta/
+    assert_select "ol[aria-label='Come iniziare il percorso educativo']", text: /professionista formato/
+  end
+
   test "keeps the legacy academy curriculum available" do
     get posturacorretta_accademia_url
     assert_response :success

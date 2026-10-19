@@ -97,6 +97,17 @@
           <% if @didactic_path["eyebrow"].present? %><p class="text-xs font-bold uppercase tracking-[.15em] text-blue-700"><%= @didactic_path.fetch("eyebrow") %></p><% end %>
           <h1 class="!m-0 !mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= @didactic_path.fetch("title") %></h1>
           <% if @didactic_path["description"].present? %><p class="mt-2 leading-7 text-slate-600"><%= @didactic_path.fetch("description") %></p><% end %>
+          <% if @didactic_path["introduction_steps"].present? %>
+            <ol class="mt-6 grid gap-5 sm:grid-cols-3" aria-label="Come iniziare il percorso educativo">
+              <% @didactic_path.fetch("introduction_steps").each do |step| %>
+                <li class="border-l-2 border-blue-200 pl-4">
+                  <span class="text-[11px] font-black uppercase tracking-[.14em] text-blue-700"><%= step.fetch("number") %></span>
+                  <h2 class="mt-1 text-lg font-semibold text-slate-950"><%= step.fetch("title") %></h2>
+                  <p class="mt-1 text-sm leading-6 text-slate-600"><%= step.fetch("description") %></p>
+                </li>
+              <% end %>
+            </ol>
+          <% end %>
         </header>
       <div class="space-y-6">
         <% @didactic_courses.each do |course| %>
