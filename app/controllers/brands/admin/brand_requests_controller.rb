@@ -21,13 +21,18 @@ module Brands
         @active_state = params[:state].presence_in(%w[open closed all]) || "open"
         scope = scope.active if @active_state == "open"
         scope = scope.closed if @active_state == "closed"
-        allowed_statuses = case @active_state
-        when "open" then BrandRequest::ACTIVE_STATUSES
-        when "closed" then BrandRequest::CLOSED_STATUSES
-        else BrandRequest::STATUSES
+
+        if @active_state == "closed"
+          @active_status = params[:status].presence_in(%w[accepted rejected closed])
+          if @active_status == "rejected"
+            scope = scope.where(status: %w[rejected cancelled])
+          elsif @active_status.present?
+            scope = scope.where(status: @active_status)
+          end
+        else
+          @active_status = nil
         end
-        @active_status = params[:status].presence_in(allowed_statuses)
-        scope = scope.where(status: @active_status) if @active_status
+
         @requests = scope
           .includes(:domain, :participant_contact, :subject, :requester_profile, :assigned_to_profile, :brand_invitations)
           .order(created_at: :desc)

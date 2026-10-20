@@ -66,4 +66,14 @@ Possiamo riassumere il filo in questo modo:
 
 Non devi scegliere una direzione ed eliminare le altre. Puoi continuare a imparare, essere seguito da un professionista e mantenere aperta la curiosità.
 
+> **AGGIUNTA DA RILEGGERE · 20 ottobre 2026**
+>
+> Le tre direzioni rispondono a tre necessità diverse che possono accompagnarsi:
+>
+> 1. **Percorso Integrato — valutare e costruire.** Prima occorre conoscere la situazione, capire quali funzioni o sistemi richiedono attenzione e coinvolgere i professionisti della salute o del benessere adatti. Ogni proposta dovrebbe spiegare con parole semplici su che cosa vuole lavorare, come prevede di ottenere il risultato e quando verrà verificata.
+> 2. **PosturaCorretta — conoscere ed educare.** La cura da sola non insegna necessariamente a conoscere il corpo. Il percorso educativo usa postura, fisiologia e principi delle metodiche per offrire una base comune. L'insegnante collega gli argomenti; quando possiede anche una professione, interviene soltanto secondo le competenze e i confini di quella professione.
+> 3. **Il Giardino del Corpo — scoprire e coltivare.** Non tutto ciò che riguarda l'essere umano è già conosciuto o spiegato. Possiamo esplorare capacità, forme di espressione, relazioni, ambiente e dimensione interiore distinguendo sempre ciò che è verificato, ciò che nasce dall'esperienza e ciò che rimane un'ipotesi.
+>
+> Anche la progressione simbolica diventa più leggibile: dal **rosso al verde** il Percorso Integrato incontra salute, prevenzione, preparazione e benessere; l'**azzurro** dà espressione al corpo e al sentire; l'**indaco** sviluppa consapevolezza nel percorso educativo; il **viola** apre alla connessione nel Giardino del Corpo.
+
 Nel prossimo capitolo faremo ordine e sceglierai da quale passo continuare.

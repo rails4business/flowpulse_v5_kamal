@@ -42,12 +42,12 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     assert @brand_request.resolved_at.present?
   end
 
-  test "closed requests use outcome filters and all requests use a compact table" do
+  test "closed requests use outcome filters and table layout is used for all views" do
     @brand_request.update!(status: "accepted", resolved_at: Time.current)
     BrandRequest.create!(
       domain: @domain, brand_node: @brand, subject: @brand, participant_contact: @contact,
-      title: "Richiesta da archiviare", kind: "information", audience: "user",
-      status: "closed", resolved_at: Time.current
+      title: "Richiesta da rifiutare", kind: "information", audience: "user",
+      status: "rejected", resolved_at: Time.current
     )
     sign_in(@owner)
 
@@ -55,28 +55,27 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
 
     assert_response :success
     assert_select ".brand-admin-filter[aria-current='page']", text: /Chiuse · 2/
-    assert_select ".brand-admin-filter--secondary", text: /Accettata · 1/
-    assert_select ".brand-admin-filter--secondary", text: /Archiviata · 1/
+    assert_select ".brand-admin-filter--secondary", text: /Accettate · 1/
+    assert_select ".brand-admin-filter--secondary", text: /Rifiutate · 1/
     assert_select ".brand-admin-filter--secondary", text: /In attesa/, count: 0
-    assert_select "table.brand-admin-table", count: 0
+    assert_select "table.brand-admin-table", count: 1
 
     get brand_admin_requests_url(@brand.slug, state: "all")
 
     assert_response :success
     assert_select "table.brand-admin-table", count: 1
     assert_select "table.brand-admin-table tbody tr", count: 2
-    assert_select "table.brand-admin-table a", text: "Apri", count: 2
-    assert_select "article[id^='brand-request-']", count: 0
+    assert_select ".brand-admin-filter--secondary", count: 0
   end
 
-  test "an incompatible status is ignored when filtering open requests" do
+  test "open requests do not display secondary status submenu" do
     sign_in(@owner)
 
     get brand_admin_requests_url(@brand.slug, state: "open", status: "accepted")
 
     assert_response :success
     assert_select "#brand-request-#{@brand_request.id}"
-    assert_select ".brand-admin-filter--secondary[aria-current='page']", text: "Tutte le aperte"
+    assert_select ".brand-admin-filter--secondary", count: 0
   end
 
   test "access request creates a linked invitation" do

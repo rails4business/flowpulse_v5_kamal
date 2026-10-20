@@ -34,7 +34,16 @@ module Posturacorretta
       repository = ContentRepository.new(include_scheduled: true)
       courses = repository.courses
 
-      assert_equal %w[inizia-con-posturacorretta postura-e-fisiologia muoviti-ed-esplora ascolta-gli-aspetti-vitali nutri-il-corpo regola-con-le-piante-officinali], courses.map { |course| course.fetch("slug") }
+      assert_equal %w[
+        inizia-con-posturacorretta
+        postura-e-fisiologia
+        percorso-integrato
+        muoviti-ed-esplora
+        ascolta-gli-aspetti-vitali
+        corpo-come-un-giardino
+        nutri-il-corpo
+        regola-con-le-piante-officinali
+      ], courses.map { |course| course.fetch("slug") }
 
       chapters = courses.flat_map { |course| course.fetch("chapters") }
       assert chapters.all? { |chapter| chapter.fetch("content_path").start_with?("brands/posturacorretta/courses/") }

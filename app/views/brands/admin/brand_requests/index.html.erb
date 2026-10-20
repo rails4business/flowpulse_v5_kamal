@@ -3,7 +3,7 @@
   status_labels = {
     "open" => "Aperta", "in_progress" => "In carico", "waiting" => "In attesa",
     "invited" => "Invitata", "accepted" => "Accettata", "closed" => "Archiviata",
-    "rejected" => "Rifiutata", "cancelled" => "Annullata"
+    "rejected" => "Rifiutata", "cancelled" => "Rifiutata"
   }
   kind_labels = {
     "waitlist" => "Lista d’attesa", "access" => "Accesso", "group_path" => "Percorso di gruppo",
@@ -13,10 +13,9 @@
     "contact" => "Contatto", "other" => "Altro"
   }
   audience_labels = { "user" => "Utente", "professional" => "Professionista", "organization" => "Organizzazione" }
-  status_groups = {
-    "open" => BrandRequest::ACTIVE_STATUSES,
-    "closed" => BrandRequest::CLOSED_STATUSES
-  }
+
+  accepted_count = @status_counts["accepted"].to_i
+  rejected_count = @status_counts["rejected"].to_i + @status_counts["cancelled"].to_i
 %>
 
 <main class="brand-admin-shell max-w-6xl">
@@ -30,19 +29,19 @@
     <h1 class="brand-admin-title mt-2 text-3xl"><%= @brand.title %> · Richieste</h1>
     <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Contatti, liste d’attesa, candidature e richieste di accesso. Una richiesta può essere chiusa direttamente oppure trasformata in invito, servizio, evento o impegno.</p>
 
+    <!-- LIVELLO PRINCIPALE: Aperte / Chiuse / Tutte -->
     <nav class="mt-5 flex flex-wrap gap-2" aria-label="Filtra richieste aperte e chiuse">
       <%= link_to "Aperte · #{@state_counts.fetch('open')}", brand_admin_requests_path(@brand.slug, state: "open"), aria: { current: ("page" if @active_state == "open") }, class: "brand-admin-filter" %>
       <%= link_to "Chiuse · #{@state_counts.fetch('closed')}", brand_admin_requests_path(@brand.slug, state: "closed"), aria: { current: ("page" if @active_state == "closed") }, class: "brand-admin-filter" %>
       <%= link_to "Tutte · #{@state_counts.values.sum}", brand_admin_requests_path(@brand.slug, state: "all"), aria: { current: ("page" if @active_state == "all") }, class: "brand-admin-filter" %>
     </nav>
 
-    <% if status_groups.key?(@active_state) %>
-      <nav class="mt-3 flex flex-wrap gap-2" aria-label="Filtra per stato">
-        <%= link_to "Tutte #{@active_state == 'open' ? 'le aperte' : 'le chiuse'}", brand_admin_requests_path(@brand.slug, state: @active_state), aria: { current: ("page" unless @active_status) }, class: "brand-admin-filter brand-admin-filter--secondary" %>
-        <% status_groups.fetch(@active_state).each do |status| %>
-          <% next if @status_counts[status].to_i.zero? %>
-          <%= link_to "#{status_labels.fetch(status)} · #{@status_counts.fetch(status)}", brand_admin_requests_path(@brand.slug, state: @active_state, status:), aria: { current: ("page" if @active_status == status) }, class: "brand-admin-filter brand-admin-filter--secondary" %>
-        <% end %>
+    <!-- SOTTOMENU: SOLO SOTTO CHIUSE (Accettate e Rifiutate) -->
+    <% if @active_state == "closed" %>
+      <nav class="mt-3 flex flex-wrap gap-2" aria-label="Filtra richieste chiuse">
+        <%= link_to "Tutte le chiuse · #{@state_counts.fetch('closed')}", brand_admin_requests_path(@brand.slug, state: "closed"), aria: { current: ("page" unless @active_status) }, class: "brand-admin-filter brand-admin-filter--secondary" %>
+        <%= link_to "Accettate · #{accepted_count}", brand_admin_requests_path(@brand.slug, state: "closed", status: "accepted"), aria: { current: ("page" if @active_status == "accepted") }, class: "brand-admin-filter brand-admin-filter--secondary" %>
+        <%= link_to "Rifiutate · #{rejected_count}", brand_admin_requests_path(@brand.slug, state: "closed", status: "rejected"), aria: { current: ("page" if @active_status == "rejected") }, class: "brand-admin-filter brand-admin-filter--secondary" %>
       </nav>
     <% end %>
   </header>
@@ -59,32 +58,113 @@
     </section>
   <% end %>
 
-  <% if @requests.any? && @active_state == "all" %>
-    <section class="brand-admin-card brand-admin-table-wrap mt-6" aria-label="Tutte le richieste del Brand">
+  <% if @requests.any? %>
+    <section class="brand-admin-card brand-admin-table-wrap mt-6" aria-label="Richieste del Brand">
       <table class="brand-admin-table">
-        <thead><tr><th>Data</th><th>Persona</th><th>Richiesta</th><th>Stato</th><th>Responsabile</th><th>Esito</th><th><span class="sr-only">Apri</span></th></tr></thead>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Richiedente & Contatti</th>
+            <th>Richiesta</th>
+            <th>Stato</th>
+            <th>Responsabile</th>
+            <th class="text-right">Azioni</th>
+          </tr>
+        </thead>
         <tbody>
           <% @requests.each do |brand_request| %>
-            <% contact = brand_request.participant_contact %>
-            <% person_name = contact&.name.presence || brand_request.requester_profile&.display_name || "—" %>
-            <tr>
-              <td><time datetime="<%= brand_request.created_at.iso8601 %>"><%= l(brand_request.created_at.to_date, format: :short) %></time></td>
-              <td><strong><%= person_name %></strong><% if contact&.email.present? %><small><%= contact.email %></small><% end %></td>
-              <td><strong><%= kind_labels.fetch(brand_request.kind, brand_request.kind.humanize) %></strong><small><%= brand_request.title %></small></td>
-              <td><span class="brand-admin-badge brand-admin-badge--status"><%= status_labels.fetch(brand_request.status, brand_request.status.humanize) %></span></td>
-              <td><%= brand_request.assigned_to_profile&.display_name || "—" %></td>
-              <td><%= brand_request.active? ? "—" : status_labels.fetch(brand_request.status) %></td>
-              <td><%= link_to "Apri", brand_admin_requests_path(@brand.slug, state: (brand_request.active? ? "open" : "closed"), status: brand_request.status, anchor: "brand-request-#{brand_request.id}"), class: "brand-admin-action" %></td>
+            <%
+              contact = brand_request.participant_contact
+              metadata = brand_request.metadata.to_h
+              person_name = contact&.name.presence || brand_request.requester_profile&.display_name || "—"
+              status_badge_modifier = case brand_request.status
+                when "accepted" then "brand-admin-badge--accepted"
+                when "rejected", "cancelled" then "brand-admin-badge--rejected"
+                when "waiting" then "brand-admin-badge--waiting"
+                else "brand-admin-badge--status"
+              end
+            %>
+            <tr id="brand-request-<%= brand_request.id %>">
+              <td class="whitespace-nowrap">
+                <time datetime="<%= brand_request.created_at.iso8601 %>" class="font-bold">
+                  <%= l(brand_request.created_at.to_date, format: :short) %>
+                </time>
+                <small class="text-slate-400 font-mono"><%= brand_request.domain.display_hostname %></small>
+              </td>
+
+              <td>
+                <strong class="text-slate-900"><%= person_name %></strong>
+                <% if contact&.email.present? %>
+                  <div class="mt-0.5"><%= mail_to contact.email, contact.email, class: "font-semibold text-teal-700 hover:underline" %></div>
+                <% end %>
+                <% if contact&.phone.present? %>
+                  <div><%= link_to contact.phone, "tel:#{contact.phone}", class: "text-xs font-semibold text-slate-600 hover:text-teal-700 hover:underline" %></div>
+                <% end %>
+                <% if metadata["city"].present? %>
+                  <small class="text-slate-500">📍 <%= metadata["city"] %><%= " (#{metadata['country_code']})" if metadata["country_code"].present? %></small>
+                <% end %>
+              </td>
+
+              <td>
+                <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                  <span class="brand-admin-badge brand-admin-badge--request"><%= kind_labels.fetch(brand_request.kind, brand_request.kind.humanize) %></span>
+                  <span class="brand-admin-badge brand-admin-badge--<%= brand_request.audience %>"><%= audience_labels.fetch(brand_request.audience, brand_request.audience.humanize) %></span>
+                </div>
+                <strong class="text-slate-900 block"><%= brand_request.title %></strong>
+                <% if brand_request.message.present? %>
+                  <p class="mt-1 text-xs text-slate-600 max-w-sm" title="<%= brand_request.message %>"><%= brand_request.message %></p>
+                <% end %>
+                <% if brand_request.subject.is_a?(Node) %>
+                  <small class="text-slate-500">Nodo: <%= brand_request.subject.title %></small>
+                <% end %>
+              </td>
+
+              <td class="whitespace-nowrap">
+                <span class="brand-admin-badge <%= status_badge_modifier %>">
+                  <%= status_labels.fetch(brand_request.status, brand_request.status.humanize) %>
+                </span>
+                <% if brand_request.resolved_at.present? %>
+                  <small class="text-slate-500">Chiusa <%= l(brand_request.resolved_at, format: :short) %></small>
+                <% end %>
+              </td>
+
+              <td class="whitespace-nowrap">
+                <%= brand_request.assigned_to_profile&.display_name || "—" %>
+              </td>
+
+              <td class="text-right whitespace-nowrap">
+                <div class="inline-flex flex-wrap items-center justify-end gap-1.5">
+                  <% if brand_request.active? %>
+                    <% if brand_request.kind == "access" && contact&.email.present? %>
+                      <%= button_to(brand_request.brand_invitations.pending.exists? ? "Rigenera invito" : "Genera invito", brand_admin_request_invitation_path(@brand.slug, brand_request), method: :post, class: "brand-admin-action brand-admin-action--primary brand-admin-action--sm") %>
+                    <% end %>
+
+                    <% if brand_request.status == "open" %>
+                      <%= button_to "In carico", brand_admin_request_state_path(@brand.slug, brand_request), method: :patch, params: { transition: "take_charge" }, class: "brand-admin-action brand-admin-action--sm" %>
+                    <% end %>
+
+                    <% if %w[open in_progress].include?(brand_request.status) %>
+                      <%= button_to "In attesa", brand_admin_request_state_path(@brand.slug, brand_request), method: :patch, params: { transition: "wait" }, class: "brand-admin-action brand-admin-action--sm" %>
+                    <% end %>
+
+                    <% unless brand_request.kind == "access" %>
+                      <%= button_to "Accetta", brand_admin_request_state_path(@brand.slug, brand_request), method: :patch, params: { transition: "accept" }, class: "brand-admin-action brand-admin-action--primary brand-admin-action--sm" %>
+                    <% end %>
+
+                    <%= button_to "Rifiuta", brand_admin_request_state_path(@brand.slug, brand_request), method: :patch, params: { transition: "reject" }, class: "brand-admin-action brand-admin-action--danger brand-admin-action--sm", data: { turbo_confirm: "Confermi di voler rifiutare questa richiesta?" } %>
+                  <% else %>
+                    <%= button_to "Riapri", brand_admin_request_state_path(@brand.slug, brand_request), method: :patch, params: { transition: "reopen" }, class: "brand-admin-action brand-admin-action--sm" %>
+                  <% end %>
+                </div>
+              </td>
             </tr>
           <% end %>
         </tbody>
       </table>
     </section>
-  <% elsif @requests.any? %>
-    <section class="mt-6 space-y-4" aria-label="Richieste del Brand">
-      <%= render partial: "request_card", collection: @requests, as: :brand_request, locals: { status_labels:, kind_labels:, audience_labels: } %>
-    </section>
   <% else %>
-    <p class="brand-admin-card mt-6 border-dashed p-10 text-center text-sm text-slate-500">Non ci sono richieste<%= " con stato #{status_labels.fetch(@active_status)}" if @active_status %> per questo Brand.</p>
+    <p class="brand-admin-card mt-6 border-dashed p-10 text-center text-sm text-slate-500">
+      Non ci sono richieste<%= " con stato #{status_labels.fetch(@active_status)}" if @active_status %> per questo Brand.
+    </p>
   <% end %>
 </main>
