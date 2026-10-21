@@ -1,37 +1,44 @@
 # Piano — Dashboard condivisa Flowpulse
 
 **Data:** 19 ottobre 2026  
-**Stato:** prima implementazione superadmin avviata
+**Stato:** fonte operativa corrente; impostazione rivista il 21 ottobre 2026
 **Prototipo:** `docs/private_prototypes/viste_html/Dashboard · generaimpresa.html`
 **Modello precedente congelato:** `docs/private_prototypes/viste_html/Dashboard · generaimpresa · originale 2026-10-19.html` (versione precedente al Tavolo; non modificare)
-**Dashboard Rails:** `/flowpulse/admin/production`
+**Implementazione precedente:** `/flowpulse/admin/production` (base da riusare,
+non destinazione definitiva)
 
 ## Obiettivo
 
-Costruire un unico workspace operativo che permetta di leggere lo stesso
-lavoro da tre punti di vista, senza duplicare i dati e senza sostituire le
-pagine specialistiche già esistenti:
+Costruire una nuova dashboard ufficiale condivisa, composta da quattro aree,
+che riusi progressivamente frontend, controller, query e modelli esistenti.
+Durante la costruzione le vecchie dashboard restano operative; saranno
+sostituite soltanto dopo avere raggiunto e verificato la parità funzionale.
 
 ```text
-Generaimpresa        Rails4Business       1impegno
-cosa e per chi       come si produce      chi fa cosa e quando
+Flowpulse             Generaimpresa       Rails4Business       1impegno
+visione comune        cosa esiste         come si produce      chi, cosa, quando
 
-Brand                Skill                Persone
-Progetto              Catena               Impegni
-Prodotto              Dima attiva          Eventi e settimana
+Panoramica            Brand               Skill                Impegni
+collegamenti          Progetti / Node     Catene               Settimana
+regia                 Prodotti            Dime e processi      Contatti e luoghi
 ```
 
 Flowpulse fornisce la shell, le autorizzazioni, la navigazione e il
-collegamento fra i tre punti di vista.
+collegamento fra le quattro aree. Ogni area conserva però il proprio confine:
+Impegni e Settimana appartengono a 1impegno; Brand, Progetti / Node e Prodotti
+a Generaimpresa; Skill e catene di montaggio a Rails4Business.
 
 La dashboard non diventa un nuovo Brand e non introduce un quinto archivio.
 Legge `Node`, Skill, processi, prodotti e dati di 1impegno dalle rispettive
 fonti di verità.
 
-## Decisione architetturale
+## Decisione architetturale corrente
 
-La base migliore è la dashboard autenticata Creator già presente sotto
-`CreatorWorld`, perché possiede:
+La destinazione è una nuova shell ufficiale condivisa. La dashboard Creator,
+la dashboard produttiva superadmin e il workspace 1impegno sono sorgenti da
+riusare, non la struttura definitiva da estendere indefinitamente.
+
+La nuova shell deve riusare:
 
 - shell Flowpulse;
 - selezione del ruolo e del canale Creator;
@@ -39,10 +46,10 @@ La base migliore è la dashboard autenticata Creator già presente sotto
 - albero di Node e domini;
 - layout responsive già condiviso.
 
-La nuova dashboard produttiva deve essere una sezione del workspace Creator,
-accessibile inizialmente anche al superadmin. La dashboard tecnica
-`/admin/dashboard` resta separata: serve a governare applicazione, domini,
-audit e importazioni, non il lavoro produttivo.
+La nuova dashboard non deve avere un controller monolitico: ogni area avrà
+controller e viste propri sotto una shell comune. La dashboard tecnica
+`/admin/dashboard` resta separata e continua a governare applicazione, domini,
+audit e importazioni.
 
 Le landing pubbliche di Generaimpresa, Rails4Business e 1impegno restano
 separate. La dashboard le collega ma non le incorpora integralmente.
@@ -144,7 +151,32 @@ Prima si rifinisce il prototipo statico nello stile Tailwind del progetto. Poi
 lo stesso markup viene suddiviso in partial ERB; non si mantiene un secondo CSS
 dedicato alla dashboard.
 
-### Tavolo — ingresso rapido di 1impegno
+### Impegni — primo incremento verticale di 1impegno
+
+La prima sezione da costruire nella nuova dashboard è l'index **Impegni** di
+1impegno. La fonte è `DataCommitment`: non viene creato un nuovo archivio.
+
+L'index, inizialmente in sola lettura, mostra:
+
+- titolo e stato;
+- proprietario e destinatario;
+- Brand;
+- Progetto / Node;
+- Skill;
+- prodotto;
+- eventuale catena;
+- data oppure indicazione "da programmare".
+
+La lista rimane leggera. Classificazione completa, modifica, pianificazione,
+azioni ed export del singolo record vivono nello show del DataCommitment. Dopo
+la verifica di index e show si collega la vista Settimana agli stessi record.
+
+#### Storico: Tavolo e raccolta rapida
+
+La sezione seguente documenta la prima implementazione superadmin chiamata
+**Tavolo**. Resta utile come inventario dei campi e della raccolta rapida, ma
+non definisce più la navigazione della nuova dashboard ufficiale: quelle voci
+sono DataCommitment e compaiono nell'index Impegni di 1impegno.
 
 Prima della vista ordinata serve un posto nel quale scaricare rapidamente
 attività, idee, eventi e cose da costruire. Nella dashboard condivisa questa
@@ -348,10 +380,10 @@ ProductionDashboard::PersonPresenter
 Questi oggetti non scrivono dati e possono essere riutilizzati prima dal
 superadmin e poi dai Creator.
 
-## Rotte proposte
+## Rotte precedentemente proposte
 
-La sezione va aggiunta al workspace Creator, evitando una nuova dashboard
-parallela:
+Queste rotte documentano l'ipotesi precedente basata sul workspace Creator e
+non sono più la destinazione approvata:
 
 ```text
 /creator_world/production
@@ -381,8 +413,10 @@ L'index ha quattro ingressi di sistema:
 Flowpulse | Generaimpresa | Rails4Business | 1impegno
 ```
 
-**Flowpulse** è la lettura generale e contiene Tavolo e Progetti/prodotti. Nel
-dettaglio di un Node le tab rimangono soltanto:
+Questa prima implementazione collocava Tavolo e Progetti/prodotti sotto
+Flowpulse. Nella nuova struttura è codice da riusare: Impegni passa a
+1impegno, mentre Brand, Progetti / Node e Prodotti passano a Generaimpresa.
+Nel dettaglio di un Node le letture trasversali possono rimanere:
 
 ```text
 Generaimpresa | Rails4Business | 1impegno

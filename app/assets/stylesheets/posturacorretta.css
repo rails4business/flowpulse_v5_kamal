@@ -173,6 +173,10 @@
   backdrop-filter: blur(14px);
 }
 
+.pc-mobile-app-nav--reader {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .pc-mobile-app-nav > a,
 .pc-mobile-app-nav > button,
 .pc-mobile-app-nav > details > summary {

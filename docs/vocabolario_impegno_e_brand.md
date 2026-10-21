@@ -59,8 +59,21 @@ operano su Session e Slot; non sono ruoli globali dell'utente.
 | Termine | Significato | Stato |
 |---|---|---|
 | Service | Configurazione commerciale/organizzativa: prezzo, capienza, luogo o online, operatori e prenotazione | futuro, dopo il pilota |
-| DataCommitment | Impegno concreto di una persona nel suo calendario | già esistente |
+| DataCommitment | Impegno o scambio concreto: attività, partecipazione, accordo o pagamento; può essere programmato oppure ancora senza data | già esistente |
 | Luogo / contatto | Risorse riusabili di 1Impegno | già esistenti, da semplificare |
+
+### Soggetti del DataCommitment
+
+| Termine | Significato |
+|---|---|
+| Proprietario | Profilo nel cui spazio vive il DataCommitment |
+| Creato da | Profilo che ha creato materialmente il record; dato di audit |
+| Destinatario | Contatto al quale l'impegno, il pagamento o lo scambio è riferito |
+| Responsabile | Profilo che governa l'esecuzione |
+| Assegnatario | Profilo o calendario a cui l'attività è assegnata |
+
+Questi ruoli possono coincidere, ma non sono sinonimi. In particolare
+**destinatario** e **proprietario** devono rimanere distinti.
 
 Un corso o una masterclass con prezzo online può essere acquistabile come
 contenuto senza diventare un Service. Il Service serve quando si vende la

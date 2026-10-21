@@ -1,0 +1,16 @@
+<%
+  tabs = [
+    ["Da fare", workspace_data_commitments_path, :todo],
+    ["Agenda", workspace_data_commitments_agenda_path, :agenda],
+    ["Settimana", workspace_data_commitments_week_path, :week]
+  ]
+%>
+
+<nav class="mt-5 flex gap-2 overflow-x-auto" aria-label="Sezioni di 1impegno">
+  <% tabs.each do |label, path, key| %>
+    <% active = local_assigns.fetch(:active) == key %>
+    <%= link_to label, path,
+          aria: { current: ("page" if active) },
+          class: "whitespace-nowrap rounded-full px-4 py-2 text-sm font-extrabold #{active ? 'bg-blue-600 text-white shadow-sm' : 'border border-slate-300 bg-white text-slate-600 hover:bg-slate-50'}" %>
+  <% end %>
+</nav>

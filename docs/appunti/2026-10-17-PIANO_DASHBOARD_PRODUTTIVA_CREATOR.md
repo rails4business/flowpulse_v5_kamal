@@ -1,7 +1,7 @@
 # Piano — Dashboard produttiva per Creator
 
 **Data:** 17 ottobre 2026  
-**Stato:** definizione in corso, non ancora implementato  
+**Stato:** storico; sostituito dal piano della dashboard condivisa del 19 ottobre 2026
 **Prototipo:** `docs/private_prototypes/viste_html/Dashboard · generaimpresa.html`
 
 > **Revisione del 19 ottobre 2026:** l'ipotesi “DataExperience = prodotto” è
@@ -13,6 +13,12 @@
 > Nella UI corrente, `NodeProcess` espone **Catena** e **Dima attiva**;
 > l'esecuzione concreta viene chiamata **Ciclo di lavoro**. Persone e
 > calendario appartengono a 1impegno, dove ogni persona ha una pagina propria.
+
+> **Decisione del 21 ottobre 2026:** questo file conserva la cronologia del
+> ragionamento e non deve guidare nuove implementazioni. La fonte operativa è
+> [`2026-10-19-PIANO_IMPLEMENTAZIONE_DASHBOARD_CONDIVISA.md`](./2026-10-19-PIANO_IMPLEMENTAZIONE_DASHBOARD_CONDIVISA.md),
+> che definisce una nuova dashboard ufficiale composta dalle aree Flowpulse,
+> GeneraImpresa, Rails4Business e 1impegno.
 
 ## Obiettivo
 

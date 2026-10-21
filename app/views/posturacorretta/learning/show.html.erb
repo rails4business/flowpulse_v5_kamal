@@ -6,7 +6,7 @@
   <% elsif @course_overview %>
     <%= render "posturacorretta/learning/student_dashboard_header", active_item: :percorso %>
   <% elsif context_course && context_mode %>
-    <%= render "posturacorretta/learning/course_reader_header", course: context_course, active: context_mode %>
+    <%= render "posturacorretta/learning/course_reader_header", course: context_course, active: context_mode, mobile_only: @lesson.present? %>
   <% else %>
     <%= render "posturacorretta/learning/header" %>
   <% end %>

@@ -1,0 +1,84 @@
+<% content_for :title, "Agenda · 1impegno" %>
+<%
+  visible_session_ids = @data_sessions.map(&:id)
+  visible_slot_ids = @data_sessions.flat_map { |session| session.data_slots.map(&:id) } + @standalone_slots.map(&:id)
+  independent_commitments = @commitments.reject do |commitment|
+    visible_session_ids.include?(commitment.data_session_id) || visible_slot_ids.include?(commitment.data_slot_id)
+  end
+  days = if @agenda_scope
+    (@data_sessions.map { |item| item.starts_at&.to_date } +
+      @standalone_slots.map { |item| item.starts_at&.to_date } +
+      independent_commitments.map { |item| item.starts_at&.to_date }).compact.uniq.sort
+  else
+    (@week_start..@week_end).to_a
+  end
+  days.reverse! if @agenda_scope == "past"
+  agenda_by_day = days.index_with { [] }
+
+  @data_sessions.each do |session|
+    agenda_by_day[session.starts_at.to_date] << {
+      starts_at: session.starts_at, ends_at: session.ends_at, title: session.title,
+      sort_at: session.starts_at, id: "data-session-#{session.id}"
+    }
+    session.data_slots.each do |slot|
+      day = (slot.starts_at || session.starts_at).to_date
+      agenda_by_day[day] << {
+        starts_at: slot.starts_at, ends_at: slot.ends_at, title: slot.title,
+        sort_at: slot.starts_at || session.starts_at, id: "data-slot-#{slot.id}"
+      } if agenda_by_day.key?(day)
+    end
+  end
+  @standalone_slots.each do |slot|
+    agenda_by_day[slot.starts_at.to_date] << {
+      starts_at: slot.starts_at, ends_at: slot.ends_at, title: slot.title,
+      sort_at: slot.starts_at, id: "data-slot-#{slot.id}"
+    }
+  end
+  independent_commitments.each do |commitment|
+    agenda_by_day[commitment.starts_at.to_date] << {
+      starts_at: commitment.starts_at, ends_at: commitment.ends_at, title: commitment.title,
+      sort_at: commitment.starts_at, id: "agenda-data-commitment-#{commitment.id}"
+    }
+  end
+  agenda_days = days.select { |day| agenda_by_day.fetch(day).any? }
+%>
+
+<div class="mx-auto max-w-7xl">
+  <%= render "shared/workspace/system_navigation", active_system: :impegno %>
+  <%= render "navigation", active: :agenda %>
+
+  <section class="mt-7" aria-labelledby="agenda-heading">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-emerald-700">1impegno</p>
+        <h2 id="agenda-heading" class="mt-1 text-2xl font-black text-slate-950">Agenda</h2>
+        <p class="mt-1 text-sm text-slate-600"><% if @agenda_scope == "past" %>Solo appuntamenti passati<% elsif @agenda_scope == "future" %>Solo appuntamenti futuri<% else %><%= l(@week_start, format: "%d %B") %> – <%= l(@week_end, format: "%d %B %Y") %><% end %></p>
+      </div>
+      <%= render "period_navigation", path_helper: :workspace_data_commitments_agenda_path, agenda_controls: true %>
+    </div>
+
+    <% if agenda_days.any? %>
+      <div class="home__programma__text mt-8 max-w-4xl">
+        <h2 class="text-3xl font-black tracking-tight text-slate-950">Il programma della settimana</h2>
+        <% agenda_days.each do |day| %>
+          <div class="home__programma__text__table border-b border-slate-200 py-7 last:border-b-0">
+            <h3 class="text-xl font-black capitalize text-slate-950"><%= l(day, format: "%d %B, %A") %></h3>
+            <ul class="mt-4 list-disc space-y-3 pl-6 text-base leading-7 text-slate-700">
+              <% agenda_by_day.fetch(day).sort_by { |entry| entry.fetch(:sort_at) }.each do |entry| %>
+                <li id="<%= entry.fetch(:id) %>">
+                  <% if entry[:starts_at] %><strong><%= entry[:starts_at].strftime("%H:%M") %><%= " – #{entry[:ends_at].strftime('%H:%M')}" if entry[:ends_at] %></strong> – <% end %><%= entry.fetch(:title) %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="mt-8 max-w-4xl border-t border-slate-200 py-10">
+        <p class="text-base text-slate-500">Nessun appuntamento personale in questa settimana.</p>
+      </div>
+    <% end %>
+  </section>
+
+  <%= render "shared/workspace/versions_footer", function: :data_commitments %>
+</div>

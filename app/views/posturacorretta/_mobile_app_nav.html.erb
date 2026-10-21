@@ -3,13 +3,19 @@
 <% lessons_active = request.path == posturacorretta_student_dashboard_path %>
 <% methodologies_active = request.path.start_with?(posturacorretta_metodiche_path) %>
 <% profile_active = request.path.start_with?(posturacorretta_profile_path) || request.path.start_with?(posturacorretta_student_appointments_path) %>
-<nav class="pc-mobile-app-nav sm:hidden" aria-label="Navigazione app PosturaCorretta">
+<nav class="pc-mobile-app-nav <%= 'pc-mobile-app-nav--reader' if course_chapter %> sm:hidden" aria-label="Navigazione app PosturaCorretta">
   <% if course_chapter %>
-    <%= link_to posturacorretta_course_path(corso: params[:corso]), aria: { label: "Torna al corso" }, class: "pc-app-logo" do %>
-      <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="">
-      <small aria-hidden="true">←</small>
+    <% if @previous_lesson %>
+      <%= link_to posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: @previous_lesson.fetch("slug")), aria: { label: "Capitolo precedente" } do %><span aria-hidden="true">←</span><small>Indietro</small><% end %>
+    <% else %>
+      <span aria-hidden="true"></span>
     <% end %>
     <button type="button" aria-current="page" aria-label="Apri indice capitoli" aria-controls="seme-aside" aria-expanded="false" class="is-active" data-mobile-aside-target="toggle" data-action="mobile-aside#open"><span aria-hidden="true">☰</span><small>Indice</small></button>
+    <% if @next_lesson %>
+      <%= link_to posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: @next_lesson.fetch("slug")), aria: { label: "Capitolo successivo" } do %><span aria-hidden="true">→</span><small>Avanti</small><% end %>
+    <% else %>
+      <span aria-hidden="true"></span>
+    <% end %>
   <% else %>
     <%= link_to posturacorretta_path, aria: { label: "Percorso PosturaCorretta", current: ("page" if home_active) }, class: "pc-app-logo #{'is-active' if home_active}" do %>
       <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="">
@@ -17,14 +23,15 @@
     <% end %>
     <%= link_to posturacorretta_student_dashboard_path, aria: { current: ("page" if lessons_active) }, class: (lessons_active ? "is-active" : nil) do %><span aria-hidden="true">▤</span><small>Lezioni</small><% end %>
   <% end %>
-  <%= link_to posturacorretta_metodiche_path, aria: { current: ("page" if methodologies_active) }, class: (methodologies_active ? "is-active" : nil) do %><span aria-hidden="true">◎</span><small>Metodiche</small><% end %>
-  <details class="pc-app-explore group [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
+  <% unless course_chapter %>
+    <%= link_to posturacorretta_metodiche_path, aria: { current: ("page" if methodologies_active) }, class: (methodologies_active ? "is-active" : nil) do %><span aria-hidden="true">◎</span><small>Metodiche</small><% end %>
+    <details class="pc-app-explore group [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
     <summary aria-label="Apri Esplora"><span aria-hidden="true">•••</span><small>Esplora</small></summary>
     <div class="pc-app-explore-menu" aria-label="Esplora PosturaCorretta">
       <%= render "posturacorretta/explore_links" %>
     </div>
-  </details>
-  <details class="pc-app-account group [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
+    </details>
+    <details class="pc-app-account group [&_summary::-webkit-details-marker]:hidden" data-close-on-outside>
     <summary aria-label="Apri menu profilo" class="<%= 'is-active' if profile_active %>">
       <% if authenticated? %>
         <span class="pc-app-avatar" aria-hidden="true"><%= (Current.user.profile&.display_name.presence || Current.user.email_address).first.upcase %></span>
@@ -60,5 +67,6 @@
         <%= render "shared/privacy_menu_button" %>
       <% end %>
     </div>
-  </details>
+    </details>
+  <% end %>
 </nav>

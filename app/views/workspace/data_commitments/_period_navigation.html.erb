@@ -1,0 +1,21 @@
+<% if local_assigns[:agenda_controls] %>
+  <nav class="flex flex-wrap items-end gap-2" aria-label="Navigazione temporale agenda">
+    <% past_active = @agenda_scope == "past" %>
+    <% future_active = @agenda_scope == "future" %>
+    <%= link_to "Passati", public_send(path_helper, scope: "past"), aria: { pressed: past_active }, class: "rounded-lg border px-4 py-2.5 text-sm font-extrabold #{past_active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'}" %>
+    <%= form_with url: public_send(path_helper), method: :get, class: "flex items-end gap-2", data: { turbo: false } do |form| %>
+      <div>
+        <%= form.label :date, "Seleziona data", class: "mb-1 block text-[10px] font-extrabold uppercase tracking-[0.12em] text-slate-500" %>
+        <%= form.date_field :date, value: @selected_date.iso8601, class: "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800", onchange: "this.form.requestSubmit()" %>
+      </div>
+      <noscript><%= form.submit "Vai", class: "rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white" %></noscript>
+    <% end %>
+    <%= link_to "Futuri", public_send(path_helper, scope: "future"), aria: { pressed: future_active }, class: "rounded-lg border px-4 py-2.5 text-sm font-extrabold #{future_active ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'}" %>
+  </nav>
+<% else %>
+  <div class="flex flex-wrap items-center gap-2">
+    <%= link_to "←", public_send(path_helper, date: (@week_start - 1.week).iso8601), class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-600 hover:bg-slate-50", aria: { label: "Settimana precedente" } %>
+    <%= link_to "Oggi", public_send(path_helper, date: Date.current.iso8601), class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-extrabold text-blue-700 hover:bg-blue-50" %>
+    <%= link_to "→", public_send(path_helper, date: (@week_start + 1.week).iso8601), class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-600 hover:bg-slate-50", aria: { label: "Settimana successiva" } %>
+  </div>
+<% end %>

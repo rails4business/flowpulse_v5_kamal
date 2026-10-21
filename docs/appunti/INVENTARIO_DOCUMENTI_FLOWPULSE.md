@@ -1,6 +1,6 @@
 # Inventario dei documenti Flowpulse
 
-> Inventario iniziale del 15 settembre 2026, rivisto l'11 ottobre 2026. Serve a riordinare senza perdere
+> Inventario iniziale del 15 settembre 2026, rivisto il 21 ottobre 2026. Serve a riordinare senza perdere
 > informazioni. `Attivo` indica una fonte decisionale; `supporto` approfondisce
 > un ambito; `da rivedere` può contenere parti ancora utili; `storico` non deve
 > guidare nuove implementazioni; `prototipo` è un riferimento visuale.
@@ -14,6 +14,7 @@
 | `ARCHITETTURA_CICLI_CONTENUTI_E_SERVIZI.md` | Flowpulse / 1Impegno | DataExperience, DataSession, DataSlot, DataCommitment, calendari e servizi; non governa Domain e Site |
 | `METODO_SOLUZIONE_ATOMICA_E_PROGRAMMI.md` | GeneraImpresa / Rails4Business / Flowpulse | ProblemSolving, Skill, metodo di lavoro e mappa amministrativa dei Brand |
 | `2026-10-19-PIANO_IMPLEMENTAZIONE_DASHBOARD_CONDIVISA.md` | Flowpulse / GeneraImpresa / Rails4Business / 1impegno | Fonte operativa per UX, query condivise, autorizzazioni e implementazione progressiva della dashboard produttiva |
+| `2026-10-19-SCHEMA_SKILL_PRODOTTI_PROCESSI_1IMPEGNO.md` | GeneraImpresa / Rails4Business / 1impegno | Confini fra Node, Skill, prodotti, processi, DataCommitment e soggetti dello scambio |
 | `REGISTRO_PROGETTI_YML.md` | Flowpulse | Fonte YAML e priorità dei progetti |
 | `ROADMAP_PILOTA_POSTURACORRETTA_E_VISTA_OPERATIVA.md` | PosturaCorretta | Sequenza operativa del pilota |
 | `vocabolario_impegno_e_brand.md` | 1Impegno | Vocabolario sintetico coerente con l'architettura corrente |
@@ -32,7 +33,7 @@
 | `contenuti_trasversali_domini.md` | Tutti i brand | Provenienza, riuso e visibilità dei contenuti |
 | `eventi_trasversali_domini.md` | Tutti i brand | Rivedere alla prova delle Session pubbliche |
 | `ecosistema_persona_tre_progetti.md` | Ecosistema | Narrazione dei progetti intorno alla persona |
-| `FLOWPULSE_INTEGRAZIONE_PROGETTI.md` | Flowpulse | Visione progetti e sovranità; modelli Project rinviati |
+| `FLOWPULSE_INTEGRAZIONE_PROGETTI.md` | Flowpulse | Visione narrativa di progetti e sovranità; non è una fonte per i modelli o per la dashboard |
 | `flowpulse_sovranita_progetti_community.html` | Flowpulse | Documento/prototipo narrativo |
 | `dashboard_professionista_privata.md` | Professionisti | Rivedere dopo il pilota Operator |
 | `piano_professionista_tabs.md` | Professionisti | Rivedere insieme alla futura area privata |
@@ -44,12 +45,12 @@
 
 | Documento | Motivo |
 | --- | --- |
+| `2026-10-17-PIANO_DASHBOARD_PRODUTTIVA_CREATOR.md` | Piano precedente, sostituito dalla dashboard ufficiale condivisa in quattro aree |
 | `data_event_mvp_decisioni.md` | Descrive il precedente DataEvent, rimosso prima dell'uso reale |
 | `impegno_eventi_architettura.md` | Architettura precedente; prevalgono DataSession e DataSlot |
 | `esperienze_eventi_commitment.md` | Ipotesi storiche da recuperare solo quando si modelleranno le partecipazioni |
 | `posturacorretta_refactoring_guide.md` | Verificare rispetto all'interfaccia corrente prima di applicarlo |
 | `role_navigation_refactor_plan.md` | Parte del refactoring ruoli è già stata implementata |
-| `FLOWPULSE_INTEGRAZIONE_PROGETTI.md` | Visione utile, ma i futuri modelli Project non sostituiscono i Node, ProblemSolving o Skill correnti |
 
 Questi file non vanno cancellati ora. Quando una decisione utile viene
 recuperata, va trasferita nella fonte attiva appropriata e marcata come già
@@ -63,6 +64,7 @@ assorbita.
 | `docs/private_prototypes/viste_html/orario_ufficiale.html` | Fonte degli orari reali già discussi |
 | `docs/private_prototypes/viste_html/0_dataevent_show.html` | Solo riferimento visuale; rinominare i concetti in DataSession/DataSlot |
 | `docs/private_prototypes/viste_html/1impegno_official_2026.html` | Interfaccia 1Impegno da semplificare |
+| `docs/private_prototypes/viste_html/Dashboard · generaimpresa.html` | Esempio visuale della dashboard condivisa; il nome storico è fuorviante e andrà cambiato aggiornando prima tutti i riferimenti |
 | `docs/private_prototypes/viste_html/home_posturacorretta_programma.html` | Programma lezioni PosturaCorretta |
 | `docs/private_prototypes/viste_html/flowpulse_sovranita_progetti_community.html` | Visione Flowpulse; Project resta rinviato |
 

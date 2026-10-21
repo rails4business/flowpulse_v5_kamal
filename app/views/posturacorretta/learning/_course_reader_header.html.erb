@@ -1,7 +1,8 @@
 <% reader_course = local_assigns.fetch(:course) %>
 <% course_path = posturacorretta_course_path(corso: reader_course.fetch("slug")) %>
+<% mobile_only = local_assigns.fetch(:mobile_only, false) %>
 
-<header class="pc-course-reader-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+<header class="pc-course-reader-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur <%= "lg:hidden" if mobile_only %>">
   <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 min-w-0 items-center gap-3 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
       <%= link_to posturacorretta_path, class: "shrink-0 lg:justify-self-start", aria: { label: "PosturaCorretta home" } do %>

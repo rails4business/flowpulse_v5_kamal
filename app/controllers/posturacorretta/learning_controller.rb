@@ -2,7 +2,7 @@ module Posturacorretta
   class LearningController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
-  before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher]
+  before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher, :enroll, :complete_chapter]
   helper_method :posturacorretta_editorial_preview?, :publication_decision_time
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
@@ -52,6 +52,70 @@ module Posturacorretta
     return if performed?
 
     render :show
+  end
+
+  def enroll
+    load_curriculum_sources
+    course = @all_didactic_courses.find { |item| item.fetch("slug") == params[:corso] }
+    return redirect_to(posturacorretta_path, alert: "Corso non trovato") unless course
+    return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
+
+    commitment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
+    unless commitment
+      now = Time.current
+      commitment = learning_commitments.create!(
+        created_by_profile: current_profile,
+        domain: posturacorretta_domain,
+        title: "Iscrizione · #{course.fetch('title')}",
+        kind: "academy",
+        status: "in_progress",
+        starts_at: now,
+        actual_started_at: now,
+        blocks_calendar: false,
+        pricing_type: "none",
+        contribution_type: "unpaid",
+        content_key: course.fetch("slug"),
+        metadata: { "record_type" => "course_enrollment", "course_slug" => course.fetch("slug"), "access" => "free" }
+      )
+    end
+    redirect_to posturacorretta_course_path(corso: course.fetch("slug")), notice: "Iscrizione gratuita registrata."
+  end
+
+  def complete_chapter
+    load_curriculum_sources
+    course = @all_didactic_courses.find { |item| item.fetch("slug") == params[:corso] }
+    chapter = course&.fetch("chapters", [])&.find { |item| item.fetch("slug") == params[:capitolo] }
+    return redirect_to(posturacorretta_path, alert: "Capitolo non trovato") unless course && chapter
+    return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
+
+    enrollment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
+    return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Iscriviti al corso prima di registrare i capitoli completati.") unless enrollment
+
+    completed = learning_commitments.find do |item|
+      chapter_completion?(item) && item.content_key == chapter.fetch("slug") && item.metadata.to_h["course_slug"] == course.fetch("slug")
+    end
+    unless completed
+      now = Time.current
+      learning_commitments.create!(
+        created_by_profile: current_profile,
+        domain: posturacorretta_domain,
+        parent: enrollment,
+        title: "Capitolo completato · #{chapter.fetch('title')}",
+        kind: "academy",
+        status: "completed",
+        starts_at: now,
+        blocks_calendar: false,
+        pricing_type: "none",
+        contribution_type: "unpaid",
+        content_key: chapter.fetch("slug"),
+        metadata: { "record_type" => "chapter_completion", "course_slug" => course.fetch("slug"), "chapter_slug" => chapter.fetch("slug"), "access" => "free" }
+      )
+    end
+    completed_slugs = learning_commitments.select { |item| chapter_completion?(item) && item.metadata.to_h["course_slug"] == course.fetch("slug") && item.status == "completed" }.map(&:content_key).uniq
+    if course.fetch("chapters", []).any? && (course.fetch("chapters").map { |item| item.fetch("slug") } - completed_slugs).empty?
+      enrollment.update!(status: "completed", actual_ended_at: Time.current)
+    end
+    redirect_to posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: chapter.fetch("slug")), notice: "Capitolo segnato come completato."
   end
 
   def legacy_programma
@@ -157,7 +221,9 @@ module Posturacorretta
     learning_data = YAML.safe_load_file(LEARNING_PATH, permitted_classes: [], aliases: false)
     @content_repository = Posturacorretta::ContentRepository.new(
       path: CONTENT_CATALOG_PATH,
-      include_scheduled: Current.user&.superadmin_user? || false
+      # Il catalogo mostra anche titoli e struttura in preparazione; l'accesso al
+      # corpo del capitolo resta governato dal DataCommitment editoriale.
+      include_scheduled: true
     )
     calendar_data = YAML.safe_load_file(GROUP_LESSON_CALENDAR_PATH, permitted_classes: [], aliases: false).fetch("calendar")
     @scheduled_courses_by_id = calendar_data.fetch("courses").index_by { |scheduled_course| scheduled_course.fetch("content_id") }
@@ -272,6 +338,7 @@ module Posturacorretta
     @reader_course_slug = course_slug
     @selected_course = didactic_course
     @course_lessons = didactic_course.fetch("chapters", []).map { |chapter| learning_lesson(chapter) }
+    load_learning_progress(course_slug, @course_lessons)
   end
 
   def decorate_program_steps(steps)
@@ -377,6 +444,7 @@ module Posturacorretta
     @selected_stage = { "slug" => "percorso-educativo", "title" => @didactic_path.fetch("title") }
     @course_lessons = didactic_course.fetch("chapters", []).map { |chapter| learning_lesson(chapter) }
     @selected_course = didactic_course.merge("lessons" => @course_lessons)
+    load_learning_progress(@reader_course_slug, @course_lessons)
 
     return if params[:capitolo].blank?
 
@@ -402,6 +470,11 @@ module Posturacorretta
         alert: "Il capitolo è pubblicato nell’indice, ma il contenuto è ancora in preparazione."
       )
     end
+
+    navigable_lessons = @course_lessons.select { |item| item.fetch("show_available", false) }
+    lesson_index = navigable_lessons.index(@lesson)
+    @previous_lesson = navigable_lessons[lesson_index - 1] if lesson_index&.positive?
+    @next_lesson = navigable_lessons[lesson_index + 1] if lesson_index
 
     load_lesson_content
   end
@@ -479,6 +552,39 @@ module Posturacorretta
 
   def publication_decision_time(commitment)
     commitment.published_at || commitment.actual_ended_at || commitment.updated_at
+  end
+
+  def load_learning_progress(course_slug, chapters)
+    @course_enrollment = nil
+    @completed_chapter_slugs = []
+    return unless authenticated?
+
+    commitments = learning_commitments.to_a
+    @course_enrollment = commitments.find { |item| course_enrollment?(item) && item.content_key == course_slug && item.status != "cancelled" }
+    @completed_chapter_slugs = commitments.select do |item|
+      chapter_completion?(item) && item.metadata.to_h["course_slug"] == course_slug && item.status == "completed"
+    end.map(&:content_key)
+    @course_progress_percent = chapters.any? ? ((@completed_chapter_slugs.size.to_f / chapters.size) * 100).round : 0
+  end
+
+  def learning_commitments
+    return current_profile.data_commitments.none unless posturacorretta_domain
+
+    current_profile.data_commitments.where(domain: posturacorretta_domain, kind: "academy")
+  end
+
+  def posturacorretta_domain
+    return @posturacorretta_domain if defined?(@posturacorretta_domain)
+
+    @posturacorretta_domain = Domain.find_for_host("posturacorretta.org")
+  end
+
+  def course_enrollment?(commitment)
+    commitment.metadata.to_h["record_type"] == "course_enrollment"
+  end
+
+  def chapter_completion?(commitment)
+    commitment.metadata.to_h["record_type"] == "chapter_completion"
   end
 
   def redirect_legacy_learning_path
@@ -559,6 +665,21 @@ module Posturacorretta
     @active_lesson_programs = calendar.fetch("active_programs", [])
     load_dashboard_agenda
     @selected_participation = params[:participation].presence_in(%w[group individual])
+    if authenticated?
+      commitments = learning_commitments.to_a
+      enrollments = commitments.select { |item| course_enrollment?(item) && item.status != "cancelled" }.index_by(&:content_key)
+      completions = commitments.select { |item| chapter_completion?(item) && item.status == "completed" }.group_by { |item| item.metadata.to_h["course_slug"] }
+      @enrolled_courses = @dashboard_courses.filter_map do |course|
+        enrollment = enrollments[course.fetch("slug")]
+        next unless enrollment
+
+        completed = Array(completions[course.fetch("slug")]).map(&:content_key).uniq
+        total = course.fetch("chapters", []).size
+        course.merge("enrollment" => enrollment, "completed_count" => completed.size, "progress_percent" => total.positive? ? ((completed.size.to_f / total) * 100).round : 0)
+      end
+    else
+      @enrolled_courses = []
+    end
   end
 
   def load_student_lessons_program

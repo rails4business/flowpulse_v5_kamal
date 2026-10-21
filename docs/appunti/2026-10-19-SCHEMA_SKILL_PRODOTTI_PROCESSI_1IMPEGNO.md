@@ -1,7 +1,7 @@
 # Schema — Skill, prodotti, catene produttive e 1impegno
 
 **Data:** 19 ottobre 2026  
-**Stato:** schema concettuale da verificare prima di modificare nuovamente i modelli  
+**Stato:** schema concettuale corrente; non richiede nuovi modelli per il primo incremento
 **Obiettivo:** distinguere ciò che esiste, ciò che si vuole produrre e il lavoro
 necessario per produrlo.
 
@@ -15,6 +15,10 @@ essere montate sullo stesso Node e ordinate da una catena produttiva per
 costruire un risultato più ampio. 1impegno porta nel tempo il lavoro concreto
 delle persone.
 
+La nuova dashboard condivisa usa i modelli esistenti e li presenta nelle aree
+che ne sono responsabili. Non introduce un modello `Dashboard`, un nuovo
+archivio produttivo o copie dei dati.
+
 ```text
 Generaimpresa               Rails4Business               1impegno
 
@@ -26,6 +30,29 @@ Skill attivate              ricetta e cicli              scadenze ed eventi
 ```
 
 ## 1. Le parti da non confondere
+
+### DataCommitment e soggetti dello scambio
+
+Un `DataCommitment` non rappresenta soltanto un task nel calendario. Può
+descrivere un'attività, una partecipazione, un accordo, un pagamento o un altro
+scambio riferito a una persona.
+
+| Ruolo UI | Campo corrente | Significato |
+| --- | --- | --- |
+| Proprietario | `profile` | profilo nel cui spazio vive il DataCommitment |
+| Creato da | `created_by_profile` | autore del record; informazione di audit |
+| Destinatario | `participant_contact` | contatto al quale l'impegno o lo scambio è riferito |
+| Responsabile | `responsible_profile` | persona che governa l'esecuzione |
+| Assegnatario | `assignee_profile` | persona o calendario a cui il lavoro è assegnato |
+
+Più ruoli possono coincidere, ma restano semanticamente distinti. In
+particolare il destinatario non deve essere dedotto dal proprietario o dal
+responsabile.
+
+L'export/import deve conservare anche il destinatario. Il servizio attuale
+`DataCommitmentTransfer` trasferisce i profili ma non ancora
+`participant_contact`: questa lacuna va risolta prima del passaggio completo
+develop → production.
 
 ### Node
 

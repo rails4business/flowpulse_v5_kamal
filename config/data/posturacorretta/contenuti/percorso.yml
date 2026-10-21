@@ -14,19 +14,32 @@ path:
       title: Approfondisci
       description: Hai trovato una metodica che ti piace? Vuoi iniziare un percorso personalizzato? Ogni metodica ha una scuola. Trova un professionista formato che possa seguirti nel tuo percorso.
 
-  courses: []
+  courses:
+    - content_id: inizia-con-posturacorretta
+
+    - content_id: percorso-integrato
+
+    - slug: apprendimento-ed-espressione
+      title: Apprendimento ed espressione — Le metodiche posturali
+      description: Le metodiche posturali come strumenti per conoscere ed esprimere il corpo, in dialogo con musica, danza, lotta, teatro e altre pratiche corporee.
+      image: /images/posturacorretta/courses/apprendimento-ed-espressione.png
+      level: base
+      status: draft
+      access: free
+
+    - content_id: postura-e-fisiologia
+
+    - content_id: corpo-come-un-giardino
+
+    - slug: lavoro-risorse-progetti
+      title: Lavoro — Dalle risorse ai progetti
+      description: Riconoscere il proprio potenziale, individuare le risorse disponibili, sviluppare abilità e applicarle nel lavoro, nella vita professionale e nei progetti. Introduzione a Flowpulse.
+      image: /images/posturacorretta/courses/lavoro-risorse-progetti.png
+      level: base
+      status: draft
+      access: free
 
   sections:
-    - slug: postura-e-fisiologia
-      title: Postura e fisiologia
-      description: Le basi educative per iniziare a conoscere il corpo, la salute e la costruzione di un percorso integrato.
-      level: base
-      courses:
-        - content_id: inizia-con-posturacorretta
-        - content_id: percorso-integrato
-        - content_id: postura-e-fisiologia
-        - content_id: corpo-come-un-giardino
-
     - slug: recupera-con-la-terapia-manuale
       title: Postura, recupero e coscienza corporea
       description: Recupera con la terapia manuale e scopri principi e pratiche delle metodiche posturali.

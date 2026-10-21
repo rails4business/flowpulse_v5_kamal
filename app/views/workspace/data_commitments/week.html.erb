@@ -1,0 +1,54 @@
+<% content_for :title, "Settimana · 1impegno" %>
+<%
+  days = (@week_start..@week_end).to_a
+  visible_session_ids = @data_sessions.map(&:id)
+  visible_slot_ids = @data_sessions.flat_map { |session| session.data_slots.map(&:id) } + @standalone_slots.map(&:id)
+  independent_commitments = @commitments.reject do |commitment|
+    visible_session_ids.include?(commitment.data_session_id) || visible_slot_ids.include?(commitment.data_slot_id)
+  end
+%>
+
+<div class="mx-auto max-w-7xl">
+  <%= render "shared/workspace/system_navigation", active_system: :impegno %>
+  <%= render "navigation", active: :week %>
+
+  <section class="mt-7" aria-labelledby="week-heading">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-emerald-700">1impegno · Weekplan personale</p>
+        <h2 id="week-heading" class="mt-1 text-2xl font-black text-slate-950">Settimana</h2>
+        <p class="mt-1 text-sm text-slate-600"><%= l(@week_start, format: "%d %B") %> – <%= l(@week_end, format: "%d %B %Y") %>.</p>
+      </div>
+      <%= render "period_navigation", path_helper: :workspace_data_commitments_week_path %>
+    </div>
+
+    <div class="mt-6 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5">
+      <div class="min-w-[900px]">
+        <div class="grid grid-cols-[70px_repeat(7,minmax(110px,1fr))] gap-1 border-b border-slate-200 pb-2 text-center">
+          <div class="self-end text-xs font-bold text-slate-400">Ora</div>
+          <% days.each do |day| %><div class="rounded-lg px-2 py-2 <%= day == Date.current ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-700' %>"><strong class="block text-xs capitalize"><%= l(day, format: "%A") %></strong><span class="text-[11px]"><%= day.strftime("%d/%m") %></span></div><% end %>
+        </div>
+
+        <% (7..21).each do |hour| %>
+          <div class="grid grid-cols-[70px_repeat(7,minmax(110px,1fr))] gap-1 border-b border-slate-100">
+            <div class="py-3 pr-2 text-right font-mono text-[11px] font-bold text-slate-400"><%= format("%02d:00", hour) %></div>
+            <% days.each do |day| %>
+              <%
+                sessions = @data_sessions.select { |item| item.starts_at&.to_date == day && item.starts_at.hour == hour }
+                slots = @standalone_slots.select { |item| item.starts_at&.to_date == day && item.starts_at.hour == hour }
+                commitments = independent_commitments.select { |item| item.starts_at&.to_date == day && item.starts_at.hour == hour }
+              %>
+              <div class="min-h-14 space-y-1 rounded-md bg-slate-50/60 p-1">
+                <% sessions.each do |session| %><div id="week-data-session-<%= session.id %>" class="rounded-md border border-blue-200 bg-blue-50 p-2 text-[11px] text-blue-950"><strong class="block"><%= session.title %></strong><span><%= session.starts_at.strftime("%H:%M") %><%= "–#{session.ends_at.strftime('%H:%M')}" if session.ends_at %></span></div><% end %>
+                <% slots.each do |slot| %><div id="week-data-slot-<%= slot.id %>" class="rounded-md border border-violet-200 bg-violet-50 p-2 text-[11px] text-violet-950"><strong class="block"><%= slot.title %></strong><span><%= slot.starts_at.strftime("%H:%M") %><%= "–#{slot.ends_at.strftime('%H:%M')}" if slot.ends_at %></span></div><% end %>
+                <% commitments.each do |commitment| %><div id="week-data-commitment-<%= commitment.id %>" class="rounded-md border border-emerald-200 bg-emerald-50 p-2 text-[11px] text-emerald-950"><strong class="block"><%= commitment.title %></strong><span><%= commitment.starts_at.strftime("%H:%M") %><%= "–#{commitment.ends_at.strftime('%H:%M')}" if commitment.ends_at %></span></div><% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <%= render "shared/workspace/versions_footer", function: :data_commitments %>
+</div>

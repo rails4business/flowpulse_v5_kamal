@@ -153,10 +153,12 @@ Rails.application.routes.draw do
   get "posturacorretta/presentazione-posturacorretta" => "posturacorretta#triathlon_handout", as: :posturacorretta_presentation
   get "posturacorretta/guida-triatlon" => redirect("/posturacorretta/presentazione-posturacorretta", status: 301)
   get "posturacorretta/corsi/:corso" => "posturacorretta/learning#course", as: :posturacorretta_course
+  post "posturacorretta/corsi/:corso/iscrizione" => "posturacorretta/learning#enroll", as: :posturacorretta_course_enrollment
   get "posturacorretta/corsi/:corso/lezioni" => "posturacorretta/learning#programma", as: :posturacorretta_course_lessons
   get "posturacorretta/corsi/:corso/lezioni/:attivita" => "posturacorretta/learning#programma", as: :posturacorretta_course_lesson
   get "posturacorretta/corsi/:corso/capitoli" => "posturacorretta/learning#percorso_educativo", as: :posturacorretta_course_chapters
   get "posturacorretta/corsi/:corso/capitoli/:capitolo" => "posturacorretta/learning#percorso_educativo", as: :posturacorretta_course_chapter
+  post "posturacorretta/corsi/:corso/capitoli/:capitolo/completamento" => "posturacorretta/learning#complete_chapter", as: :posturacorretta_course_chapter_completion
   get "posturacorretta/programma" => "posturacorretta/learning#legacy_programma", as: :posturacorretta_programma
   get "posturacorretta/percorso-educativo" => "posturacorretta/learning#legacy_percorso_educativo", as: :posturacorretta_percorso_educativo
   get "posturacorretta/tre-progetti" => "brands/posturacorretta#three_projects", as: :posturacorretta_three_projects
@@ -245,6 +247,12 @@ Rails.application.routes.draw do
   get "impegno/professionista" => "brands/impegno/professional_workspace#show", as: :impegno_professional
   resources :impegno_contacts, path: "impegno/contacts", controller: "brands/impegno/contacts", as: :impegno_contacts, only: %i[index create edit update destroy]
   resources :impegno_places, path: "impegno/places", controller: "brands/impegno/places", as: :impegno_places, only: %i[index create edit update destroy]
+
+  # Prima sezione della nuova dashboard ufficiale condivisa. Il nome helper è
+  # distinto dalle rotte CRUD storiche /impegni durante la migrazione.
+  get "data_commitments", to: "workspace/data_commitments#index", as: :workspace_data_commitments
+  get "data_commitments/agenda", to: "workspace/data_commitments#agenda", as: :workspace_data_commitments_agenda
+  get "data_commitments/week", to: "workspace/data_commitments#week", as: :workspace_data_commitments_week
 
   # Dashboard utente loggato
   get "dashboard" => "home#dashboard", as: :dashboard

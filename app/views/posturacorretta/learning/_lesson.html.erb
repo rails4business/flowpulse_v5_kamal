@@ -1,13 +1,22 @@
 <main>
   <div class="fixed inset-0 z-[100] hidden bg-slate-950/30 opacity-0 transition-opacity lg:hidden" data-mobile-aside-target="backdrop" data-action="click->mobile-aside#close"></div>
   <div class="mx-auto max-w-screen-xl px-4 py-6 sm:px-6 lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-8 lg:px-8 lg:py-8">
-    <aside id="seme-aside" class="pc-course-aside-enter fixed inset-y-0 left-0 z-[110] w-80 max-w-[88vw] -translate-x-full overflow-y-auto border-r border-slate-200 bg-white p-5 shadow-2xl transition-transform lg:sticky lg:top-24 lg:z-auto lg:block lg:h-auto lg:max-h-[calc(100vh-7rem)] lg:w-auto lg:max-w-none lg:translate-x-0 lg:overscroll-contain lg:rounded-xl lg:border lg:shadow-sm [scrollbar-color:rgb(203_213_225)_transparent] [scrollbar-width:thin]" data-mobile-aside-target="panel" aria-hidden="true">
-      <div class="mb-4 flex items-center justify-between border-b border-slate-200 pb-3 lg:hidden">
-        <p class="text-sm font-bold text-slate-900">Indice del corso</p>
-        <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-mobile-aside-target="close" data-action="mobile-aside#close" aria-label="Chiudi indice">✕</button>
+    <aside id="seme-aside" class="pc-course-aside-enter fixed inset-y-0 left-0 z-[110] w-80 max-w-[88vw] -translate-x-full overflow-y-auto border-r border-slate-200 bg-white p-5 shadow-2xl transition-transform lg:sticky lg:top-8 lg:z-auto lg:block lg:h-auto lg:max-h-[calc(100vh-4rem)] lg:w-auto lg:max-w-none lg:translate-x-0 lg:overscroll-contain lg:rounded-xl lg:border lg:shadow-sm [scrollbar-color:rgb(203_213_225)_transparent] [scrollbar-width:thin]" data-mobile-aside-target="panel" aria-hidden="true">
+      <div class="mb-4 flex items-center justify-between gap-3 border-b border-slate-200 pb-3 lg:hidden">
+        <%= link_to posturacorretta_path, class: "inline-flex items-center gap-1 rounded-lg px-2 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50", aria: { label: "Torna alla home PosturaCorretta" } do %><span aria-hidden="true">←</span> Home<% end %>
+        <button type="button" class="rounded-lg px-3 py-2 text-xl font-bold leading-none text-slate-500 hover:bg-slate-100" data-mobile-aside-target="close" data-action="mobile-aside#close" aria-label="Chiudi indice">×</button>
+      </div>
+      <div class="mb-5 hidden border-b border-slate-200 pb-4 lg:block">
+        <%= link_to posturacorretta_path, class: "inline-flex items-center gap-1 text-sm font-bold text-blue-700 hover:text-blue-900", aria: { label: "Torna alla home PosturaCorretta" } do %><span aria-hidden="true">←</span> Home<% end %>
+        <%= link_to posturacorretta_course_path(corso: @reader_course_slug), class: "mt-3 block text-base font-bold leading-6 text-slate-900 hover:text-blue-700" do %><%= @selected_course.fetch("title") %><% end %>
       </div>
       <div data-action="click->mobile-aside#closeFromNavigation">
         <%= render "posturacorretta/learning/curriculum_aside", active: :path, course: @selected_course, lesson: @lesson %>
+      </div>
+      <div class="mt-6 hidden justify-center border-t border-slate-200 pt-5 lg:flex">
+        <%= link_to posturacorretta_path, aria: { label: "PosturaCorretta home" }, class: "inline-flex opacity-75 transition hover:opacity-100" do %>
+          <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="h-6 w-auto">
+        <% end %>
       </div>
     </aside>
 
@@ -34,4 +43,21 @@
       </div>
     </article>
   </div>
+
+  <nav class="sticky bottom-0 z-40 hidden border-t border-slate-200 bg-white/95 px-3 py-3 shadow-[0_-8px_24px_rgba(15,23,42,.08)] backdrop-blur sm:block" aria-label="Navigazione del capitolo">
+    <div class="mx-auto max-w-4xl">
+      <div class="flex items-center justify-between gap-2">
+        <%= link_to "☰ Indice", posturacorretta_course_path(corso: @reader_course_slug, anchor: "capitoli"), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100" %>
+        <span class="flex items-center gap-2">
+        <% if @previous_lesson %><%= link_to "← Precedente", posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: @previous_lesson.fetch("slug")), class: "rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
+        <% if @course_enrollment && !@completed_chapter_slugs.include?(@lesson.fetch("slug")) %>
+          <%= button_to "Completa", posturacorretta_course_chapter_completion_path(corso: @reader_course_slug, capitolo: @lesson.fetch("slug")), class: "rounded-lg bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800" %>
+        <% elsif @completed_chapter_slugs.include?(@lesson.fetch("slug")) %>
+          <span class="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">✓ Completato</span>
+        <% end %>
+        <% if @next_lesson %><%= link_to "Successivo →", posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: @next_lesson.fetch("slug")), class: "rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
+        </span>
+      </div>
+    </div>
+  </nav>
 </main>

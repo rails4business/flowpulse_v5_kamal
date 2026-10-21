@@ -2,7 +2,7 @@
 <% course_code = format("%02d", (course_position || 0) + 1) %>
 <% cover_styles = ["from-blue-950 via-blue-700 to-cyan-400", "from-emerald-950 via-emerald-700 to-lime-400", "from-violet-950 via-violet-700 to-fuchsia-400", "from-slate-950 via-indigo-700 to-blue-400"] %>
 <% cover_style = cover_styles[(course_position || 0) % cover_styles.size] %>
-<% first_chapter = @course_lessons.first %>
+<% first_chapter = @course_lessons.find { |chapter| chapter.fetch("show_available", false) } %>
 <% course_start_path = posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: first_chapter.fetch("slug")) if first_chapter&.fetch("show_available", false) %>
 
 <main class="min-h-screen bg-slate-50" data-controller="mobile-aside" data-action="keydown@window->mobile-aside#keydown">
@@ -50,9 +50,13 @@
               <h1 class="mt-3 text-3xl font-semibold tracking-[-.03em] text-slate-950 sm:text-4xl"><%= @selected_course.fetch("title") %></h1>
               <% if @selected_course["description"].present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= @selected_course.fetch("description") %></p><% end %>
               <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
-                <p class="text-xs font-semibold text-slate-500"><%= @course_lessons.size %> capitoli</p>
-                <% if course_start_path %>
-                  <%= link_to "Inizia", course_start_path, class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700" %>
+                <p class="text-xs font-semibold text-slate-500"><%= @course_lessons.size %> capitoli<%= " · #{@course_progress_percent}% completato" if @course_enrollment %></p>
+                <% if @course_enrollment && course_start_path %>
+                  <%= link_to(@completed_chapter_slugs.any? ? "Continua il corso" : "Inizia", course_start_path, class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition") %>
+                <% elsif authenticated? %>
+                  <%= button_to "Iscriviti gratuitamente", posturacorretta_course_enrollment_path(corso: @reader_course_slug), class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition" %>
+                <% elsif course_start_path %>
+                  <%= link_to "Accedi per iscriverti", new_session_path(return_to: posturacorretta_course_path(corso: @reader_course_slug)), class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition" %>
                 <% else %>
                   <span class="inline-flex rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold text-slate-500">In preparazione</span>
                 <% end %>
@@ -79,7 +83,7 @@
                   <% chapter_body = capture do %>
                     <span class="text-[11px] font-extrabold uppercase tracking-[.12em]"><span class="text-slate-500">Capitolo <%= format("%02d", index + 1) %></span><span class="mt-1 block <%= practical ? 'text-red-700' : 'text-blue-700' %>"><%= practical ? "Pratico" : "Teorico" %></span></span>
                     <span class="min-w-0 text-base font-bold leading-6 <%= show_available ? 'text-slate-900 group-hover:text-indigo-800' : 'text-slate-700' %>"><%= chapter.fetch("title") %></span>
-                    <span class="text-xs font-bold <%= show_available ? 'text-emerald-700' : 'text-slate-400' %>"><%= show_available ? "Apri" : "In preparazione" %></span>
+                    <span class="text-xs font-bold <%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? 'text-emerald-700' : (show_available ? 'text-blue-700' : 'text-amber-700') %>"><%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? "✓ Completato" : (show_available ? "Apri" : "⌛ A breve") %></span>
                   <% end %>
                   <% if show_available %>
                     <%= link_to chapter_body, posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: chapter.fetch("slug")), class: "group grid gap-3 px-1 py-5 transition hover:bg-slate-50 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3" %>

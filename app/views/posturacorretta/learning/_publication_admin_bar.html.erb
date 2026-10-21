@@ -11,6 +11,11 @@
       <button type="button" onclick="document.getElementById('<%= dialog_id %>')?.showModal()" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-black ring-1 <%= pill_classes %>" title="Apri informazioni editoriali"><span aria-hidden="true"><%= commitment.publication_status == 'published' ? '✓' : commitment.publication_status == 'archived' ? '■' : '●' %></span><%= status_label %> · <%= l(end_time, format: :short) %></button>
     <% else %>
       <%= link_to "＋ DataCommitment", commitment_path, class: "inline-flex rounded-full bg-violet-50 px-3 py-1 font-black text-violet-700 ring-1 ring-violet-200 hover:bg-violet-100" %>
+      <% if Current.user&.superadmin_user? %>
+        <%= button_to "Pubblica", data_commitments_path,
+              params: { publication_decision: "1", return_to: request.fullpath, data_commitment: { title: "Pubblica · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
+              class: "inline-flex rounded-full bg-emerald-700 px-3 py-1 font-black text-white hover:bg-emerald-800" %>
+      <% end %>
     <% end %>
   </aside>
   <% if commitment %>
@@ -19,6 +24,11 @@
       <dl class="grid gap-3 text-sm sm:grid-cols-2"><div><dt class="font-bold text-slate-500">Stato</dt><dd><%= commitment.publication_status.humanize %></dd></div><div><dt class="font-bold text-slate-500">Intervento</dt><dd><%= commitment.publication_change_kind.presence&.humanize || "—" %></dd></div><div><dt class="font-bold text-slate-500">Visibilità</dt><dd><%= commitment.publication_visibility.humanize %></dd></div><div><dt class="font-bold text-slate-500">Accesso</dt><dd><%= commitment.access_modes.map(&:humanize).join(" + ") %></dd></div><div><dt class="font-bold text-slate-500">Nodo</dt><dd><%= commitment.subject_type == "Node" ? commitment.subject.title : "—" %></dd></div><div><dt class="font-bold text-slate-500">Data</dt><dd><%= l(publication_decision_time(commitment), format: :long) %></dd></div></dl>
       <% if commitment.publication_note_md.present? %><div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="text-xs font-black uppercase tracking-wide text-slate-500">Note</p><div class="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700"><%= commitment.publication_note_md %></div></div><% end %>
       <div><%= link_to "＋ Nuovo aggiornamento", commitment_path, class: "inline-flex rounded-full bg-violet-700 px-4 py-2 text-sm font-black text-white hover:bg-violet-800" %></div>
+      <% if Current.user&.superadmin_user? && commitment.publication_status != "published" %>
+        <%= button_to "Pubblica ora", data_commitments_path,
+              params: { publication_decision: "1", return_to: request.fullpath, data_commitment: { title: "Pubblica · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
+              class: "inline-flex rounded-full bg-emerald-700 px-4 py-2 text-sm font-black text-white hover:bg-emerald-800" %>
+      <% end %>
       <details class="rounded-xl border border-slate-200 p-4"><summary class="cursor-pointer font-black text-violet-700">Vedi storico (<%= history.size %>)</summary><ol class="mt-4 space-y-3"><% history.each do |item| %><li class="rounded-lg bg-slate-50 p-3 text-sm"><div class="flex flex-wrap gap-2"><strong><%= item.publication_status.humanize %></strong><span>· <%= item.publication_change_kind.presence&.humanize || "Intervento" %></span><time class="text-slate-500"><%= l(publication_decision_time(item), format: :short) %></time></div><% if item.publication_note_md.present? %><p class="mt-2 whitespace-pre-wrap text-slate-600"><%= item.publication_note_md %></p><% end %></li><% end %></ol></details>
     </div></dialog>
   <% end %>

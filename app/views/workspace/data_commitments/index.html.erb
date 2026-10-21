@@ -1,0 +1,86 @@
+<% content_for :title, "Impegni · Dashboard condivisa" %>
+<%
+  status_labels = {
+    "draft" => "Bozza", "requested" => "Richiesto", "planned" => "Pianificato",
+    "confirmed" => "Confermato", "in_progress" => "In corso",
+    "completed" => "Completato", "cancelled" => "Annullato"
+  }
+  status_classes = {
+    "draft" => "bg-slate-100 text-slate-700", "requested" => "bg-violet-50 text-violet-700",
+    "planned" => "bg-amber-50 text-amber-700", "confirmed" => "bg-blue-50 text-blue-700",
+    "in_progress" => "bg-emerald-50 text-emerald-700", "completed" => "bg-teal-50 text-teal-700",
+    "cancelled" => "bg-red-50 text-red-700"
+  }
+%>
+
+<div class="mx-auto max-w-7xl">
+  <%= render "shared/workspace/system_navigation", active_system: :impegno %>
+  <%= render "navigation", active: :todo %>
+
+  <section class="mt-7" aria-labelledby="commitments-heading">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-emerald-700">1impegno · DataCommitment</p>
+        <h2 id="commitments-heading" class="mt-1 text-2xl font-black text-slate-950">Da fare</h2>
+        <p class="mt-1 text-sm text-slate-600">Commitment personali ancora aperti: attività, accordi e scambi da completare.</p>
+      </div>
+      <span class="inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-slate-700"><%= @data_commitments.size %> elementi</span>
+    </div>
+
+    <% if @data_commitments.any? %>
+      <ol class="mt-5 grid gap-3" aria-label="Elenco impegni">
+        <% @data_commitments.each do |commitment| %>
+          <%
+            owner = commitment.profile
+            recipient = commitment.participant_contact
+            node = commitment.subject if commitment.subject.is_a?(Node)
+            product = commitment.skill_product
+            skill = product&.reusable_skill
+            process = commitment.data_experience&.node_process
+            effective_date = commitment.actual_started_at || commitment.starts_at
+          %>
+          <li id="data-commitment-<%= commitment.id %>" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+            <div class="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,1fr)_auto] lg:items-center">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide <%= status_classes.fetch(commitment.status, 'bg-slate-100 text-slate-700') %>"><%= status_labels.fetch(commitment.status, commitment.status.humanize) %></span>
+                  <span class="text-xs font-bold text-slate-400">DC-<%= commitment.id %></span>
+                </div>
+                <h3 class="mt-2 text-lg font-black text-slate-950"><%= commitment.title %></h3>
+                <p class="mt-1 text-xs leading-5 text-slate-500">
+                  Proprietario · <strong class="text-slate-700"><%= owner.display_name.presence || "@#{owner.username}" %></strong>
+                  <span class="px-1" aria-hidden="true">→</span>
+                  Destinatario · <strong class="text-slate-700"><%= recipient&.name || "Non indicato" %></strong>
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5">
+                <% if commitment.domain %><span class="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-extrabold text-blue-700">Brand · <%= commitment.domain.node&.title.presence || commitment.domain.display_hostname %></span><% end %>
+                <% if node %><span class="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-extrabold text-sky-700">Progetto / Node · <%= node.title %></span><% end %>
+                <% if skill %><span class="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-extrabold text-amber-700">Skill · <%= skill.title %></span><% end %>
+                <% if product %><span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-extrabold text-emerald-700">Prodotto · <%= product.title %></span><% end %>
+                <% if process %><span class="rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-extrabold text-violet-700">Catena · <%= process.title %></span><% end %>
+              </div>
+
+              <div class="lg:text-right">
+                <% if effective_date %>
+                  <time datetime="<%= effective_date.iso8601 %>" class="text-sm font-black text-slate-800"><%= l(effective_date, format: :short) %></time>
+                <% else %>
+                  <span class="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-extrabold text-amber-700">Da programmare</span>
+                <% end %>
+                <% if commitment.responsible_profile %><span class="mt-1 block text-xs text-slate-500">Responsabile · <%= commitment.responsible_profile.display_name.presence || "@#{commitment.responsible_profile.username}" %></span><% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ol>
+    <% else %>
+      <div class="mt-5 rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center">
+        <h3 class="font-black text-slate-950">Nessun impegno</h3>
+        <p class="mt-1 text-sm text-slate-500">Gli impegni del profilo corrente compariranno qui.</p>
+      </div>
+    <% end %>
+  </section>
+
+  <%= render "shared/workspace/versions_footer", function: :data_commitments %>
+</div>

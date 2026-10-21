@@ -554,6 +554,41 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "benessereintegrato.my.canva.site/home"
   end
 
+  test "records a free course enrollment and chapter completion as separate learning commitments" do
+    publish_content!("incontro-salute-metodiche")
+    user = create_test_user("learner-#{SecureRandom.hex(4)}@example.com")
+    sign_in(user)
+
+    post posturacorretta_course_enrollment_path(corso: "inizia-con-posturacorretta")
+    assert_redirected_to posturacorretta_course_url(corso: "inizia-con-posturacorretta")
+
+    enrollment = user.profile.data_commitments.find_by!(content_key: "inizia-con-posturacorretta", kind: "academy")
+    assert_equal "course_enrollment", enrollment.metadata.fetch("record_type")
+    assert_equal "in_progress", enrollment.status
+    assert_equal "none", enrollment.pricing_type
+
+    post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+    assert_redirected_to posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+
+    completion = user.profile.data_commitments.find_by!(content_key: "incontro-salute-metodiche", kind: "academy")
+    assert_equal "chapter_completion", completion.metadata.fetch("record_type")
+    assert_equal enrollment, completion.parent
+    assert_equal "completed", completion.status
+  end
+
+  test "does not duplicate enrollment or chapter completion commitments" do
+    publish_content!("incontro-salute-metodiche")
+    user = create_test_user("learner-idempotent-#{SecureRandom.hex(4)}@example.com")
+    sign_in(user)
+
+    2.times { post posturacorretta_course_enrollment_path(corso: "inizia-con-posturacorretta") }
+    2.times { post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche") }
+
+    learning = user.profile.data_commitments.where(kind: "academy")
+    assert_equal 1, learning.count { |item| item.metadata.fetch("record_type") == "course_enrollment" }
+    assert_equal 1, learning.count { |item| item.metadata.fetch("record_type") == "chapter_completion" }
+  end
+
   private
 
   def publish_content!(content_key)

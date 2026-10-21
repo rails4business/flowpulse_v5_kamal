@@ -71,9 +71,19 @@ GeneraImpresa                             → chiarisce cosa costruire e con qua
 Flowpulse                                 → rende visibile e governa l'insieme
 ```
 
-La dashboard gestionale appartiene quindi a Flowpulse. Rails4Business può
-condurre alla dashboard, ma non deve duplicarla: rimane l'area per comprendere,
-progettare e migliorare business e processi.
+La shell della dashboard gestionale appartiene a Flowpulse, ma è composta da
+aree con responsabilità esplicite:
+
+```text
+Flowpulse       → panoramica, collegamenti e regia dell'insieme
+GeneraImpresa  → Brand, Progetti / Node e Prodotti
+Rails4Business → Skill, catene di montaggio, dime e processi
+1impegno       → Impegni, Settimana, contatti e luoghi
+```
+
+Le aree condividono navigazione, contesto e autorizzazioni senza duplicare i
+dati. Durante la migrazione le dashboard precedenti restano operative; la
+nuova dashboard le sostituirà soltanto dopo la parità funzionale.
 
 ### PosturaCorretta
 
