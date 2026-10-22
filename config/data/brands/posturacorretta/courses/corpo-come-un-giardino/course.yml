@@ -4,16 +4,28 @@ contents:
   - id: corpo-come-un-giardino
     format: course
     slug: corpo-come-un-giardino
-    position: 4
+    position: 5
     status: published
     visibility: public
     access: free
-    title: Apprendimento e potenziale umano — Scoperta e connessione
-    description: Scoprire le proprie possibilità attraverso la relazione con il corpo, le persone e l'ambiente. Qui trova il suo posto naturale Il Giardino del Corpo.
+    title: Eventi ed esperienze — Il Giardino del Corpo
+    description: Incontri tra natura, meditazione, musica, arte e stili di vita, da vivere in poche ore, in una giornata o in esperienze più lunghe.
     image: https://ik.imagekit.io/posturacorretta/giusta_posizione.png?updatedAt=1786699701209
     level: base
     author_node_slug: markpostura
     publisher_node_slug: posturacorretta
+
+  - id: giardino-scoperta-connessione-introduzione
+    parent_id: corpo-come-un-giardino
+    format: chapter
+    chapter_type: theory
+    slug: giardino-scoperta-connessione
+    position: 0
+    status: published
+    visibility: public
+    access: free
+    title: "Il Giardino del Corpo: scoperta e connessione"
+    content_path: brands/posturacorretta/courses/corpo-come-un-giardino/chapters/giardino-scoperta-connessione.md
 
   - id: fisiologia-metodiche-paradigmi-esperienza
     parent_id: corpo-come-un-giardino

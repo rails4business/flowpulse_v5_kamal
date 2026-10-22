@@ -4,16 +4,28 @@ contents:
   - id: postura-e-fisiologia
     format: course
     slug: postura-e-fisiologia
-    position: 2
+    position: 3
     status: published
     visibility: public
     access: free
-    title: Apprendimento e consapevolezza — Educazione alla salute
-    description: Ascoltare il corpo, riconoscere abitudini e automatismi e diventare più partecipi delle proprie scelte di salute.
+    title: Percorso Educativo PosturaCorretta
+    description: Un programma sui sistemi fisiologici e sulle principali metodiche, per professionisti della salute e del benessere, educatori e insegnanti.
     image: https://ik.imagekit.io/posturacorretta/postura-e-fisiologia-5-m.png
     level: base
     author_node_slug: markpostura
     publisher_node_slug: posturacorretta
+
+  - id: fisiologia-percorso-educativo-introduzione
+    parent_id: postura-e-fisiologia
+    format: chapter
+    chapter_type: theory
+    slug: percorso-educativo-imparare-sentire-corpo
+    position: 0
+    status: published
+    visibility: public
+    access: free
+    title: "Il Percorso Educativo: imparare a sentire ed esprimere il corpo"
+    content_path: brands/posturacorretta/courses/postura-e-fisiologia/chapters/percorso-educativo-imparare-sentire-corpo.md
 
   - id: fisiologia-postura
     parent_id: postura-e-fisiologia

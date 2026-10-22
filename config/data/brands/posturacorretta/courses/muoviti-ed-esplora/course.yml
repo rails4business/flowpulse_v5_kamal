@@ -3,15 +3,26 @@ contents:
   - id: muoviti-ed-esplora
     format: course
     slug: muoviti-ed-esplora
-    position: 3
+    position: 4
     status: draft
     visibility: public
     access: free
-    title: Muoviti ed esplora
-    description: Movimento, coordinazione ed esplorazione progressiva delle possibilità del corpo.
+    title: "Consapevolezza attraverso metodiche e discipline"
+    description: Incontrare discipline corporee, metodiche e professionisti per riconoscere capacità, preferenze e nuove possibilità.
     level: base
     author_node_slug: markpostura
     publisher_node_slug: posturacorretta
+  - id: muoviti-dalla-percezione-consapevolezza
+    parent_id: muoviti-ed-esplora
+    format: chapter
+    chapter_type: theory
+    slug: dalla-percezione-alla-consapevolezza
+    position: 0
+    status: draft
+    visibility: public
+    access: free
+    title: Dalla percezione alla consapevolezza
+    content_path: brands/posturacorretta/courses/muoviti-ed-esplora/chapters/dalla-percezione-alla-consapevolezza.md
   - id: muoviti-prima-esplorazione
     parent_id: muoviti-ed-esplora
     format: chapter

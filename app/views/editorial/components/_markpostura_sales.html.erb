@@ -28,15 +28,15 @@
       <figure class="mp-sales__hero-world">
         <span class="mp-sales__orbit mp-sales__orbit--one" aria-hidden="true"></span>
         <span class="mp-sales__orbit mp-sales__orbit--two" aria-hidden="true"></span>
-        <a href="<%= hero.dig("image", "full_url") %>" target="_blank" rel="noopener noreferrer">
+        <% if hero.dig("image", "full_url").present? %><a href="<%= hero.dig("image", "full_url") %>" target="_blank" rel="noopener noreferrer"><% end %>
           <%= image_tag hero.dig("image", "url"), alt: hero.dig("image", "alt"), width: 760, height: 1110, fetchpriority: "high" %>
-        </a>
-        <figcaption>Il FlowPulse di MarkPostura · apri la mappa</figcaption>
+        <% if hero.dig("image", "full_url").present? %></a><% end %>
+        <figcaption><%= hero.dig("image", "caption") || "MarkPostura" %></figcaption>
       </figure>
     </div>
   </header>
 
-  <section class="mp-sales__problem">
+  <section id="funzione" class="mp-sales__problem scroll-mt-24">
     <div class="mp-sales__shell">
       <div class="mp-sales__section-heading">
         <p class="mp-sales__eyebrow"><%= problem.fetch("eyebrow") %></p>

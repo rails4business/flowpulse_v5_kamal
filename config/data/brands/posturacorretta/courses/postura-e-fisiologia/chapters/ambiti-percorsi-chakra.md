@@ -40,9 +40,28 @@ Il **verde** rappresenta il benessere e l'armonia. Non promette uno stato perfet
 
 Questi punti non sono quattro caselle rigide. Una persona può dover controllare un sintomo, prevenire un rischio, prepararsi a tornare allo sport e desiderare anche un po' di benessere. L'importante è non confondere le responsabilità.
 
-Il percorso educativo **azzurro** di PosturaCorretta attraversa tutti gli ambiti: aiuta a conoscere il corpo, comprendere ciò che si sta facendo e comunicare meglio con chi ci accompagna. I professionisti della salute e del benessere intervengono invece secondo competenze, obiettivi e confini differenti.
+I primi quattro ambiti descrivono le intenzioni più direttamente legate alla salute:
 
-Quando osserviamo i diversi ambiti della persona possiamo usare anche mappe interpretative, compresa quella dei sette centri o chakra. Sono strumenti per porre domande e ampliare l'osservazione; non sostituiscono la fisiologia, la valutazione sanitaria o le prove di efficacia.
+1. **Rosso — sicurezza e dolore:** verificare che la salute non sia in pericolo e affidarsi ai professionisti sanitari quando necessario.
+2. **Arancione — prevenzione:** riconoscere e ridurre i rischi prima che diventino problemi più grandi.
+3. **Giallo — preparazione e performance:** sviluppare le capacità necessarie per la vita, il lavoro e lo sport.
+4. **Verde — benessere:** coltivare condizioni che aiutino la persona a stare bene.
+
+Questi quattro ambiti possono costituire la base di un Percorso Integrato. Una volta affrontate le priorità della salute, il percorso può aprirsi alle tre dimensioni dell'apprendimento.
+
+## Dalla salute all'apprendimento
+
+PosturaCorretta propone tre possibilità per continuare ad apprendere attraverso il corpo:
+
+5. **Azzurro — esprimere e sentire il corpo:** il Percorso Educativo PosturaCorretta aiuta a riconoscere i sistemi fisiologici, dare un nome a ciò che percepiamo e comunicare sensazioni, bisogni e cambiamenti. Le principali metodiche posturali vengono utilizzate per spiegare la fisiologia e trasformare la conoscenza in pratica.
+6. **Indaco — consapevolezza attraverso metodiche e discipline:** incontrare movimento, ritmo, voce, canto, danza, lotta, contatto, meditazione e altre discipline corporee permette di confrontare esperienze diverse e riconoscere meglio capacità, preferenze e modalità di apprendimento.
+7. **Viola — scoperta e connessione:** il Giardino del Corpo amplia lo sguardo verso il rapporto tra mondo interno e mondo esterno, persone, ambiente, natura, arte e comunità.
+
+L'Azzurro e l'Indaco sono due passaggi distinti ma collegati. Nel primo impariamo a sentire ed esprimere il corpo attraverso un programma educativo; nel secondo diventiamo più consapevoli delle nostre possibilità incontrando metodiche, discipline e professionisti differenti.
+
+I professionisti della salute e del benessere intervengono in tutti gli ambiti secondo competenze, obiettivi e confini differenti.
+
+Quando osserviamo i diversi ambiti della persona possiamo usare anche mappe interpretative, compresa quella simbolica dei sette centri o chakra. In questa mappa i colori aiutano a ricordare la progressione dalla sicurezza alla connessione, ma non attribuiscono ai chakra un valore diagnostico o scientifico. Sono strumenti per porre domande e ampliare l'osservazione; non sostituiscono la fisiologia, la valutazione sanitaria o le prove di efficacia.
 
 Prima di continuare, prova a rispondere:
 
@@ -50,3 +69,4 @@ Prima di continuare, prova a rispondere:
 2. Che cosa puoi iniziare a osservare in autonomia?
 3. Dove ti serve un insegnante o un professionista?
 4. Come potresti accorgerti che il percorso sta funzionando?
+5. In questo momento hai bisogno soprattutto di esprimere ciò che senti, sviluppare consapevolezza attraverso nuove esperienze o cercare connessioni più ampie?
