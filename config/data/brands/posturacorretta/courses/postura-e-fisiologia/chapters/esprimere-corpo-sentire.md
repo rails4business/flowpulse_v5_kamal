@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Azzurro: esprimere il corpo e il sentire
+# Azzurro blu esprimere quello che si sente con il corpo
 
 > **NUOVA SCHEDA DA RILEGGERE · 20 ottobre 2026**
 
@@ -24,4 +24,3 @@ Le metodiche e le arti corporee possono offrire esperienze differenti:
 Scegli un gesto semplice. Ripetilo lentamente, poi con un ritmo, una direzione o un respiro differenti. Annota che cosa cambia nel movimento e nel modo in cui lo senti.
 
 Questa è un'esplorazione educativa, non una valutazione psicologica o clinica.
-

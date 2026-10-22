@@ -22,7 +22,7 @@ module Posturacorretta
     test "keeps drafts private regardless of time while allowing superadmin preview" do
       travel_to Time.zone.parse("2026-09-20 12:00") do
         assert_nil ContentRepository.new.course_by_id("muoviti-ed-esplora")
-        assert_equal "Consapevolezza attraverso metodiche e discipline", ContentRepository.new(include_scheduled: true).course_by_id("muoviti-ed-esplora").fetch("title")
+        assert_equal "Apprendimento 2: consapevolezza attraverso metodiche e discipline", ContentRepository.new(include_scheduled: true).course_by_id("muoviti-ed-esplora").fetch("title")
       end
 
       travel_to Time.zone.parse("2026-09-21 09:01") do

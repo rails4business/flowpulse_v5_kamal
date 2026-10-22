@@ -10,6 +10,29 @@ status: editorial
 
 Questo documento raccoglie l'intera sezione **Postura e Fisiologia**: il primo corso introduttivo, la trama dei cinque corsi successivi e tutti i capitoli che compongono il percorso. Può essere modificato come documento editoriale prima di aggiornare i singoli corsi e capitoli pubblicati.
 
+## Il bisogno della persona e le due modalità del percorso
+
+Chi arriva con un problema deve capire subito che cosa può fare. Il percorso parte da una domanda concreta: **«Ho questo problema: qual è il prossimo passo adatto a me?»**
+
+La persona può scegliere fra due modalità.
+
+### Percorso completo
+
+1. Inizia a conoscere gli strumenti e osserva il proprio punto di partenza.
+2. Chiarisce il problema, lo stato di salute e l'eventuale necessità di un Percorso Integrato con i professionisti adatti.
+3. Segue il Percorso Educativo per conoscere fisiologia, postura e metodiche.
+4. Può partecipare alle attività espressive e di consapevolezza.
+5. Può esplorare le esperienze del Giardino del Corpo.
+6. Se mancano risorse personali, relazionali o organizzative, impara a riconoscerle e cercarle nel corso dedicato al potenziale e a Flowpulse.
+7. Passa alla pratica con l'Igiene Posturale e con le sezioni successive.
+8. Se desidera essere seguito, partecipa alle lezioni con gli insegnanti.
+
+### Percorso rapido — in preparazione
+
+Chi vuole arrivare prima alla pratica potrà compilare questionari e schede di orientamento, saltare gli approfondimenti non necessari in quel momento e passare all'Igiene Posturale. I questionari e le schede devono ancora essere realizzati e inseriti nel percorso.
+
+Questi strumenti non formuleranno diagnosi e non stabiliranno da soli l'idoneità sanitaria. Serviranno a riconoscere il punto di partenza, individuare eventuali segnali che richiedono un professionista e scegliere consapevolmente se proseguire in autonomia o con un insegnante.
+
 ---
 
 ## Corso 1 — Inizia con PosturaCorretta
@@ -64,6 +87,8 @@ Raccoglie gli errori più comuni: cercare una correzione uguale per tutti, proce
 #### 7. Scegli il prossimo passo
 
 Conclude il corso collegandolo al resto della sezione. La persona può continuare con il Percorso Integrato, partecipare alle attività, approfondire l'educazione alla salute o esplorare il Giardino del Corpo e Flowpulse.
+
+Il capitolo presenta anche le due modalità: il percorso completo attraverso i sei corsi oppure, quando saranno disponibili questionari e schede di orientamento, il percorso rapido verso l'Igiene Posturale. In entrambi i casi la persona deve sapere quando fermarsi, chiedere una valutazione professionale o scegliere l'accompagnamento di un insegnante.
 
 ---
 
@@ -187,6 +212,8 @@ L'insegnante accompagna la parte educativa e aiuta a collegare conoscenza e prat
 
 Il percorso di educazione alla salute psoturacorretta standard inizia la parte pratica nella sezione successiva con postura recupero con i primi sistemi le articolazioni con l'igiene posturale.  comprende contenuti online, pratica e lezioni con gli insegnanti. Chi vuole trasmettere il programma può accedere alla formazione degli insegnanti.
 
+La modalità completa attraversa educazione, espressione, consapevolezza, Giardino del Corpo e risorse prima di proseguire con l'Igiene Posturale. La futura modalità rapida permetterà invece di utilizzare questionari e schede di orientamento per raggiungere prima la pratica, senza trasformare questi strumenti in diagnosi o sostituti della valutazione professionale.
+
 #### 14. Percorso personalizzato
 
 Il programma può diventare individuale e adattarsi alla situazione, agli obiettivi, ai tempi e alle indicazioni dei professionisti coinvolti.
@@ -292,6 +319,8 @@ Il primo ambiente che abitiamo è il corpo, con sensazioni, pensieri, emozioni, 
 
 Alcuni fenomeni sono sostenuti da conoscenze ed evidenze condivise; altri appartengono all'esperienza, alle tradizioni o a ipotesi ancora da comprendere. Scoprire significa rimanere curiosi distinguendo sempre esperienza, interpretazione ed evidenza, senza sostituire cure o valutazioni necessarie.
 
+Nel Giardino del Corpo si aprono anche strade verso altri modi di pensare, altre culture e altri modelli attraverso il confronto con ciò che differenti autori, tradizioni e comunità ci raccontano. Non si tratta di riunire ogni visione in un'unica spiegazione o di considerarle tutte equivalenti, ma di conoscerne l'origine, il linguaggio e il contesto, metterle a confronto e osservare quali domande possono aggiungere alla comprensione dell'essere umano.
+
 #### 6. Esperienze per scoprire e connettersi
 
 Il Giardino del Corpo propone esperienze meditative, artistiche ed espressive: musicoterapia, suono, tessuti, bagni di gong, pratiche corporee e momenti di ascolto. Possono durare qualche ora, una giornata, un fine settimana o alcune settimane e permettono di verificare direttamente che cosa modifica percezione, presenza e relazione.
@@ -326,7 +355,7 @@ Il corso si conclude scegliendo un'esperienza, un luogo, un gruppo o una persona
 
 ---
 
-## Corso 6 — Lavoro e risorse: potenziale e Flowpulse
+## Corso 6 — Lavoro e risorse: scopri il tuo potenziale 
 
 ### Capitoli e trama
 
@@ -351,6 +380,8 @@ Una persona può essere più portata alla vendita e alle relazioni, un'altra all
 #### 5. Conoscere le capacità cognitive
 
 Attenzione, memoria, ragionamento, linguaggio, orientamento, creatività e capacità di risolvere problemi partecipano in modo diverso alle attività quotidiane. Conoscerle aiuta a scegliere strumenti, ambienti e strategie di apprendimento più adatti.
+
+Le facoltà cognitive possono essere osservate anche attraverso letture differenti. Una lettura pratica aiuta a comprendere come impariamo, lavoriamo, prendiamo decisioni e organizziamo lo stile di vita. Altri autori e altre culture le mettono invece in relazione con la conoscenza di sé, la coscienza e la dimensione spirituale. Il percorso può confrontare questi modelli senza confonderli: chiarisce da dove provengono, che cosa descrivono, quali aspetti sono verificabili e quali appartengono all'esperienza o all'interpretazione.
 
 #### 6. Gestire le risorse
 

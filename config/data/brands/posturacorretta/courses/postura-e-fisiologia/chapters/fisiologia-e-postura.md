@@ -1,4 +1,4 @@
-# La fisiologia e la postura
+# La fisiologia e la postura — percorso online
 
 > **Bozza da sviluppare**
 
@@ -41,5 +41,4 @@ per l'elaborazione, movimento per l'efferenza e l'azione.
 9) Ti stanno seguendo altri professionisti del benessere, fitness o altro (massaggi shiatsu altri trattamenti sulla guarigione) 
 
 10) Pratichi sport palestra qualche disciplina musica danza lotta? 
-
 

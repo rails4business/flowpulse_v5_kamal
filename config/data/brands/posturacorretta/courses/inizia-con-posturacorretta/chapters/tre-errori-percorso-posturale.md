@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Tre errori quando si inizia un percorso posturale
+# Tre errori che tutti fanno quando iniziano un percorso posturale
 
 Fin qui abbiamo parlato di postura, osservato il corpo e provato una prima scheda. È un buon inizio. Il rischio, adesso, è pensare che una manciata di esercizi possa contenere tutto ciò che riguarda la salute.
 

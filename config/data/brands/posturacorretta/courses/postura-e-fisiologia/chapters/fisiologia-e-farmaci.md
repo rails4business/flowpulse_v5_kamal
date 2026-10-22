@@ -1,4 +1,4 @@
-# Fisiologia e farmaci
+# Fisiologia e Farmaci
 
 > **Bozza da sviluppare**
 

@@ -106,10 +106,18 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_path
 
     assert_response :success
+    assert_equal %w[
+      inizia-con-posturacorretta
+      percorso-integrato
+      postura-e-fisiologia
+      muoviti-ed-esplora
+      corpo-come-un-giardino
+      ascolta-gli-aspetti-vitali
+    ], css_select("#primi-corsi article[id]").map { |course| course["id"] }
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "nav[aria-label='Indice generale']", count: 0
-    assert_select "h1", text: "Percorso educativo PosturaCorretta"
+    assert_select "h1", text: "L'educazione alla salute inizia dalla postura."
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 3
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}']", text: /Metodiche/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details summary", text: /Esplora/
@@ -119,22 +127,21 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#pc-week-focus-title", count: 0
     assert_select "link[rel='manifest'][href='#{posturacorretta_pwa_manifest_path}']"
     assert_select "h3", text: "Inizia con PosturaCorretta"
-    assert_select "h3", text: "Postura e Fisiologia"
-    assert_select "h2", text: "Recupera con la terapia manuale"
-    assert_select "h2", text: "Muoviti ed esplora"
-    assert_select "h2", text: "Ascolta gli aspetti vitali"
-    assert_select "h2", text: "Nutri il corpo"
-    assert_select "h2", text: "Regola con le piante officinali"
+    assert_select "h3", text: "Apprendimento 1: esprimere e sentire il corpo — Percorso Educativo PosturaCorretta"
+    assert_select "h3", text: "Apprendimento 2: consapevolezza attraverso metodiche e discipline"
+    assert_select "h3", text: "Apprendimento 3: scoperta e connessione — Il Giardino del Corpo"
+    assert_select "h3", text: "Lavoro e risorse: scopri il tuo potenziale"
+    assert_select "h2", text: "Postura, recupero e coscienza corporea"
     assert_select "h3", text: "Igiene Posturale"
-    assert_includes response.body, "Scopri come funziona il tuo corpo, e riattiva i tuoi sistemi!"
+    assert_includes response.body, "Un percorso che ti guida dalla scoperta delle metodiche posturali verso un approccio integrato alla salute."
     assert_select "span", text: "Corso 01", minimum: 1
     assert_select "a[href='#{posturacorretta_course_path(corso: "inizia-con-posturacorretta")}'][aria-label='Apri il corso Inizia con PosturaCorretta']", count: 0
     assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale")}'][aria-label='Apri il corso Igiene Posturale']", count: 0
     assert_select "details > summary", text: /Inizia con PosturaCorretta/, minimum: 1
     assert_select "h3", text: "Intro: basi e fondamenti", count: 0
     assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", count: 0
-    assert_select "div", text: /L'incontro con la salute e le metodiche posturali/
-    assert_select "div", text: /La storia comune e i benefici della postura/m
+    assert_select "div", text: /Postura e Fisiologia: la trama della sezione/
+    assert_select "div", text: /L'incontro con la salute e le metodiche posturali/m
     assert_not_includes response.body, "Uscita "
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
     assert_equal ["Percorso", "Lezioni", "Metodiche"], css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
@@ -398,12 +405,12 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     lessons = courses.flat_map { |course| course.fetch("lessons") }
     teacher_lessons = courses.flat_map { |course| course.dig("teacher_path", "lessons") || [] }
 
-    assert_equal 7, courses.size
-    assert_equal 36, lessons.size
-    assert_equal 40, lessons.sum { |lesson| lesson.fetch("sheets").size }
+    assert_equal 12, courses.size
+    assert_equal 40, lessons.size
+    assert_equal 42, lessons.sum { |lesson| lesson.fetch("sheets").size }
     assert_equal 19, teacher_lessons.size
     assert_not program.key?("lessons")
-    assert_equal ["introduzione-a-posturacorretta"], program.fetch("courses").pluck("key")
+    assert_empty program.fetch("courses")
     assert lessons.all? { |lesson| lesson.fetch("sheets").all? { |sheet| sheet.key?("chapter_key") } }
     assert lessons.none? { |lesson| lesson.key?("theory_chapter") || lesson.key?("additional_chapters") }
     assert courses.none? { |course| course.dig("teacher_path", "requirements").present? }

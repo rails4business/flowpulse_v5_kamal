@@ -1,4 +1,4 @@
-# Le basi delle 5 aree e il programma settimanale
+# Le basi delle cinque aree e il programma settimanale
 
 Costruisci una prima settimana di osservazione usando le cinque M. Non devi
 riempire ogni giornata di attività: scegli un'esperienza semplice e

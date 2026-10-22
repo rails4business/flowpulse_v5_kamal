@@ -1,4 +1,8 @@
-# Informati, pratica, insegna
+# Percorso standard: informati, pratica, insegna
+
+Il percorso standard di educazione alla salute PosturaCorretta comprende contenuti online, pratica e lezioni con gli insegnanti. La parte pratica prosegue nella sezione dedicata a postura, recupero e primi sistemi, iniziando dalle articolazioni con l'Igiene Posturale. Chi vuole trasmettere il programma può accedere alla formazione degli insegnanti.
+
+Nella modalità completa la persona attraversa anche espressione, consapevolezza, Giardino del Corpo e risorse. Una futura modalità rapida permetterà di usare questionari e schede di orientamento per passare prima all'Igiene Posturale. Questi strumenti sono ancora in preparazione e non sostituiranno diagnosi o valutazioni professionali.
 
 Per ogni argomento distingui tre passaggi:
 

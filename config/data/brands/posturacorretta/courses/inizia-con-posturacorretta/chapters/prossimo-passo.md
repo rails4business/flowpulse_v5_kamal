@@ -12,6 +12,18 @@ Hai anche visto il limite più importante: **la postura è un punto di partenza,
 
 Adesso puoi scegliere il prossimo passo. Le direzioni sono tre e possono convivere.
 
+## Due modi per proseguire
+
+### Il percorso completo
+
+Puoi attraversare i sei corsi iniziali: conoscere gli strumenti, osservare il punto di partenza, capire se serve un Percorso Integrato, seguire il Percorso Educativo, sperimentare attività espressive e di consapevolezza, esplorare il Giardino del Corpo e riconoscere le risorse utili per la vita e i progetti. Successivamente puoi passare all'Igiene Posturale e alle altre attività pratiche.
+
+### Il percorso rapido — in preparazione
+
+Se vuoi arrivare prima alla pratica, in futuro potrai compilare questionari e schede di orientamento e passare direttamente all'Igiene Posturale quando non emergono motivi per chiedere prima una valutazione professionale. Questi strumenti devono ancora essere realizzati.
+
+Questionari e schede non saranno diagnosi né certificazioni di idoneità. Aiuteranno a riconoscere il punto di partenza, le domande da approfondire e l'opportunità di proseguire in autonomia, rivolgersi a un professionista o iniziare le lezioni con un insegnante.
+
 ## Continuare con PosturaCorretta
 
 Il corso successivo, **Percorso integrato ed educazione alla salute**, prosegue il percorso educativo. Entreremo nei sistemi del corpo, nelle aree della salute e nelle diverse ragioni per cui possiamo iniziare un lavoro: controllare che la salute non sia in pericolo, prevenire, prepararci a un'attività oppure stare meglio.

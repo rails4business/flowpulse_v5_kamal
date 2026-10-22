@@ -9,6 +9,19 @@ program:
   status: pilot
   lesson_count_planned: 40
   sheet_type: practical
+  navigation_modes:
+    complete:
+      title: Percorso completo
+      status: active
+      description: Orientamento, Percorso Integrato quando necessario, educazione, espressione, Giardino del Corpo, risorse e successivo accesso all'Igiene Posturale.
+    quick:
+      title: Percorso rapido
+      status: planned
+      description: Questionari e schede di orientamento, ancora da realizzare, per raggiungere prima l'Igiene Posturale senza sostituire valutazioni o indicazioni professionali.
+      requires:
+      - questionari-orientamento
+      - schede-punto-di-partenza
+      destination_course_key: igiene-posturale
   introductory_lessons:
   - number: 1
     reusable: true
@@ -56,11 +69,11 @@ program:
           type: internship
           sheets: []
     - key: percorso-integrato
-      title: Percorso Integrato
+      title: "Salute: il Percorso Integrato"
       lessons:
       - number: 2
         key: percorso-integrato
-        title: Percorso Integrato
+        title: "Salute: il Percorso Integrato"
         sheets:
         - course_key: percorso-integrato
           chapter_key: ambiti-percorsi-chakra
@@ -71,31 +84,53 @@ program:
           title: Professionisti della salute, del benessere e insegnanti blu
           type: practical
     - key: postura-e-fisiologia
-      title: Educazione alla salute con la postura
+      title: "Apprendimento 1: esprimere e sentire il corpo — Percorso Educativo PosturaCorretta"
       lessons:
       - number: 3
         key: postura-e-fisiologia
-        title: Educazione alla salute con la postura
+        title: "Apprendimento 1: esprimere e sentire il corpo"
         sheets:
         - course_key: postura-e-fisiologia
           chapter_key: cinque-aree-programma-settimanale
-          title: Le basi delle 5 aree e il programma settimanale
+          title: Le basi delle cinque aree e il programma settimanale
           type: practical
         - course_key: postura-e-fisiologia
           chapter_key: informati-pratica-insegna
-          title: Informati, pratica, insegna
+          title: "Percorso standard: informati, pratica, insegna"
           type: practical
-    - key: corpo-come-un-giardino
-      title: Postura e potenziale umano
-      subtitle: Alla scoperta del potenziale dell'essere umano e della sua evoluzione armonica, osservando il corpo come un giardino
+    - key: muoviti-ed-esplora
+      title: "Apprendimento 2: consapevolezza attraverso metodiche e discipline"
       lessons:
       - number: 4
-        key: postura-potenziale-umano
-        title: Postura e potenziale umano
+        key: consapevolezza-metodiche-discipline
+        title: Consapevolezza attraverso metodiche e discipline
+        sheets:
+        - course_key: muoviti-ed-esplora
+          chapter_key: programma-generale-consapevolezza
+          title: Un programma generale per sviluppare consapevolezza
+          type: practical
+    - key: corpo-come-un-giardino
+      title: "Apprendimento 3: scoperta e connessione — Il Giardino del Corpo"
+      subtitle: Esperienze di natura, arte, musica, meditazione, comunità e confronto fra culture e modelli.
+      lessons:
+      - number: 5
+        key: scoperta-connessione-giardino-corpo
+        title: Scoperta e connessione — Il Giardino del Corpo
         sheets:
         - course_key: corpo-come-un-giardino
-          chapter_key: metodiche-paradigmi-esperienza
-          title: Le metodiche posturali, paradigmi ed esperienza
+          chapter_key: esperienze-per-scoprire-connettersi
+          title: Esperienze per scoprire e connettersi
+          type: practical
+    - key: ascolta-gli-aspetti-vitali
+      title: "Lavoro e risorse: scopri il tuo potenziale"
+      lessons:
+      - number: 6
+        key: lavoro-risorse-potenziale
+        title: Lavoro e risorse — Scopri il tuo potenziale
+        sheets:
+        - course_key: ascolta-gli-aspetti-vitali
+          chapter_key: prima-pratica-di-ascolto
+          title: Prima pratica di ascolto
           type: practical
   - key: postura-recupero-coscienza
     title: Postura, recupero e coscienza corporea
@@ -104,7 +139,7 @@ program:
     - key: igiene-posturale
       title: Igiene Posturale
       lessons:
-      - number: 5
+      - number: 7
         key: igiene-posturale-mobilita-articolare
         title: Igiene Posturale · Mobilità articolare
         sheets:
@@ -112,7 +147,7 @@ program:
           chapter_key: mobilita-articolare
           title: Mobilità articolare
           type: practical
-      - number: 6
+      - number: 8
         key: igiene-posturale-punti-di-tensione
         title: Igiene Posturale · Punti di tensione
         sheets:
@@ -120,7 +155,7 @@ program:
           chapter_key: punti-di-tensione
           title: Punti di tensione
           type: practical
-      - number: 7
+      - number: 9
         key: igiene-posturale-vie-di-discesa
         title: Igiene Posturale · Vie di discesa
         sheets:
@@ -128,7 +163,7 @@ program:
           chapter_key: vie-di-discesa
           title: Vie di discesa
           type: practical
-      - number: 8
+      - number: 10
         key: igiene-posturale-recettori-sensoriali
         title: Igiene Posturale · Recettori sensoriali
         sheets:
@@ -164,7 +199,7 @@ program:
     - key: principi-di-fisioterapia
       title: Principi di Fisioterapia
       lessons:
-      - number: 9
+      - number: 11
         key: principi-di-fisioterapia-sistema-respiratorio
         title: Principi di Fisioterapia · Sistema respiratorio
         sheets:
@@ -172,7 +207,7 @@ program:
           chapter_key: sistema-respiratorio
           title: Sistema respiratorio
           type: practical
-      - number: 10
+      - number: 12
         key: principi-di-fisioterapia-sistema-nervoso-urogenitale
         title: Principi di Fisioterapia · Sistema nervoso e urogenitale
         sheets:
@@ -180,7 +215,7 @@ program:
           chapter_key: sistema-nervoso-urogenitale
           title: Sistema nervoso e urogenitale
           type: practical
-      - number: 11
+      - number: 13
         key: principi-di-fisioterapia-sistema-muscolo-scheletrico
         title: Principi di Fisioterapia · Sistema muscolo-scheletrico
         sheets:
@@ -188,7 +223,7 @@ program:
           chapter_key: sistema-muscolo-scheletrico
           title: Sistema muscolo-scheletrico
           type: practical
-      - number: 12
+      - number: 14
         key: principi-di-fisioterapia-sistema-cardiocircolatorio
         title: Principi di Fisioterapia · Sistema cardiocircolatorio
         sheets:
@@ -196,7 +231,7 @@ program:
           chapter_key: sistema-cardiocircolatorio
           title: Sistema cardiocircolatorio
           type: practical
-      - number: 13
+      - number: 15
         key: principi-di-fisioterapia-sistema-linfatico-digerente
         title: Principi di Fisioterapia · Sistema linfatico e digerente
         sheets:
@@ -204,7 +239,7 @@ program:
           chapter_key: sistema-linfatico-digerente
           title: Sistema linfatico e digerente
           type: practical
-      - number: 14
+      - number: 16
         key: principi-di-fisioterapia-approfondimento-fisioterapia
         title: Principi di Fisioterapia · Scopri di più sulla metodica
         sheets:
@@ -227,7 +262,7 @@ program:
     - key: biomeccanica-comportamentale-gds
       title: Biomeccanica comportamentale (GDS)
       lessons:
-      - number: 15
+      - number: 17
         key: biomeccanica-comportamentale-gds-cinque-direzioni-movimento
         title: Biomeccanica comportamentale (GDS) · Le 5 direzioni di movimento
         sheets:
@@ -235,7 +270,7 @@ program:
           chapter_key: cinque-direzioni-movimento
           title: Le 5 direzioni di movimento
           type: practical
-      - number: 16
+      - number: 18
         key: biomeccanica-comportamentale-gds-catena-am
         title: Biomeccanica comportamentale (GDS) · Catena AM
         sheets:
@@ -243,7 +278,7 @@ program:
           chapter_key: catena-am
           title: Catena AM
           type: practical
-      - number: 17
+      - number: 19
         key: biomeccanica-comportamentale-gds-catena-al
         title: Biomeccanica comportamentale (GDS) · Catena AL
         sheets:
@@ -251,7 +286,7 @@ program:
           chapter_key: catena-al
           title: Catena AL
           type: practical
-      - number: 18
+      - number: 20
         key: biomeccanica-comportamentale-gds-catena-pm
         title: Biomeccanica comportamentale (GDS) · Catena PM
         sheets:
@@ -259,7 +294,7 @@ program:
           chapter_key: catena-pm
           title: Catena PM
           type: practical
-      - number: 19
+      - number: 21
         key: biomeccanica-comportamentale-gds-catena-pl
         title: Biomeccanica comportamentale (GDS) · Catena PL
         sheets:
@@ -267,7 +302,7 @@ program:
           chapter_key: catena-pl
           title: Catena PL
           type: practical
-      - number: 20
+      - number: 22
         key: biomeccanica-comportamentale-gds-catene-pa-ap
         title: Biomeccanica comportamentale (GDS) · Catene PA/AP
         sheets:
@@ -275,7 +310,7 @@ program:
           chapter_key: catene-pa-ap
           title: Catene PA/AP
           type: practical
-      - number: 21
+      - number: 23
         key: biomeccanica-comportamentale-gds-approfondimento-gds
         title: Biomeccanica comportamentale (GDS) · Scopri di più sulla metodica
         sheets:
@@ -298,7 +333,7 @@ program:
     - key: principi-di-osteopatia
       title: Principi di Osteopatia
       lessons:
-      - number: 22
+      - number: 24
         key: principi-di-osteopatia-eliminare-disfunzioni
         title: Principi di Osteopatia · Eliminare le disfunzioni
         sheets:
@@ -306,7 +341,7 @@ program:
           chapter_key: eliminare-disfunzioni
           title: Eliminare le disfunzioni
           type: practical
-      - number: 23
+      - number: 25
         key: principi-di-osteopatia-sistema-fasciale
         title: Principi di Osteopatia · Il sistema fasciale
         sheets:
@@ -314,7 +349,7 @@ program:
           chapter_key: sistema-fasciale
           title: Il sistema fasciale
           type: practical
-      - number: 24
+      - number: 26
         key: principi-di-osteopatia-sistema-viscerale
         title: Principi di Osteopatia · Il sistema viscerale
         sheets:
@@ -322,7 +357,7 @@ program:
           chapter_key: sistema-viscerale
           title: Il sistema viscerale
           type: practical
-      - number: 25
+      - number: 27
         key: principi-di-osteopatia-sistema-cranio-sacrale
         title: Principi di Osteopatia · Il sistema cranio-sacrale
         sheets:
@@ -330,7 +365,7 @@ program:
           chapter_key: sistema-cranio-sacrale
           title: Il sistema cranio-sacrale
           type: practical
-      - number: 26
+      - number: 28
         key: principi-di-osteopatia-sistema-neurovegetativo
         title: Principi di Osteopatia · Il sistema neurovegetativo
         sheets:
@@ -338,7 +373,7 @@ program:
           chapter_key: sistema-neurovegetativo
           title: Il sistema neurovegetativo
           type: practical
-      - number: 27
+      - number: 29
         key: principi-di-osteopatia-approfondimento-osteopatia
         title: Principi di Osteopatia · Scopri di più sulla metodica
         sheets:
@@ -361,7 +396,7 @@ program:
     - key: introduzione-al-metodo-corpo-e-coscienza
       title: Corpo e Coscienza
       lessons:
-      - number: 28
+      - number: 30
         key: introduzione-al-metodo-corpo-e-coscienza-due-circolazioni
         title: Corpo e Coscienza · Le 2 circolazioni
         sheets:
@@ -369,7 +404,7 @@ program:
           chapter_key: due-circolazioni
           title: Le 2 circolazioni
           type: practical
-      - number: 29
+      - number: 31
         key: introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita
         title: Corpo e Coscienza · I 3 centri di gravità
         sheets:
@@ -377,7 +412,7 @@ program:
           chapter_key: tre-centri-gravita
           title: I 3 centri di gravità
           type: practical
-      - number: 30
+      - number: 32
         key: introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento
         title: Corpo e Coscienza · I 4 tipi di movimento
         sheets:
@@ -385,7 +420,7 @@ program:
           chapter_key: quattro-tipi-movimento
           title: I 4 tipi di movimento
           type: practical
-      - number: 31
+      - number: 33
         key: introduzione-al-metodo-corpo-e-coscienza-cinque-elementi
         title: Corpo e Coscienza · I 5 elementi
         sheets:
@@ -393,7 +428,7 @@ program:
           chapter_key: cinque-elementi
           title: I 5 elementi
           type: practical
-      - number: 32
+      - number: 34
         key: introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani
         title: Corpo e Coscienza · Le 6 coppie di meridiani
         sheets:
@@ -401,7 +436,7 @@ program:
           chapter_key: sei-coppie-meridiani
           title: Le 6 coppie di meridiani
           type: practical
-      - number: 33
+      - number: 35
         key: introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici
         title: Corpo e Coscienza · I 7 centri neurolinfatici
         sheets:
@@ -409,7 +444,7 @@ program:
           chapter_key: sette-centri-neurolinfatici
           title: I 7 centri neurolinfatici
           type: practical
-      - number: 34
+      - number: 36
         key: introduzione-al-metodo-corpo-e-coscienza-approfondimento-corpo-coscienza
         title: Corpo e Coscienza · Scopri di più sulla metodica
         sheets:
@@ -432,7 +467,7 @@ program:
     - key: altre-metodiche-posturali
       title: Altre metodiche posturali
       lessons:
-      - number: 35
+      - number: 37
         key: altre-metodiche-posturali-sequenza-kinesiologia-applicata
         title: Altre metodiche posturali · Sequenza di Kinesiologia Applicata
         sheets:
@@ -440,7 +475,7 @@ program:
           chapter_key: sequenza-kinesiologia-applicata
           title: Sequenza di Kinesiologia Applicata
           type: practical
-      - number: 36
+      - number: 38
         key: altre-metodiche-posturali-feldenkrais
         title: Altre metodiche posturali · Feldenkrais
         sheets:
@@ -448,7 +483,7 @@ program:
           chapter_key: feldenkrais
           title: Feldenkrais
           type: practical
-      - number: 37
+      - number: 39
         key: altre-metodiche-posturali-alexander-consapevolezza
         title: Altre metodiche posturali · Alexander e consapevolezza
         sheets:
@@ -456,7 +491,7 @@ program:
           chapter_key: alexander-consapevolezza
           title: Alexander e consapevolezza
           type: practical
-      - number: 38
+      - number: 40
         key: altre-metodiche-posturali-sintesi-percorso
         title: Altre metodiche posturali · Sintesi del percorso
         sheets:

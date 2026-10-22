@@ -1,4 +1,4 @@
-# Fisiologia e meditazione
+# Fisiologia e Meditazione
 
 > **Bozza da sviluppare**
 
