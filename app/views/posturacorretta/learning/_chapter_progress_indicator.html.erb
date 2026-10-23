@@ -1,0 +1,20 @@
+<% completed = local_assigns.fetch(:completed, false) %>
+<% completed_at = local_assigns[:completed_at] %>
+<% pending_label = local_assigns[:pending_label] %>
+<% show_date = local_assigns.fetch(:show_date, false) %>
+<% published = chapter.fetch("published_for_public", false) %>
+
+<span class="inline-flex shrink-0 items-center gap-2 text-xs font-bold" data-chapter-progress="<%= completed ? 'completed' : (published ? 'pending' : 'upcoming') %>">
+  <% if completed %>
+    <span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[11px] text-white" aria-hidden="true">✓</span>
+    <span class="<%= show_date ? 'text-emerald-700' : 'sr-only' %>">
+      <span class="sr-only">Completato</span>
+      <% if show_date && completed_at %><time datetime="<%= completed_at.iso8601 %>"><%= completed_at.strftime("%d/%m/%Y") %></time><% end %>
+    </span>
+  <% elsif published %>
+    <span class="size-5 rounded-full border-2 border-blue-400 bg-white" aria-hidden="true"></span>
+    <span class="<%= pending_label.present? ? 'text-blue-700' : 'sr-only' %>"><%= pending_label.presence || "Da completare" %></span>
+  <% else %>
+    <span class="text-amber-700">In arrivo</span>
+  <% end %>
+</span>

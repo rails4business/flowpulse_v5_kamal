@@ -90,7 +90,7 @@
                     <% chapter_completed_at = @completed_chapter_commitments[chapter.fetch("slug")]&.actual_ended_at %>
                     <span class="text-[11px] font-extrabold uppercase tracking-[.12em] text-slate-500">Capitolo <%= format("%02d", index + 1) %></span>
                     <span class="min-w-0 text-base font-bold leading-6 <%= show_available ? 'text-slate-900 group-hover:text-indigo-800' : 'text-slate-700' %>"><%= chapter.fetch("title") %></span>
-                    <span class="text-xs font-bold <%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? 'text-emerald-700' : (chapter.fetch('published_for_public', false) ? 'text-blue-700' : 'text-amber-700') %>"><%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? "✓ Completato#{" il #{l(chapter_completed_at.to_date, format: :long)}" if chapter_completed_at}" : (chapter.fetch('published_for_public', false) ? "Da completare" : "In arrivo") %></span>
+                    <%= render "posturacorretta/learning/chapter_progress_indicator", chapter: chapter, completed: @completed_chapter_slugs.include?(chapter.fetch("slug")), completed_at: chapter_completed_at, show_date: true %>
                   <% end %>
                   <% if show_available %>
                     <%= link_to chapter_body, posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: chapter.fetch("slug")), class: "group grid gap-3 px-1 py-5 transition hover:bg-slate-50 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3" %>

@@ -36,6 +36,7 @@ module Admin
       assert_select "a[href='#{admin_brands_path}']", text: /Brand e domini/
       assert_select "a[href='#{admin_brands_path(tab: "domains")}']"
       assert_select "a[href='#{admin_assigned_role_map_path}']", text: /Ruoli assegnati/
+      assert_select "header[data-dashboard-topbar] a[href='#{admin_note_path(source: "docs", path: "flowpulse_monitoraggio_sicurezza_e_richieste.md")}']", text: "Sicurezza"
     end
 
     test "superadmin can open the didactic hub and its yaml sources" do

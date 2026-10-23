@@ -49,6 +49,10 @@ module Brands
         attributes[:resolved_at] = BrandRequest::CLOSED_STATUSES.include?(target_status) ? Time.current : nil
         brand_request.update!(attributes)
 
+        if params[:transition] == "reject"
+          return redirect_to brand_admin_requests_path(@brand.slug, state: "open"), notice: "Richiesta rifiutata."
+        end
+
         state = BrandRequest::CLOSED_STATUSES.include?(target_status) ? "closed" : "open"
         redirect_to brand_admin_requests_path(@brand.slug, state:, anchor: "brand-request-#{brand_request.id}"), notice: "Richiesta aggiornata."
       end

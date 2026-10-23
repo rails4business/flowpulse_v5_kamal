@@ -16,6 +16,9 @@
 </div>
 
 <div class="flex items-center gap-2">
+  <% if Current.user&.superadmin_user? && Current.user.active_role == "superadmin" %>
+    <%= link_to "Sicurezza", admin_note_path(source: "docs", path: "flowpulse_monitoraggio_sicurezza_e_richieste.md"), class: "hidden rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100 sm:block" %>
+  <% end %>
   <%= verified_link_to "Dashboard", dashboard_home_path, class: "hidden rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 sm:block" %>
 
   <% if authenticated? %>

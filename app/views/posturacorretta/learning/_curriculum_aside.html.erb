@@ -39,11 +39,15 @@
     <ol class="mt-5 divide-y divide-slate-200 border-y border-slate-200">
       <% active_course.fetch("chapters", []).each_with_index do |chapter, index| %>
         <% selected = active_lesson&.fetch("slug", nil) == chapter.fetch("slug") %>
+        <% chapter_completed_at = @completed_chapter_commitments[chapter.fetch("slug")]&.actual_ended_at %>
         <% item_classes = selected ? "border-blue-600 bg-blue-50 text-slate-950" : "border-blue-200 text-slate-600 hover:border-blue-500 hover:bg-blue-50/60 hover:text-slate-900" %>
         <li>
           <%= link_to posturacorretta_course_chapter_path(corso: active_course.fetch("slug"), capitolo: chapter.fetch("slug")), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "block border-l-[3px] px-3 py-3.5 transition #{item_classes}" do %>
             <span class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Capitolo <%= format("%02d", index + 1) %></span>
-            <span class="mt-1 block text-sm leading-5 <%= selected ? "font-bold" : "font-medium" %>"><%= chapter.fetch("title") %></span>
+            <span class="mt-1 flex items-start gap-2">
+              <%= render "posturacorretta/learning/chapter_progress_indicator", chapter: chapter, completed: @completed_chapter_slugs.include?(chapter.fetch("slug")), completed_at: chapter_completed_at %>
+              <span class="text-sm leading-5 <%= selected ? "font-bold" : "font-medium" %>"><%= chapter.fetch("title") %></span>
+            </span>
           <% end %>
         </li>
       <% end %>

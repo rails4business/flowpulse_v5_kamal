@@ -2,28 +2,32 @@
   <% commitment = chapter["publication_commitment"] %>
   <% history = Array(chapter["publication_history"]) %>
   <% dialog_id = "publication-#{chapter.fetch('slug').parameterize}" %>
-  <% commitment_path = impegno_agenda_path(workspace: "1", default_brand: "posturacorretta", editorial_decision: "1", content_key: chapter["id"].presence || chapter.fetch("slug"), content_title: chapter.fetch("title"), publication_change_kind: (commitment ? "update" : "publish"), subject_node_id: chapter["publication_node_id"], return_to: request.fullpath) %>
   <aside class="<%= local_assigns[:inline] ? 'contents' : 'mt-3 flex flex-wrap items-center gap-2' %> text-xs" aria-label="Stato editoriale del contenuto">
     <% if commitment %>
       <% end_time = commitment.actual_ended_at || commitment.ends_at || publication_decision_time(commitment) %>
       <% pill_classes = commitment.publication_status == "published" ? "bg-emerald-100 text-emerald-800 ring-emerald-200" : commitment.publication_status == "archived" ? "bg-slate-200 text-slate-700 ring-slate-300" : "bg-amber-100 text-amber-800 ring-amber-200" %>
       <% status_label = commitment.publication_status == "published" ? "Pubblicato" : commitment.publication_status == "archived" ? "Archiviato" : "Bozza" %>
       <button type="button" onclick="document.getElementById('<%= dialog_id %>')?.showModal()" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-black ring-1 <%= pill_classes %>" title="Apri informazioni editoriali"><span aria-hidden="true"><%= commitment.publication_status == 'published' ? '✓' : commitment.publication_status == 'archived' ? '■' : '●' %></span><%= status_label %> · <%= l(end_time, format: :short) %></button>
-      <%= link_to "Aggiorna", commitment_path, class: "inline-flex rounded-full bg-violet-700 px-3 py-1 font-black text-white hover:bg-violet-800" %>
       <% if commitment.publication_status == "published" %>
+        <%= button_to "Aggiorna", data_commitments_path,
+              params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Aggiorna · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "update", publication_status: commitment.publication_status, publication_visibility: commitment.publication_visibility, subject_node_id: chapter["publication_node_id"], access_modes: commitment.access_modes } },
+              class: "pc-action-button pc-action-button--update pc-action-button--compact",
+              form: { data: { turbo_confirm: "Aggiornare questo contenuto?" } } %>
         <%= button_to "Sospendi", data_commitments_path,
               params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Sospendi · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "unpublish", publication_status: "draft", publication_visibility: "private", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
-              class: "pc-action-button pc-action-button--warning pc-action-button--compact" %>
+              class: "pc-action-button pc-action-button--warning pc-action-button--compact",
+              form: { data: { turbo_confirm: "Sospendere la visibilità di questo contenuto?" } } %>
       <% else %>
         <%= button_to "Pubblica", data_commitments_path,
               params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Pubblica · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
-              class: "pc-action-button pc-action-button--success pc-action-button--compact" %>
+              class: "pc-action-button pc-action-button--success pc-action-button--compact",
+              form: { data: { turbo_confirm: "Pubblicare questo contenuto?" } } %>
       <% end %>
     <% else %>
-      <%= link_to "＋ DataCommitment", commitment_path, class: "inline-flex rounded-full bg-violet-50 px-3 py-1 font-black text-violet-700 ring-1 ring-violet-200 hover:bg-violet-100" %>
       <%= button_to "Pubblica", data_commitments_path,
             params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Pubblica · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
-            class: "pc-action-button pc-action-button--success pc-action-button--compact" %>
+            class: "pc-action-button pc-action-button--success pc-action-button--compact",
+            form: { data: { turbo_confirm: "Pubblicare questo contenuto?" } } %>
     <% end %>
   </aside>
   <% if commitment %>

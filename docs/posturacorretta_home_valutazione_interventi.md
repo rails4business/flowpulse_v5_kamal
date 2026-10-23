@@ -64,6 +64,10 @@ Si procede con un solo intervento alla volta. Ogni punto viene prima verificato 
 - [x] Nascondere la barra allo 0% prima dell'avvio, fare iniziare il corso dal primo capitolo e sbloccare “Segna come letto” rispettando l'ordine dei capitoli.
 - [x] Mostrare in home lo stato “In arrivo” per i capitoli non pubblicati, “Da completare” per quelli pubblicati e “Completato il [data]” per quelli già letti.
 - [x] Nella home mostrare “Inizia” soltanto sul primo capitolo di un corso non avviato e “Da completare” sugli altri capitoli pubblicati.
+- [x] Tenere i corsi iniziati e il loro avanzamento nel Percorso online, non nella pagina Lezioni, che è dedicata alla pratica con insegnanti e appuntamenti.
+- [x] Collocare “Segna come letto” alla fine del capitolo e usare negli indici un cerchio vuoto per i capitoli da completare e un cerchio verde con spunta e data per quelli completati.
+- [x] Rendere “Aggiorna” una decisione editoriale diretta e aggiungere conferma a pubblicazione/sospensione.
+- [x] Usare il cerchio verde con spunta e la data `gg/mm/aaaa` in home e nell'indice del corso; nella sidebar mostrare soltanto il cerchio. In fondo al capitolo mostrare “Letto il [data]”, senza azione per riportarlo a non letto.
 - [x] Rendere visibile in home il pulsante “Inizia”.
 - [x] Presentare i primi sei contenuti come “Corso 1 di 6”–“Corso 6 di 6”.
 - [x] Eliminare la classificazione teoria/pratica dai capitoli.

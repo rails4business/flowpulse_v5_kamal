@@ -123,7 +123,9 @@ module Posturacorretta
     completed = learning_commitments.find do |item|
       chapter_completion?(item) && item.content_key == chapter.fetch("slug") && item.metadata.to_h["course_slug"] == course.fetch("slug")
     end
-    unless completed
+    if completed
+      completed.update!(status: "completed", actual_ended_at: Time.current) unless completed.status == "completed"
+    else
       now = Time.current
       learning_commitments.create!(
         created_by_profile: current_profile,
@@ -528,6 +530,7 @@ module Posturacorretta
     @previous_lesson = navigable_lessons[lesson_index - 1] if lesson_index&.positive?
     @next_lesson = navigable_lessons[lesson_index + 1] if lesson_index
     lesson_position = @course_lessons.index(@lesson)
+    @lesson_number = lesson_position + 1
     previous_slugs = @course_lessons.first(lesson_position).map { |item| item.fetch("slug") }
     @chapter_completion_unlocked = @course_enrollment.present? && (previous_slugs - @completed_chapter_slugs).empty?
 
@@ -766,21 +769,6 @@ module Posturacorretta
     @active_lesson_programs = calendar.fetch("active_programs", [])
     load_dashboard_agenda
     @selected_participation = params[:participation].presence_in(%w[group individual])
-    if authenticated?
-      commitments = learning_commitments.to_a
-      enrollments = commitments.select { |item| course_enrollment?(item) && item.status != "cancelled" }.index_by(&:content_key)
-      completions = commitments.select { |item| chapter_completion?(item) && item.status == "completed" }.group_by { |item| item.metadata.to_h["course_slug"] }
-      @enrolled_courses = @dashboard_courses.filter_map do |course|
-        enrollment = enrollments[course.fetch("slug")]
-        next unless enrollment
-
-        completed = Array(completions[course.fetch("slug")]).map(&:content_key).uniq
-        total = course.fetch("chapters", []).size
-        course.merge("enrollment" => enrollment, "completed_count" => completed.size, "progress_percent" => total.positive? ? ((completed.size.to_f / total) * 100).round : 0)
-      end
-    else
-      @enrolled_courses = []
-    end
   end
 
   def load_student_lessons_program

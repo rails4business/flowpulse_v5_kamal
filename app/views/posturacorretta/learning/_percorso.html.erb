@@ -94,20 +94,11 @@
             <% chapter_published = chapter.fetch("published_for_public", false) %>
             <% chapter_completed = progress.fetch("completed_slugs", []).include?(chapter.fetch("slug")) %>
             <% chapter_completed_at = progress.fetch("completion_dates", {})[chapter.fetch("slug")] %>
-            <% chapter_action = if chapter_completed
-                 "✓ Completato#{" il #{l(chapter_completed_at.to_date, format: :long)}" if chapter_completed_at}"
-               elsif !chapter_published
-                 "In arrivo"
-               elsif progress.fetch("state") == "not_started" && chapter_index.zero?
-                 "Inizia"
-               else
-                 "Da completare"
-               end %>
             <li>
               <% chapter_body = capture do %>
                 <span class="grid size-8 shrink-0 place-items-center rounded-full border border-blue-200 bg-blue-50 text-sm font-black text-blue-700" aria-hidden="true">▤</span>
                 <span class="min-w-0 flex-1"><span class="block font-semibold"><%= chapter.fetch("title") %></span><span class="mt-0.5 block text-[10px] font-bold uppercase tracking-wide"><span class="text-slate-500">Capitolo <%= format("%02d", chapter_index + 1) %></span><% if chapter["release_at"].present? %> · <span class="text-slate-500"><%= chapter.fetch("demo", false) ? "Disponibile ora" : "Uscita #{l(Time.zone.parse(chapter.fetch('release_at')).to_date, format: :long)}" %></span><% end %></span></span>
-                <span class="ml-auto text-[10px] font-bold uppercase tracking-wide <%= chapter_completed ? "text-emerald-700" : (chapter_available ? "text-blue-700" : "text-amber-700") %>"><%= chapter_action %></span>
+                <%= render "posturacorretta/learning/chapter_progress_indicator", chapter: chapter, completed: chapter_completed, completed_at: chapter_completed_at, show_date: true %>
               <% end %>
               <% if chapter_available %>
                 <%= link_to chapter_body, posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: chapter.fetch("slug")), class: "flex items-center gap-4 py-4 text-sm text-slate-700 transition hover:text-blue-700" %>

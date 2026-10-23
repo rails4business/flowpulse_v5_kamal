@@ -42,6 +42,16 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     assert @brand_request.resolved_at.present?
   end
 
+  test "rejecting a request returns to the open requests list" do
+    sign_in(@owner)
+
+    patch brand_admin_request_state_url(@brand.slug, @brand_request), params: { transition: "reject" }
+
+    assert_equal "rejected", @brand_request.reload.status
+    assert @brand_request.resolved_at.present?
+    assert_redirected_to brand_admin_requests_url(@brand.slug, state: "open")
+  end
+
   test "closed requests use outcome filters and table layout is used for all views" do
     @brand_request.update!(status: "accepted", resolved_at: Time.current)
     BrandRequest.create!(

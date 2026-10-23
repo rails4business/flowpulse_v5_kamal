@@ -192,7 +192,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "author_node_slug"
     assert_not_includes response.body, "publisher_node_slug"
     assert_not_includes response.body, "author: Mark Postura"
-    assert_select "p.text-blue-700", text: "Capitolo"
+    assert_select "p.text-blue-700", text: "Capitolo 02"
     assert_select "p", text: "Postura e salute: da dove iniziare"
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] button[data-mobile-aside-target='toggle'][aria-controls='seme-aside']", text: /Indice/
     assert_select "#seme-aside[data-mobile-aside-target='panel']"
@@ -256,7 +256,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
       assert_select "span", text: "Libero"
-      assert_select "p.text-blue-700", text: "Capitolo"
+      assert_select "p.text-blue-700", text: "Capitolo 05"
       assert_select "p", text: "Postura e salute: da dove iniziare"
       assert_select "header a[aria-label^='Torna all']", text: /Postura e salute: da dove iniziare/
       assert_select "nav[aria-label='Navigazione del corso']", count: 0
@@ -309,14 +309,14 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Percorso"
     assert_select "h1", text: "Programma lezioni PosturaCorretta", count: 1
     assert_select "nav[aria-label='Corsi del programma lezioni']"
-    assert_select "div[aria-label='Corso introduttivo']", count: 1
-    assert_select "section[aria-labelledby^='lesson-section-']", count: 5
-    assert_select "a[aria-current='step'][aria-label^='1. Introduzione a PosturaCorretta']", count: 1
+    assert_select "div[aria-label='Corso introduttivo']", count: 0
+    assert_select "section[aria-labelledby^='lesson-section-']", count: 6
+    assert_select "a[aria-current='step'][aria-label^='1. Postura e salute: da dove iniziare']", count: 1
     assert_select "a[aria-label*='non ancora disponibile']", count: 0
-    assert_select "h2", text: "Introduzione a PosturaCorretta", count: 1
-    assert_select "ol[aria-label='Lezioni di Introduzione a PosturaCorretta'] > li", count: 2
+    assert_select "h2", text: "Postura e salute: da dove iniziare", count: 1
+    assert_select "ol[aria-label='Lezioni di Postura e salute: da dove iniziare'] > li", count: 1
     assert_includes response.body, "Prima scheda esercizi e video"
-    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'inizia-con-posturacorretta', capitolo: 'prima-scheda-esercizi-video')}']", count: 0
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'inizia-con-posturacorretta', capitolo: 'prima-scheda-esercizi-video')}']", count: 1
     assert_select "section[aria-label='Percorso insegnante del corso selezionato']", count: 0
     assert_select "a", text: "Apri il corso online", count: 0
     assert_select "aside[aria-label='Sorgenti YAML del programma']", count: 0
@@ -324,7 +324,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_student_dashboard_path(corso: "igiene-posturale", participation: "group")
 
     assert_response :success
-    assert_select "a[aria-current='step'][aria-label^='2. Igiene Posturale']", count: 1
+    assert_select "a[aria-current='step'][aria-label^='7. Igiene Posturale']", count: 1
     assert_select "h2", text: "Igiene Posturale", count: 1
     assert_select "ol[aria-label='Lezioni di Igiene Posturale'] > li", count: 4
     assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'igiene-posturale', capitolo: 'punti-di-tensione')}']", count: 0
@@ -531,6 +531,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "form[action='#{data_commitments_path}']" do
       assert_select "button", text: "Pubblica", minimum: 1
+      assert_select "button", text: "Aggiorna", count: 0
       assert_select "input[name='context_brand'][value='posturacorretta']", minimum: 1
       assert_select "input[name='publication_decision'][value='1']", minimum: 1
     end
@@ -558,6 +559,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
     assert_response :success
     assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Pubblica", minimum: 1
+    assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Aggiorna", count: 0
 
     post data_commitments_path, params: {
       publication_decision: "1", context_brand: "posturacorretta", return_to: posturacorretta_course_path(corso: "inizia-con-posturacorretta"),
@@ -567,8 +569,10 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
     assert_response :success
-    assert_select "aside[aria-label='Stato editoriale del contenuto'] a", text: "Aggiorna", minimum: 1
+    assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Aggiorna", minimum: 1
+    assert_select "aside[aria-label='Stato editoriale del contenuto'] form[data-turbo-confirm='Aggiornare questo contenuto?']", minimum: 1
     assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Sospendi", minimum: 1
+    assert_select "aside[aria-label='Stato editoriale del contenuto'] form[data-turbo-confirm]", minimum: 1
 
     delete session_path
     learner = create_test_user("posturacorretta-learner-controls@example.com")
@@ -670,7 +674,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
     assert_response :success
-    assert_select "time[datetime='#{completion.actual_ended_at.iso8601}']", text: I18n.l(completion.actual_ended_at.to_date, format: :long)
+    assert_select "time[datetime='#{completion.actual_ended_at.iso8601}']", text: completion.actual_ended_at.strftime("%d/%m/%Y")
     assert_select "button", text: "Segna come letto", count: 0
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
@@ -683,7 +687,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#inizia-con-posturacorretta [aria-label^='Avanzamento del corso']", text: /In corso · 2 di 7 capitoli/
     assert_select "#inizia-con-posturacorretta [role='progressbar'][aria-valuenow='29']", count: 1
     assert_select "main article [role='progressbar']", count: 1
-    assert_select "#inizia-con-posturacorretta", text: /✓ Completato il #{Regexp.escape(I18n.l(completion.actual_ended_at.to_date, format: :long))}/
+    assert_select "#inizia-con-posturacorretta [data-chapter-progress='completed']", minimum: 1 do
+      assert_select "time[datetime='#{completion.actual_ended_at.iso8601}']", text: completion.actual_ended_at.strftime("%d/%m/%Y"), minimum: 1
+    end
     assert_select "#inizia-con-posturacorretta", text: /Da completare/
     assert_select "#inizia-con-posturacorretta", text: /In arrivo/
   end
