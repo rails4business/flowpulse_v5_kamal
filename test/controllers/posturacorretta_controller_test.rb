@@ -162,7 +162,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "h3", text: "Recupero"
     assert_select "table[aria-label='Introduzione a PosturaCorretta'] th", text: "Insegnante"
     assert_select "table[aria-label='Introduzione a PosturaCorretta'] td", text: "Mark Postura"
-    assert_select "table[aria-label='Introduzione a PosturaCorretta'] td", text: /1\. Inizia con PosturaCorretta/
+    assert_select "table[aria-label='Introduzione a PosturaCorretta'] td", text: /1\. Postura e salute: da dove iniziare/
     assert_select "table[aria-label='Introduzione a PosturaCorretta'] td", text: /2\. Postura e Fisiologia/
     assert_select "table[aria-label='Principi di Fisioterapia']"
     assert_select "table[aria-label='Biomeccanica comportamentale (GDS)']"

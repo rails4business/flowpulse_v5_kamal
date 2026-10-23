@@ -3,7 +3,7 @@ module Posturacorretta
   layout "landing"
   allow_unauthenticated_access
   before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher, :enroll, :complete_chapter]
-  helper_method :posturacorretta_editorial_preview?, :publication_decision_time
+  helper_method :posturacorretta_editorial_preview?, :posturacorretta_chapter_editor?, :publication_decision_time
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
   ACADEMY_PATH = Rails.root.join("config/data/posturacorretta/accademia/academy.yml").freeze
@@ -23,6 +23,7 @@ module Posturacorretta
     load_curriculum_sources
     @courses = build_courses
     @direct_courses = @didactic_courses
+    load_home_course_progress
     render :show
   end
 
@@ -48,6 +49,11 @@ module Posturacorretta
     return redirect_to(posturacorretta_path, alert: "Corso non trovato") unless course_slug
     return redirect_to(posturacorretta_course_path(corso: course_slug), status: :moved_permanently) if params[:vista].present?
 
+    selected_course = @all_didactic_courses.find { |item| item.fetch("slug") == course_slug }
+    unless selected_course.fetch("show_available", false) || posturacorretta_chapter_editor?(selected_course)
+      return redirect_to(posturacorretta_path, alert: "Corso non disponibile.")
+    end
+
     load_course_overview(course_slug)
     return if performed?
 
@@ -63,14 +69,17 @@ module Posturacorretta
     commitment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
     unless commitment
       now = Time.current
+      started_at = now - 1.second
       commitment = learning_commitments.create!(
         created_by_profile: current_profile,
         domain: posturacorretta_domain,
-        title: "Iscrizione · #{course.fetch('title')}",
+        title: "Inizio corso · #{course.fetch('title')}",
         kind: "academy",
-        status: "in_progress",
-        starts_at: now,
-        actual_started_at: now,
+        status: "completed",
+        starts_at: started_at,
+        ends_at: now,
+        actual_started_at: started_at,
+        actual_ended_at: now,
         blocks_calendar: false,
         pricing_type: "none",
         contribution_type: "unpaid",
@@ -78,7 +87,15 @@ module Posturacorretta
         metadata: { "record_type" => "course_enrollment", "course_slug" => course.fetch("slug"), "access" => "free" }
       )
     end
-    redirect_to posturacorretta_course_path(corso: course.fetch("slug")), notice: "Iscrizione gratuita registrata."
+    requested_chapter = course.fetch("chapters", []).find do |chapter|
+      chapter.fetch("slug") == params[:capitolo] && chapter.fetch("show_available", false)
+    end
+    destination = if requested_chapter
+      posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: requested_chapter.fetch("slug"))
+    else
+      posturacorretta_course_path(corso: course.fetch("slug"))
+    end
+    redirect_to destination, notice: "Corso iniziato."
   end
 
   def complete_chapter
@@ -89,7 +106,19 @@ module Posturacorretta
     return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
 
     enrollment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
-    return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Iscriviti al corso prima di registrare i capitoli completati.") unless enrollment
+    return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Inizia il corso prima di registrare i capitoli completati.") unless enrollment
+
+    chapter_index = course.fetch("chapters", []).index(chapter)
+    completed_before = learning_commitments.select do |item|
+      chapter_completion?(item) && item.metadata.to_h["course_slug"] == course.fetch("slug") && item.status == "completed"
+    end.map(&:content_key).uniq
+    previous_slugs = course.fetch("chapters", []).first(chapter_index).map { |item| item.fetch("slug") }
+    if (previous_slugs - completed_before).any?
+      return redirect_to(
+        posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: chapter.fetch("slug")),
+        alert: "Completa prima il capitolo precedente."
+      )
+    end
 
     completed = learning_commitments.find do |item|
       chapter_completion?(item) && item.content_key == chapter.fetch("slug") && item.metadata.to_h["course_slug"] == course.fetch("slug")
@@ -100,10 +129,11 @@ module Posturacorretta
         created_by_profile: current_profile,
         domain: posturacorretta_domain,
         parent: enrollment,
-        title: "Capitolo completato · #{chapter.fetch('title')}",
+        title: "Capitolo letto · #{chapter.fetch('title')}",
         kind: "academy",
         status: "completed",
         starts_at: now,
+        actual_ended_at: now,
         blocks_calendar: false,
         pricing_type: "none",
         contribution_type: "unpaid",
@@ -115,7 +145,7 @@ module Posturacorretta
     if course.fetch("chapters", []).any? && (course.fetch("chapters").map { |item| item.fetch("slug") } - completed_slugs).empty?
       enrollment.update!(status: "completed", actual_ended_at: Time.current)
     end
-    redirect_to posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: chapter.fetch("slug")), notice: "Capitolo segnato come completato."
+    redirect_to posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: chapter.fetch("slug")), notice: "Capitolo segnato come letto."
   end
 
   def legacy_programma
@@ -391,17 +421,39 @@ module Posturacorretta
     end
     return unless decorated
 
+    course_node_slug = decorated["node_slug"].presence || decorated["publisher_node_slug"].presence
+    course_node = publication_node_for_slug(course_node_slug)
+    decorated = decorated.merge("publication_node_id" => course_node&.id, "publication_node_slug" => course_node_slug)
+    course_commitment = chapter_publication_commitment(decorated)
+    decorated = decorated.merge(
+      "show_available" => editorial_item_show_available?(decorated, course_commitment),
+      "publication_commitment" => course_commitment,
+      "publication_history" => (chapter_publication_history(decorated) if posturacorretta_chapter_editor?(decorated))
+    )
+
     chapters = decorated.fetch("chapters", []).map do |chapter|
-      publication_node_slug = chapter["node_slug"].presence || decorated["node_slug"].presence || decorated["publisher_node_slug"].presence
+      publication_node_slug = chapter["node_slug"].presence || course_node_slug
       publication_node = publication_node_for_slug(publication_node_slug)
       chapter = chapter.merge("publication_node_id" => publication_node&.id, "publication_node_slug" => publication_node_slug)
+      publication_commitment = chapter_publication_commitment(chapter)
       chapter.merge(
         "show_available" => chapter_show_available?(chapter),
-        "publication_commitment" => chapter_publication_commitment(chapter),
-        "publication_history" => (chapter_publication_history(chapter) if posturacorretta_editorial_preview?)
+        "published_for_public" => publication_commitment&.publication_status == "published" && publication_commitment.publication_visibility == "public" && publication_commitment.access_modes.include?("free"),
+        "publication_commitment" => publication_commitment,
+        "publication_history" => (chapter_publication_history(chapter) if posturacorretta_chapter_editor?(chapter))
       )
     end
     decorated.merge("release_locked" => false, "chapters" => chapters)
+  end
+
+  def editorial_item_show_available?(item, commitment)
+    if commitment
+      commitment.publication_status == "published" &&
+        commitment.publication_visibility == "public" &&
+        commitment.access_modes.include?("free")
+    else
+      item.fetch("status", "draft") == "published" && item.fetch("visibility", "public") == "public"
+    end
   end
 
   def scheduled_course_placeholder(content_id)
@@ -475,6 +527,9 @@ module Posturacorretta
     lesson_index = navigable_lessons.index(@lesson)
     @previous_lesson = navigable_lessons[lesson_index - 1] if lesson_index&.positive?
     @next_lesson = navigable_lessons[lesson_index + 1] if lesson_index
+    lesson_position = @course_lessons.index(@lesson)
+    previous_slugs = @course_lessons.first(lesson_position).map { |item| item.fetch("slug") }
+    @chapter_completion_unlocked = @course_enrollment.present? && (previous_slugs - @completed_chapter_slugs).empty?
 
     load_lesson_content
   end
@@ -491,7 +546,7 @@ module Posturacorretta
   end
 
   def chapter_show_available?(chapter)
-    return true if posturacorretta_editorial_preview?
+    return true if posturacorretta_chapter_editor?(chapter)
 
     commitment = chapter_publication_commitment(chapter)
     commitment&.publication_status == "published" &&
@@ -514,6 +569,13 @@ module Posturacorretta
     return true if Current.user&.superadmin_user?
 
     posturacorretta_brand_node&.administered_by?(Current.user) || false
+  end
+
+  def posturacorretta_chapter_editor?(chapter)
+    return true if posturacorretta_editorial_preview?
+    return false unless Current.user && chapter["publication_node_id"].present?
+
+    Node.find_by(id: chapter["publication_node_id"])&.administered_by?(Current.user) || false
   end
 
   def posturacorretta_brand_node
@@ -557,14 +619,53 @@ module Posturacorretta
   def load_learning_progress(course_slug, chapters)
     @course_enrollment = nil
     @completed_chapter_slugs = []
+    @completed_chapter_commitments = {}
     return unless authenticated?
 
     commitments = learning_commitments.to_a
     @course_enrollment = commitments.find { |item| course_enrollment?(item) && item.content_key == course_slug && item.status != "cancelled" }
-    @completed_chapter_slugs = commitments.select do |item|
+    completed_commitments = commitments.select do |item|
       chapter_completion?(item) && item.metadata.to_h["course_slug"] == course_slug && item.status == "completed"
-    end.map(&:content_key)
+    end
+    @completed_chapter_commitments = completed_commitments.group_by(&:content_key).transform_values do |items|
+      items.max_by { |item| item.actual_ended_at || item.updated_at }
+    end
+    @completed_chapter_slugs = @completed_chapter_commitments.keys
     @course_progress_percent = chapters.any? ? ((@completed_chapter_slugs.size.to_f / chapters.size) * 100).round : 0
+  end
+
+  def load_home_course_progress
+    commitments = authenticated? ? learning_commitments.to_a : []
+    enrollments = commitments.select { |item| course_enrollment?(item) && item.status != "cancelled" }.index_by(&:content_key)
+    completions = commitments.select { |item| chapter_completion?(item) && item.status == "completed" }.group_by { |item| item.metadata.to_h["course_slug"] }
+
+    @home_course_progress = @all_didactic_courses.to_h do |course|
+      chapter_slugs = course.fetch("chapters", []).map { |chapter| chapter.fetch("slug") }
+      completed_count = Array(completions[course.fetch("slug")]).map(&:content_key).uniq.count { |slug| chapter_slugs.include?(slug) }
+      chapter_count = chapter_slugs.size
+      enrollment = enrollments[course.fetch("slug")]
+      completion_dates = Array(completions[course.fetch("slug")]).group_by(&:content_key).transform_values do |items|
+        items.filter_map(&:actual_ended_at).max
+      end
+      state = if chapter_count.positive? && completed_count == chapter_count
+        "completed"
+      elsif enrollment || completed_count.positive?
+        "in_progress"
+      else
+        "not_started"
+      end
+
+      progress = {
+        "chapter_count" => chapter_count,
+        "completed_count" => completed_count,
+        "completed_slugs" => Array(completions[course.fetch("slug")]).map(&:content_key).uniq,
+        "completion_dates" => completion_dates,
+        "started" => enrollment.present?,
+        "percent" => chapter_count.positive? ? ((completed_count.to_f / chapter_count) * 100).round : 0,
+        "state" => state
+      }
+      [course.fetch("slug"), progress]
+    end
   end
 
   def learning_commitments

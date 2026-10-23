@@ -210,6 +210,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert commitment.published_at.present?
     assert_not commitment.blocks_calendar?
     assert_equal previous, commitment.previous_publication_commitment
+    assert_nil flash[:alert]
     assert_equal "Pubblicazione approvata.", flash[:notice]
   end
 
@@ -279,6 +280,65 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_not commitment.blocks_calendar?
     assert_equal @profile, commitment.published_by_profile
     assert commitment.published_at.present?
+  end
+
+  test "brand admin and delegated node manager can approve publication decisions" do
+    brand_owner = RoleAssignment.create!(profile: @profile, role: :ideatore)
+    brand = Node.create!(title: "PosturaCorretta", slug: "posturacorretta-publication-roles", role_assignment: brand_owner, node_type: :project)
+    @domain.update!(node: brand)
+
+    admin = User.create!(email_address: "posturacorretta-admin-publication@example.com", password: "password123", password_confirmation: "password123")
+    admin_profile = admin.create_profile!(display_name: "Admin PosturaCorretta", username: "pc_admin_pub")
+    RoleAssignment.create!(profile: admin_profile, context: brand, role: :admin, parent: brand_owner)
+    delete session_url
+    post session_url, params: { email_address: admin.email_address, password: "password123" }
+
+    assert_difference -> { DataCommitment.where(kind: "content", content_key: "capitolo-admin").count }, 1 do
+      post data_commitments_url, params: {
+        publication_decision: "1", context_brand: "posturacorretta", return_to: "/posturacorretta",
+        data_commitment: { title: "Pubblica capitolo admin", content_key: "capitolo-admin", publication_status: "published", publication_visibility: "public", access_modes: ["free"] }
+      }
+    end
+    assert_equal admin_profile, DataCommitment.find_by!(content_key: "capitolo-admin").published_by_profile
+
+    published = DataCommitment.find_by!(content_key: "capitolo-admin")
+    post data_commitments_url, params: {
+      publication_decision: "1", context_brand: "posturacorretta", return_to: "/posturacorretta",
+      data_commitment: { title: "Sospendi capitolo admin", content_key: "capitolo-admin", publication_change_kind: "unpublish", publication_status: "draft", publication_visibility: "private", access_modes: ["free"] }
+    }
+    suspended = DataCommitment.where(content_key: "capitolo-admin").order(:id).last
+    assert_equal "draft", suspended.publication_status
+    assert_equal "private", suspended.publication_visibility
+    assert_equal "unpublish", suspended.publication_change_kind
+    assert_equal published, suspended.previous_publication_commitment
+
+    creator = User.create!(email_address: "posturacorretta-manager-publication@example.com", password: "password123", password_confirmation: "password123")
+    creator_profile = creator.create_profile!(display_name: "Responsabile editoriale", username: "pc_manager_pub")
+    editorial_node = Node.create!(title: "Nodo editoriale delegato", slug: "capitolo-manager-publication", parent: brand, role_assignment: brand_owner, node_type: :project)
+    RoleAssignment.create!(profile: creator_profile, role: :responsabile, context: editorial_node, parent: brand_owner)
+    BrandAccess.create!(profile: creator_profile, source_domain: @domain)
+    assert editorial_node.administered_by?(creator)
+    delete session_url
+    post session_url, params: { email_address: creator.email_address, password: "password123" }
+
+    post data_commitments_url, params: {
+      publication_decision: "1", context_brand: "posturacorretta", return_to: "/posturacorretta",
+      data_commitment: { title: "Pubblica capitolo autore", content_key: "capitolo-autore", subject_node_id: editorial_node.id, publication_status: "published", publication_visibility: "public", access_modes: ["free"] }
+    }
+    assert_equal "Pubblicazione approvata.", flash[:notice]
+    author_commitment = DataCommitment.find_by!(content_key: "capitolo-autore")
+    assert_equal creator_profile, author_commitment.published_by_profile
+    assert_equal editorial_node, author_commitment.subject
+
+    other_owner = RoleAssignment.create!(profile: creator_profile, role: :ideatore)
+    unrelated_node = Node.create!(title: "Progetto estraneo", slug: "unrelated-publication-node", role_assignment: other_owner, node_type: :project)
+    assert_no_difference -> { DataCommitment.where(kind: "content", content_key: "capitolo-estraneo").count } do
+      post data_commitments_url, params: {
+        publication_decision: "1", context_brand: "posturacorretta", return_to: "/posturacorretta",
+        data_commitment: { title: "Tentativo fuori Brand", content_key: "capitolo-estraneo", subject_node_id: unrelated_node.id, publication_status: "published", publication_visibility: "public", access_modes: ["free"] }
+      }
+    end
+    assert_equal "Non hai i permessi per approvare questo contenuto.", flash[:alert]
   end
 
   test "content access supports subscription or purchase but keeps free exclusive" do

@@ -49,14 +49,21 @@
               </div>
               <h1 class="mt-3 text-3xl font-semibold tracking-[-.03em] text-slate-950 sm:text-4xl"><%= @selected_course.fetch("title") %></h1>
               <% if @selected_course["description"].present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= @selected_course.fetch("description") %></p><% end %>
+              <%= render "posturacorretta/learning/publication_admin_bar", chapter: @selected_course %>
+              <% if @course_enrollment %>
+                <div class="mt-5" aria-label="Avanzamento del corso">
+                  <div class="flex items-center justify-between gap-3 text-xs font-semibold"><span class="text-slate-600"><%= @completed_chapter_slugs.size %> di <%= @course_lessons.size %> capitoli letti</span><span class="text-blue-700"><%= @course_progress_percent %>%</span></div>
+                  <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="<%= @course_progress_percent %>% completato" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= @course_progress_percent %>"><span class="block h-full rounded-full bg-blue-600 transition-all" style="width: <%= @course_progress_percent %>%"></span></div>
+                </div>
+              <% end %>
               <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
                 <p class="text-xs font-semibold text-slate-500"><%= @course_lessons.size %> capitoli<%= " · #{@course_progress_percent}% completato" if @course_enrollment %></p>
                 <% if @course_enrollment && course_start_path %>
                   <%= link_to(@completed_chapter_slugs.any? ? "Continua il corso" : "Inizia", course_start_path, class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition") %>
                 <% elsif authenticated? %>
-                  <%= button_to "Iscriviti gratuitamente", posturacorretta_course_enrollment_path(corso: @reader_course_slug), class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition" %>
+                  <%= button_to "Inizia", posturacorretta_course_enrollment_path(corso: @reader_course_slug), params: ({ capitolo: first_chapter.fetch("slug") } if first_chapter), class: "pc-action-button pc-action-button--primary min-w-24" %>
                 <% elsif course_start_path %>
-                  <%= link_to "Accedi per iscriverti", new_session_path(return_to: posturacorretta_course_path(corso: @reader_course_slug)), class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition" %>
+                  <%= link_to "Accedi per iniziare", new_session_path(return_to: posturacorretta_course_path(corso: @reader_course_slug)), class: "pc-primary-cta inline-flex min-w-24 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition" %>
                 <% else %>
                   <span class="inline-flex rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold text-slate-500">In preparazione</span>
                 <% end %>
@@ -77,13 +84,13 @@
           <% if @course_lessons.present? %>
             <ol class="mt-6 divide-y divide-slate-200 border-y border-slate-200">
               <% @course_lessons.each_with_index do |chapter, index| %>
-                <% practical = chapter.fetch("chapter_type", "theory") == "practical" %>
                 <% show_available = chapter.fetch("show_available", false) %>
                 <li>
                   <% chapter_body = capture do %>
-                    <span class="text-[11px] font-extrabold uppercase tracking-[.12em]"><span class="text-slate-500">Capitolo <%= format("%02d", index + 1) %></span><span class="mt-1 block <%= practical ? 'text-red-700' : 'text-blue-700' %>"><%= practical ? "Pratico" : "Teorico" %></span></span>
+                    <% chapter_completed_at = @completed_chapter_commitments[chapter.fetch("slug")]&.actual_ended_at %>
+                    <span class="text-[11px] font-extrabold uppercase tracking-[.12em] text-slate-500">Capitolo <%= format("%02d", index + 1) %></span>
                     <span class="min-w-0 text-base font-bold leading-6 <%= show_available ? 'text-slate-900 group-hover:text-indigo-800' : 'text-slate-700' %>"><%= chapter.fetch("title") %></span>
-                    <span class="text-xs font-bold <%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? 'text-emerald-700' : (show_available ? 'text-blue-700' : 'text-amber-700') %>"><%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? "✓ Completato" : (show_available ? "Apri" : "⌛ A breve") %></span>
+                    <span class="text-xs font-bold <%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? 'text-emerald-700' : (chapter.fetch('published_for_public', false) ? 'text-blue-700' : 'text-amber-700') %>"><%= @completed_chapter_slugs.include?(chapter.fetch('slug')) ? "✓ Completato#{" il #{l(chapter_completed_at.to_date, format: :long)}" if chapter_completed_at}" : (chapter.fetch('published_for_public', false) ? "Da completare" : "In arrivo") %></span>
                   <% end %>
                   <% if show_available %>
                     <%= link_to chapter_body, posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: chapter.fetch("slug")), class: "group grid gap-3 px-1 py-5 transition hover:bg-slate-50 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3" %>

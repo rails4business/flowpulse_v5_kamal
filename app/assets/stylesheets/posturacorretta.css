@@ -1991,15 +1991,39 @@ html {
   color: var(--pc-brand);
 }
 
-.posturacorretta-ui a.pc-primary-cta {
+.posturacorretta-ui .pc-primary-cta {
   background: #1d4ed8;
   color: #fff;
 }
 
-.posturacorretta-ui a.pc-primary-cta:hover {
+.posturacorretta-ui .pc-primary-cta:hover {
   background: #1e40af;
   color: #fff;
 }
+
+.posturacorretta-ui .pc-action-button {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: .5rem;
+  padding: .625rem 1.25rem;
+  color: #fff;
+  font-size: .875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.posturacorretta-ui .pc-action-button--primary { background: #1d4ed8; }
+.posturacorretta-ui .pc-action-button--primary:hover { background: #1e40af; }
+.posturacorretta-ui .pc-action-button--success { background: #047857; }
+.posturacorretta-ui .pc-action-button--success:hover { background: #065f46; }
+.posturacorretta-ui .pc-action-button--warning { border-color: #fcd34d; background: #fffbeb; color: #92400e; }
+.posturacorretta-ui .pc-action-button--warning:hover { background: #fef3c7; }
+.posturacorretta-ui .pc-action-button--compact { min-height: 0; border-radius: 999px; padding: .25rem .75rem; font-size: .75rem; line-height: 1rem; font-weight: 900; }
 
 .posturacorretta-ui a.pc-appointment-cta {
   border-color: #fcd34d;

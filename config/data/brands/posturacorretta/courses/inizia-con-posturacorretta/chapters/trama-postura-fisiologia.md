@@ -4,7 +4,17 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Postura e Fisiologia: la trama della sezione
+
+# Come può aiutarti questo percorso?
+
+Se ti stai chiedendo se un percorso della postura possa risolvere il tuo problema devi sapere che seguiure un percorso sulla postura ti potrà aiutare, nel campo della salute, nel campo dell'apprendimento e nel campo del lavoro e delle tue risorse
+
+I primi capitoli sono importanti per impostare un approccio completo. Se vuoi invece passare al lavoro sui tuoi sistemi dopo il primo corso puoi passare alla sezione successiva.
+
+## Postura e Fisiologia
+
+**Postura e Fisiologia**: è la prima sezione del percorso posturacorretta in questa sezione presenteremo una visione che ti permetta di condividere il punto di vista che vogliamo offrirti sulla postura e sulla salute. 
+Abbiamo progettato degli strumenti per poter concretamente proporre la visione della salute non solo come assenza di malattia ma come un completo benessere bio psico sociale.
 
 La sezione presenta gli aspetti della salute sui quali la persona può agire e intorno ai quali è possibile organizzare servizi, se crediamo davvero che la salute sia benessere fisico, mentale e sociale e non soltanto assenza di malattia.
 
@@ -14,7 +24,7 @@ La postura viene utilizzata come punto di osservazione e come strumento per acco
 - l'apprendimento;
 - il lavoro e le risorse.
 
-## Il percorso in sei corsi
+## I sei corsi della prima sezione
 
 1. **Incontrare la salute e la postura:** iniziare a osservare il corpo e conoscere le metodiche posturali.
 2. **Salute — il Percorso Integrato:** costruire un percorso intorno alla persona e mettere in relazione bisogni, servizi e professionisti.
@@ -28,3 +38,11 @@ La postura viene utilizzata come punto di osservazione e come strumento per acco
 Questo primo corso apre l'intera sezione. Propone un primo incontro con la salute, la postura e le metodiche posturali, una valutazione iniziale e un primo mese di lavoro con una scheda dedicata alla postura.
 
 L'obiettivo è iniziare a osservare il corpo, comprendere che cosa può raccontare la postura, evitare gli errori più comuni e scegliere il passo successivo.
+
+
+# Postura e Fisiologia
+
+## Pronto a scoprire di più su postura e salute?
+
+
+

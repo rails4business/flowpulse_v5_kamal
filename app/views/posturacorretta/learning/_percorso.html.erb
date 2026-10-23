@@ -5,13 +5,17 @@
      "from-slate-950 via-indigo-700 to-blue-400"
    ] %>
 
-<% course_row = lambda do |course, course_number, inherited_level = nil| %>
+<% course_row = lambda do |course, course_number, inherited_level = nil, journey_total = nil| %>
+  <% progress = @home_course_progress.fetch(course.fetch("slug"), { "chapter_count" => course.fetch("chapters", []).size, "completed_count" => 0, "completed_slugs" => [], "completion_dates" => {}, "started" => false, "percent" => 0, "state" => "not_started" }) %>
+  <% progress_label = { "not_started" => "Da iniziare", "in_progress" => "In corso", "completed" => "Completato" }.fetch(progress.fetch("state")) %>
+  <% action_label = { "not_started" => "Inizia", "in_progress" => "Continua", "completed" => "Rivedi" }.fetch(progress.fetch("state")) %>
   <% release_locked = course.fetch("release_locked", false) %>
   <% learning_available = course.fetch("chapters", []).any? { |chapter| chapter["content_ref"].present? || chapter["content_path"].present? } %>
   <% program_available = @program_course_slugs.include?(course.fetch("slug")) %>
   <% course_code = format("%02d", course_number) %>
+  <% course_position_label = journey_total ? "Corso #{course_number} di #{journey_total}" : "Corso #{course_code}" %>
   <% first_chapter = course.fetch("chapters", []).first %>
-  <% first_chapter_available = first_chapter && (!release_locked || first_chapter.fetch("demo", false)) && first_chapter.fetch("show_available", false) %>
+  <% first_chapter_available = course.fetch("show_available", false) && first_chapter && (!release_locked || first_chapter.fetch("demo", false)) && first_chapter.fetch("show_available", false) %>
   <% start_path = posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: first_chapter.fetch("slug")) if first_chapter %>
   <article id="<%= course.fetch("slug") %>" class="group scroll-mt-24 overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-blue-300 hover:shadow-xl hover:shadow-slate-900/5">
     <details class="group/course">
@@ -36,12 +40,12 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z" />
           </svg>
         <% end %>
-        <span class="absolute bottom-4 left-4 rounded-full bg-white/95 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[.13em] text-slate-900 shadow-sm">Corso <%= course_code %></span>
+        <span class="absolute bottom-4 left-4 rounded-full bg-white/95 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[.13em] text-slate-900 shadow-sm"><%= course_position_label %></span>
       </div>
 
       <div class="flex min-w-0 flex-col p-5 sm:p-7">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-[11px] font-bold uppercase tracking-[.13em] text-blue-700">Corso <%= course_code %></span>
+          <span class="text-[11px] font-bold uppercase tracking-[.13em] text-blue-700"><%= course_position_label %></span>
           <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700"><%= course.fetch("access", "free") == "free" ? "Libero" : "A pagamento" %></span>
           <% if release_locked %><span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-600">🔒 Dal <%= l(Time.zone.parse(course.fetch("release_at")).to_date, format: :long) %></span><% end %>
           <% if course["status"] == "draft" %><span class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">In preparazione</span><% end %>
@@ -50,6 +54,17 @@
           <%= course.fetch("title") %>
         </h3>
         <% if course["description"].present? %><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600"><%= course.fetch("description") %></p><% end %>
+        <% if progress.fetch("started", false) || progress.fetch("completed_count").positive? %>
+        <div class="mt-5" aria-label="Avanzamento del corso <%= course.fetch("title") %>">
+          <div class="flex items-center justify-between gap-3 text-xs font-semibold">
+            <span class="text-slate-600"><%= progress_label %> · <%= progress.fetch("completed_count") %> di <%= progress.fetch("chapter_count") %> capitoli</span>
+            <span class="text-blue-700"><%= progress.fetch("percent") %>%</span>
+          </div>
+          <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="<%= progress.fetch("percent") %>% completato" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= progress.fetch("percent") %>">
+            <span class="block h-full rounded-full bg-blue-600 transition-all" style="width: <%= progress.fetch("percent") %>%"></span>
+          </div>
+        </div>
+        <% end %>
         <div class="mt-auto flex flex-wrap items-end justify-between gap-4 pt-6">
           <span class="text-xs font-semibold text-slate-500"><%= course.fetch("chapters", []).size %> capitoli</span>
           <span class="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
@@ -63,17 +78,36 @@
     <% if first_chapter %>
         <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3 sm:px-7">
           <span class="text-xs font-semibold text-slate-500">Indice del corso</span>
-          <% if start_path && first_chapter_available %><%= link_to(first_chapter.fetch("demo", false) && release_locked ? "Apri" : "Inizia", start_path, class: "relative z-10 inline-flex min-w-28 items-center justify-center rounded-lg bg-blue-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-blue-800", aria: { label: "Inizia il corso #{course.fetch("title")}" }) %><% end %>
+          <% if start_path && first_chapter_available %>
+            <% if progress.fetch("state") == "not_started" && authenticated? %>
+              <%= button_to "Inizia", posturacorretta_course_enrollment_path(corso: course.fetch("slug")), params: { capitolo: first_chapter.fetch("slug") }, class: "pc-action-button pc-action-button--primary relative z-10 min-w-28", aria: { label: "Inizia il corso #{course.fetch("title")}" } %>
+            <% elsif progress.fetch("state") == "not_started" %>
+              <%= link_to "Inizia", new_session_path(return_to: posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: first_chapter.fetch("slug"))), class: "pc-primary-cta relative z-10 inline-flex min-w-28 items-center justify-center rounded-lg px-4 py-2 text-sm font-bold transition", aria: { label: "Accedi per iniziare il corso #{course.fetch("title")}" } %>
+            <% else %>
+              <%= link_to action_label, start_path, class: "pc-primary-cta relative z-10 inline-flex min-w-28 items-center justify-center rounded-lg px-4 py-2 text-sm font-bold transition", aria: { label: "#{action_label} il corso #{course.fetch("title")}" } %>
+            <% end %>
+          <% end %>
         </div>
         <ol class="divide-y divide-slate-200 border-t border-slate-200 bg-white px-5 sm:px-7">
           <% course.fetch("chapters").each_with_index do |chapter, chapter_index| %>
-            <% practical = chapter.fetch("chapter_type", "theory") == "practical" %>
             <% chapter_available = !chapter.fetch("release_locked", false) && chapter.fetch("show_available", false) %>
+            <% chapter_published = chapter.fetch("published_for_public", false) %>
+            <% chapter_completed = progress.fetch("completed_slugs", []).include?(chapter.fetch("slug")) %>
+            <% chapter_completed_at = progress.fetch("completion_dates", {})[chapter.fetch("slug")] %>
+            <% chapter_action = if chapter_completed
+                 "✓ Completato#{" il #{l(chapter_completed_at.to_date, format: :long)}" if chapter_completed_at}"
+               elsif !chapter_published
+                 "In arrivo"
+               elsif progress.fetch("state") == "not_started" && chapter_index.zero?
+                 "Inizia"
+               else
+                 "Da completare"
+               end %>
             <li>
               <% chapter_body = capture do %>
-                <span class="grid size-8 shrink-0 place-items-center rounded-full border text-sm font-black <%= practical ? 'border-red-200 bg-red-50 text-red-700' : 'border-blue-200 bg-blue-50 text-blue-700' %>" aria-hidden="true"><%= practical ? "◆" : "▤" %></span>
-                <span class="min-w-0 flex-1"><span class="block font-semibold"><%= chapter.fetch("title") %></span><span class="mt-0.5 block text-[10px] font-bold uppercase tracking-wide"><span class="text-slate-500">Capitolo <%= format("%02d", chapter_index + 1) %></span> · <span class="<%= practical ? 'text-red-700' : 'text-blue-700' %>"><%= practical ? "Pratico" : "Teorico" %></span><% if chapter["release_at"].present? %> · <span class="text-slate-500"><%= chapter.fetch("demo", false) ? "Disponibile ora" : "Uscita #{l(Time.zone.parse(chapter.fetch('release_at')).to_date, format: :long)}" %></span><% end %></span></span>
-                <span class="ml-auto text-[10px] font-bold uppercase tracking-wide <%= chapter_available ? "text-emerald-700" : "text-amber-700" %>"><%= chapter_available ? "Apri" : "⌛ A breve" %></span>
+                <span class="grid size-8 shrink-0 place-items-center rounded-full border border-blue-200 bg-blue-50 text-sm font-black text-blue-700" aria-hidden="true">▤</span>
+                <span class="min-w-0 flex-1"><span class="block font-semibold"><%= chapter.fetch("title") %></span><span class="mt-0.5 block text-[10px] font-bold uppercase tracking-wide"><span class="text-slate-500">Capitolo <%= format("%02d", chapter_index + 1) %></span><% if chapter["release_at"].present? %> · <span class="text-slate-500"><%= chapter.fetch("demo", false) ? "Disponibile ora" : "Uscita #{l(Time.zone.parse(chapter.fetch('release_at')).to_date, format: :long)}" %></span><% end %></span></span>
+                <span class="ml-auto text-[10px] font-bold uppercase tracking-wide <%= chapter_completed ? "text-emerald-700" : (chapter_available ? "text-blue-700" : "text-amber-700") %>"><%= chapter_action %></span>
               <% end %>
               <% if chapter_available %>
                 <%= link_to chapter_body, posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: chapter.fetch("slug")), class: "flex items-center gap-4 py-4 text-sm text-slate-700 transition hover:text-blue-700" %>
@@ -94,6 +128,7 @@
       <% course_number = 0 %>
       <section id="primi-corsi" class="scroll-mt-24">
         <header class="mb-7 max-w-3xl border-b border-slate-200 pb-5">
+          <p class="text-xs font-black uppercase tracking-[.15em] text-blue-700">Il tuo percorso · <%= @didactic_courses.size %> corsi</p>
           <% if @didactic_path["eyebrow"].present? %><p class="text-xs font-bold uppercase tracking-[.15em] text-blue-700"><%= @didactic_path.fetch("eyebrow") %></p><% end %>
           <h1 class="!m-0 !mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= @didactic_path.fetch("title") %></h1>
           <% if @didactic_path["description"].present? %><p class="mt-2 leading-7 text-slate-600"><%= @didactic_path.fetch("description") %></p><% end %>
@@ -108,11 +143,22 @@
               <% end %>
             </ol>
           <% end %>
+          <div class="mt-6">
+            <% first_course = @didactic_courses.first %>
+            <% first_chapter = first_course&.fetch("chapters", [])&.first %>
+            <% if first_course && first_chapter %>
+              <% if authenticated? && !@home_course_progress.dig(first_course.fetch("slug"), "started") %>
+                <%= button_to "Inizia", posturacorretta_course_enrollment_path(corso: first_course.fetch("slug")), params: { capitolo: first_chapter.fetch("slug") }, class: "pc-action-button pc-action-button--primary" %>
+              <% else %>
+                <%= link_to "Inizia", posturacorretta_course_chapter_path(corso: first_course.fetch("slug"), capitolo: first_chapter.fetch("slug")), class: "inline-flex items-center justify-center rounded-xl border border-blue-700 bg-white px-5 py-3 text-sm font-bold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2" %>
+              <% end %>
+            <% end %>
+          </div>
         </header>
       <div class="space-y-6">
         <% @didactic_courses.each do |course| %>
           <% course_number += 1 %>
-          <% course_row.call(course, course_number) %>
+          <% course_row.call(course, course_number, nil, @didactic_courses.size) %>
         <% end %>
       </div>
     </section>

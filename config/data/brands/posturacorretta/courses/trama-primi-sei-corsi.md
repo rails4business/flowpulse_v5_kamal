@@ -1,14 +1,14 @@
 ---
-title: Postura e Fisiologia — Trama generale dei primi sei corsi
+title: Postura, salute, apprendimento, lavoro e risorse — Trama generale dei primi sei corsi
 publisher_node_slug: posturacorretta
 status: editorial
 ---
 
-# Postura e Fisiologia
+# Postura, salute, apprendimento, lavoro e risorse
 
 ## Trama generale dei primi sei corsi PosturaCorretta
 
-Questo documento raccoglie l'intera sezione **Postura e Fisiologia**: il primo corso introduttivo, la trama dei cinque corsi successivi e tutti i capitoli che compongono il percorso. Può essere modificato come documento editoriale prima di aggiornare i singoli corsi e capitoli pubblicati.
+Questo documento raccoglie il percorso che dalla **postura** attraversa salute, apprendimento, lavoro e risorse: il primo corso introduttivo, la trama dei cinque corsi successivi e tutti i capitoli che lo compongono. Può essere modificato come documento editoriale prima di aggiornare i singoli corsi e capitoli pubblicati.
 
 ## Il bisogno della persona e le due modalità del percorso
 
@@ -35,11 +35,11 @@ Questi strumenti non formuleranno diagnosi e non stabiliranno da soli l'idoneit�
 
 ---
 
-## Corso 1 — Inizia con PosturaCorretta
+## Corso 1 — Postura e salute: da dove iniziare
 
 ### Capitoli e trama
 
-#### 1. Postura e Fisiologia: la trama della sezione
+#### 1. Come può aiutarti questo percorso?
 
 La sezione è necessaria per presentare gli aspetti della salute sui quali la persona può agire e intorno ai quali è possibile organizzare servizi, se crediamo davvero che la salute sia benessere fisico, mentale e sociale e non soltanto assenza di malattia.
 
@@ -51,12 +51,12 @@ La postura viene utilizzata come punto di osservazione e come strumento per acco
 
 Il percorso si sviluppa attraverso sei corsi:
 
-1. **Incontrare la salute e la postura:** iniziare a osservare il corpo e conoscere le metodiche posturali.
-2. **Salute — il Percorso Integrato:** costruire un percorso intorno alla persona e mettere in relazione bisogni, servizi e professionisti.
-3. **Apprendimento 1 — esprimere e sentire il corpo:** conoscere la fisiologia e imparare a dare un nome a ciò che percepiamo attraverso il Percorso Educativo PosturaCorretta.
-4. **Apprendimento 2 — consapevolezza:** incontrare metodiche e discipline corporee per riconoscere capacità, preferenze e nuove possibilità.
-5. **Apprendimento 3 — scoperta e connessione:** esplorare il rapporto tra mondo interno e mondo esterno, natura, meditazione, musica, arte e comunità attraverso il Giardino del Corpo.
-6. **Lavoro e risorse:** riconoscere risorse, capacità e potenziale e trasformarli in collaborazioni e progetti attraverso Flowpulse.
+1. **Postura e salute — Da dove iniziare:** osservare il corpo e conoscere le metodiche posturali.
+2. **Postura e salute — Il Percorso Integrato:** costruire un percorso intorno alla persona e mettere in relazione bisogni, servizi e professionisti.
+3. **Postura e apprendimento — Sentire ed esprimere il corpo:** conoscere la fisiologia e imparare a dare un nome a ciò che percepiamo attraverso il Percorso Educativo PosturaCorretta.
+4. **Postura e apprendimento — Sviluppare consapevolezza:** incontrare metodiche e discipline corporee per riconoscere capacità, preferenze e nuove possibilità.
+5. **Postura e apprendimento — Scoperta e connessione:** esplorare il rapporto tra mondo interno e mondo esterno, natura, meditazione, musica, arte e comunità attraverso il Giardino del Corpo.
+6. **Postura, lavoro e risorse — Scoprire il proprio potenziale:** riconoscere risorse, capacità e potenziale e trasformarli in collaborazioni e progetti attraverso Flowpulse.
 
 Questo primo corso apre l'intera sezione.
 
@@ -92,7 +92,7 @@ Il capitolo presenta anche le due modalità: il percorso completo attraverso i s
 
 ---
 
-## Corso 2 — Salute: il Percorso Integrato
+## Corso 2 — Postura e salute: il Percorso Integrato
 
 ### Capitoli e trama
 
@@ -154,7 +154,7 @@ La rete cresce informando persone, professionisti, centri e pubbliche amministra
 
 ---
 
-## Corso 3 — Apprendimento 1: esprimere e sentire il corpo — Percorso Educativo PosturaCorretta
+## Corso 3 — Postura e apprendimento: sentire ed esprimere il corpo
 
 ### Capitoli e trama
 
@@ -224,7 +224,7 @@ Il programma può diventare individuale e adattarsi alla situazione, agli obiett
 
 ---
 
-## Corso 4 — Apprendimento 2: consapevolezza attraverso metodiche e discipline
+## Corso 4 — Postura e apprendimento: sviluppare consapevolezza
 
 
 ### Capitoli e trama
@@ -277,7 +277,7 @@ Le attività hanno un'impostazione generale e divulgativa. Non sostituiscono un 
 L'espressione Azzurra e la consapevolezza Indaco sono due punti fondanti di PosturaCorretta. Il passaggio successivo apre alla scoperta e alla connessione con persone, ambiente, natura e comunità attraverso il Giardino del Corpo.
 ---
 
-## Corso 5 — Apprendimento 3: scoperta e connessione — Il Giardino del Corpo
+## Corso 5 — Postura e apprendimento: scoperta e connessione
 
 ### Capitoli e trama
 
@@ -355,7 +355,7 @@ Il corso si conclude scegliendo un'esperienza, un luogo, un gruppo o una persona
 
 ---
 
-## Corso 6 — Lavoro e risorse: scopri il tuo potenziale 
+## Corso 6 — Postura, lavoro e risorse: scoprire il proprio potenziale
 
 ### Capitoli e trama
 

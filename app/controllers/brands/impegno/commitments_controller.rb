@@ -256,7 +256,7 @@ module Brands
 
     def create_publication_decision
       brand = params[:context_brand].to_s.strip.presence || params[:default_brand].to_s.strip.presence
-      domain = default_domain_for(brand)
+      domain = publication_domain_for(brand)
       return redirect_to(personal_commitment_return_path, alert: "Il dominio del contenuto non è disponibile.") unless domain
 
       attributes = params.require(:data_commitment).permit(
@@ -314,8 +314,22 @@ module Brands
 
     def publication_manageable_by_current_user?(domain, subject)
       return true if Current.user&.superadmin_user?
+      return false unless publication_subject_in_domain?(domain, subject)
 
       domain.node&.administered_by?(Current.user) || subject&.administered_by?(Current.user) || false
+    end
+
+    def publication_subject_in_domain?(domain, subject)
+      return false unless domain.node && subject
+
+      domain.node.self_and_descendants.where(id: subject.id).exists?
+    end
+
+    def publication_domain_for(brand)
+      requested_brand = brand == "personale" ? "impegno" : brand.to_s.tr("_", "-")
+      Domain.active.where(primary: true).find do |domain|
+        brand_context_for(domain).to_s.tr("_", "-") == requested_brand
+      end
     end
 
     def skill_product_for(requested_id, subject)

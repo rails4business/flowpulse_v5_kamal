@@ -135,16 +135,19 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_url
 
     assert_response :success
-    assert_select "h1", text: "Ho provato a mettere su una mappa tutto ciò che sto costruendo."
-    assert_select ".mp-sales__hero-world img[alt='Il mondo FlowPulse costruito da MarkPostura']"
+    assert_select "h1", text: "Ascolto le persone, do forma alle idee e collego chi può realizzarle."
+    assert_select ".mp-sales__hero-world img[alt='Mark Postura']"
     assert_select "#percorsi .mp-sales__movement", count: 3
-    assert_select "#percorsi", text: /Conoscere.*Costruire.*Esplorare/m
+    assert_select "#percorsi", text: /Ascoltare.*Dare forma.*Mettere alla prova/m
     assert_select "#mondo-markpostura .mp-sales__entrance", count: 3
     assert_select "#mondo-markpostura a[href='#{flowpulse_projects_path(mondo: 'markpostura')}']", text: /MarkPostura/i
     assert_select "#mondo-markpostura a[href='#{flowpulse_projects_path}']", text: /tutti i Brand/i
     assert_select "#presentazione .mp-sales__program li", count: 4
-    assert_select "#presentazione", text: /Costruisci la prima mappa del tuo mondo/
+    assert_select "#presentazione", text: /Mettiamo a fuoco il primo progetto su cui lavorare/
     assert_select "#contenuti .mp-sales__content-list > a", count: 3
+    assert_select ".mp-sales__about", text: /Sono partito dalla fisioterapia.*ho iniziato a dare vita a progetti/m
+    assert_select ".mp-sales__about .mp-sales__traits", text: /Origine.*Formazione.*Evoluzione/m
+    assert_select ".mp-sales__about a[href='#{markpostura_timeline_path}']", text: /Formazione e linea del tempo/
     assert_select ".mp-sales__faq-list details", count: 5
     assert_select "#lista-attesa form[action='#{public_brand_requests_path}']"
     assert_select "#lista-attesa input[name='brand_request[kind]'][value='waitlist']"
@@ -221,9 +224,9 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get markpostura_weekplan_url(week: "2026-W39")
 
     assert_response :success
-    assert_includes response.body, "Lezione di gruppo · Inizia con PosturaCorretta"
-    assert_not_includes response.body, "Pubblicazione corso · Inizia con PosturaCorretta"
-    assert_not_includes response.body, "Preparazione · Inizia con PosturaCorretta"
+    assert_includes response.body, "Lezione di gruppo · Postura e salute: da dove iniziare"
+    assert_not_includes response.body, "Pubblicazione corso · Postura e salute: da dove iniziare"
+    assert_not_includes response.body, "Preparazione · Postura e salute: da dove iniziare"
   end
 
   test "MarkPostura Week Plan includes public database sessions from its professional calendar" do

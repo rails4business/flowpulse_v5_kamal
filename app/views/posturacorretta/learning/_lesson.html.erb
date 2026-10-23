@@ -25,9 +25,8 @@
         <% if posturacorretta_editorial_preview? && Rails.env.development? %>
           <div class="mb-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-xs leading-5 text-sky-900"><strong>Ambiente di sviluppo.</strong> Questo stato editoriale è locale e non modifica la produzione.</div>
         <% end %>
-        <% practical_chapter = @lesson.fetch("chapter_type", "theory") == "practical" %>
         <div class="flex flex-wrap items-center gap-2">
-          <p class="text-xs font-semibold uppercase tracking-[.16em] <%= practical_chapter ? "text-red-700" : "text-blue-700" %>"><%= practical_chapter ? "Capitolo pratico" : "Capitolo teorico" %></p>
+          <p class="text-xs font-semibold uppercase tracking-[.16em] text-blue-700">Capitolo</p>
           <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700"><%= @lesson.fetch("access", "free") == "free" ? "Libero" : "A pagamento" %></span>
           <%= render "posturacorretta/learning/publication_admin_bar", chapter: @lesson, inline: true %>
         </div>
@@ -50,10 +49,15 @@
         <%= link_to "☰ Indice", posturacorretta_course_path(corso: @reader_course_slug, anchor: "capitoli"), class: "rounded-lg px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100" %>
         <span class="flex items-center gap-2">
         <% if @previous_lesson %><%= link_to "← Precedente", posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: @previous_lesson.fetch("slug")), class: "rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
-        <% if @course_enrollment && !@completed_chapter_slugs.include?(@lesson.fetch("slug")) %>
-          <%= button_to "Completa", posturacorretta_course_chapter_completion_path(corso: @reader_course_slug, capitolo: @lesson.fetch("slug")), class: "rounded-lg bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800" %>
+        <% if !@course_enrollment && @course_lessons.first == @lesson && authenticated? %>
+          <%= button_to "Inizia il corso", posturacorretta_course_enrollment_path(corso: @reader_course_slug), params: { capitolo: @lesson.fetch("slug") }, class: "pc-action-button pc-action-button--primary", aria: { label: "Inizia il corso e apri il primo capitolo" } %>
+        <% elsif @course_enrollment && !@completed_chapter_slugs.include?(@lesson.fetch("slug")) && @chapter_completion_unlocked %>
+          <%= button_to "Segna come letto", posturacorretta_course_chapter_completion_path(corso: @reader_course_slug, capitolo: @lesson.fetch("slug")), class: "pc-action-button pc-action-button--success", aria: { label: "Segna il capitolo come letto" } %>
+        <% elsif @course_enrollment && !@completed_chapter_slugs.include?(@lesson.fetch("slug")) %>
+          <span class="rounded-lg bg-slate-100 px-3 py-2 text-sm font-bold text-slate-500">🔒 Completa prima il capitolo precedente</span>
         <% elsif @completed_chapter_slugs.include?(@lesson.fetch("slug")) %>
-          <span class="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">✓ Completato</span>
+          <% completed_at = @completed_chapter_commitments.fetch(@lesson.fetch("slug")).actual_ended_at %>
+          <span class="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">✓ Letto<% if completed_at %> il <time datetime="<%= completed_at.iso8601 %>"><%= l(completed_at.to_date, format: :long) %></time><% end %></span>
         <% end %>
         <% if @next_lesson %><%= link_to "Successivo →", posturacorretta_course_chapter_path(corso: @reader_course_slug, capitolo: @next_lesson.fetch("slug")), class: "rounded-lg px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50" %><% end %>
         </span>
