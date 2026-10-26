@@ -2,13 +2,24 @@ module Authentication
   extend ActiveSupport::Concern
 
   included do
+    class_attribute :unauthenticated_access_rules, instance_writer: false, default: []
     before_action :require_authentication
     helper_method :authenticated?
   end
 
   class_methods do
     def allow_unauthenticated_access(**options)
+      self.unauthenticated_access_rules = (unauthenticated_access_rules + [options.symbolize_keys]).freeze
       skip_before_action :require_authentication, **options
+    end
+
+    def unauthenticated_action?(action)
+      action = action.to_s
+      unauthenticated_access_rules.any? do |options|
+        only = Array(options[:only]).map(&:to_s)
+        except = Array(options[:except]).map(&:to_s)
+        (only.empty? || action.in?(only)) && (except.empty? || !action.in?(except))
+      end
     end
   end
 

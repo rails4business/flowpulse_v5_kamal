@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Scegli il prossimo passo
+# Come proseguire il percorso
 
 Sei partito dalla tua idea di salute. Hai incontrato le metodiche posturali, chiarito che cosa intendiamo per postura, osservato il corpo e provato una prima scheda.
 

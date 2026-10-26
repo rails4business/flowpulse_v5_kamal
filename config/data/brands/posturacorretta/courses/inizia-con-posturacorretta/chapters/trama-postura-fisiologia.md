@@ -5,7 +5,7 @@ publisher_node_slug: posturacorretta
 ---
 
 
-# Come può aiutarti questo percorso?
+# La postura può aiutarti nella salute e in altri aspetti della vita
 
 Se ti stai chiedendo se un percorso della postura possa risolvere il tuo problema devi sapere che seguiure un percorso sulla postura ti potrà aiutare, nel campo della salute, nel campo dell'apprendimento e nel campo del lavoro e delle tue risorse
 

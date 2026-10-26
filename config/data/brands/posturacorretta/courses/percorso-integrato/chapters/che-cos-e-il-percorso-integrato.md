@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Che cos'è il Percorso Integrato
+# Qual è il tuo punto di partenza?
 
 La postura può aiutarci nel mondo della salute, ma da sola non basta. È necessario un percorso costruito intorno alla singola persona.
 

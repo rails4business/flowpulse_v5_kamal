@@ -1,7 +1,7 @@
 class PublicBrandRequestsController < ApplicationController
   allow_unauthenticated_access
-  rate_limit to: 5, within: 10.minutes, only: :create,
-    with: -> { redirect_back fallback_location: root_path, alert: "Hai inviato troppe richieste. Riprova tra qualche minuto." }
+  protect_public_submission :create, form_key: "public_brand_request",
+    fallback: -> { request.referer.presence || root_path }
 
   PUBLIC_KINDS = %w[waitlist contact information event service].freeze
 

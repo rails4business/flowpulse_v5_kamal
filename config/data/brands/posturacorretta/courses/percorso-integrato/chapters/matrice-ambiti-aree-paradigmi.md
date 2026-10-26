@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Matrice, ambiti, aree e paradigmi
+# Una Matrice per orientarsi nella salute e nel benessere
 
 Per orientare le persone servono, oltre agli ambiti, le cinque aree della salute e i paradigmi di credenze con i quali si scelgono terapie e professionisti.
 

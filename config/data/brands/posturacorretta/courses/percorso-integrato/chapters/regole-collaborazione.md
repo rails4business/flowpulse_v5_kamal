@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Le regole per collaborare
+# A ognuno il suo ruolo: le regole per collaborare
 
 > **NUOVA SCHEDA DA RILEGGERE · 20 ottobre 2026**
 

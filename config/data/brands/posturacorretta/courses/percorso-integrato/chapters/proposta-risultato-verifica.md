@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Come pensiamo di ottenere e verificare il risultato?
+# Un responsabile e un programma verificabile
 
 > **NUOVA SCHEDA DA RILEGGERE · 20 ottobre 2026**
 

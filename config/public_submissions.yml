@@ -1,0 +1,20 @@
+public_submissions:
+  public_brand_requests#create:
+    form_key: public_brand_request
+    purpose: Contatti e liste d'attesa dei Brand
+  brand_access_requests#create:
+    form_key: brand_access_request
+    purpose: Richieste di invito ai Brand
+  brands/corpo_e_coscienza#create_request:
+    form_key: corpo_e_coscienza_request
+    purpose: Richieste e candidature Corpo e Coscienza
+
+authenticated_or_token_protected:
+  sessions#create: Credenziali e rate limit dedicato
+  users#create: Invito personale obbligatorio
+  passwords#create: Rate limit dedicato
+  passwords#update: Token di reset firmato
+  email_verifications#update: Token di verifica firmato
+  sync/data_commitment_imports#create: Bearer token di sincronizzazione
+  posturacorretta/learning#enroll: Accesso utente obbligatorio sul singolo endpoint
+  posturacorretta/learning#complete_chapter: Accesso utente obbligatorio sul singolo endpoint

@@ -2,8 +2,8 @@ class BrandAccessRequestsController < ApplicationController
   layout "landing"
 
   allow_unauthenticated_access
-  rate_limit to: 5, within: 10.minutes, only: :create,
-    with: -> { redirect_to new_brand_access_request_path, alert: "Hai inviato troppe richieste. Riprova tra qualche minuto." }
+  protect_public_submission :create, form_key: "brand_access_request",
+    fallback: -> { new_brand_access_request_path(context_params) }
 
   before_action :set_request_domain
 

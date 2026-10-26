@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Ambiti della salute e percorsi
+# A ogni ambito il suo tipo di percorso
 
 Dolore, prevenzione, performance e benessere richiedono intenzioni e servizi differenti. Gli ambiti aiutano a scegliere la direzione del percorso e a orientare le persone verso i giusti professionisti.
 

@@ -1,6 +1,20 @@
 require "test_helper"
 
 class DomainTest < ActiveSupport::TestCase
+  test "accepts only known public submission security profiles" do
+    domain = Domain.new(hostname: "invalid-security.example", security_profile: "unlimited")
+
+    assert_not domain.valid?
+    assert_includes domain.errors[:security_profile], "non è riconosciuto"
+  end
+
+  test "imports and exports the public submission security profile" do
+    Domain.import_from_hash!("secure-import.example" => { "security_profile" => "sensitive" })
+
+    assert_equal "sensitive", Domain.find_by!(hostname: "secure-import.example").security_profile
+    assert_equal "sensitive", Domain.export_to_hash.dig("secure-import.example", "security_profile")
+  end
+
   test "configures 1impegno as an authenticated primary domain" do
     config = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access.fetch("1impegno.it")
 

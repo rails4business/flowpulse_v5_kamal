@@ -1,7 +1,8 @@
 <% active_mode = local_assigns.fetch(:active) %>
 <% active_course = local_assigns.fetch(:course) %>
 <% active_lesson = local_assigns[:lesson] %>
-<nav aria-label="Indice del corso" data-controller="scroll-selected">
+<% manage_own_scroll = local_assigns.fetch(:manage_own_scroll, true) %>
+<nav aria-label="Indice del corso"<%= ' data-controller="scroll-selected"'.html_safe if manage_own_scroll %>>
   <% if active_mode == :program %>
     <% activities = @lesson_delivery_by_course.fetch(active_course.fetch("slug"), {}).fetch("program", []) %>
     <p class="text-[10px] font-bold uppercase tracking-[.14em] text-amber-700">Schede pratiche</p>

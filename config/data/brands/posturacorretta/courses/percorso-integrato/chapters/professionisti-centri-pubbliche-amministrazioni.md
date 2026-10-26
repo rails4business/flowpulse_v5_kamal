@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Professionisti, centri e pubbliche amministrazioni
+# Costruire una rete tra professionisti, centri e pubbliche amministrazioni
 
 La rete cresce informando persone, professionisti, centri e pubbliche amministrazioni. L'obiettivo è rendere riconoscibili i servizi presenti, favorire collaborazioni, utilizzare gli spazi disponibili e creare punti d'incontro, gruppi ed eventi informativi.
 

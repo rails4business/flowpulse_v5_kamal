@@ -138,6 +138,8 @@ module Admin
       assert_select "input[type='text'][id='domain_role_assignment_id_input']"
       assert_select "input[type='hidden'][name='domain[node_id]']"
       assert_select "input[type='text'][id='domain_node_id_input']"
+      assert_select "select[name='domain[security_profile]'] option[value='standard'][selected]", text: "Standard"
+      assert_select "select[name='domain[security_profile]'] option[value='sensitive']", text: "Sensibile"
     end
 
     test "superadmin can create domain linked to creator node" do

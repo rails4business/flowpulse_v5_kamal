@@ -2,6 +2,7 @@
 title: Postura, salute, apprendimento, lavoro e risorse — Trama generale dei primi sei corsi
 publisher_node_slug: posturacorretta
 status: editorial
+versione: 1
 ---
 
 # Postura, salute, apprendimento, lavoro e risorse

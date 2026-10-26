@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# I benefici di una postura corretta
+# I benefici di una postura corretta e i problemi legati alla postura
 
 Scendi dall'auto dopo il solito tragitto: quaranta minuti, magari meno. Quando ti alzi senti la schiena rigida, il collo contratto e le spalle tirate in avanti. Il corpo ci mette un attimo a rispondere.
 

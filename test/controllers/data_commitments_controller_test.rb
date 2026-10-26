@@ -119,7 +119,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
           starts_at: "2026-10-05T09:00",
           ends_at: "2026-10-05T11:00",
           calendar_label: @profile.display_name,
-          content_key: "incontro-salute-metodiche",
+          content_key: "ricordi-quando-hai-preso-la-patente",
           publish_on_completion: "1",
           publication_status: "draft",
           publication_visibility: "public",
@@ -130,7 +130,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
 
     commitment = DataCommitment.last
     assert_equal "content", commitment.kind
-    assert_equal "incontro-salute-metodiche", commitment.content_key
+    assert_equal "ricordi-quando-hai-preso-la-patente", commitment.content_key
     assert commitment.publish_on_completion?
     assert_equal "draft", commitment.publication_status
     assert_equal "public", commitment.publication_visibility
@@ -146,7 +146,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
         starts_at: "2026-10-06T09:00",
         ends_at: "2026-10-06T10:00",
         calendar_label: @profile.display_name,
-        content_key: "incontro-salute-metodiche",
+        content_key: "ricordi-quando-hai-preso-la-patente",
         publication_status: "draft",
         publication_visibility: "public",
         publication_change_kind: "update",
@@ -258,7 +258,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
       post data_commitments_url, params: {
         publication_decision: "1",
         context_brand: "posturacorretta",
-        return_to: "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/benefici-postura-corretta",
+        return_to: "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/benefici-postura-problemi-posturali",
         data_commitment: {
           title: "I benefici di una postura corretta",
           content_key: "inizia-benefici-postura-corretta",
@@ -271,7 +271,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     end
 
     commitment = DataCommitment.last
-    assert_redirected_to "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/benefici-postura-corretta"
+    assert_redirected_to "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/benefici-postura-problemi-posturali"
     assert_equal "content", commitment.kind
     assert_equal "completed", commitment.status
     assert_equal "published", commitment.publication_status
@@ -377,7 +377,7 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
         ends_at: "2026-10-07T10:00",
         calendar_label: @profile.display_name,
         subject_node_id: course_node.id,
-        content_key: "inizia-con-posturacorretta/incontro-salute-metodiche",
+        content_key: "inizia-con-posturacorretta/ricordi-quando-hai-preso-la-patente",
         publication_status: "draft",
         publication_visibility: "public",
         publication_change_kind: "update",

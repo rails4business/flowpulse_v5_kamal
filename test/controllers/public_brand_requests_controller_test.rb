@@ -9,6 +9,14 @@ class PublicBrandRequestsControllerTest < ActionDispatch::IntegrationTest
     @domain = Domain.create!(hostname: "markpostura.it", node: @node, role_assignment: assignment, primary: true, active: true)
   end
 
+  test "the public form contains the shared anti-spam fields" do
+    get "/markpostura"
+
+    assert_response :success
+    assert_select "input[name='submission_check[website]']", count: 1
+    assert_select "input[name='submission_check[token]'][value]:not([value=''])", count: 1
+  end
+
   test "anonymous visitor joins a brand waiting list without a commitment" do
     assert_difference [-> { BrandRequest.count }, -> { Brands::Impegno::Contact.count }], 1 do
       assert_no_difference -> { DataCommitment.count } do

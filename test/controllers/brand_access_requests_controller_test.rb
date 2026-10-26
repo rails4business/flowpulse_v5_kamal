@@ -15,6 +15,20 @@ class BrandAccessRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Richiedi un invito"
     assert_select "form[action='#{brand_access_request_path}']"
+    assert_select "input[name='submission_check[website]']", count: 1
+    assert_select "input[name='submission_check[token]'][value]:not([value=''])", count: 1
+  end
+
+  test "silently discards a honeypot submission" do
+    host! "localhost"
+    assert_no_difference [-> { Brands::Impegno::Contact.count }, -> { BrandRequest.count }] do
+      post brand_access_request_path, params: {
+        site: "posturacorretta",
+        submission_check: { website: "https://spam.example" },
+        access_request: { name: "Bot", email: "bot@example.com", privacy_consent: "1" }
+      }
+    end
+    assert_redirected_to new_brand_access_request_path(site: "posturacorretta")
   end
 
   test "creates an unscheduled brand request and contact" do

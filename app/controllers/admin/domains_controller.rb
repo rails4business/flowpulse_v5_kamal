@@ -21,7 +21,7 @@ module Admin
     end
 
     def new
-      @domain = Domain.new(locale: "it", target_controller: "landing", active: true)
+      @domain = Domain.new(locale: "it", target_controller: "landing", active: true, security_profile: "standard")
     end
 
     def edit
@@ -82,7 +82,7 @@ module Admin
       end
 
       def domain_params
-        params.require(:domain).permit(:hostname, :canonical_host, :locale, :target_controller, :target_action, :site_key, :primary, :active, :role_assignment_id, :node_id, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url, :social_image_url, :llms_enabled, :llms_summary, :llms_instructions)
+        params.require(:domain).permit(:hostname, :canonical_host, :locale, :target_controller, :target_action, :site_key, :primary, :active, :role_assignment_id, :node_id, :logo_full_url, :logo_square_url, :site_title, :site_description, :favicon_url, :social_image_url, :llms_enabled, :llms_summary, :llms_instructions, :security_profile)
       end
 
       def yaml_export_request?

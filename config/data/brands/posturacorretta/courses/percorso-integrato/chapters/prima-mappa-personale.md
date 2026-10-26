@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Disegna la prima mappa del tuo percorso
+# Crea il primo programma del tuo Percorso Integrato
 
 > **NUOVA SCHEDA DA RILEGGERE · 20 ottobre 2026**
 

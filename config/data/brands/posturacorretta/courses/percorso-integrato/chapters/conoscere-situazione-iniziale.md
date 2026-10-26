@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# L'educazione da sola non basta: conoscere la situazione
+# Osserva i diversi ambiti della tua salute
 
 > **NUOVA SCHEDA DA RILEGGERE · 20 ottobre 2026**
 

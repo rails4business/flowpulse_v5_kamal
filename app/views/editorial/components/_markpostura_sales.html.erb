@@ -209,6 +209,7 @@
         <h2><%= contact.fetch("title") %></h2>
         <p><%= contact.fetch("description") %></p>
         <%= form_with url: public_brand_requests_path, scope: :brand_request, class: "mp-sales__waitlist" do |form| %>
+          <%= render "shared/public_submission_protection", form_key: "public_brand_request" %>
           <%= form.hidden_field :brand_slug, value: "markpostura" %>
           <%= form.hidden_field :kind, value: "waitlist" %>
           <%= form.hidden_field :title, value: "Lista d’attesa · Presentazione MarkPostura" %>

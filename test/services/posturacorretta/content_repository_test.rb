@@ -8,7 +8,7 @@ module Posturacorretta
 
       assert_equal "course", course.fetch("format")
       assert_equal "free", course.fetch("access")
-      assert_equal "Postura e salute: da dove iniziare", course.fetch("title")
+      assert_equal "La prima settimana con PosturaCorretta", course.fetch("title")
       assert_equal 7, course.fetch("chapters").size
       assert course.fetch("chapters").all? { |chapter| chapter.fetch("format") == "chapter" }
       assert course.fetch("chapters").all? { |chapter| chapter.fetch("parent_id") == course.fetch("id") }

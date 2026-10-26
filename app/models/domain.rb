@@ -15,7 +15,8 @@ class Domain < ApplicationRecord
     :redirect_path,
     :llms_enabled,
     :llms_summary,
-    :llms_instructions
+    :llms_instructions,
+    :security_profile
 
   belongs_to :role_assignment, optional: true
   belongs_to :node, optional: true
@@ -45,6 +46,7 @@ class Domain < ApplicationRecord
   validate :operational_roles_are_known
   validate :only_one_primary_domain_per_brand
   validate :primary_domain_is_canonical
+  validate :security_profile_is_known
 
   scope :active, -> { where(active: true) }
 
@@ -201,6 +203,7 @@ class Domain < ApplicationRecord
       self.llms_enabled = ActiveModel::Type::Boolean.new.cast(raw_llms_enabled) unless raw_llms_enabled.nil?
       self.llms_summary = llms_summary.to_s.strip.presence
       self.llms_instructions = llms_instructions.to_s.strip.presence
+      self.security_profile = security_profile.to_s.strip.presence
       raw_operational_roles = operational_roles
       self.operational_roles = Array(raw_operational_roles).filter_map { |role| role.to_s.strip.presence }.uniq unless raw_operational_roles.nil?
       self.settings = settings.to_h.compact.presence
@@ -209,6 +212,12 @@ class Domain < ApplicationRecord
     def operational_roles_are_known
       invalid_roles = Array(operational_roles).reject { |role| role.match?(/\A[a-z0-9_]+\z/) }
       errors.add(:operational_roles, "contiene codici non validi: #{invalid_roles.join(', ')}") if invalid_roles.any?
+    end
+
+    def security_profile_is_known
+      return if security_profile.blank? || security_profile.in?(PublicSubmissionSecurity::PROFILES.keys)
+
+      errors.add(:security_profile, "non è riconosciuto")
     end
 
     def only_one_primary_domain_per_brand

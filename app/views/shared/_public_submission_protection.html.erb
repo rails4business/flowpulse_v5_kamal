@@ -1,0 +1,6 @@
+<% form_key = local_assigns.fetch(:form_key).to_s %>
+<div class="absolute -left-[10000px] top-auto size-px overflow-hidden" aria-hidden="true">
+  <label for="<%= "submission-check-#{form_key.parameterize}" %>">Lascia vuoto questo campo</label>
+  <input id="<%= "submission-check-#{form_key.parameterize}" %>" type="text" name="submission_check[website]" value="" tabindex="-1" autocomplete="off">
+</div>
+<input type="hidden" name="submission_check[token]" value="<%= PublicSubmissionSecurity.generate_token(form_key: form_key, host: request.host) %>">

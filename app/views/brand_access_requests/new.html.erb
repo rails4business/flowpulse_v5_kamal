@@ -11,6 +11,7 @@
 
     <div class="px-6 py-7 sm:px-7">
       <%= form_with url: brand_access_request_path, scope: :access_request, class: "space-y-5" do |form| %>
+        <%= render "shared/public_submission_protection", form_key: "brand_access_request" %>
         <% if local_request? && authentication_context_site.present? %><%= hidden_field_tag :site, authentication_context_site %><% end %>
         <div><%= form.label :name, "Nome", class: "block text-sm font-bold text-slate-800" %><%= form.text_field :name, required: true, autocomplete: "name", class: "mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5" %></div>
         <div><%= form.label :email, "Email", class: "block text-sm font-bold text-slate-800" %><%= form.email_field :email, required: true, autocomplete: "email", class: "mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5" %></div>

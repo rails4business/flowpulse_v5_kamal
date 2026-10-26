@@ -2,6 +2,8 @@ module Brands
   class CorpoECoscienzaController < ApplicationController
     layout "landing"
     allow_unauthenticated_access only: %i[index privacy locations create_request]
+    protect_public_submission :create_request, form_key: "corpo_e_coscienza_request",
+      fallback: -> { corpo_e_coscienza_path(anchor: "richiesta") }
 
     REQUEST_KINDS = %w[group_path individual_treatment events information training find_professional professional_application other].freeze
 
@@ -52,6 +54,10 @@ module Brands
       end
       if attributes[:name].blank? || attributes[:message].blank?
         return redirect_to(corpo_e_coscienza_path(anchor: "richiesta"), alert: "Indica il tuo nome e scrivi un breve messaggio.")
+      end
+
+      if matching_active_request?(domain, attributes)
+        return redirect_to corpo_e_coscienza_path(anchor: "richiesta"), notice: "Richiesta ricevuta. Ti ricontatteremo usando i recapiti indicati."
       end
 
       ActiveRecord::Base.transaction do
@@ -148,6 +154,17 @@ module Brands
 
       def decimal_or_nil(value)
         Float(value, exception: false)
+      end
+
+      def matching_active_request?(domain, attributes)
+        scope = BrandRequest.active.joins(:participant_contact).where(
+          domain: domain,
+          kind: attributes.fetch(:request_kind)
+        )
+        return true if attributes[:email].present? && scope.where("LOWER(impegno_contacts.email) = ?", attributes[:email].downcase).exists?
+        return true if attributes[:phone].present? && scope.where(impegno_contacts: { phone: attributes[:phone] }).exists?
+
+        false
       end
   end
 end

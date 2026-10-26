@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# L'incontro con la salute e le metodiche posturali
+# Ricordi quando hai preso la patente?
 
 ## Dove ti hanno insegnato come restare in salute?
 

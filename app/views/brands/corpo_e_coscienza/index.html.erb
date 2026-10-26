@@ -149,6 +149,7 @@
       </div>
 
       <%= form_with url: corpo_e_coscienza_requests_path, scope: :request, class: "cec-request-panel" do |form| %>
+        <%= render "shared/public_submission_protection", form_key: "corpo_e_coscienza_request" %>
         <div class="cec-form cec-form--<%= @request_tab %>">
           <nav class="cec-request-tabs" aria-label="Tipo di richiesta">
             <%= link_to "Sono un professionista", corpo_e_coscienza_path(request_kind: "professional_application", anchor: "richiesta"), class: class_names("cec-request-tab cec-request-tab--professional", active: @request_tab == "professional_application"), aria: { current: (@request_tab == "professional_application" ? "page" : nil) } %>

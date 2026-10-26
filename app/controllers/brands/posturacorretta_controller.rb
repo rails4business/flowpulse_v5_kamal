@@ -2,19 +2,19 @@ module Brands
   class PosturacorrettaController < ::PosturacorrettaController
     FIRST_MONTH_BOOK_SLUG = "postura-corretta-in-un-mese".freeze
     FIRST_MONTH_BOOK_CHAPTERS = {
-      "00-incontro-salute-metodiche" => "incontro-salute-metodiche",
-      "02-benefici" => "benefici-postura-corretta",
-      "04-disallineamento" => "postura-strumento-lettura",
+      "00-incontro-salute-metodiche" => "ricordi-quando-hai-preso-la-patente",
+      "02-benefici" => "benefici-postura-problemi-posturali",
+      "04-disallineamento" => "postura-strumento-per-leggere-il-corpo",
       "05-metodiche" => "insegnamenti-metodiche-posturali",
-      "01-errori" => "tre-errori-percorso-posturale",
+      "01-errori" => "errori-frequenti-percorso-postura-salute",
       "00-postura-punto-incontro" => "postura-punto-incontro",
       "00-percorso-o-interventi-separati" => "percorso-o-interventi-separati",
       "rosso-verde-blu" => "rosso-verde-blu",
       "00-trovare-il-giusto-punto-di-vista" => "giusto-punto-di-vista",
       "00-ultima-sconfitta" => "giusto-punto-di-vista",
       "06-visione" => "nuovo-punto-di-vista",
-      "00-da-dove-iniziare" => "prossimo-passo",
-      "03-da-dove-iniziare" => "prossimo-passo"
+      "00-da-dove-iniziare" => "come-proseguire-il-percorso",
+      "03-da-dove-iniziare" => "come-proseguire-il-percorso"
     }.freeze
     PERCORSO_INTEGRATO_DOCS = {
       "domanda-da-dove-comincio" => "da-dove-comincio",

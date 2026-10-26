@@ -1,6 +1,6 @@
 # Flowpulse: monitoraggio, limiti alle richieste e sicurezza
 
-Ultima verifica del repository: 23 ottobre 2026.
+Ultima verifica del repository: 25 ottobre 2026.
 
 ## Obiettivo
 
@@ -81,12 +81,31 @@ Non dovrebbe registrare ogni richiesta nel database. Gli eventi ripetuti devono 
 
 - Login: massimo 10 tentativi in 3 minuti.
 - Richiesta di reset password: massimo 10 tentativi in 3 minuti.
-- Richiesta pubblica di accesso al Brand: massimo 5 invii in 10 minuti.
-- Altri form pubblici `BrandRequest`: massimo 5 invii in 10 minuti.
+- I form pubblici condividono una protezione unica per tutti i Brand: limite per IP e limite complessivo per dominio, honeypot, token firmato legato a host e modulo, tempo minimo di compilazione, scadenza del token e limiti alla dimensione di richiesta e campi.
+- Il profilo `standard` consente 5 invii per IP e 100 complessivi per dominio in 10 minuti; `sensitive` 3 per IP e 50 complessivi in 15 minuti; `api` 30 per IP e 300 complessivi al minuto.
+- Corpo e Coscienza usa il profilo `sensitive` e non duplica una richiesta ancora attiva dello stesso tipo con la stessa email o telefono.
 - Le pagine pubbliche più costose di PosturaCorretta (`contenuti` e `metodiche`) hanno due limiti: 24 richieste al minuto per IP e 120 richieste al minuto complessive.
 - Quando quei limiti vengono superati viene restituita una pagina `429`, con `Retry-After`, e viene scritto un evento strutturato nel log.
 - Per quel monitoraggio l'indirizzo IP viene trasformato in un hash breve; non viene registrato direttamente.
 - I form Rails mantengono la protezione CSRF predefinita. L'endpoint tecnico di sincronizzazione la disattiva intenzionalmente perché usa un Bearer token confrontato in tempo costante.
+
+### Automazione per domini e moduli futuri
+
+- Ogni dominio canonico dichiara `security_profile` in `config/domains.yml`; gli alias ereditano il profilo del dominio canonico.
+- Nel pannello superadmin il nuovo dominio parte dal profilo `standard`, modificabile in `standard`, `sensitive` o `api`.
+- La checklist di pubblicazione segnala come attenzione un dominio senza profilo esplicito. Anche in quel caso l'applicazione applica comunque `standard`, così un errore di configurazione non lascia il modulo senza limite.
+- `config/public_submissions.yml` è il registro degli endpoint anonimi che modificano dati. Distingue i moduli protetti dalla barriera comune dagli endpoint protetti tramite credenziali o token.
+- Il test `test/security/public_submission_registry_test.rb` controlla tutte le route applicative anonime `POST`, `PATCH`, `PUT` e `DELETE`: una nuova route non dichiarata fa fallire la suite, obbligando a scegliere una protezione prima della pubblicazione.
+
+Quando si aggiunge un dominio:
+
+1. aggiungerlo a `config/domains.yml` e scegliere `security_profile`;
+2. importare/verificare il dominio dal pannello superadmin;
+3. controllare la voce **Protezione form pubblici** nella checklist di pubblicazione;
+4. se contiene un nuovo modulo anonimo, applicare `protect_public_submission`, inserire il partial `shared/public_submission_protection` nel form e registrare l'endpoint in `config/public_submissions.yml`;
+5. eseguire almeno il test del registro e il test controller del modulo.
+
+La protezione non esegue scansioni periodiche e non salva ogni richiesta nel database: interviene soltanto quando arriva un invio. I contatori usano la cache Rails e i rifiuti scrivono un evento sintetico nel log con IP trasformato in hash.
 
 ### Segreti, log e controlli sul codice
 
@@ -102,7 +121,7 @@ Non dovrebbe registrare ogni richiesta nel database. Gli eventi ripetuti devono 
 1. **Monitoraggio esterno e avvisi:** nel repository non risulta ancora configurato un servizio che avvisi quando il server o un dominio non rispondono.
 2. **Firewall e porte Hetzner:** non sono verificabili dal repository. Controllare che siano pubbliche soltanto le porte necessarie e che PostgreSQL non sia raggiungibile da Internet.
 3. **Backup e prova di ripristino:** non è presente evidenza sufficiente per confermare frequenza, cifratura, copia esterna e test periodici di restore.
-4. **Protezione generale al proxy:** esistono limiti applicativi su alcune azioni, ma non una regola documentata a livello di reverse proxy per connessioni, richieste lente, dimensione del body e picchi generali.
+4. **Protezione generale al proxy:** i form hanno ora limiti applicativi condivisi e dimensione massima del body, ma manca ancora una regola documentata a livello di reverse proxy per connessioni, richieste lente e picchi generali.
 5. **Content Security Policy:** il file di configurazione esiste, ma la policy è commentata e quindi non è attiva. Va prima introdotta in modalità report-only, verificando gli script inline e le risorse esterne, poi applicata gradualmente.
 
 ### Priorità media
@@ -145,3 +164,53 @@ Le soglie iniziali sono orientative. Devono essere adattate dopo aver raccolto u
 ## Nota sul perimetro dell'audit
 
 Questa verifica riguarda il codice e i file di deploy presenti nel repository. Non dimostra lo stato reale del server Hetzner, del firewall cloud, delle chiavi SSH, dei servizi Docker in esecuzione, dei backup remoti o dei pannelli esterni. Questi elementi richiedono una verifica diretta dell'infrastruttura di produzione.
+
+## Verifiche infrastrutturali da riprendere
+
+### Porta PostgreSQL verificata dall'esterno
+
+Il 23 ottobre 2026 è stato eseguito dal computer di sviluppo un controllo TCP non invasivo verso il server configurato in `config/deploy.yml`:
+
+```text
+178.105.106.247:5432 → timeout
+```
+
+La porta PostgreSQL non risultava quindi raggiungibile pubblicamente al momento del controllo. È il comportamento atteso e costituisce un buon segnale, ma non garantisce da solo che firewall e rete siano configurati correttamente in ogni condizione.
+
+Controlli ancora da eseguire sul server:
+
+```bash
+sudo ss -lntp
+```
+
+PostgreSQL non deve comparire in ascolto pubblico come `0.0.0.0:5432` o `[::]:5432`.
+
+### Firewall Hetzner da verificare
+
+Nel pannello Hetzner controllare che un Cloud Firewall sia realmente associato al server e che le regole in ingresso prevedano:
+
+- porte `80` e `443` pubbliche;
+- porta `22` limitata alle sorgenti necessarie per amministrazione e deploy Kamal;
+- nessuna esposizione pubblica della porta `5432`;
+- nessun'altra porta pubblica non necessaria.
+
+Non restringere o chiudere SSH prima di avere verificato da quale indirizzo o rete partono i deploy Kamal, altrimenti si rischia di perdere l'accesso amministrativo.
+
+### Backup ancora da confermare
+
+Nel repository non è stata trovata una configurazione sufficiente a dimostrare l'esistenza di backup PostgreSQL automatici, esterni al server e verificati. Nel pannello Hetzner controllare:
+
+- se i backup del server sono abilitati;
+- la data e l'esito dell'ultimo backup o snapshot;
+- quali dischi e volumi vengono effettivamente inclusi;
+- la conservazione disponibile.
+
+Oltre al backup del server è consigliata una copia logica periodica di PostgreSQL, conservata fuori dal server. La verifica non è conclusa finché un dump non viene ripristinato con successo in un database separato e non produttivo.
+
+Stato al 23 ottobre 2026:
+
+- PostgreSQL raggiungibile pubblicamente: **non rilevato dal test esterno**;
+- Cloud Firewall Hetzner associato e corretto: **da verificare**;
+- backup automatico PostgreSQL: **non dimostrato**;
+- copia conservata fuori dal server: **da verificare**;
+- prova di ripristino: **da eseguire**.

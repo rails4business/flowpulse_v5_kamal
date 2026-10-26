@@ -36,9 +36,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "header"
     assert_select "header img[src*='posturacorretta_home.png']", count: 1
-    assert_select "header h1", text: "Postura e salute: da dove iniziare"
+    assert_select "header h1", text: "La prima settimana con PosturaCorretta"
     assert_select "header", text: /7 capitoli/
-    assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", count: 0
+    assert_select "header a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")}']", count: 0
     assert_not_includes response.body, 'header class="border-b border-slate-200 bg-[#F6F7F4] p-4 sm:p-6 lg:p-8"'
     assert_select "nav[aria-label='Navigazione del corso']", count: 0
     assert_select "nav[aria-label='Contenuti del corso']", count: 0
@@ -46,12 +46,12 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#capitoli.rounded-2xl", count: 1
     assert_select "h2", text: "Corso online"
     assert_select "p", text: "Studio in autonomia"
-    assert_select "#capitoli", text: /L'incontro con la salute e le metodiche posturali/
+    assert_select "#capitoli", text: /Ricordi quando hai preso la patente?/
     assert_select "#capitoli", text: /In arrivo/
     assert_select "#capitoli a", text: /Prima scheda esercizi e video/, count: 0
     assert_select "#capitoli span", text: "Capitolo 01"
     assert_select "#capitoli ol.divide-y", count: 1
-    assert_select "nav[aria-label='Indice percorso'] a[aria-current='page']", text: /Postura e salute: da dove iniziare/
+    assert_select "nav[aria-label='Indice percorso'] a[aria-current='page']", text: /La prima settimana con PosturaCorretta/
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Percorso"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
       assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
@@ -118,9 +118,11 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "footer a[href='#{markpostura_timeline_path}']", text: "La storia di Mark Postura", count: 1
     assert_select "nav[aria-label='Indice generale']", count: 0
-    assert_select "h1", text: "L'educazione alla salute inizia dalla postura."
+    assert_select "h1", text: "Percorso PosturaCorretta"
+    assert_select "#primi-corsi h2", text: "Postura e fisiologia", count: 1
+    assert_select "#primi-corsi", text: /Postura e fisiologia sono strettamente collegate/
     assert_select "#primi-corsi > header > p", text: "Il tuo percorso · 6 corsi", count: 1
-    assert_select "ol[aria-label='Come iniziare il percorso educativo'] + div a.bg-white[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "trama-postura-fisiologia")}']", text: "Inizia", count: 1
+    assert_select "ol[aria-label='Come iniziare il percorso educativo'] + div a.bg-white[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-ambiti")}']", text: "Inizia", count: 1
     assert_select "main article [role='progressbar']", count: 0
     assert_select "#inizia-con-posturacorretta", text: /In arrivo/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 3
@@ -131,24 +133,24 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] a.pc-app-logo img", count: 1
     assert_select "#pc-week-focus-title", count: 0
     assert_select "link[rel='manifest'][href='#{posturacorretta_pwa_manifest_path}']"
-    assert_select "h3", text: "Postura e salute: da dove iniziare"
+    assert_select "h3", text: "La prima settimana con PosturaCorretta"
     assert_select "h3", text: "Postura e apprendimento: sentire ed esprimere il corpo"
     assert_select "h3", text: "Postura e apprendimento: sviluppare consapevolezza"
     assert_select "h3", text: "Postura e apprendimento: scoperta e connessione"
     assert_select "h3", text: "Postura, lavoro e risorse: scoprire il proprio potenziale"
     assert_select "h2", text: "Postura, recupero e coscienza corporea"
     assert_select "h3", text: "Igiene Posturale"
-    assert_includes response.body, "Un percorso che ti guida dalla scoperta delle metodiche posturali verso un approccio integrato alla salute."
+    assert_includes response.body, "Conoscere i nostri sistemi fisiologici e imparare a riattivarli"
     assert_select "#primi-corsi span", text: "Corso 1 di 6", minimum: 1
     assert_select "#primi-corsi span", text: "Corso 6 di 6", minimum: 1
     assert_select "#recupera-con-la-terapia-manuale span", text: "Corso 07", minimum: 1
-    assert_select "a[href='#{posturacorretta_course_path(corso: "inizia-con-posturacorretta")}'][aria-label='Apri il corso Postura e salute: da dove iniziare']", count: 0
+    assert_select "a[href='#{posturacorretta_course_path(corso: "inizia-con-posturacorretta")}'][aria-label='Apri il corso La prima settimana con PosturaCorretta']", count: 0
     assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale")}'][aria-label='Apri il corso Igiene Posturale']", count: 0
-    assert_select "details > summary", text: /Postura e salute: da dove iniziare/, minimum: 1
+    assert_select "details > summary", text: /La prima settimana con PosturaCorretta/, minimum: 1
     assert_select "h3", text: "Intro: basi e fondamenti", count: 0
-    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")}']", count: 0
-    assert_select "div", text: /Come può aiutarti questo percorso?/
-    assert_select "div", text: /L'incontro con la salute e le metodiche posturali/m
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")}']", count: 0
+    assert_select "div", text: /La postura può aiutarti nella salute e in altri aspetti della vita/
+    assert_select "div", text: /Ricordi quando hai preso la patente?/m
     assert_not_includes response.body, "Uscita "
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
     assert_equal ["Percorso", "Lezioni", "Metodiche"], css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
@@ -183,19 +185,24 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "course chapters keep editorial front matter out of the rendered content" do
-    publish_content!("incontro-salute-metodiche")
-    get posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+    publish_content!("ricordi-quando-hai-preso-la-patente")
+    get posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
 
     assert_response :success
-    assert_select "h1", text: "L'incontro con la salute e le metodiche posturali"
+    assert_select "h1", text: "Ricordi quando hai preso la patente?"
     assert_includes response.body, "Il movimento è innato. Fin dalla culla"
     assert_not_includes response.body, "author_node_slug"
     assert_not_includes response.body, "publisher_node_slug"
     assert_not_includes response.body, "author: Mark Postura"
     assert_select "p.text-blue-700", text: "Capitolo 02"
-    assert_select "p", text: "Postura e salute: da dove iniziare"
+    assert_select "p", text: "La prima settimana con PosturaCorretta"
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] button[data-mobile-aside-target='toggle'][aria-controls='seme-aside']", text: /Indice/
     assert_select "#seme-aside[data-mobile-aside-target='panel']"
+    assert_select "#seme-aside > [data-course-aside-header]", text: /La prima settimana con PosturaCorretta/
+    assert_select "#seme-aside > [data-course-aside-header] img[alt='PosturaCorretta']", count: 1
+    assert_select "#seme-aside > div[data-controller~='scroll-selected'][data-scroll-selected-position-selected-at-top-value='true']"
+    assert_select "#seme-aside > div[data-scroll-selected-reset-to-top-value]", count: 0
+    assert_select "#seme-aside nav[aria-label='Indice del corso'][data-controller~='scroll-selected']", count: 0
     assert_select "nav[aria-label='Indice del corso'] [data-chapter-type]", count: 0
     assert_select "nav[aria-label='Indice del corso']", text: /Teoria|Pratica/, count: 0
   end
@@ -257,8 +264,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_select "span", text: "Libero"
       assert_select "p.text-blue-700", text: "Capitolo 05"
-      assert_select "p", text: "Postura e salute: da dove iniziare"
-      assert_select "header a[aria-label^='Torna all']", text: /Postura e salute: da dove iniziare/
+      assert_select "p", text: "La prima settimana con PosturaCorretta"
+      assert_select "header a[aria-label^='Torna all']", text: /La prima settimana con PosturaCorretta/
       assert_select "nav[aria-label='Navigazione del corso']", count: 0
       assert_select "#seme-aside #course-aside-title", count: 0
       assert_select "nav[aria-label='Esplora PosturaCorretta']", count: 0
@@ -276,11 +283,11 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       superadmin.update!(superadmin: true, active_role: :superadmin)
       sign_in(superadmin)
 
-      get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "benefici-postura-corretta")
+      get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "benefici-postura-problemi-posturali")
 
       assert_response :success
-      assert_select "h1", text: "La storia comune e i benefici della postura"
-      assert_select "a[href*='content_key=inizia-benefici-postura-corretta']", text: /DataCommitment/
+      assert_select "h1", text: "I benefici di una postura corretta e i problemi legati alla postura"
+      assert_select "form input[name='data_commitment[content_key]'][value='inizia-benefici-postura-corretta']", minimum: 1
     end
   end
 
@@ -311,11 +318,11 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Corsi del programma lezioni']"
     assert_select "div[aria-label='Corso introduttivo']", count: 0
     assert_select "section[aria-labelledby^='lesson-section-']", count: 6
-    assert_select "a[aria-current='step'][aria-label^='1. Postura e salute: da dove iniziare']", count: 1
+    assert_select "a[aria-current='step'][aria-label^='1. La prima settimana con PosturaCorretta']", count: 1
     assert_select "a[aria-label*='non ancora disponibile']", count: 0
-    assert_select "h2", text: "Postura e salute: da dove iniziare", count: 1
-    assert_select "ol[aria-label='Lezioni di Postura e salute: da dove iniziare'] > li", count: 1
-    assert_includes response.body, "Prima scheda esercizi e video"
+    assert_select "h2", text: "La prima settimana con PosturaCorretta", count: 1
+    assert_select "ol[aria-label='Lezioni di La prima settimana con PosturaCorretta'] > li", count: 1
+    assert_includes response.body, "Prima scheda di esercizi e video"
     assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'inizia-con-posturacorretta', capitolo: 'prima-scheda-esercizi-video')}']", count: 1
     assert_select "section[aria-label='Percorso insegnante del corso selezionato']", count: 0
     assert_select "a", text: "Apri il corso online", count: 0
@@ -488,37 +495,37 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       get posturacorretta_course_path(corso: "postura-e-fisiologia")
 
     assert_response :success
-    assert_select "h1", text: "Postura e Fisiologia"
+    assert_select "h1", text: "Postura e apprendimento: sentire ed esprimere il corpo"
     assert_select "h2", text: "Corso online"
     assert_select "nav[aria-label='Contenuti del corso']", count: 0
-    assert_select "#capitoli", text: /Le basi delle 5 aree e il programma settimanale/
-    assert_select "#capitoli", text: /Professionisti della salute, del benessere e insegnanti blu/
+    assert_select "#capitoli", text: /Le basi delle cinque aree e il programma settimanale/
+    assert_select "#capitoli", text: /Indaco: dalla percezione alla consapevolezza/
     assert_select "#capitoli a", count: 0
 
       get posturacorretta_course_chapter_path(corso: "postura-e-fisiologia", capitolo: "professionisti-salute-benessere-insegnanti-blu")
-      assert_redirected_to posturacorretta_course_url(corso: "postura-e-fisiologia")
+      assert_redirected_to posturacorretta_course_chapters_url(corso: "postura-e-fisiologia")
     end
   end
 
   test "unlocks a published chapter show only through its completed publication commitment" do
     chapter_path = posturacorretta_course_chapter_path(
       corso: "inizia-con-posturacorretta",
-      capitolo: "incontro-salute-metodiche"
+      capitolo: "ricordi-quando-hai-preso-la-patente"
     )
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
     assert_response :success
-    assert_select "#capitoli", text: /L'incontro con la salute e le metodiche posturali/
+    assert_select "#capitoli", text: /Ricordi quando hai preso la patente?/
     assert_select "#capitoli a[href='#{chapter_path}']", count: 0
 
     get chapter_path
     assert_redirected_to posturacorretta_course_url(corso: "inizia-con-posturacorretta")
 
-    publish_content!("incontro-salute-metodiche")
+    publish_content!("ricordi-quando-hai-preso-la-patente")
 
     get chapter_path
     assert_response :success
-    assert_select "h1", text: "L'incontro con la salute e le metodiche posturali"
+    assert_select "h1", text: "Ricordi quando hai preso la patente?"
   end
 
   test "superadmin quick publish form includes the PosturaCorretta brand context" do
@@ -563,7 +570,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     post data_commitments_path, params: {
       publication_decision: "1", context_brand: "posturacorretta", return_to: posturacorretta_course_path(corso: "inizia-con-posturacorretta"),
-      data_commitment: { title: "Pubblica capitolo", content_key: "incontro-salute-metodiche", publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: brand.id, access_modes: ["free"] }
+      data_commitment: { title: "Pubblica capitolo", content_key: "ricordi-quando-hai-preso-la-patente", publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: brand.id, access_modes: ["free"] }
     }
     assert_response :redirect
 
@@ -583,9 +590,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "the latest completed editorial commitment can return a chapter to draft" do
-    published = publish_content!("incontro-salute-metodiche")
+    published = publish_content!("ricordi-quando-hai-preso-la-patente")
     published.update!(published_at: 2.hours.ago)
-    latest = publish_content!("incontro-salute-metodiche")
+    latest = publish_content!("ricordi-quando-hai-preso-la-patente")
     latest.update!(
       publication_status: "draft",
       publication_change_kind: "unpublish",
@@ -596,7 +603,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_course_chapter_path(
       corso: "inizia-con-posturacorretta",
-      capitolo: "incontro-salute-metodiche"
+      capitolo: "ricordi-quando-hai-preso-la-patente"
     )
 
     assert_redirected_to posturacorretta_course_url(corso: "inizia-con-posturacorretta")
@@ -646,8 +653,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "records a free course enrollment and chapter completion as separate learning commitments" do
-    publish_content!("incontro-salute-metodiche")
-    publish_content!("benefici-postura-corretta")
+    publish_content!("ricordi-quando-hai-preso-la-patente")
+    publish_content!("benefici-postura-problemi-posturali")
     user = create_test_user("learner-#{SecureRandom.hex(4)}@example.com")
     sign_in(user)
 
@@ -662,17 +669,17 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_in_delta enrollment.actual_started_at, enrollment.actual_ended_at, 1.0
     assert_equal "none", enrollment.pricing_type
 
-    post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "trama-postura-fisiologia")
-    post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
-    assert_redirected_to posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+    post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-ambiti")
+    post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
+    assert_redirected_to posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
 
-    completion = user.profile.data_commitments.find_by!(content_key: "incontro-salute-metodiche", kind: "academy")
+    completion = user.profile.data_commitments.find_by!(content_key: "ricordi-quando-hai-preso-la-patente", kind: "academy")
     assert_equal "chapter_completion", completion.metadata.fetch("record_type")
     assert_equal enrollment, completion.parent
     assert_equal "completed", completion.status
     assert completion.actual_ended_at.present?
 
-    get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+    get posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
     assert_response :success
     assert_select "time[datetime='#{completion.actual_ended_at.iso8601}']", text: completion.actual_ended_at.strftime("%d/%m/%Y")
     assert_select "button", text: "Segna come letto", count: 0
@@ -695,37 +702,37 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "starting a course from a chapter enrolls once and opens that chapter" do
-    publish_content!("incontro-salute-metodiche")
+    publish_content!("ricordi-quando-hai-preso-la-patente")
     user = create_test_user("learner-start-chapter-#{SecureRandom.hex(4)}@example.com")
     sign_in(user)
 
-    post posturacorretta_course_enrollment_path(corso: "inizia-con-posturacorretta"), params: { capitolo: "incontro-salute-metodiche" }
+    post posturacorretta_course_enrollment_path(corso: "inizia-con-posturacorretta"), params: { capitolo: "ricordi-quando-hai-preso-la-patente" }
 
-    assert_redirected_to posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+    assert_redirected_to posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
     enrollment = user.profile.data_commitments.find_by!(kind: "academy", content_key: "inizia-con-posturacorretta")
     assert_equal "course_enrollment", enrollment.metadata.fetch("record_type")
     assert_equal "completed", enrollment.status
   end
 
   test "chapter completion is unlocked in course order" do
-    publish_content!("incontro-salute-metodiche")
+    publish_content!("ricordi-quando-hai-preso-la-patente")
     user = create_test_user("learner-sequence-#{SecureRandom.hex(4)}@example.com")
     sign_in(user)
     post posturacorretta_course_enrollment_path(corso: "inizia-con-posturacorretta")
 
-    assert_no_difference -> { user.profile.data_commitments.where(kind: "academy", content_key: "incontro-salute-metodiche").count } do
-      post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "incontro-salute-metodiche")
+    assert_no_difference -> { user.profile.data_commitments.where(kind: "academy", content_key: "ricordi-quando-hai-preso-la-patente").count } do
+      post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
     end
     assert_equal "Completa prima il capitolo precedente.", flash[:alert]
   end
 
   test "does not duplicate enrollment or chapter completion commitments" do
-    publish_content!("trama-postura-fisiologia")
+    publish_content!("postura-salute-altri-ambiti")
     user = create_test_user("learner-idempotent-#{SecureRandom.hex(4)}@example.com")
     sign_in(user)
 
     2.times { post posturacorretta_course_enrollment_path(corso: "inizia-con-posturacorretta") }
-    2.times { post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "trama-postura-fisiologia") }
+    2.times { post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-ambiti") }
 
     learning = user.profile.data_commitments.where(kind: "academy")
     assert_equal 1, learning.count { |item| item.metadata.fetch("record_type") == "course_enrollment" }

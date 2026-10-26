@@ -146,6 +146,13 @@
             <% end %>
           </div>
         </header>
+      <% if @didactic_path["section_title"].present? %>
+        <header class="mb-7 max-w-3xl border-b border-slate-200 pb-5">
+          <p class="text-xs font-black uppercase tracking-[.15em] text-blue-700">Prima sezione</p>
+          <h2 class="mt-1 text-3xl font-semibold tracking-tight text-slate-950"><%= @didactic_path.fetch("section_title") %></h2>
+          <% if @didactic_path["section_description"].present? %><p class="mt-2 leading-7 text-slate-600"><%= @didactic_path.fetch("section_description") %></p><% end %>
+        </header>
+      <% end %>
       <div class="space-y-6">
         <% @didactic_courses.each do |course| %>
           <% course_number += 1 %>

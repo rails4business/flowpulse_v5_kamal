@@ -4,7 +4,7 @@ author_node_slug: markpostura
 publisher_node_slug: posturacorretta
 ---
 
-# Prima scheda esercizi e video
+# Prima scheda di esercizi e video
 
 Benvenuto nella tua prima scheda pratica di lavoro. Dopo aver esplorato la postura e osservato come il corpo si organizza nello spazio, è il momento di passare all'esperienza diretta sul tappetino.
 

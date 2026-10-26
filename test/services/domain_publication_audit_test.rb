@@ -15,7 +15,8 @@ class DomainPublicationAuditTest < ActiveSupport::TestCase
       site_description: "Descrizione pubblica del dominio.",
       logo_square_url: "https://cdn.example/logo.png",
       favicon_url: "https://cdn.example/favicon.png",
-      social_image_url: "https://cdn.example/social.png"
+      social_image_url: "https://cdn.example/social.png",
+      security_profile: "standard"
     )
   end
 
@@ -27,6 +28,7 @@ class DomainPublicationAuditTest < ActiveSupport::TestCase
     assert_includes result.checks.map(&:key), :sitemap
     assert_includes result.checks.map(&:key), :llms
     assert_includes result.checks.map(&:key), :api
+    assert_includes result.checks.map(&:key), :security
   end
 
   test "a private root blocks public discovery checks" do

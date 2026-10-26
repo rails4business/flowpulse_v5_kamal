@@ -29,6 +29,8 @@ module Brands
       assert_select "h1", "Corpo e Coscienza"
       assert_select ".cec-method-name", "Metodo Georges Courchinoux"
       assert_select "form[action='#{corpo_e_coscienza_requests_path}']"
+      assert_select "input[name='submission_check[website]']", count: 1
+      assert_select "input[name='submission_check[token]'][value]:not([value=''])", count: 1
       assert_select "#cec-professionals-map[data-professionals]"
       assert_select ".cec-request-tabs a", count: 3
       assert_select ".cec-request-mobile select option", count: 3
@@ -65,6 +67,34 @@ module Brands
       assert_select "[data-privacy-content='functionality'][hidden]#cec-professionals-map"
       assert_select "script[src*='unpkg.com/leaflet']", count: 0
       assert_select "template[data-privacy-src*='unpkg.com/leaflet']", count: 1
+    end
+
+    test "silently discards a honeypot request" do
+      assert_no_difference [-> { Brands::Impegno::Contact.count }, -> { BrandRequest.count }] do
+        post corpo_e_coscienza_requests_url, params: {
+          submission_check: { website: "https://spam.example" },
+          request: {
+            request_kind: "information", name: "Bot", email: "bot@example.com",
+            message: "Spam", privacy_consent: "1"
+          }
+        }
+      end
+
+      assert_redirected_to corpo_e_coscienza_path(anchor: "richiesta")
+    end
+
+    test "does not duplicate an active request for the same contact and kind" do
+      request_params = {
+        request: {
+          request_kind: "information", name: "Mario Rossi", email: "mario@example.com",
+          message: "Vorrei informazioni.", privacy_consent: "1"
+        }
+      }
+      post corpo_e_coscienza_requests_url, params: request_params
+
+      assert_no_difference [-> { Brands::Impegno::Contact.count }, -> { BrandRequest.count }] do
+        post corpo_e_coscienza_requests_url, params: request_params
+      end
     end
 
     test "shows the account menu and brand administration to its owner" do

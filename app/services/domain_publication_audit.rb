@@ -38,6 +38,7 @@ class DomainPublicationAudit
     inspect_node
     inspect_identity
     inspect_assets
+    inspect_security
     inspect_public_projection
     inspect_performance
     Result.new(domain, @checks.freeze)
@@ -101,6 +102,18 @@ class DomainPublicationAudit
       missing << "immagine social" if domain.social_image_url.blank?
       add(:assets, "Asset del dominio", missing.empty? ? :ready : :warning,
         missing.empty? ? "Logo, favicon e immagine social sono configurati." : "Da completare: #{missing.join(', ')}.")
+    end
+
+    def inspect_security
+      explicit_profile = domain.security_profile.to_s.presence_in(PublicSubmissionSecurity::PROFILES.keys)
+      if explicit_profile
+        limits = PublicSubmissionSecurity::PROFILES.fetch(explicit_profile)
+        add(:security, "Protezione form pubblici", :ready,
+          "Profilo #{explicit_profile}: #{limits.fetch(:per_ip)} invii per IP ogni #{limits.fetch(:within).inspect}.")
+      else
+        add(:security, "Protezione form pubblici", :warning,
+          "Si applica automaticamente il profilo standard, ma il dominio deve confermare un profilo esplicito.")
+      end
     end
 
     def inspect_public_projection
