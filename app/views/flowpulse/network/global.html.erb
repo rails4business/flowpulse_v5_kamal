@@ -1,0 +1,236 @@
+<% content_for :title, "Rete globale dei Node — FlowPulse" %>
+<% content_for :description, "Esplora i Node FlowPulse, i collegamenti gerarchici, i ponti e i domini associati." %>
+
+<%
+  nodes_by_id = @network_nodes.index_by(&:id)
+  active_domains_by_node_id = @network_nodes.to_h { |node| [node.id, node.domains.select(&:active?)] }
+  ancestry_for = lambda do |node|
+    ancestry = []
+    current = node
+    while current && !ancestry.include?(current)
+      ancestry << current
+      current = nodes_by_id[current.parent_id]
+    end
+    ancestry
+  end
+  modes_for = lambda do |node|
+    next %w[brand professional] if node.slug == "flowpulse"
+
+    ancestry = ancestry_for.call(node)
+    modes = []
+    modes << "professional" if ancestry.any?(&:professional?)
+    modes << "professional" if ancestry.any? { |ancestor| ancestor.professional_owner_node_id.present? }
+    modes << "brand" if ancestry.any? do |ancestor|
+      ancestor.project? && active_domains_by_node_id.fetch(ancestor.id, []).any?
+    end
+    modes << "brand" if modes.empty?
+    modes.uniq
+  end
+
+  selected_node = @network_nodes.find { |node| node.slug == params[:node] }
+  selected_node = nil if selected_node&.slug == "flowpulse"
+  selected_mode = if %w[brand professional].include?(params[:vista])
+    params[:vista]
+  elsif selected_node && !modes_for.call(selected_node).include?("brand")
+    "professional"
+  else
+    "brand"
+  end
+  selected_node = nil if selected_node && !modes_for.call(selected_node).include?(selected_mode)
+
+  graph_nodes = @network_nodes.map do |node|
+    can_manage = @manageable_role_assignment_ids.include?(node.role_assignment_id)
+    can_delete = can_manage && active_domains_by_node_id.fetch(node.id, []).empty? && node.children.empty?
+    {
+      data: {
+        id: "node-#{node.id}",
+        slug: node.slug,
+        label: node.title,
+        kind: "node",
+        nodeTypeLabel: if node.professional?
+          active_domains_by_node_id.fetch(node.id, []).any? ? "Professional Brand" : "Professional"
+        elsif active_domains_by_node_id.fetch(node.id, []).any?
+          "Brand"
+        else
+          "Project Node"
+        end,
+        description: node.description.to_s,
+        url: node_path(node),
+        canManage: can_manage,
+        canDelete: can_delete,
+        newChildUrl: can_manage && !node.bridge_node? ? new_creator_world_role_assignment_node_path(node.role_assignment_id, parent_id: node.id) : nil,
+        deleteUrl: can_delete ? flowpulse_global_network_node_path(node, vista: selected_mode) : nil,
+        modes: modes_for.call(node),
+        domains: node.domains.select(&:active?).map(&:display_hostname).sort,
+        hasDomain: node.domains.any?(&:active?)
+      }
+    }
+  end
+
+  visible_ids = @network_nodes.map(&:id).to_set
+  flowpulse_node = @network_nodes.find { |node| node.slug == "flowpulse" }
+  graph_edges = @network_nodes.filter_map do |node|
+    # Nella mappa globale FlowPulse è il contenitore dell'ecosistema, non un
+    # progetto figlio del professionista che ne cura l'implementazione.
+    next if node == flowpulse_node
+    next if node.parent_id.blank? || !visible_ids.include?(node.parent_id)
+    { data: { id: "parent-#{node.parent_id}-#{node.id}", source: "node-#{node.parent_id}", target: "node-#{node.id}", kind: "hierarchy" } }
+  end
+  if flowpulse_node
+    ecosystem_roots = @network_nodes.select { |node| node != flowpulse_node && node.parent_id.blank? }
+    graph_edges.concat(ecosystem_roots.map do |node|
+      { data: { id: "ecosystem-#{flowpulse_node.id}-#{node.id}", source: "node-#{flowpulse_node.id}", target: "node-#{node.id}", kind: "ecosystem" } }
+    end)
+  end
+  graph_edges.concat(@network_nodes.filter_map do |node|
+    next if node.link_node_id.blank? || !visible_ids.include?(node.link_node_id)
+    { data: { id: "bridge-#{node.id}-#{node.link_node_id}", source: "node-#{node.id}", target: "node-#{node.link_node_id}", kind: "bridge" } }
+  end)
+  graph_edges.concat(@network_nodes.filter_map do |node|
+    owner = node.professional_owner_node
+    next if owner.blank? || !visible_ids.include?(owner.id) || owner == node.parent
+    { data: { id: "professional-owner-#{owner.id}-#{node.id}", source: "node-#{owner.id}", target: "node-#{node.id}", kind: "professional-owner" } }
+  end)
+
+  graph = { elements: graph_nodes + graph_edges }
+
+  directory_nodes = @network_nodes.select do |node|
+    active_domains_by_node_id.fetch(node.id, []).any? &&
+      (selected_mode == "professional" ? node.professional? : node.project?)
+  end
+  platform_brand_slugs = %w[flowpulse generaimpresa rails4business impegno]
+  directory_groups = if selected_mode == "brand"
+    platform_nodes = directory_nodes.select { |node| platform_brand_slugs.include?(node.slug) }
+      .sort_by { |node| platform_brand_slugs.index(node.slug) }
+    network_nodes = directory_nodes.reject { |node| platform_brand_slugs.include?(node.slug) }
+      .sort_by { |node| [node.title.downcase, node.id] }
+    [
+      ["Strumenti FlowPulse", "Servizi trasversali per ideare, realizzare e organizzare i progetti.", platform_nodes, "bg-blue-50 text-blue-800"],
+      ["Brand della rete", "Progetti e mondi dotati di un proprio dominio.", network_nodes, "bg-slate-50 text-slate-700"]
+    ].reject { |group| group[2].empty? }
+  else
+    [["Professional Brand", "Identità professionali dotate di un proprio dominio.", directory_nodes.sort_by { |node| [node.title.downcase, node.id] }, "bg-violet-50 text-violet-800"]]
+  end
+%>
+
+<main class="min-h-screen bg-slate-50 text-slate-950">
+  <%= render "landing/flowpulse_nav" %>
+
+  <% if selected_node.blank? %>
+    <section class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-5 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.16em] text-blue-700">Rete FlowPulse</p>
+          <h1 class="mt-2 text-3xl font-black tracking-tight"><%= selected_mode == "professional" ? "Professional Brand" : "Brand" %></h1>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Seleziona un Node per esplorarne la rete, i progetti collegati e i ponti.</p>
+        </div>
+        <div class="flex rounded-xl bg-slate-200 p-1" aria-label="Tipo di rete">
+          <%= link_to "Brand", flowpulse_global_network_path(vista: "brand"), class: "rounded-lg px-4 py-2 text-sm font-black #{selected_mode == "brand" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-white"}" %>
+          <%= link_to "Professional Brand", flowpulse_global_network_path(vista: "professional"), class: "rounded-lg px-4 py-2 text-sm font-black #{selected_mode == "professional" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-white"}" %>
+        </div>
+      </div>
+
+      <% if directory_nodes.any? %>
+        <div class="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[640px] border-collapse text-left">
+              <thead class="bg-slate-100 text-[11px] font-black uppercase tracking-[.12em] text-slate-500">
+                <tr>
+                  <th scope="col" class="px-5 py-3.5">Node</th>
+                  <th scope="col" class="px-5 py-3.5">Domini associati</th>
+                  <th scope="col" class="w-32 px-5 py-3.5 text-right"><span class="sr-only">Azioni</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <% directory_groups.each do |label, description, nodes, group_class| %>
+                  <tr class="<%= group_class %>">
+                    <th colspan="3" scope="rowgroup" class="px-5 py-3 text-left">
+                      <span class="text-xs font-black uppercase tracking-[.12em]"><%= label %></span>
+                      <span class="ml-2 text-xs font-medium normal-case tracking-normal opacity-75"><%= description %></span>
+                    </th>
+                  </tr>
+                  <% nodes.each do |node| %>
+                    <% domains = active_domains_by_node_id.fetch(node.id, []).sort_by(&:display_hostname) %>
+                    <tr class="transition hover:bg-blue-50/60">
+                      <th scope="row" class="px-5 py-4">
+                        <%= link_to node.title, flowpulse_global_network_path(vista: selected_mode, node: node.slug), class: "font-black text-slate-950 hover:text-blue-700" %>
+                      </th>
+                      <td class="px-5 py-4">
+                        <ul class="space-y-1">
+                          <% domains.each do |domain| %>
+                            <li class="text-sm font-semibold text-slate-600"><%= domain.display_hostname %></li>
+                          <% end %>
+                        </ul>
+                      </td>
+                      <td class="px-5 py-4 text-right">
+                        <%= link_to "Apri rete →", flowpulse_global_network_path(vista: selected_mode, node: node.slug), class: "inline-flex whitespace-nowrap rounded-lg px-3 py-2 text-xs font-black text-blue-700 hover:bg-blue-100", aria: { label: "Apri la rete di #{node.title}" } %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% else %>
+        <div class="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center text-sm text-slate-500">Nessun <%= selected_mode == "professional" ? "Professional Brand" : "Brand" %> pubblicato.</div>
+      <% end %>
+    </section>
+  <% else %>
+  <div
+    class="w-full"
+    data-controller="node-network"
+    data-node-network-graph-value="<%= json_escape(graph.to_json) %>"
+    data-node-network-selected-value="node-<%= selected_node.id %>"
+    data-node-network-mode-value="<%= selected_mode %>"
+  >
+    <section data-node-network-target="stage" class="relative w-full overflow-hidden bg-slate-50" style="height: calc(100vh - 65px); min-height: 620px;" aria-label="Mappa dei Node">
+      <div data-node-network-target="canvas" class="absolute inset-0 h-full w-full" aria-label="Grafo interattivo dei Node"></div>
+
+      <div class="absolute left-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] items-center gap-2 sm:left-5 sm:top-5 sm:max-w-[calc(100%-2.5rem)]">
+        <div class="flex max-w-full items-center gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg shadow-slate-900/10">
+          <label class="sr-only" for="node-network-search">Cerca un Node</label>
+          <svg class="ml-1 size-4 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          <input id="node-network-search" data-node-network-target="search" data-action="keydown->node-network#search change->node-network#search" list="node-network-options" type="search" placeholder="Cerca un Node…" class="w-36 shrink-0 border-0 bg-transparent px-1 py-1.5 text-sm outline-none sm:w-52">
+          <datalist id="node-network-options"><% @network_nodes.each do |node| %><option value="<%= node.title %>"></option><% end %></datalist>
+          <span class="mx-1 h-6 w-px shrink-0 bg-slate-200" aria-hidden="true"></span>
+          <%= link_to "← Elenco", flowpulse_global_network_path(vista: selected_mode), class: "shrink-0 rounded-lg bg-slate-100 px-3 py-2 text-[11px] font-black text-slate-700 hover:bg-slate-200" %>
+          <span class="mx-1 h-6 w-px shrink-0 bg-slate-200" aria-hidden="true"></span>
+          <p data-node-network-target="current" class="hidden max-w-48 truncate px-1 text-xs font-bold text-slate-500 xl:block">FlowPulse › Tutta la rete</p>
+          <span class="mx-1 hidden h-6 w-px shrink-0 bg-slate-200 xl:block" aria-hidden="true"></span>
+          <button type="button" data-action="node-network#zoomIn" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-bold text-slate-700 hover:bg-slate-100" aria-label="Ingrandisci" title="Ingrandisci">+</button>
+          <button type="button" data-action="node-network#zoomOut" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-bold text-slate-700 hover:bg-slate-100" aria-label="Riduci" title="Riduci">−</button>
+          <button type="button" data-action="node-network#recenter" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-blue-700 hover:bg-blue-50" aria-label="Ricentra" title="Ricentra">◎</button>
+          <button type="button" data-node-network-target="fullscreenButton" data-action="node-network#toggleFullscreen" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-slate-700 hover:bg-slate-100" aria-label="Visualizza a schermo intero" title="Schermo intero">⛶</button>
+        </div>
+      </div>
+
+      <aside data-node-network-target="drawer" class="absolute right-3 top-16 z-20 max-h-[calc(100%-5rem)] w-[360px] max-w-[calc(100%-1.5rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl shadow-slate-900/20 transition-transform duration-200 sm:right-5 sm:top-5 sm:max-h-[calc(100%-2.5rem)]">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p data-node-network-target="type" class="text-xs font-black uppercase tracking-[.16em] text-blue-700">FlowPulse</p>
+            <h1 data-node-network-target="title" class="mt-2 text-2xl font-black tracking-tight">Tutta la rete</h1>
+          </div>
+          <button type="button" data-action="node-network#closeDetails" class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-lg text-slate-600 hover:bg-slate-200" aria-label="Chiudi dettagli">×</button>
+        </div>
+
+        <p data-node-network-target="description" class="mt-4 text-sm leading-6 text-slate-600">Seleziona un Node per vedere domini e collegamenti diretti.</p>
+        <p data-node-network-target="relation" class="mt-4 text-xs font-black text-emerald-700"></p>
+
+        <div class="mt-6 border-t border-slate-100 pt-5">
+          <h2 class="text-[10px] font-black uppercase tracking-[.14em] text-slate-400">Domini associati</h2>
+          <ul data-node-network-target="domains" class="mt-2 space-y-1 text-sm font-bold text-slate-700"></ul>
+          <p data-node-network-target="empty" class="mt-2 text-sm text-slate-400">Nessun Node selezionato</p>
+        </div>
+
+        <div class="mt-7 flex items-center gap-2">
+          <a data-node-network-target="openLink" href="#" class="min-w-0 flex-1 rounded-xl px-4 py-3 text-center text-sm font-black text-white hover:opacity-90" style="background-color: #2563eb; color: #ffffff;">Apri il Node →</a>
+          <a data-node-network-target="addLink" href="#" hidden class="grid size-11 shrink-0 place-items-center rounded-xl border border-emerald-200 bg-emerald-50 text-xl font-black text-emerald-700 hover:bg-emerald-100" title="Aggiungi un Project Node figlio" aria-label="Aggiungi un Project Node figlio">＋</a>
+          <a data-node-network-target="deleteLink" href="#" hidden data-turbo-method="delete" class="grid size-11 shrink-0 place-items-center rounded-xl border border-red-200 bg-red-50 text-xl font-black text-red-700 hover:bg-red-100" title="Elimina Node" aria-label="Elimina Node">−</a>
+        </div>
+      </aside>
+
+    </section>
+  </div>
+  <% end %>
+</main>

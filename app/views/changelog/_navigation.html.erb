@@ -27,8 +27,7 @@
     <div class="flex shrink-0 items-center gap-1 text-sm font-bold">
       <%= link_to "Home", changelog_brand.fetch("home_url"), class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
       <% if changelog_brand.fetch("key") == "flowpulse" %>
-        <%= link_to "Progetti", flowpulse_projects_path, class: "hidden rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:inline-flex" %>
-        <%= link_to "Professionisti", flowpulse_professionals_path, class: "hidden rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:inline-flex" %>
+        <%= link_to "Rete", flowpulse_global_network_path, class: "hidden rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:inline-flex" %>
       <% end %>
       <%= link_to "Changelog", changelog_index_path, aria: { current: "page" }, class: "rounded-full bg-blue-50 px-3 py-2 text-blue-700" %>
     </div>

@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PosturaCorretta — Rete dei nodi</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #647184;
+      --line: #dce4ed;
+      --paper: #fff;
+      --canvas: #f4f7fa;
+      --blue: #2463d4;
+      --blue-soft: #edf4ff;
+      --green: #137a54;
+      --green-soft: #eaf8f1;
+      --amber: #a65f00;
+      --amber-soft: #fff7e7;
+      --shadow: 0 14px 38px rgba(28, 43, 61, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    button { font: inherit; }
+
+    main {
+      width: min(1280px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 72px;
+    }
+
+    header { max-width: 880px; }
+    h1, h2, h3 { line-height: 1.15; letter-spacing: -.02em; }
+    h1 { margin: 6px 0 14px; font-size: clamp(2rem, 4vw, 3.2rem); }
+    h2 { margin: 0; font-size: 1.15rem; }
+    h3 { margin: 0; font-size: 1rem; }
+    p { margin: 0; }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .lead { color: var(--muted); font-size: 1.05rem; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
+    .legend span { display: inline-flex; gap: 7px; align-items: center; }
+    .legend i { width: 11px; height: 11px; border-radius: 50%; background: var(--green); }
+    .legend .locked { background: var(--amber); }
+    .legend .related { background: var(--blue); }
+
+    .network {
+      display: grid;
+      grid-template-columns: minmax(190px, .8fr) minmax(300px, 1.25fr) minmax(210px, .9fr);
+      gap: 22px;
+      align-items: start;
+      margin-top: 30px;
+    }
+
+    .column {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .column-heading { margin-bottom: 14px; }
+    .column-heading p { margin-top: 4px; color: var(--muted); font-size: .83rem; }
+    .node-list { display: grid; gap: 10px; }
+
+    .node-card {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--paper);
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+
+    .node-card:hover, .node-card:focus-visible {
+      border-color: #91afe1;
+      box-shadow: 0 8px 20px rgba(36, 99, 212, .1);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .node-card strong { display: block; }
+    .node-card small { display: block; margin-top: 5px; color: var(--muted); }
+    .node-card .direction { color: var(--blue); font-weight: 800; }
+    .node-card.is-blocked { border-color: #ecd29c; background: var(--amber-soft); }
+    .node-card:disabled {
+      cursor: not-allowed;
+      opacity: .72;
+      transform: none;
+      box-shadow: none;
+    }
+    .node-card.is-related { border-style: dashed; }
+
+    .empty {
+      padding: 14px;
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .focus {
+      overflow: hidden;
+      border: 1px solid #b7cae8;
+      border-radius: 20px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .focus-head { padding: 24px; background: var(--blue-soft); }
+    .focus-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+    .tag {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: white;
+      color: var(--blue);
+      font-size: .74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .tag.status { color: var(--amber); }
+    .tag.status.open { color: var(--green); }
+    .focus h2 { font-size: clamp(1.45rem, 3vw, 2.15rem); }
+    .focus-description { margin-top: 10px; color: var(--muted); }
+
+    .gate-message {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      background: var(--amber-soft);
+      color: #724300;
+      font-size: .88rem;
+    }
+
+    .gate-message.open { background: var(--green-soft); color: #0e6243; }
+
+    .process { padding: 22px 24px 24px; }
+    .process-title { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .progress { color: var(--muted); font-size: .82rem; }
+    .steps { display: grid; gap: 9px; margin-top: 14px; }
+
+    .step {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      cursor: pointer;
+    }
+
+    .step input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--green); }
+    .step span { font-size: .9rem; }
+    .step input:checked + span { color: var(--muted); text-decoration: line-through; }
+
+    .no-process { margin-top: 12px; color: var(--muted); font-size: .9rem; }
+
+    .reset {
+      margin-top: 15px;
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .related-panel {
+      margin-top: 22px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--paper);
+    }
+
+    .related-panel .node-list {
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      margin-top: 12px;
+    }
+
+    .prototype-note { margin-top: 18px; color: var(--muted); font-size: .82rem; text-align: center; }
+
+    @media (max-width: 900px) {
+      .network { grid-template-columns: 1fr 1fr; }
+      .focus { grid-column: 1 / -1; grid-row: 1; }
+    }
+
+    @media (max-width: 620px) {
+      main { width: min(100% - 20px, 1280px); padding-top: 24px; }
+      .network { grid-template-columns: 1fr; }
+      .focus, .column { grid-column: auto; }
+      .focus { grid-row: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Prototipo di navigazione · dati dimostrativi</p>
+      <h1>Rete dei nodi PosturaCorretta</h1>
+      <p class="lead">Seleziona un nodo: la vista mostra da dove puoi arrivare, dove puoi andare e quale catena devi completare per sbloccare i proseguimenti.</p>
+      <div class="legend" aria-label="Legenda">
+        <span><i></i> attraversabile</span>
+        <span><i class="locked"></i> visitabile, ma da completare</span>
+        <span><i class="related"></i> collegamento correlato</span>
+      </div>
+    </header>
+
+    <div class="network">
+      <aside class="column" aria-labelledby="incoming-title">
+        <div class="column-heading">
+          <h2 id="incoming-title">Da dove puoi arrivare</h2>
+          <p>I nodi precedenti restano sempre raggiungibili.</p>
+        </div>
+        <div class="node-list" id="incoming"></div>
+      </aside>
+
+      <article class="focus" aria-live="polite">
+        <div class="focus-head">
+          <div class="focus-meta">
+            <span class="tag" id="node-type"></span>
+            <span class="tag status" id="node-status"></span>
+          </div>
+          <h2 id="node-title"></h2>
+          <p class="focus-description" id="node-description"></p>
+          <p class="gate-message" id="gate-message"></p>
+        </div>
+        <div class="process">
+          <div class="process-title">
+            <h3>Catena del nodo</h3>
+            <span class="progress" id="progress"></span>
+          </div>
+          <div class="steps" id="steps"></div>
+          <button class="reset" id="reset" type="button">Azzera la prova di questo nodo</button>
+        </div>
+      </article>
+
+      <aside class="column" aria-labelledby="outgoing-title">
+        <div class="column-heading">
+          <h2 id="outgoing-title">Dove puoi andare</h2>
+          <p id="outgoing-help"></p>
+        </div>
+        <div class="node-list" id="outgoing"></div>
+      </aside>
+    </div>
+
+    <section class="related-panel" aria-labelledby="related-title">
+      <h2 id="related-title">Collegamenti del nodo</h2>
+      <div class="node-list" id="related"></div>
+    </section>
+
+    <p class="prototype-note">Il completamento è salvato soltanto nel browser per provare l’interazione. In seguito sarà collegato ai DataCommitment reali.</p>
+  </main>
+
+  <script>
+    const nodes = {
+      "stato-salute": {
+        title: "Il tuo stato di salute",
+        type: "punto di ingresso",
+        description: "Osserva la situazione iniziale e individua il tipo di sostegno più adatto.",
+        gate: false,
+        process: []
+      },
+      posturacorretta: {
+        title: "PosturaCorretta",
+        type: "landing · hub",
+        description: "Un nuovo punto di vista da cui osservare la salute e l’essere umano.",
+        gate: false,
+        process: []
+      },
+      "prima-settimana": {
+        title: "La prima settimana con PosturaCorretta",
+        type: "percorso",
+        description: "La prima esperienza guidata per orientarsi e scegliere come proseguire.",
+        gate: true,
+        process: ["Presentazione del percorso", "Osservazione iniziale", "Prima esperienza pratica"]
+      },
+      "percorso-integrato": {
+        title: "Percorso Integrato",
+        type: "progetto",
+        description: "Dal rosso al verde con professionisti della salute e del benessere.",
+        gate: true,
+        process: ["Definisci problema o obiettivo", "Individua i sistemi coinvolti", "Costruisci la prima mappa del percorso"]
+      },
+      "apprendimento-1": {
+        title: "Apprendimento 1 · Esprimere il corpo",
+        type: "percorso educativo",
+        description: "Educazione alla salute, fisiologia e cinque aree di esperienza.",
+        gate: true,
+        process: ["Introduzione alla fisiologia", "Scegli una delle cinque aree", "Completa la prima esperienza"]
+      },
+      "apprendimento-2": {
+        title: "Apprendimento 2 · Sviluppare consapevolezza",
+        type: "rete di esperienze",
+        description: "Incontri, discipline, metodiche posturali e tecniche corporee.",
+        gate: false,
+        process: []
+      },
+      "apprendimento-3": {
+        title: "Apprendimento 3 · Il giardino del corpo",
+        type: "progetto",
+        description: "Esperienze e modelli per esplorare punti di vista oltre il già conosciuto.",
+        gate: true,
+        process: ["Introduzione al Giardino del corpo", "Partecipa a un’esperienza", "Raccogli e condividi ciò che hai osservato"]
+      },
+      risorse: {
+        title: "Postura, lavoro e risorse",
+        type: "progetto",
+        description: "Scoprire e organizzare le risorse necessarie per sostenere il proprio percorso.",
+        gate: false,
+        process: []
+      }
+    };
+
+    const links = [
+      { from: "stato-salute", to: "posturacorretta", kind: "progression" },
+      { from: "posturacorretta", to: "prima-settimana", kind: "progression" },
+      { from: "prima-settimana", to: "percorso-integrato", kind: "progression" },
+      { from: "prima-settimana", to: "apprendimento-1", kind: "progression" },
+      { from: "apprendimento-1", to: "apprendimento-2", kind: "progression" },
+      { from: "apprendimento-2", to: "apprendimento-3", kind: "progression" },
+      { from: "posturacorretta", to: "apprendimento-2", kind: "related" },
+      { from: "posturacorretta", to: "risorse", kind: "related" },
+      { from: "percorso-integrato", to: "risorse", kind: "related" }
+    ];
+
+    const storageKey = "posturacorretta-node-prototype-v1";
+    const completion = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    let currentId = new URLSearchParams(location.search).get("node") || "posturacorretta";
+    if (!nodes[currentId]) currentId = "posturacorretta";
+
+    function completedSteps(id) {
+      return new Set(completion[id] || []);
+    }
+
+    function isOpen(id) {
+      const node = nodes[id];
+      return !node.gate || node.process.every((_, index) => completedSteps(id).has(index));
+    }
+
+    function save() {
+      localStorage.setItem(storageKey, JSON.stringify(completion));
+    }
+
+    function empty(message) {
+      const element = document.createElement("p");
+      element.className = "empty";
+      element.textContent = message;
+      return element;
+    }
+
+    function nodeButton(id, options = {}) {
+      const node = nodes[id];
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "node-card";
+      if (options.blocked) button.classList.add("is-blocked");
+      if (options.related) button.classList.add("is-related");
+      button.disabled = Boolean(options.disabled);
+
+      const direction = options.direction ? `<span class="direction">${options.direction}</span> ` : "";
+      button.innerHTML = `<strong>${direction}${node.title}</strong><small>${options.note || node.type}</small>`;
+      if (!button.disabled) button.addEventListener("click", () => focusNode(id));
+      return button;
+    }
+
+    function focusNode(id) {
+      currentId = id;
+      const url = new URL(location.href);
+      url.searchParams.set("node", id);
+      history.replaceState({}, "", url);
+      render();
+      document.querySelector(".focus").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function renderList(element, ids, options, emptyMessage) {
+      element.replaceChildren();
+      if (!ids.length) {
+        element.append(empty(emptyMessage));
+        return;
+      }
+      ids.forEach((id) => element.append(nodeButton(id, options(id))));
+    }
+
+    function render() {
+      const node = nodes[currentId];
+      const open = isOpen(currentId);
+      const incoming = links.filter((link) => link.kind === "progression" && link.to === currentId);
+      const outgoing = links.filter((link) => link.kind === "progression" && link.from === currentId);
+      const related = links.filter((link) => link.kind === "related" && (link.from === currentId || link.to === currentId));
+
+      document.getElementById("node-type").textContent = node.type;
+      document.getElementById("node-title").textContent = node.title;
+      document.getElementById("node-description").textContent = node.description;
+
+      const status = document.getElementById("node-status");
+      status.textContent = open ? "attraversabile" : "da completare";
+      status.classList.toggle("open", open);
+
+      const gate = document.getElementById("gate-message");
+      gate.classList.toggle("open", open);
+      gate.textContent = open
+        ? "Questo nodo è attraversabile: i suoi proseguimenti sono disponibili."
+        : "Puoi visitare questo nodo, ma devi completarne la catena prima di proseguire.";
+
+      renderList(
+        document.getElementById("incoming"),
+        incoming.map((link) => link.from),
+        () => ({ direction: "←", note: "Torna al nodo precedente" }),
+        "Questo è un punto di ingresso della rete."
+      );
+
+      document.getElementById("outgoing-help").textContent = open
+        ? "I proseguimenti sono disponibili."
+        : "Sono visibili, ma si aprono completando la catena.";
+
+      renderList(
+        document.getElementById("outgoing"),
+        outgoing.map((link) => link.to),
+        () => ({
+          direction: "→",
+          blocked: !open,
+          disabled: !open,
+          note: open ? "Apri il nodo" : "Visibile · accesso non ancora sbloccato"
+        }),
+        "Da questo nodo non sono ancora stati definiti proseguimenti."
+      );
+
+      const relatedIds = related.map((link) => link.from === currentId ? link.to : link.from);
+      renderList(
+        document.getElementById("related"),
+        relatedIds,
+        () => ({ related: true, note: "Collegamento libero, non fa parte della progressione" }),
+        "Nessun collegamento correlato definito per questo nodo."
+      );
+
+      const steps = document.getElementById("steps");
+      const reset = document.getElementById("reset");
+      steps.replaceChildren();
+
+      if (!node.process.length) {
+        steps.append(empty("Questo nodo non richiede una catena: funziona come accesso, landing o collegamento libero."));
+        reset.hidden = true;
+      } else {
+        const done = completedSteps(currentId);
+        node.process.forEach((title, index) => {
+          const label = document.createElement("label");
+          label.className = "step";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = done.has(index);
+          checkbox.addEventListener("change", () => {
+            const updated = completedSteps(currentId);
+            checkbox.checked ? updated.add(index) : updated.delete(index);
+            completion[currentId] = [...updated];
+            save();
+            render();
+          });
+          const text = document.createElement("span");
+          text.textContent = title;
+          label.append(checkbox, text);
+          steps.append(label);
+        });
+        reset.hidden = false;
+      }
+
+      const doneCount = completedSteps(currentId).size;
+      document.getElementById("progress").textContent = node.process.length
+        ? `${doneCount} di ${node.process.length}`
+        : "nessun requisito";
+    }
+
+    document.getElementById("reset").addEventListener("click", () => {
+      delete completion[currentId];
+      save();
+      render();
+    });
+
+    window.addEventListener("popstate", () => {
+      const requested = new URLSearchParams(location.search).get("node");
+      if (nodes[requested]) {
+        currentId = requested;
+        render();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

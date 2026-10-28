@@ -1,6 +1,39 @@
 module Flowpulse
   class NetworkController < ApplicationController
     layout "landing"
+    allow_unauthenticated_access only: :global
+
+    def global
+      @network_nodes = Node.published_public
+        .includes(:parent, :children, :link_node, :professional_owner_node, :domains)
+        .order(:title, :id)
+      @manageable_role_assignment_ids = if Current.user&.superadmin_user?
+        @network_nodes.map(&:role_assignment_id).uniq
+      else
+        Current.user&.role_assignments&.ideatore&.pluck(:id) || []
+      end
+    end
+
+    def destroy_node
+      node = Node.find(params[:id])
+      unless can_manage_node?(node)
+        return redirect_to flowpulse_global_network_path(node: node.slug, vista: params[:vista]), alert: "Non hai i permessi per eliminare questo Node."
+      end
+      if node.domains.exists?
+        return redirect_to flowpulse_global_network_path(node: node.slug, vista: params[:vista]), alert: "Un Brand con dominio non può essere eliminato dalla mappa."
+      end
+      if node.children.exists?
+        return redirect_to flowpulse_global_network_path(node: node.slug, vista: params[:vista]), alert: "Prima di eliminare il Node devi ricollocare o eliminare i suoi figli."
+      end
+
+      if node.destroy
+        redirect_to flowpulse_global_network_path(vista: params[:vista]), notice: "Node #{node.title} eliminato. Ricorda di aggiornare il catalogo YAML."
+      else
+        redirect_to flowpulse_global_network_path(node: node.slug, vista: params[:vista]), alert: node.errors.full_messages.to_sentence
+      end
+    rescue ActiveRecord::RecordNotDestroyed => error
+      redirect_to flowpulse_global_network_path(node: node&.slug, vista: params[:vista]), alert: error.record.errors.full_messages.to_sentence
+    end
 
     def show
       @professional_brands = professional_brands
@@ -13,6 +46,13 @@ module Flowpulse
     end
 
     private
+
+      def can_manage_node?(node)
+        return false if Current.user.blank?
+        return true if Current.user.superadmin_user?
+
+        Current.user.role_assignments.ideatore.exists?(id: node.role_assignment_id)
+      end
 
       def professional_brands
         @professional_brands ||= Node.professional.joins(:domains)

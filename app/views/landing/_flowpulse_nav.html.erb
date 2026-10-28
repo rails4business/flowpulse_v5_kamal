@@ -2,12 +2,31 @@
   <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-8">
     <%= link_to "Flowpulse", flowpulse_path, class: "text-sm font-black uppercase tracking-[0.2em] text-blue-700" %>
     <div class="flex flex-wrap items-center justify-end gap-1 text-sm font-bold">
-      <%= link_to "Mondi e Brand", flowpulse_projects_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_projects_path) ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
-      <%= link_to "Professionisti", flowpulse_professionals_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_professionals_path) ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
-      <% if authenticated? %><%= link_to "La mia rete", flowpulse_network_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_network_path) ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %><% end %>
+      <details class="group relative">
+        <summary class="flex cursor-pointer list-none items-center gap-1 rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 [&::-webkit-details-marker]:hidden">
+          Strumenti
+          <span class="text-[10px] transition group-open:rotate-180" aria-hidden="true">▼</span>
+        </summary>
+        <div class="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10">
+          <%= link_to genera_impresa_path, class: "block rounded-xl px-3 py-3 hover:bg-orange-50" do %>
+            <strong class="block text-sm text-slate-950">GeneraImpresa</strong>
+            <span class="mt-0.5 block text-xs font-medium text-slate-500">Dall’idea al progetto</span>
+          <% end %>
+          <%= link_to rails4b_path, class: "block rounded-xl px-3 py-3 hover:bg-violet-50" do %>
+            <strong class="block text-sm text-slate-950">Rails4Business</strong>
+            <span class="mt-0.5 block text-xs font-medium text-slate-500">Progettazione e realizzazione</span>
+          <% end %>
+          <%= link_to impegno_path, class: "block rounded-xl px-3 py-3 hover:bg-blue-50" do %>
+            <strong class="block text-sm text-slate-950">1Impegno</strong>
+            <span class="mt-0.5 block text-xs font-medium text-slate-500">Attività, agenda ed esecuzione</span>
+          <% end %>
+        </div>
+      </details>
+      <%= link_to "Rete", flowpulse_global_network_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/network' && action_name == 'global' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <% if Current.user&.superadmin_user? %>
-        <%= link_to "Mappa Brand", flowpulse_admin_brands_path, class: "rounded-full px-3 py-2 text-blue-700 hover:bg-blue-50" %>
-        <%= link_to "Brand in costruzione", admin_brands_path(tab: "building"), class: "rounded-full px-3 py-2 text-amber-800 hover:bg-amber-50" %>
+        <span class="mx-1 hidden h-6 w-px bg-slate-200 sm:block" aria-hidden="true"></span>
+        <%= link_to "La mia rete", flowpulse_network_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_network_path) ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
+        <%= link_to "Gestione rete", flowpulse_admin_brands_path, class: "rounded-full px-3 py-2 text-blue-700 hover:bg-blue-50" %>
         <%= link_to "Sviluppo", flowpulse_development_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/development' ? 'bg-amber-50 text-amber-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <% end %>
       <%= link_to "Changelog", changelog_path, class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>

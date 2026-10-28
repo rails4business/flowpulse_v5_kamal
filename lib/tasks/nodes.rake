@@ -11,6 +11,14 @@ namespace :nodes do
     puts "Imported #{result.nodes} nodes and linked #{result.profiles} primary profiles."
   end
 
+  desc "Synchronize config/nodes.yml and remove unconfigured Nodes (development only)"
+  task sync_development: :environment do
+    abort "nodes:sync_development può essere eseguito soltanto in development" unless Rails.env.development?
+
+    result = NodeCatalog.from_config.import!(prune: true)
+    puts "Sincronizzati #{result.nodes} Node, collegati #{result.profiles} profili e rimossi #{result.pruned} Node locali non configurati."
+  end
+
   desc "Print the configured Node tree"
   task tree: :environment do
     roots = Node.where(parent_id: nil).includes(:domains, :professional_owner_node).order(:title)

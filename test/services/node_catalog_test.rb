@@ -18,17 +18,23 @@ class NodeCatalogTest < ActiveSupport::TestCase
     second = catalog.import!
 
     mark = Node.find_by!(slug: "markpostura")
+    stato_di_salute = Node.find_by!(slug: "stato-di-salute")
     postura = Node.find_by!(slug: "posturacorretta")
+    percorso_integrato = Node.find_by!(slug: "percorso-integrato")
+    giardino_del_corpo = Node.find_by!(slug: "ilgiardinodelcorpo")
     genera_impresa = Node.find_by!(slug: "generaimpresa")
     inside_adventure = Node.find_by!(slug: "insideadventure")
 
-    configured_slugs = %w[markpostura flowpulse rails4business posturacorretta percorso-integrato ilgiardinodelcorpo insideadventure corpoecoscienza cantachetipassa generaimpresa impegno svuotamente brand-in-costruzione igiene-posturale radioestesia]
+    configured_slugs = %w[markpostura flowpulse rails4business posturacorretta stato-di-salute percorso-integrato ilgiardinodelcorpo insideadventure corpoecoscienza cantachetipassa generaimpresa impegno svuotamente brand-in-costruzione igiene-posturale radioestesia]
     assert_equal configured_slugs.size, first.nodes
     assert_equal configured_slugs.size, second.nodes
     assert_equal configured_slugs.size, Node.where(slug: configured_slugs).count
     assert mark.professional?
     assert_equal mark, user_profile.primary_node
-    assert_equal mark, postura.parent
+    assert_equal mark, stato_di_salute.parent
+    assert_equal stato_di_salute, postura.parent
+    assert_equal stato_di_salute, percorso_integrato.parent
+    assert_equal stato_di_salute, giardino_del_corpo.parent
     assert_equal genera_impresa, inside_adventure.parent
     assert_equal mark, postura.professional_owner_node
   end
@@ -57,6 +63,21 @@ class NodeCatalogTest < ActiveSupport::TestCase
     catalog = NodeCatalog.from_config("test")
 
     assert_no_difference("Node.count") { catalog.import!(dry_run: true) }
+  end
+
+  test "optional pruning removes nodes absent from the catalog outside production" do
+    catalog = NodeCatalog.from_config("test")
+    catalog.import!
+    extra = Node.create!(
+      title: "Node locale temporaneo",
+      slug: "node-locale-temporaneo",
+      role_assignment: RoleAssignment.joins(:profile).find_by!(profiles: { username: "markpostura" })
+    )
+
+    result = catalog.import!(prune: true)
+
+    assert_equal 1, result.pruned
+    assert_not Node.exists?(extra.id)
   end
 
   private

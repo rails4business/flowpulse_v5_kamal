@@ -62,6 +62,19 @@ default: &default
   www.posturacorretta.org:
     canonical_host: posturacorretta.org
 
+  statodisalute.it:
+    security_profile: sensitive
+    locale: it
+    target_controller: landing
+    target_action: stato_di_salute
+    primary: true
+    node_slug: stato-di-salute
+    site_title: "Stato di Salute — Osserva il tuo punto di partenza"
+    site_description: "Osserva i diversi ambiti della salute e orientati tra Percorso Integrato ed educazione alla salute, senza sostituire una valutazione sanitaria."
+
+  www.statodisalute.it:
+    canonical_host: statodisalute.it
+
   percorsointegrato.it:
     security_profile: sensitive
     locale: it

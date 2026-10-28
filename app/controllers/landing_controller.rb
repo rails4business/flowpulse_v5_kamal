@@ -7,6 +7,10 @@ class LandingController < ApplicationController
   def flowpulse
   end
 
+  def stato_di_salute
+    @scopes = PosturacorrettaTaxonomies.load.fetch("scopes", {})
+  end
+
   def inside_adventure
     response.set_header("X-Robots-Tag", "noindex, nofollow")
     prototype = Rails.root.join("docs/private_prototypes/viste_html/inside-adventure.html").read

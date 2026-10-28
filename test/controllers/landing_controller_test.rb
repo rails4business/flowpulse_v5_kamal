@@ -1,6 +1,25 @@
 require "test_helper"
 
 class LandingControllerTest < ActionDispatch::IntegrationTest
+  test "Stato di Salute presents the two paths without simulating a clinical assessment" do
+    get stato_di_salute_url
+
+    assert_response :success
+    assert_select "h1", "Come stai, davvero?"
+    assert_select "nav a[href='#orientamento']", text: "Fai il test"
+    assert_select "#human-areas"
+    assert_select "#human-areas [data-area-tab]", count: 7
+    assert_select "a[href='#{percorso_integrato_path}']", text: /Percorso Integrato/
+    assert_select "a[href='#{posturacorretta_path}']", text: /PosturaCorretta/
+    assert_select "nav a[href='#{giardino_del_corpo_path}']", text: "Il Giardino del Corpo"
+    assert_select "article", text: /Dalla PosturaCorretta al Giardino del Corpo/
+    assert_select "span", text: "Questionario in preparazione"
+    assert_select "main", text: /non sostituirà diagnosi, visita o valutazione professionale/i
+
+    get "/stato_di_salute"
+    assert_redirected_to stato_di_salute_url
+  end
+
   test "Igiene Posturale route stays inside GeneraImpresa while its Node is not public" do
     get igieneposturale_url
 
@@ -34,37 +53,31 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{genera_impresa_path}']", text: /Dai forma a un’idea/
   end
 
-  test "Flowpulse navigation exposes projects professionals and changelog" do
+  test "Flowpulse navigation exposes one network directory and changelog" do
     get flowpulse_url
 
     assert_response :success
-    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_projects_path}']", text: "Mondi e Brand"
-    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_professionals_path}']", text: "Professionisti"
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{flowpulse_global_network_path}']", text: "Rete"
+    assert_select "nav[aria-label='Navigazione Flowpulse'] details summary", text: /Strumenti/
+    assert_select "nav[aria-label='Navigazione Flowpulse'] details a[href='#{genera_impresa_path}']", text: /GeneraImpresa/
+    assert_select "nav[aria-label='Navigazione Flowpulse'] details a[href='#{rails4b_path}']", text: /Rails4Business/
+    assert_select "nav[aria-label='Navigazione Flowpulse'] details a[href='#{impegno_path}']", text: /1Impegno/
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a", text: "Mondi e Brand", count: 0
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a", text: "Professionisti", count: 0
     assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{changelog_path}']", text: "Changelog"
     assert_select "footer a[href='https://github.com/rails4business/flowpulse_v5_kamal'][target='_blank']", text: /GitHub/
   end
 
-  test "Flowpulse projects index renders public registry entries" do
+  test "legacy Flowpulse projects directory redirects to the Brand tab" do
     get flowpulse_projects_url
 
-    assert_response :success
-    assert_select "h1", text: "Mondi e Brand"
-    assert_select "nav[aria-label='Scegli quali Brand visualizzare'] a", count: 2
-    assert_select "a[href='#{flowpulse_projects_path(mondo: 'markpostura')}']", text: "Mondo di MarkPostura"
-    assert_select "a[href='/posturacorretta']", text: /PosturaCorretta/
-    assert_select "a[href='/impegno']", text: /1Impegno/
-    assert_select "a[href='/rails4b']", text: /Rails4Business/
-    assert_select "a[href='/cantachetipassa']", text: /Canta che ti passa/
-    assert_select "a[href='/flowpulse/inside-adventure']", count: 0
+    assert_redirected_to flowpulse_global_network_url(vista: "brand")
   end
 
-  test "Flowpulse can isolate the Brand in MarkPostura world" do
+  test "legacy world filter redirects to the unified Brand tab" do
     get flowpulse_projects_url(mondo: "markpostura")
 
-    assert_response :success
-    assert_select "h2", text: "Il mondo di MarkPostura"
-    assert_select "a[href='/posturacorretta']", text: /PosturaCorretta/
-    assert_select "a[href='/corpo-e-coscienza']", text: /Corpo e Coscienza/
+    assert_redirected_to flowpulse_global_network_url(vista: "brand")
   end
 
   test "Canta che ti passa links to its four sessions and participation sections" do
@@ -122,13 +135,11 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select ".accordion-study__list a", count: 8
   end
 
-  test "Flowpulse professionals index has a safe YAML fallback" do
+  test "legacy professionals directory redirects to the Professional Brand tab" do
     host! "localhost"
     get flowpulse_professionals_url
 
-    assert_response :success
-    assert_select "h1", text: "Professionisti"
-    assert_select "a[href='/markpostura']", text: /MarkPostura/
+    assert_redirected_to flowpulse_global_network_url(vista: "professional")
   end
 
   test "MarkPostura local route renders the editorial YAML home" do

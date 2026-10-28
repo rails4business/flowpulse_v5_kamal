@@ -27,7 +27,7 @@ default: &default
     posturacorretta:
       title: PosturaCorretta
       node_type: project
-      parent_slug: markpostura
+      parent_slug: stato-di-salute
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -35,10 +35,18 @@ default: &default
         - insegnante
         - segreteria
 
+    stato-di-salute:
+      title: Stato di Salute
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     percorso-integrato:
       title: Percorso Integrato
       node_type: project
-      parent_slug: markpostura
+      parent_slug: stato-di-salute
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -49,7 +57,7 @@ default: &default
     ilgiardinodelcorpo:
       title: Il Giardino del Corpo
       node_type: project
-      parent_slug: markpostura
+      parent_slug: stato-di-salute
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -103,9 +111,9 @@ default: &default
     svuotamente:
       title: SvuotaMente
       node_type: project
-      parent_slug: markpostura
+      parent_slug: generaimpresa
       professional_owner_slug: markpostura
-      status: published
+      status: draft
       visibility: public
 
     brand-in-costruzione:

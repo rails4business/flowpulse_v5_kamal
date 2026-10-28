@@ -50,11 +50,15 @@ Rails.application.routes.draw do
   get "esperienze" => redirect("/eventi", status: 301), as: :esperienze
   get "esperienze/:id" => redirect("/eventi/%{id}", status: 301), as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
+  get "stato-di-salute" => "landing#stato_di_salute", as: :stato_di_salute
+  get "stato_di_salute" => redirect("/stato-di-salute", status: 301)
   get "generaimpresa/brand/inside-adventure" => "landing#inside_adventure", as: :inside_adventure
   get "flowpulse/inside-adventure" => redirect("/generaimpresa/brand/inside-adventure", status: 301)
-  get "flowpulse/progetti" => "landing#flowpulse_projects", as: :flowpulse_projects
-  get "flowpulse/professionisti" => "landing#flowpulse_professionals", as: :flowpulse_professionals
+  get "flowpulse/progetti" => redirect("/flowpulse/rete/globale?vista=brand", status: 301), as: :flowpulse_projects
+  get "flowpulse/professionisti" => redirect("/flowpulse/rete/globale?vista=professional", status: 301), as: :flowpulse_professionals
   get "flowpulse/rete" => "flowpulse/network#show", as: :flowpulse_network
+  get "flowpulse/rete/globale" => "flowpulse/network#global", as: :flowpulse_global_network
+  delete "flowpulse/rete/globale/nodes/:id" => "flowpulse/network#destroy_node", as: :flowpulse_global_network_node
   get "flowpulse/sviluppo" => "flowpulse/development#index", as: :flowpulse_development
   get "flowpulse/sviluppo/:slug" => "flowpulse/development#show", as: :flowpulse_development_entry,
       constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }

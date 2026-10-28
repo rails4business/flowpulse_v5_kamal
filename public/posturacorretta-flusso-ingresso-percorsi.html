@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PosturaCorretta — Flusso di ingresso ai percorsi</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5f6b7a;
+      --line: #dbe2ea;
+      --paper: #ffffff;
+      --canvas: #f4f7f9;
+      --blue: #2563eb;
+      --blue-soft: #eaf2ff;
+      --indigo: #4f46e5;
+      --violet: #7c3aed;
+      --green: #16845b;
+      --red: #c2414b;
+      --amber: #b66a05;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 72px;
+    }
+
+    h1, h2, h3 { line-height: 1.15; letter-spacing: -.025em; }
+    h1 { max-width: 820px; margin: 0; font-size: clamp(2rem, 4vw, 3.5rem); }
+    h2 { margin: 0 0 12px; font-size: clamp(1.35rem, 2.5vw, 2rem); }
+    h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    p { margin: 0; }
+
+    .eyebrow {
+      margin-bottom: 12px;
+      color: var(--blue);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      max-width: 820px;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      margin-top: 28px;
+      padding: 18px 20px;
+      border: 1px solid #b9d0fa;
+      border-radius: 16px;
+      background: var(--blue-soft);
+    }
+
+    .decision strong:first-child {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+    }
+
+    section {
+      margin-top: 28px;
+      padding: clamp(20px, 4vw, 36px);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--paper);
+      box-shadow: 0 12px 35px rgba(26, 40, 58, .06);
+    }
+
+    .section-intro { max-width: 850px; color: var(--muted); }
+
+    .diagram {
+      margin-top: 26px;
+      overflow-x: auto;
+      padding: 18px 8px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfdff;
+    }
+
+    .mermaid { width: max-content; min-width: 100%; text-align: left; }
+    .diagram .mermaid svg { max-width: none !important; height: auto; }
+    .diagram .mermaid .edgePath path {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .scroll-hint {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .82rem;
+      text-align: center;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .card {
+      min-height: 152px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--accent);
+      border-radius: 12px;
+      background: white;
+    }
+
+    .card small {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .card p { color: var(--muted); font-size: .9rem; }
+
+    .practical-line {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      margin-top: 24px;
+      overflow: hidden;
+      border: 1px solid #b9d0fa;
+      border-radius: 14px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 128px;
+      padding: 18px;
+      background: #f8fbff;
+    }
+
+    .step + .step { border-left: 1px solid #b9d0fa; }
+    .step b { display: block; margin-bottom: 7px; color: var(--blue); }
+    .step p { color: var(--muted); font-size: .9rem; }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .note {
+      padding: 17px;
+      border-radius: 13px;
+      background: #f5f7fa;
+    }
+
+    .note p { color: var(--muted); font-size: .92rem; }
+
+    footer { margin-top: 24px; color: var(--muted); font-size: .85rem; text-align: center; }
+
+    @media (max-width: 900px) {
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .practical-line { grid-template-columns: 1fr 1fr; }
+      .step + .step { border-left: 0; }
+      .step:nth-child(even) { border-left: 1px solid #b9d0fa; }
+      .step:nth-child(n+3) { border-top: 1px solid #b9d0fa; }
+      .notes { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      main { width: min(100% - 20px, 1180px); padding-top: 28px; }
+      .decision { grid-template-columns: 1fr; }
+      .cards, .practical-line { grid-template-columns: 1fr; }
+      .step:nth-child(even) { border-left: 0; }
+      .step:nth-child(n+2) { border-top: 1px solid #b9d0fa; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Bozza di architettura · non pubblicata</p>
+      <h1>Progetto flowpulse</h1>
+      <!--p class="lead">Schema generale</p-->
+
+    </header>
+
+    <section aria-labelledby="flusso-title">
+      <h2 id="flusso-title">1. Mappa generale</h2>
+      <p class="section-intro">Per ora la mappa mostra i Node principali e i materiali già collegati. Quando un Node possiede un dominio, il dominio è indicato direttamente sotto il suo nome. Le catene di montaggio verranno trasformate una alla volta, senza introdurre ancora stazioni o regole di avanzamento.</p>
+      <p class="scroll-hint">Scorri orizzontalmente per esplorare tutta la mappa →</p>
+
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+    I["Dalla PosturaCorretta fino al giardino del corpo: un nuovo punto di vista<br/>da cui osservare la salute e l'essere umano - iniziamo dal tuo stato di salute<br/><small>statodisalute.it</small>"]
+    PI["SALUTE Percorso Integrato<br/><small>percorsointegrato.it</small>"]
+    PC["PosturaCorretta<br/><small>posturacorretta.org</small>"]
+    VIO["Apprendimento 3:<br/>scoperta e connessione il giardino del corpo l'essere umano come un giardino eventi seminari weekend esperienze<br/><small>ilgiardinodelcorpo.it</small>"]
+    RIS["rails4b.com, lavoro e risorse:<br/>scoprire il proprio potenziale"]
+    I <--> PI & PC & VIO & RIS
+
+    PI --> PID["Stop al dolore"]
+    PI --> PIP["Prevenzione"]
+    PI --> PIF["Performance"]
+    PI --> PIB["Percorso Benessere"]
+
+    PC --> A["Apprendimento 1 - Esprimere il corpo con il percorso di Educazione alla salute - Le cinque aree<br/>Postura e fisiologia"]
+    PC --> IND["Apprendimento 2:<br/>sviluppare consapevolezza incontri settimanali per categorie generali organizzare incontri ed eventi con pratiche di varie discipline e metodiche posturali, tecniche corporee, sulla guarigione e discipline corporee"]
+
+    PC --> S["La prima settimana con PosturaCorretta"]
+    S --> A
+    IND --> GEN["Categorie generali"]
+    IND --> SPEC["Categorie specifiche"]
+    SPEC --> SCRIVANIA["60 movimenti alla scrivania"]
+
+    classDef integrated fill:#e9f8f1,color:#145c43,stroke:#2b9a70,stroke-width:2px;
+    classDef intro fill:#e8f7fb,color:#164e63,stroke:#7dd3fc,stroke-width:2px;
+    classDef indigo fill:#eef2ff,color:#37308f,stroke:#818cf8,stroke-width:2px;
+    classDef violet fill:#faf5ff,color:#6b259e,stroke:#c084fc,stroke-width:2px;
+    classDef resources fill:#fff5df,color:#78450a,stroke:#d28a1d,stroke-width:2px;
+    classDef pain fill:#fff0f1,color:#8f2530,stroke:#e87983,stroke-width:2px;
+    classDef prevention fill:#fff2e8,color:#8a431a,stroke:#ef955c,stroke-width:2px;
+    classDef performance fill:#fff8df,color:#72540b,stroke:#d9ae32,stroke-width:2px;
+    classDef wellbeing fill:#edf9f3,color:#175d45,stroke:#63b68f,stroke-width:2px;
+    class I,PI integrated;
+    class PC,A,S intro;
+    class IND,GEN,SPEC,SCRIVANIA indigo;
+    class VIO violet;
+    class RIS resources;
+    class PID pain;
+    class PIP prevention;
+    class PIF performance;
+    class PIB wellbeing;
+
+    click I "https://statodisalute.it" "Apri Stato di Salute" _blank
+    click PI "https://percorsointegrato.it" "Apri Percorso Integrato" _blank
+    click PC "https://posturacorretta.org" "Apri PosturaCorretta" _blank
+    click VIO "https://ilgiardinodelcorpo.it" "Apri Il Giardino del Corpo" _blank
+    click RIS "https://rails4b.com" "Apri Rails4B" _blank
+    click A "https://posturacorretta.org/posturacorretta/corsi/postura-e-fisiologia" "Apri Apprendimento 1" _blank
+    click IND "https://posturacorretta.org/posturacorretta/corsi/muoviti-ed-esplora" "Apri Apprendimento 2" _blank
+        </pre>
+      </div>
+
+      <h3 style="margin-top: 32px;">Apprendimento 1 · Le cinque aree</h3>
+      <p class="section-intro">Esprimere il corpo con il percorso di Educazione alla salute: Postura e fisiologia.</p>
+      <p class="scroll-hint">Scorri orizzontalmente per esplorare le aree e le sequenze →</p>
+
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+    A["Apprendimento 1 - Esprimere il corpo con il percorso di Educazione alla salute - Le cinque aree<br/>Postura e fisiologia"]
+    R["Area Massaggio - terapie manuali e tecniche corporee Postura, recupero<br/>e coscienza corporea"]
+    A --> R
+    A --> MOV["Area Movimento<br/>Postura, movimento e attività motoria"]
+    A --> MED["Area Meditazione<br/>Postura, ascolto e consapevolezza"]
+    A --> ALI["Area Alimentazione<br/>Postura, nutrimento e fisiologia"]
+    A --> FAR["Area Farmaci<br/>Postura, regolazione e medicamenti"]
+
+    MOV --> MOV01["Rinforzo muscolare"]
+    MOV01 --> MOV02["Una sequenza dalla kinesiologia"]
+    MOV02 --> MOV03["I cinque tibetani"]
+    MOV03 --> MOV04["Gli 8 pezzi di brocato"]
+    MOV04 --> MOV05["Una sequenza dello yoga"]
+    MOV05 --> MOV06["Lo sviluppo del movimento dei bambini DNS"]
+    MOV06 --> MOV07["Animal Flow"]
+    MOV07 --> MOV08["Movimenti arcaici"]
+    MOV08 --> MOV09["La capoeira"]
+    MOV09 --> MOV10["Il tai chi"]
+
+    MED --> MED01["La morfopsicologia"]
+    MED01 --> MED02["Human design"]
+    MED02 --> MED03["Caisedo Sofrologia"]
+    MED03 --> MED04["Corpo e coscienza"]
+    MED04 --> MED05["Yoga nozioni avanzate"]
+    MED05 --> MED06["Su wen medicina cinese fenomenologia"]
+    MED06 --> MED07["Siamo fatti di parole"]
+    MED07 --> MED08["Il potere delle storie"]
+    MED08 --> MED09["Efficacia personale"]
+    MED09 --> MED10["Il viaggio dell'eroe"]
+    MED10 --> MED11["La medicina del Suono"]
+    MED11 --> MED12["Il teatro"]
+    MED12 --> MED13["Il giardino del corpo"]
+    MED13 --> MED13["Bagno di Foresta"]
+    MED13 --> MED13["Viaggio sonoro"]
+
+    ALI --> ALI01["Cosa stiamo mangiando?"]
+    ALI01 --> ALI02["Cos'è il cibo?"]
+    ALI02 --> ALI03["Il cibo viene dalla terra"]
+    ALI03 --> ALI04["Cibo e industrializzazione"]
+    ALI04 --> ALI05["Cibo un mezzo per trasmettere energia"]
+
+    FAR --> FAR01["La medicina dei semplici Dr. Abbiati"]
+    FAR01 --> FAR02["Medicina mediterranea"]
+    FAR02 --> FAR03["Medicina cinese"]
+    FAR03 --> FAR04["Ayurveda"]
+
+    R --> C07["Igiene Posturale<br/><small>igieneposturale.it</small>"]
+    C07 --> L07["Mobilità articolare"]
+    L07 --> L08["Punti di tensione"]
+    L08 --> L09["Vie di discesa"]
+    L09 --> L10["Recettori sensoriali"]
+
+    L10 --> C08["Principi di Fisioterapia"]
+    C08 --> L11["Sistema respiratorio"]
+    L11 --> L12["Sistema nervoso e urogenitale"]
+    L12 --> L13["Sistema muscolo-scheletrico"]
+    L13 --> L14["Sistema cardiocircolatorio"]
+    L14 --> L15["Sistema linfatico e digerente"]
+    L15 --> L16["Scopri di più sulla Fisioterapia"]
+
+    L16 --> C09["Biomeccanica comportamentale GDS"]
+    C09 --> L17["Le cinque direzioni di movimento"]
+    L17 --> L18["Catena AM"]
+    L18 --> L19["Catena AL"]
+    L19 --> L20["Catena PM"]
+    L20 --> L21["Catena PL"]
+    L21 --> L22["Catene PA/AP"]
+    L22 --> L23["Scopri di più sulla metodica GDS"]
+
+    L23 --> C10["Principi di Osteopatia"]
+    C10 --> L24["Eliminare le disfunzioni"]
+    L24 --> L25["Il sistema fasciale"]
+    L25 --> L26["Il sistema viscerale"]
+    L26 --> L27["Il sistema cranio-sacrale"]
+    L27 --> L28["Il sistema neurovegetativo"]
+    L28 --> L29["Scopri di più sull'Osteopatia"]
+
+    L29 --> C11["Corpo e Coscienza<br/><small>corpoecoscienza.org</small>"]
+    C11 --> L30["Le due circolazioni"]
+    L30 --> L31["I tre centri di gravità"]
+    L31 --> L32["I quattro tipi di movimento"]
+    L32 --> L33["I cinque elementi"]
+    L33 --> L34["Le sei coppie di meridiani"]
+    L34 --> L35["I sette centri neurolinfatici"]
+    L35 --> L36["Scopri di più su Corpo e Coscienza"]
+
+    L36 --> L38["Altre metodiche posturali"]
+   
+    
+
+    classDef intro fill:#e8f7fb,color:#164e63,stroke:#7dd3fc,stroke-width:2px;
+    classDef course fill:#69418a,color:#fff,stroke:#45265f,stroke-width:2px;
+    classDef lesson fill:#f4eef9,color:#4c2b63,stroke:#a77bc4,stroke-width:2px;
+    classDef integrated fill:#e9f8f1,color:#145c43,stroke:#2b9a70,stroke-width:2px;
+    classDef indigo fill:#eef2ff,color:#37308f,stroke:#818cf8,stroke-width:2px;
+    classDef violet fill:#faf5ff,color:#6b259e,stroke:#c084fc,stroke-width:2px;
+    classDef resources fill:#fff5df,color:#78450a,stroke:#d28a1d,stroke-width:2px;
+    classDef massage fill:#eee7f6,color:#4c2b63,stroke:#8b5cab,stroke-width:2px;
+    classDef movement fill:#e2faf5,color:#0f625c,stroke:#2aa79d,stroke-width:2px;
+    classDef meditation fill:#fff0ef,color:#8f2f29,stroke:#e4776f,stroke-width:2px;
+    classDef alimentation fill:#fff7dc,color:#76570a,stroke:#d6a927,stroke-width:2px;
+    classDef medication fill:#eaf8ee,color:#24613c,stroke:#5eae78,stroke-width:2px;
+    classDef movementItem fill:#f0fcf9,color:#0f625c,stroke:#68c9c0,stroke-width:2px;
+    classDef meditationItem fill:#fff7f6,color:#8f2f29,stroke:#efaaa5,stroke-width:2px;
+    classDef alimentationItem fill:#fffbec,color:#76570a,stroke:#e8cb6b,stroke-width:2px;
+    classDef medicationItem fill:#f2fbf4,color:#24613c,stroke:#91cda4,stroke-width:2px;
+    classDef pain fill:#fff0f1,color:#8f2530,stroke:#e87983,stroke-width:2px;
+    classDef prevention fill:#fff2e8,color:#8a431a,stroke:#ef955c,stroke-width:2px;
+    classDef performance fill:#fff8df,color:#72540b,stroke:#d9ae32,stroke-width:2px;
+    classDef wellbeing fill:#edf9f3,color:#175d45,stroke:#63b68f,stroke-width:2px;
+
+    class A intro;
+    class C07,C08,C09,C10,C11,C12 course;
+    class L07,L08,L09,L10,L11,L12,L13,L14,L15,L16,L17,L18,L19,L20,L21,L22,L23,L24,L25,L26,L27,L28,L29,L30,L31,L32,L33,L34,L35,L36,L37,L38,L39,L40 lesson;
+    class R massage;
+    class MOV movement;
+    class MED meditation;
+    class ALI alimentation;
+    class FAR medication;
+    class MOV01,MOV02,MOV03,MOV04,MOV05,MOV06,MOV07,MOV08,MOV09,MOV10 movementItem;
+    class MED01,MED02,MED03,MED04,MED05,MED06,MED07,MED08,MED09,MED10,MED11,MED12,MED13 meditationItem;
+    class ALI01,ALI02,ALI03,ALI04,ALI05 alimentationItem;
+    class FAR01,FAR02,FAR03,FAR04 medicationItem;
+
+    click A "https://posturacorretta.org/posturacorretta/corsi/postura-e-fisiologia" "Apri Apprendimento 1" _blank
+    click C07 "https://igieneposturale.it" "Apri Igiene Posturale" _blank
+    click C11 "https://corpoecoscienza.org" "Apri Corpo e Coscienza" _blank
+        </pre>
+      </div>
+    </section>
+
+    <footer>Documento di lavoro PosturaCorretta · Il diagramma richiede una connessione per caricare Mermaid.</footer>
+  </main>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"
+
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      securityLevel: "loose",
+      flowchart: {
+        curve: "stepAfter",
+        htmlLabels: true,
+        useMaxWidth: false,
+        diagramPadding: 28,
+        nodeSpacing: 52,
+        rankSpacing: 86,
+        wrappingWidth: 220
+      },
+      themeVariables: {
+        fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
+        primaryTextColor: "#172033",
+        lineColor: "#8a99aa",
+        clusterBkg: "#ffffff",
+        clusterBorder: "#dbe2ea"
+      }
+    })
+  </script>
+</body>
+</html>

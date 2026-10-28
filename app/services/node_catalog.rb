@@ -1,5 +1,5 @@
 class NodeCatalog
-  Result = Data.define(:nodes, :profiles)
+  Result = Data.define(:nodes, :profiles, :pruned)
 
   ALLOWED_ATTRIBUTES = %w[
     title description node_type view_type status visibility
@@ -32,10 +32,15 @@ class NodeCatalog
     true
   end
 
-  def import!(dry_run: false)
+  def import!(dry_run: false, prune: false)
     validate!
+    if prune && Rails.env.production?
+      raise ArgumentError, "Il pruning del catalogo Node non è consentito in produzione"
+    end
+
     imported = {}
     associated_profiles = 0
+    pruned = 0
 
     ActiveRecord::Base.transaction do
       definitions.each_key { |slug| import_node!(slug, imported, []) }
@@ -53,10 +58,21 @@ class NodeCatalog
         associated_profiles += 1
       end
 
+      if prune
+        removable_nodes = Node.where.not(slug: definitions.keys).to_a
+          .sort_by { |node| -node.self_and_ancestors.count }
+        removable_nodes.each do |node|
+          next unless Node.exists?(node.id)
+
+          node.destroy!
+          pruned += 1
+        end
+      end
+
       raise ActiveRecord::Rollback if dry_run
     end
 
-    Result.new(nodes: imported.size, profiles: associated_profiles)
+    Result.new(nodes: imported.size, profiles: associated_profiles, pruned: pruned)
   end
 
   private

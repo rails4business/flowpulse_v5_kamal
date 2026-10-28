@@ -54,6 +54,37 @@ class Flowpulse::NetworkControllerTest < ActionDispatch::IntegrationTest
     assert_select "section[aria-labelledby='collaborations-title'] li", text: /Brand non collegato.*Insegnante/m
   end
 
+  test "global network starts with the brand directory instead of the graph" do
+    get flowpulse_global_network_url(vista: "brand")
+
+    assert_response :success
+    assert_select "h1", "Brand"
+    assert_select "tbody th[scope='rowgroup']", text: /Brand della rete/
+    assert_select "[data-controller='node-network']", count: 0
+    assert_select "a[href='#{flowpulse_global_network_path(vista: "brand", node: @project.slug)}']", text: /Progetto del proprietario/
+    assert_select "td li", text: "network-project.test"
+    assert_select "th[scope='row'] a", text: "Brand Personale", count: 0
+  end
+
+  test "professional directory lists professional brands and opens their focused graph" do
+    sign_in(@owner)
+
+    get flowpulse_global_network_url(vista: "professional")
+
+    assert_response :success
+    assert_select "h1", "Professional Brand"
+    assert_select "tbody th[scope='rowgroup']", text: /Professional Brand/
+    assert_select "a[href='#{flowpulse_global_network_path(vista: "professional", node: @professional.slug)}']", text: /Brand Personale/
+    assert_select "th[scope='row'] a", text: "Progetto del proprietario", count: 0
+
+    get flowpulse_global_network_url(vista: "professional", node: @professional.slug)
+
+    assert_response :success
+    assert_select "[data-controller='node-network'][data-node-network-selected-value='node-#{@professional.id}']", count: 1
+    assert_select "a[href='#{flowpulse_global_network_path(vista: "professional")}']", text: /Elenco/
+    assert_select "button", text: "TUTTO", count: 0
+  end
+
   private
 
     def sign_in(user)
