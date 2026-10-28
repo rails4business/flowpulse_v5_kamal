@@ -214,12 +214,15 @@
       <div class="diagram">
         <pre class="mermaid">
 flowchart LR
-    I["Dalla PosturaCorretta fino al giardino del corpo: un nuovo punto di vista<br/>da cui osservare la salute e l'essere umano - iniziamo dal tuo stato di salute<br/><small>statodisalute.it</small>"]
+    LIBRO["dalla PosturaCorretta al Giardino del Corpo: un nuovo punto di vista<br/>da cui osservare la salute e l'essere umano"]
+    I["Stato di salute <br/><small>statodisalute.it</small>"]
     PI["SALUTE Percorso Integrato - Professionisti della salute e del benessere. <br/><small>percorsointegrato.it</small>"]
     PC["PosturaCorretta<br/><small>posturacorretta.org</small>"]
     VIO["Apprendimento 3:<br/>scoperta e connessione il giardino del corpo l'essere umano come un giardino eventi seminari weekend esperienze<br/><small>ilgiardinodelcorpo.it</small>"]
     RIS["rails4b.com, lavoro e risorse:<br/>scoprire il proprio potenziale"]
-    I <--> PI & PC & VIO & RIS
+
+    I --> PI
+
 
     PI --> PID["Stop al dolore"]
     PI --> PIP["Prevenzione"]
@@ -235,6 +238,8 @@ flowchart LR
     IND --> GEN["Categorie generali"]
     IND --> SPEC["Categorie specifiche"]
     SPEC --> SCRIVANIA["60 movimenti alla scrivania"]
+    I --> LIBRO
+    LIBRO <-->  PC & VIO & RIS
 
     classDef integrated fill:#e9f8f1,color:#145c43,stroke:#2b9a70,stroke-width:2px;
     classDef intro fill:#e8f7fb,color:#164e63,stroke:#7dd3fc,stroke-width:2px;
@@ -245,6 +250,7 @@ flowchart LR
     classDef prevention fill:#fff2e8,color:#8a431a,stroke:#ef955c,stroke-width:2px;
     classDef performance fill:#fff8df,color:#72540b,stroke:#d9ae32,stroke-width:2px;
     classDef wellbeing fill:#edf9f3,color:#175d45,stroke:#63b68f,stroke-width:2px;
+    classDef book fill:#eaf2ff,color:#173f77,stroke:#60a5fa,stroke-width:2px;
     class I,PI integrated;
     class PC,A,S intro;
     class IND,GEN,SPEC,SCRIVANIA indigo;
@@ -254,6 +260,7 @@ flowchart LR
     class PIP prevention;
     class PIF performance;
     class PIB wellbeing;
+    class LIBRO book;
 
     click I "https://statodisalute.it" "Apri Stato di Salute" _blank
     click PI "https://percorsointegrato.it" "Apri Percorso Integrato" _blank
