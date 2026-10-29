@@ -27,6 +27,7 @@
         <span class="mx-1 hidden h-6 w-px bg-slate-200 sm:block" aria-hidden="true"></span>
         <%= link_to "La mia rete", flowpulse_network_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_network_path) ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
         <%= link_to "Gestione rete", flowpulse_admin_brands_path, class: "rounded-full px-3 py-2 text-blue-700 hover:bg-blue-50" %>
+        <%= link_to "Aggiungere dominio", admin_note_path(source: "docs", path: "aggiungere-dominio-flowpulse.md"), class: "rounded-full px-3 py-2 text-emerald-700 hover:bg-emerald-50" %>
         <%= link_to "Sviluppo", flowpulse_development_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/development' ? 'bg-amber-50 text-amber-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <% end %>
       <%= link_to "Changelog", changelog_path, class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>

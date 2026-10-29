@@ -39,6 +39,15 @@ class Flowpulse::DevelopmentControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{flowpulse_development_entry_path("posturacorretta-programma-lezioni-studente-insegnante")}']"
   end
 
+  test "superadmin sees the domain publication guide in FlowPulse navigation" do
+    sign_in_superadmin
+
+    get flowpulse_development_url
+
+    assert_response :success
+    assert_select "a[href='#{admin_note_path(source: "docs", path: "aggiungere-dominio-flowpulse.md")}']", text: "Aggiungere dominio"
+  end
+
   test "repairs a missing active role for a superadmin" do
     @superadmin.update_columns(active_role: 99)
     sign_in_superadmin
