@@ -19,24 +19,31 @@ class NodeCatalogTest < ActiveSupport::TestCase
 
     mark = Node.find_by!(slug: "markpostura")
     stato_di_salute = Node.find_by!(slug: "stato-di-salute")
+    linea_postura_giardino = Node.find_by!(slug: "dalla-posturacorretta-al-giardino-del-corpo")
     postura = Node.find_by!(slug: "posturacorretta")
     percorso_integrato = Node.find_by!(slug: "percorso-integrato")
     giardino_del_corpo = Node.find_by!(slug: "ilgiardinodelcorpo")
     genera_impresa = Node.find_by!(slug: "generaimpresa")
     inside_adventure = Node.find_by!(slug: "insideadventure")
 
-    configured_slugs = %w[markpostura flowpulse rails4business posturacorretta stato-di-salute percorso-integrato ilgiardinodelcorpo insideadventure corpoecoscienza cantachetipassa generaimpresa impegno svuotamente brand-in-costruzione igiene-posturale radioestesia]
+    configured_slugs = %w[markpostura flowpulse rails4business posturacorretta stato-di-salute dalla-posturacorretta-al-giardino-del-corpo percorso-integrato ilgiardinodelcorpo insideadventure corpoecoscienza cantachetipassa generaimpresa impegno svuotamente brand-in-costruzione igiene-posturale radioestesia]
     assert_equal configured_slugs.size, first.nodes
     assert_equal configured_slugs.size, second.nodes
     assert_equal configured_slugs.size, Node.where(slug: configured_slugs).count
     assert mark.professional?
     assert_equal mark, user_profile.primary_node
     assert_equal mark, stato_di_salute.parent
-    assert_equal stato_di_salute, postura.parent
+    assert_equal stato_di_salute, linea_postura_giardino.parent
+    assert_equal linea_postura_giardino, postura.parent
     assert_equal stato_di_salute, percorso_integrato.parent
-    assert_equal stato_di_salute, giardino_del_corpo.parent
+    assert_equal linea_postura_giardino, giardino_del_corpo.parent
     assert_equal genera_impresa, inside_adventure.parent
     assert_equal mark, postura.professional_owner_node
+    assert_equal mark, Node.find_by!(slug: "flowpulse").parent
+    assert_match(/Piattaforma trasversale/, Node.find_by!(slug: "flowpulse").description)
+    assert_match(/costruzione di processi/, Node.find_by!(slug: "rails4business").description)
+    assert_match(/diventano progetti/, genera_impresa.description)
+    assert_match(/calendari, eventi ed esperienze/, Node.find_by!(slug: "impegno").description)
   end
 
   test "supports a professional demo without a profile association" do

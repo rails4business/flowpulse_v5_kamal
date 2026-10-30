@@ -10,6 +10,7 @@ default: &default
 
     flowpulse:
       title: Flowpulse
+      description: Piattaforma trasversale che ospita, collega e rende percorribili Brand, linee di apprendimento, servizi ed esperienze.
       node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
@@ -18,6 +19,7 @@ default: &default
 
     rails4business:
       title: Rails4Business
+      description: Mondo dedicato alla scoperta del potenziale, alla gestione delle risorse e alla costruzione di processi riutilizzabili.
       node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
@@ -27,7 +29,7 @@ default: &default
     posturacorretta:
       title: PosturaCorretta
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -39,6 +41,15 @@ default: &default
       title: Stato di Salute
       node_type: project
       parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    dalla-posturacorretta-al-giardino-del-corpo:
+      title: Dalla PosturaCorretta al Giardino del Corpo
+      description: Linea di apprendimento che parte dalla conoscenza della postura e conduce alla scoperta e alla connessione con il corpo, le persone e l'ambiente.
+      node_type: project
+      parent_slug: stato-di-salute
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -57,7 +68,7 @@ default: &default
     ilgiardinodelcorpo:
       title: Il Giardino del Corpo
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -94,6 +105,7 @@ default: &default
 
     generaimpresa:
       title: GeneraImpresa
+      description: Mondo nel quale idee e bisogni diventano progetti da definire, sviluppare e realizzare.
       node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
@@ -102,6 +114,7 @@ default: &default
 
     impegno:
       title: 1Impegno
+      description: Mondo operativo per organizzare impegni e risorse attraverso calendari, eventi ed esperienze.
       node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura

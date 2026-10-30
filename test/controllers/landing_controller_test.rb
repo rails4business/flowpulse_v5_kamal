@@ -42,11 +42,11 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get flowpulse_url
 
     assert_response :success
-    assert_select "h1", text: /Costruisci il tuo mondo.*Segui il tuo flow/m
+    assert_select "h1", text: /Segui il tuo battito.*Entra nel flusso/m
     assert_select "figure[aria-labelledby='personal-flow-title personal-flow-caption']"
     assert_select "svg[aria-labelledby='personal-flow-title personal-flow-description']"
     assert_select "svg title", text: "Costruisci il tuo mondo con FlowPulse"
-    assert_select "#come-funziona", text: /Il tuo mondo non deve assomigliare/
+    assert_select "#come-funziona", text: /Ogni apprendimento è una linea metropolitana/
     assert_select "#mondo-markpostura", text: /Il FlowPulse costruito da MarkPostura/
     assert_select "#mondo-markpostura img[alt='Il FlowPulse costruito da MarkPostura']"
     assert_select "#mondo-markpostura", text: /Un’altra persona può partire da sfere completamente diverse/

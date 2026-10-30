@@ -219,10 +219,14 @@ flowchart LR
     PI["SALUTE Percorso Integrato - Professionisti della salute e del benessere. <br/><small>percorsointegrato.it</small>"]
     PC["PosturaCorretta<br/><small>posturacorretta.org</small>"]
     VIO["Apprendimento 3:<br/>scoperta e connessione il giardino del corpo l'essere umano come un giardino eventi seminari weekend esperienze<br/><small>ilgiardinodelcorpo.it</small>"]
-    RIS["rails4b.com, lavoro e risorse:<br/>scoprire il proprio potenziale"]
+    RIS["rails4b.com, lavoro e risorse:<br/>scoprire il proprio potenziale e creare processi"]
+    GENER["generaimpresa.it, progetti e realizzazione"]
+    IMPEGN["1impegno.it, gestione impegni e risorse calendario eventi"]
+    FLOW["flowpulse.net, piattaforma ospitante"]
+
 
     I --> PI
-
+    I --> PC
 
     PI --> PID["Stop al dolore"]
     PI --> PIP["Prevenzione"]
@@ -240,6 +244,8 @@ flowchart LR
     SPEC --> SCRIVANIA["60 movimenti alla scrivania"]
     I --> LIBRO
     LIBRO <-->  PC & VIO & RIS
+
+    RIS  <--> GENER & IMPEGN & FLOW
 
     classDef integrated fill:#e9f8f1,color:#145c43,stroke:#2b9a70,stroke-width:2px;
     classDef intro fill:#e8f7fb,color:#164e63,stroke:#7dd3fc,stroke-width:2px;
@@ -267,6 +273,9 @@ flowchart LR
     click PC "https://posturacorretta.org" "Apri PosturaCorretta" _blank
     click VIO "https://ilgiardinodelcorpo.it" "Apri Il Giardino del Corpo" _blank
     click RIS "https://rails4b.com" "Apri Rails4B" _blank
+    click GENER "https://generaimpresa.it" "Apri GeneraImpresa" _blank
+    click IMPEGN "https://1impegno.it" "Apri 1Impegno" _blank
+    click FLOW "https://flowpulse.net" "Apri FlowPulse" _blank
     click A "https://posturacorretta.org/posturacorretta/corsi/postura-e-fisiologia" "Apri Apprendimento 1" _blank
     click IND "https://posturacorretta.org/posturacorretta/corsi/muoviti-ed-esplora" "Apri Apprendimento 2" _blank
         </pre>
@@ -283,7 +292,7 @@ flowchart LR
     R["Area Massaggio - terapie manuali e tecniche corporee Postura, recupero<br/>e coscienza corporea"]
     A --> R
     A --> MOV["Area Movimento<br/>Postura, movimento e attività motoria"]
-    A --> MED["Area Meditazione<br/>Postura, ascolto e consapevolezza"]
+    A --> MED["Area Mente<br/>Postura, ascolto e consapevolezza"]
     A --> ALI["Area Alimentazione<br/>Postura, nutrimento e fisiologia"]
     A --> FAR["Area Farmaci<br/>Postura, regolazione e medicamenti"]
 
@@ -311,8 +320,8 @@ flowchart LR
     MED10 --> MED11["La medicina del Suono"]
     MED11 --> MED12["Il teatro"]
     MED12 --> MED13["Il giardino del corpo"]
-    MED13 --> MED13["Bagno di Foresta"]
-    MED13 --> MED13["Viaggio sonoro"]
+    MED13 --> MED14["Bagno di Foresta"]
+    MED14 --> MED15["Viaggio sonoro"]
 
     ALI --> ALI01["Cosa stiamo mangiando?"]
     ALI01 --> ALI02["Cos'è il cibo?"]
@@ -366,8 +375,7 @@ flowchart LR
     L35 --> L36["Scopri di più su Corpo e Coscienza"]
 
     L36 --> L38["Altre metodiche posturali"]
-   
-    
+
 
     classDef intro fill:#e8f7fb,color:#164e63,stroke:#7dd3fc,stroke-width:2px;
     classDef course fill:#69418a,color:#fff,stroke:#45265f,stroke-width:2px;
@@ -399,7 +407,7 @@ flowchart LR
     class ALI alimentation;
     class FAR medication;
     class MOV01,MOV02,MOV03,MOV04,MOV05,MOV06,MOV07,MOV08,MOV09,MOV10 movementItem;
-    class MED01,MED02,MED03,MED04,MED05,MED06,MED07,MED08,MED09,MED10,MED11,MED12,MED13 meditationItem;
+    class MED01,MED02,MED03,MED04,MED05,MED06,MED07,MED08,MED09,MED10,MED11,MED12,MED13,MED14,MED15 meditationItem;
     class ALI01,ALI02,ALI03,ALI04,ALI05 alimentationItem;
     class FAR01,FAR02,FAR03,FAR04 medicationItem;
 
@@ -421,7 +429,7 @@ flowchart LR
       theme: "base",
       securityLevel: "loose",
       flowchart: {
-        curve: "stepAfter",
+        curve: "monotoneX",
         htmlLabels: true,
         useMaxWidth: false,
         diagramPadding: 28,

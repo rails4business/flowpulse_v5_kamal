@@ -38,7 +38,7 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     get flowpulse_path
 
     assert_response :success
-    assert_select "h1", text: /Costruisci il tuo mondo.*Segui il tuo flow/m
+    assert_select "h1", text: /Segui il tuo battito.*Entra nel flusso/m
     assert_select "a[href='#{rails4b_path}']", text: /Rails4Business/, minimum: 1
     assert_select "a[href='#{eventi_path}']", count: 0
     assert_select "a[href^='/flowpulse/contenuti']", count: 0
