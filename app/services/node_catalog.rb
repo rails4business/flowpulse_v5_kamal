@@ -3,7 +3,7 @@ class NodeCatalog
 
   ALLOWED_ATTRIBUTES = %w[
     title description node_type view_type status visibility
-    operator_roles
+    operator_roles map_color
   ].freeze
 
   def self.from_config(environment = Rails.env)
@@ -25,6 +25,11 @@ class NodeCatalog
         next if attributes[reference].blank? || definitions.key?(attributes[reference])
 
         raise ArgumentError, "Node #{slug}: #{reference} sconosciuto #{attributes[reference]}"
+      end
+
+      link_slug = attributes["link_node_slug"].presence
+      if link_slug.present? && !definitions.key?(link_slug)
+        raise ArgumentError, "Node #{slug}: link_node_slug sconosciuto #{link_slug}"
       end
     end
 
@@ -48,7 +53,11 @@ class NodeCatalog
       definitions.each do |slug, attributes|
         node = imported.fetch(slug)
         owner_slug = attributes["professional_owner_slug"].presence
-        node.update!(professional_owner_node: owner_slug ? imported.fetch(owner_slug) : nil)
+        link_slug = attributes["link_node_slug"].presence
+        node.update!(
+          professional_owner_node: owner_slug ? imported.fetch(owner_slug) : nil,
+          link_node: link_slug ? imported.fetch(link_slug) : nil
+        )
 
         username = attributes["primary_profile_username"].presence
         next if username.blank?

@@ -19,6 +19,15 @@ class NodeTest < ActiveSupport::TestCase
     assert node_c.valid?
   end
 
+  test "validates optional map color as a full hex value" do
+    @node_a.map_color = "#1D4ED8"
+    assert @node_a.valid?
+
+    @node_a.map_color = "blue"
+    assert_not @node_a.valid?
+    assert_includes @node_a.errors[:map_color], "deve essere un colore HEX nel formato #RRGGBB"
+  end
+
   test "cannot set link_node to self" do
     node = Node.create!(
       title: "Self Linker",

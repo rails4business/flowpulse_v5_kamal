@@ -19,15 +19,17 @@ default: &default
 
     rails4business:
       title: Rails4Business
+      map_color: "#F59E0B"
       description: Mondo dedicato alla scoperta del potenziale, alla gestione delle risorse e alla costruzione di processi riutilizzabili.
       node_type: project
-      parent_slug: markpostura
+      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     posturacorretta:
       title: PosturaCorretta
+      map_color: "#2563EB"
       node_type: project
       parent_slug: dalla-posturacorretta-al-giardino-del-corpo
       professional_owner_slug: markpostura
@@ -39,6 +41,7 @@ default: &default
 
     stato-di-salute:
       title: Stato di Salute
+      map_color: "#0F766E"
       node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
@@ -47,6 +50,7 @@ default: &default
 
     dalla-posturacorretta-al-giardino-del-corpo:
       title: Dalla PosturaCorretta al Giardino del Corpo
+      map_color: "#7C3AED"
       description: Linea di apprendimento che parte dalla conoscenza della postura e conduce alla scoperta e alla connessione con il corpo, le persone e l'ambiente.
       node_type: project
       parent_slug: stato-di-salute
@@ -56,6 +60,8 @@ default: &default
 
     percorso-integrato:
       title: Percorso Integrato
+      map_color: "#E11D48"
+      description: Percorsi coordinati per orientare bisogni, programmi, professionisti e verifiche nella salute e nel benessere.
       node_type: project
       parent_slug: stato-di-salute
       professional_owner_slug: markpostura
@@ -65,10 +71,182 @@ default: &default
         - professionista
         - segreteria
 
+    stop-al-dolore:
+      title: Stop al dolore
+      map_color: "#DC2626"
+      description: Percorso dedicato alla fase acuta, ai sintomi persistenti e all'orientamento verso il professionista più adatto.
+      node_type: project
+      parent_slug: percorso-integrato
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    prevenzione:
+      title: Prevenzione
+      map_color: "#F97316"
+      description: Percorso per riconoscere i fattori di rischio, consolidare abitudini utili e prevenire nuove difficoltà.
+      node_type: project
+      parent_slug: percorso-integrato
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    performance:
+      title: Performance
+      map_color: "#EAB308"
+      description: Percorso per sviluppare capacità, recupero e qualità del movimento in relazione agli obiettivi personali.
+      node_type: project
+      parent_slug: percorso-integrato
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    percorso-benessere:
+      title: Percorso Benessere
+      map_color: "#16A34A"
+      description: Percorso integrato rivolto al benessere quotidiano, all'equilibrio e alla cura continuativa della persona.
+      node_type: project
+      parent_slug: percorso-integrato
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-posturacorretta-da-percorso-integrato:
+      title: Accesso a PosturaCorretta da Percorso Integrato
+      description: Ponte tecnico che rende PosturaCorretta raggiungibile direttamente da Percorso Integrato.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: percorso-integrato
+      link_node_slug: posturacorretta
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    apprendimento-1-espressione:
+      title: Apprendimento 1 · Espressione — Postura e fisiologia
+      map_color: "#2E1065"
+      description: Educazione alla salute attraverso postura, fisiologia e le cinque aree di esperienza del corpo.
+      node_type: project
+      parent_slug: posturacorretta
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    area-massaggio-terapie-manuali-tecniche-corporee:
+      title: Area Massaggio - terapie manuali e tecniche corporee · Postura, recupero e coscienza corporea
+      map_color: "#2E1065"
+      description: Area dedicata a massaggio, terapie manuali, tecniche corporee, recupero e sviluppo della coscienza corporea.
+      node_type: project
+      parent_slug: apprendimento-1-espressione
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    apprendimento-2-connessione:
+      title: Apprendimento 2 · Consapevolezza con le metodiche posturali
+      map_color: "#4F46E5"
+      description: Incontri, pratiche ed esperienze per sviluppare consapevolezza attraverso discipline e metodiche corporee.
+      node_type: project
+      parent_slug: posturacorretta
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    categorie-generali:
+      title: Categorie generali
+      description: Attività e incontri organizzati intorno ai temi generali della consapevolezza e del benessere.
+      node_type: project
+      parent_slug: apprendimento-2-connessione
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    categorie-specifiche:
+      title: Categorie specifiche
+      description: Percorsi e attività focalizzati su bisogni, contesti e pratiche specifiche.
+      node_type: project
+      parent_slug: apprendimento-2-connessione
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    sessanta-movimenti-alla-scrivania:
+      title: 60 movimenti alla scrivania
+      description: Una sequenza accessibile per esplorare il movimento e lavorare sulla postura utilizzando una sedia.
+      node_type: project
+      parent_slug: categorie-specifiche
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    la-prima-settimana-con-posturacorretta:
+      title: La prima settimana con PosturaCorretta
+      map_color: "#2E1065"
+      description: Un primo incontro con la postura attraverso una settimana di osservazione, una prima scheda personale, pratica e orientamento.
+      node_type: project
+      parent_slug: area-massaggio-terapie-manuali-tecniche-corporee
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-posturacorretta-da-prima-settimana:
+      title: Collegamento tra Prima settimana e PosturaCorretta
+      description: Ponte tecnico che rende La prima settimana con PosturaCorretta raggiungibile direttamente da PosturaCorretta.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: la-prima-settimana-con-posturacorretta
+      link_node_slug: posturacorretta
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    pacchetto-gruppi:
+      title: Pacchetto gruppi
+      description: Proposta dedicata ad aziende, società sportive, associazioni e altri gruppi organizzati.
+      node_type: project
+      parent_slug: la-prima-settimana-con-posturacorretta
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     ilgiardinodelcorpo:
-      title: Il Giardino del Corpo
+      title: Apprendimento 3 · Connessione — Il Giardino del Corpo
+      map_color: "#7C3AED"
       node_type: project
       parent_slug: dalla-posturacorretta-al-giardino-del-corpo
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-stato-di-salute-da-posturacorretta:
+      title: Accesso a Stato di Salute da PosturaCorretta
+      description: Ponte visibile da PosturaCorretta verso Stato di Salute, ma non nella direzione opposta.
+      node_type: project
+      view_type: backlink_bridge
+      parent_slug: stato-di-salute
+      link_node_slug: posturacorretta
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-stato-di-salute-da-giardino-del-corpo:
+      title: Accesso a Stato di Salute dal Giardino del Corpo
+      description: Ponte visibile dal Giardino del Corpo verso Stato di Salute, ma non nella direzione opposta.
+      node_type: project
+      view_type: backlink_bridge
+      parent_slug: stato-di-salute
+      link_node_slug: ilgiardinodelcorpo
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-percorso-integrato-da-linea-postura-giardino:
+      title: Collegamento tra la linea narrativa e Percorso Integrato
+      description: Ponte tecnico reciproco tra la linea Dalla PosturaCorretta al Giardino del Corpo e Percorso Integrato.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
+      link_node_slug: percorso-integrato
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -139,10 +317,10 @@ default: &default
     igiene-posturale:
       title: Igiene Posturale
       node_type: project
-      parent_slug: brand-in-costruzione
+      parent_slug: la-prima-settimana-con-posturacorretta
       professional_owner_slug: markpostura
-      status: draft
-      visibility: private
+      status: published
+      visibility: public
 
     radioestesia:
       title: Radioestesia e Benessere

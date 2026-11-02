@@ -1,0 +1,209 @@
+<%
+  primary_domains = [
+    {
+      key: "rosso", label: "Rosso", title: "Salute, cura e riabilitazione", color: "red",
+      questions: [
+        ["Il dolore o altri disturbi interferiscono con le mie attività quotidiane.", true],
+        ["Riesco a muovermi e a prendermi cura di me in autonomia.", false],
+        ["I miei problemi di salute sono sotto controllo con il percorso concordato.", false],
+        ["Negli ultimi tempi ho notato sintomi nuovi o un peggioramento.", true],
+        ["So a chi rivolgermi quando un problema di salute richiede attenzione.", false],
+        ["Ho trovato un percorso o delle soluzioni che mi aiutano concretamente a gestire i miei problemi di salute.", false]
+      ]
+    },
+    {
+      key: "arancione", label: "Arancione", title: "Prevenzione", color: "orange",
+      questions: [
+        ["Mi muovo regolarmente durante la settimana.", false],
+        ["Trascorro molto tempo nella stessa posizione, seduto, in piedi o davanti a uno schermo.", true],
+        ["Riconosco i rischi per la mia salute presenti nel lavoro, nello sport e nella vita quotidiana.", false],
+        ["Adotto attività o accorgimenti per compensare questi rischi.", false],
+        ["Dedico tempo al recupero dopo attività impegnative.", false],
+        ["So a chi rivolgermi quando ho bisogno di affrontare tensioni o difficoltà legate alle mie attività.", false],
+        ["Durante l’anno dedico momenti specifici alla prevenzione e alla verifica di come sto.", false]
+      ]
+    },
+    {
+      key: "giallo", label: "Giallo", title: "Performance", color: "amber",
+      questions: [
+        ["Ho energia sufficiente per affrontare la giornata.", false],
+        ["Riesco a mantenere attenzione e concentrazione nelle mie attività.", false],
+        ["Il mio corpo sostiene adeguatamente ciò che gli chiedo nel lavoro, nello studio o nello sport.", false],
+        ["A fine giornata riesco a recuperare dagli sforzi fisici e mentali.", false],
+        ["Nel corso della settimana riesco a evitare di accumulare stanchezza.", false],
+        ["Riesco a perseguire i miei obiettivi senza arrivare abitualmente esausto.", false],
+        ["Sono soddisfatto della mia forma fisica rispetto alle attività e agli obiettivi che ho.", false]
+      ]
+    },
+    {
+      key: "verde", label: "Verde", title: "Benessere", color: "emerald",
+      questions: [
+        ["Al risveglio mi sento riposato.", false],
+        ["La mia alimentazione è sufficientemente varia e regolare.", false],
+        ["Riesco a rilassarmi e a dedicare tempo ad attività piacevoli.", false],
+        ["Mi sento emotivamente in equilibrio nella maggior parte delle giornate.", false],
+        ["Sono soddisfatto del mio umore nella vita quotidiana.", false],
+        ["Nel complesso sono soddisfatto di come mi sento.", false]
+      ]
+    }
+  ]
+
+  deeper_domains = [
+    {
+      key: "azzurro", label: "Azzurro", title: "Conoscenza ed espressione del corpo", color: "sky",
+      questions: [
+        ["Riconosco i segnali con cui il corpo mi comunica stanchezza, tensione o bisogno di recupero.", false],
+        ["Riesco a descrivere con chiarezza ciò che sento nel corpo.", false],
+        ["Comprendo come sonno, respiro, movimento, alimentazione e stress influenzano il mio stato.", false],
+        ["Quando qualcosa non va, riesco a comunicarlo e a chiedere il sostegno adatto.", false]
+      ]
+    },
+    {
+      key: "indaco", label: "Indaco", title: "Consapevolezza", color: "indigo",
+      questions: [
+        ["Mi fermo ad ascoltare ciò che sto provando, senza reagire subito in modo automatico.", false],
+        ["Riconosco le situazioni e le abitudini che migliorano o peggiorano il mio equilibrio.", false],
+        ["Mi accorgo quando pensieri, emozioni e corpo si influenzano reciprocamente.", false],
+        ["Le mie scelte quotidiane sono coerenti con ciò che considero importante.", false]
+      ]
+    },
+    {
+      key: "violetto", label: "Violetto", title: "Evoluzione e connessione", color: "violet",
+      questions: [
+        ["Le mie relazioni mi fanno sentire sostenuto e parte di una comunità.", false],
+        ["L’ambiente in cui vivo e lavoro favorisce il mio equilibrio.", false],
+        ["Dedico tempo al contatto con la natura, la cultura o esperienze che ampliano la mia prospettiva.", false],
+        ["Percepisco una direzione o un significato nel modo in cui vivo e cresco.", false],
+        ["Riesco a tradurre nella vita quotidiana ciò che considero importante.", false],
+        ["Riesco a condividere con chi mi sta accanto i valori e le esperienze significative per me.", false]
+      ]
+    }
+  ]
+
+  response_options = [[0, "Per niente"], [1, "Poco"], [2, "Abbastanza"], [3, "Molto"], [4, "Completamente"]]
+  domain_styles = {
+    "red" => ["border-red-200 bg-red-50", "text-red-800", "bg-red-600"],
+    "orange" => ["border-orange-200 bg-orange-50", "text-orange-800", "bg-orange-500"],
+    "amber" => ["border-amber-200 bg-amber-50", "text-amber-800", "bg-amber-500"],
+    "emerald" => ["border-emerald-200 bg-emerald-50", "text-emerald-800", "bg-emerald-600"],
+    "sky" => ["border-sky-200 bg-sky-50", "text-sky-800", "bg-sky-600"],
+    "indigo" => ["border-indigo-200 bg-indigo-50", "text-indigo-800", "bg-indigo-600"],
+    "violet" => ["border-violet-200 bg-violet-50", "text-violet-800", "bg-violet-600"]
+  }
+%>
+
+<% all_domains = primary_domains + deeper_domains %>
+<section id="ambiti" class="scroll-mt-20 bg-slate-50" data-health-assessment>
+  <div class="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
+   
+
+    <section class="mt-8" aria-labelledby="health-domains-title">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h3 id="health-domains-title" class="text-xl font-black">I sette ambiti</h3>
+        <div class="flex flex-wrap gap-2 text-xs font-bold text-slate-500"><span class="rounded-full bg-white px-3 py-1.5" data-group-progress="core">0 di 4 principali</span><span class="rounded-full bg-white px-3 py-1.5" data-group-progress="deep">0 di 3 facoltativi</span></div>
+      </div>
+      <div class="mt-6 space-y-3">
+        <% primary_domains.each do |domain| %><%= render "landing/stato_salute_domain_card", domain: domain, domain_styles: domain_styles, optional: false %><% end %>
+     
+        <% deeper_domains.each do |domain| %><%= render "landing/stato_salute_domain_card", domain: domain, domain_styles: domain_styles, optional: true %><% end %>
+      </div>
+    </section>
+
+    <div class="mt-8 hidden rounded-3xl border border-emerald-200 bg-emerald-50 p-7" data-core-complete>
+      <p class="text-xs font-black uppercase tracking-[.16em] text-emerald-700">Primi quattro ambiti completati</p>
+      <h3 class="mt-2 text-2xl font-black text-emerald-950">Hai osservato come sta la tua salute.</h3>
+      <p class="mt-3 max-w-3xl leading-7 text-emerald-900">Puoi approfondire gli altri ambiti, confrontare il profilo con chi ti segue oppure scoprire come costruire un Percorso Integrato.</p>
+      <%= link_to "Scopri il Percorso Integrato →", percorso_integrato_path(anchor: "percorso"), class: "mt-5 inline-flex rounded-xl bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800" %>
+    </div>
+
+    <div class="mt-8 hidden grid gap-4 sm:grid-cols-2" data-deep-complete>
+      <%= link_to posturacorretta_path, class: "rounded-3xl border border-blue-200 bg-blue-50 p-7 hover:bg-blue-100" do %><p class="text-xs font-black uppercase tracking-[.16em] text-blue-700">Azzurro e Indaco</p><strong class="mt-2 block text-xl text-blue-950">Inizia da PosturaCorretta</strong><span class="mt-2 block text-sm leading-6 text-blue-800">Conosci il corpo e sperimenta nuove metodiche.</span><% end %>
+      <%= link_to giardino_del_corpo_path, class: "rounded-3xl border border-violet-200 bg-violet-50 p-7 hover:bg-violet-100" do %><p class="text-xs font-black uppercase tracking-[.16em] text-violet-700">Violetto</p><strong class="mt-2 block text-xl text-violet-950">Entra nel Giardino del Corpo</strong><span class="mt-2 block text-sm leading-6 text-violet-800">Esplora esperienze, relazioni e connessioni.</span><% end %>
+    </div>
+
+    <div class="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-6 text-sm text-slate-500"><p><strong class="text-slate-700">Orientamento, non diagnosi.</strong> Le risposte restano nel browser.</p><button type="button" class="font-bold text-slate-500 underline hover:text-red-700" data-reset-assessment>Azzera la valutazione</button></div>
+  </div>
+
+  <% all_domains.each_with_index do |domain, domain_index| %>
+    <% panel_class, text_class, dot_class = domain_styles.fetch(domain.fetch(:color)) %>
+    <div class="fixed inset-0 z-[100] hidden overflow-y-auto bg-white" data-domain-panel="<%= domain.fetch(:key) %>" data-domain-index="<%= domain_index %>" role="dialog" aria-modal="true" aria-label="<%= domain.fetch(:label) %> — <%= domain.fetch(:title) %>">
+      <div class="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <div class="mx-auto flex max-w-3xl items-center gap-4 px-5 py-4">
+          <button type="button" class="flex size-10 shrink-0 items-center justify-center rounded-full border border-slate-200 text-xl hover:bg-slate-100" data-close-domain aria-label="Chiudi">×</button>
+          <div class="min-w-0 flex-1"><div class="flex justify-between gap-3 text-xs font-bold text-slate-500"><span class="truncate"><%= domain.fetch(:label) %> · <%= domain.fetch(:title) %></span><span data-step-count></span></div><div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuemin="1" aria-valuemax="<%= domain.fetch(:questions).length %>" data-progress-track><span class="block h-full rounded-full transition-all duration-300 <%= dot_class %>" data-progress-bar></span></div></div>
+        </div>
+      </div>
+
+      <form class="mx-auto flex min-h-[calc(100vh-73px)] max-w-3xl flex-col px-5" data-domain-form="<%= domain.fetch(:key) %>" data-domain-label="<%= domain.fetch(:label) %> · <%= domain.fetch(:title) %>">
+        <div class="flex flex-1 items-start justify-center py-10 sm:items-center"><div class="w-full max-w-xl">
+          <% domain.fetch(:questions).each_with_index do |(question, reversed), question_index| %>
+            <fieldset class="hidden" data-domain-step data-reversed="<%= reversed %>" data-question-index="<%= question_index %>">
+              <legend class="w-full"><span class="inline-flex rounded-full px-3 py-1 text-xs font-black uppercase tracking-[.12em] <%= panel_class %> <%= text_class %>"><%= domain.fetch(:label) %></span><span class="mt-5 block text-2xl font-black leading-tight sm:text-3xl"><%= question %></span></legend>
+              <div class="mt-8 space-y-3" role="radiogroup">
+                <% response_options.each do |value, label| %>
+                  <label class="flex cursor-pointer items-center gap-4 rounded-2xl border-2 border-slate-200 p-4 transition hover:border-slate-400 has-[:checked]:border-slate-950 has-[:checked]:bg-slate-950 has-[:checked]:text-white"><input type="radio" name="<%= domain.fetch(:key) %>_q<%= question_index %>" value="<%= value %>" class="peer size-5 accent-slate-950"><span class="flex-1 font-bold"><%= label %></span><span class="font-black text-slate-400 peer-checked:text-slate-300"><%= value %></span></label>
+                <% end %>
+              </div>
+            </fieldset>
+          <% end %>
+
+          <div class="hidden" data-domain-result tabindex="-1"><p class="text-xs font-black uppercase tracking-[.16em] <%= text_class %>">Valutazione completata</p><h3 class="mt-3 text-3xl font-black"><%= domain.fetch(:label) %> — <%= domain.fetch(:title) %></h3><div class="mt-7 rounded-3xl border p-6 <%= panel_class %>"><div class="flex items-center justify-between gap-6"><strong class="text-lg <%= text_class %>" data-result-status></strong><div class="shrink-0 text-center"><div class="flex gap-2" aria-label="Indicatore a semaforo"><span class="size-5 rounded-full bg-red-500 opacity-20" data-signal="red"></span><span class="size-5 rounded-full bg-amber-400 opacity-20" data-signal="amber"></span><span class="size-5 rounded-full bg-emerald-500 opacity-20" data-signal="green"></span></div><span class="mt-2 block text-sm font-black <%= text_class %>" data-result-score></span></div></div></div><p class="mt-5 leading-7 text-slate-600">Questo risultato descrive le risposte che hai dato in questo ambito. Non è una diagnosi e non sostituisce una valutazione professionale.</p><div class="mt-7 grid gap-3 sm:grid-cols-2"><button type="button" class="rounded-xl border border-slate-300 px-5 py-3 text-sm font-black hover:bg-slate-50" data-review-domain>Rifai la valutazione</button><button type="button" class="rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-800" data-next-domain><%= domain_index == all_domains.length - 1 ? "Torna al profilo" : "Continua con il prossimo ambito" %></button></div></div>
+        </div></div>
+        <div class="sticky bottom-0 border-t border-slate-200 bg-white/95 py-4 backdrop-blur" data-domain-actions><div class="mx-auto flex max-w-xl"><button type="button" class="hidden rounded-xl border border-slate-300 px-5 py-3 font-black hover:bg-slate-100" data-previous-step>Indietro</button><p class="ml-auto self-center text-sm font-semibold text-slate-400">La risposta porta automaticamente avanti</p></div></div>
+      </form>
+    </div>
+  <% end %>
+</section>
+
+<script>
+  (() => {
+    const root = document.querySelector("[data-health-assessment]");
+    if (!root || root.dataset.ready === "true") return;
+    root.dataset.ready = "true";
+    const storageKey = "stato-salute-profile-v1";
+    const coreKeys = ["rosso", "arancione", "giallo", "verde"];
+    const deepKeys = ["azzurro", "indaco", "violetto"];
+    let profile = {};
+    try { profile = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch (_) { profile = {}; }
+    const save = () => { try { localStorage.setItem(storageKey, JSON.stringify(profile)); } catch (_) {} };
+    const completed = (key) => Boolean(profile[key]?.complete);
+    const scoreFor = (panel, key) => {
+      const answers = profile[key]?.answers || [];
+      const steps = Array.from(panel.querySelectorAll("[data-domain-step]"));
+      const score = steps.reduce((sum, step, index) => { const raw = Number(answers[index]); return sum + (step.dataset.reversed === "true" ? 4 - raw : raw); }, 0);
+      return Math.round((score / (steps.length * 4)) * 100);
+    };
+    const statusFor = (score) => score >= 75 ? "Risorsa presente" : score >= 50 ? "Equilibrio da consolidare" : "Ambito da approfondire";
+    const signalFor = (score) => score >= 75 ? "green" : score >= 50 ? "amber" : "red";
+    const signalIconFor = (score) => score >= 75 ? "🟢" : score >= 50 ? "🟡" : "🔴";
+
+    const refreshOverview = () => {
+      root.querySelectorAll("[data-domain-card]").forEach((card) => { const key = card.dataset.domainCard; const done = completed(key); card.querySelector("[data-card-status]").textContent = done ? `${signalIconFor(profile[key].score)} ${statusFor(profile[key].score)} · ${profile[key].score}%` : "Da iniziare"; card.querySelector("[data-card-button]").textContent = done ? "Vedi risultato" : "Valuta"; card.classList.toggle("ring-2", done); card.classList.toggle("ring-slate-300", done); });
+      const coreCount = coreKeys.filter(completed).length; const deepCount = deepKeys.filter(completed).length;
+      root.querySelector("[data-group-progress='core']").textContent = `${coreCount} di 4 principali`;
+      root.querySelector("[data-group-progress='deep']").textContent = `${deepCount} di 3 facoltativi`;
+      root.querySelector("[data-core-complete]").classList.toggle("hidden", coreCount !== 4);
+      root.querySelector("[data-deep-complete]").classList.toggle("hidden", deepCount !== 3);
+    };
+    const close = (panel) => { panel.classList.add("hidden"); document.body.classList.remove("overflow-hidden"); refreshOverview(); };
+    const open = (key) => { const panel = root.querySelector(`[data-domain-panel="${key}"]`); if (!panel) return; panel.classList.remove("hidden"); panel.scrollTop = 0; document.body.classList.add("overflow-hidden"); panel.dispatchEvent(new CustomEvent("domain:open")); };
+    root.querySelectorAll("[data-open-domain]").forEach((button) => button.addEventListener("click", () => open(button.dataset.openDomain)));
+    root.querySelectorAll("[data-close-domain]").forEach((button) => button.addEventListener("click", () => close(button.closest("[data-domain-panel]"))));
+
+    root.querySelectorAll("[data-domain-form]").forEach((form) => {
+      const key = form.dataset.domainForm; const panel = form.closest("[data-domain-panel]"); const steps = Array.from(form.querySelectorAll("[data-domain-step]")); const result = form.querySelector("[data-domain-result]"); const actions = form.querySelector("[data-domain-actions]"); const previous = form.querySelector("[data-previous-step]"); const count = panel.querySelector("[data-step-count]"); const bar = panel.querySelector("[data-progress-bar]"); const track = panel.querySelector("[data-progress-track]"); let current = 0; let advancing;
+      const answers = () => profile[key]?.answers || [];
+      const showResult = () => { steps.forEach((step) => step.classList.add("hidden")); actions.classList.add("hidden"); result.classList.remove("hidden"); const score = profile[key].score; result.querySelector("[data-result-score]").textContent = `${score}%`; result.querySelector("[data-result-status]").textContent = statusFor(score); result.querySelectorAll("[data-signal]").forEach((signal) => { const active = signal.dataset.signal === signalFor(score); signal.classList.toggle("opacity-20", !active); signal.classList.toggle("ring-4", active); signal.classList.toggle("ring-white", active); }); count.textContent = "Completato"; bar.style.width = "100%"; panel.scrollTo({ top: 0, behavior: "smooth" }); };
+      const render = () => { result.classList.add("hidden"); actions.classList.remove("hidden"); steps.forEach((step, index) => step.classList.toggle("hidden", index !== current)); previous.classList.toggle("hidden", current === 0); count.textContent = `${current + 1} di ${steps.length}`; bar.style.width = `${((current + 1) / steps.length) * 100}%`; track.setAttribute("aria-valuenow", String(current + 1)); panel.scrollTo({ top: 0, behavior: "smooth" }); };
+      const finish = () => { profile[key].complete = true; profile[key].score = scoreFor(panel, key); save(); showResult(); refreshOverview(); };
+      panel.addEventListener("domain:open", () => { const saved = answers(); steps.forEach((step, index) => { const input = step.querySelector(`input[value="${saved[index]}"]`); if (input) input.checked = true; }); if (completed(key)) showResult(); else { current = Math.max(0, saved.findIndex((value) => value === null || value === undefined)); if (current < 0) current = 0; render(); } });
+      form.addEventListener("change", (event) => { const step = event.target.closest("[data-domain-step]"); if (!step) return; const index = Number(step.dataset.questionIndex); profile[key] ||= { answers: [] }; profile[key].answers[index] = Number(event.target.value); save(); clearTimeout(advancing); advancing = setTimeout(() => { if (current < steps.length - 1) { current += 1; render(); } else finish(); }, 280); });
+      previous.addEventListener("click", () => { clearTimeout(advancing); if (current > 0) { current -= 1; render(); } });
+      result.querySelector("[data-review-domain]").addEventListener("click", () => { profile[key] = { answers: [], complete: false }; steps.forEach((step) => step.querySelectorAll("input").forEach((input) => input.checked = false)); save(); current = 0; render(); });
+      result.querySelector("[data-next-domain]").addEventListener("click", () => { const nextPanel = panel.nextElementSibling; close(panel); const nextIndex = Number(panel.dataset.domainIndex) + 1; const next = root.querySelector(`[data-domain-index="${nextIndex}"]`); if (next) open(next.querySelector("[data-domain-form]").dataset.domainForm); else root.scrollIntoView({ behavior: "smooth" }); });
+    });
+    root.querySelector("[data-reset-assessment]").addEventListener("click", () => { if (!confirm("Vuoi cancellare tutte le risposte e i risultati salvati in questo browser?")) return; profile = {}; try { localStorage.removeItem(storageKey); } catch (_) {} root.querySelectorAll("input[type='radio']").forEach((input) => input.checked = false); refreshOverview(); });
+    document.addEventListener("keydown", (event) => { if (event.key !== "Escape") return; const panel = root.querySelector("[data-domain-panel]:not(.hidden)"); if (panel) close(panel); });
+    refreshOverview();
+  })();
+</script>

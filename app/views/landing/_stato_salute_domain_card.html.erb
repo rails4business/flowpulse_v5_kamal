@@ -1,0 +1,28 @@
+<%
+  panel_class, text_class, dot_class = domain_styles.fetch(domain.fetch(:color))
+  descriptions = {
+    "rosso" => "Disturbi, autonomia e gestione dei problemi di salute.",
+    "arancione" => "Movimento, rischi, recupero e prevenzione.",
+    "giallo" => "Energia, capacità, attività e obiettivi.",
+    "verde" => "Riposo, equilibrio e percezione dello stare bene.",
+    "azzurro" => "Ascolto, comprensione ed espressione del corpo.",
+    "indaco" => "Bisogni, emozioni, comportamenti e scelte.",
+    "violetto" => "Ambiente, relazioni, valori e direzione personale."
+  }
+%>
+<article class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md sm:flex sm:items-center sm:gap-6" data-domain-card="<%= domain.fetch(:key) %>">
+  <span class="absolute inset-y-0 left-0 w-1.5 <%= dot_class %>" aria-hidden="true"></span>
+  <div class="min-w-0 flex-1 pl-2">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-xs font-black uppercase tracking-[.12em] <%= text_class %>"><%= domain.fetch(:label) %></span>
+      <% if optional %><span class="rounded-full bg-slate-100 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-slate-500">Facoltativo</span><% end %>
+      <span class="text-xs font-semibold text-slate-400"><%= domain.fetch(:questions).length %> domande · circa 1 minuto</span>
+    </div>
+    <h4 class="mt-1 text-lg font-black text-slate-950"><%= domain.fetch(:title) %></h4>
+    <p class="mt-1 text-sm leading-6 text-slate-600"><%= descriptions.fetch(domain.fetch(:key)) %></p>
+  </div>
+  <div class="mt-4 flex items-center justify-between gap-4 pl-2 sm:mt-0 sm:w-56 sm:shrink-0 sm:pl-0">
+    <p class="text-xs font-black uppercase tracking-[.1em] <%= text_class %>" data-card-status>Da iniziare</p>
+    <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 transition hover:border-slate-500 hover:bg-slate-50" data-open-domain="<%= domain.fetch(:key) %>" data-card-button>Valuta</button>
+  </div>
+</article>

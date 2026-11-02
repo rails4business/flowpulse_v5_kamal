@@ -1,13 +1,22 @@
-<nav class="border-b border-slate-200 bg-white" aria-label="Navigazione Flowpulse">
-  <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-8">
-    <%= link_to "Flowpulse", flowpulse_path, class: "text-sm font-black uppercase tracking-[0.2em] text-blue-700" %>
-    <div class="flex flex-wrap items-center justify-end gap-1 text-sm font-bold">
-      <details class="group relative">
-        <summary class="flex cursor-pointer list-none items-center gap-1 rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 [&::-webkit-details-marker]:hidden">
+<% vertical = local_assigns.fetch(:vertical, false) %>
+<nav class="<%= vertical ? 'w-full bg-white' : 'border-b border-slate-200 bg-white' %>" aria-label="Navigazione Flowpulse">
+  <div class="<%= vertical ? 'flex flex-col items-stretch gap-3' : 'mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-8' %>">
+    <%= link_to "Flowpulse", flowpulse_path, class: "text-sm font-black uppercase tracking-[0.2em] text-blue-700 #{vertical ? 'px-1 py-2' : ''}" %>
+    <% if vertical %>
+      <details class="group/nav">
+        <summary class="flex cursor-pointer list-none items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-black text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 [&::-webkit-details-marker]:hidden">
+          <span>Navigazione</span>
+          <span class="text-[10px] transition-transform group-open/nav:rotate-180" aria-hidden="true">▼</span>
+        </summary>
+        <div class="mt-2 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm">
+    <% end %>
+    <div class="<%= vertical ? 'flex flex-col items-stretch gap-1 text-sm font-bold' : 'flex flex-wrap items-center justify-end gap-1 text-sm font-bold' %>">
+      <details class="group <%= vertical ? '' : 'relative' %>">
+        <summary class="flex cursor-pointer list-none items-center gap-1 <%= vertical ? 'justify-between rounded-xl' : 'rounded-full' %> px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950 [&::-webkit-details-marker]:hidden">
           Strumenti
           <span class="text-[10px] transition group-open:rotate-180" aria-hidden="true">▼</span>
         </summary>
-        <div class="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10">
+        <div class="<%= vertical ? 'mt-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1' : 'absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10' %>">
           <%= link_to genera_impresa_path, class: "block rounded-xl px-3 py-3 hover:bg-orange-50" do %>
             <strong class="block text-sm text-slate-950">GeneraImpresa</strong>
             <span class="mt-0.5 block text-xs font-medium text-slate-500">Dall’idea al progetto</span>
@@ -24,7 +33,7 @@
       </details>
       <%= link_to "Rete", flowpulse_global_network_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/network' && action_name == 'global' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <% if Current.user&.superadmin_user? %>
-        <span class="mx-1 hidden h-6 w-px bg-slate-200 sm:block" aria-hidden="true"></span>
+        <span class="<%= vertical ? 'my-1 h-px w-full bg-slate-200' : 'mx-1 hidden h-6 w-px bg-slate-200 sm:block' %>" aria-hidden="true"></span>
         <%= link_to "La mia rete", flowpulse_network_path, class: "rounded-full px-3 py-2 #{current_page?(flowpulse_network_path) ? 'bg-violet-50 text-violet-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
         <%= link_to "Gestione rete", flowpulse_admin_brands_path, class: "rounded-full px-3 py-2 text-blue-700 hover:bg-blue-50" %>
         <%= link_to "Aggiungere dominio", admin_note_path(source: "docs", path: "aggiungere-dominio-flowpulse.md"), class: "rounded-full px-3 py-2 text-emerald-700 hover:bg-emerald-50" %>
@@ -32,5 +41,9 @@
       <% end %>
       <%= link_to "Changelog", changelog_path, class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
     </div>
+    <% if vertical %>
+        </div>
+      </details>
+    <% end %>
   </div>
 </nav>

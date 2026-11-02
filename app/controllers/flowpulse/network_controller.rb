@@ -1,7 +1,7 @@
 module Flowpulse
   class NetworkController < ApplicationController
     layout "landing"
-    allow_unauthenticated_access only: :global
+    allow_unauthenticated_access only: %i[global automatic]
 
     def global
       @network_nodes = Node.published_public
@@ -12,6 +12,12 @@ module Flowpulse
       else
         Current.user&.role_assignments&.ideatore&.pluck(:id) || []
       end
+    end
+
+    def automatic
+      @automatic_center = true
+      global
+      render :global
     end
 
     def destroy_node

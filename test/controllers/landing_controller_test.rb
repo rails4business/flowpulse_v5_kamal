@@ -1,23 +1,36 @@
 require "test_helper"
 
 class LandingControllerTest < ActionDispatch::IntegrationTest
-  test "Stato di Salute presents the two paths without simulating a clinical assessment" do
+  test "Stato di Salute presents seven modular non-diagnostic assessments" do
     get stato_di_salute_url
 
     assert_response :success
-    assert_select "h1", "Come stai, davvero?"
-    assert_select "nav a[href='#orientamento']", text: "Fai il test"
-    assert_select "#human-areas"
-    assert_select "#human-areas [data-area-tab]", count: 7
-    assert_select "a[href='#{percorso_integrato_path}']", text: /Percorso Integrato/
+    assert_select "h1", "Autovalutazione dello stato di salute."
+    assert_select "[data-domain-card]", count: 7
+    assert_select "[data-domain-panel]", count: 7
+    assert_select "[data-domain-form]", count: 7
+    assert_select "[data-domain-step]", count: 40
+    assert_select "[data-progress-track]", count: 7
+    assert_select "a[href='#{percorso_integrato_path(anchor: 'percorso')}']", text: /Percorso Integrato/
     assert_select "a[href='#{posturacorretta_path}']", text: /PosturaCorretta/
-    assert_select "nav a[href='#{giardino_del_corpo_path}']", text: "Il Giardino del Corpo"
-    assert_select "article", text: /Dalla PosturaCorretta al Giardino del Corpo/
-    assert_select "span", text: "Questionario in preparazione"
-    assert_select "main", text: /non sostituirà diagnosi, visita o valutazione professionale/i
+    assert_select "nav a[href='#ambiti']", minimum: 1
+    assert_select "nav a[href='#{stato_di_salute_about_path}']", minimum: 1
+    assert_select "nav a[href='#{percorso_integrato_path}']", count: 0
+    assert_select "nav a[href='#{posturacorretta_path}']", count: 0
+    assert_select "nav a[href='#{giardino_del_corpo_path}']", count: 0
+    assert_select "a[href='#{giardino_del_corpo_path}']", text: /Entra nel Giardino/
+    assert_select "main", text: /Orientamento, non diagnosi/i
 
     get "/stato_di_salute"
     assert_redirected_to stato_di_salute_url
+  end
+
+  test "Stato di Salute about explains the project and returns to assessments" do
+    get stato_di_salute_about_url
+
+    assert_response :success
+    assert_select "h1", "La patologia non è tutta la tua salute."
+    assert_select "a[href='#{stato_di_salute_path(anchor: 'ambiti')}']", minimum: 1
   end
 
   test "Igiene Posturale route stays inside GeneraImpresa while its Node is not public" do

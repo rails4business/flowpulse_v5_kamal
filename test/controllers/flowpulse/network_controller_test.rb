@@ -85,6 +85,33 @@ class Flowpulse::NetworkControllerTest < ActionDispatch::IntegrationTest
     assert_select "button", text: "TUTTO", count: 0
   end
 
+  test "automatic network renders a single automatically centered radial map" do
+    get flowpulse_automatic_network_url(vista: "brand")
+
+    assert_response :success
+    assert_select "[data-controller='node-network'][data-node-network-automatic-center-value='true']", count: 1
+    assert_select "a[title='Passa alla vista All']", text: /Vista.*ONLY NODE/m, count: 1
+  end
+
+  test "only node view preserves the requested center" do
+    technical_bridge = Node.create!(
+      role_assignment: @owner_role,
+      parent: @professional,
+      professional_owner_node: @professional,
+      link_node: @project,
+      title: "Accesso tecnico nascosto",
+      view_type: "access_bridge",
+      status: "published"
+    )
+
+    get flowpulse_automatic_network_url(vista: "brand", node: @project.slug)
+
+    assert_response :success
+    assert_select "[data-node-network-selected-value='node-#{@project.id}'][data-node-network-fixed-center-value='true']", count: 1
+    assert_not_includes response.body, "node-#{technical_bridge.id}"
+    assert_not_includes response.body, "professional-owner-#{@professional.id}-#{technical_bridge.id}"
+  end
+
   private
 
     def sign_in(user)

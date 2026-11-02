@@ -76,6 +76,7 @@ class Node < ApplicationRecord
   validates :view_type, presence: true
   validates :status, presence: true, inclusion: { in: STATUSES }
   validates :visibility, presence: true, inclusion: { in: VISIBILITIES }
+  validates :map_color, format: { with: /\A#[0-9A-Fa-f]{6}\z/, message: "deve essere un colore HEX nel formato #RRGGBB" }, allow_blank: true
   validate :operator_roles_are_valid
   validate :role_assignment_matches_parent
   validate :validate_link_node_constraints
