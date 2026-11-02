@@ -3,7 +3,7 @@ class NodeCatalog
 
   ALLOWED_ATTRIBUTES = %w[
     title description node_type view_type status visibility
-    operator_roles map_color
+    operator_roles map_color position
   ].freeze
 
   def self.from_config(environment = Rails.env)

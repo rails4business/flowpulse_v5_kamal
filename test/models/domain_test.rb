@@ -71,6 +71,12 @@ class DomainTest < ActiveSupport::TestCase
     assert_equal rails_logo, domains.fetch("rails4b.com").fetch("social_image_url")
   end
 
+  test "assigns igieneposturale.it to its landing Node instead of the course" do
+    domains = Rails.application.config_for(:domains, env: Rails.env).with_indifferent_access
+
+    assert_equal "igieneposturale", domains.fetch("igieneposturale.it").fetch("node_slug")
+  end
+
   test "imports and exports an editorial site key" do
     Domain.import_from_hash!(
       "editorial.example" => {

@@ -1,12 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 import cytoscape from "cytoscape"
+import { buildRadialSupportTree, calculateRadialSectorLayout } from "radial_sector_layout"
 
 export default class extends Controller {
-  static targets = ["stage", "canvas", "orbitOverlay", "drawer", "panelButton", "title", "current", "type", "description", "domains", "relation", "empty", "search", "openLink", "addLink", "deleteLink", "fullscreenButton", "modeButton", "centerModeLink"]
+  static targets = ["stage", "canvas", "orbitOverlay", "drawer", "panelButton", "breadcrumb", "title", "type", "description", "domains", "relation", "empty", "search", "openLink", "addLink", "deleteLink", "fullscreenButton", "modeButton", "centerModeLink", "depthRange", "depthLabel", "nodeLimitNotice", "expandNodesButton"]
   static values = { graph: Object, selected: String, mode: { type: String, default: "brand" }, automaticCenter: Boolean, fixedCenter: Boolean }
 
   connect() {
     this.drawerOpen = true
+    this.visibleDepth = this.automaticCenterValue ? 2 : 3
+    this.visibleNodeLimit = 40
     this.fullscreenChangeHandler = () => this.updateFullscreenButton()
     document.addEventListener("fullscreenchange", this.fullscreenChangeHandler)
 
@@ -20,10 +23,11 @@ export default class extends Controller {
       style: this.styles()
     })
 
-    this.cy.on("tap", "node", (event) => this.select(event.target.id(), true))
+    this.cy.on("tap", "node", (event) => this.select(event.target.data("canonicalId") || event.target.id(), true))
     this.orbitViewportHandler = () => this.scheduleOrbitRender()
     this.cy.on("pan zoom resize", this.orbitViewportHandler)
     this.applyMode(this.modeValue, false)
+    this.updateDepthControls()
     const initialId = this.automaticCenterValue && !this.fixedCenterValue
       ? this.automaticCenterId()
       : this.selectedValue || this.graphValue.elements.find((element) => element.data.kind === "node")?.data.id
@@ -37,6 +41,7 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("fullscreenchange", this.fullscreenChangeHandler)
+    if (this.depthLabelTimer) window.clearTimeout(this.depthLabelTimer)
     this.cy?.off("pan zoom resize", this.orbitViewportHandler)
     if (this.orbitFrame) window.cancelAnimationFrame(this.orbitFrame)
     this.cy?.destroy()
@@ -104,6 +109,38 @@ export default class extends Controller {
 
   zoomOut() {
     this.cy.animate({ zoom: Math.max(this.cy.zoom() / 1.2, this.cy.minZoom()) }, { duration: 160 })
+  }
+
+  setDepthFromRange(event) {
+    const value = Number(event.currentTarget.value)
+    this.visibleDepth = value === 6 ? Number.POSITIVE_INFINITY : value
+    this.visibleNodeLimit = 40
+    this.updateDepthControls()
+    this.showDepthLabel()
+    const selected = this.cy.$("node.selected")
+    if (selected.length) this.arrangeRadial(selected.first(), true)
+  }
+
+  expandNodeLimit() {
+    this.visibleNodeLimit += 20
+    const selected = this.cy.$("node.selected")
+    if (selected.length) this.arrangeRadial(selected.first(), true)
+  }
+
+  updateDepthControls() {
+    const rangeValue = Number.isFinite(this.visibleDepth) ? this.visibleDepth : 6
+    const label = rangeValue === 6 ? "Tutti i livelli" : `${rangeValue} ${rangeValue === 1 ? "livello" : "livelli"}`
+    this.depthRangeTarget.value = rangeValue
+    this.depthRangeTarget.setAttribute("aria-valuetext", label)
+    this.depthLabelTarget.textContent = rangeValue === 6 ? "Tutti" : rangeValue
+  }
+
+  showDepthLabel() {
+    if (this.depthLabelTimer) window.clearTimeout(this.depthLabelTimer)
+    this.depthLabelTarget.classList.remove("opacity-0")
+    this.depthLabelTimer = window.setTimeout(() => {
+      this.depthLabelTarget.classList.add("opacity-0")
+    }, 900)
   }
 
   fitWithZoomLimit(elements, padding) {
@@ -195,6 +232,7 @@ export default class extends Controller {
     if (!selected.length || selected.data("kind") !== "node" || selected.hasClass("mode-hidden")) return
 
     const neighborhood = this.contextFor(selected)
+    this.updateDomainMembership(selected)
     const directNodes = selected.neighborhood("node").not(".mode-hidden")
     this.cy.elements().addClass("context-hidden").removeClass("faded selected incoming outgoing secondary")
     neighborhood.removeClass("context-hidden")
@@ -206,6 +244,7 @@ export default class extends Controller {
     selected.connectedEdges().removeClass("faded")
 
     this.renderDetails(selected)
+    this.renderBreadcrumb(selected)
     this.updateCenterModeLink(selected)
     this.drawerOpen = true
     this.drawerTarget.style.transform = "translateX(0)"
@@ -219,11 +258,79 @@ export default class extends Controller {
     }
   }
 
+  renderBreadcrumb(selected) {
+    if (!this.hasBreadcrumbTarget) return
+
+    const path = [selected]
+    const visited = new Set([selected.id()])
+    let current = selected
+    while (current.length) {
+      const parentEdge = current.connectedEdges().intersection(this.hierarchyEdges())
+        .filter((edge) => edge.target().id() === current.id())
+        .sort((a, b) => this.compareNodes(a.source(), b.source())).first()
+      if (!parentEdge.length) break
+      const parent = parentEdge.source()
+      if (visited.has(parent.id())) break
+      visited.add(parent.id())
+      path.unshift(parent)
+      current = parent
+    }
+
+    this.breadcrumbTarget.replaceChildren()
+    path.forEach((node, index) => {
+      const stationWrapper = document.createElement("span")
+      stationWrapper.className = "relative w-28 shrink-0"
+      if (index < path.length - 1) {
+        const rail = document.createElement("span")
+        rail.className = "absolute left-1/2 top-2 h-1 w-full bg-slate-300"
+        rail.setAttribute("aria-hidden", "true")
+        stationWrapper.append(rail)
+      }
+
+      const station = document.createElement("button")
+      const active = index === path.length - 1
+      station.type = "button"
+      station.className = "group relative z-10 flex w-full flex-col items-center gap-1 text-center"
+      station.disabled = active
+      station.title = active ? node.data("label") : `Torna a ${node.data("label")}`
+      station.setAttribute("aria-current", active ? "page" : "false")
+      station.addEventListener("click", () => this.select(node.id(), true))
+
+      const dot = document.createElement("span")
+      dot.className = active
+        ? "size-5 rounded-full border-4 border-violet-200 bg-violet-700 shadow-sm"
+        : "size-5 rounded-full border-4 border-slate-200 bg-white transition group-hover:border-blue-200 group-hover:bg-blue-600"
+      const label = document.createElement("span")
+      label.className = active
+        ? "max-w-32 truncate text-[9px] font-black text-violet-800"
+        : "max-w-32 truncate text-[9px] font-bold text-slate-500 group-hover:text-blue-700"
+      label.textContent = node.data("label")
+      station.append(dot, label)
+      stationWrapper.append(station)
+      this.breadcrumbTarget.append(stationWrapper)
+    })
+    this.breadcrumbTarget.scrollLeft = this.breadcrumbTarget.scrollWidth
+  }
+
+  updateDomainMembership(selected) {
+    this.cy.nodes().removeClass("external-domain")
+    if (!this.automaticCenterValue) {
+      return
+    }
+
+    const focusDomain = selected.data("domainKey")
+    this.cy.nodes().forEach((node) => {
+      const nodeDomain = node.data("domainKey")
+      if (focusDomain && node.id() !== selected.id() && nodeDomain !== focusDomain) {
+        node.addClass("external-domain")
+      }
+    })
+  }
+
   renderDetails(node) {
     const data = node.data()
     this.emptyTarget.hidden = true
     this.titleTarget.textContent = data.label
-    this.currentTarget.textContent = `FlowPulse › ${data.label}`
     this.typeTarget.textContent = data.nodeTypeLabel
     this.descriptionTarget.textContent = data.description || "Nessuna descrizione inserita."
     this.domainsTarget.replaceChildren()
@@ -263,7 +370,6 @@ export default class extends Controller {
   clearDetails() {
     this.emptyTarget.hidden = false
     this.titleTarget.textContent = "Tutta la rete"
-    this.currentTarget.textContent = "FlowPulse › Tutta la rete"
     this.typeTarget.textContent = "FlowPulse"
     this.descriptionTarget.textContent = "Seleziona un Node per vedere domini e collegamenti diretti."
     this.domainsTarget.replaceChildren()
@@ -288,8 +394,24 @@ export default class extends Controller {
   arrangeRadial(selected, animate) {
     if (!selected?.length) return
 
-    const neighborhood = this.contextFor(selected)
+    this.clearBridgeAliases()
+    const fullContext = this.rawContextFor(selected)
+    let neighborhood = this.limitContextFor(selected, fullContext)
+    neighborhood = this.addBridgeAliases(selected, neighborhood)
     const positions = this.radialPositions(selected, neighborhood.nodes())
+    if (this.radialExcludedIds?.size) {
+      const layoutNodes = neighborhood.nodes().filter((node) => !this.radialExcludedIds.has(node.id()))
+      const layoutEdges = neighborhood.edges().filter((edge) => (
+        layoutNodes.contains(edge.source()) && layoutNodes.contains(edge.target())
+      ))
+      neighborhood = layoutNodes.union(layoutEdges)
+    }
+    this.cy.elements().addClass("context-hidden")
+    neighborhood.removeClass("context-hidden")
+    selected.removeClass("context-hidden").addClass("selected")
+    if (Number.isFinite(this.visibleDepth)) {
+      this.currentRingRadii = this.currentRingRadii.filter(([ring]) => ring <= this.visibleDepth)
+    }
     const layout = neighborhood.layout({
       name: "preset",
       positions: (node) => positions[node.id()] || { x: 0, y: 0 },
@@ -314,188 +436,160 @@ export default class extends Controller {
     layout.run()
   }
 
+  clearBridgeAliases() {
+    this.cy.edges().removeClass("alias-replaced")
+    const aliases = this.cy.elements("[layoutAlias]")
+    if (aliases.length) this.cy.remove(aliases)
+  }
+
+  addBridgeAliases(selected, neighborhood) {
+    if (!this.automaticCenterValue) return neighborhood
+
+    const visibleNodes = neighborhood.nodes()
+    const hierarchyEdges = neighborhood.edges().intersection(this.hierarchyEdges())
+    let reachable = selected
+    let frontier = selected
+    while (frontier.length) {
+      frontier = frontier.connectedEdges().intersection(hierarchyEdges).connectedNodes()
+        .intersection(visibleNodes).not(reachable)
+      reachable = reachable.union(frontier)
+    }
+
+    let result = neighborhood
+    this.contextualEdgesFor(selected).forEach((edge) => {
+      const canonical = edge.connectedNodes().not(selected).intersection(visibleNodes).first()
+      if (!canonical.length || !reachable.contains(canonical)) return
+
+      const aliasId = `layout-alias-${selected.id()}-${canonical.id()}`
+      const aliasEdgeId = `layout-alias-edge-${edge.id()}`
+      const alias = this.cy.add({
+        group: "nodes",
+        data: {
+          ...canonical.data(),
+          id: aliasId,
+          canonicalId: canonical.id(),
+          layoutAlias: true
+        },
+        classes: "bridge-alias"
+      })
+      const sourceId = edge.source().id() === selected.id() ? selected.id() : aliasId
+      const targetId = edge.target().id() === selected.id() ? selected.id() : aliasId
+      const aliasEdge = this.cy.add({
+        group: "edges",
+        data: {
+          ...edge.data(),
+          id: aliasEdgeId,
+          source: sourceId,
+          target: targetId,
+          layoutAlias: true
+        }
+      })
+      edge.addClass("alias-replaced")
+      result = result.not(edge).union(alias).union(aliasEdge)
+    })
+    return result
+  }
+
   radialPositions(selected, nodes) {
     const focusId = selected.id()
-    const positions = { [focusId]: { x: 0, y: 0 } }
     const hierarchyEdges = this.hierarchyEdges()
     const contextualEdges = this.automaticCenterValue ? this.contextualEdgesFor(selected) : this.cy.collection()
-    const layoutEdges = this.automaticCenterValue
-      ? hierarchyEdges.union(contextualEdges)
-      : hierarchyEdges
-    const contextualIds = new Set(contextualEdges.connectedNodes().not(selected).map((node) => node.id()))
-    const visited = new Set([focusId])
-    const depth = new Map([[focusId, 0]])
-    const children = new Map([[focusId, []]])
-    const rings = new Map()
-    const queue = [selected]
-
-    while (queue.length) {
-      const current = queue.shift()
-      const neighbors = current.connectedEdges().intersection(layoutEdges).connectedNodes()
-        .intersection(nodes).sort((a, b) => {
-          const contextualDifference = Number(contextualIds.has(a.id())) - Number(contextualIds.has(b.id()))
-          return contextualDifference || this.compareNodes(a, b)
-        })
-
-      neighbors.forEach((neighbor) => {
-        if (visited.has(neighbor.id())) return
-
-        visited.add(neighbor.id())
-        const ring = depth.get(current.id()) + 1
-        depth.set(neighbor.id(), ring)
-        children.set(neighbor.id(), [])
-        children.get(current.id()).push(neighbor)
-        rings.set(ring, [...(rings.get(ring) || []), neighbor])
-        queue.push(neighbor)
-      })
+    const nodesById = new Map(nodes.map((node) => [node.id(), node]))
+    const compareForLayout = (a, b) => {
+      const aPosition = a.data("position")
+      const bPosition = b.data("position")
+      if (Number.isFinite(aPosition) || Number.isFinite(bPosition)) {
+        const positionDifference = (Number.isFinite(aPosition) ? aPosition : Number.MAX_SAFE_INTEGER) -
+          (Number.isFinite(bPosition) ? bPosition : Number.MAX_SAFE_INTEGER)
+        if (positionDifference !== 0) return positionDifference
+      }
+      const domainDifference = (a.data("domainKey") || "~").localeCompare(b.data("domainKey") || "~", "it")
+      return domainDifference || this.compareNodes(a, b)
     }
-
-    const disconnectedNodes = nodes.filter((node) => !visited.has(node.id())).sort((a, b) => this.compareNodes(a, b))
-    disconnectedNodes.forEach((node) => {
-      visited.add(node.id())
-      depth.set(node.id(), 1)
-      children.set(node.id(), [])
-      children.get(focusId).push(node)
-      rings.set(1, [...(rings.get(1) || []), node])
+    const edgeData = (edge) => ({ id: edge.id(), source: edge.source().id(), target: edge.target().id() })
+    const nodeIds = nodes.map((node) => node.id())
+    const tree = buildRadialSupportTree({
+      focusId,
+      nodeIds,
+      hierarchyEdges: hierarchyEdges.map(edgeData),
+      contextualEdges: contextualEdges.map(edgeData),
+      directedHierarchy: this.automaticCenterValue,
+      terminalRootParents: this.automaticCenterValue,
+      compareNodeIds: (a, b) => compareForLayout(nodesById.get(a), nodesById.get(b))
+    })
+    const { childrenById, depthById, ringNodeIds, supportEdgeByChild, supportEdgeIds, excludedNodeIds } = tree
+    this.radialExcludedIds = new Set(excludedNodeIds)
+    const layoutNodeIds = nodeIds.filter((nodeId) => !this.radialExcludedIds.has(nodeId))
+    const layoutNodes = nodes.filter((node) => !this.radialExcludedIds.has(node.id()))
+    const contextualEdgeIds = new Set(contextualEdges.map((edge) => edge.id()))
+    this.cy.nodes().removeClass("first-ring-reference")
+    ;(childrenById.get(focusId) || []).forEach((childId) => {
+      const supportEdge = supportEdgeByChild.get(childId)
+      if (!supportEdge) return
+      const isContextual = contextualEdgeIds.has(supportEdge.id)
+      const isDirectParent = supportEdge.target === focusId
+      if (isContextual || isDirectParent) nodesById.get(childId)?.addClass("first-ring-reference")
+    })
+    const visibleEdges = this.cy.edges().filter((edge) => (
+      layoutNodes.contains(edge.source()) && layoutNodes.contains(edge.target())
+    ))
+    const supportEdges = this.cy.edges().filter((edge) => supportEdgeIds.has(edge.id()))
+    this.cy.edges().removeClass("cross-link layout-support")
+    supportEdges.addClass("layout-support")
+    visibleEdges.not(supportEdges).addClass("cross-link")
+    const continuationById = {}
+    this.cy.nodes().removeClass("course-chapter")
+    childrenById.forEach((childIds, parentId) => {
+      const courseChildren = childIds.filter((childId) => nodesById.get(childId)?.data("viewType") === "course")
+      if (courseChildren.length === 1) continuationById[parentId] = courseChildren[0]
+      if (nodesById.get(parentId)?.data("viewType") === "course") {
+        childIds.filter((childId) => childId !== courseChildren[0]).forEach((childId) => {
+          nodesById.get(childId)?.addClass("course-chapter")
+        })
+      }
     })
 
-    const radii = new Map([[0, 0]])
-    const maxDepth = Math.max(0, ...rings.keys())
-    for (let ring = 1; ring <= maxDepth; ring += 1) {
-      const count = (rings.get(ring) || []).length
-      const maxClusterSpan = Math.PI * 1.75
-      const collisionRadius = count <= 1 ? 180 : 210 / (2 * Math.sin(maxClusterSpan / (2 * (count - 1))))
-      const provisionalGap = ring === 1 ? 220 : 140
-      radii.set(ring, Math.max(radii.get(ring - 1) + provisionalGap, collisionRadius))
-    }
-
-    const angles = new Map()
-    const collisionMargin = 21
     const dimensionsFor = (ring) => {
       if (ring === 0) return { width: 210, height: 70 }
       if (ring === 1) return { width: 184, height: 62 }
       return { width: 166, height: 56 }
     }
-    const boxAt = (node, ring, radius) => {
-      const angle = angles.get(node.id())
-      const dimensions = dimensionsFor(ring)
-      const x = Math.cos(angle) * radius
-      const y = Math.sin(angle) * radius
-      return {
-        node,
-        x,
-        y,
-        left: x - dimensions.width / 2 - collisionMargin,
-        right: x + dimensions.width / 2 + collisionMargin,
-        top: y - dimensions.height / 2 - collisionMargin,
-        bottom: y + dimensions.height / 2 + collisionMargin
+    const nodeDimensionsById = {}
+    const groupById = {}
+    layoutNodes.forEach((node) => {
+      const ring = depthById.get(node.id()) || 0
+      const fallback = dimensionsFor(ring)
+      const externalPadding = node.hasClass("external-domain") ? 12 : 0
+      nodeDimensionsById[node.id()] = {
+        width: (Number.parseFloat(node.style("width")) || fallback.width) + externalPadding,
+        height: (Number.parseFloat(node.style("height")) || fallback.height) + externalPadding
       }
-    }
-    const boxesOverlap = (first, second) => !(
-      first.right <= second.left || first.left >= second.right ||
-      first.bottom <= second.top || first.top >= second.bottom
-    )
-    const childOffsets = new Map()
-    const calculateCones = () => {
-      childOffsets.clear()
-      const sectorWidths = new Map()
-      const calculateSector = (node, branchAngle = 0) => {
-        const nodeChildren = children.get(node.id()) || []
-        if (!nodeChildren.length) {
-          sectorWidths.set(node.id(), 0)
-          return 0
-        }
-
-        // Root branches first receive their real direction. Their descendants
-        // can then calculate tangential clearance for that orientation.
-        if (node.id() === focusId && nodeChildren.length > 1) {
-          if (nodeChildren.length === 2) {
-            const rootSpan = Math.PI / 2
-            nodeChildren.forEach((child, index) => {
-              const childAngle = -rootSpan / 2 + rootSpan * index
-              childOffsets.set(child.id(), childAngle)
-              calculateSector(child, childAngle)
-            })
-            sectorWidths.set(node.id(), rootSpan)
-            return rootSpan
-          }
-
-          const rootSpan = Math.PI * 2
-          const rootStep = rootSpan / nodeChildren.length
-          nodeChildren.forEach((child, index) => {
-            const childAngle = -Math.PI / 2 + rootStep * index
-            childOffsets.set(child.id(), childAngle)
-            calculateSector(child, childAngle)
-          })
-          sectorWidths.set(node.id(), rootSpan)
-          return rootSpan
-        }
-
-        const childRing = depth.get(nodeChildren[0].id())
-        const childRadius = radii.get(childRing)
-        const childDimensions = dimensionsFor(childRing)
-        const tangentialSize = (
-          Math.abs(Math.sin(branchAngle)) * childDimensions.width +
-          Math.abs(Math.cos(branchAngle)) * childDimensions.height +
-          collisionMargin * 2
-        )
-        const minimumSeparation = 2 * Math.asin(Math.min(1, tangentialSize / (2 * childRadius)))
-        const infos = nodeChildren.map((child) => ({ child, width: calculateSector(child, branchAngle) }))
-
-        const centers = []
-        let rightEdge = 0
-        infos.forEach((info, index) => {
-          const halfWidth = info.width / 2
-          const center = index === 0
-            ? halfWidth
-            : Math.max(rightEdge + halfWidth, centers[index - 1] + minimumSeparation)
-          centers.push(center)
-          rightEdge = center + halfWidth
-        })
-
-        const leftEdge = centers.length ? centers[0] - infos[0].width / 2 : 0
-        const sectorCenter = (leftEdge + rightEdge) / 2
-        infos.forEach((info, index) => childOffsets.set(info.child.id(), centers[index] - sectorCenter))
-        const width = Math.max(0, rightEdge - leftEdge)
-        sectorWidths.set(node.id(), width)
-        return width
-      }
-      calculateSector(selected)
-
-      angles.set(focusId, 0)
-      const assignAngles = (node) => {
-        const baseAngle = angles.get(node.id()) || 0
-        ;(children.get(node.id()) || []).forEach((child) => {
-          angles.set(child.id(), baseAngle + (childOffsets.get(child.id()) || 0))
-          assignAngles(child)
-        })
-      }
-      assignAngles(selected)
-
-      // The tree owns the angle, not the ring. Packing each orbital independently
-      // made single-child chains zig-zag because a child could be rotated away
-      // from its parent. Sibling cones are already separated recursively above;
-      // any remaining collision is solved by increasing that orbital's radius.
-    }
-
-    const solveRadii = () => {
-      for (let ring = 1; ring <= maxDepth; ring += 1) {
-        const orbitalStep = ring === 4 ? 206 : 196
-        radii.set(ring, ring === 1 ? 230 : radii.get(ring - 1) + orbitalStep)
-      }
-    }
-
-    for (let iteration = 0; iteration < 7; iteration += 1) {
-      calculateCones()
-      solveRadii()
-    }
-
-    nodes.not(selected).forEach((node) => {
-      const ring = depth.get(node.id())
-      const box = boxAt(node, ring, radii.get(ring))
-      positions[node.id()] = { x: box.x, y: box.y }
+      groupById[node.id()] = node.data("domainKey") || null
     })
-
+    const rootDirections = {}
+    ;(childrenById.get(focusId) || []).forEach((childId) => {
+      const connectingEdge = supportEdgeByChild.get(childId)
+      rootDirections[childId] = connectingEdge && connectingEdge.source === focusId
+        ? "outgoing"
+        : "incoming"
+    })
+    const result = calculateRadialSectorLayout({
+      focusId,
+      nodeIds: layoutNodeIds,
+      childrenById,
+      depthById,
+      ringNodeIds,
+      rootDirections,
+      continuationById,
+      dimensionsByRing: dimensionsFor,
+      nodeDimensionsById,
+      groupById
+    })
+    const { positions, radii } = result
+    this.radialDiagnostics = result.diagnostics
+    if (new URL(window.location.href).searchParams.get("layout_debug") === "1") {
+      console.debug("FlowPulse radial layout", result.diagnostics)
+    }
     this.currentRingRadii = [...radii.entries()].filter(([ring]) => ring > 0)
     return positions
   }
@@ -514,11 +608,12 @@ export default class extends Controller {
     const selected = this.cy.$("node.selected").first()
     const rings = this.currentRingRadii || []
     this.orbitOverlayTarget.replaceChildren()
+    const namespace = "http://www.w3.org/2000/svg"
+    if (!this.automaticCenterValue) this.renderDomainFences(namespace)
     if (!selected.length || !rings.length) return
 
     const center = selected.renderedPosition()
     const zoom = this.cy.zoom()
-    const namespace = "http://www.w3.org/2000/svg"
     rings.forEach(([level, radius]) => {
       const circle = document.createElementNS(namespace, "circle")
       circle.setAttribute("cx", center.x)
@@ -533,7 +628,116 @@ export default class extends Controller {
     })
   }
 
+  renderDomainFences(namespace) {
+    const groups = new Map()
+    this.cy.nodes().not(".mode-hidden").not(".context-hidden").forEach((node) => {
+      const key = node.data("domainKey")
+      if (!key) return
+      if (!groups.has(key)) groups.set(key, [])
+      groups.get(key).push(node)
+    })
+
+    groups.forEach((nodes) => {
+      if (nodes.length < 2) return
+
+      const padding = 14
+      const points = nodes.flatMap((node) => {
+        const box = node.renderedBoundingBox({ includeLabels: true, includeOverlays: false })
+        return [
+          { x: box.x1 - padding, y: box.y1 - padding },
+          { x: box.x2 + padding, y: box.y1 - padding },
+          { x: box.x2 + padding, y: box.y2 + padding },
+          { x: box.x1 - padding, y: box.y2 + padding }
+        ]
+      })
+      const hull = this.convexHull(points)
+      if (hull.length < 3) return
+
+      const color = nodes[0].data("domainColor") || "#64748B"
+      const path = document.createElementNS(namespace, "path")
+      path.setAttribute("d", `${hull.map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ")} Z`)
+      path.setAttribute("fill", color)
+      path.setAttribute("fill-opacity", "0.045")
+      path.setAttribute("stroke", color)
+      path.setAttribute("stroke-width", "1.5")
+      path.setAttribute("stroke-linejoin", "round")
+      path.setAttribute("opacity", "0.68")
+      this.orbitOverlayTarget.append(path)
+
+      const top = hull.reduce((best, point) => point.y < best.y ? point : best, hull[0])
+      const label = document.createElementNS(namespace, "text")
+      label.setAttribute("x", top.x)
+      label.setAttribute("y", top.y - 8)
+      label.setAttribute("fill", color)
+      label.setAttribute("font-size", "11")
+      label.setAttribute("font-weight", "800")
+      label.setAttribute("paint-order", "stroke")
+      label.setAttribute("stroke", "#ffffff")
+      label.setAttribute("stroke-width", "4")
+      label.setAttribute("stroke-linejoin", "round")
+      label.textContent = nodes[0].data("domainLabel")
+      this.orbitOverlayTarget.append(label)
+    })
+  }
+
+  convexHull(points) {
+    const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y)
+    const cross = (origin, a, b) => (a.x - origin.x) * (b.y - origin.y) - (a.y - origin.y) * (b.x - origin.x)
+    const half = (items) => {
+      const result = []
+      items.forEach((point) => {
+        while (result.length >= 2 && cross(result[result.length - 2], result[result.length - 1], point) <= 0) result.pop()
+        result.push(point)
+      })
+      return result
+    }
+    const lower = half(sorted)
+    const upper = half([...sorted].reverse())
+    lower.pop()
+    upper.pop()
+    return lower.concat(upper)
+  }
+
   contextFor(selected) {
+    return this.limitContextFor(selected, this.rawContextFor(selected))
+  }
+
+  limitContextFor(selected, context) {
+    const contextNodes = context.nodes().not(".mode-hidden")
+    const contextEdges = context.edges().not(".mode-hidden")
+    const visibleIds = new Set([selected.id()])
+    const queue = [{ node: selected, depth: 0 }]
+
+    while (queue.length && visibleIds.size < this.visibleNodeLimit) {
+      const { node, depth } = queue.shift()
+      if (depth >= this.visibleDepth) continue
+
+      const neighbors = node.connectedEdges().intersection(contextEdges).connectedNodes()
+        .intersection(contextNodes)
+        .filter((neighbor) => !visibleIds.has(neighbor.id()))
+        .sort((a, b) => this.compareNodes(a, b))
+
+      neighbors.forEach((neighbor) => {
+        if (visibleIds.size >= this.visibleNodeLimit) return
+        visibleIds.add(neighbor.id())
+        queue.push({ node: neighbor, depth: depth + 1 })
+      })
+    }
+
+    const visibleNodes = contextNodes.filter((node) => visibleIds.has(node.id()))
+    const visibleEdges = contextEdges.filter((edge) => (
+      visibleIds.has(edge.source().id()) && visibleIds.has(edge.target().id())
+    ))
+    const omitted = contextNodes.length - visibleNodes.length
+    if (this.hasNodeLimitNoticeTarget) {
+      this.nodeLimitNoticeTarget.hidden = omitted <= 0
+      this.nodeLimitNoticeTarget.textContent = omitted > 0 ? `+ ${omitted} Node non visibili` : ""
+      this.expandNodesButtonTarget.hidden = omitted <= 0 || visibleNodes.length < this.visibleNodeLimit
+    }
+    return visibleNodes.union(visibleEdges)
+  }
+
+  rawContextFor(selected) {
     if (this.automaticCenterValue) return this.automaticContextFor(selected)
 
     let nodes = selected
@@ -584,14 +788,10 @@ export default class extends Controller {
 
     const siteNodes = nodes
     const contextualEdges = this.contextualEdgesFor(selected)
-    const directlyLinkedIds = new Set(
-      contextualEdges.connectedNodes().not(selected).map((node) => node.id())
-    )
     nodes = nodes.union(contextualEdges.connectedNodes())
     const edges = hierarchyEdges.filter((edge) => (
       siteNodes.contains(edge.source()) &&
-      siteNodes.contains(edge.target()) &&
-      !directlyLinkedIds.has(edge.target().id())
+      siteNodes.contains(edge.target())
     )).union(incomingHierarchyEdges).union(contextualEdges)
     return nodes.union(edges).not(".mode-hidden")
   }
@@ -604,7 +804,7 @@ export default class extends Controller {
     const selector = this.modeValue === "professional"
       ? "edge[kind = 'bridge'], edge[kind = 'professional-owner']"
       : "edge[kind = 'bridge']"
-    return selected.connectedEdges(selector).not(".mode-hidden").filter((edge) => {
+    return selected.connectedEdges(selector).not(".mode-hidden").not(".alias-replaced").filter((edge) => {
       if (edge.data("kind") !== "bridge") return true
 
       const visibility = edge.data("bridgeVisibility") || "both"
@@ -659,6 +859,7 @@ export default class extends Controller {
         style: {
           "background-color": "#ffffff",
           "border-color": "#2563eb",
+          "border-style": "solid",
           "border-width": 2,
           "color": "#172033",
           "font-size": 12,
@@ -670,12 +871,13 @@ export default class extends Controller {
           "text-wrap": "wrap",
           "text-max-width": 150,
           "width": 184,
-          "height": 62
+          "height": 62,
+          "underlay-opacity": 0
         }
       },
       {
         selector: "node[hasDomain]",
-        style: { "background-color": "#eef5ff", "border-width": 3 }
+        style: { "background-color": "#eef5ff", "border-width": 2 }
       },
       {
         selector: "node[hasMapColor]",
@@ -698,7 +900,14 @@ export default class extends Controller {
       },
       {
         selector: "edge[kind = 'bridge']",
-        style: { "curve-style": "bezier", "line-style": "dashed", "line-color": "#7c3aed", "target-arrow-color": "#7c3aed" }
+        style: {
+          "curve-style": "unbundled-bezier",
+          "control-point-distances": 34,
+          "control-point-weights": 0.5,
+          "line-style": "dashed",
+          "line-color": "#7c3aed",
+          "target-arrow-color": "#7c3aed"
+        }
       },
       {
         selector: "edge[kind = 'ecosystem']",
@@ -709,12 +918,61 @@ export default class extends Controller {
         style: { "curve-style": "bezier", "line-style": "dotted", "line-color": "#0f9f6e", "target-arrow-color": "#0f9f6e", "width": 3 }
       },
       {
+        selector: "edge.cross-link",
+        style: {
+          "curve-style": "unbundled-bezier",
+          "control-point-distances": 46,
+          "control-point-weights": 0.5,
+          "line-style": "dashed",
+          "opacity": 0.58,
+          "width": 2
+        }
+      },
+      {
         selector: ".selected",
         style: { "background-color": "#2563eb", "border-color": "#1d4ed8", "border-width": 5, "color": "#ffffff", "width": 210, "height": 70 }
       },
       {
         selector: "node.selected[hasMapColor]",
         style: { "background-color": "data(mapColor)", "border-color": "data(mapColor)", "color": "data(mapSelectedTextColor)" }
+      },
+      {
+        selector: "node.external-domain",
+        style: {
+          "border-style": "dashed",
+          "border-width": 5,
+          "underlay-color": "#ffffff",
+          "underlay-opacity": 0.9,
+          "underlay-padding": 6
+        }
+      },
+      {
+        selector: "node.bridge-alias",
+        style: {
+          "border-style": "dashed",
+          "border-width": 3,
+          "underlay-color": "#ffffff",
+          "underlay-opacity": 0.92,
+          "underlay-padding": 4
+        }
+      },
+      {
+        selector: "node.first-ring-reference",
+        style: {
+          "font-size": 10,
+          "text-max-width": 126,
+          "width": 156,
+          "height": 52
+        }
+      },
+      {
+        selector: "node.course-chapter",
+        style: {
+          "font-size": 10,
+          "text-max-width": 126,
+          "width": 156,
+          "height": 52
+        }
       },
       {
         selector: ".incoming",

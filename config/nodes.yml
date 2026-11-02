@@ -138,6 +138,47 @@ default: &default
       description: Area dedicata a massaggio, terapie manuali, tecniche corporee, recupero e sviluppo della coscienza corporea.
       node_type: project
       parent_slug: apprendimento-1-espressione
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    area-movimento-postura-attivita-motoria:
+      title: Area Movimento · Postura, movimento e attività motoria
+      map_color: "#0F766E"
+      node_type: project
+      parent_slug: apprendimento-1-espressione
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    area-mente-postura-ascolto-consapevolezza:
+      title: Area Mente · Postura, ascolto e consapevolezza
+      map_color: "#B91C1C"
+      node_type: project
+      parent_slug: apprendimento-1-espressione
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    area-alimentazione-postura-nutrimento-fisiologia:
+      title: Area Alimentazione · Postura, nutrimento e fisiologia
+      map_color: "#CA8A04"
+      node_type: project
+      parent_slug: apprendimento-1-espressione
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    area-farmaci-postura-regolazione-medicamenti:
+      title: Area Farmaci · Postura, regolazione e medicamenti
+      map_color: "#2563EB"
+      node_type: project
+      parent_slug: apprendimento-1-espressione
+      position: 5
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -314,10 +355,390 @@ default: &default
       status: draft
       visibility: private
 
+    igieneposturale:
+      title: IgienePosturale.it
+      map_color: "#2563EB"
+      description: Landing pubblica del dominio igieneposturale.it, collegata al corso didattico ospitato in PosturaCorretta.
+      node_type: project
+      parent_slug: markpostura
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     igiene-posturale:
       title: Igiene Posturale
+      description: Corso di PosturaCorretta dedicato alle basi dell'igiene posturale e alla pratica quotidiana.
       node_type: project
+      view_type: course
       parent_slug: la-prima-settimana-con-posturacorretta
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-corso-igiene-posturale-da-landing:
+      title: Accesso al corso Igiene Posturale dalla landing
+      description: Ponte tra il Node landing igieneposturale.it e il corso Igiene Posturale interno a PosturaCorretta.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: igieneposturale
+      link_node_slug: igiene-posturale
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    igiene-posturale-mobilita-articolare:
+      title: Mobilità articolare
+      node_type: project
+      parent_slug: igiene-posturale
+      position: 7
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    igiene-posturale-punti-di-tensione:
+      title: Punti di tensione
+      node_type: project
+      parent_slug: igiene-posturale
+      position: 8
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    igiene-posturale-vie-di-discesa:
+      title: Vie di discesa
+      node_type: project
+      parent_slug: igiene-posturale
+      position: 9
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    igiene-posturale-recettori-sensoriali:
+      title: Recettori sensoriali
+      node_type: project
+      parent_slug: igiene-posturale
+      position: 10
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-fisioterapia:
+      title: Principi di Fisioterapia
+      node_type: project
+      view_type: course
+      parent_slug: igiene-posturale
+      position: 11
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-fisioterapia-sistema-respiratorio:
+      title: Sistema respiratorio
+      node_type: project
+      parent_slug: principi-di-fisioterapia
+      position: 11
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-fisioterapia-sistema-nervoso-urogenitale:
+      title: Sistema nervoso e urogenitale
+      node_type: project
+      parent_slug: principi-di-fisioterapia
+      position: 12
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-fisioterapia-sistema-muscolo-scheletrico:
+      title: Sistema muscolo-scheletrico
+      node_type: project
+      parent_slug: principi-di-fisioterapia
+      position: 13
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-fisioterapia-sistema-cardiocircolatorio:
+      title: Sistema cardiocircolatorio
+      node_type: project
+      parent_slug: principi-di-fisioterapia
+      position: 14
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-fisioterapia-sistema-linfatico-digerente:
+      title: Sistema linfatico e digerente
+      node_type: project
+      parent_slug: principi-di-fisioterapia
+      position: 15
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-fisioterapia-approfondimento-fisioterapia:
+      title: Scopri di più sulla Fisioterapia
+      node_type: project
+      parent_slug: principi-di-fisioterapia
+      position: 16
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds:
+      title: Biomeccanica comportamentale (GDS)
+      node_type: project
+      view_type: course
+      parent_slug: principi-di-fisioterapia
+      position: 17
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds-cinque-direzioni-movimento:
+      title: Le 5 direzioni di movimento
+      node_type: project
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 17
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds-catena-am:
+      title: Catena AM
+      node_type: project
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 18
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds-catena-al:
+      title: Catena AL
+      node_type: project
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 19
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds-catena-pm:
+      title: Catena PM
+      node_type: project
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 20
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds-catena-pl:
+      title: Catena PL
+      node_type: project
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 21
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds-catene-pa-ap:
+      title: Catene PA/AP
+      node_type: project
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 22
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    biomeccanica-comportamentale-gds-approfondimento-gds:
+      title: Scopri di più sulla metodica GDS
+      node_type: project
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 23
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-osteopatia:
+      title: Principi di Osteopatia
+      node_type: project
+      view_type: course
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 24
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-osteopatia-eliminare-disfunzioni:
+      title: Eliminare le disfunzioni
+      node_type: project
+      parent_slug: principi-di-osteopatia
+      position: 24
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-osteopatia-sistema-fasciale:
+      title: Il sistema fasciale
+      node_type: project
+      parent_slug: principi-di-osteopatia
+      position: 25
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-osteopatia-sistema-viscerale:
+      title: Il sistema viscerale
+      node_type: project
+      parent_slug: principi-di-osteopatia
+      position: 26
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-osteopatia-sistema-cranio-sacrale:
+      title: Il sistema cranio-sacrale
+      node_type: project
+      parent_slug: principi-di-osteopatia
+      position: 27
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-osteopatia-sistema-neurovegetativo:
+      title: Il sistema neurovegetativo
+      node_type: project
+      parent_slug: principi-di-osteopatia
+      position: 28
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    principi-di-osteopatia-approfondimento-osteopatia:
+      title: Scopri di più sull'Osteopatia
+      node_type: project
+      parent_slug: principi-di-osteopatia
+      position: 29
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza:
+      title: Corpo e Coscienza
+      node_type: project
+      view_type: course
+      parent_slug: principi-di-osteopatia
+      position: 30
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza-due-circolazioni:
+      title: Le 2 circolazioni
+      node_type: project
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 30
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita:
+      title: I 3 centri di gravità
+      node_type: project
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 31
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento:
+      title: I 4 tipi di movimento
+      node_type: project
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 32
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza-cinque-elementi:
+      title: I 5 elementi
+      node_type: project
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 33
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani:
+      title: Le 6 coppie di meridiani
+      node_type: project
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 34
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici:
+      title: I 7 centri neurolinfatici
+      node_type: project
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 35
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-metodo-corpo-e-coscienza-approfondimento-corpo-coscienza:
+      title: Scopri di più su Corpo e Coscienza
+      node_type: project
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 36
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    altre-metodiche-posturali:
+      title: Altre metodiche posturali
+      node_type: project
+      view_type: course
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 37
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    altre-metodiche-posturali-sequenza-kinesiologia-applicata:
+      title: Sequenza di Kinesiologia Applicata
+      node_type: project
+      parent_slug: altre-metodiche-posturali
+      position: 37
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    altre-metodiche-posturali-feldenkrais:
+      title: Feldenkrais
+      node_type: project
+      parent_slug: altre-metodiche-posturali
+      position: 38
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    altre-metodiche-posturali-alexander-consapevolezza:
+      title: Alexander e consapevolezza
+      node_type: project
+      parent_slug: altre-metodiche-posturali
+      position: 39
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    altre-metodiche-posturali-sintesi-percorso:
+      title: Sintesi del percorso
+      node_type: project
+      parent_slug: altre-metodiche-posturali
+      position: 40
       professional_owner_slug: markpostura
       status: published
       visibility: public

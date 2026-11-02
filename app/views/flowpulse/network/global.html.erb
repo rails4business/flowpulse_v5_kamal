@@ -37,6 +37,20 @@
     end
     nil
   end
+  domain_context_for = lambda do |node|
+    ancestry_for.call(node).each do |ancestor|
+      domain = active_domains_by_node_id.fetch(ancestor.id, []).sort_by(&:display_hostname).first
+      next if domain.blank?
+
+      return {
+        key: domain.display_hostname,
+        label: domain.display_hostname,
+        owner_slug: ancestor.slug,
+        color: effective_map_color_for.call(ancestor) || "#64748B"
+      }
+    end
+    nil
+  end
   color_text_for = lambda do |hex|
     red, green, blue = hex.delete_prefix("#").scan(/../).map { |value| value.to_i(16) }
     ((red * 299 + green * 587 + blue * 114) / 1000) >= 150 ? "#172033" : "#FFFFFF"
@@ -70,6 +84,7 @@
     can_delete = can_manage && active_domains_by_node_id.fetch(node.id, []).empty? && node.children.empty?
     map_color = effective_map_color_for.call(node)
     map_background = map_color ? light_background_for.call(map_color) : nil
+    domain_context = domain_context_for.call(node)
     {
       data: {
         id: "node-#{node.id}",
@@ -83,6 +98,7 @@
         else
           "Project Node"
         end,
+        viewType: node.view_type,
         description: node.description.to_s,
         position: node.position,
         hasMapColor: map_color.present?,
@@ -97,7 +113,11 @@
         deleteUrl: can_delete ? flowpulse_global_network_node_path(node, vista: selected_mode) : nil,
         modes: modes_for.call(node),
         domains: node.domains.select(&:active?).map(&:display_hostname).sort,
-        hasDomain: node.domains.any?(&:active?)
+        hasDomain: node.domains.any?(&:active?),
+        domainKey: domain_context&.fetch(:key),
+        domainLabel: domain_context&.fetch(:label),
+        domainOwnerSlug: domain_context&.fetch(:owner_slug),
+        domainColor: domain_context&.fetch(:color)
       }
     }
   end
@@ -225,10 +245,12 @@
     data-node-network-fixed-center-value="<%= automatic_center && params[:node].present? %>"
   >
     <section data-node-network-target="stage" class="relative w-full overflow-hidden bg-slate-50" style="height: 100vh; min-height: 620px;" aria-label="Mappa dei Node">
-      <div data-node-network-target="canvas" class="absolute inset-0 h-full w-full" aria-label="Grafo interattivo dei Node"></div>
+      <div data-node-network-target="canvas" class="absolute inset-0 z-[2] h-full w-full" aria-label="Grafo interattivo dei Node"></div>
       <svg data-node-network-target="orbitOverlay" class="pointer-events-none absolute inset-0 z-[1] size-full overflow-visible" aria-hidden="true"></svg>
 
       <button type="button" data-node-network-target="panelButton" data-action="node-network#togglePanel" class="absolute left-3 top-3 z-10 grid size-11 place-items-center rounded-xl border border-slate-200 bg-white text-lg font-black text-slate-700 shadow-lg shadow-slate-900/10 hover:bg-slate-50 sm:left-5 sm:top-5" aria-label="Apri pannello della rete" aria-expanded="true" title="Pannello della rete">☰</button>
+
+      <nav data-node-network-target="breadcrumb" class="pointer-events-auto absolute left-16 right-3 top-3 z-10 ml-auto flex max-w-max items-start overflow-x-auto rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 shadow-lg shadow-slate-900/10 backdrop-blur sm:right-5 sm:top-5" aria-label="Percorso del Node"></nav>
 
       <aside data-node-network-target="drawer" class="absolute inset-y-0 left-0 z-20 h-full w-[calc(100%-3.5rem)] overflow-y-auto rounded-r-2xl border-y-0 border-l-0 border-r border-slate-200 bg-white p-4 shadow-2xl shadow-slate-900/20 transition-transform duration-200 sm:w-[390px] sm:p-5">
         <div class="sticky top-0 z-30 flex h-0 justify-end">
@@ -247,13 +269,22 @@
           <%= link_to "← Elenco", flowpulse_global_network_path(vista: selected_mode), class: "shrink-0 rounded-lg bg-slate-100 px-3 py-2 text-[11px] font-black text-slate-700 hover:bg-slate-200" %>
         </div>
 
-        <p data-node-network-target="current" class="mt-3 truncate text-xs font-bold text-slate-500">FlowPulse › Tutta la rete</p>
+        <% if Current.user&.superadmin_user? %>
+          <a href="http://www.posturacorretta.org/posturacorretta-flusso-ingresso-percorsi.html" target="_blank" rel="noopener noreferrer" class="mt-2 flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[10px] font-black text-amber-800 hover:bg-amber-100">
+            <span>Appunto · Schema completo PosturaCorretta</span><span aria-hidden="true">↗</span>
+          </a>
+        <% end %>
 
         <div class="mt-3 flex flex-wrap items-center gap-1 rounded-xl bg-slate-100 p-1.5">
           <button type="button" data-action="node-network#zoomIn" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-bold text-slate-700 hover:bg-slate-100" aria-label="Ingrandisci" title="Ingrandisci">+</button>
           <button type="button" data-action="node-network#zoomOut" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-bold text-slate-700 hover:bg-slate-100" aria-label="Riduci" title="Riduci">−</button>
           <button type="button" data-action="node-network#recenter" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-blue-700 hover:bg-blue-50" aria-label="Centra la vista sul Node selezionato" title="Centra la vista">⌖</button>
           <button type="button" data-node-network-target="fullscreenButton" data-action="node-network#toggleFullscreen" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-slate-700 hover:bg-slate-100" aria-label="Visualizza a schermo intero" title="Schermo intero">⛶</button>
+          <span class="mx-1 h-6 w-px shrink-0 bg-slate-300" aria-hidden="true"></span>
+          <div class="relative flex h-14 w-7 shrink-0 items-center justify-center px-1" title="Livelli visibili">
+            <input type="range" min="1" max="6" step="1" value="<%= automatic_center ? 2 : 3 %>" data-node-network-target="depthRange" data-action="input->node-network#setDepthFromRange" class="h-12 w-4 cursor-pointer accent-violet-700" style="writing-mode: vertical-lr; direction: rtl;" aria-label="Numero di livelli visibili; ultima posizione tutti">
+            <output data-node-network-target="depthLabel" class="pointer-events-none absolute left-full top-1/2 z-10 ml-1 min-w-7 -translate-y-1/2 rounded-md bg-violet-800 px-1.5 py-1 text-center text-[9px] font-black text-white opacity-0 shadow-lg transition-opacity"><%= automatic_center ? "2" : "3" %></output>
+          </div>
           <span class="mx-1 h-6 w-px shrink-0 bg-slate-300" aria-hidden="true"></span>
           <% if automatic_center %>
             <%= link_to flowpulse_global_network_path(vista: selected_mode, node: params[:node]), data: { node_network_target: "centerModeLink" }, class: "ml-auto flex shrink-0 items-center gap-2 rounded-lg bg-violet-50 px-2.5 py-1.5 text-[11px] font-black text-violet-800 hover:bg-violet-100", aria: { label: "Mostra tutta la rete" }, title: "Passa alla vista All" do %>
@@ -264,6 +295,11 @@
               <span>Vista</span><span class="rounded-full bg-slate-200 px-2 py-0.5 text-[9px] text-slate-600">ALL</span>
             <% end %>
           <% end %>
+        </div>
+
+        <div class="mt-2 flex items-center justify-between gap-3 px-1">
+            <p data-node-network-target="nodeLimitNotice" hidden class="text-xs font-bold text-amber-700"></p>
+            <button type="button" data-node-network-target="expandNodesButton" data-action="node-network#expandNodeLimit" hidden class="ml-auto rounded-lg bg-amber-50 px-2.5 py-1.5 text-[10px] font-black text-amber-800 hover:bg-amber-100">Mostra altri 20</button>
         </div>
 
         <div class="mt-5 flex items-start justify-between gap-4 border-t border-slate-100 pt-5">

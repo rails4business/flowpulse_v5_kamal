@@ -23,6 +23,9 @@ class NodeCatalogTest < ActiveSupport::TestCase
     postura = Node.find_by!(slug: "posturacorretta")
     percorso_integrato = Node.find_by!(slug: "percorso-integrato")
     prima_settimana = Node.find_by!(slug: "la-prima-settimana-con-posturacorretta")
+    igiene_posturale_landing = Node.find_by!(slug: "igieneposturale")
+    igiene_posturale_course = Node.find_by!(slug: "igiene-posturale")
+    ponte_igiene_posturale = Node.find_by!(slug: "accesso-corso-igiene-posturale-da-landing")
     ponte_prima_settimana = Node.find_by!(slug: "accesso-posturacorretta-da-prima-settimana")
     apprendimento_espressione = Node.find_by!(slug: "apprendimento-1-espressione")
     area_massaggio = Node.find_by!(slug: "area-massaggio-terapie-manuali-tecniche-corporee")
@@ -32,7 +35,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     inside_adventure = Node.find_by!(slug: "insideadventure")
     rails4business = Node.find_by!(slug: "rails4business")
 
-    configured_slugs = %w[markpostura flowpulse rails4business posturacorretta stato-di-salute dalla-posturacorretta-al-giardino-del-corpo percorso-integrato stop-al-dolore prevenzione performance percorso-benessere accesso-posturacorretta-da-percorso-integrato apprendimento-1-espressione area-massaggio-terapie-manuali-tecniche-corporee apprendimento-2-connessione categorie-generali categorie-specifiche sessanta-movimenti-alla-scrivania la-prima-settimana-con-posturacorretta accesso-posturacorretta-da-prima-settimana pacchetto-gruppi ilgiardinodelcorpo accesso-stato-di-salute-da-posturacorretta accesso-stato-di-salute-da-giardino-del-corpo accesso-percorso-integrato-da-linea-postura-giardino insideadventure corpoecoscienza cantachetipassa generaimpresa impegno svuotamente brand-in-costruzione igiene-posturale radioestesia]
+    configured_slugs = YAML.load_file(Rails.root.join("config/nodes.yml"), aliases: true).dig("test", "nodes").keys
     assert_equal configured_slugs.size, first.nodes
     assert_equal configured_slugs.size, second.nodes
     assert_equal configured_slugs.size, Node.where(slug: configured_slugs).count
@@ -47,6 +50,11 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_nil prima_settimana.link_node
     assert_not prima_settimana.bridge_node?
     assert_equal apprendimento_espressione, area_massaggio.parent
+    assert_equal 1, area_massaggio.position
+    assert_equal apprendimento_espressione, Node.find_by!(slug: "area-movimento-postura-attivita-motoria").parent
+    assert_equal apprendimento_espressione, Node.find_by!(slug: "area-mente-postura-ascolto-consapevolezza").parent
+    assert_equal apprendimento_espressione, Node.find_by!(slug: "area-alimentazione-postura-nutrimento-fisiologia").parent
+    assert_equal apprendimento_espressione, Node.find_by!(slug: "area-farmaci-postura-regolazione-medicamenti").parent
     assert_equal area_massaggio, prima_settimana.parent
     assert_equal prima_settimana, ponte_prima_settimana.parent
     assert_equal postura, ponte_prima_settimana.link_node
@@ -69,8 +77,23 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal "Apprendimento 2 · Consapevolezza con le metodiche posturali", apprendimento_consapevolezza.title
     assert_equal "#4F46E5", apprendimento_consapevolezza.map_color
     assert_equal "#2E1065", prima_settimana.map_color
-    assert_equal prima_settimana, Node.find_by!(slug: "igiene-posturale").parent
-    assert_equal "published", Node.find_by!(slug: "igiene-posturale").status
+    assert_equal mark, igiene_posturale_landing.parent
+    assert_equal prima_settimana, igiene_posturale_course.parent
+    assert_equal "published", igiene_posturale_course.status
+    assert_equal igiene_posturale_landing, ponte_igiene_posturale.parent
+    assert_equal igiene_posturale_course, ponte_igiene_posturale.link_node
+    assert ponte_igiene_posturale.bridge_node?
+    assert_equal igiene_posturale_course, Node.find_by!(slug: "igiene-posturale-mobilita-articolare").parent
+    assert_equal 7, Node.find_by!(slug: "igiene-posturale-mobilita-articolare").position
+    assert_equal igiene_posturale_course, Node.find_by!(slug: "principi-di-fisioterapia").parent
+    assert_equal "course", igiene_posturale_course.view_type
+    assert_equal "course", Node.find_by!(slug: "principi-di-fisioterapia").view_type
+    assert_equal "course", Node.find_by!(slug: "biomeccanica-comportamentale-gds").view_type
+    assert_equal Node.find_by!(slug: "principi-di-fisioterapia"), Node.find_by!(slug: "principi-di-fisioterapia-sistema-respiratorio").parent
+    assert_equal Node.find_by!(slug: "principi-di-fisioterapia"), Node.find_by!(slug: "biomeccanica-comportamentale-gds").parent
+    assert_equal Node.find_by!(slug: "biomeccanica-comportamentale-gds"), Node.find_by!(slug: "principi-di-osteopatia").parent
+    assert_equal Node.find_by!(slug: "principi-di-osteopatia"), Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza").parent
+    assert_equal Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza"), Node.find_by!(slug: "altre-metodiche-posturali").parent
     assert_equal "#7C3AED", linea_postura_giardino.map_color
     assert_equal "#7C3AED", giardino_del_corpo.map_color
     assert_equal "Apprendimento 3 · Connessione — Il Giardino del Corpo", giardino_del_corpo.title
