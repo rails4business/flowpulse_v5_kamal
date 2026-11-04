@@ -92,6 +92,7 @@ module Workspace
     end
 
     test "agenda and week show only personal calendar data" do
+      travel_to Time.zone.parse("2026-10-20 10:00") do
       personal_session = DataSession.create!(
         title: "Workshop personale",
         starts_at: Time.zone.parse("2026-10-23 16:00"),
@@ -143,6 +144,7 @@ module Workspace
       assert_select "aside[data-dashboard-sidebar]", count: 0
       assert_select "#week-data-session-#{personal_session.id}", text: /Workshop personale/
       assert_select "#week-data-session-#{other_session.id}", count: 0
+      end
     end
 
     private

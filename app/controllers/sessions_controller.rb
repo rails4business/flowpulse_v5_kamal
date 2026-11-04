@@ -95,5 +95,4 @@ class SessionsController < ApplicationController
   def pending_invitation
     BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
   end
-
 end

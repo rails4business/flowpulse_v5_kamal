@@ -27,6 +27,5 @@ module Flowpulse
     rescue ArgumentError, KeyError => error
       raise ActiveRecord::RecordNotFound, error.message
     end
-
   end
 end

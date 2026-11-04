@@ -122,7 +122,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#primi-corsi h2", text: "Postura e fisiologia", count: 1
     assert_select "#primi-corsi", text: /Postura e fisiologia sono strettamente collegate/
     assert_select "#primi-corsi > header > p", text: "Il tuo percorso · 6 corsi", count: 1
-    assert_select "ol[aria-label='Come iniziare il percorso educativo'] + div a.bg-white[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-ambiti")}']", text: "Inizia", count: 1
+    assert_select "ol[aria-label='Come iniziare il percorso educativo'] + div a.bg-white[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-aspetti")}']", text: "Inizia", count: 1
     assert_select "main article [role='progressbar']", count: 0
     assert_select "#inizia-con-posturacorretta", text: /In arrivo/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 3
@@ -669,7 +669,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_in_delta enrollment.actual_started_at, enrollment.actual_ended_at, 1.0
     assert_equal "none", enrollment.pricing_type
 
-    post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-ambiti")
+    post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-aspetti")
     post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
     assert_redirected_to posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
 
@@ -727,12 +727,12 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "does not duplicate enrollment or chapter completion commitments" do
-    publish_content!("postura-salute-altri-ambiti")
+    publish_content!("inizia-trama-postura-fisiologia")
     user = create_test_user("learner-idempotent-#{SecureRandom.hex(4)}@example.com")
     sign_in(user)
 
     2.times { post posturacorretta_course_enrollment_path(corso: "inizia-con-posturacorretta") }
-    2.times { post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-ambiti") }
+    2.times { post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-aspetti") }
 
     learning = user.profile.data_commitments.where(kind: "academy")
     assert_equal 1, learning.count { |item| item.metadata.fetch("record_type") == "course_enrollment" }

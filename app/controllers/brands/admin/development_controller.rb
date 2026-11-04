@@ -1,7 +1,6 @@
 module Brands
   module Admin
     class DevelopmentController < BaseController
-
       def index
         @development_entries = repository.entries.select { |entry| entry.fetch("owner_brand") == @brand.slug }
       end

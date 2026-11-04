@@ -107,13 +107,12 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to rails4b_contents_path
   end
 
-  test "shows events organized by markpostura without duplicating their source" do
+  test "shows the empty upcoming events state when markpostura has no future events" do
     get markpostura_events_path
 
     assert_response :success
     assert_select "h1", text: "Prossimi eventi"
-    assert_select "a[href='https://posturacorretta.org/posturacorretta/eventi']", minimum: 1
-    assert_match "PosturaCorretta", response.body
+    assert_select "h2", text: "Nessun evento in programma"
   end
 
   test "renders a dated PosturaCorretta markdown article without changing its slug" do

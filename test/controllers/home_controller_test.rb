@@ -11,7 +11,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_includes response.body, flowpulse_projects_path
+    assert_includes response.body, flowpulse_global_network_path
     assert_includes response.body, root_path
     assert_not_includes response.body, 'data-layout="dashboard"'
     assert_not_includes response.body, "data-dashboard-sidebar"

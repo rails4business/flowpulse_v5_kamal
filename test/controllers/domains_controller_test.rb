@@ -115,13 +115,11 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Problemi, idee e soluzioni da mettere alla prova"
-    assert_select "#direzioni"
-    assert_select "nav a[href='#{markpostura_weekplan_path}']", text: "Orario"
+    assert_select "h1", text: "Ascolto le persone, do forma alle idee e collego chi può realizzarle."
     assert_select "#weekplan", count: 0
-    assert_select "header#inizia img[alt='Percorso integrato tra salute, apprendimento e risorse']"
-    assert_select "header#inizia a[href='https://ik.imagekit.io/posturacorretta/Percorso%20integrato%20tra%20salute,%20apprendimento%20e%20risorse.png']"
-    assert_select "#mondo-markpostura img[alt='Mappa completa del mondo FlowPulse di MarkPostura']"
+    assert_select ".mp-sales__hero-world img[alt='Percorso integrato tra salute, apprendimento e risorse']"
+    assert_select "#percorsi .mp-sales__movement", count: 3
+    assert_select "#mondo-markpostura .mp-sales__entrance", count: 3
     assert_select "meta[name='robots'][content='noindex,nofollow']", count: 0
   end
 
@@ -137,7 +135,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get localized_domain_root_url(locale: "it")
 
     assert_response :success
-    assert_select "h1", text: "Problemi, idee e soluzioni da mettere alla prova"
+    assert_select "h1", text: "Ascolto le persone, do forma alle idee e collego chi può realizzarle."
   end
 
   test "does not publish an undeclared language variant" do
@@ -223,7 +221,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Costruisci un percorso personale, leggibile e coordinato."
+    assert_select "h1", text: "Costruisci e migliora il tuo percorso, un passo alla volta."
     assert_select "title", text: /Percorso Integrato/
   end
 

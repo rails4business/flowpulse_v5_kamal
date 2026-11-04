@@ -19,5 +19,4 @@ class SitemapsController < ApplicationController
       format.xml
     end
   end
-
 end

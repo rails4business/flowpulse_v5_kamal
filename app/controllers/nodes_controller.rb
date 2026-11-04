@@ -76,5 +76,4 @@ class NodesController < ApplicationController
 
     domains.order(primary: :desc, hostname: :asc).first
   end
-
 end

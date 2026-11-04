@@ -157,7 +157,6 @@ module Brands
         def default_domain_for(brand)
           @impegno_domains.find { |domain| brand_key_for(domain) == brand }
         end
-
     end
   end
 end

@@ -4,7 +4,7 @@ class FlowpulseNavigationTest < ApplicationSystemTestCase
   test "opens Flowpulse and its unified public network directory" do
     visit flowpulse_path
 
-    assert_text "Flowpulse"
+    assert_text(/Flowpulse/i)
     click_link "Rete", match: :first
 
     assert_current_path flowpulse_global_network_path

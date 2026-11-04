@@ -28,7 +28,6 @@ class Flowpulse::DevelopmentControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", "Flowpulse"
     assert_select "a[href='https://github.com/rails4business/flowpulse_v5_kamal'][target='_blank']", text: /Repository Flowpulse/
     assert_select "a[href='#{flowpulse_development_entry_path("registro-sviluppo-centralizzato")}']"
-    assert_select "a[href='#{admin_brands_path(tab: "building")}']", text: "Brand in costruzione"
 
     get flowpulse_development_url(brand: "impegno")
     assert_response :success

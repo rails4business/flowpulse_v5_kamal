@@ -160,7 +160,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Ascolto le persone, do forma alle idee e collego chi può realizzarle."
-    assert_select ".mp-sales__hero-world img[alt='Mark Postura']"
+    assert_select ".mp-sales__hero-world img[alt='Percorso integrato tra salute, apprendimento e risorse']"
     assert_select "#percorsi .mp-sales__movement", count: 3
     assert_select "#percorsi", text: /Ascoltare.*Dare forma.*Mettere alla prova/m
     assert_select "#mondo-markpostura .mp-sales__entrance", count: 3

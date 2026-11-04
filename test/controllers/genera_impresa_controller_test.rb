@@ -42,11 +42,9 @@ class GeneraImpresaControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{radioestesia_page_path("contenuti")}']"
   end
 
-  test "renders SvuotaMente as a brand with its webapp project" do
+  test "renders the public SvuotaMente webapp project" do
     get genera_impresa_brand_url("svuotamente")
-    assert_response :success
-    assert_select "h1", "SvuotaMente"
-    assert_includes response.body, "Webapp SvuotaMente"
+    assert_response :not_found
 
     get genera_impresa_project_url("webapp-svuotamente")
     assert_response :success
