@@ -60,7 +60,7 @@ end
 
 group :test do
   # Keep tests isolated in a lightweight local SQLite database
-  gem "sqlite3", ">= 2.1"
+  gem "sqlite3", ">= 2.10.2"
 end
 
 group :development do
