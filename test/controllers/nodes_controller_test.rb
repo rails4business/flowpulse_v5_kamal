@@ -183,7 +183,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "header a[href=?]", new_brand_access_request_path, text: "Richiedi accesso"
     assert_select "header details summary.rounded-full", text: /N/
     assert_select "header details a[href=?]", dashboard_path, text: "Dashboard"
-    assert_operator response.body.index("Richiedi accesso"), :<, response.body.index("node-public-breadcrumb")
+    assert_select ".node-public-breadcrumb", count: 0
     assert_includes response.body, "Richiedi accesso"
   end
 
@@ -246,14 +246,38 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Draft Node"
     assert_not_includes response.body, "Anteprima privata"
     assert_select ".node-public-status", false
-    assert_select ".node-public-creator-menu-toggle"
-    assert_includes response.body, "Creator"
-    assert_includes response.body, "Stato"
-    assert_includes response.body, "draft"
-    assert_includes response.body, "Visibilita"
-    assert_includes response.body, "Pubblico"
+    assert_select ".node-public-creator-menu-toggle", count: 1
     assert_includes response.body, dashboard_path
     assert_no_match admin_dashboard_path, response.body
+  end
+
+  test "only superadmin can open the short development edit route" do
+    superadmin = User.create!(
+      email_address: "catalog-superadmin@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      superadmin: true,
+      active_role: :superadmin
+    )
+    superadmin.create_profile!(display_name: "Catalog Superadmin")
+    sign_in(superadmin)
+
+    get edit_node_url(@draft_node, return_to: "/flowpulse/rete/globale")
+
+    assert_redirected_to edit_creator_world_role_assignment_node_url(
+      @draft_node.role_assignment,
+      @draft_node,
+      return_to: "/flowpulse/rete/globale"
+    )
+    follow_redirect!
+    assert_response :success
+    assert_select "textarea[name='node[navigation_input]']"
+    assert_select "a[href='/flowpulse/rete/globale']", text: /Torna alla rete/
+
+    delete session_url
+    sign_in(@user)
+    get edit_node_url(@draft_node)
+    assert_redirected_to node_url(@draft_node)
   end
 
   test "domain navigation does not climb above domain root node" do
@@ -299,6 +323,12 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
       logo_full_url: "https://cdn.example.com/bounded-full.png",
       logo_square_url: "https://cdn.example.com/bounded-square.png"
     )
+    domain_root.update!(navigation: {
+      "items" => [
+        { "slug" => child.slug, "label" => "Domain Child" },
+        { "slug" => sibling.slug, "label" => "Domain Sibling" }
+      ]
+    })
 
     host! "www.bounded.example"
     get node_url(child)
@@ -307,9 +337,12 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "aside#bookAside", false
     assert_select "link[rel='icon'][href='https://cdn.example.com/bounded-square.png']"
     assert_select "link[rel='apple-touch-icon'][href='https://cdn.example.com/bounded-square.png']"
-    assert_select ".node-public-breadcrumb a .node-public-breadcrumb-logo-full[src='https://cdn.example.com/bounded-full.png'][alt='bounded.example']"
-    assert_select ".node-public-breadcrumb a .node-public-breadcrumb-logo-square[src='https://cdn.example.com/bounded-square.png'][alt='bounded.example']"
-    assert_select ".node-public-breadcrumb a .sr-only", "bounded.example"
+    assert_select ".node-public-breadcrumb-current", "Domain Child"
+    assert_select ".node-public-breadcrumb img", count: 0
+    assert_select "header nav[aria-label='Navigazione principale']", count: 1
+    assert_select "header nav[aria-label='Navigazione principale'] > a[href=?][aria-label='bounded.example · Home']", node_path(domain_root)
+    assert_select "header nav[aria-label='Navigazione principale'] a[href=?]", node_path(child), text: "Domain Child"
+    assert_select "header nav[aria-label='Navigazione principale'] a[href=?]", node_path(sibling), text: "Domain Sibling"
     assert_select ".node-public-reading-nav-static"
     assert_no_match "www.bounded.example", css_select(".node-public-breadcrumb").to_s
     assert_no_match "Top Root", response.body
@@ -320,8 +353,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(domain_root)
 
     assert_response :success
-    assert_select ".node-public-breadcrumb-current .node-public-breadcrumb-logo-full[src='https://cdn.example.com/bounded-full.png'][alt='bounded.example']"
-    assert_select ".node-public-breadcrumb-current .node-public-breadcrumb-logo-square[src='https://cdn.example.com/bounded-square.png'][alt='bounded.example']"
+    assert_select ".node-public-breadcrumb", count: 0
     assert_select "aside#bookAside", false
     assert_no_match "Top Root", response.body
     assert_select ".node-public-reading-nav-static"
@@ -377,7 +409,8 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(domain_root)
 
     assert_response :success
-    assert_select ".node-public-breadcrumb a", "parent-domain.example"
+    assert_select ".node-public-breadcrumb-current", "Nested Domain Root"
+    assert_select ".node-public-breadcrumb img", count: 0
     assert_select ".node-public-sidebar-parent-link[href=?]", node_path(top_root), text: "Top Root"
     assert_select ".node-public-sidebar-link[href=?]", node_path(domain_root), text: "Nested Domain Root"
     assert_select ".node-public-sidebar-link[href=?]", node_path(sibling), text: "Nested Domain Sibling"
@@ -460,15 +493,16 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".node-public-book-next[href=?]", node_path(next_node)
   end
 
-  test "editor actions are visible only to active creator owner" do
+  test "editor actions are visible only to the node owner and superadmin" do
     sign_in(@user)
 
     get node_url(@draft_node)
 
     assert_response :success
     assert_select ".node-public-creator-menu-toggle"
-    assert_select "header a[href=?]", tree_creator_world_role_assignment_node_path(@draft_node.role_assignment, @draft_node), text: "Albero"
-    assert_select "header a[href=?]", edit_creator_world_role_assignment_node_path(@draft_node.role_assignment, @draft_node), text: "Modifica"
+    assert_select "details[data-controller='details-menu'][data-action*='click@window->details-menu#closeOutside']"
+    assert_select ".node-public-creator-menu-toggle svg[width='18'][height='18']"
+    assert_select "header a[href=?]", edit_creator_world_role_assignment_node_path(@draft_node.role_assignment, @draft_node, return_to: node_path(@draft_node)), text: "Modifica"
 
     delete session_url
     superadmin = User.create!(
@@ -483,9 +517,9 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get node_url(@draft_node)
 
     assert_response :success
-    assert_select ".node-public-creator-menu-toggle", false
-    assert_select "header a[href=?]", tree_creator_world_role_assignment_node_path(@draft_node.role_assignment, @draft_node), count: 0
-    assert_select "header a[href=?]", edit_creator_world_role_assignment_node_path(@draft_node.role_assignment, @draft_node), count: 0
+    assert_select ".node-public-creator-menu-toggle"
+    assert_select "header a[href=?]", tree_creator_world_role_assignment_node_path(@draft_node.role_assignment, @draft_node), text: "Albero"
+    assert_select "header a[href=?]", edit_creator_world_role_assignment_node_path(@draft_node.role_assignment, @draft_node, return_to: node_path(@draft_node)), text: "Modifica"
     assert_select ".node-public-status", false
   end
 

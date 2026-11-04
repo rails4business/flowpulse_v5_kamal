@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -411,6 +411,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_110000) do
     t.bigint "professional_owner_node_id"
     t.integer "node_type", default: 1, null: false
     t.string "map_color"
+    t.jsonb "navigation"
     t.index ["link_node_id"], name: "index_nodes_on_link_node_id"
     t.index ["node_type"], name: "index_nodes_on_node_type"
     t.index ["parent_id"], name: "index_nodes_on_parent_id"

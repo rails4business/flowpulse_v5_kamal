@@ -63,7 +63,7 @@
   </head>
 
   <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-    <% nav_brand = @navigation_domain&.display_hostname.presence || "Flowpulse" %>
+    <% nav_brand = @navigation_domain&.site_title.presence || @navigation_domain&.display_hostname.presence || @navigation_root_node&.title.presence || "Flowpulse" %>
     <%
       nav_siblings = Array(@siblings)
       nav_has_real_siblings = nav_siblings.any? { |sibling| sibling != @node }
@@ -72,57 +72,40 @@
     
     <div id="siblingSidebarOverlay" class="fixed inset-0 z-30 hidden bg-slate-950/40 backdrop-blur-sm lg:hidden" aria-hidden="true"></div>
 
-    <!-- Top navbar -->
-    <header class="sticky top-0 z-30 w-full border-b border-slate-200 bg-white/95 backdrop-blur px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between shadow-sm">
-      <div class="flex items-center gap-3 min-w-0 flex-1 mr-4">
+    <!-- Navigazione pubblica del Brand -->
+    <header class="sticky top-0 z-30 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+      <nav class="mx-auto flex min-h-16 w-full max-w-8xl items-center gap-3 px-4 py-2 sm:px-6 lg:px-8" aria-label="Navigazione principale">
         <% if nav_has_left_sidebar %>
-          <button id="siblingSidebarToggle" type="button" class="lg:hidden p-2 -ml-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0" aria-label="Apri menu laterale">
+          <button id="siblingSidebarToggle" type="button" class="lg:hidden -ml-2 flex-shrink-0 rounded-xl p-2 text-slate-500 hover:bg-slate-100" aria-label="Apri navigazione del contenuto" title="Navigazione del contenuto">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5.5 w-5.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3.75h10.5v4.5H6.75zM4.5 15.75h6v4.5h-6zM13.5 15.75h6v4.5h-6zM12 8.25v3.75m0 0H7.5v3.75M12 12h4.5v3.75" />
             </svg>
           </button>
         <% end %>
 
-        <% if @brand_access_domain.present? %>
-          <% if Current.user.blank? %>
-            <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: @brand_access_domain.auth_slug.presence || @brand_access_domain.node&.slug } : {}),
-              title: "Richiedi un invito per accedere a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}.",
-              class: "rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-bold text-white hover:bg-slate-800" %>
-          <% elsif FlowRoles.active_role_for(Current.user) == "traveler" && @brand_access.present? %>
-            <%= link_to "Accesso attivo", viaggiatori_path,
-              title: "Hai accesso a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}. Puoi gestirlo dalla dashboard.",
-              class: "rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-bold text-green-700 hover:bg-green-100" %>
-          <% elsif FlowRoles.active_role_for(Current.user) == "traveler" %>
-            <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: @brand_access_domain.auth_slug.presence || @brand_access_domain.node&.slug } : {}),
-              title: "Richiedi un invito per accedere a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}.",
-              class: "rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-bold text-white hover:bg-slate-800" %>
+        <%= link_to flowtree_public_node_path(@navigation_root_node || @node), class: "flex min-w-0 flex-shrink-0 items-center gap-2", aria: { label: "#{nav_brand} · Home" } do %>
+          <% if @navigation_domain&.logo_full_url.present? %>
+            <%= image_tag @navigation_domain.logo_full_url, alt: nav_brand, class: "hidden h-10 max-w-[190px] object-contain sm:block" %>
+          <% elsif @navigation_domain&.logo_square_url.present? %>
+            <%= image_tag @navigation_domain.logo_square_url, alt: nav_brand, class: "hidden h-10 w-10 object-contain sm:block" %>
+          <% else %>
+            <span class="hidden text-lg font-black tracking-tight text-slate-950 sm:block"><%= nav_brand %></span>
           <% end %>
+          <span class="max-w-36 truncate text-base font-black tracking-tight text-slate-950 sm:hidden"><%= nav_brand %></span>
         <% end %>
 
-        <% if content_for?(:navbar_breadcrumbs) %>
-          <div class="min-w-0 flex-1 overflow-x-auto overflow-y-hidden">
-            <%= yield :navbar_breadcrumbs %>
+        <details class="group/nav relative ml-auto lg:ml-4 lg:min-w-0 lg:flex-1" <%= "hidden" unless content_for?(:public_node_navigation) %>>
+          <summary class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="Apri menu principale">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" /></svg>
+          </summary>
+          <div class="absolute right-0 z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-2 shadow-xl group-open/nav:block lg:static lg:mt-0 lg:flex lg:w-auto lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+            <%= yield :public_node_navigation %>
           </div>
-        <% else %>
-          <%= link_to root_path, class: "flex items-center gap-2 flex-shrink-0" do %>
-            <span class="flex min-h-9 items-center">
-              <% if @navigation_domain&.logo_square_url.present? %>
-                <%= image_tag @navigation_domain.logo_square_url, alt: nav_brand, class: "h-9 w-9 object-contain sm:hidden" %>
-              <% else %>
-                <span class="text-lg font-black tracking-wider text-slate-900 sm:hidden"><%= nav_brand %></span>
-              <% end %>
+        </details>
 
-              <% if @navigation_domain&.logo_full_url.present? %>
-                <%= image_tag @navigation_domain.logo_full_url, alt: nav_brand, class: "hidden h-9 max-w-[220px] object-contain sm:block" %>
-              <% else %>
-                <span class="hidden text-lg font-black tracking-wider text-slate-900 sm:inline"><%= nav_brand %></span>
-              <% end %>
-            </span>
-          <% end %>
-        <% end %>
-      </div>
+        <div class="ml-auto flex flex-shrink-0 items-center gap-2">
+          <%= render "layouts/public_node_brand_access" %>
 
-      <div class="flex items-center gap-3 flex-shrink-0">
         <button id="tocSidebarToggle" type="button" class="xl:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 flex-shrink-0 hidden" aria-label="Apri indice">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5.5 w-5.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
@@ -130,11 +113,17 @@
         </button>
 
         <% if @can_manage_public_node %>
-          <details class="relative">
-            <summary class="node-public-creator-menu-toggle flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100" aria-label="Apri strumenti creator">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4.5 w-4.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.66.84.083.037.165.076.246.117.334.169.73.16 1.045-.043l1.08-.696a1.125 1.125 0 011.45.12l1.833 1.833c.389.389.44.997.12 1.45l-.696 1.08c-.203.315-.212.711-.043 1.045.041.081.08.163.117.246.154.347.466.597.84.66l1.281.213c.542.09.94.56.94 1.11v2.593c0 .55-.398 1.02-.94 1.11l-1.281.213c-.374.063-.686.313-.84.66a6.963 6.963 0 01-.117.246c-.169.334-.16.73.043 1.045l.696 1.08c.32.453.269 1.061-.12 1.45l-1.833 1.833a1.125 1.125 0 01-1.45.12l-1.08-.696c-.315-.203-.711-.212-1.045-.043a6.963 6.963 0 01-.246.117c-.347.154-.597.466-.66.84l-.213 1.281c-.09.542-.56.94-1.11.94h-2.593c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.66-.84a6.963 6.963 0 01-.246-.117c-.334-.169-.73-.16-1.045.043l-1.08.696a1.125 1.125 0 01-1.45-.12l-1.833-1.833a1.125 1.125 0 01-.12-1.45l.696-1.08c.203-.315.212-.711.043-1.045a6.963 6.963 0 01-.117-.246c-.154-.347-.466-.597-.84-.66l-1.281-.213a1.125 1.125 0 01-.94-1.11v-2.593c0-.55.398-1.02.94-1.11l1.281-.213c.374-.063.686-.313.84-.66.037-.083.076-.165.117-.246.169-.334.16-.73-.043-1.045l-.696-1.08a1.125 1.125 0 01.12-1.45l1.833-1.833a1.125 1.125 0 011.45-.12l1.08.696c.315.203.711.212 1.045.043.081-.041.163-.08.246-.117.347-.154.597-.466.66-.84l.213-1.281z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <details
+            class="relative"
+            data-controller="details-menu"
+            data-action="click@window->details-menu#closeOutside keydown@window->details-menu#closeOnEscape"
+          >
+            <summary class="node-public-creator-menu-toggle flex h-9 w-9 shrink-0 cursor-pointer list-none appearance-none items-center justify-center rounded-full border border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100" aria-label="Apri strumenti creator" title="Strumenti Node">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:block; flex:none">
+                <path stroke-linecap="round" d="M4 7h10M18 7h2M4 17h2M10 17h10M4 12h4M12 12h8" />
+                <circle cx="16" cy="7" r="2" />
+                <circle cx="8" cy="17" r="2" />
+                <circle cx="10" cy="12" r="2" />
               </svg>
             </summary>
             <div class="absolute right-0 z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
@@ -159,7 +148,7 @@
                 </svg>
                 <span>Albero</span>
               <% end %>
-              <%= link_to edit_creator_world_role_assignment_node_path(@node.role_assignment, @node), class: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" do %>
+              <%= link_to edit_creator_world_role_assignment_node_path(@node.role_assignment, @node, return_to: request.fullpath), class: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100" do %>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4 text-blue-600">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                 </svg>
@@ -201,7 +190,9 @@
             <% end %>
           </div>
         </details>
-      </div>
+        </div>
+      </nav>
+
     </header>
 
     <!-- Main Container -->

@@ -119,7 +119,9 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#direzioni"
     assert_select "nav a[href='#{markpostura_weekplan_path}']", text: "Orario"
     assert_select "#weekplan", count: 0
-    assert_select "img[src*='hero_markpostura-720']"
+    assert_select "header#inizia img[alt='Percorso integrato tra salute, apprendimento e risorse']"
+    assert_select "header#inizia a[href='https://ik.imagekit.io/posturacorretta/Percorso%20integrato%20tra%20salute,%20apprendimento%20e%20risorse.png']"
+    assert_select "#mondo-markpostura img[alt='Mappa completa del mondo FlowPulse di MarkPostura']"
     assert_select "meta[name='robots'][content='noindex,nofollow']", count: 0
   end
 

@@ -31,6 +31,13 @@ class NodeCatalog
       if link_slug.present? && !definitions.key?(link_slug)
         raise ArgumentError, "Node #{slug}: link_node_slug sconosciuto #{link_slug}"
       end
+
+
+      navigation_slugs(attributes["navigation"]).each do |navigation_slug|
+        next if definitions.key?(navigation_slug)
+
+        raise ArgumentError, "Node #{slug}: navigation riferisce lo slug sconosciuto #{navigation_slug}"
+      end
     end
 
     detect_parent_cycles!
@@ -56,7 +63,8 @@ class NodeCatalog
         link_slug = attributes["link_node_slug"].presence
         node.update!(
           professional_owner_node: owner_slug ? imported.fetch(owner_slug) : nil,
-          link_node: link_slug ? imported.fetch(link_slug) : nil
+          link_node: link_slug ? imported.fetch(link_slug) : nil,
+          navigation: attributes["navigation"]
         )
 
         username = attributes["primary_profile_username"].presence
@@ -87,6 +95,14 @@ class NodeCatalog
   private
 
     attr_reader :definitions
+
+    def navigation_slugs(navigation)
+      items = navigation.to_h["items"] || navigation.to_h[:items]
+      Array(items).flat_map do |item|
+        attributes = item.to_h.stringify_keys
+        [attributes["slug"], *navigation_slugs("items" => attributes["children"])]
+      end.compact
+    end
 
     def import_node!(slug, imported, stack)
       return imported.fetch(slug) if imported.key?(slug)

@@ -9,6 +9,8 @@ module PublicNodePresentation
 
       @navigation_domain = navigation_domain || public_node_navigation_domain(@node)
       @navigation_root_node = @navigation_domain&.node
+      @navigation_source_node = @node.navigation_source_node
+      @public_navigation_items = resolve_public_navigation(@node.effective_navigation_items)
       boundary_node = @navigation_root_node
       @current_host_domain_root = domain_root.nil? ? public_node_domain_root?(@node) : domain_root
 
@@ -43,6 +45,19 @@ module PublicNodePresentation
       end
     end
 
+    def resolve_public_navigation(items)
+      Array(items).filter_map do |item|
+        target = @node.role_assignment.nodes.find_by(slug: item["slug"])
+        next if target.blank? || !public_node_navigable?(target)
+
+        {
+          node: target.bridge_node? ? target.resolve_target : target,
+          label: item["label"].presence || target.title,
+          children: resolve_public_navigation(item["children"])
+        }
+      end
+    end
+
     def public_node_domain_root?(node)
       current = current_domain
       return current.node_id == node.id if current.present?
@@ -73,10 +88,10 @@ module PublicNodePresentation
     end
 
     def public_node_creator_owner?
-      return false unless Current.user.present?
-      return false unless FlowRoles.active_role_for(Current.user) == "ideatore"
+      return false unless NodeCatalogEditor.enabled? && Current.user.present?
+      return true if Current.user.superadmin_user?
 
-      Current.user.role_assignments.exists?(id: @node.role_assignment_id, role: :ideatore)
+      Current.user.ideatore_user? && Current.user.role_assignments.ideatore.exists?(id: @node.role_assignment_id)
     end
 
     def set_public_node_brand_access_context

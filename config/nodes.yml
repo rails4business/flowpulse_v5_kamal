@@ -194,19 +194,171 @@ default: &default
       visibility: public
 
     categorie-generali:
-      title: Categorie generali
-      description: Attività e incontri organizzati intorno ai temi generali della consapevolezza e del benessere.
+      title: Attività settimanali
+      description: Attività e incontri ricorrenti per esplorare il movimento, la postura e la consapevolezza nel tempo.
       node_type: project
       parent_slug: apprendimento-2-connessione
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     categorie-specifiche:
-      title: Categorie specifiche
-      description: Percorsi e attività focalizzati su bisogni, contesti e pratiche specifiche.
+      title: Corsi mirati
+      description: Percorsi focalizzati su condizioni, bisogni, attività e contesti specifici.
       node_type: project
       parent_slug: apprendimento-2-connessione
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    condizioni-e-patologie:
+      title: Condizioni e patologie
+      description: Corsi educativi organizzati intorno a condizioni, sintomi, prevenzione e bisogni specifici, senza sostituire diagnosi o cure professionali.
+      node_type: project
+      parent_slug: categorie-specifiche
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    attivita-e-contesti:
+      title: Attività e contesti
+      description: Corsi mirati alle attività quotidiane, sportive e professionali e ai diversi contesti in cui viene utilizzato il corpo.
+      node_type: project
+      parent_slug: categorie-specifiche
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    metodiche-posturali:
+      title: Metodiche posturali
+      description: Spazio dedicato alla presentazione e all’esplorazione progressiva delle diverse metodiche posturali.
+      node_type: project
+      parent_slug: apprendimento-2-connessione
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    fisioterapia:
+      title: Fisioterapia
+      description: Professione sanitaria dedicata alla prevenzione, valutazione, cura e riabilitazione delle funzioni motorie e corporee.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 1
+      map_color: "#2E1065"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    gds:
+      title: Biomeccanica Comportamentale GDS
+      description: Una lettura del corpo attraverso catene muscolari, comportamento e direzioni di movimento.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 2
+      map_color: "#2563EB"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    osteopatia:
+      title: Osteopatia
+      description: Un approccio manuale che osserva la relazione tra struttura, funzione, mobilità e capacità di autoregolazione.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 3
+      map_color: "#B91C1C"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    mezieres:
+      title: Mézières
+      description: Una metodica autonoma di osservazione e lavoro posturale sviluppata da Françoise Mézières.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 4
+      map_color: "#B91C1C"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    rpg:
+      title: RPG
+      description: La Rieducazione Posturale Globale, presentata come metodica distinta con principi e percorso formativo propri.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 5
+      map_color: "#B91C1C"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    souchard:
+      title: Metodo Souchard
+      description: La proposta metodologica attribuita a Philippe Souchard, catalogata separatamente dalla RPG e dal metodo Mézières.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 6
+      map_color: "#B91C1C"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    feldenkrais:
+      title: Feldenkrais
+      description: Un metodo di apprendimento somatico che usa movimento, attenzione e percezione per ampliare le possibilità del corpo.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 7
+      map_color: "#2563EB"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    alexander:
+      title: Tecnica Alexander
+      description: Una pratica educativa sull’uso di sé, sull’organizzazione del movimento e sulla relazione tra attenzione e postura.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 8
+      map_color: "#2563EB"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    kinesiologia-applicata:
+      title: Kinesiologia Applicata
+      description: Una sequenza di osservazione, test muscolare e verifica per leggere relazioni funzionali del corpo.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 9
+      map_color: "#15803D"
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    bioritmi-corpo-coscienza:
+      title: Corpo e Coscienza
+      description: Una mappa di ritmi, centri, movimenti ed elementi per leggere il corpo come sistema in relazione.
+      node_type: project
+      view_type: methodology
+      parent_slug: metodiche-posturali
+      position: 10
+      map_color: "#B91C1C"
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -215,7 +367,8 @@ default: &default
       title: 60 movimenti alla scrivania
       description: Una sequenza accessibile per esplorare il movimento e lavorare sulla postura utilizzando una sedia.
       node_type: project
-      parent_slug: categorie-specifiche
+      parent_slug: attivita-e-contesti
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -376,6 +529,17 @@ default: &default
       status: published
       visibility: public
 
+    programma-igiene-posturale:
+      title: Programma · Igiene Posturale
+      description: Capitoli, concetti e materiali del corso Igiene Posturale.
+      node_type: project
+      view_type: program
+      parent_slug: igiene-posturale
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     accesso-corso-igiene-posturale-da-landing:
       title: Accesso al corso Igiene Posturale dalla landing
       description: Ponte tra il Node landing igieneposturale.it e il corso Igiene Posturale interno a PosturaCorretta.
@@ -390,7 +554,7 @@ default: &default
     igiene-posturale-mobilita-articolare:
       title: Mobilità articolare
       node_type: project
-      parent_slug: igiene-posturale
+      parent_slug: programma-igiene-posturale
       position: 7
       professional_owner_slug: markpostura
       status: published
@@ -399,7 +563,7 @@ default: &default
     igiene-posturale-punti-di-tensione:
       title: Punti di tensione
       node_type: project
-      parent_slug: igiene-posturale
+      parent_slug: igiene-posturale-mobilita-articolare
       position: 8
       professional_owner_slug: markpostura
       status: published
@@ -408,7 +572,7 @@ default: &default
     igiene-posturale-vie-di-discesa:
       title: Vie di discesa
       node_type: project
-      parent_slug: igiene-posturale
+      parent_slug: igiene-posturale-punti-di-tensione
       position: 9
       professional_owner_slug: markpostura
       status: published
@@ -417,14 +581,14 @@ default: &default
     igiene-posturale-recettori-sensoriali:
       title: Recettori sensoriali
       node_type: project
-      parent_slug: igiene-posturale
+      parent_slug: igiene-posturale-vie-di-discesa
       position: 10
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     principi-di-fisioterapia:
-      title: Principi di Fisioterapia
+      title: Primo incontro con la Fisioterapia
       node_type: project
       view_type: course
       parent_slug: igiene-posturale
@@ -433,10 +597,21 @@ default: &default
       status: published
       visibility: public
 
+    programma-principi-di-fisioterapia:
+      title: Programma · Principi di Fisioterapia
+      description: Capitoli, sistemi e approfondimenti del corso Principi di Fisioterapia.
+      node_type: project
+      view_type: program
+      parent_slug: principi-di-fisioterapia
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     principi-di-fisioterapia-sistema-respiratorio:
       title: Sistema respiratorio
       node_type: project
-      parent_slug: principi-di-fisioterapia
+      parent_slug: programma-principi-di-fisioterapia
       position: 11
       professional_owner_slug: markpostura
       status: published
@@ -445,7 +620,7 @@ default: &default
     principi-di-fisioterapia-sistema-nervoso-urogenitale:
       title: Sistema nervoso e urogenitale
       node_type: project
-      parent_slug: principi-di-fisioterapia
+      parent_slug: principi-di-fisioterapia-sistema-respiratorio
       position: 12
       professional_owner_slug: markpostura
       status: published
@@ -454,7 +629,7 @@ default: &default
     principi-di-fisioterapia-sistema-muscolo-scheletrico:
       title: Sistema muscolo-scheletrico
       node_type: project
-      parent_slug: principi-di-fisioterapia
+      parent_slug: principi-di-fisioterapia-sistema-nervoso-urogenitale
       position: 13
       professional_owner_slug: markpostura
       status: published
@@ -463,7 +638,7 @@ default: &default
     principi-di-fisioterapia-sistema-cardiocircolatorio:
       title: Sistema cardiocircolatorio
       node_type: project
-      parent_slug: principi-di-fisioterapia
+      parent_slug: principi-di-fisioterapia-sistema-muscolo-scheletrico
       position: 14
       professional_owner_slug: markpostura
       status: published
@@ -472,7 +647,7 @@ default: &default
     principi-di-fisioterapia-sistema-linfatico-digerente:
       title: Sistema linfatico e digerente
       node_type: project
-      parent_slug: principi-di-fisioterapia
+      parent_slug: principi-di-fisioterapia-sistema-cardiocircolatorio
       position: 15
       professional_owner_slug: markpostura
       status: published
@@ -481,14 +656,14 @@ default: &default
     principi-di-fisioterapia-approfondimento-fisioterapia:
       title: Scopri di più sulla Fisioterapia
       node_type: project
-      parent_slug: principi-di-fisioterapia
+      parent_slug: principi-di-fisioterapia-sistema-linfatico-digerente
       position: 16
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     biomeccanica-comportamentale-gds:
-      title: Biomeccanica comportamentale (GDS)
+      title: Primo incontro con la GDS
       node_type: project
       view_type: course
       parent_slug: principi-di-fisioterapia
@@ -497,10 +672,21 @@ default: &default
       status: published
       visibility: public
 
+    programma-biomeccanica-comportamentale-gds:
+      title: Programma · Biomeccanica comportamentale (GDS)
+      description: Capitoli, catene e approfondimenti del corso di Biomeccanica comportamentale GDS.
+      node_type: project
+      view_type: program
+      parent_slug: biomeccanica-comportamentale-gds
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     biomeccanica-comportamentale-gds-cinque-direzioni-movimento:
       title: Le 5 direzioni di movimento
       node_type: project
-      parent_slug: biomeccanica-comportamentale-gds
+      parent_slug: programma-biomeccanica-comportamentale-gds
       position: 17
       professional_owner_slug: markpostura
       status: published
@@ -509,7 +695,7 @@ default: &default
     biomeccanica-comportamentale-gds-catena-am:
       title: Catena AM
       node_type: project
-      parent_slug: biomeccanica-comportamentale-gds
+      parent_slug: biomeccanica-comportamentale-gds-cinque-direzioni-movimento
       position: 18
       professional_owner_slug: markpostura
       status: published
@@ -518,7 +704,7 @@ default: &default
     biomeccanica-comportamentale-gds-catena-al:
       title: Catena AL
       node_type: project
-      parent_slug: biomeccanica-comportamentale-gds
+      parent_slug: biomeccanica-comportamentale-gds-catena-am
       position: 19
       professional_owner_slug: markpostura
       status: published
@@ -527,7 +713,7 @@ default: &default
     biomeccanica-comportamentale-gds-catena-pm:
       title: Catena PM
       node_type: project
-      parent_slug: biomeccanica-comportamentale-gds
+      parent_slug: biomeccanica-comportamentale-gds-catena-al
       position: 20
       professional_owner_slug: markpostura
       status: published
@@ -536,7 +722,7 @@ default: &default
     biomeccanica-comportamentale-gds-catena-pl:
       title: Catena PL
       node_type: project
-      parent_slug: biomeccanica-comportamentale-gds
+      parent_slug: biomeccanica-comportamentale-gds-catena-pm
       position: 21
       professional_owner_slug: markpostura
       status: published
@@ -545,7 +731,7 @@ default: &default
     biomeccanica-comportamentale-gds-catene-pa-ap:
       title: Catene PA/AP
       node_type: project
-      parent_slug: biomeccanica-comportamentale-gds
+      parent_slug: biomeccanica-comportamentale-gds-catena-pl
       position: 22
       professional_owner_slug: markpostura
       status: published
@@ -554,14 +740,14 @@ default: &default
     biomeccanica-comportamentale-gds-approfondimento-gds:
       title: Scopri di più sulla metodica GDS
       node_type: project
-      parent_slug: biomeccanica-comportamentale-gds
+      parent_slug: biomeccanica-comportamentale-gds-catene-pa-ap
       position: 23
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     principi-di-osteopatia:
-      title: Principi di Osteopatia
+      title: Primo incontro con l’Osteopatia
       node_type: project
       view_type: course
       parent_slug: biomeccanica-comportamentale-gds
@@ -570,10 +756,21 @@ default: &default
       status: published
       visibility: public
 
+    programma-principi-di-osteopatia:
+      title: Programma · Principi di Osteopatia
+      description: Capitoli, sistemi e approfondimenti del corso Principi di Osteopatia.
+      node_type: project
+      view_type: program
+      parent_slug: principi-di-osteopatia
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     principi-di-osteopatia-eliminare-disfunzioni:
       title: Eliminare le disfunzioni
       node_type: project
-      parent_slug: principi-di-osteopatia
+      parent_slug: programma-principi-di-osteopatia
       position: 24
       professional_owner_slug: markpostura
       status: published
@@ -582,7 +779,7 @@ default: &default
     principi-di-osteopatia-sistema-fasciale:
       title: Il sistema fasciale
       node_type: project
-      parent_slug: principi-di-osteopatia
+      parent_slug: principi-di-osteopatia-eliminare-disfunzioni
       position: 25
       professional_owner_slug: markpostura
       status: published
@@ -591,7 +788,7 @@ default: &default
     principi-di-osteopatia-sistema-viscerale:
       title: Il sistema viscerale
       node_type: project
-      parent_slug: principi-di-osteopatia
+      parent_slug: principi-di-osteopatia-sistema-fasciale
       position: 26
       professional_owner_slug: markpostura
       status: published
@@ -600,7 +797,7 @@ default: &default
     principi-di-osteopatia-sistema-cranio-sacrale:
       title: Il sistema cranio-sacrale
       node_type: project
-      parent_slug: principi-di-osteopatia
+      parent_slug: principi-di-osteopatia-sistema-viscerale
       position: 27
       professional_owner_slug: markpostura
       status: published
@@ -609,7 +806,7 @@ default: &default
     principi-di-osteopatia-sistema-neurovegetativo:
       title: Il sistema neurovegetativo
       node_type: project
-      parent_slug: principi-di-osteopatia
+      parent_slug: principi-di-osteopatia-sistema-cranio-sacrale
       position: 28
       professional_owner_slug: markpostura
       status: published
@@ -618,14 +815,14 @@ default: &default
     principi-di-osteopatia-approfondimento-osteopatia:
       title: Scopri di più sull'Osteopatia
       node_type: project
-      parent_slug: principi-di-osteopatia
+      parent_slug: principi-di-osteopatia-sistema-neurovegetativo
       position: 29
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     introduzione-al-metodo-corpo-e-coscienza:
-      title: Corpo e Coscienza
+      title: Primo incontro con Corpo e Coscienza
       node_type: project
       view_type: course
       parent_slug: principi-di-osteopatia
@@ -634,10 +831,21 @@ default: &default
       status: published
       visibility: public
 
+    programma-introduzione-corpo-e-coscienza:
+      title: Programma · Corpo e Coscienza
+      description: Capitoli, principi e approfondimenti del corso Corpo e Coscienza.
+      node_type: project
+      view_type: program
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     introduzione-al-metodo-corpo-e-coscienza-due-circolazioni:
       title: Le 2 circolazioni
       node_type: project
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      parent_slug: programma-introduzione-corpo-e-coscienza
       position: 30
       professional_owner_slug: markpostura
       status: published
@@ -646,7 +854,7 @@ default: &default
     introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita:
       title: I 3 centri di gravità
       node_type: project
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza-due-circolazioni
       position: 31
       professional_owner_slug: markpostura
       status: published
@@ -655,7 +863,7 @@ default: &default
     introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento:
       title: I 4 tipi di movimento
       node_type: project
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita
       position: 32
       professional_owner_slug: markpostura
       status: published
@@ -664,7 +872,7 @@ default: &default
     introduzione-al-metodo-corpo-e-coscienza-cinque-elementi:
       title: I 5 elementi
       node_type: project
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento
       position: 33
       professional_owner_slug: markpostura
       status: published
@@ -673,7 +881,7 @@ default: &default
     introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani:
       title: Le 6 coppie di meridiani
       node_type: project
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza-cinque-elementi
       position: 34
       professional_owner_slug: markpostura
       status: published
@@ -682,7 +890,7 @@ default: &default
     introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici:
       title: I 7 centri neurolinfatici
       node_type: project
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani
       position: 35
       professional_owner_slug: markpostura
       status: published
@@ -691,14 +899,15 @@ default: &default
     introduzione-al-metodo-corpo-e-coscienza-approfondimento-corpo-coscienza:
       title: Scopri di più su Corpo e Coscienza
       node_type: project
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici
       position: 36
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
-    altre-metodiche-posturali:
-      title: Altre metodiche posturali
+    primo-incontro-kinesiologia-applicata:
+      title: Primo incontro con la Kinesiologia Applicata
+      description: Un assaggio educativo dei principi della Kinesiologia Applicata nel percorso PosturaCorretta.
       node_type: project
       view_type: course
       parent_slug: introduzione-al-metodo-corpo-e-coscienza
@@ -707,38 +916,84 @@ default: &default
       status: published
       visibility: public
 
-    altre-metodiche-posturali-sequenza-kinesiologia-applicata:
-      title: Sequenza di Kinesiologia Applicata
+    altre-metodiche-posturali:
+      title: Altre metodiche posturali
       node_type: project
-      parent_slug: altre-metodiche-posturali
-      position: 37
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    altre-metodiche-posturali-feldenkrais:
-      title: Feldenkrais
-      node_type: project
-      parent_slug: altre-metodiche-posturali
+      view_type: course
+      parent_slug: primo-incontro-kinesiologia-applicata
       position: 38
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
-    altre-metodiche-posturali-alexander-consapevolezza:
-      title: Alexander e consapevolezza
+    accesso-fisioterapia-da-primo-incontro:
+      title: Collegamento tra Fisioterapia e primo incontro
+      description: Ponte tecnico tra la professione Fisioterapia e il relativo assaggio educativo PosturaCorretta.
       node_type: project
-      parent_slug: altre-metodiche-posturali
-      position: 39
+      view_type: access_bridge
+      parent_slug: principi-di-fisioterapia
+      link_node_slug: fisioterapia
+      position: 99
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
-    altre-metodiche-posturali-sintesi-percorso:
-      title: Sintesi del percorso
+    accesso-gds-da-primo-incontro:
+      title: Collegamento tra GDS e primo incontro
+      description: Ponte tecnico tra la metodica GDS e il relativo assaggio educativo PosturaCorretta.
       node_type: project
+      view_type: access_bridge
+      parent_slug: biomeccanica-comportamentale-gds
+      link_node_slug: gds
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-osteopatia-da-primo-incontro:
+      title: Collegamento tra Osteopatia e primo incontro
+      description: Ponte tecnico tra la metodica Osteopatia e il relativo assaggio educativo PosturaCorretta.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: principi-di-osteopatia
+      link_node_slug: osteopatia
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-corpo-coscienza-da-primo-incontro:
+      title: Collegamento tra Corpo e Coscienza e primo incontro
+      description: Ponte tecnico tra la metodica Corpo e Coscienza e il relativo assaggio educativo PosturaCorretta.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
+      link_node_slug: bioritmi-corpo-coscienza
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-kinesiologia-da-primo-incontro:
+      title: Collegamento tra Kinesiologia Applicata e primo incontro
+      description: Ponte tecnico tra la metodica Kinesiologia Applicata e il relativo assaggio educativo PosturaCorretta.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: primo-incontro-kinesiologia-applicata
+      link_node_slug: kinesiologia-applicata
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-categoria-metodiche-da-altre-metodiche:
+      title: Collegamento tra la categoria e il corso conclusivo sulle metodiche
+      description: Ponte tecnico tra il contenitore Metodiche posturali e il corso conclusivo Altre metodiche posturali.
+      node_type: project
+      view_type: access_bridge
       parent_slug: altre-metodiche-posturali
-      position: 40
+      link_node_slug: metodiche-posturali
+      position: 99
       professional_owner_slug: markpostura
       status: published
       visibility: public

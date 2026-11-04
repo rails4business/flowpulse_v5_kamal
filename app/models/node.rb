@@ -61,6 +61,10 @@ class Node < ApplicationRecord
 
   accepts_nested_attributes_for :content, update_only: true
 
+  attr_writer :navigation_mode
+
+  before_validation :apply_navigation_form
+
   before_validation :set_slug, if: -> { slug.blank? && title.present? }
   before_validation :set_node_defaults
   before_validation :normalize_operator_roles
@@ -82,6 +86,7 @@ class Node < ApplicationRecord
   validate :validate_link_node_constraints
   validate :parent_cannot_be_bridge_node
   validate :professional_owner_is_professional
+  validate :navigation_items_are_valid
 
   scope :published_public, -> { where(status: "published", visibility: "public") }
   scope :published_free, -> { where(status: "published", visibility: %w[public subscription]) }
@@ -128,6 +133,34 @@ class Node < ApplicationRecord
     domains.active.where(primary: true, canonical_host: [nil, ""]).first
   end
 
+  def navigation_mode
+    return @navigation_mode if defined?(@navigation_mode)
+    return "inherit" if navigation.nil?
+
+    Array(navigation["items"]).empty? ? "none" : "custom"
+  end
+
+  def navigation_input
+    return @navigation_input if defined?(@navigation_input)
+    return "" unless navigation_mode == "custom"
+
+    navigation_items_to_hash(Array(navigation["items"])).to_yaml.delete_prefix("---\n")
+  end
+
+  def navigation_input=(value)
+    @navigation_input_assigned = true
+    @navigation_input = value.to_s
+  end
+
+  def navigation_source_node
+    self_and_ancestors.find { |candidate| !candidate.navigation.nil? }
+  end
+
+  def effective_navigation_items
+    source = navigation_source_node
+    source ? Array(source.navigation["items"]) : []
+  end
+
   def owned_by?(user)
     user.present? && role_assignment&.user == user
   end
@@ -152,6 +185,87 @@ class Node < ApplicationRecord
   end
 
   private
+
+  def apply_navigation_form
+    return unless defined?(@navigation_mode) || @navigation_input_assigned
+
+    case navigation_mode
+    when "inherit"
+      self.navigation = nil
+    when "none"
+      self.navigation = { "items" => [] }
+    when "custom"
+      parsed = YAML.safe_load(@navigation_input.to_s, permitted_classes: [], permitted_symbols: [], aliases: false)
+      parsed = {} if parsed.nil?
+      unless parsed.is_a?(Hash)
+        errors.add(:navigation, "deve essere un hash YAML di slug e nomi")
+        return
+      end
+      self.navigation = { "items" => normalize_navigation_hash(parsed) }
+    else
+      errors.add(:navigation, "ha una modalità non valida")
+    end
+  rescue Psych::SyntaxError => error
+    errors.add(:navigation, "contiene YAML non valido: #{error.problem}")
+  end
+
+  def normalize_navigation_hash(raw)
+    raw.map do |slug, definition|
+      slug = slug.to_s.strip
+      if definition.is_a?(Hash)
+        attributes = definition.stringify_keys
+        item = {
+          "slug" => slug,
+          "label" => attributes["label"].to_s.strip.presence || slug.humanize
+        }
+        children = attributes["children"]
+        item["children"] = normalize_navigation_hash(children) if children.is_a?(Hash)
+        item
+      else
+        { "slug" => slug, "label" => definition.to_s.strip.presence || slug.humanize }
+      end
+    end
+  end
+
+  def navigation_items_to_hash(items)
+    items.each_with_object({}) do |item, hash|
+      children = Array(item["children"])
+      hash[item["slug"]] = if children.any?
+        { "label" => item["label"], "children" => navigation_items_to_hash(children) }
+      else
+        item["label"]
+      end
+    end
+  end
+
+  def navigation_items_are_valid
+    return if navigation.nil?
+
+    items = navigation["items"]
+    unless items.is_a?(Array)
+      errors.add(:navigation, "deve contenere un elenco ordinato di voci")
+      return
+    end
+
+    validate_navigation_level(items)
+  end
+
+  def validate_navigation_level(items)
+    slugs = items.filter_map { |item| item["slug"].to_s.strip.presence }
+    errors.add(:navigation, "contiene slug duplicati") if slugs.uniq.size != slugs.size
+
+    items.each do |item|
+      slug = item["slug"].to_s.strip
+      label = item["label"].to_s.strip
+      errors.add(:navigation, "contiene una voce senza slug") if slug.blank?
+      errors.add(:navigation, "contiene una voce senza nome") if label.blank?
+      if slug.present? && role_assignment_id.present? && !Node.where(role_assignment_id: role_assignment_id, slug: slug).where.not(id: id).exists? && self.slug != slug
+        errors.add(:navigation, "riferisce il Node inesistente #{slug}")
+      end
+      children = item["children"]
+      validate_navigation_level(children) if children.is_a?(Array)
+    end
+  end
 
   def set_slug
     self.slug = title.parameterize

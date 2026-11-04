@@ -90,7 +90,41 @@ class Flowpulse::NetworkControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "[data-controller='node-network'][data-node-network-automatic-center-value='true']", count: 1
+    assert_select "[data-controller='node-network'][data-node-network-depth-value='2']", count: 1
     assert_select "a[title='Passa alla vista All']", text: /Vista.*ONLY NODE/m, count: 1
+  end
+
+  test "centrality URL configures network presentation and visible levels" do
+    get flowpulse_automatic_network_node_url(
+      "all",
+      @project.slug,
+      vista: "brand",
+      livelli: "4"
+    )
+
+    assert_response :success
+    assert_select "[data-controller='node-network'][data-node-network-automatic-center-value='false'][data-node-network-depth-value='4']", count: 1
+    assert_select "input[data-node-network-target='depthRange'][value='4']", count: 1
+    assert_select "a[title='Passa alla vista Only node'][href*='/centralita/only/#{@project.slug}'][href*='livelli=4']", count: 1
+
+    get flowpulse_automatic_network_node_url(
+      "only",
+      @project.slug,
+      vista: "brand",
+      livelli: "tutti"
+    )
+
+    assert_response :success
+    assert_select "[data-controller='node-network'][data-node-network-automatic-center-value='true'][data-node-network-depth-value='tutti']", count: 1
+    assert_select "input[data-node-network-target='depthRange'][value='6']", count: 1
+    assert_select "a[title='Passa alla vista All'][href*='/centralita/all/#{@project.slug}'][href*='livelli=tutti']", count: 1
+  end
+
+  test "legacy centrality URL redirects to mode and node path" do
+    get flowpulse_automatic_network_url(vista: "brand", node: @project.slug, modalita: "only", livelli: "2")
+
+    assert_redirected_to flowpulse_automatic_network_node_url("only", @project.slug, vista: "brand", livelli: "2")
+    assert_response :moved_permanently
   end
 
   test "only node view preserves the requested center" do
@@ -103,13 +137,24 @@ class Flowpulse::NetworkControllerTest < ActionDispatch::IntegrationTest
       view_type: "access_bridge",
       status: "published"
     )
+    legacy_preview = Node.create!(
+      role_assignment: @owner_role,
+      parent: @professional,
+      professional_owner_node: @professional,
+      link_node: @project,
+      title: "Vecchia presentazione visibile",
+      view_type: "methodology_preview",
+      status: "published"
+    )
 
-    get flowpulse_automatic_network_url(vista: "brand", node: @project.slug)
+    get flowpulse_automatic_network_node_url("only", @project.slug, vista: "brand")
 
     assert_response :success
     assert_select "[data-node-network-selected-value='node-#{@project.id}'][data-node-network-fixed-center-value='true']", count: 1
     assert_not_includes response.body, "node-#{technical_bridge.id}"
     assert_not_includes response.body, "professional-owner-#{@professional.id}-#{technical_bridge.id}"
+    assert_not_includes response.body, "node-#{legacy_preview.id}"
+    assert_not_includes response.body, "bridge-#{legacy_preview.id}-#{@project.id}"
   end
 
   private

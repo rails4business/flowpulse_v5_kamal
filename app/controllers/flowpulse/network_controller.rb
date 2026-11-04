@@ -4,18 +4,25 @@ module Flowpulse
     allow_unauthenticated_access only: %i[global automatic]
 
     def global
+      @catalog_editor_enabled = NodeCatalogEditor.enabled?
       @network_nodes = Node.published_public
         .includes(:parent, :children, :link_node, :professional_owner_node, :domains)
         .order(:title, :id)
       @manageable_role_assignment_ids = if Current.user&.superadmin_user?
         @network_nodes.map(&:role_assignment_id).uniq
       else
-        Current.user&.role_assignments&.ideatore&.pluck(:id) || []
+        []
       end
     end
 
     def automatic
-      @automatic_center = true
+      if params[:legacy_centrality] && params[:node].present?
+        mode = params[:modalita] == "all" ? "all" : "only"
+        query = request.query_parameters.symbolize_keys.except(:node, :modalita)
+        return redirect_to flowpulse_automatic_network_node_path(mode, params[:node], **query), status: :moved_permanently
+      end
+
+      @automatic_center = params[:modalita] != "all"
       global
       render :global
     end

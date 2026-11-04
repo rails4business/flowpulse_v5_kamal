@@ -1,0 +1,15 @@
+<% if @brand_access_domain.present? %>
+  <% if Current.user.blank? %>
+    <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: @brand_access_domain.auth_slug.presence || @brand_access_domain.node&.slug } : {}),
+      title: "Richiedi un invito per accedere a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}.",
+      class: "hidden rounded-lg bg-slate-950 px-3 py-2 text-sm font-bold text-white hover:bg-slate-800 sm:inline-flex" %>
+  <% elsif FlowRoles.active_role_for(Current.user) == "traveler" && @brand_access.present? %>
+    <%= link_to "Accesso attivo", viaggiatori_path,
+      title: "Hai accesso a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}. Puoi gestirlo dalla dashboard.",
+      class: "hidden rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm font-bold text-green-700 hover:bg-green-100 sm:inline-flex" %>
+  <% elsif FlowRoles.active_role_for(Current.user) == "traveler" %>
+    <%= link_to "Richiedi accesso", new_brand_access_request_path(local_request? ? { site: @brand_access_domain.auth_slug.presence || @brand_access_domain.node&.slug } : {}),
+      title: "Richiedi un invito per accedere a #{@brand_access_domain.site_title.presence || @brand_access_domain.display_hostname}.",
+      class: "hidden rounded-lg bg-slate-950 px-3 py-2 text-sm font-bold text-white hover:bg-slate-800 sm:inline-flex" %>
+  <% end %>
+<% end %>

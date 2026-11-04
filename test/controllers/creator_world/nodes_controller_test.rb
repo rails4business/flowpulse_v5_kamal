@@ -37,6 +37,24 @@ module CreatorWorld
       assert_select ".flowtree-editor-shell"
       assert_includes response.body, "Existing Node"
       assert_includes response.body, "Proprietà nota"
+      assert_select "select[name='node[navigation_mode]']"
+      assert_select "textarea[name='node[navigation_input]']"
+    end
+
+    test "creator can configure an inherited public navigation" do
+      target = Node.create!(title: "Target", slug: "target", role_assignment: @assignment)
+      sign_in(@user)
+
+      patch creator_world_role_assignment_node_url(@assignment, @node), params: {
+        node: {
+          title: @node.title,
+          navigation_mode: "custom",
+          navigation_input: "#{target.slug}: Vai al target"
+        }
+      }
+
+      assert_redirected_to tree_creator_world_role_assignment_node_url(@assignment, @node)
+      assert_equal [{ "slug" => target.slug, "label" => "Vai al target" }], @node.reload.navigation["items"]
     end
 
     test "cannot move a node under a bridge node" do

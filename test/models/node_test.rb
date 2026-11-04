@@ -28,6 +28,49 @@ class NodeTest < ActiveSupport::TestCase
     assert_includes @node_a.errors[:map_color], "deve essere un colore HEX nel formato #RRGGBB"
   end
 
+  test "stores an ordered navigation hash and descendants inherit it" do
+    @node_a.navigation_mode = "custom"
+    @node_a.navigation_input = <<~YAML
+      node-a: Home
+      node-b:
+        label: Percorso
+        children:
+          node-a: Torna alla home
+    YAML
+    assert @node_a.save
+
+    assert_equal %w[node-a node-b], @node_a.navigation["items"].pluck("slug")
+    assert_equal "Percorso", @node_a.navigation["items"].last["label"]
+    assert_equal "node-a", @node_a.navigation["items"].last["children"].first["slug"]
+    assert_equal @node_a, @node_b.navigation_source_node
+    assert_equal @node_a.navigation["items"], @node_b.effective_navigation_items
+  end
+
+  test "a descendant can disable or override inherited navigation" do
+    @node_a.update!(navigation: { "items" => [{ "slug" => "node-a", "label" => "Home" }] })
+
+    @node_b.navigation_mode = "none"
+    assert @node_b.save
+    assert_equal [], @node_b.effective_navigation_items
+
+    @node_b.navigation_mode = "inherit"
+    assert @node_b.save
+    @node_b.reload
+    assert_nil @node_b.navigation
+    assert_equal @node_a.navigation["items"], @node_b.effective_navigation_items
+  end
+
+  test "navigation rejects unknown slugs and malformed yaml" do
+    @node_a.navigation_mode = "custom"
+    @node_a.navigation_input = "missing-node: Missing"
+    assert_not @node_a.valid?
+    assert_includes @node_a.errors[:navigation], "riferisce il Node inesistente missing-node"
+
+    @node_a.navigation_input = "node-a: ["
+    assert_not @node_a.valid?
+    assert @node_a.errors[:navigation].any? { |message| message.include?("YAML non valido") }
+  end
+
   test "cannot set link_node to self" do
     node = Node.create!(
       title: "Self Linker",

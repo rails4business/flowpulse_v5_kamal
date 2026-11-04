@@ -61,10 +61,21 @@
     "##{mixed.map { |channel| channel.to_s(16).rjust(2, "0") }.join.upcase}"
   end
 
-  hidden_bridge_view_types = %w[access_bridge backlink_bridge]
+  # `methodology_preview` is the retired, formerly visible bridge model. Keep
+  # it hidden defensively while databases created before the migration are
+  # being cleaned up.
+  hidden_bridge_view_types = %w[access_bridge backlink_bridge methodology_preview]
   selected_node = @network_nodes.find { |node| node.slug == params[:node] }
   selected_node = nil if selected_node&.slug == "flowpulse" || hidden_bridge_view_types.include?(selected_node&.view_type)
   automatic_center = @automatic_center == true
+  requested_depth = params[:livelli].to_s
+  initial_depth = if requested_depth == "tutti"
+    6
+  elsif requested_depth.match?(/\A[1-5]\z/)
+    requested_depth.to_i
+  else
+    automatic_center ? 2 : 3
+  end
   selected_mode = if %w[brand professional].include?(params[:vista])
     params[:vista]
   elsif selected_node && !modes_for.call(selected_node).include?("brand")
@@ -80,7 +91,7 @@
 
   display_network_nodes = @network_nodes.reject { |node| hidden_bridge_view_types.include?(node.view_type) }
   graph_nodes = display_network_nodes.map do |node|
-    can_manage = @manageable_role_assignment_ids.include?(node.role_assignment_id)
+    can_manage = @catalog_editor_enabled && @manageable_role_assignment_ids.include?(node.role_assignment_id)
     can_delete = can_manage && active_domains_by_node_id.fetch(node.id, []).empty? && node.children.empty?
     map_color = effective_map_color_for.call(node)
     map_background = map_color ? light_background_for.call(map_color) : nil
@@ -109,7 +120,9 @@
         url: node_path(node),
         canManage: can_manage,
         canDelete: can_delete,
-        newChildUrl: can_manage && !node.bridge_node? ? new_creator_world_role_assignment_node_path(node.role_assignment_id, parent_id: node.id) : nil,
+        editUrl: can_manage ? edit_node_path(node, return_to: request.fullpath) : nil,
+        newChildUrl: can_manage && !node.bridge_node? ? new_creator_world_role_assignment_node_path(node.role_assignment_id, parent_id: node.id, return_to: request.fullpath) : nil,
+        newBridgeUrl: can_manage && !node.bridge_node? ? new_creator_world_role_assignment_node_path(node.role_assignment_id, parent_id: node.id, intent: "bridge", return_to: request.fullpath) : nil,
         deleteUrl: can_delete ? flowpulse_global_network_node_path(node, vista: selected_mode) : nil,
         modes: modes_for.call(node),
         domains: node.domains.select(&:active?).map(&:display_hostname).sort,
@@ -138,6 +151,7 @@
     end)
   end
   graph_edges.concat(@network_nodes.filter_map do |node|
+    next if node.view_type == "methodology_preview"
     next if node.link_node_id.blank? || !visible_ids.include?(node.link_node_id)
     source = hidden_bridge_view_types.include?(node.view_type) ? node.parent : node
     next if source.blank? || !visible_ids.include?(source.id)
@@ -243,6 +257,7 @@
     data-node-network-mode-value="<%= selected_mode %>"
     data-node-network-automatic-center-value="<%= automatic_center %>"
     data-node-network-fixed-center-value="<%= automatic_center && params[:node].present? %>"
+    data-node-network-depth-value="<%= initial_depth == 6 ? "tutti" : initial_depth %>"
   >
     <section data-node-network-target="stage" class="relative w-full overflow-hidden bg-slate-50" style="height: 100vh; min-height: 620px;" aria-label="Mappa dei Node">
       <div data-node-network-target="canvas" class="absolute inset-0 z-[2] h-full w-full" aria-label="Grafo interattivo dei Node"></div>
@@ -282,16 +297,16 @@
           <button type="button" data-node-network-target="fullscreenButton" data-action="node-network#toggleFullscreen" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-slate-700 hover:bg-slate-100" aria-label="Visualizza a schermo intero" title="Schermo intero">⛶</button>
           <span class="mx-1 h-6 w-px shrink-0 bg-slate-300" aria-hidden="true"></span>
           <div class="relative flex h-14 w-7 shrink-0 items-center justify-center px-1" title="Livelli visibili">
-            <input type="range" min="1" max="6" step="1" value="<%= automatic_center ? 2 : 3 %>" data-node-network-target="depthRange" data-action="input->node-network#setDepthFromRange" class="h-12 w-4 cursor-pointer accent-violet-700" style="writing-mode: vertical-lr; direction: rtl;" aria-label="Numero di livelli visibili; ultima posizione tutti">
-            <output data-node-network-target="depthLabel" class="pointer-events-none absolute left-full top-1/2 z-10 ml-1 min-w-7 -translate-y-1/2 rounded-md bg-violet-800 px-1.5 py-1 text-center text-[9px] font-black text-white opacity-0 shadow-lg transition-opacity"><%= automatic_center ? "2" : "3" %></output>
+            <input type="range" min="1" max="6" step="1" value="<%= initial_depth %>" data-node-network-target="depthRange" data-action="input->node-network#setDepthFromRange" class="h-12 w-4 cursor-pointer accent-violet-700" style="writing-mode: vertical-lr; direction: rtl;" aria-label="Numero di livelli visibili; ultima posizione tutti">
+            <output data-node-network-target="depthLabel" class="pointer-events-none absolute left-full top-1/2 z-10 ml-1 min-w-7 -translate-y-1/2 rounded-md bg-violet-800 px-1.5 py-1 text-center text-[9px] font-black text-white opacity-0 shadow-lg transition-opacity"><%= initial_depth == 6 ? "Tutti" : initial_depth %></output>
           </div>
           <span class="mx-1 h-6 w-px shrink-0 bg-slate-300" aria-hidden="true"></span>
           <% if automatic_center %>
-            <%= link_to flowpulse_global_network_path(vista: selected_mode, node: params[:node]), data: { node_network_target: "centerModeLink" }, class: "ml-auto flex shrink-0 items-center gap-2 rounded-lg bg-violet-50 px-2.5 py-1.5 text-[11px] font-black text-violet-800 hover:bg-violet-100", aria: { label: "Mostra tutta la rete" }, title: "Passa alla vista All" do %>
+            <%= link_to flowpulse_automatic_network_node_path("all", selected_node.slug, vista: selected_mode, livelli: initial_depth == 6 ? "tutti" : initial_depth), data: { node_network_target: "centerModeLink" }, class: "ml-auto flex shrink-0 items-center gap-2 rounded-lg bg-violet-50 px-2.5 py-1.5 text-[11px] font-black text-violet-800 hover:bg-violet-100", aria: { label: "Mostra tutta la rete" }, title: "Passa alla vista All" do %>
               <span>Vista</span><span class="rounded-full bg-violet-700 px-2 py-0.5 text-[9px] text-white">ONLY NODE</span>
             <% end %>
           <% else %>
-            <%= link_to flowpulse_automatic_network_path(vista: selected_mode, node: selected_node.slug), data: { node_network_target: "centerModeLink" }, class: "ml-auto flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-black text-slate-600 hover:bg-violet-50 hover:text-violet-800", aria: { label: "Mostra soltanto la rete del Node" }, title: "Passa alla vista Only node" do %>
+            <%= link_to flowpulse_automatic_network_node_path("only", selected_node.slug, vista: selected_mode, livelli: initial_depth == 6 ? "tutti" : initial_depth), data: { node_network_target: "centerModeLink" }, class: "ml-auto flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-black text-slate-600 hover:bg-violet-50 hover:text-violet-800", aria: { label: "Mostra soltanto la rete del Node" }, title: "Passa alla vista Only node" do %>
               <span>Vista</span><span class="rounded-full bg-slate-200 px-2 py-0.5 text-[9px] text-slate-600">ALL</span>
             <% end %>
           <% end %>
@@ -320,7 +335,9 @@
 
         <div class="mt-7 flex items-center gap-2">
           <a data-node-network-target="openLink" href="#" class="min-w-0 flex-1 rounded-xl px-4 py-3 text-center text-sm font-black text-white hover:opacity-90" style="background-color: #2563eb; color: #ffffff;">Apri il Node →</a>
+          <a data-node-network-target="editLink" href="#" hidden class="grid size-11 shrink-0 place-items-center rounded-xl border border-blue-200 bg-blue-50 text-base font-black text-blue-700 hover:bg-blue-100" title="Modifica Node" aria-label="Modifica Node">✎</a>
           <a data-node-network-target="addLink" href="#" hidden class="grid size-11 shrink-0 place-items-center rounded-xl border border-emerald-200 bg-emerald-50 text-xl font-black text-emerald-700 hover:bg-emerald-100" title="Aggiungi un Project Node figlio" aria-label="Aggiungi un Project Node figlio">＋</a>
+          <a data-node-network-target="bridgeLink" href="#" hidden class="grid size-11 shrink-0 place-items-center rounded-xl border border-violet-200 bg-violet-50 text-base font-black text-violet-700 hover:bg-violet-100" title="Aggiungi Node link" aria-label="Aggiungi Node link">↗</a>
           <a data-node-network-target="deleteLink" href="#" hidden data-turbo-method="delete" class="grid size-11 shrink-0 place-items-center rounded-xl border border-red-200 bg-red-50 text-xl font-black text-red-700 hover:bg-red-100" title="Elimina Node" aria-label="Elimina Node">−</a>
         </div>
       </aside>

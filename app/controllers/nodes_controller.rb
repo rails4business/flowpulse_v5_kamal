@@ -31,6 +31,20 @@ class NodesController < ApplicationController
     prepare_public_node(@node)
   end
 
+  def edit
+    node = Node.find(params[:id])
+    unless NodeCatalogEditor.enabled? && Current.user&.superadmin_user?
+      redirect_to node_path(node), alert: "L’editor del catalogo non è disponibile o non hai i permessi necessari."
+      return
+    end
+
+    redirect_to edit_creator_world_role_assignment_node_path(
+      node.role_assignment,
+      node,
+      return_to: params[:return_to].presence || node_path(node)
+    )
+  end
+
   private
 
   def redirect_hidden_node

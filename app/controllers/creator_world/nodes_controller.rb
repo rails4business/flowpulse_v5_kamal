@@ -6,8 +6,9 @@ module CreatorWorld
 
     before_action :set_role_assignment
     before_action :set_creator_domain_context
-    before_action :set_scoped_node, only: [:tree, :move, :edit, :update, :destroy]
-    before_action :ensure_node_in_domain_context!, only: [:tree, :move, :edit, :update, :destroy]
+    before_action :set_scoped_node, only: [:tree, :move, :edit, :update, :destroy, :export_yaml]
+    before_action :ensure_node_in_domain_context!, only: [:tree, :move, :edit, :update, :destroy, :export_yaml]
+    before_action :ensure_catalog_editor_enabled!, only: [:new, :create, :edit, :update, :export_yaml]
 
     def index
       @roots = @role_assignment.nodes.roots.order(:position, :title)
@@ -44,6 +45,8 @@ module CreatorWorld
     end
 
     def new
+      @return_to = safe_return_to
+      @node_intent = params[:intent].presence_in(%w[bridge child])
       @parent = @role_assignment.nodes.find_by(id: params[:parent_id]) if params[:parent_id].present?
       unless node_allowed_in_domain_context?(@parent)
         redirect_to creator_world_root_path, alert: "Nodo fuori dal dominio corrente."
@@ -63,6 +66,7 @@ module CreatorWorld
     end
 
     def create
+      @return_to = safe_return_to
       @node = @role_assignment.nodes.new(node_params.merge(role_assignment_id: @role_assignment.id))
       unless node_allowed_in_domain_context?(@node.parent)
         redirect_to creator_world_root_path, alert: "Nodo fuori dal dominio corrente."
@@ -71,7 +75,7 @@ module CreatorWorld
 
       if @node.save
         respond_to do |format|
-          format.html { redirect_to tree_creator_world_role_assignment_node_path(@role_assignment, @node), notice: "Nodo creato." }
+          format.html { redirect_to @return_to || tree_creator_world_role_assignment_node_path(@role_assignment, @node), notice: "Nodo creato. Aggiorna lo YAML prima del deploy." }
           format.turbo_stream do
             set_tree_context_for(@node)
             @children = @node.children.order(:position, :title)
@@ -99,11 +103,13 @@ module CreatorWorld
     end
 
     def edit
+      @return_to = safe_return_to
       @node.build_content if @node.content.blank?
       set_tree_context_for(@node)
     end
 
     def update
+      @return_to = safe_return_to
       @node.assign_attributes(node_params)
       unless node_allowed_in_domain_context?(@node.parent)
         redirect_to creator_world_root_path, alert: "Nodo fuori dal dominio corrente."
@@ -112,7 +118,7 @@ module CreatorWorld
 
       if @node.save
         respond_to do |format|
-          format.html { redirect_to tree_creator_world_role_assignment_node_path(@role_assignment, @node), notice: "Nodo aggiornato." }
+          format.html { redirect_to @return_to || tree_creator_world_role_assignment_node_path(@role_assignment, @node), notice: "Nodo aggiornato. Aggiorna lo YAML prima del deploy." }
           format.turbo_stream do
             set_tree_context_for(@node)
             @children = @node.children.order(:position, :title)
@@ -129,6 +135,13 @@ module CreatorWorld
         set_tree_context_for(@node)
         render :edit, status: :unprocessable_entity
       end
+    end
+
+    def export_yaml
+      path = NodeCatalogEntryWriter.new(@node).write!
+      redirect_to edit_creator_world_role_assignment_node_path(@role_assignment, @node, return_to: safe_return_to), notice: "Voce aggiornata in #{path.relative_path_from(Rails.root)}. Controlla il git diff prima del deploy."
+    rescue StandardError => error
+      redirect_to edit_creator_world_role_assignment_node_path(@role_assignment, @node, return_to: safe_return_to), alert: error.message
     end
 
     def destroy
@@ -159,6 +172,17 @@ module CreatorWorld
     end
 
     private
+
+    def ensure_catalog_editor_enabled!
+      return if NodeCatalogEditor.enabled?
+
+      redirect_to dashboard_home_path, alert: "Editor del catalogo Node disabilitato in questo ambiente."
+    end
+
+    def safe_return_to
+      value = params[:return_to].to_s
+      value if value.start_with?("/") && !value.start_with?("//")
+    end
 
     def set_role_assignment
       if superadmin?
@@ -298,6 +322,8 @@ module CreatorWorld
         :parent_id,
         :position,
         :link_node_id,
+        :navigation_mode,
+        :navigation_input,
         content_attributes: [
           :id,
           :editor,

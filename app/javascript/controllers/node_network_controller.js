@@ -3,12 +3,14 @@ import cytoscape from "cytoscape"
 import { buildRadialSupportTree, calculateRadialSectorLayout } from "radial_sector_layout"
 
 export default class extends Controller {
-  static targets = ["stage", "canvas", "orbitOverlay", "drawer", "panelButton", "breadcrumb", "title", "type", "description", "domains", "relation", "empty", "search", "openLink", "addLink", "deleteLink", "fullscreenButton", "modeButton", "centerModeLink", "depthRange", "depthLabel", "nodeLimitNotice", "expandNodesButton"]
-  static values = { graph: Object, selected: String, mode: { type: String, default: "brand" }, automaticCenter: Boolean, fixedCenter: Boolean }
+  static targets = ["stage", "canvas", "orbitOverlay", "drawer", "panelButton", "breadcrumb", "title", "type", "description", "domains", "relation", "empty", "search", "openLink", "editLink", "addLink", "bridgeLink", "deleteLink", "fullscreenButton", "modeButton", "centerModeLink", "depthRange", "depthLabel", "nodeLimitNotice", "expandNodesButton"]
+  static values = { graph: Object, selected: String, mode: { type: String, default: "brand" }, automaticCenter: Boolean, fixedCenter: Boolean, depth: String }
 
   connect() {
     this.drawerOpen = true
-    this.visibleDepth = this.automaticCenterValue ? 2 : 3
+    this.visibleDepth = this.depthValue === "tutti"
+      ? Number.POSITIVE_INFINITY
+      : Math.min(5, Math.max(1, Number(this.depthValue) || (this.automaticCenterValue ? 2 : 3)))
     this.visibleNodeLimit = 40
     this.fullscreenChangeHandler = () => this.updateFullscreenButton()
     document.addEventListener("fullscreenchange", this.fullscreenChangeHandler)
@@ -28,6 +30,7 @@ export default class extends Controller {
     this.cy.on("pan zoom resize", this.orbitViewportHandler)
     this.applyMode(this.modeValue, false)
     this.updateDepthControls()
+    this.updateViewStateUrl()
     const initialId = this.automaticCenterValue && !this.fixedCenterValue
       ? this.automaticCenterId()
       : this.selectedValue || this.graphValue.elements.find((element) => element.data.kind === "node")?.data.id
@@ -116,9 +119,23 @@ export default class extends Controller {
     this.visibleDepth = value === 6 ? Number.POSITIVE_INFINITY : value
     this.visibleNodeLimit = 40
     this.updateDepthControls()
+    this.updateViewStateUrl()
     this.showDepthLabel()
     const selected = this.cy.$("node.selected")
     if (selected.length) this.arrangeRadial(selected.first(), true)
+  }
+
+  updateViewStateUrl() {
+    const url = new URL(window.location.href)
+    url.searchParams.delete("modalita")
+    url.searchParams.set("livelli", Number.isFinite(this.visibleDepth) ? this.visibleDepth : "tutti")
+    history.replaceState({}, "", url)
+
+    if (this.hasCenterModeLinkTarget) {
+      const modeUrl = new URL(this.centerModeLinkTarget.href, window.location.origin)
+      modeUrl.searchParams.set("livelli", Number.isFinite(this.visibleDepth) ? this.visibleDepth : "tutti")
+      this.centerModeLinkTarget.href = `${modeUrl.pathname}${modeUrl.search}`
+    }
   }
 
   expandNodeLimit() {
@@ -253,7 +270,9 @@ export default class extends Controller {
 
     if (updateUrl) {
       const url = new URL(window.location.href)
-      url.searchParams.set("node", selected.data("slug"))
+      url.pathname = this.centralityPath(this.automaticCenterValue ? "only" : "all", selected.data("slug"))
+      url.searchParams.delete("node")
+      url.searchParams.delete("modalita")
       history.replaceState({}, "", url)
     }
   }
@@ -352,8 +371,12 @@ export default class extends Controller {
     const outgoing = node.outgoers("node").length
     this.relationTarget.textContent = `${incoming} ingressi · ${outgoing} uscite`
     this.openLinkTarget.href = data.url
+    this.editLinkTarget.hidden = !data.canManage || !data.editUrl
+    this.editLinkTarget.href = data.editUrl || "#"
     this.addLinkTarget.hidden = !data.canManage || !data.newChildUrl
     this.addLinkTarget.href = data.newChildUrl || "#"
+    this.bridgeLinkTarget.hidden = !data.canManage || !data.newBridgeUrl
+    this.bridgeLinkTarget.href = data.newBridgeUrl || "#"
     this.deleteLinkTarget.hidden = !data.canDelete
     this.deleteLinkTarget.href = data.deleteUrl || "#"
     this.deleteLinkTarget.dataset.turboConfirm = `Eliminare definitivamente il Node “${data.label}”? Questa operazione non può essere annullata.`
@@ -363,8 +386,15 @@ export default class extends Controller {
     if (!this.hasCenterModeLinkTarget) return
 
     const url = new URL(this.centerModeLinkTarget.href, window.location.origin)
-    url.searchParams.set("node", node.data("slug"))
+    const mode = url.pathname.match(/\/centralita\/(only|all)\//)?.[1] || (this.automaticCenterValue ? "all" : "only")
+    url.pathname = this.centralityPath(mode, node.data("slug"))
+    url.searchParams.delete("node")
+    url.searchParams.delete("modalita")
     this.centerModeLinkTarget.href = `${url.pathname}${url.search}`
+  }
+
+  centralityPath(mode, slug) {
+    return `/flowpulse/rete/globale/centralita/${mode}/${encodeURIComponent(slug)}`
   }
 
   clearDetails() {
@@ -375,6 +405,8 @@ export default class extends Controller {
     this.domainsTarget.replaceChildren()
     this.relationTarget.textContent = ""
     this.addLinkTarget.hidden = true
+    this.editLinkTarget.hidden = true
+    this.bridgeLinkTarget.hidden = true
     this.deleteLinkTarget.hidden = true
     this.drawerOpen = false
     this.drawerTarget.style.transform = "translateX(calc(-100% - 2rem))"

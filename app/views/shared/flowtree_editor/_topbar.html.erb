@@ -2,6 +2,16 @@
 <% compact_breadcrumbs = @breadcrumbs.to_a %>
 <% visible_breadcrumbs = compact_breadcrumbs.last(2) %>
 <% hidden_breadcrumbs_count = compact_breadcrumbs.size - visible_breadcrumbs.size %>
+<%
+  editor_return_path = @return_to.presence || creator_world_root_path
+  editor_return_label = if @return_to.to_s.start_with?("/flowpulse/rete/")
+    "Torna alla rete"
+  elsif @return_to.to_s.match?(%r{\A/nodes/\d+})
+    "Torna al Node"
+  else
+    "Torna alla dashboard"
+  end
+%>
 
 <div class="tree-toolbar flex flex-wrap items-center gap-2" aria-label="Node explorer">
   <button
@@ -15,7 +25,7 @@
     ☰
   </button>
 
-  <%= link_to "← Torna alla dashboard", creator_world_root_path,
+  <%= link_to "← #{editor_return_label}", editor_return_path,
     class: "tree-roots-link rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100" %>
 
   <div class="tree-toolbar-breadcrumb flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden whitespace-nowrap text-sm">

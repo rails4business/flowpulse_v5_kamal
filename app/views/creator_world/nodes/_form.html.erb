@@ -1,6 +1,7 @@
 <%= form_with(model: [:creator_world, @role_assignment, node], class: "node-editor-form obsidian-editor-form flex flex-col h-[calc(100vh-4.5rem)] min-h-0") do |form| %>
   <%= form.hidden_field :parent_id %>
   <%= form.hidden_field :role_assignment_id if node.parent_id.present? %>
+  <%= hidden_field_tag :return_to, @return_to if @return_to.present? %>
 
   <% if node.errors.any? %>
     <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 mx-6 mt-4 md:mx-8">
@@ -12,6 +13,12 @@
           <li><%= message %></li>
         <% end %>
       </ul>
+    </div>
+  <% end %>
+
+  <% if @node_intent == "bridge" %>
+    <div class="mx-6 mt-4 rounded-lg border border-violet-200 bg-violet-50 px-4 py-3 text-sm text-violet-800 md:mx-8">
+      <strong>Nuovo Node link.</strong> Inserisci titolo e destinazione nel campo “Node link”; questo Node resterà un collegamento tecnico senza figli.
     </div>
   <% end %>
 
@@ -224,6 +231,27 @@
                 class: "w-full border border-transparent hover:border-slate-200 focus:border-blue-400 bg-transparent focus:bg-white text-right text-xs font-semibold text-slate-700 focus:ring-1 focus:ring-blue-100 rounded px-2 py-1 transition cursor-pointer" %>
             </div>
           </div>
+
+          <div class="border-b border-slate-100/70 py-3">
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+              <span>🧭</span><span>Navigazione pubblica</span>
+            </div>
+            <p class="mt-1 text-[11px] leading-4 text-slate-400">
+              Il nav viene ereditato dai figli finché un Node non lo personalizza.
+            </p>
+            <%= form.select :navigation_mode,
+              [["Eredita dal parent", "inherit"], ["Personalizza", "custom"], ["Nessun nav", "none"]],
+              {},
+              class: "mt-2 w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs font-semibold text-slate-700" %>
+            <%= form.text_area :navigation_input,
+              rows: 9,
+              class: "mt-2 w-full rounded-md border border-slate-200 bg-white px-2.5 py-2 font-mono text-[11px] leading-5 text-slate-800 focus:border-blue-400 focus:ring-1 focus:ring-blue-100",
+              placeholder: "percorso: Percorso\nmetodiche-posturali:\n  label: Metodiche\n  children:\n    gds: GDS\n    osteopatia: Osteopatia" %>
+            <p class="mt-1 text-[10px] leading-4 text-slate-400">
+              Formato: <code>slug: Nome</code>. Per un dropdown usa <code>label</code> e <code>children</code>.
+              L’ordine delle righe è l’ordine del menu.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -283,8 +311,14 @@
     </div>
 
     <div class="flex items-center gap-3">
+      <% if node.persisted? && NodeCatalogEditor.enabled? %>
+        <%= link_to "Aggiorna YAML",
+          export_yaml_creator_world_role_assignment_node_path(@role_assignment, node, return_to: @return_to),
+          data: { turbo_method: :post, turbo_confirm: "Aggiornare la voce di questo Node in config/nodes.yml?" },
+          class: "inline-flex h-8 items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100" %>
+      <% end %>
       <%= link_to "Annulla",
-        node.persisted? ? tree_creator_world_role_assignment_node_path(@role_assignment, node) : creator_world_role_assignment_nodes_path(@role_assignment),
+        @return_to.presence || (node.persisted? ? tree_creator_world_role_assignment_node_path(@role_assignment, node) : creator_world_role_assignment_nodes_path(@role_assignment)),
         class: "inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition h-8" %>
 
       <%= form.submit "Salva", class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 transition h-8 cursor-pointer" %>

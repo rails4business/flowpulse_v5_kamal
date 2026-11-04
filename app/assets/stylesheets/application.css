@@ -4255,6 +4255,10 @@ body[data-layout="dashboard"] [data-dashboard-main] {
   transition: all 150ms ease-in-out;
 }
 
+.node-public-creator-menu-toggle::-webkit-details-marker {
+  display: none;
+}
+
 .node-settings-checkbox:checked ~ .node-compose-layout .node-settings-toggle-btn {
   background-color: rgb(219 234 254) !important;
   color: rgb(29 78 216) !important;

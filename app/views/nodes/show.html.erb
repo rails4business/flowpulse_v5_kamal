@@ -12,49 +12,24 @@
   has_sidebar = @parent_node.present? || has_real_siblings || sidebar_children.any?
 %>
 
-<% content_for :navbar_breadcrumbs do %>
-  <nav class="node-public-breadcrumb" aria-label="Percorso">
-    <% @breadcrumbs.each_with_index do |node, index| %>
-      <% domain_breadcrumb = @navigation_domain.present? && node == @navigation_root_node %>
-      <% breadcrumb_label = domain_breadcrumb ? @navigation_domain.display_hostname : node.title %>
-      <% if index.positive? %>
-        <span class="node-public-breadcrumb-separator">/</span>
-      <% end %>
-      <% if node == @node %>
-        <span aria-current="page" class="node-public-breadcrumb-current">
-          <% if domain_breadcrumb && (@navigation_domain.logo_full_url.present? || @navigation_domain.logo_square_url.present?) %>
-            <span class="node-public-breadcrumb-brand">
-              <% if @navigation_domain.logo_square_url.present? %>
-                <%= image_tag @navigation_domain.logo_square_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-square #{'sm:hidden' if @navigation_domain.logo_full_url.present?}" %>
-              <% end %>
-              <% if @navigation_domain.logo_full_url.present? %>
-                <%= image_tag @navigation_domain.logo_full_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-full #{'hidden sm:block' if @navigation_domain.logo_square_url.present?}" %>
-              <% end %>
-              <span class="sr-only"><%= breadcrumb_label %></span>
-            </span>
-          <% else %>
-            <%= breadcrumb_label %>
-          <% end %>
-        </span>
-      <% else %>
-        <%= link_to flowtree_public_node_path(node), class: "node-public-breadcrumb-link" do %>
-          <% if domain_breadcrumb && (@navigation_domain.logo_full_url.present? || @navigation_domain.logo_square_url.present?) %>
-            <span class="node-public-breadcrumb-brand">
-              <% if @navigation_domain.logo_square_url.present? %>
-                <%= image_tag @navigation_domain.logo_square_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-square #{'sm:hidden' if @navigation_domain.logo_full_url.present?}" %>
-              <% end %>
-              <% if @navigation_domain.logo_full_url.present? %>
-                <%= image_tag @navigation_domain.logo_full_url, alt: breadcrumb_label, class: "node-public-breadcrumb-logo-full #{'hidden sm:block' if @navigation_domain.logo_square_url.present?}" %>
-              <% end %>
-              <span class="sr-only"><%= breadcrumb_label %></span>
-            </span>
-          <% else %>
-            <%= breadcrumb_label %>
-          <% end %>
+<% content_for :public_node_navigation do %>
+  <%= render "nodes/public_navigation_items", items: @public_navigation_items %>
+<% end %>
+
+<% breadcrumb_nodes = Array(@breadcrumbs).reject { |breadcrumb| breadcrumb == @navigation_root_node } %>
+<% if breadcrumb_nodes.any? %>
+  <% content_for :navbar_breadcrumbs do %>
+    <nav class="node-public-breadcrumb" aria-label="Percorso editoriale">
+      <% breadcrumb_nodes.each_with_index do |breadcrumb, index| %>
+        <% if index.positive? %><span class="node-public-breadcrumb-separator">/</span><% end %>
+        <% if breadcrumb == @node %>
+          <span aria-current="page" class="node-public-breadcrumb-current"><%= breadcrumb.title %></span>
+        <% else %>
+          <%= link_to breadcrumb.title, flowtree_public_node_path(breadcrumb), class: "node-public-breadcrumb-link" %>
         <% end %>
       <% end %>
-    <% end %>
-  </nav>
+    </nav>
+  <% end %>
 <% end %>
 
 <div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> lg:min-h-0">
@@ -118,6 +93,12 @@
     <% end %>
 
     <main class="node-public-article lg:min-h-0">
+      <% if content_for?(:navbar_breadcrumbs) %>
+        <div class="mb-4 overflow-x-auto">
+          <%= yield :navbar_breadcrumbs %>
+        </div>
+      <% end %>
+
       <p class="node-public-kicker">
         <%= @node.node_type.presence || @node.content_type.presence || "Articolo" %>
       </p>
