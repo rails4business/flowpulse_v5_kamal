@@ -23,7 +23,23 @@
     {
       "fingerprint": "ef8d737925962c0ba021ff7e001fb018b3d7671b01726aa5474122f549a95c2d",
       "note": "Il book slug viene ristretto a caratteri sicuri e index.yml viene letto soltanto dalla radice libro risolta dal catalogo editoriale."
+    },
+    {
+      "fingerprint": "2d49dcf69df1d29ab3b946de9bc1d060da5f4936c2832ba7ea673a1083d716ed",
+      "note": "seo_json_ld restituisce JSON.generate e la view applica json_escape prima di inserirlo nel blocco application/ld+json; raw evita l'escaping HTML che renderebbe il JSON-LD non valido."
+    },
+    {
+      "fingerprint": "686fc7991c43e383d0c3f5c8a83c8773564a7f70b306071e18580d369787b324",
+      "note": "seo_json_ld restituisce JSON.generate e la view applica json_escape prima di inserirlo nel blocco application/ld+json; raw evita l'escaping HTML che renderebbe il JSON-LD non valido."
+    },
+    {
+      "fingerprint": "73811ad15ca305ef3b77e7850dd367efbe76eaa1c2ab764e08cdf9ee833dd40b",
+      "note": "Il redirect usa canonical_host del Domain corrente, configurato internamente, e non un parametro della richiesta; allow_other_host e' necessario per la canonicalizzazione del dominio."
+    },
+    {
+      "fingerprint": "bf97e0cf13afe094614b94807fd319815891ef8d636b32369e4693badc1fd414",
+      "note": "Il redirect usa canonical_host di un Domain active trovato per hostname e non una destinazione fornita dall'utente; allow_other_host e' necessario per servire llms.txt sul dominio canonico."
     }
   ],
-  "updated": "2026-09-25"
+  "updated": "2026-11-04"
 }

@@ -253,6 +253,20 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "select[name='data_commitment[publication_change_kind]'] option[value='publish'][selected]"
   end
 
+  test "publication decision rejects an external return path" do
+    get impegno_agenda_url(
+      workspace: "1",
+      editorial_decision: "1",
+      return_to: "https://evil.example/phishing"
+    )
+
+    safe_path = impegno_path(area: "user", view: "agenda")
+    assert_response :success
+    assert_select "dialog#publication-decision-dialog a[href=?]", safe_path, count: 2
+    assert_select "input[name='return_to'][value=?]", safe_path
+    assert_not_includes response.body, "evil.example"
+  end
+
   test "publication decision immediately approves content without occupying the calendar" do
     assert_difference -> { DataCommitment.count }, 1 do
       post data_commitments_url, params: {

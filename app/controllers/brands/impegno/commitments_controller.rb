@@ -28,6 +28,7 @@ module Brands
     # Il calendario è unico: il dominio è un contesto del commitment, non un calendario separato.
     @default_brand = params[:default_brand].to_s.strip.presence || "impegno"
     @default_domain = default_domain_for(@default_brand)
+    @return_to_path = safe_return_path || impegno_path(area: "user", view: "agenda")
     @commitment_node_options = available_commitment_nodes
     @default_commitment_node = @default_domain&.node
 
