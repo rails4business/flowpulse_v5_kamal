@@ -210,19 +210,24 @@ class Node < ApplicationRecord
   end
 
   def normalize_navigation_hash(raw)
-    raw.map do |slug, definition|
-      slug = slug.to_s.strip
+    raw.map do |key, definition|
+      key = key.to_s.strip
       if definition.is_a?(Hash)
         attributes = definition.stringify_keys
         item = {
-          "slug" => slug,
-          "label" => attributes["label"].to_s.strip.presence || slug.humanize
+          "key" => key,
+          "label" => attributes["label"].to_s.strip.presence || key.humanize
         }
+        item["group"] = true if ActiveModel::Type::Boolean.new.cast(attributes["group"])
+        item["home"] = true if ActiveModel::Type::Boolean.new.cast(attributes["home"])
+        item["path"] = attributes["path"].to_s.strip if attributes["path"].present?
+        item["audience"] = attributes["audience"].to_s.strip if attributes["audience"].present?
+        item["slug"] = attributes["slug"].to_s.strip.presence || key unless item["group"] || item["home"] || item["path"].present?
         children = attributes["children"]
         item["children"] = normalize_navigation_hash(children) if children.is_a?(Hash)
         item
       else
-        { "slug" => slug, "label" => definition.to_s.strip.presence || slug.humanize }
+        { "key" => key, "slug" => key, "label" => definition.to_s.strip.presence || key.humanize }
       end
     end
   end
@@ -230,10 +235,20 @@ class Node < ApplicationRecord
   def navigation_items_to_hash(items)
     items.each_with_object({}) do |item, hash|
       children = Array(item["children"])
-      hash[item["slug"]] = if children.any?
-        { "label" => item["label"], "children" => navigation_items_to_hash(children) }
-      else
+      key = item["key"].presence || item["slug"]
+      attributes = {
+        "label" => item["label"],
+        "slug" => item["slug"].presence == key ? nil : item["slug"].presence,
+        "group" => item["group"] ? true : nil,
+        "home" => item["home"] ? true : nil,
+        "path" => item["path"].presence,
+        "audience" => item["audience"].presence,
+        "children" => children.any? ? navigation_items_to_hash(children) : nil
+      }.compact
+      hash[key] = if attributes.keys == ["label"]
         item["label"]
+      else
+        attributes
       end
     end
   end
@@ -251,14 +266,24 @@ class Node < ApplicationRecord
   end
 
   def validate_navigation_level(items)
-    slugs = items.filter_map { |item| item["slug"].to_s.strip.presence }
-    errors.add(:navigation, "contiene slug duplicati") if slugs.uniq.size != slugs.size
+    keys = items.filter_map { |item| (item["key"].presence || item["slug"]).to_s.strip.presence }
+    errors.add(:navigation, "contiene identificatori duplicati") if keys.uniq.size != keys.size
 
     items.each do |item|
+      key = (item["key"].presence || item["slug"]).to_s.strip
       slug = item["slug"].to_s.strip
       label = item["label"].to_s.strip
-      errors.add(:navigation, "contiene una voce senza slug") if slug.blank?
+      path = item["path"].to_s.strip
+      group = item["group"] == true
+      home = item["home"] == true
+      audience = item["audience"].presence || "public"
+      errors.add(:navigation, "contiene una voce senza identificatore") if key.blank?
       errors.add(:navigation, "contiene una voce senza nome") if label.blank?
+      errors.add(:navigation, "contiene un pubblico non valido per #{key}") unless audience.in?(%w[public superadmin])
+      errors.add(:navigation, "contiene un percorso non valido per #{key}") if path.present? && !path.match?(%r{\A/(?!/)[^\s]*\z})
+      target_count = [slug.present?, path.present?, group, home].count(true)
+      errors.add(:navigation, "contiene una destinazione ambigua per #{key}") if target_count > 1
+      errors.add(:navigation, "contiene una voce senza destinazione per #{key}") if target_count.zero?
       if slug.present? && role_assignment_id.present? && !Node.where(role_assignment_id: role_assignment_id, slug: slug).where.not(id: id).exists? && self.slug != slug
         errors.add(:navigation, "riferisce il Node inesistente #{slug}")
       end

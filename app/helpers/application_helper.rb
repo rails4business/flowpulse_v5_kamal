@@ -48,6 +48,22 @@ module ApplicationHelper
     node_path(node.resolve_target, *args)
   end
 
+  def public_node_navigation_item_path(item)
+    return item[:path] if item[:path].present?
+    if item[:home]
+      return public_node_domain_home_path
+    end
+    flowtree_public_node_path(item[:node])
+  end
+
+  def public_node_domain_home_path
+    domain = @navigation_domain
+    return root_path if domain.present? && request.host.in?([domain.hostname, domain.canonical_host].compact)
+    return domain_home_by_slug_path(domain.path_slug) if domain&.path_slug.present?
+
+    flowtree_public_node_path(@navigation_root_node || @node)
+  end
+
   def can_manage_nodes?(role_assignment)
     return false unless Current.user
     Current.user.superadmin_user? || (Current.user.creator_user? && Current.user.role_assignments.exists?(id: role_assignment&.id))

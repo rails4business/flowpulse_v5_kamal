@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Percorso PosturaCorretta · Educazione alla salute</title>
 <meta name="description" content="Il percorso educativo alla salute grazie alle metodiche posturali: percorso online, lezioni con un insegnante, tirocinio per insegnanti.">
+<script>if(new URLSearchParams(location.search).get("embed")==="1")document.documentElement.classList.add("embed-map");</script>
 <style>
 :root{
   color-scheme:light dark;
@@ -106,6 +107,43 @@ footer a{color:var(--mut)}
   .btn.ghost{margin:10px 0 0}
 }
 @media (prefers-reduced-motion:no-preference){.dot{transition:transform .15s}}
+.embed-map body{background:transparent}
+.embed-map header.top,.embed-map footer,.embed-map .seq{display:none}
+.embed-map main.wrap{max-width:none;padding:0}
+.embed-map body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#0f172a}
+.embed-map .mapbox{padding:28px;border:1px solid #e2e8f0;border-radius:24px;background:#fff;box-shadow:0 12px 36px rgb(15 23 42 / 7%)}
+.embed-map .bar{display:none}
+.embed-map .linea{padding:8px 8px 0}
+.embed-map .stz{color:#334155}
+.embed-map .stz .nm{height:3.8em;color:#334155;font-size:.82rem;font-weight:750}
+.embed-map .track{height:48px}
+.embed-map .track::before{height:6px;margin-top:-3px;border-radius:999px}
+.embed-map .dot{width:26px;height:26px;border-width:3px}
+.embed-map .dot.qui{width:34px;height:34px}
+.embed-map .stz[aria-pressed="true"] .dot{box-shadow:0 0 0 4px #fff,0 0 0 7px var(--c)}
+.embed-map .cap{min-height:0;margin:12px 4px 22px;color:#64748b;font-size:.78rem;line-height:1.45}
+.embed-map .tabs{display:flex;grid-template-columns:none;gap:6px;margin:0 10px -1px;padding:0;border:0;background:transparent;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.embed-map .tabs button{position:relative;z-index:1;flex:1 0 150px;min-height:48px;padding:10px 14px;border:1px solid #e2e8f0;border-bottom-color:#cbd5e1;border-radius:13px 13px 0 0;background:#f8fafc;color:#64748b;font-size:.86rem;font-weight:750;white-space:nowrap;transition:background-color .15s,color .15s,border-color .15s,box-shadow .15s}
+.embed-map .tabs button:hover{background:#fff;color:#0f172a;border-color:#cbd5e1}
+.embed-map .tabs button[aria-selected="true"]{z-index:3;border-color:var(--c);border-bottom-color:#fff;background:#fff;color:var(--c);box-shadow:inset 0 4px 0 var(--c)}
+.embed-map .panel{position:relative;z-index:2;min-height:240px;margin-top:0;padding:24px;border:1px solid #e2e8f0;border-radius:18px;background:#fff;box-shadow:none}
+.embed-map .panel h3{color:#0f172a;font-size:1.22rem;font-weight:800;letter-spacing:-.02em}
+.embed-map .panel p{color:#475569;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.embed-map .panel .st{color:#64748b;font-size:.78rem;font-weight:650;text-transform:uppercase;letter-spacing:.04em}
+.embed-map .list{margin-top:18px;gap:10px}
+.embed-map .list li{color:#334155;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:.94rem}
+.embed-map .ck{border-width:2px;border-radius:6px}
+.embed-map .btn{border-radius:10px;padding:10px 16px;font-size:.9rem;font-weight:750;box-shadow:0 5px 14px color-mix(in srgb,var(--c,var(--brand)) 18%,transparent)}
+.embed-map .date,.embed-map .ins-card{border-color:#e2e8f0;border-radius:14px;background:#f8fafc}
+@media(max-width:640px){
+  .embed-map .mapbox{padding:16px;border-radius:18px}
+  .embed-map .linea{overflow-x:auto;padding:4px 0 2px}
+  .embed-map .stz{min-width:112px}
+  .embed-map .tabs{margin-right:4px;margin-left:4px;padding-right:8px}
+  .embed-map .tabs button{flex-basis:145px}
+  .embed-map .panel{min-height:220px;padding:18px}
+  .embed-map .cap{margin-bottom:16px}
+}
 </style>
 </head>
 <body>
@@ -124,16 +162,11 @@ footer a{color:var(--mut)}
 </header>
 
 <main class="wrap">
-  <section class="hero">
-    <h1>Conosci il tuo corpo e impara a riattivarlo</h1>
-    <p>Un percorso di educazione alla salute basato sulle metodiche posturali. Lo fai online da solo, con le lezioni di un insegnante, oppure diventi insegnante tu stesso.</p>
-    <a class="btn" href="#mappa" data-goto="online">Inizia dalla prima settimana</a>
-    <a class="btn ghost" href="#mappa" data-goto="tirocinio">Voglio diventare insegnante</a>
-  </section>
+  
 
   <section class="mapbox" id="mappa" aria-labelledby="t-mappa">
     <div class="bar">
-      <h2 id="t-mappa">Il percorso</h2>
+      <!--h2 id="t-mappa">Il percorso</h2-->
       <label class="ruolo">Anteprima come
         <select id="ruolo">
           <option value="utente">Utente</option>
@@ -142,7 +175,7 @@ footer a{color:var(--mut)}
         </select>
       </label>
     </div>
-    <p class="sub">Scegli una stazione, poi un servizio: la linea cambia e sotto trovi il corso, le lezioni con le date, le cose da fare per il tirocinio o gli insegnanti.</p>
+    <!--p class="sub">Scegli una stazione, poi un servizio: la linea cambia e sotto trovi il corso, le lezioni con le date, le cose da fare per il tirocinio o gli insegnanti.</p-->
 
     <div class="linea" id="linea" role="group" aria-label="Stazioni del percorso"></div>
     <p class="cap" id="cap"></p>
@@ -242,7 +275,8 @@ const $ = s => document.querySelector(s);
 const ins = id => INSEGNANTI.find(x => x.id === id);
 const formati = id => INSEGNANTI.filter(x => x.formatoDa === id).length;
 let sel = { tab: "online", st: STAZIONI[0].id };
-let ruolo = "utente";
+const EMBED_MAP = new URLSearchParams(location.search).get("embed") === "1";
+let ruolo = EMBED_MAP ? "insegnante" : "utente";
 
 function statoDot(s) {
   if (!s.online.attivo) return "arrivo";
@@ -353,7 +387,19 @@ function renderPanel() {
   p.innerHTML = h;
 }
 
-function render() { renderLinea(); renderTabs(); renderPanel(); }
+function notifyEmbedHeight() {
+  if (!EMBED_MAP || window.parent === window) return;
+  requestAnimationFrame(() => {
+    const map = document.querySelector("#mappa");
+    if (!map) return;
+    window.parent.postMessage({
+      type: "posturacorretta-map-height",
+      height: Math.ceil(map.getBoundingClientRect().height) + 2
+    }, location.origin);
+  });
+}
+
+function render() { renderLinea(); renderTabs(); renderPanel(); notifyEmbedHeight(); }
 
 document.addEventListener("click", e => {
   const g = e.target.closest("[data-goto]");
@@ -374,6 +420,10 @@ $("#ruolo").addEventListener("change", e => {
 });
 
 render();
+if (EMBED_MAP && "ResizeObserver" in window) {
+  new ResizeObserver(notifyEmbedHeight).observe(document.querySelector("#mappa"));
+}
+window.addEventListener("load", notifyEmbedHeight);
 </script>
 </body>
 </html>

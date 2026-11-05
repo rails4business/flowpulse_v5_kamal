@@ -13,10 +13,14 @@ class Domain < ApplicationRecord
     :site_key,
     :sites,
     :redirect_path,
+    :path_slug,
+    :home_mode,
     :llms_enabled,
     :llms_summary,
     :llms_instructions,
     :security_profile
+
+  HOME_MODES = %w[auto node site target].freeze
 
   belongs_to :role_assignment, optional: true
   belongs_to :node, optional: true
@@ -47,6 +51,8 @@ class Domain < ApplicationRecord
   validate :only_one_primary_domain_per_brand
   validate :primary_domain_is_canonical
   validate :security_profile_is_known
+  validate :home_mode_is_known
+  validate :path_slug_is_valid
 
   scope :active, -> { where(active: true) }
 
@@ -66,6 +72,11 @@ class Domain < ApplicationRecord
     else
       active.find_by(hostname: "www.#{normalized}")
     end
+  end
+
+  def self.find_for_path_slug(slug)
+    normalized = slug.to_s.strip.downcase
+    active.where(canonical_host: [nil, ""]).find_by("settings ->> 'path_slug' = ?", normalized)
   end
 
   def self.import_from_config!(environment = Rails.env)
@@ -166,6 +177,10 @@ class Domain < ApplicationRecord
     llms_enabled.nil? || ActiveModel::Type::Boolean.new.cast(llms_enabled)
   end
 
+  def resolved_home_mode
+    home_mode.presence || "auto"
+  end
+
   def to_config
     {}.tap do |hash|
       hash["canonical_host"] = canonical_host if canonical_host.present?
@@ -199,6 +214,8 @@ class Domain < ApplicationRecord
       self.site_key = site_key.to_s.strip.presence
       self.sites = sites.to_h.transform_keys(&:to_s).transform_values { |value| value.to_s.strip }.compact_blank.presence if sites.present?
       self.redirect_path = redirect_path.to_s.strip.presence
+      self.path_slug = path_slug.to_s.strip.downcase.presence
+      self.home_mode = home_mode.to_s.strip.downcase.presence
       raw_llms_enabled = llms_enabled
       self.llms_enabled = ActiveModel::Type::Boolean.new.cast(raw_llms_enabled) unless raw_llms_enabled.nil?
       self.llms_summary = llms_summary.to_s.strip.presence
@@ -218,6 +235,28 @@ class Domain < ApplicationRecord
       return if security_profile.blank? || security_profile.in?(PublicSubmissionSecurity::PROFILES.keys)
 
       errors.add(:security_profile, "non è riconosciuto")
+    end
+
+    def home_mode_is_known
+      return if home_mode.blank? || home_mode.in?(HOME_MODES)
+
+      errors.add(:home_mode, "non è riconosciuto")
+    end
+
+    def path_slug_is_valid
+      return if path_slug.blank?
+
+      unless path_slug.match?(/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/)
+        errors.add(:path_slug, "non è valido")
+        return
+      end
+
+      duplicate = self.class.active
+        .where(canonical_host: [nil, ""])
+        .where("settings ->> 'path_slug' = ?", path_slug)
+        .where.not(id: id)
+        .exists?
+      errors.add(:path_slug, "è già utilizzato") if duplicate
     end
 
     def only_one_primary_domain_per_brand

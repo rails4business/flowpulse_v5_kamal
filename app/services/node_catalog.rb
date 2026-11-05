@@ -100,7 +100,8 @@ class NodeCatalog
       items = navigation.to_h["items"] || navigation.to_h[:items]
       Array(items).flat_map do |item|
         attributes = item.to_h.stringify_keys
-        [attributes["slug"], *navigation_slugs("items" => attributes["children"])]
+        slug = attributes["slug"] unless attributes["group"] || attributes["home"] || attributes["path"].present?
+        [slug, *navigation_slugs("items" => attributes["children"])]
       end.compact
     end
 

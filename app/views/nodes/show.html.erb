@@ -3,13 +3,14 @@
 <%
   sidebar_siblings = Array(@siblings)
   sidebar_children = Array(@children)
+  landing_mode = @node.slug == "posturacorretta" && @current_host_domain_root
   has_real_siblings = sidebar_siblings.any? { |sibling| sibling != @node }
   sidebar_items = if has_real_siblings || @parent_node.present?
     sidebar_siblings
   else
     sidebar_children
   end
-  has_sidebar = @parent_node.present? || has_real_siblings || sidebar_children.any?
+  has_sidebar = !landing_mode && (@parent_node.present? || has_real_siblings || sidebar_children.any?)
 %>
 
 <% content_for :public_node_navigation do %>
@@ -32,7 +33,7 @@
   <% end %>
 <% end %>
 
-<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> lg:min-h-0">
+<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> <%= 'node-public-landing' if landing_mode %> lg:min-h-0">
   <div class="node-public-layout lg:min-h-0">
     <% if has_sidebar %>
       <aside class="node-public-sidebar lg:min-h-0">
@@ -103,7 +104,9 @@
         <%= @node.node_type.presence || @node.content_type.presence || "Articolo" %>
       </p>
 
-      <h1 class="node-public-title"><%= @node.title %></h1>
+      <% unless landing_mode %>
+        <h1 class="node-public-title"><%= @node.title %></h1>
+      <% end %>
 
       <div class="node-public-meta flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500 mt-4 pb-6 border-b border-slate-100">
         <div class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 capitalize">
@@ -154,8 +157,23 @@
         </p>
       <% end %>
 
+      <% if landing_mode %>
+        <section id="mappa" class="node-public-path-map" aria-label="Mappa del percorso PosturaCorretta" data-controller="embedded-frame">
+          <iframe
+            src="/posturacorretta_landing_page_perfetta.html?embed=1#mappa"
+            title="Mappa del percorso PosturaCorretta"
+            class="node-public-path-map-frame"
+            data-embedded-frame-target="frame"
+            loading="eager"
+            scrolling="no"
+          ></iframe>
+        </section>
+      <% end %>
+
       <article class="node-public-content">
-        <% if content&.body_md.present? %>
+        <% if content&.body.present? %>
+          <%= content.body %>
+        <% elsif content&.body_md.present? %>
           <%= render_node_markdown(content.body_md) %>
         <% elsif content&.body_html.present? %>
           <%= sanitize content.body_html %>
@@ -178,6 +196,7 @@
     </main>
 
     <!-- Right Sidebar Table of Contents (TOC) -->
+    <% unless landing_mode %>
     <aside data-controller="toc" class="node-public-toc-sidebar xl:min-h-0">
       <div class="node-public-sidebar-mobile-header xl:hidden flex justify-between items-center px-4 py-3 border-b border-slate-100 mb-4 bg-slate-50 rounded-t-xl">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Indice</span>
@@ -199,5 +218,6 @@
         </ul>
       </nav>
     </aside>
+    <% end %>
   </div>
 </div>

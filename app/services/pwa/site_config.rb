@@ -109,7 +109,13 @@ module Pwa
 
     def local_path_matches?
       path = @request.path.to_s
-      path == scope || path.start_with?("#{scope}/")
+      path == scope || path.start_with?("#{scope}/") || additional_local_paths.include?(path)
+    end
+
+    def additional_local_paths
+      Array(settings["local_paths"]).map do |path|
+        "/#{path.to_s.sub(%r{\A/+}, '').sub(%r{/+\z}, '')}"
+      end
     end
 
     def join_scope(path)

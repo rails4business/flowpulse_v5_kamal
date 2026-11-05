@@ -38,6 +38,39 @@ default: &default
       operator_roles:
         - insegnante
         - segreteria
+      navigation:
+        items:
+          - key: home
+            label: Home
+            home: true
+          - key: servizi
+            label: Servizi
+            group: true
+            children:
+              - slug: apprendimento-1-espressione
+                label: Postura e fisiologia
+              - slug: apprendimento-2-connessione
+                label: Consapevolezza
+              - slug: metodiche-posturali
+                label: Metodiche posturali
+              - slug: categorie-generali
+                label: Attività settimanali
+              - slug: categorie-specifiche
+                label: Corsi mirati
+          - key: ecosistema
+            label: Ecosistema
+            group: true
+            children:
+              - slug: stato-di-salute
+                label: Stato di Salute
+              - slug: percorso-integrato
+                label: Percorso Integrato
+              - slug: dalla-posturacorretta-al-giardino-del-corpo
+                label: Dalla PosturaCorretta al Giardino del Corpo
+          - key: vecchio-menu
+            label: Vecchio menu
+            path: /percorso-posturacorretta
+            audience: superadmin
 
     stato-di-salute:
       title: Stato di Salute

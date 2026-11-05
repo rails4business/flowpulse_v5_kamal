@@ -1,22 +1,36 @@
 schema_version: 1
 
 contents:
-  - id: percorso-integrato
+  - id: il-tuo-stato-di-salute
     format: course
-    slug: percorso-integrato
+    slug: il-tuo-stato-di-salute
     position: 2
     status: published
     visibility: public
     access: free
-    title: "Il tuo stato di salute e il Percorso Integrato"
-    description: "La postura può contribuire alla salute, ma da sola non basta. Prima di iniziare il percorso educativo, osserviamo il tuo stato di salute e comprendiamo se sia utile costruire un Percorso Integrato con i professionisti adatti."
+    title: "Il tuo stato di salute"
+    description: "Prima di iniziare il percorso educativo, osserva il tuo stato di salute, riconosci il punto di partenza e comprendi quali ambiti e sistemi richiedono attenzione."
+    image: https://ik.imagekit.io/posturacorretta/stato_di_salute.png
+    level: base
+    author_node_slug: markpostura
+    publisher_node_slug: posturacorretta
+
+  - id: percorso-integrato
+    format: course
+    slug: percorso-integrato
+    position: 3
+    status: published
+    visibility: public
+    access: free
+    title: "Il Percorso Integrato"
+    description: "Costruisci un percorso comprensibile e verificabile con i professionisti adatti, chiarendo obiettivi, ruoli, responsabilità e modalità di collaborazione."
     image: https://ik.imagekit.io/posturacorretta/percorso%20integrato.png?updatedAt=1788608704470
     level: base
     author_node_slug: markpostura
     publisher_node_slug: posturacorretta
 
   - id: percorso-che-cos-e-percorso-integrato
-    parent_id: percorso-integrato
+    parent_id: il-tuo-stato-di-salute
     format: chapter
     slug: qual-e-il-tuo-punto-di-partenza
     position: 1
@@ -28,7 +42,7 @@ contents:
     content_path: brands/posturacorretta/courses/percorso-integrato/chapters/che-cos-e-il-percorso-integrato.md
 
   - id: fisiologia-ambiti-percorsi-chakra
-    parent_id: percorso-integrato
+    parent_id: il-tuo-stato-di-salute
     format: chapter
     slug: a-ogni-ambito-il-suo-percorso
     position: 6
@@ -40,7 +54,7 @@ contents:
     content_path: brands/posturacorretta/courses/percorso-integrato/chapters/ambiti-percorsi-chakra.md
 
   - id: fisiologia-matrice-ambiti
-    parent_id: percorso-integrato
+    parent_id: il-tuo-stato-di-salute
     format: chapter
     slug: matrice-per-orientarsi-salute-benessere
     position: 7
@@ -52,7 +66,7 @@ contents:
     content_path: brands/posturacorretta/courses/percorso-integrato/chapters/matrice-ambiti-aree-paradigmi.md
 
   - id: fisiologia-professionisti-insegnanti-blu
-    parent_id: percorso-integrato
+    parent_id: il-tuo-stato-di-salute
     format: chapter
     slug: tre-colori-professionisti-insegnanti
     position: 8
@@ -64,7 +78,7 @@ contents:
     content_path: brands/posturacorretta/courses/percorso-integrato/chapters/professionisti-salute-benessere-insegnanti-blu.md
 
   - id: percorso-conoscere-situazione-iniziale
-    parent_id: percorso-integrato
+    parent_id: il-tuo-stato-di-salute
     format: chapter
     slug: osserva-i-diversi-ambiti-della-salute
     position: 2
@@ -76,7 +90,7 @@ contents:
     content_path: brands/posturacorretta/courses/percorso-integrato/chapters/conoscere-situazione-iniziale.md
 
   - id: percorso-problema-obiettivo-sistemi
-    parent_id: percorso-integrato
+    parent_id: il-tuo-stato-di-salute
     format: chapter
     slug: problema-obiettivo-sistemi-coinvolti
     position: 3

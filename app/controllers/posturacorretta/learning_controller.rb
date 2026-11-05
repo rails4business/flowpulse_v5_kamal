@@ -46,12 +46,12 @@ module Posturacorretta
 
     load_curriculum_sources
     course_slug = params[:corso].presence_in(@all_didactic_courses.map { |item| item.fetch("slug") })
-    return redirect_to(posturacorretta_path, alert: "Corso non trovato") unless course_slug
+    return redirect_to(percorso_posturacorretta_path, alert: "Corso non trovato") unless course_slug
     return redirect_to(posturacorretta_course_path(corso: course_slug), status: :moved_permanently) if params[:vista].present?
 
     selected_course = @all_didactic_courses.find { |item| item.fetch("slug") == course_slug }
     unless selected_course.fetch("show_available", false) || posturacorretta_chapter_editor?(selected_course)
-      return redirect_to(posturacorretta_path, alert: "Corso non disponibile.")
+      return redirect_to(percorso_posturacorretta_path, alert: "Corso non disponibile.")
     end
 
     load_course_overview(course_slug)
@@ -63,7 +63,7 @@ module Posturacorretta
   def enroll
     load_curriculum_sources
     course = @all_didactic_courses.find { |item| item.fetch("slug") == params[:corso] }
-    return redirect_to(posturacorretta_path, alert: "Corso non trovato") unless course
+    return redirect_to(percorso_posturacorretta_path, alert: "Corso non trovato") unless course
     return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
 
     commitment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
@@ -102,7 +102,7 @@ module Posturacorretta
     load_curriculum_sources
     course = @all_didactic_courses.find { |item| item.fetch("slug") == params[:corso] }
     chapter = course&.fetch("chapters", [])&.find { |item| item.fetch("slug") == params[:capitolo] }
-    return redirect_to(posturacorretta_path, alert: "Capitolo non trovato") unless course && chapter
+    return redirect_to(percorso_posturacorretta_path, alert: "Capitolo non trovato") unless course && chapter
     return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
 
     enrollment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
@@ -201,11 +201,11 @@ module Posturacorretta
     load_curriculum_sources
     return redirect_legacy_learning_path if params[:stage].present? || params[:lesson].present?
 
-    redirect_to posturacorretta_path, status: :moved_permanently
+    redirect_to percorso_posturacorretta_path, status: :moved_permanently
   end
 
   def percorso
-    redirect_to posturacorretta_path, status: :moved_permanently
+    redirect_to percorso_posturacorretta_path, status: :moved_permanently
   end
 
   def integrated_paths

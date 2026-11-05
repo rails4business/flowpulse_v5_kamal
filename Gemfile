@@ -17,6 +17,9 @@ gem "tailwindcss-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+# Rich text editor for Node content, integrated with Action Text.
+gem "lexxy", "~> 0.9.21"
+
 # Use PostgreSQL in development and production
 gem "pg", ">= 1.5"
 

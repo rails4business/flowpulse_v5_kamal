@@ -1,5 +1,5 @@
 <% course_chapter = params[:capitolo].present? && request.path.start_with?("/posturacorretta/corsi/") %>
-<% home_active = request.path == posturacorretta_path || (request.path.start_with?("/posturacorretta/corsi/") && !course_chapter) %>
+<% home_active = request.path == percorso_posturacorretta_path || (request.path.start_with?("/posturacorretta/corsi/") && !course_chapter) %>
 <% lessons_active = request.path == posturacorretta_student_dashboard_path %>
 <% methodologies_active = request.path.start_with?(posturacorretta_metodiche_path) %>
 <% profile_active = request.path.start_with?(posturacorretta_profile_path) || request.path.start_with?(posturacorretta_student_appointments_path) %>
@@ -17,7 +17,7 @@
       <span aria-hidden="true"></span>
     <% end %>
   <% else %>
-    <%= link_to posturacorretta_path, aria: { label: "Percorso PosturaCorretta", current: ("page" if home_active) }, class: "pc-app-logo #{'is-active' if home_active}" do %>
+    <%= link_to percorso_posturacorretta_path, aria: { label: "Percorso PosturaCorretta", current: ("page" if home_active) }, class: "pc-app-logo #{'is-active' if home_active}" do %>
       <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="">
       <small>Percorso</small>
     <% end %>

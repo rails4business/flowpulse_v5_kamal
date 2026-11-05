@@ -9,7 +9,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     Domain.create!(hostname: "posturacorretta-owner.test", node: brand, role_assignment: role, active: true)
     post session_path, params: { email_address: owner.email_address, password: "password123" }
 
-    get posturacorretta_path
+    get percorso_posturacorretta_path
 
     assert_response :success
     assert_select "a[href='#{brand_admin_nodes_path(brand.slug)}']", text: "Amministra Brand", minimum: 2
@@ -45,7 +45,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "keeps its own how-it-works guide distinct from the Percorso Integrato docs" do
-    get posturacorretta_path
+    get percorso_posturacorretta_path
 
     assert_response :success
     assert_select "a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
@@ -72,13 +72,13 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get the educational path landing page" do
-    get posturacorretta_url
+    get percorso_posturacorretta_url
     assert_response :success
     assert_includes response.body, "Percorso PosturaCorretta"
   end
 
   test "orders the primary navigation around path lessons methodologies and explore" do
-    get posturacorretta_url
+    get percorso_posturacorretta_url
 
     assert_response :success
     desktop_links = css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
@@ -92,7 +92,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "presents the educational introduction as three readable steps" do
-    get posturacorretta_url
+    get percorso_posturacorretta_url
 
     assert_response :success
     assert_select "ol[aria-label='Come iniziare il percorso educativo'] > li", count: 3

@@ -83,7 +83,7 @@
           </button>
         <% end %>
 
-        <%= link_to flowtree_public_node_path(@navigation_root_node || @node), class: "flex min-w-0 flex-shrink-0 items-center gap-2", aria: { label: "#{nav_brand} · Home" } do %>
+        <%= link_to public_node_domain_home_path, class: "flex min-w-0 flex-shrink-0 items-center gap-2", aria: { label: "#{nav_brand} · Home" } do %>
           <% if @navigation_domain&.logo_full_url.present? %>
             <%= image_tag @navigation_domain.logo_full_url, alt: nav_brand, class: "hidden h-10 max-w-[190px] object-contain sm:block" %>
           <% elsif @navigation_domain&.logo_square_url.present? %>
@@ -94,11 +94,21 @@
           <span class="max-w-36 truncate text-base font-black tracking-tight text-slate-950 sm:hidden"><%= nav_brand %></span>
         <% end %>
 
-        <details class="group/nav relative ml-auto lg:ml-4 lg:min-w-0 lg:flex-1" <%= "hidden" unless content_for?(:public_node_navigation) %>>
+        <div class="ml-4 hidden min-w-0 flex-1 items-center gap-1 lg:flex" <%= "hidden" unless content_for?(:public_node_navigation) %>>
+          <%= yield :public_node_navigation %>
+        </div>
+
+        <details
+          class="group/nav relative ml-auto lg:hidden"
+          data-controller="details-menu"
+          data-details-menu-group-value="public-node-mobile-shell"
+          data-action="toggle->details-menu#closePeers click@window->details-menu#closeOutside keydown@window->details-menu#closeOnEscape"
+          <%= "hidden" unless content_for?(:public_node_navigation) %>
+        >
           <summary class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="Apri menu principale">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" /></svg>
           </summary>
-          <div class="absolute right-0 z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-2 shadow-xl group-open/nav:block lg:static lg:mt-0 lg:flex lg:w-auto lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+          <div class="absolute right-0 z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
             <%= yield :public_node_navigation %>
           </div>
         </details>

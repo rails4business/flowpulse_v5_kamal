@@ -43,6 +43,23 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".node-public-status", false
   end
 
+  test "local brand path renders the Node Show assigned to its domain" do
+    Domain.create!(
+      hostname: "posturacorretta.org",
+      node: @published_node,
+      role_assignment: @assignment,
+      path_slug: "posturacorretta",
+      home_mode: "node",
+      locale: "it"
+    )
+
+    get posturacorretta_url
+
+    assert_response :success
+    assert_includes response.body, "Published Node"
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+  end
+
   test "public visitor cannot view free subscription node" do
     subscription_node = Node.create!(
       title: "Subscriber Lesson",
@@ -340,7 +357,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".node-public-breadcrumb-current", "Domain Child"
     assert_select ".node-public-breadcrumb img", count: 0
     assert_select "header nav[aria-label='Navigazione principale']", count: 1
-    assert_select "header nav[aria-label='Navigazione principale'] > a[href=?][aria-label='bounded.example · Home']", node_path(domain_root)
+    assert_select "header nav[aria-label='Navigazione principale'] > a[href=?][aria-label='bounded.example · Home']", root_path
     assert_select "header nav[aria-label='Navigazione principale'] a[href=?]", node_path(child), text: "Domain Child"
     assert_select "header nav[aria-label='Navigazione principale'] a[href=?]", node_path(sibling), text: "Domain Sibling"
     assert_select ".node-public-reading-nav-static"

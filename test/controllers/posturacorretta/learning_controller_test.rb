@@ -103,11 +103,12 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows courses grouped into the educational path" do
-    get posturacorretta_path
+    get percorso_posturacorretta_path
 
     assert_response :success
     assert_equal %w[
       inizia-con-posturacorretta
+      il-tuo-stato-di-salute
       percorso-integrato
       postura-e-fisiologia
       muoviti-ed-esplora
@@ -121,7 +122,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Percorso PosturaCorretta"
     assert_select "#primi-corsi h2", text: "Postura e fisiologia", count: 1
     assert_select "#primi-corsi", text: /Postura e fisiologia sono strettamente collegate/
-    assert_select "#primi-corsi > header > p", text: "Il tuo percorso · 6 corsi", count: 1
+    assert_select "#primi-corsi > header > p", text: "Il tuo percorso · 7 corsi", count: 1
     assert_select "ol[aria-label='Come iniziare il percorso educativo'] + div a.bg-white[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-aspetti")}']", text: "Inizia", count: 1
     assert_select "main article [role='progressbar']", count: 0
     assert_select "#inizia-con-posturacorretta", text: /In arrivo/
@@ -134,16 +135,21 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#pc-week-focus-title", count: 0
     assert_select "link[rel='manifest'][href='#{posturacorretta_pwa_manifest_path}']"
     assert_select "h3", text: "La prima settimana con PosturaCorretta"
-    assert_select "h3", text: "Postura e apprendimento: sentire ed esprimere il corpo"
-    assert_select "h3", text: "Postura e apprendimento: sviluppare consapevolezza"
-    assert_select "h3", text: "Postura e apprendimento: scoperta e connessione"
-    assert_select "h3", text: "Postura, lavoro e risorse: scoprire il proprio potenziale"
+    assert_select "h3", text: "Il tuo stato di salute"
+    assert_select "h3", text: "Il Percorso Integrato"
+    assert_select "h3", text: "Postura e fisiologia"
+    assert_includes response.body, "Apprendimento 1: imparare ad ascoltare il corpo e a riattivare i nostri sistemi per capire come si esprime."
+    assert_select "h3", text: "Postura e consapevolezza"
+    assert_select "h3", text: "Oltre la postura"
+    assert_includes response.body, "Dalla PosturaCorretta al Giardino del Corpo: la scoperta e la connessione sono un altro aspetto dell’apprendimento."
+    assert_select "h3", text: "Le tue risorse"
+    assert_includes response.body, "Conoscere attitudini, capacità cognitive, abilità e risorse personali per orientare relazioni, lavoro e progetti con Rails4Business."
     assert_select "h2", text: "Postura, recupero e coscienza corporea"
     assert_select "h3", text: "Igiene Posturale"
     assert_includes response.body, "Conoscere i nostri sistemi fisiologici e imparare a riattivarli"
-    assert_select "#primi-corsi span", text: "Corso 1 di 6", minimum: 1
-    assert_select "#primi-corsi span", text: "Corso 6 di 6", minimum: 1
-    assert_select "#recupera-con-la-terapia-manuale span", text: "Corso 07", minimum: 1
+    assert_select "#primi-corsi span", text: "Corso 1 di 7", minimum: 1
+    assert_select "#primi-corsi span", text: "Corso 7 di 7", minimum: 1
+    assert_select "#recupera-con-la-terapia-manuale span", text: "Corso 08", minimum: 1
     assert_select "a[href='#{posturacorretta_course_path(corso: "inizia-con-posturacorretta")}'][aria-label='Apri il corso La prima settimana con PosturaCorretta']", count: 0
     assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale")}'][aria-label='Apri il corso Igiene Posturale']", count: 0
     assert_select "details > summary", text: /La prima settimana con PosturaCorretta/, minimum: 1
@@ -313,7 +319,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "p", text: "Gruppo"
     assert_select "[role='progressbar']", count: 0
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Lezioni"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Percorso"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{percorso_posturacorretta_path}']", text: "Percorso"
     assert_select "h1", text: "Programma lezioni PosturaCorretta", count: 1
     assert_select "nav[aria-label='Corsi del programma lezioni']"
     assert_select "div[aria-label='Corso introduttivo']", count: 0
@@ -486,7 +492,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   test "redirects the former course catalog to the new home" do
     get posturacorretta_seme_percorso_path
 
-    assert_redirected_to posturacorretta_url
+    assert_redirected_to percorso_posturacorretta_url
     assert_response :moved_permanently
   end
 
@@ -495,7 +501,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       get posturacorretta_course_path(corso: "postura-e-fisiologia")
 
     assert_response :success
-    assert_select "h1", text: "Postura e apprendimento: sentire ed esprimere il corpo"
+    assert_select "h1", text: "Postura e fisiologia"
     assert_select "h2", text: "Corso online"
     assert_select "nav[aria-label='Contenuti del corso']", count: 0
     assert_select "#capitoli", text: /Le basi delle cinque aree e il programma settimanale/
@@ -623,7 +629,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
 
-    assert_redirected_to posturacorretta_url
+    assert_redirected_to percorso_posturacorretta_url
     assert_equal "Corso non disponibile.", flash[:alert]
   end
 
@@ -638,7 +644,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "displays Canva superadmin links in footer only for superadmin users" do
-    get posturacorretta_path
+    get percorso_posturacorretta_path
     assert_response :success
     assert_not_includes response.body, "benessereintegrato.my.canva.site"
 
@@ -646,7 +652,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     superadmin.update!(superadmin: true)
     sign_in(superadmin)
 
-    get posturacorretta_path
+    get percorso_posturacorretta_path
     assert_response :success
     assert_includes response.body, "benessereintegrato.my.canva.site/postura-sito-4-ante-presentazione-servizi-centri-sito-web"
     assert_includes response.body, "benessereintegrato.my.canva.site/home"
@@ -689,7 +695,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "[aria-label='Avanzamento del corso']", text: /2 di 7 capitoli letti.*29%/m
     assert_select "[role='progressbar'][aria-valuenow='29']", count: 1
 
-    get posturacorretta_path
+    get percorso_posturacorretta_path
     assert_response :success
     assert_select "#inizia-con-posturacorretta [aria-label^='Avanzamento del corso']", text: /In corso · 2 di 7 capitoli/
     assert_select "#inizia-con-posturacorretta [role='progressbar'][aria-valuenow='29']", count: 1

@@ -21,7 +21,7 @@ module Posturacorretta
     test "keeps drafts private regardless of time while allowing superadmin preview" do
       travel_to Time.zone.parse("2026-09-20 12:00") do
         assert_nil ContentRepository.new.course_by_id("muoviti-ed-esplora")
-        assert_equal "Postura e apprendimento: sviluppare consapevolezza", ContentRepository.new(include_scheduled: true).course_by_id("muoviti-ed-esplora").fetch("title")
+        assert_equal "Postura e consapevolezza", ContentRepository.new(include_scheduled: true).course_by_id("muoviti-ed-esplora").fetch("title")
       end
 
       travel_to Time.zone.parse("2026-09-21 09:01") do
@@ -35,6 +35,7 @@ module Posturacorretta
 
       assert_equal %w[
         inizia-con-posturacorretta
+        il-tuo-stato-di-salute
         percorso-integrato
         postura-e-fisiologia
         muoviti-ed-esplora

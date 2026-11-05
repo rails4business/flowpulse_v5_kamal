@@ -59,18 +59,46 @@ class DomainsController < ApplicationController
 
     def dispatch_domain_action
       selected_site_key = Current.domain&.site_key_for(requested_site_locale)
-      if selected_site_key.present? && editorial_site_uses_builder?(selected_site_key)
-        render_editorial_site(selected_site_key)
-      elsif Current.domain&.target_controller.present?
+      renderable_site_key = selected_site_key if selected_site_key.present? && editorial_site_uses_builder?(selected_site_key)
+      renderer = DomainHomeResolver.new(Current.domain, site_key: renderable_site_key).call
+
+      case renderer
+      when :site
+        render_editorial_site(renderable_site_key)
+      when :target
         render_domain_target
-      elsif Current.domain&.node.present? && render_public_node(Current.domain.node)
-        # successfully rendered assigned node
-      elsif Current.domain&.role_assignment.present? && (creator_node = Current.domain.role_assignment.nodes.roots.published_free.order(:position, :title).find { |node| public_node_visible?(node) }) && render_public_node(creator_node)
-        # successfully rendered creator's home/first root node
+      when :node
+        render_public_node(Current.domain.node) || render_home_configuration_error
+      when :creator
+        render_creator_home || render_flowpulse_fallback
+      when :misconfigured
+        render_home_configuration_error
       else
-        prepare_flowpulse_landing
-        render "landing/flowpulse"
+        render_flowpulse_fallback
       end
+    end
+
+    def render_creator_home
+      creator_node = Current.domain&.role_assignment&.nodes&.roots&.published_free&.order(:position, :title)&.find do |node|
+        public_node_visible?(node)
+      end
+      return false if creator_node.blank?
+
+      render_public_node(creator_node)
+    end
+
+    def render_flowpulse_fallback
+      prepare_flowpulse_landing
+      render "landing/flowpulse"
+    end
+
+    def render_home_configuration_error
+      Rails.logger.error(
+        "Invalid domain home configuration domain=#{Current.domain&.hostname.inspect} " \
+        "home_mode=#{Current.domain&.resolved_home_mode.inspect}"
+      )
+      response.set_header("X-Robots-Tag", "noindex, nofollow")
+      render plain: "Sito temporaneamente non disponibile.", status: :service_unavailable
     end
 
     def requested_site_locale

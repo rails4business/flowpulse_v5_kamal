@@ -54,7 +54,7 @@ module CreatorWorld
       }
 
       assert_redirected_to tree_creator_world_role_assignment_node_url(@assignment, @node)
-      assert_equal [{ "slug" => target.slug, "label" => "Vai al target" }], @node.reload.navigation["items"]
+      assert_equal [{ "key" => target.slug, "slug" => target.slug, "label" => "Vai al target" }], @node.reload.navigation["items"]
     end
 
     test "cannot move a node under a bridge node" do

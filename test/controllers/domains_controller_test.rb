@@ -52,11 +52,9 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "PosturaCorretta"
-    assert_select "title", text: "Percorso PosturaCorretta · Educazione alla salute"
-    assert_select "meta[name='description'][content='Il percorso educativo alla salute grazie alle metodiche posturali. Scopri come funziona il tuo corpo e riattiva i tuoi sistemi.']"
+    assert_select "title", text: "Cambiare punto di vista fa la differenza"
     assert_select "link[rel='icon'][href='https://cdn.example.com/posturacorretta-icon.png']"
-    assert_select "meta[property='og:title'][content='Percorso PosturaCorretta · Educazione alla salute']"
-    assert_select "meta[property='og:description'][content='Il percorso educativo alla salute grazie alle metodiche posturali. Scopri come funziona il tuo corpo e riattiva i tuoi sistemi.']"
+    assert_select "meta[property='og:title'][content='Cambiare punto di vista fa la differenza']"
     assert_select "meta[property='og:image'][content='https://cdn.example.com/posturacorretta-social.png']"
     assert_select "meta[name='twitter:image'][content='https://cdn.example.com/posturacorretta-social.png']"
   end
@@ -295,6 +293,78 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     # Should render the specific node
     assert_includes response.body, "Specific Target Node"
     assert_not_includes response.body, "Creator Home Node"
+  end
+
+  test "node home mode renders the assigned node even when a legacy target exists" do
+    Domain.create!(
+      hostname: "node-home-mode.org",
+      home_mode: "node",
+      target_controller: "landing",
+      target_action: "posturacorretta",
+      node: @other_node,
+      role_assignment: @role_assignment,
+      locale: "it"
+    )
+    host! "node-home-mode.org"
+
+    get root_url
+
+    assert_response :success
+    assert_includes response.body, "Specific Target Node"
+    assert_select "h1", text: /Trova la giusta posizione/, count: 0
+  end
+
+  test "posturacorretta root reaches the domain resolver and renders its Node Show" do
+    Domain.create!(
+      hostname: "posturacorretta.org",
+      home_mode: "node",
+      site_key: "posturacorretta_it",
+      target_controller: "brands/posturacorretta",
+      target_action: "home",
+      node: @other_node,
+      role_assignment: @role_assignment,
+      locale: "it"
+    )
+    host! "posturacorretta.org"
+
+    get root_url
+
+    assert_response :success
+    assert_includes response.body, "Specific Target Node"
+    assert_select "h1", text: "Specific Target Node"
+  end
+
+  test "keeps the previous posturacorretta home at its percorso path" do
+    Domain.create!(
+      hostname: "posturacorretta.org",
+      home_mode: "node",
+      node: @other_node,
+      role_assignment: @role_assignment,
+      locale: "it"
+    )
+    host! "posturacorretta.org"
+
+    get percorso_posturacorretta_url
+
+    assert_response :success
+    assert_select "title", text: "Percorso PosturaCorretta · Educazione alla salute"
+  end
+
+  test "an explicitly misconfigured home does not silently use another renderer" do
+    Domain.create!(
+      hostname: "missing-node-home.org",
+      home_mode: "node",
+      target_controller: "landing",
+      target_action: "flowpulse",
+      locale: "it"
+    )
+    host! "missing-node-home.org"
+
+    get root_url
+
+    assert_response :service_unavailable
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+    assert_equal "Sito temporaneamente non disponibile.", response.body
   end
 
   test "falls back to creator's first root node when target_controller/action and node are blank" do

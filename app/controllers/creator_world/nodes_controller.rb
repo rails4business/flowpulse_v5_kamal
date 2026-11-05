@@ -19,6 +19,7 @@ module CreatorWorld
 
     def tree
       @node.build_content if @node.content.blank?
+      @node.content.prepare_lexxy_body!
       set_tree_context_for(@node)
       @children = @node.children.order(:position, :title)
       @active_tab = params[:tab].presence_in(%w[node content]) || "node"
@@ -55,6 +56,7 @@ module CreatorWorld
 
       @node = @role_assignment.nodes.new(parent: @parent)
       @node.build_content if @node.content.blank?
+      @node.content.prepare_lexxy_body!
       @tree = tree_for(@parent)
       if @parent
         @root = context_root_for(@parent)
@@ -105,6 +107,7 @@ module CreatorWorld
     def edit
       @return_to = safe_return_to
       @node.build_content if @node.content.blank?
+      @node.content.prepare_lexxy_body!
       set_tree_context_for(@node)
     end
 
@@ -330,6 +333,7 @@ module CreatorWorld
           :format,
           :body_md,
           :body_html,
+          :body,
           :source_path
         ]
       )

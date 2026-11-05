@@ -47,12 +47,17 @@ module PublicNodePresentation
 
     def resolve_public_navigation(items)
       Array(items).filter_map do |item|
-        target = @node.role_assignment.nodes.find_by(slug: item["slug"])
-        next if target.blank? || !public_node_navigable?(target)
+        next if item["audience"] == "superadmin" && !Current.user&.superadmin_user?
+
+        target = @node.role_assignment.nodes.find_by(slug: item["slug"]) if item["slug"].present?
+        next if item["slug"].present? && (target.blank? || !public_node_navigable?(target))
 
         {
-          node: target.bridge_node? ? target.resolve_target : target,
-          label: item["label"].presence || target.title,
+          node: target&.bridge_node? ? target.resolve_target : target,
+          label: item["label"].presence || target&.title,
+          group: item["group"] == true,
+          home: item["home"] == true,
+          path: item["path"].presence,
           children: resolve_public_navigation(item["children"])
         }
       end

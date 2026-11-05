@@ -1,6 +1,48 @@
 require "test_helper"
 
 class DomainTest < ActiveSupport::TestCase
+  test "finds the canonical active domain by its independent local path slug" do
+    domain = Domain.create!(
+      hostname: "local-brand.example",
+      path_slug: "local-brand",
+      locale: "it"
+    )
+
+    assert_equal domain, Domain.find_for_path_slug("LOCAL-BRAND")
+  end
+
+  test "path slug must be unique among active canonical domains" do
+    Domain.create!(hostname: "first-brand.example", path_slug: "shared-brand", locale: "it")
+    duplicate = Domain.new(hostname: "second-brand.example", path_slug: "shared-brand", locale: "it")
+
+    assert_not duplicate.valid?
+    assert_includes duplicate.errors[:path_slug], "è già utilizzato"
+  end
+
+  test "defaults home mode to auto" do
+    assert_equal "auto", Domain.new(hostname: "automatic-home.example").resolved_home_mode
+  end
+
+  test "accepts only known home modes" do
+    domain = Domain.new(hostname: "invalid-home.example", home_mode: "surprise")
+
+    assert_not domain.valid?
+    assert_includes domain.errors[:home_mode], "non è riconosciuto"
+  end
+
+  test "imports and exports the home mode" do
+    Domain.import_from_hash!(
+      "node-home.example" => {
+        "locale" => "it",
+        "home_mode" => "node"
+      }
+    )
+
+    domain = Domain.find_by!(hostname: "node-home.example")
+    assert_equal "node", domain.home_mode
+    assert_equal "node", Domain.export_to_hash.dig("node-home.example", "home_mode")
+  end
+
   test "accepts only known public submission security profiles" do
     domain = Domain.new(hostname: "invalid-security.example", security_profile: "unlimited")
 

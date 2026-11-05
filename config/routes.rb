@@ -35,9 +35,6 @@ Rails.application.routes.draw do
   get "posturacorretta/offline" => "pwa#offline", as: :posturacorretta_pwa_offline
 
   # Public Routes
-  constraints ->(request) { request.host == "posturacorretta.org" } do
-    get "/", to: "posturacorretta/learning#index", as: :posturacorretta_domain_root
-  end
   constraints ->(request) { %w[ilgiardinodelcorpo.it www.ilgiardinodelcorpo.it].include?(request.host) } do
     get "/", to: "landing#giardino_del_corpo", as: :giardino_del_corpo_domain_root
   end
@@ -45,6 +42,7 @@ Rails.application.routes.draw do
   get ":locale", to: "domains#show", as: :localized_domain_root,
       constraints: { locale: /it|en|fr|de|es/ }
   resources :nodes, only: %i[show edit]
+  get "percorso-posturacorretta" => "posturacorretta/learning#index", as: :percorso_posturacorretta
   get "eventi" => "public_events#index", as: :eventi
   get "eventi/:id" => "public_events#show", as: :evento
   get "esperienze" => redirect("/eventi", status: 301), as: :esperienze
@@ -158,7 +156,9 @@ Rails.application.routes.draw do
       defaults: { brand: "posturacorretta", brand_path: "posturacorretta" },
       as: :posturacorretta_changelog_entry,
       constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
-  get "posturacorretta" => "posturacorretta/learning#index", as: :posturacorretta
+  get "posturacorretta" => "nodes#domain_home",
+      defaults: { path_slug: "posturacorretta" },
+      as: :posturacorretta
   get "posturacorretta/profilo" => "posturacorretta#profile", as: :posturacorretta_profile
   get "posturacorretta/presentazione-posturacorretta" => "posturacorretta#triathlon_handout", as: :posturacorretta_presentation
   get "posturacorretta/guida-triatlon" => redirect("/posturacorretta/presentazione-posturacorretta", status: 301)
@@ -411,4 +411,9 @@ Rails.application.routes.draw do
   get "libro/:id" => "libro#legacy_show", as: :libro_chapter
 
   get "up" => "rails/health#show", as: :rails_health_check
+
+  # Preview/path locale delle home di dominio. Le route applicative esplicite
+  # restano prioritarie perché questo resolver è intenzionalmente in fondo.
+  get ":path_slug" => "nodes#domain_home", as: :domain_home_by_slug,
+      constraints: { path_slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
 end

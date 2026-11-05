@@ -2,7 +2,26 @@ class NodesController < ApplicationController
   include PublicNodePresentation
 
   layout "public_node"
-  allow_unauthenticated_access only: [:show]
+  allow_unauthenticated_access only: [:show, :domain_home]
+
+  def domain_home
+    domain = Domain.find_for_path_slug(params[:path_slug])
+    # Il percorso locale si comporta come la root del dominio configurato,
+    # anche se la richiesta arriva da localhost.
+    Current.domain = domain if domain.present?
+    node = domain&.node
+
+    if node.blank? || !public_node_visible?(node)
+      redirect_hidden_node
+      return
+    end
+
+    # This path is the local/path-based preview of a domain home. The real
+    # canonical page lives on the configured hostname.
+    response.set_header("X-Robots-Tag", "noindex, nofollow")
+    prepare_public_node(node, navigation_domain: domain, domain_root: true)
+    render :show
+  end
 
   def show
     @node = Node.find_by(id: params[:id])
