@@ -16,11 +16,8 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%= stylesheet_link_tag "tailwind", "application", "data-turbo-track": "reload" %>
-    <% if Rails.application.assets.load_path.find("lexxy.css") %>
-      <%= stylesheet_link_tag "lexxy", "data-turbo-track": "reload" %>
-    <% end %>
+    <%= stylesheet_link_tag "lexxy", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <script type="module">import "lexxy"</script>
   </head>
 
   <body class="flowtree-editor-body">

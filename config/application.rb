@@ -18,15 +18,6 @@ module FlowpulseV5
     config.time_zone = "Europe/Rome"
     config.active_record.default_timezone = :utc
 
-    # Keep Lexxy opt-in: only forms using `lexxy_rich_text_area` get the editor.
-    config.lexxy.override_action_text_defaults = false
-
-    # Lexxy 0.9.x registers `app/javascript`, while its compiled module lives
-    # under `app/assets/javascript`. Add the real path for Propshaft/importmap.
-    lexxy_gem_path = Gem.loaded_specs.fetch("lexxy").full_gem_path
-    config.assets.paths << "#{lexxy_gem_path}/app/assets/javascript"
-    config.assets.paths << "#{lexxy_gem_path}/app/assets/stylesheets"
-
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

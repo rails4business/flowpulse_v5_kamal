@@ -118,6 +118,10 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".mp-sales__hero-world img[alt='Percorso integrato tra salute, apprendimento e risorse']"
     assert_select "#percorsi .mp-sales__movement", count: 3
     assert_select "#mondo-markpostura .mp-sales__entrance", count: 3
+    assert_select "#lavori .mp-sales__job", count: 3
+    assert_select "#lavori", text: /Accademia PosturaCorretta/
+    assert_select "#lavori", text: /Il Giardino del Corpo/
+    assert_select "#lavori", text: /Rails4Business/
     assert_select "meta[name='robots'][content='noindex,nofollow']", count: 0
   end
 

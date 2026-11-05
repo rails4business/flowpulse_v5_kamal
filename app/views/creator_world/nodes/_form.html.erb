@@ -63,10 +63,9 @@
             <span>Lexxy Editor</span>
           </div>
 
-          <% rich_text_area_method = content_form.respond_to?(:lexxy_rich_text_area) ? :lexxy_rich_text_area : :rich_text_area %>
-          <%= content_form.public_send rich_text_area_method, :body,
+          <%= content_form.rich_text_area :body,
             rows: 18,
-            class: "node-body-input obsidian-body-input",
+            class: "lexxy-content node-body-input obsidian-body-input",
             placeholder: "Scrivi qui il contenuto della nota…" %>
 
           <details class="mt-5 rounded-xl border border-slate-200 bg-slate-50/70 p-3">

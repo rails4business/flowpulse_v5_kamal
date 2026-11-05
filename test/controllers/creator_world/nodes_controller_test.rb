@@ -39,6 +39,9 @@ module CreatorWorld
       assert_includes response.body, "Proprietà nota"
       assert_select "select[name='node[navigation_mode]']"
       assert_select "textarea[name='node[navigation_input]']"
+      assert_select "lexxy-editor[name='node[content_attributes][body]']", count: 1
+      assert_select "link[href*='lexxy'][rel='stylesheet']", count: 1
+      assert_select "script[type='importmap']", text: /lexxy/
     end
 
     test "creator can configure an inherited public navigation" do
