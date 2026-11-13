@@ -313,15 +313,32 @@ default: &default
       status: published
       visibility: public
 
-    introduzione-al-percorso-integrato:
+    corso-introduzione-al-percorso-integrato:
       title: Introduzione al Percorso Integrato
+      description: Corso della Sessione 1 - tre percorsi complementari, il paradigma e il metodo scientifico, il tuo stato di salute e le tre Educazioni.
+      line_slugs: [postura-recupero]
+      offer_slugs: [prima-settimana-posturacorretta, igiene-posturale, area-massaggio-recupero]
+      node_type: project
+      view_type: course
+      parent_slug: apprendimento-1-espressione
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 476.0
+          "y": -1064.0
+
+    introduzione-al-percorso-integrato:
+      title: Lezione · Introduzione al Percorso Integrato
       description: Prima lezione, indipendente dalle altre - tre percorsi complementari, il paradigma e il metodo scientifico, il tuo stato di salute e le tre Educazioni.
       course_key: introduzione-percorso-integrato-posturacorretta
       line_slugs: [postura-recupero]
       offer_slugs: [prima-settimana-posturacorretta, igiene-posturale, area-massaggio-recupero]
       node_type: project
       view_type: course_lesson
-      parent_slug: apprendimento-1-espressione
+      parent_slug: corso-introduzione-al-percorso-integrato
       position: 1
       professional_owner_slug: markpostura
       status: published
@@ -1246,8 +1263,25 @@ default: &default
           x: -884.0
           "y": 722.0
 
-    la-prima-settimana-con-posturacorretta:
+    corso-la-prima-settimana-con-posturacorretta:
       title: La prima settimana con PosturaCorretta
+      description: Corso della Sessione 2 - una settimana di osservazione, una prima scheda personale, pratica e orientamento.
+      line_slugs: [postura-recupero]
+      offer_slugs: [prima-settimana-posturacorretta, igiene-posturale, area-massaggio-recupero]
+      node_type: project
+      view_type: course
+      parent_slug: introduzione-al-percorso-integrato
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 646.0
+          "y": -1064.0
+
+    la-prima-settimana-con-posturacorretta:
+      title: Lezione · La prima settimana con PosturaCorretta
       lane_container: true
       course_key: inizia-con-posturacorretta
       academy_module_key: introduzione
@@ -1257,7 +1291,7 @@ default: &default
       offer_slugs: [prima-settimana-posturacorretta, igiene-posturale, area-massaggio-recupero]
       node_type: project
       view_type: course_lesson
-      parent_slug: introduzione-al-percorso-integrato
+      parent_slug: corso-la-prima-settimana-con-posturacorretta
       position: 1
       professional_owner_slug: markpostura
       status: published

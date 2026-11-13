@@ -1,4 +1,4 @@
-<% listino = Posturacorretta::Listino.sections %>
+<% listino = Posturacorretta::Listino.sections(superadmin: Current.user&.superadmin_user?) %>
 <% items = listino.flat_map(&:items) %>
 <% nodes = Node.published_public.where(slug: items.filter_map(&:node_slug)).index_by(&:slug) %>
 <% offers = Offer.where(slug: items.filter_map(&:offer_slug)).index_by(&:slug) %>
@@ -7,11 +7,13 @@
 <% sentence = ->(values) { values.to_sentence(words_connector: ", ", two_words_connector: " e ", last_word_connector: " e ") } %>
 <%# Le tappe della prima linea si aprono nella pagina del percorso; le altre voci nella loro corsia. %>
 <% item_path = lambda do |slug|
-     if journey_slugs.include?(slug) then posturacorretta_postura_recupero_path(tappa: slug, tab: "online")
+     if slug.blank? then nil
+     elsif journey_slugs.include?(slug) then posturacorretta_postura_recupero_path(tappa: slug, tab: "online")
      elsif slug == "percorso-integrato" then percorso_integrato_path
      elsif nodes.key?(slug) then flowpulse_network_lanes_path(slug, vista: "brand")
      end
    end %>
+<% includes_for = ->(item) { offers[item.offer_slug]&.included_offer_slugs.to_a.filter_map { |slug| offer_titles[slug] } } %>
 
 <div class="pc-landing-home">
   <section id="inizia" class="pc-hero pc-hero--simple">
@@ -21,40 +23,60 @@
       <p class="pc-hero__lead">Da dove vuoi iniziare?</p>
       <div class="pc-landing-actions">
         <%= link_to "Inizia con PosturaCorretta", posturacorretta_postura_recupero_path(tappa: "introduzione-al-percorso-integrato", tab: "online"), class: "pc-landing-primary-action" %>
-        <a href="#<%= listino.first&.slug %>" class="pc-landing-secondary-action">Vedi il listino</a>
       </div>
+      <% if listino.many? %>
+        <nav class="pc-listino-nav" aria-label="Sezioni del listino">
+          <% listino.each do |section| %>
+            <a href="#<%= section.slug %>"><%= section.title %></a>
+          <% end %>
+        </nav>
+      <% end %>
     </div>
   </section>
 
   <% listino.each do |section| %>
-    <section id="<%= section.slug %>" class="pc-landing-section pc-price-list">
-      <div class="pc-landing-section-heading">
-        <p class="pc-landing-eyebrow">Listino</p>
+    <section id="<%= section.slug %>" class="pc-landing-section pc-listino">
+      <header class="pc-listino__head">
         <h2><%= section.title %></h2>
+        <% unless section.priced? %><p class="pc-listino__note">Prezzi in definizione</p><% end %>
         <% if section.description.present? %><p><%= section.description %></p><% end %>
-      </div>
+      </header>
 
-      <ul class="pc-price-list__items" aria-label="<%= section.title %>">
-        <% section.items.each do |item| %>
-          <% offer = offers[item.offer_slug] %>
-          <% path = item.node_slug && item_path.call(item.node_slug) %>
-          <li class="pc-price-list__item">
-            <div class="pc-price-list__text">
-              <h3><%= item.title %></h3>
+      <% if section.steps? %>
+        <ol class="pc-listino-steps">
+          <% section.items.each_with_index do |item, index| %>
+            <% path = item_path.call(item.node_slug) %>
+            <% included = includes_for.call(item) %>
+            <li class="pc-listino-step <%= "is-first" if index.zero? %> <%= "is-soon" unless path %>">
+              <div class="pc-listino-step__top">
+                <span class="pc-listino-step__number"><%= index + 1 %></span>
+                <% if index.zero? %><span class="pc-listino-step__badge">Inizia da qui</span><% end %>
+              </div>
+              <h3><% if path %><%= link_to item.title, path, class: "pc-listino__link" %><% else %><%= item.title %><% end %></h3>
               <% if item.detail.present? %><p><%= item.detail %></p><% end %>
-              <% if offer&.included_offer_slugs.present? %>
-                <p class="pc-price-list__includes">Comprende <%= sentence.call(offer.included_offer_slugs.filter_map { |slug| offer_titles[slug] }) %></p>
-              <% end %>
-            </div>
-            <span class="pc-price-list__price <%= "is-pending" unless item.price %>"><%= item.price || "Prezzo da definire" %></span>
-            <% if path %>
-              <%= link_to "Scopri", path, class: "pc-price-list__action", aria: { label: "Scopri #{item.title}" } %>
-            <% else %>
-              <span class="pc-price-list__action is-soon">In arrivo</span>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
+              <% if included.any? %><p class="pc-listino-step__includes" title="Comprende <%= sentence.call(included) %>">Comprende i passi precedenti</p><% end %>
+              <div class="pc-listino-step__foot">
+                <% if item.price %><strong><%= item.price %></strong><% end %>
+                <span class="pc-listino__cta" aria-hidden="true"><%= path ? "Scopri →" : "In arrivo" %></span>
+              </div>
+            </li>
+          <% end %>
+        </ol>
+      <% else %>
+        <ul class="pc-listino-list">
+          <% section.items.each do |item| %>
+            <% path = item_path.call(item.node_slug) %>
+            <li class="pc-listino-row <%= "is-soon" unless path %>">
+              <div>
+                <h3><% if path %><%= link_to item.title, path, class: "pc-listino__link" %><% else %><%= item.title %><% end %></h3>
+                <% if item.detail.present? %><p><%= item.detail %></p><% end %>
+              </div>
+              <% if item.price %><strong class="pc-listino-row__price"><%= item.price %></strong><% end %>
+              <span class="pc-listino__cta" aria-hidden="true"><%= path ? "→" : "In arrivo" %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
     </section>
   <% end %>
 </div>

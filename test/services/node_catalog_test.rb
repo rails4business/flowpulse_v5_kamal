@@ -93,9 +93,14 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal percorso_salute, alimentazione.parent
     assert_equal percorso_salute, farmaci.parent
     assert [movimento, mente, alimentazione, farmaci].all? { |node| node.view_type == "course_lesson" }
+    corso_introduzione = Node.find_by!(slug: "corso-introduzione-al-percorso-integrato")
     introduzione = Node.find_by!(slug: "introduzione-al-percorso-integrato")
-    assert_equal apprendimento_espressione, introduzione.parent
-    assert_equal introduzione, prima_settimana.parent
+    corso_prima_settimana = Node.find_by!(slug: "corso-la-prima-settimana-con-posturacorretta")
+    assert_equal apprendimento_espressione, corso_introduzione.parent
+    assert_equal "course", corso_introduzione.view_type
+    assert_equal corso_introduzione, introduzione.parent
+    assert_equal introduzione, corso_prima_settimana.parent
+    assert_equal corso_prima_settimana, prima_settimana.parent
     assert_equal "course_lesson", prima_settimana.view_type
     assert_nil Node.find_by(slug: "lezione-1-inizia-con-posturacorretta")
     assert_equal postura, apprendimento_espressione.parent
@@ -149,7 +154,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     servizi_personalizzati = Node.find_by!(slug: "pacchetto-gruppi")
     individuali = Node.find_by!(slug: "servizi-personalizzati-individuali")
     assert_equal apprendimento_espressione, servizi_personalizzati.parent
-    assert_equal %w[introduzione-al-percorso-integrato pacchetto-gruppi], apprendimento_espressione.children.order(:position).pluck(:slug)
+    assert_equal %w[corso-introduzione-al-percorso-integrato pacchetto-gruppi], apprendimento_espressione.children.order(:position).pluck(:slug)
     assert_equal "Servizi personalizzati", servizi_personalizzati.title
     assert servizi_personalizzati.lane_container?
     assert_equal servizi_personalizzati, individuali.parent

@@ -20,7 +20,8 @@ module Posturacorretta
       line = LandingLine.find("postura-recupero")
 
       assert_equal "Introduzione al Percorso Integrato", line.stations.first.title
-      assert_equal "La prima settimana con PosturaCorretta", line.stations.second.title
+      assert_equal "Introduzione al Percorso Integrato", line.stations.second.title
+      assert_equal "La prima settimana con PosturaCorretta", line.stations.third.title
       assert_not_includes line.stations.map(&:slug), "area-massaggio-orientarsi"
       assert_equal [
         ["prima-settimana-posturacorretta", [], "introduzione-al-percorso-integrato"],

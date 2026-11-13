@@ -7,8 +7,8 @@ module Posturacorretta
     TABS = {
       "online" => "Percorso online",
       "lezioni" => "Programma lezioni",
-      "centri" => "Centri",
-      "insegnanti" => "Insegnanti"
+      "insegnanti" => "Insegnanti",
+      "centri" => "Centri"
     }.freeze
 
     STATIONS = [

@@ -24,7 +24,7 @@ module Posturacorretta
     # La linea mostra sia corsi sia lezioni: la forma della stazione comunica la differenza.
     def stations
       @stations ||= nodes.each_with_index.map do |node, index|
-        Station.new(slug: node.slug, title: node.title.split(/ [-·] /).first, index:)
+        Station.new(slug: node.slug, title: node.title.delete_prefix("Lezione · ").split(/ [-·] /).first, index:)
       end
     end
 

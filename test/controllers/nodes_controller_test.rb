@@ -89,10 +89,10 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select ".pc-landing-home", count: 1
     assert_select "a[href='#{posturacorretta_postura_recupero_path(tappa: 'introduzione-al-percorso-integrato', tab: 'online')}']", text: /Inizia con PosturaCorretta/
-    assert_select "#lezioni-e-percorsi .pc-price-list__item", minimum: 1
-    assert_select "#avanzati", count: 1
-    assert_select "#servizi-personalizzati", count: 1
-    assert_select ".pc-price-list__price", text: "Prezzo da definire", minimum: 1
+    assert_select "#lezioni-e-percorsi .pc-listino-step", minimum: 1
+    assert_select "#avanzati", count: 0
+    assert_select "#servizi-personalizzati", count: 0
+    assert_select ".pc-listino__note", text: "Prezzi in definizione", minimum: 1
     assert_select ".pc-home-tabs", count: 0
 
     get posturacorretta_postura_recupero_url(tappa: "la-prima-settimana-con-posturacorretta", tab: "lezioni")

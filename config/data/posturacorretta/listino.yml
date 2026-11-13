@@ -1,16 +1,18 @@
 # Listino della home PosturaCorretta: rispecchia docs/posturacorretta_offerte_listino.md.
 # price vuoto = "Prezzo da definire". node_slug collega la voce alla sua pagina; offer_slug all'offerta
-# della linea (per mostrare cosa comprende).
+# della linea (per mostrare cosa comprende). style: steps mostra la sezione come passi numerati,
+# altrimenti come lista. audience: superadmin rende visibile una sezione o una voce solo al superadmin.
 sections:
   - slug: lezioni-e-percorsi
     title: Lezioni e percorsi
+    style: steps
     description: Si inizia dalla prima settimana; ogni percorso comprende i precedenti.
     items:
       - title: Introduzione al Percorso Integrato
         detail: 1 lezione + corso online
         node_slug: introduzione-al-percorso-integrato
       - title: La prima settimana con PosturaCorretta
-        detail: 1 lezione + corso online
+        detail: 1 lezione + corso online · compresa l'Introduzione al Percorso Integrato
         node_slug: la-prima-settimana-con-posturacorretta
         offer_slug: prima-settimana-posturacorretta
       - title: Postura e fisiologia
@@ -24,15 +26,16 @@ sections:
         detail: n lezioni
         node_slug: area-massaggio-terapie-manuali-tecniche-corporee
         offer_slug: area-massaggio-recupero
-      - title: Percorso Base
-        detail: Area recupero + area mente
-      - title: Solo Area Movimento
+      - title: Area Movimento e allenamento
         node_slug: area-movimento-postura-attivita-motoria
-      - title: Tutte e tre le aree
-        detail: Massaggio, Movimento e Meditazione
+        audience: superadmin
+      - title: Area Mente
+        node_slug: area-mente-postura-ascolto-consapevolezza
+        audience: superadmin
 
   - slug: avanzati
     title: Avanzati
+    audience: superadmin
     items:
       - title: Percorso salute
         detail: Percorso completo · slot 4
@@ -51,6 +54,7 @@ sections:
 
   - slug: servizi-personalizzati
     title: Servizi personalizzati
+    audience: superadmin
     items:
       - title: Stato di salute
         detail: Consulenza e valutazione
