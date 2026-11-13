@@ -135,8 +135,8 @@
             </ol>
           <% end %>
           <div class="mt-6">
-            <% first_course = @didactic_courses.first %>
-            <% first_chapter = first_course&.fetch("chapters", [])&.first %>
+            <%# Inizia apre il primo capitolo pubblicato, seguendo l'ordine dei corsi di presentazione. %>
+            <% first_course, first_chapter = @didactic_courses.lazy.map { |course| [course, course.fetch("chapters", []).find { |chapter| chapter["status"] == "published" }] }.find { |_course, chapter| chapter } %>
             <% if first_course && first_chapter %>
               <% if authenticated? && !@home_course_progress.dig(first_course.fetch("slug"), "started") %>
                 <%= button_to "Inizia", posturacorretta_course_enrollment_path(corso: first_course.fetch("slug")), params: { capitolo: first_chapter.fetch("slug") }, class: "pc-action-button pc-action-button--primary" %>

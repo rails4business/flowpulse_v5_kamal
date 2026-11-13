@@ -65,28 +65,6 @@ default: &default
           - key: home
             label: Home
             home: true
-          - key: problema
-            path: /posturacorretta#inizia
-            label: Percorso
-          - key: servizi
-            label: Servizi
-            group: true
-            children:
-              - key: percorsi
-                path: /posturacorretta#problema
-                label: Voglio risolvere un problema
-              - key: orientamento
-                path: /posturacorretta#servizi
-                label: Servizi e pacchetti
-              - key: metodiche
-                path: /posturacorretta#consapevolezza
-                label: Consapevolezza e metodiche
-              - key: rete
-                path: /posturacorretta#diventa-insegnante
-                label: Diventa insegnante
-              - key: oltre-la-postura
-                path: /posturacorretta#giardino
-                label: Il Giardino del Corpo
           - key: vecchio-menu
             label: Percorso online
             path: /percorso-posturacorretta
@@ -338,6 +316,9 @@ default: &default
     introduzione-al-percorso-integrato:
       title: Introduzione al Percorso Integrato
       description: Prima lezione, indipendente dalle altre - tre percorsi complementari, il paradigma e il metodo scientifico, il tuo stato di salute e le tre Educazioni.
+      course_key: introduzione-percorso-integrato-posturacorretta
+      line_slugs: [postura-recupero]
+      offer_slugs: [prima-settimana-posturacorretta, igiene-posturale, area-massaggio-recupero]
       node_type: project
       view_type: course_lesson
       parent_slug: apprendimento-1-espressione
@@ -371,6 +352,8 @@ default: &default
       lane_container: true
       map_color: "#38BDF8"
       description: Percorso dedicato ai sistemi fisiologici e alle cinque aree attraverso cui osservare come il corpo si esprime.
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
       node_type: project
       view_type: course
       parent_slug: la-prima-settimana-con-posturacorretta
@@ -386,6 +369,9 @@ default: &default
     introduzione-postura-e-fisiologia:
       title: Introduzione a Postura e fisiologia
       description: Prima lezione del corso Postura e fisiologia - introduce le cinque aree attraverso cui il corpo si esprime.
+      course_key: postura-e-fisiologia
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
       node_type: project
       view_type: course_lesson
       parent_slug: postura-e-fisiologia
@@ -1267,6 +1253,8 @@ default: &default
       academy_module_key: introduzione
       map_color: "#2E1065"
       description: Un primo incontro con la postura attraverso una settimana di osservazione, una prima scheda personale, pratica e orientamento.
+      line_slugs: [postura-recupero]
+      offer_slugs: [prima-settimana-posturacorretta, igiene-posturale, area-massaggio-recupero]
       node_type: project
       view_type: course_lesson
       parent_slug: introduzione-al-percorso-integrato

@@ -7,7 +7,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     program = YAML.safe_load_file(Posturacorretta::LearningController::GUIDED_PATH, permitted_classes: [], aliases: false)
     learning = YAML.safe_load_file(Posturacorretta::LearningController::LEARNING_PATH, permitted_classes: [], aliases: false)
 
-    assert_equal({ "content_id" => "percorso-integrato" }, titles.dig("path", "courses", 0))
+    assert_equal({ "content_id" => "introduzione-percorso-integrato-posturacorretta" }, titles.dig("path", "courses", 0))
     assert_equal "course", contents.dig("contents", 0, "format")
     assert_equal "inizia-con-posturacorretta", contents.dig("contents", 1, "parent_id")
     assert_equal "chapter", contents.dig("contents", 1, "format")
@@ -107,22 +107,25 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_equal %w[
-      percorso-integrato
-      il-tuo-stato-di-salute
+      introduzione-percorso-integrato-posturacorretta
       inizia-con-posturacorretta
       postura-e-fisiologia
+    ], css_select("#primi-corsi article[id]").map { |course| course["id"] }
+    assert_equal %w[
+      percorso-integrato
+      il-tuo-stato-di-salute
       muoviti-ed-esplora
       corpo-come-un-giardino
       ascolta-gli-aspetti-vitali
-    ], css_select("#primi-corsi article[id]").map { |course| course["id"] }
+    ], css_select("#educazione-1-ascoltare-il-corpo article[id]").map { |course| course["id"] }
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Appuntamenti", count: 0
     assert_select "footer a[href='#{markpostura_timeline_path}']", text: "La storia di Mark Postura", count: 1
     assert_select "nav[aria-label='Indice generale']", count: 0
     assert_select "h1", text: "Percorso PosturaCorretta"
-    assert_select "#primi-corsi h2", text: "Postura e fisiologia", count: 1
-    assert_select "#primi-corsi", text: /Postura e fisiologia sono strettamente collegate/
-    assert_select "#primi-corsi > header > p", text: "Il tuo percorso · 7 corsi", count: 1
+    assert_select "#primi-corsi h2", text: "Corsi presentazione PosturaCorretta", count: 1
+    assert_select "#educazione-1-ascoltare-il-corpo h2", text: "Educazione 1 · Imparare ad ascoltare il corpo per capire come si esprime", count: 1
+    assert_select "#primi-corsi > header > p", text: "Il tuo percorso · 3 corsi", count: 1
     assert_select "ol[aria-label='Come iniziare il percorso educativo'] + div a.bg-white[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "postura-salute-altri-aspetti")}']", text: "Inizia", count: 1
     assert_select "main article [role='progressbar']", count: 0
     assert_select "#inizia-con-posturacorretta", text: /In arrivo/
@@ -147,9 +150,10 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "Postura, recupero e coscienza corporea"
     assert_select "h3", text: "Igiene Posturale"
     assert_includes response.body, "Conoscere i nostri sistemi fisiologici e imparare a riattivarli"
-    assert_select "#primi-corsi span", text: "Corso 1 di 7", minimum: 1
-    assert_select "#primi-corsi span", text: "Corso 7 di 7", minimum: 1
-    assert_select "#recupera-con-la-terapia-manuale span", text: "Corso 08", minimum: 1
+    assert_select "#primi-corsi span", text: "Corso 1 di 3", minimum: 1
+    assert_select "#primi-corsi span", text: "Corso 3 di 3", minimum: 1
+    assert_select "#educazione-1-ascoltare-il-corpo span", text: "Corso 04", minimum: 1
+    assert_select "#recupera-con-la-terapia-manuale span", text: "Corso 09", minimum: 1
     assert_select "a[href='#{posturacorretta_course_path(corso: "inizia-con-posturacorretta")}'][aria-label='Apri il corso La prima settimana con PosturaCorretta']", count: 0
     assert_select "a[href='#{posturacorretta_course_path(corso: "igiene-posturale")}'][aria-label='Apri il corso Igiene Posturale']", count: 0
     assert_select "details > summary", text: /La prima settimana con PosturaCorretta/, minimum: 1

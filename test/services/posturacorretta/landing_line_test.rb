@@ -19,12 +19,13 @@ module Posturacorretta
     test "presents cumulative offers entering after the included ones" do
       line = LandingLine.find("postura-recupero")
 
-      assert_equal "Area Massaggio e recupero", line.stations.first.title
-      assert_equal "Igiene Posturale", line.stations.second.title
+      assert_equal "Introduzione al Percorso Integrato", line.stations.first.title
+      assert_equal "La prima settimana con PosturaCorretta", line.stations.second.title
       assert_not_includes line.stations.map(&:slug), "area-massaggio-orientarsi"
       assert_equal [
-        ["igiene-posturale", [], "area-massaggio-terapie-manuali-tecniche-corporee"],
-        ["area-massaggio-recupero", ["Percorso Igiene Posturale"], nil]
+        ["prima-settimana-posturacorretta", [], "introduzione-al-percorso-integrato"],
+        ["igiene-posturale", ["La prima settimana con PosturaCorretta"], "introduzione-postura-e-fisiologia"],
+        ["area-massaggio-recupero", ["La prima settimana con PosturaCorretta", "Percorso Igiene Posturale"], nil]
       ], line.offers.map { |offer| [offer.slug, offer.included_titles, offer.entry_slug] }
     end
   end

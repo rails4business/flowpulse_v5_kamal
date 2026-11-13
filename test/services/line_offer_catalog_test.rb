@@ -27,27 +27,31 @@ class LineOfferCatalogTest < ActiveSupport::TestCase
     second = catalog.import!
 
     line = MetroLine.find_by!(slug: "postura-recupero")
+    initial = Offer.find_by!(slug: "prima-settimana-posturacorretta")
     hygiene = Offer.find_by!(slug: "igiene-posturale")
     complete = Offer.find_by!(slug: "area-massaggio-recupero")
 
     assert_equal 1, first.lines
-    assert_equal 2, first.offers
+    assert_equal 3, first.offers
     assert_equal first, second
     assert_equal "posturacorretta.org", line.domain.hostname
-    assert_equal "area-massaggio-terapie-manuali-tecniche-corporee", line.start_node.slug
+    assert_equal "introduzione-al-percorso-integrato", line.start_node.slug
     assert_equal "altre-metodiche-posturali", line.end_node.slug
     assert_equal [
+      "introduzione-al-percorso-integrato",
+      "la-prima-settimana-con-posturacorretta",
+      "postura-e-fisiologia",
+      "introduzione-postura-e-fisiologia",
       "area-massaggio-terapie-manuali-tecniche-corporee",
       "igiene-posturale",
-      "igiene-posturale-introduzione",
-      "igiene-posturale-mobilita-articolare"
-    ], line.ordered_nodes.first(4).map(&:slug)
+      "igiene-posturale-introduzione"
+    ], line.ordered_nodes.first(7).map(&:slug)
     assert_equal "altre-metodiche-posturali", line.ordered_nodes.last.slug
     assert_not_includes line.nodes, Node.find_by!(slug: "valutazione-mobilita-articolare")
-    assert_not_includes line.nodes, Node.find_by!(slug: "la-prima-settimana-con-posturacorretta")
-    assert_empty hygiene.included_offers
-    assert_equal [hygiene], complete.included_offers.to_a
-    assert_equal "none", hygiene.previous_purchase_mode
+    assert_equal %w[introduzione-al-percorso-integrato la-prima-settimana-con-posturacorretta], initial.nodes.order(:id).pluck(:slug).sort
+    assert_equal [initial], hygiene.included_offers.to_a
+    assert_equal [initial, hygiene], complete.included_offers.order(:id).to_a
+    assert_equal "credit", hygiene.previous_purchase_mode
     assert_includes hygiene.nodes, Node.find_by!(slug: "igiene-posturale")
     assert_not_includes hygiene.nodes, Node.find_by!(slug: "principi-di-fisioterapia")
   end
@@ -55,12 +59,13 @@ class LineOfferCatalogTest < ActiveSupport::TestCase
   test "removes the lines and offers listed in removed_slugs" do
     root = Node.find_by!(slug: "posturacorretta")
     line = MetroLine.create!(slug: "postura-fisiologia", title: "Postura e fisiologia", domain: Domain.find_by!(hostname: "posturacorretta.org"), start_node: root, end_node: root)
-    Offer.create!(slug: "prima-settimana-posturacorretta", title: "Inizia con PosturaCorretta", metro_line: line, start_node: root, end_node: root)
+    Offer.create!(slug: "offerta-tolta", title: "Offerta tolta", metro_line: line, start_node: root, end_node: root)
+    offers = Rails.application.config_for(:offers, env: "test").to_h.deep_stringify_keys.merge("removed_slugs" => ["offerta-tolta"])
 
-    LineOfferCatalog.from_config("test").import!
+    LineOfferCatalog.new(lines_config: Rails.application.config_for(:metro_lines, env: "test"), offers_config: offers).import!
 
     assert_not MetroLine.exists?(slug: "postura-fisiologia")
-    assert_not Offer.exists?(slug: "prima-settimana-posturacorretta")
+    assert_not Offer.exists?(slug: "offerta-tolta")
   end
 
   test "rejects an included offer that goes beyond the offer route" do

@@ -1,0 +1,89 @@
+schema_version: 1
+
+# Corso introduttivo della prima lezione (Sessione 1): presenta il Percorso Integrato e PosturaCorretta.
+# I corsi completi restano come approfondimento; qui si presentano e al massimo si rimanda a loro.
+contents:
+  - id: introduzione-percorso-integrato-posturacorretta
+    format: course
+    slug: introduzione-percorso-integrato-posturacorretta
+    position: 1
+    status: published
+    visibility: public
+    access: free
+    title: "Introduzione al Percorso Integrato"
+    description: "Tre percorsi complementari, il paradigma e il metodo scientifico, il tuo stato di salute e le tre Educazioni."
+    level: base
+    author_node_slug: markpostura
+    publisher_node_slug: posturacorretta
+
+  - id: intro-pi-tre-percorsi-complementari
+    parent_id: introduzione-percorso-integrato-posturacorretta
+    lesson_node_slug: introduzione-al-percorso-integrato
+    format: chapter
+    slug: tre-percorsi-complementari
+    position: 1
+    status: draft
+    visibility: public
+    access: free
+    title: "Tre percorsi complementari"
+    content_path: brands/posturacorretta/courses/introduzione-percorso-integrato-posturacorretta/chapters/tre-percorsi-complementari.md
+
+  - id: intro-pi-paradigma-metodo-scientifico
+    parent_id: introduzione-percorso-integrato-posturacorretta
+    lesson_node_slug: introduzione-al-percorso-integrato
+    format: chapter
+    slug: paradigma-metodo-scientifico
+    position: 2
+    status: draft
+    visibility: public
+    access: free
+    title: "Il paradigma e il metodo scientifico"
+    content_path: brands/posturacorretta/courses/introduzione-percorso-integrato-posturacorretta/chapters/paradigma-metodo-scientifico.md
+
+  - id: intro-pi-il-tuo-stato-di-salute
+    parent_id: introduzione-percorso-integrato-posturacorretta
+    lesson_node_slug: introduzione-al-percorso-integrato
+    format: chapter
+    slug: il-tuo-stato-di-salute
+    position: 3
+    status: draft
+    visibility: public
+    access: free
+    title: "Il tuo stato di salute"
+    content_path: brands/posturacorretta/courses/introduzione-percorso-integrato-posturacorretta/chapters/il-tuo-stato-di-salute.md
+
+  - id: intro-pi-educazione-1-come-si-esprime-il-corpo
+    parent_id: introduzione-percorso-integrato-posturacorretta
+    lesson_node_slug: introduzione-al-percorso-integrato
+    format: chapter
+    slug: educazione-1-come-si-esprime-il-corpo
+    position: 4
+    status: draft
+    visibility: public
+    access: free
+    title: "Educazione 1 · Come si esprime il corpo: educazione alla salute con postura e fisiologia"
+    content_path: brands/posturacorretta/courses/introduzione-percorso-integrato-posturacorretta/chapters/educazione-1-come-si-esprime-il-corpo.md
+
+  - id: intro-pi-educazione-2-consapevolezza-metodiche
+    parent_id: introduzione-percorso-integrato-posturacorretta
+    lesson_node_slug: introduzione-al-percorso-integrato
+    format: chapter
+    slug: educazione-2-consapevolezza-metodiche
+    position: 5
+    status: draft
+    visibility: public
+    access: free
+    title: "Educazione 2 · Consapevolezza con le metodiche posturali"
+    content_path: brands/posturacorretta/courses/introduzione-percorso-integrato-posturacorretta/chapters/educazione-2-consapevolezza-metodiche.md
+
+  - id: intro-pi-educazione-3-il-corpo-un-mondo-da-scoprire
+    parent_id: introduzione-percorso-integrato-posturacorretta
+    lesson_node_slug: introduzione-al-percorso-integrato
+    format: chapter
+    slug: educazione-3-il-corpo-un-mondo-da-scoprire
+    position: 6
+    status: draft
+    visibility: public
+    access: free
+    title: "Educazione 3 · La connessione: il corpo, un mondo da scoprire"
+    content_path: brands/posturacorretta/courses/introduzione-percorso-integrato-posturacorretta/chapters/educazione-3-il-corpo-un-mondo-da-scoprire.md

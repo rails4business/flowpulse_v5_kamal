@@ -184,8 +184,8 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal Node.find_by!(slug: "posturacorretta"), valutazione_mobilita.parent
     assert_empty valutazione_mobilita.line_slugs
     assert_equal area_massaggio, igiene_posturale_course.parent
-    assert_empty prima_settimana.line_slugs
-    assert_empty prima_settimana.offer_slugs
+    assert_equal ["postura-recupero"], prima_settimana.line_slugs
+    assert_equal %w[prima-settimana-posturacorretta igiene-posturale area-massaggio-recupero], prima_settimana.offer_slugs
     assert_equal ["postura-recupero"], area_massaggio.line_slugs
     assert_equal %w[igiene-posturale area-massaggio-recupero], igiene_posturale_course.offer_slugs
     igiene_posturale_intro = Node.find_by!(slug: "igiene-posturale-introduzione")

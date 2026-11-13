@@ -35,6 +35,7 @@ module Posturacorretta
 
       assert_equal %w[
         inizia-con-posturacorretta
+        introduzione-percorso-integrato-posturacorretta
         il-tuo-stato-di-salute
         percorso-integrato
         postura-e-fisiologia

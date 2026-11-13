@@ -1,0 +1,72 @@
+# Listino della home PosturaCorretta: rispecchia docs/posturacorretta_offerte_listino.md.
+# price vuoto = "Prezzo da definire". node_slug collega la voce alla sua pagina; offer_slug all'offerta
+# della linea (per mostrare cosa comprende).
+sections:
+  - slug: lezioni-e-percorsi
+    title: Lezioni e percorsi
+    description: Si inizia dalla prima settimana; ogni percorso comprende i precedenti.
+    items:
+      - title: Introduzione al Percorso Integrato
+        detail: 1 lezione + corso online
+        node_slug: introduzione-al-percorso-integrato
+      - title: La prima settimana con PosturaCorretta
+        detail: 1 lezione + corso online
+        node_slug: la-prima-settimana-con-posturacorretta
+        offer_slug: prima-settimana-posturacorretta
+      - title: Postura e fisiologia
+        detail: Compresa la prima settimana con PosturaCorretta
+        node_slug: introduzione-postura-e-fisiologia
+      - title: Percorso Igiene Posturale
+        detail: 6 lezioni + corso online
+        node_slug: igiene-posturale
+        offer_slug: igiene-posturale
+      - title: Completo · Area Massaggio e recupero
+        detail: n lezioni
+        node_slug: area-massaggio-terapie-manuali-tecniche-corporee
+        offer_slug: area-massaggio-recupero
+      - title: Percorso Base
+        detail: Area recupero + area mente
+      - title: Solo Area Movimento
+        node_slug: area-movimento-postura-attivita-motoria
+      - title: Tutte e tre le aree
+        detail: Massaggio, Movimento e Meditazione
+
+  - slug: avanzati
+    title: Avanzati
+    items:
+      - title: Percorso salute
+        detail: Percorso completo · slot 4
+        node_slug: percorso-salute-nutrire-il-corpo
+      - title: Formazione avanzata · Il corpo, un mondo da scoprire
+        detail: Il Giardino del Corpo (slot 5) e Rails4B (slot 6)
+        node_slug: dalla-posturacorretta-al-giardino-del-corpo
+      - title: Metodiche posturali
+        detail: Incontri a tema settimanali, presentazione della metodica
+        node_slug: metodiche-posturali
+      - title: Incontri settimanali
+        detail: Dove si possono svolgere le lezioni
+      - title: Diventa insegnante PosturaCorretta
+        detail: Tirocinio
+        node_slug: diventa-insegnante-posturacorretta
+
+  - slug: servizi-personalizzati
+    title: Servizi personalizzati
+    items:
+      - title: Stato di salute
+        detail: Consulenza e valutazione
+        node_slug: stato-di-salute
+      - title: Valutazione della mobilità articolare
+        detail: Consulenza e valutazione
+        node_slug: valutazione-mobilita-articolare
+      - title: Percorso Integrato
+        detail: Consulenza e creazione del percorso
+        node_slug: percorso-integrato
+      - title: Trattamento personalizzato singolo
+        detail: Trattamento
+        node_slug: trattamento-singolo
+      - title: Pacchetto percorso personalizzato singolo
+        detail: Trattamenti (pacchetto da definire)
+        node_slug: pacchetto-percorso-singolo
+      - title: Percorso gruppo · Aziende e associazioni sportive
+        detail: 5 incontri con più professionisti, per tutto il gruppo, come una visita medica sportiva
+        node_slug: percorso-aziende-associazioni-sportive

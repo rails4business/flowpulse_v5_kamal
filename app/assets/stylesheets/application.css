@@ -6112,6 +6112,25 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .pc-card--dark p { color: #cbd5e1; }
 .pc-card--dark .pc-landing-text-action { color: #bfdbfe; }
 
+/* Home come listino: hero essenziale e righe nome · dettaglio · prezzo · azione. */
+.pc-hero--simple { grid-template-columns: minmax(0, 1fr); }
+.pc-price-list { padding-block: clamp(2.5rem, 5vw, 4rem); }
+.pc-price-list__items { display: grid; margin: 1.75rem 0 0; padding: 0; list-style: none; border-top: 1px solid #e2e8f0; }
+.pc-price-list__item { display: grid; align-items: center; gap: .5rem 1.5rem; border-bottom: 1px solid #e2e8f0; padding: 1.1rem 0; grid-template-columns: minmax(0, 1fr) auto auto; }
+.pc-price-list__text h3 { margin: 0; font-size: 1.05rem; font-weight: 850; line-height: 1.35; }
+.pc-price-list__text p { margin: .25rem 0 0; color: #64748b; font-size: .92rem; line-height: 1.55; }
+.pc-price-list__text .pc-price-list__includes { color: #2563eb; font-size: .82rem; font-weight: 750; }
+.pc-price-list__price { font-size: 1.05rem; font-weight: 900; white-space: nowrap; }
+.pc-price-list__price.is-pending { color: #94a3b8; font-size: .82rem; font-weight: 750; }
+.pc-price-list__action { justify-self: end; border: 1px solid #bfdbfe; border-radius: 999px; padding: .45rem 1rem; color: #1d4ed8; font-size: .85rem; font-weight: 800; text-decoration: none; white-space: nowrap; }
+.pc-price-list__action:hover { background: #eff6ff; }
+.pc-price-list__action.is-soon { border-color: #e2e8f0; color: #94a3b8; }
+
+@media (max-width: 640px) {
+  .pc-price-list__item { grid-template-columns: minmax(0, 1fr) auto; }
+  .pc-price-list__text { grid-column: 1 / -1; }
+}
+
 @media (max-width: 900px) {
   .pc-hero, .pc-offers, .pc-card-grid, .pc-card-grid--two { grid-template-columns: 1fr; }
 }

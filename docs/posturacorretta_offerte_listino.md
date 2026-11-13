@@ -25,7 +25,7 @@ Bozza: voci presenti oggi nella home, da sistemare. Prezzi da definire.
   
 - Metodiche posturali - incontri a tema settimanali presentazione metodica
 
-- Incontri settimanali  
+- Incontri settimanali (dove ci posssono essere le lezioni)
 
 - Diventa insegnante PosturaCorretta - Tirocinio 
 

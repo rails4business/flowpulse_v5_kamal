@@ -3,8 +3,8 @@ path:
   title: Percorso PosturaCorretta
   eyebrow: Non è solo stare ben dritti con la schiena.
   description: Conoscere i nostri sistemi fisiologici e imparare a riattivarli attraverso un percorso di educazione alla salute basato sui principi delle principali metodiche posturali.
-  section_title: Postura e fisiologia
-  section_description: Postura e fisiologia sono strettamente collegate. Proponiamo un modello di educazione alla salute che può integrarsi e affiancarsi ai percorsi di cura esistenti.
+  section_title: Corsi presentazione PosturaCorretta
+  section_description: I primi tre corsi accompagnano le prime tre lezioni e presentano il percorso; i corsi delle sezioni successive sono gli approfondimenti.
   introduction_steps:
     - number: "01"
       title: Scopri 
@@ -16,22 +16,25 @@ path:
       title: Approfondisci
       description: Hai trovato una metodica che ti piace? Vuoi iniziare un percorso personalizzato? Ogni metodica ha una scuola. Trova un professionista formato che possa seguirti nel tuo percorso.
 
+  # Sezione introduzione: un corso per ciascuna delle prime tre lezioni.
   courses:
-    - content_id: percorso-integrato
-
-    - content_id: il-tuo-stato-di-salute
+    - content_id: introduzione-percorso-integrato-posturacorretta
 
     - content_id: inizia-con-posturacorretta
 
     - content_id: postura-e-fisiologia
 
-    - content_id: muoviti-ed-esplora
-
-    - content_id: corpo-come-un-giardino
-
-    - content_id: ascolta-gli-aspetti-vitali
-
   sections:
+    - slug: educazione-1-ascoltare-il-corpo
+      title: Educazione 1 · Imparare ad ascoltare il corpo per capire come si esprime
+      description: Corsi di approfondimento sul Percorso Integrato, lo stato di salute, la consapevolezza, il Giardino del Corpo e le risorse.
+      courses:
+        - { content_id: percorso-integrato }
+        - { content_id: il-tuo-stato-di-salute }
+        - { content_id: muoviti-ed-esplora }
+        - { content_id: corpo-come-un-giardino }
+        - { content_id: ascolta-gli-aspetti-vitali }
+
     - slug: recupera-con-la-terapia-manuale
       title: Postura, recupero e coscienza corporea
       description: Recupera con la terapia manuale e scopri principi e pratiche delle metodiche posturali.
