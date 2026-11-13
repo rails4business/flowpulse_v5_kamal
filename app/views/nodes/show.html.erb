@@ -4,6 +4,8 @@
   sidebar_siblings = Array(@siblings)
   sidebar_children = Array(@children)
   landing_mode = @node.slug == "posturacorretta" && @current_host_domain_root
+  home_selection_mode = landing_mode && @posturacorretta_landing
+  content_for(:hide_node_reading_nav, "true") if landing_mode
   has_real_siblings = sidebar_siblings.any? { |sibling| sibling != @node }
   sidebar_items = if has_real_siblings || @parent_node.present?
     sidebar_siblings
@@ -33,7 +35,7 @@
   <% end %>
 <% end %>
 
-<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> <%= 'node-public-landing' if landing_mode %> lg:min-h-0">
+<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> <%= 'node-public-landing' if landing_mode %> <%= 'node-public-landing-home' if home_selection_mode %> lg:min-h-0">
   <div class="node-public-layout lg:min-h-0">
     <% if has_sidebar %>
       <aside class="node-public-sidebar lg:min-h-0">
@@ -158,31 +160,26 @@
       <% end %>
 
       <% if landing_mode %>
-        <section id="mappa" class="node-public-path-map" aria-label="Mappa del percorso PosturaCorretta" data-controller="embedded-frame">
-          <iframe
-            src="/posturacorretta_landing_page_perfetta.html?embed=1#mappa"
-            title="Mappa del percorso PosturaCorretta"
-            class="node-public-path-map-frame"
-            data-embedded-frame-target="frame"
-            loading="eager"
-            scrolling="no"
-          ></iframe>
-        </section>
+        <% if home_selection_mode %>
+          <%= render "nodes/posturacorretta_home/landing" %>
+        <% else %>
+          <%= render "nodes/posturacorretta_home/journey", journey: @posturacorretta_home %>
+        <% end %>
       <% end %>
 
-      <article class="node-public-content">
+      <% unless landing_mode %><article class="node-public-content">
         <% if content&.body.present? %>
           <%= content.body %>
         <% elsif content&.body_md.present? %>
           <%= render_node_markdown(content.body_md) %>
         <% elsif content&.body_html.present? %>
           <%= sanitize content.body_html %>
-        <% else %>
+        <% elsif !landing_mode %>
           <p class="node-public-empty">
             Questo nodo non ha ancora contenuto.
           </p>
         <% end %>
-      </article>
+      </article><% end %>
 
     
 

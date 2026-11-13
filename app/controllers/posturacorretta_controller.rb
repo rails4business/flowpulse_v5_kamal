@@ -34,6 +34,12 @@ class PosturacorrettaController < ApplicationController
     @posturacorretta_profile = Current.user.profile || Current.user.create_profile!(display_name: Current.user.email_address.to_s.split("@").first)
   end
 
+  def course_data
+    render json: Posturacorretta::HomeCourseCatalog.fetch(params[:node_slug])
+  rescue KeyError, ArgumentError => error
+    render json: { error: error.message }, status: :not_found
+  end
+
   def accademia
     return unless params[:tab] == "guide"
 

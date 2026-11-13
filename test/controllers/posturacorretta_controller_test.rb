@@ -1,6 +1,25 @@
 require "test_helper"
 
 class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
+  test "exposes the first-week home course prototype from its canonical YAML sources" do
+    get posturacorretta_course_data_path("la-prima-settimana-con-posturacorretta")
+
+    assert_response :success
+    payload = response.parsed_body
+    assert_equal "inizia-con-posturacorretta", payload.dig("course", "id")
+    assert_equal "la-prima-settimana-con-posturacorretta", payload.dig("lesson", "slug")
+    assert_equal 7, payload.fetch("chapters").size
+    assert_equal ["La prima settimana con PosturaCorretta"], payload.fetch("program_lessons").pluck("title")
+    assert_equal ["centro-posturacorretta"], payload.fetch("centres").pluck("slug")
+    assert_equal ["markpostura"], payload.fetch("teachers").pluck("slug")
+  end
+
+  test "returns not found for a home course without source references" do
+    get posturacorretta_course_data_path("corso-non-configurato")
+
+    assert_response :not_found
+  end
+
   test "shows the Brand administration link to its owner" do
     owner = User.create!(email_address: "posturacorretta-brand-owner@example.com", password: "password123", password_confirmation: "password123")
     profile = owner.create_profile!(display_name: "Brand Owner")

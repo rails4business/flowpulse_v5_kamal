@@ -183,6 +183,8 @@
   else
     [["Professional Brand", "Identità professionali dotate di un proprio dominio.", directory_nodes.sort_by { |node| [node.title.downcase, node.id] }, "bg-violet-50 text-violet-800"]]
   end
+  lanes_entry_node = directory_nodes.find { |node| node.slug == "posturacorretta" } || directory_nodes.first || display_network_nodes.first
+  metro_entry_domain = lanes_entry_node&.domains&.select(&:active?)&.find { |domain| domain.canonical_host.blank? }
 %>
 
 <main class="min-h-screen bg-slate-50 text-slate-950">
@@ -196,9 +198,17 @@
           <h1 class="mt-2 text-3xl font-black tracking-tight"><%= selected_mode == "professional" ? "Professional Brand" : "Brand" %></h1>
           <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Seleziona un Node per esplorarne la rete, i progetti collegati e i ponti.</p>
         </div>
-        <div class="flex rounded-xl bg-slate-200 p-1" aria-label="Tipo di rete">
-          <%= link_to "Brand", flowpulse_global_network_path(vista: "brand"), class: "rounded-lg px-4 py-2 text-sm font-black #{selected_mode == "brand" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-white"}" %>
-          <%= link_to "Professional Brand", flowpulse_global_network_path(vista: "professional"), class: "rounded-lg px-4 py-2 text-sm font-black #{selected_mode == "professional" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-white"}" %>
+        <div class="flex flex-wrap items-center gap-2">
+          <% if lanes_entry_node %>
+            <%= link_to "Vista a corsie →", flowpulse_network_lanes_path(lanes_entry_node.slug, vista: selected_mode), class: "rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-800 hover:bg-blue-100" %>
+          <% end %>
+          <% if Current.user&.superadmin_user? && metro_entry_domain %>
+            <%= link_to "Metropolitana", flowpulse_metro_map_path(hostname: metro_entry_domain.display_hostname), class: "rounded-xl border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-black text-violet-800 hover:bg-violet-100" %>
+          <% end %>
+          <div class="flex rounded-xl bg-slate-200 p-1" aria-label="Tipo di rete">
+            <%= link_to "Brand", flowpulse_global_network_path(vista: "brand"), class: "rounded-lg px-4 py-2 text-sm font-black #{selected_mode == "brand" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-white"}" %>
+            <%= link_to "Professional Brand", flowpulse_global_network_path(vista: "professional"), class: "rounded-lg px-4 py-2 text-sm font-black #{selected_mode == "professional" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:bg-white"}" %>
+          </div>
         </div>
       </div>
 
@@ -295,6 +305,7 @@
           <button type="button" data-action="node-network#zoomOut" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-bold text-slate-700 hover:bg-slate-100" aria-label="Riduci" title="Riduci">−</button>
           <button type="button" data-action="node-network#recenter" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-blue-700 hover:bg-blue-50" aria-label="Centra la vista sul Node selezionato" title="Centra la vista">⌖</button>
           <button type="button" data-node-network-target="fullscreenButton" data-action="node-network#toggleFullscreen" class="grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-slate-700 hover:bg-slate-100" aria-label="Visualizza a schermo intero" title="Schermo intero">⛶</button>
+          <%= link_to "▥", flowpulse_network_lanes_path(selected_node.slug, vista: selected_mode), class: "grid size-8 shrink-0 place-items-center rounded-lg text-lg font-black text-blue-700 hover:bg-blue-50", aria: { label: "Apri la vista a corsie" }, title: "Vista a corsie" %>
           <span class="mx-1 h-6 w-px shrink-0 bg-slate-300" aria-hidden="true"></span>
           <div class="relative flex h-14 w-7 shrink-0 items-center justify-center px-1" title="Livelli visibili">
             <input type="range" min="1" max="6" step="1" value="<%= initial_depth %>" data-node-network-target="depthRange" data-action="input->node-network#setDepthFromRange" class="h-12 w-4 cursor-pointer accent-violet-700" style="writing-mode: vertical-lr; direction: rtl;" aria-label="Numero di livelli visibili; ultima posizione tutti">

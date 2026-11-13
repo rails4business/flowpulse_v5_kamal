@@ -2,7 +2,7 @@ class NodesController < ApplicationController
   include PublicNodePresentation
 
   layout "public_node"
-  allow_unauthenticated_access only: [:show, :domain_home]
+  allow_unauthenticated_access only: [:show, :domain_home, :domain_journey]
 
   def domain_home
     domain = Domain.find_for_path_slug(params[:path_slug])
@@ -20,6 +20,23 @@ class NodesController < ApplicationController
     # canonical page lives on the configured hostname.
     response.set_header("X-Robots-Tag", "noindex, nofollow")
     prepare_public_node(node, navigation_domain: domain, domain_root: true)
+    @posturacorretta_landing = node.slug == "posturacorretta"
+    render :show
+  end
+
+  def domain_journey
+    domain = Domain.find_for_path_slug(params[:path_slug])
+    Current.domain = domain if domain.present?
+    node = domain&.node
+
+    if node.blank? || node.slug != "posturacorretta" || !public_node_visible?(node)
+      redirect_hidden_node
+      return
+    end
+
+    response.set_header("X-Robots-Tag", "noindex, nofollow")
+    prepare_public_node(node, navigation_domain: domain, domain_root: true)
+    prepare_posturacorretta_home(node)
     render :show
   end
 
@@ -48,6 +65,7 @@ class NodesController < ApplicationController
     end
 
     prepare_public_node(@node)
+    @posturacorretta_landing = true if @current_host_domain_root && @node.slug == "posturacorretta"
   end
 
   def edit
@@ -65,6 +83,16 @@ class NodesController < ApplicationController
   end
 
   private
+
+  def prepare_posturacorretta_home(node)
+    return unless node.slug == "posturacorretta"
+
+    @posturacorretta_home = Posturacorretta::HomeJourney.new(
+      tappa: params[:tappa],
+      tab: params[:tab],
+      risorsa: params[:risorsa]
+    )
+  end
 
   def redirect_hidden_node
     redirect_to root_path, alert: "Questo nodo non è pubblico o non è accessibile."

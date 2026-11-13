@@ -1,0 +1,7 @@
+<% teachers = journey.filtered_resources %>
+<h2 class="text-2xl font-black text-slate-950">Insegnanti abilitati</h2>
+<p class="mt-2 text-sm text-slate-600">Profili pubblici attivi sul corso selezionato.</p>
+<div class="mt-6 grid gap-3 sm:grid-cols-2">
+  <% teachers.each do |teacher| %><%= link_to teacher.fetch("url"), class: "rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 hover:bg-emerald-50" do %><strong class="block text-slate-950"><%= teacher.fetch("name") %></strong><span class="mt-1 block text-sm text-slate-600"><%= [teacher["role"] || teacher["profession"], teacher["city"]].compact.join(" · ") %></span><% end %><% end %>
+</div>
+<% if teachers.empty? %><p class="mt-6 rounded-xl bg-slate-50 p-5 text-sm text-slate-500">Non ci sono ancora insegnanti pubblici abilitati su questo corso.</p><% end %>

@@ -6,11 +6,11 @@ Il percorso educativo contiene questi corsi, in sequenza:
 
 1. La prima settimana con PosturaCorretta
 2. Igiene Posturale
-3. Primo incontro con la Fisioterapia
-4. Primo incontro con la GDS
-5. Primo incontro con l’Osteopatia
-6. Primo incontro con Corpo e Coscienza
-7. Primo incontro con la Kinesiologia Applicata
+3. Principi di Fisioterapia
+4. Introduzione alla biomeccanica comportamentale (GDS)
+5. Principi di Osteopatia
+6. Introduzione al metodo Corpo e Coscienza
+7. Introduzione alla Kinesiologia Applicata
 8. Altre metodiche posturali
 
 `La prima settimana con PosturaCorretta` e `Igiene Posturale` non rappresentano
@@ -22,11 +22,11 @@ I quattro corsi introduttivi sono collegati ai rispettivi Node canonici mediante
 Node tecnici nascosti di tipo `access_bridge`:
 
 ```text
-Primo incontro con la Fisioterapia   ⇄ Fisioterapia
-Primo incontro con la GDS            ⇄ GDS
-Primo incontro con l’Osteopatia      ⇄ Osteopatia
-Primo incontro con Corpo e Coscienza ⇄ Corpo e Coscienza
-Primo incontro con la Kinesiologia Applicata ⇄ Kinesiologia Applicata
+Principi di Fisioterapia                         ⇄ Fisioterapia
+Introduzione alla biomeccanica comportamentale  ⇄ GDS
+Principi di Osteopatia                           ⇄ Osteopatia
+Introduzione al metodo Corpo e Coscienza         ⇄ Corpo e Coscienza
+Introduzione alla Kinesiologia Applicata         ⇄ Kinesiologia Applicata
 ```
 
 Nel grafico sono visibili soltanto le due estremità reali; non esistono Node

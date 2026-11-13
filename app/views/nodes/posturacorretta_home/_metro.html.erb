@@ -1,0 +1,26 @@
+<div class="pc-home-metro-wrap">
+  <div class="pc-home-metro" data-controller="horizontal-scroll">
+    <button type="button" class="pc-home-metro-arrow" data-action="horizontal-scroll#previous" aria-label="Mostra le tappe precedenti">‹</button>
+    <div class="pc-home-metro-track" data-horizontal-scroll-target="track">
+      <% journey.stations.each do |station| %>
+        <% selected = station == journey.station %>
+        <% available = journey.station_available?(station) %>
+        <%= link_to posturacorretta_postura_recupero_path(tappa: station.fetch("slug"), tab: journey.tab, risorsa: journey.resource),
+          class: "pc-home-station #{'is-selected' if selected} #{'is-unavailable' unless available}",
+          aria: { current: ("step" if selected), disabled: (!available).to_s } do %>
+          <span class="pc-home-station-name"><%= station.fetch("title") %></span>
+          <span class="pc-home-station-rail"><span class="pc-home-station-dot"></span></span>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="pc-home-metro-arrow" data-action="horizontal-scroll#next" aria-label="Mostra le tappe successive">›</button>
+  </div>
+  <% if %w[centri insegnanti].include?(journey.tab) %>
+    <div class="pc-home-resource-filter" aria-label="Filtra la disponibilità del percorso">
+      <%= link_to "Tutti", posturacorretta_postura_recupero_path(tappa: journey.station.fetch("slug"), tab: journey.tab), class: "pc-home-resource-chip #{'is-selected' if journey.resource.blank?}" %>
+      <% journey.resource_options.each do |resource| %>
+        <%= link_to resource.fetch("name"), posturacorretta_postura_recupero_path(tappa: journey.station.fetch("slug"), tab: journey.tab, risorsa: resource.fetch("slug")), class: "pc-home-resource-chip #{'is-selected' if journey.resource == resource.fetch('slug')}" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

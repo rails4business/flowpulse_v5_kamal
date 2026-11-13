@@ -1,0 +1,17 @@
+<% lessons = Array(data&.fetch(:program_lessons, [])) %>
+<p class="text-xs font-bold uppercase tracking-[.12em] text-violet-700"><%= journey.station.fetch("title") %> · Programma lezioni</p>
+<h2 class="mt-2 text-2xl font-black text-slate-950">Lezioni del corso</h2>
+<p class="mt-2 text-sm text-slate-600">Il programma degli incontri guidati. Data, modalità, centro e insegnante compariranno quando la lezione verrà programmata.</p>
+<% if lessons.any? %>
+  <div class="mt-6 space-y-3">
+    <% lessons.each do |lesson| %>
+      <article class="grid items-center gap-4 rounded-xl border border-violet-200 bg-white p-4 sm:grid-cols-[5rem_minmax(0,1fr)_auto]">
+        <div class="text-center text-sm font-black leading-tight text-violet-700"><span class="block text-[10px] uppercase tracking-wider text-slate-500">Lezione <%= lesson.fetch("number").to_i %></span></div>
+        <div><h3 class="font-bold text-slate-950"><%= lesson.fetch("title") %></h3><p class="mt-1 text-sm text-slate-500"><%= pluralize(Array(lesson["sheets"]).size, "materiale") %> collegato al programma</p></div>
+        <span class="rounded-lg border border-violet-200 px-3 py-2 text-xs font-bold text-violet-700">Programma</span>
+      </article>
+    <% end %>
+  </div>
+<% else %>
+  <p class="mt-6 rounded-xl bg-slate-50 p-5 text-sm text-slate-500">Il programma lezioni di questa tappa è in preparazione.</p>
+<% end %>

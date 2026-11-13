@@ -60,6 +60,52 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
   end
 
+  test "PosturaCorretta domain home selects the first line and the dedicated path renders its tabs" do
+    brand = Node.create!(
+      title: "PosturaCorretta",
+      slug: "posturacorretta",
+      role_assignment: @assignment,
+      status: "published",
+      visibility: "public"
+    )
+    Node.create!(
+      title: "Child course",
+      role_assignment: @assignment,
+      parent: brand,
+      status: "published",
+      visibility: "public"
+    )
+    Domain.create!(
+      hostname: "posturacorretta-native.test",
+      node: brand,
+      role_assignment: @assignment,
+      path_slug: "posturacorretta",
+      home_mode: "node",
+      locale: "it"
+    )
+
+    get posturacorretta_url
+
+    assert_response :success
+    assert_select ".pc-landing-home", count: 1
+    assert_select "a[href='#{posturacorretta_postura_recupero_path(tappa: 'la-prima-settimana-con-posturacorretta', tab: 'online')}']", text: /Inizia con PosturaCorretta/
+    assert_select "#diventa-insegnante", count: 1
+    assert_select "#consapevolezza", count: 1
+    assert_select ".pc-home-tabs", count: 0
+
+    get posturacorretta_postura_recupero_url(tappa: "la-prima-settimana-con-posturacorretta", tab: "lezioni")
+
+    assert_response :success
+    assert_select "iframe", count: 0
+    assert_select ".pc-landing-home", count: 0
+    assert_select ".pc-home-tabs a", count: 4
+    assert_select ".pc-home-panel .pc-home-metro", count: 1
+    assert_select ".pc-home-journey > .pc-home-metro", count: 0
+    assert_select ".pc-home-panel--lezioni", text: /Lezione 1/
+    assert_select ".pc-home-station[href^='#{posturacorretta_postura_recupero_path}']", minimum: 1
+    assert_select ".node-public-reading-nav-static", count: 0
+  end
+
   test "public visitor cannot view free subscription node" do
     subscription_node = Node.create!(
       title: "Subscriber Lesson",

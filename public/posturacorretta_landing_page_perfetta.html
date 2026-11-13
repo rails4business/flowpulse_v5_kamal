@@ -11,13 +11,13 @@
   color-scheme:light dark;
   --bg:#f6f8fc;--fg:#0f1b33;--mut:#4a5a78;--card:#fff;--bd:#d9e1ef;
   --brand:#1d4ed8;--on:#fff;
-  --online:#1d4ed8;--lezioni:#7c3aed;--tirocinio:#c2620a;--insegnanti:#0f7a55;
+  --online:#1d4ed8;--lezioni:#7c3aed;--centri:#c2620a;--insegnanti:#0f7a55;
 }
 @media (prefers-color-scheme:dark){
   :root{
     --bg:#0a1222;--fg:#e8eefb;--mut:#9fb0cc;--card:#111c33;--bd:#25345a;
     --brand:#6b9bff;--on:#0a1222;
-    --online:#6b9bff;--lezioni:#b79bff;--tirocinio:#f2a54a;--insegnanti:#4cc79a;
+    --online:#6b9bff;--lezioni:#b79bff;--centri:#f2a54a;--insegnanti:#4cc79a;
   }
 }
 *{box-sizing:border-box}
@@ -40,7 +40,7 @@ nav a:hover{color:var(--brand)}
 .btn.ghost{background:transparent;color:var(--brand);border:2px solid var(--brand);margin-left:8px}
 :focus-visible{outline:3px solid var(--brand);outline-offset:3px}
 
-.mapbox{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px 18px 22px;scroll-margin-top:12px}
+.mapbox{background:transparent;border:0;border-radius:0;padding:20px 18px 22px;scroll-margin-top:12px;box-shadow:none;outline:0}
 .bar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 4px}
 .bar h2{margin:0;font-size:1.2rem}
 .ruolo{font:.85rem system-ui,sans-serif;color:var(--mut);display:flex;gap:8px;align-items:center}
@@ -48,8 +48,12 @@ nav a:hover{color:var(--brand)}
 .sub{margin:0 0 14px;color:var(--mut);font-size:.95rem}
 
 /* una sola riga di stazioni + 4 tab */
-.linea{display:flex}
-.stz{flex:1 1 0;min-width:0;background:none;border:0;color:var(--fg);padding:0;margin:0;cursor:pointer;display:flex;flex-direction:column;align-items:stretch}
+.metro-shell{position:relative;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:8px}
+.metro-nav{z-index:2;width:38px;height:38px;border:1px solid var(--bd);border-radius:999px;background:var(--card);color:var(--brand);display:grid;place-items:center;font:800 1.25rem/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 12px rgb(15 23 42 / 8%)}
+.metro-nav:hover{background:var(--bg)}
+.linea{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scrollbar-width:none;padding:0 18px 8px}
+.linea::-webkit-scrollbar{display:none}
+.stz{flex:0 0 150px;min-width:0;background:none;border:0;color:var(--fg);padding:0;margin:0;cursor:pointer;display:flex;flex-direction:column;align-items:stretch;scroll-snap-align:center}
 .stz .nm{font:600 .85rem/1.25 system-ui,sans-serif;text-align:center;padding:0 4px 10px;height:4.4em;display:flex;align-items:flex-end;justify-content:center}
 .stz[aria-pressed="true"] .nm{color:var(--c);text-decoration:underline;text-underline-offset:4px}
 .track{position:relative;width:100%;height:56px;display:flex;align-items:center;justify-content:center}
@@ -64,12 +68,15 @@ nav a:hover{color:var(--brand)}
 .dot.num{width:34px;height:34px;color:var(--c);font-size:.85rem}
 .dot.num.zero{border-style:dashed;color:var(--mut)}
 .stz[aria-pressed="true"] .dot{transform:scale(1.2);box-shadow:0 0 0 4px var(--card),0 0 0 7px var(--c)}
-.cap{font:.82rem system-ui,sans-serif;color:var(--mut);margin:8px 0 0;min-height:2.6em}
-.tabs{display:grid;grid-template-columns:repeat(var(--nt,4),1fr);gap:6px;margin:12px 0 0}
-.tabs button{padding:11px 6px;border:2px solid var(--bd);border-bottom:0;background:transparent;color:var(--fg);border-radius:9px 9px 0 0;font-weight:600;font-size:.88rem;cursor:pointer}
-.tabs button[aria-selected="true"]{border-color:var(--c);background:var(--c);color:var(--on)}
+.tabs{position:relative;z-index:2;display:grid;grid-template-columns:repeat(var(--nt,4),minmax(0,1fr));gap:0;margin:34px 0 -1px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{min-width:132px;padding:12px 14px;border:1px solid var(--bd);border-bottom-color:var(--bd);border-radius:0;background:var(--bg);color:var(--mut);font-weight:700;font-size:.88rem;cursor:pointer;white-space:nowrap}
+.tabs button + button{margin-left:-1px}
+.tabs button:first-child{border-radius:18px 0 0 0}
+.tabs button:last-child{border-radius:0 18px 0 0}
+.tabs button[aria-selected="true"]{position:relative;z-index:4;margin-bottom:-1px;padding-bottom:13px;border-color:var(--c);border-bottom-color:var(--card);background:var(--card);color:var(--c);box-shadow:inset 0 4px 0 var(--c)}
 .tabs .lk{display:block;font-weight:400;font-size:.72rem;opacity:.8}
-.panel{border:2px solid var(--c);border-radius:0 0 12px 12px;padding:18px 20px 22px;min-height:200px}
+.panel{border:1px solid var(--c);border-radius:0 0 18px 18px;padding:24px 26px 28px;min-height:200px;background:var(--card);box-shadow:0 10px 30px rgb(15 23 42 / 6%)}
 .panel h3{margin:0 0 4px;font-size:1.2rem}
 .panel .st{font:.85rem system-ui,sans-serif;color:var(--mut);margin:0 0 12px}
 .panel p{margin:0 0 12px;max-width:64ch}
@@ -94,26 +101,28 @@ footer{margin-top:50px;border-top:1px solid var(--bd);padding:26px 0 38px;font:.
 footer .wrap{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between}
 footer a{color:var(--mut)}
 @media (max-width:640px){
+  .metro-shell{grid-template-columns:34px minmax(0,1fr) 34px;gap:3px}
+  .metro-nav{width:32px;height:32px;font-size:1rem}
+  .stz{flex-basis:118px}
   .stz .nm{font-size:.72rem;padding:0 1px 8px;height:5.6em}
   .dot{width:26px;height:26px}
   .dot.qui{width:32px;height:32px}
   .dot.num{width:30px;height:30px}
-  .tabs{grid-template-columns:repeat(var(--mc,2),1fr)}
-  .tabs button{border-radius:9px;border-bottom:2px solid var(--bd)}
-  .tabs button[aria-selected="true"]{border-bottom-color:var(--c)}
-  .panel{border-radius:12px;margin-top:8px}
+  .tabs{display:flex;margin:24px 0 -1px}
+  .tabs button{flex:0 0 132px}
+  .panel{border-radius:0 0 16px 16px;padding:18px}
   .date{grid-template-columns:60px 1fr}
   .date .btn{grid-column:1/-1;text-align:center}
   .btn.ghost{margin:10px 0 0}
 }
 @media (prefers-reduced-motion:no-preference){.dot{transition:transform .15s}}
-.embed-map body{background:transparent}
+.embed-map body{background:transparent;padding-top:0}
 .embed-map header.top,.embed-map footer,.embed-map .seq{display:none}
 .embed-map main.wrap{max-width:none;padding:0}
 .embed-map body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#0f172a}
-.embed-map .mapbox{padding:28px;border:1px solid #e2e8f0;border-radius:24px;background:#fff;box-shadow:0 12px 36px rgb(15 23 42 / 7%)}
+.embed-map .mapbox{padding:8px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none}
 .embed-map .bar{display:none}
-.embed-map .linea{padding:8px 8px 0}
+.embed-map .linea{padding:8px 12px 4px}
 .embed-map .stz{color:#334155}
 .embed-map .stz .nm{height:3.8em;color:#334155;font-size:.82rem;font-weight:750}
 .embed-map .track{height:48px}
@@ -121,12 +130,13 @@ footer a{color:var(--mut)}
 .embed-map .dot{width:26px;height:26px;border-width:3px}
 .embed-map .dot.qui{width:34px;height:34px}
 .embed-map .stz[aria-pressed="true"] .dot{box-shadow:0 0 0 4px #fff,0 0 0 7px var(--c)}
-.embed-map .cap{min-height:0;margin:12px 4px 22px;color:#64748b;font-size:.78rem;line-height:1.45}
-.embed-map .tabs{display:flex;grid-template-columns:none;gap:6px;margin:0 10px -1px;padding:0;border:0;background:transparent;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
-.embed-map .tabs button{position:relative;z-index:1;flex:1 0 150px;min-height:48px;padding:10px 14px;border:1px solid #e2e8f0;border-bottom-color:#cbd5e1;border-radius:13px 13px 0 0;background:#f8fafc;color:#64748b;font-size:.86rem;font-weight:750;white-space:nowrap;transition:background-color .15s,color .15s,border-color .15s,box-shadow .15s}
+.embed-map .tabs{display:grid;grid-template-columns:repeat(var(--nt,4),minmax(0,1fr));gap:0;margin:34px 8px -1px;padding:0;border:0;background:transparent;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.embed-map .tabs button{position:relative;z-index:1;min-width:142px;min-height:46px;padding:10px 14px;border:1px solid #e2e8f0;border-bottom-color:#cbd5e1;border-radius:0;background:#f8fafc;color:#64748b;font-size:.86rem;font-weight:750;white-space:nowrap;transition:background-color .15s,color .15s,border-color .15s,box-shadow .15s}
+.embed-map .tabs button:first-child{border-radius:18px 0 0 0}
+.embed-map .tabs button:last-child{border-radius:0 18px 0 0}
 .embed-map .tabs button:hover{background:#fff;color:#0f172a;border-color:#cbd5e1}
-.embed-map .tabs button[aria-selected="true"]{z-index:3;border-color:var(--c);border-bottom-color:#fff;background:#fff;color:var(--c);box-shadow:inset 0 4px 0 var(--c)}
-.embed-map .panel{position:relative;z-index:2;min-height:240px;margin-top:0;padding:24px;border:1px solid #e2e8f0;border-radius:18px;background:#fff;box-shadow:none}
+.embed-map .tabs button[aria-selected="true"]{z-index:4;margin-bottom:-1px;padding-bottom:11px;border-color:var(--c);border-bottom-color:#fff;background:#fff;color:var(--c);box-shadow:inset 0 4px 0 var(--c)}
+.embed-map .panel{position:relative;z-index:1;min-height:220px;margin:0 8px;padding:24px;border:1px solid var(--c);border-radius:0 0 18px 18px;background:#fff;box-shadow:0 10px 30px rgb(15 23 42 / 6%)}
 .embed-map .panel h3{color:#0f172a;font-size:1.22rem;font-weight:800;letter-spacing:-.02em}
 .embed-map .panel p{color:#475569;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
 .embed-map .panel .st{color:#64748b;font-size:.78rem;font-weight:650;text-transform:uppercase;letter-spacing:.04em}
@@ -136,13 +146,14 @@ footer a{color:var(--mut)}
 .embed-map .btn{border-radius:10px;padding:10px 16px;font-size:.9rem;font-weight:750;box-shadow:0 5px 14px color-mix(in srgb,var(--c,var(--brand)) 18%,transparent)}
 .embed-map .date,.embed-map .ins-card{border-color:#e2e8f0;border-radius:14px;background:#f8fafc}
 @media(max-width:640px){
-  .embed-map .mapbox{padding:16px;border-radius:18px}
-  .embed-map .linea{overflow-x:auto;padding:4px 0 2px}
+  .embed-map body{padding-top:0}
+  .embed-map .mapbox{padding:4px 0 0;border-radius:0}
+  .embed-map .linea{overflow-x:auto;padding:4px 6px 2px}
   .embed-map .stz{min-width:112px}
-  .embed-map .tabs{margin-right:4px;margin-left:4px;padding-right:8px}
-  .embed-map .tabs button{flex-basis:145px}
-  .embed-map .panel{min-height:220px;padding:18px}
-  .embed-map .cap{margin-bottom:16px}
+  .embed-map .tabs{margin:24px 4px -1px;padding-right:0}
+  .embed-map .tabs{display:flex}
+  .embed-map .tabs button{flex:0 0 145px}
+  .embed-map .panel{min-height:220px;margin:0 4px;padding:18px;border-radius:0 0 16px 16px}
 }
 </style>
 </head>
@@ -177,8 +188,11 @@ footer a{color:var(--mut)}
     </div>
     <!--p class="sub">Scegli una stazione, poi un servizio: la linea cambia e sotto trovi il corso, le lezioni con le date, le cose da fare per il tirocinio o gli insegnanti.</p-->
 
-    <div class="linea" id="linea" role="group" aria-label="Stazioni del percorso"></div>
-    <p class="cap" id="cap"></p>
+    <div class="metro-shell">
+      <button class="metro-nav" id="metro-prev" type="button" aria-label="Mostra le tappe precedenti">‹</button>
+      <div class="linea" id="linea" role="group" aria-label="Stazioni del percorso"></div>
+      <button class="metro-nav" id="metro-next" type="button" aria-label="Mostra le tappe successive">›</button>
+    </div>
     <div class="tabs" id="tabs" role="tablist"></div>
     <div class="panel" id="panel" aria-live="polite"></div>
   </section>
@@ -194,23 +208,17 @@ footer a{color:var(--mut)}
 </footer>
 
 <script>
-/* ==================================================================
-   DATI. Stazioni, lezioni, tirocinio e insegnanti vivono qui.
-   In Rails: JSON generato dal server, già FILTRATO per i permessi
-   (i tab non permessi non vanno nel JSON, non basta nasconderli).
-   ================================================================== */
 const TAB = [
   { id: "online",      nome: "Percorso online",  sub: "Fai da solo, a tuo ritmo" },
-  { id: "lezioni",     nome: "Lezioni utenti",   sub: "Con un insegnante" },
-  { id: "tirocinio",   nome: "Tirocinio",        sub: "Affianchi, poi insegni" },
-  { id: "insegnanti",  nome: "Insegnanti",       sub: "Chi insegna e chi ha formato" }
+  { id: "lezioni",     nome: "Programma lezioni", sub: "Incontri guidati con un insegnante" },
+  { id: "centri",      nome: "Centri",            sub: "Dove seguire il corso" },
+  { id: "insegnanti",  nome: "Insegnanti",       sub: "Chi può guidare il corso" }
 ];
 
-/* Chi vede cosa (simulato). Il controllo vero lo fa il server. */
 const PERMESSI = {
-  utente:      ["online", "lezioni"],
-  tirocinante: ["online", "lezioni", "tirocinio"],
-  insegnante:  ["online", "lezioni", "tirocinio", "insegnanti"]
+  utente:      ["online", "lezioni", "centri", "insegnanti"],
+  tirocinante: ["online", "lezioni", "centri", "insegnanti"],
+  insegnante:  ["online", "lezioni", "centri", "insegnanti"]
 };
 
 /* Insegnanti di esempio: sostituisci con quelli veri. formatoDa = id di un altro insegnante. */
@@ -222,60 +230,81 @@ const INSEGNANTI = [
 ];
 
 /* Per ogni stazione: corso online, lezioni con data, tirocinio (cose da fare), insegnanti abilitati. */
+const corsia = (focus, ...open) => "/flowpulse/rete/globale/corsie/" + focus + "?vista=brand&corsie=" + encodeURIComponent(open.join(","));
 const STAZIONI = [
   { id: "prima", nome: "Prima settimana",
+    networkHref: corsia("la-prima-settimana-con-posturacorretta", "posturacorretta", "la-prima-settimana-con-posturacorretta"),
     online: { attivo: true, titolo: "Inizia con PosturaCorretta", href: "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/postura-salute-altri-aspetti",
       testo: "Un primo incontro con la postura e una settimana di osservazione e pratica.",
       moduli: [ { t: "Postura e salute", fatto: true }, { t: "Osservare il proprio corpo", fatto: true }, { t: "Prima pratica guidata", fatto: false } ] },
-    lezioni: [
-      { data: "2026-11-14", ora: "10:00", luogo: "Torino, campo da rugby", insegnante: "a", posti: 8,  href: "/posturacorretta/eventi" },
-      { data: "2026-11-21", ora: "18:30", luogo: "Online",                 insegnante: "b", posti: 20, href: "/posturacorretta/eventi" } ],
+    programmaLezioni: [
+      { numero: 1, titolo: "La prima settimana con PosturaCorretta", obiettivo: "Un incontro guidato per iniziare il percorso e mettere in pratica i primi elementi.", materiali: ["Prima scheda di esercizi e video"] }
+    ],
     tirocinio: { attivo: true,
       testo: "Per iniziare il tirocinio su questa stazione:",
       cose: [ { t: "Completa il corso online", fatto: true }, { t: "Partecipa a una lezione introduttiva", fatto: false },
               { t: "Assisti a 2 lezioni come osservatore", fatto: false }, { t: "Conduci una lezione affiancato da un insegnante", fatto: false } ] },
     insegnanti: ["a", "b", "d"] },
 
-  { id: "integrato", nome: "Percorso integrato",
-    online: { attivo: true, titolo: "Il tuo stato di salute", href: "/posturacorretta/corsi",
-      testo: "Osservi il tuo stato di salute e capisci se ti serve un percorso con altri professionisti.",
-      moduli: [ { t: "Cosa osservare", fatto: false }, { t: "Quando rivolgersi a un professionista", fatto: false } ] },
+  { id: "massaggio", nome: "Area Massaggio e recupero",
+    networkHref: corsia("area-massaggio-terapie-manuali-tecniche-corporee", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee"),
+    online: { attivo: true, titolo: "Massaggio, recupero e coscienza corporea", href: "/posturacorretta/corsi",
+      testo: "Entra nella prima area e scegli il corso introduttivo da cui proseguire.",
+      moduli: [ { t: "Terapie manuali", fatto: false }, { t: "Recupero", fatto: false }, { t: "Coscienza corporea", fatto: false } ] },
     lezioni: [],
-    tirocinio: { attivo: false },
-    insegnanti: ["a"] },
+    tirocinio: { attivo: true, testo: "Esplora l'area con un insegnante.", cose: [ { t: "Scegli il primo incontro", fatto: false } ] },
+    insegnanti: ["a", "b"] },
 
-  { id: "aree", nome: "Cinque aree",
-    online: { attivo: true, titolo: "Massaggio, movimento, mente, alimentazione, farmaci", href: "/posturacorretta/corsi",
-      testo: "Come ognuna delle cinque aree influenza la fisiologia. Parte il massaggio.",
-      moduli: [ { t: "Area massaggio", fatto: false }, { t: "Area movimento", fatto: false }, { t: "Area mente", fatto: false } ] },
-    lezioni: [ { data: "2026-12-05", ora: "15:00", luogo: "Milano", insegnante: "b", posti: 6, href: "/posturacorretta/eventi" } ],
-    tirocinio: { attivo: true,
-      testo: "Per ogni area, in ordine:",
-      cose: [ { t: "Frequenta le lezioni dell’area", fatto: false }, { t: "Prova su te stesso la pratica per 2 settimane", fatto: false },
-              { t: "Affianca un insegnante in 3 lezioni", fatto: false }, { t: "Conduci una lezione con valutazione", fatto: false } ] },
-    insegnanti: ["b", "c"] },
+  { id: "igiene", nome: "Igiene Posturale",
+    networkHref: corsia("igiene-posturale", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee", "igiene-posturale"),
+    online: { attivo: true, titolo: "Igiene Posturale", href: "/posturacorretta/corsi",
+      testo: "Il primo corso della linea Massaggio e recupero.", moduli: [ { t: "Programma di Igiene Posturale", fatto: false } ] },
+    lezioni: [], tirocinio: { attivo: false }, insegnanti: ["a", "b"] },
 
-  { id: "metodiche", nome: "Metodiche",
-    online: { attivo: true, titolo: "Le metodiche posturali", href: "/posturacorretta/metodiche",
-      testo: "Corpo e Coscienza, GDS, Osteopatia, Fisioterapia e altre: i principi di ognuna.",
-      moduli: [ { t: "Corpo e Coscienza", fatto: false }, { t: "GDS", fatto: false }, { t: "Osteopatia", fatto: false } ] },
-    lezioni: [],
-    tirocinio: { attivo: false },
-    insegnanti: ["c"] },
+  { id: "fisioterapia", nome: "Principi di Fisioterapia",
+    networkHref: corsia("principi-di-fisioterapia", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee", "principi-di-fisioterapia"),
+    online: { attivo: true, titolo: "Principi di Fisioterapia", href: "/posturacorretta/corsi",
+      testo: "Un assaggio educativo dei principi della fisioterapia.", moduli: [ { t: "Principi di Fisioterapia", fatto: false } ] },
+    lezioni: [], tirocinio: { attivo: false }, insegnanti: ["b"] },
 
-  { id: "giardino", nome: "Giardino del corpo",
-    online: { attivo: false },
-    lezioni: [],
-    tirocinio: { attivo: false },
-    insegnanti: [] }
+  { id: "gds", nome: "GDS",
+    networkHref: corsia("biomeccanica-comportamentale-gds", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee", "biomeccanica-comportamentale-gds"),
+    online: { attivo: true, titolo: "Introduzione alla biomeccanica comportamentale (GDS)", href: "/posturacorretta/corsi", testo: "Scopri la biomeccanica comportamentale GDS.", moduli: [ { t: "Biomeccanica comportamentale", fatto: false } ] },
+    lezioni: [], tirocinio: { attivo: false }, insegnanti: ["c"] },
+
+  { id: "osteopatia", nome: "Osteopatia",
+    networkHref: corsia("principi-di-osteopatia", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee", "principi-di-osteopatia"),
+    online: { attivo: true, titolo: "Principi di Osteopatia", href: "/posturacorretta/corsi", testo: "Un assaggio educativo dei principi dell'osteopatia.", moduli: [ { t: "Principi di Osteopatia", fatto: false } ] },
+    lezioni: [], tirocinio: { attivo: false }, insegnanti: ["c"] },
+
+  { id: "corpo-coscienza", nome: "Corpo e Coscienza",
+    networkHref: corsia("introduzione-al-metodo-corpo-e-coscienza", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee", "introduzione-al-metodo-corpo-e-coscienza"),
+    online: { attivo: true, titolo: "Introduzione al metodo Corpo e Coscienza", href: "/posturacorretta/corsi", testo: "Un'introduzione educativa al metodo Corpo e Coscienza.", moduli: [ { t: "Introduzione al metodo", fatto: false } ] },
+    lezioni: [], tirocinio: { attivo: false }, insegnanti: ["c"] },
+
+  { id: "kinesiologia", nome: "Kinesiologia Applicata",
+    networkHref: corsia("introduzione-alla-kinesiologia-applicata", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee", "introduzione-alla-kinesiologia-applicata"),
+    online: { attivo: true, titolo: "Introduzione alla Kinesiologia Applicata", href: "/posturacorretta/corsi", testo: "Un'introduzione educativa alla Kinesiologia Applicata.", moduli: [ { t: "Sequenza di Kinesiologia Applicata", fatto: false } ] },
+    lezioni: [], tirocinio: { attivo: false }, insegnanti: [] },
+
+  { id: "altre", nome: "Altre metodiche",
+    networkHref: corsia("altre-metodiche-posturali", "posturacorretta", "la-prima-settimana-con-posturacorretta", "area-massaggio-terapie-manuali-tecniche-corporee", "altre-metodiche-posturali"),
+    online: { attivo: true, titolo: "Altre metodiche posturali", href: "/posturacorretta/metodiche", testo: "Schede di presentazione per continuare a conoscere le metodiche.", moduli: [ { t: "Esplora le schede", fatto: false } ] },
+    lezioni: [], tirocinio: { attivo: false }, insegnanti: [] }
 ];
 /* ================================================================== */
 
 const $ = s => document.querySelector(s);
 const ins = id => INSEGNANTI.find(x => x.id === id);
 const formati = id => INSEGNANTI.filter(x => x.formatoDa === id).length;
-let sel = { tab: "online", st: STAZIONI[0].id };
-const EMBED_MAP = new URLSearchParams(location.search).get("embed") === "1";
+const PAGE_PARAMS = new URLSearchParams(location.search);
+const stationSlug = station => new URL(station.networkHref, location.origin).pathname.split("/").filter(Boolean).pop();
+const requestedStation = PAGE_PARAMS.get("tappa");
+const initialStation = STAZIONI.find(station => station.id === requestedStation || stationSlug(station) === requestedStation) || STAZIONI[0];
+const requestedTab = PAGE_PARAMS.get("tab");
+const initialTab = TAB.some(tab => tab.id === requestedTab) ? requestedTab : "online";
+let sel = { tab: initialTab, st: initialStation.id };
+const EMBED_MAP = PAGE_PARAMS.get("embed") === "1";
 let ruolo = EMBED_MAP ? "insegnante" : "utente";
 
 function statoDot(s) {
@@ -287,21 +316,12 @@ function statoDot(s) {
 }
 
 const ETICHETTE = { fatta: "completata", qui: "sei qui", attiva: "disponibile", arrivo: "in preparazione" };
-const DID = {
-  online:     "Pieno: corso disponibile · spunta: completato · grande con anello: sei qui · tratteggiato: in preparazione",
-  lezioni:    "Il numero indica le lezioni in programma · tratteggiato: nessuna data per ora",
-  tirocinio:  "Pieno: tirocinio aperto · tratteggiato: non ancora previsto",
-  insegnanti: "Il numero indica gli insegnanti abilitati · tratteggiato: nessuno per ora"
-};
-
 function dotInfo(s) {
   const t = sel.tab;
   if (!PERMESSI[ruolo].includes(t)) return { cls: "arrivo", txt: "", label: "con accesso" };
   if (t === "online") { const c = statoDot(s); return { cls: c, txt: "", label: ETICHETTE[c] }; }
-  if (t === "tirocinio") return s.tirocinio.attivo
-    ? { cls: "attiva", txt: "", label: "disponibile" }
-    : { cls: "arrivo", txt: "", label: "in preparazione" };
-  const n = (t === "lezioni" ? s.lezioni : s.insegnanti).length;
+  if (t === "centri") return { cls: "attiva", txt: "", label: "centri disponibili" };
+  const n = (t === "lezioni" ? Array(s.programmaLezioni).length : s.insegnanti.length);
   return { cls: "num" + (n ? "" : " zero"), txt: n, label: n + (t === "lezioni" ? " lezioni" : " insegnanti") };
 }
 
@@ -314,7 +334,6 @@ function renderLinea() {
       '<span class="nm">' + s.nome + "</span>" +
       '<span class="track"><span class="dot ' + d.cls + '">' + d.txt + "</span></span></button>";
   }).join("");
-  $("#cap").textContent = PERMESSI[ruolo].includes(sel.tab) ? DID[sel.tab] : "Disponibile dopo l’accesso.";
 }
 
 function renderTabs() {
@@ -331,37 +350,63 @@ function dataIT(iso) {
   return { g: d.getDate(), m: d.toLocaleDateString("it-IT", { month: "short", weekday: "short" }) };
 }
 
-function panelOnline(s) {
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[character]);
+}
+
+function panelOnline(s, data) {
+  if (data?.course) {
+    const chapters = data.chapters.map(chapter =>
+      '<li><span class="ck"></span><span><a href="' + escapeHtml(chapter.url) + '"><b>' +
+      escapeHtml(chapter.position) + '. ' + escapeHtml(chapter.title) + '</b></a>' +
+      (chapter.description ? '<br><span>' + escapeHtml(chapter.description) + '</span>' : '') + '</span></li>'
+    ).join("");
+    return '<h3>' + escapeHtml(data.course.title) + '</h3><p>' + escapeHtml(data.course.description) + '</p>' +
+      '<p class="st">' + escapeHtml(data.lesson.title) + '</p><ul class="list">' + chapters + '</ul>' +
+      '<a class="btn" href="' + escapeHtml(data.chapters[0]?.url || s.networkHref) + '">Inizia il percorso online</a>';
+  }
+
   const o = s.online;
   if (!o.attivo) return '<p class="vuoto">Il corso online per questa stazione è in preparazione.</p>';
   const mostra = ruolo !== "visitatore";
   return "<h3>" + o.titolo + "</h3><p>" + o.testo + "</p>" +
     '<ul class="list">' + o.moduli.map(m =>
       '<li><span class="ck ' + (mostra && m.fatto ? "ok" : "") + '"></span>' + m.t + "</li>").join("") + "</ul>" +
-    '<a class="btn" href="' + o.href + '">' + (mostra ? "Continua il corso" : "Inizia gratis") + "</a>";
+    '<a class="btn" href="' + s.networkHref + '">Apri questa tappa nella vista a corsie</a>';
 }
 
-function panelLezioni(s) {
-  if (!s.lezioni.length) return '<p class="vuoto">Nessuna lezione in programma per questa stazione. Controlla gli <a href="/posturacorretta/eventi">eventi</a> o scrivici per avere un avviso.</p>';
-  return "<h3>Prossime lezioni</h3><p class=\"st\">Con un insegnante, in gruppo o singole.</p>" +
-    s.lezioni.map(l => {
-      const d = dataIT(l.data);
-      return '<div class="date"><div class="gg">' + d.g + "<small>" + d.m + "</small></div>" +
-        "<div><b>" + l.ora + " · " + l.luogo + "</b><span>con " + ins(l.insegnante).nome + " · " + l.posti + " posti</span></div>" +
-        '<a class="btn" href="' + l.href + '">Prenota</a></div>';
-    }).join("");
+function panelLezioni(s, data) {
+  const lessons = data ? Array(data.program_lessons) : Array(s.programmaLezioni);
+  if (!lessons.length) return '<p class="vuoto">Il programma lezioni di questo corso è in preparazione.</p>';
+  return "<h3>Programma lezioni</h3><p class=\"st\">Incontri guidati collegati al corso selezionato.</p>" +
+    lessons.map(lesson =>
+      '<article class="date"><div class="gg">' + escapeHtml(lesson.number || lesson.numero) + '<small>lezione</small></div>' +
+      '<div><b>' + escapeHtml(lesson.title || lesson.titolo) + '</b>' +
+      (lesson.obiettivo ? '<span>' + escapeHtml(lesson.obiettivo) + '</span>' : '') +
+      (lesson.sheets?.length ? '<span>Materiali: ' + lesson.sheets.map(sheet => escapeHtml(sheet.title)).join(", ") + '</span>' : '') +
+      (lesson.materiali?.length ? '<span>Materiali: ' + lesson.materiali.map(escapeHtml).join(", ") + '</span>' : '') +
+      '</div></article>'
+    ).join("");
 }
 
-function panelTirocinio(s) {
-  const t = s.tirocinio;
-  if (!t.attivo) return '<p class="vuoto">Il tirocinio non è ancora previsto per questa stazione.</p>';
-  return "<h3>Cose da fare</h3><p>" + t.testo + "</p>" +
-    '<ul class="list">' + t.cose.map(c =>
-      '<li><span class="ck ' + (c.fatto ? "ok" : "") + '"></span>' + c.t + "</li>").join("") + "</ul>" +
-    '<a class="btn" href="/accesso/richiesta/new">Richiedi accesso al tirocinio</a>';
+function panelCentri(_s, data) {
+  const centres = Array(data?.centres);
+  if (!centres.length) return '<p class="vuoto">Non ci sono ancora Centri fisici associati a questo corso.</p>';
+  return '<h3>Centri</h3><p class="st">Luoghi fisici nei quali il corso può essere proposto.</p><div class="ins-grid">' +
+    centres.map(centre => '<a class="ins-card" href="' + escapeHtml(centre.url) + '"><b>' + escapeHtml(centre.name) +
+      '</b><span>' + escapeHtml(centre.type) + '</span><span>' + escapeHtml(centre.city) + '</span></a>').join("") + '</div>';
 }
 
-function panelInsegnanti(s) {
+function panelInsegnanti(s, data) {
+  if (data) {
+    const teachers = Array(data.teachers);
+    if (!teachers.length) return '<p class="vuoto">Non ci sono ancora insegnanti pubblici abilitati su questo corso.</p>';
+    return '<h3>Insegnanti abilitati</h3><p class="st">Profili attivi sul modulo collegato al corso.</p><div class="ins-grid">' +
+      teachers.map(teacher => '<a class="ins-card" href="' + escapeHtml(teacher.url) + '"><b>' + escapeHtml(teacher.name) +
+        '</b><span>' + escapeHtml(teacher.role || teacher.profession) + '</span><span>' + escapeHtml(teacher.city) + '</span></a>').join("") + '</div>';
+  }
   if (!s.insegnanti.length) return '<p class="vuoto">Per ora non ci sono insegnanti abilitati su questa stazione. <a href="/accesso/richiesta/new">Diventa il primo</a>.</p>';
   return "<h3>Insegnanti abilitati</h3><p class=\"st\">Chi insegna questa stazione e da chi è stato formato.</p>" +
     '<div class="ins-grid">' + s.insegnanti.map(id => {
@@ -372,19 +417,39 @@ function panelInsegnanti(s) {
     }).join("") + "</div>";
 }
 
-function renderPanel() {
+const COURSE_DATA = new Map();
+let panelRequest = 0;
+
+async function loadCourseData(station) {
+  const slug = stationSlug(station);
+  if (COURSE_DATA.has(slug)) return COURSE_DATA.get(slug);
+
+  const request = fetch('/posturacorretta/course-data/' + encodeURIComponent(slug))
+    .then(response => response.ok ? response.json() : null)
+    .catch(() => null);
+  COURSE_DATA.set(slug, request);
+  return request;
+}
+
+async function renderPanel() {
+  const requestId = ++panelRequest;
   const s = STAZIONI.find(x => x.id === sel.st);
   const tab = TAB.find(t => t.id === sel.tab);
   const p = $("#panel");
   p.style.setProperty("--c", "var(--" + tab.id + ")");
-  let h = '<p class="st">' + s.nome + " · " + tab.nome + "</p>";
+  p.innerHTML = '<p class="st">' + escapeHtml(s.nome) + ' · ' + escapeHtml(tab.nome) + '</p><p class="vuoto">Caricamento…</p>';
+  const data = await loadCourseData(s);
+  if (requestId !== panelRequest) return;
+
+  let h = '<p class="st">' + escapeHtml(s.nome) + " · " + escapeHtml(tab.nome) + "</p>";
   if (!PERMESSI[ruolo].includes(tab.id)) {
     h += "<h3>Disponibile dopo l’accesso</h3><p>Questa parte è riservata a chi ha un account abilitato.</p>" +
          '<a class="btn" href="/session/new">Accedi</a>';
   } else {
-    h += { online: panelOnline, lezioni: panelLezioni, tirocinio: panelTirocinio, insegnanti: panelInsegnanti }[tab.id](s);
+    h += { online: panelOnline, lezioni: panelLezioni, centri: panelCentri, insegnanti: panelInsegnanti }[tab.id](s, data);
   }
   p.innerHTML = h;
+  notifyEmbedHeight();
 }
 
 function notifyEmbedHeight() {
@@ -399,7 +464,23 @@ function notifyEmbedHeight() {
   });
 }
 
-function render() { renderLinea(); renderTabs(); renderPanel(); notifyEmbedHeight(); }
+function notifyEmbedState() {
+  if (!EMBED_MAP || window.parent === window) return;
+  const station = STAZIONI.find(item => item.id === sel.st);
+  window.parent.postMessage({
+    type: "posturacorretta-map-state",
+    tappa: stationSlug(station),
+    tab: sel.tab
+  }, location.origin);
+}
+
+function render() {
+  renderLinea();
+  renderTabs();
+  renderPanel();
+  notifyEmbedHeight();
+  notifyEmbedState();
+}
 
 document.addEventListener("click", e => {
   const g = e.target.closest("[data-goto]");
@@ -418,6 +499,13 @@ $("#ruolo").addEventListener("change", e => {
   if (!PERMESSI[ruolo].includes(sel.tab)) sel.tab = "online";
   render();
 });
+
+function scrollMetro(direction) {
+  const line = $("#linea");
+  line.scrollBy({ left: direction * Math.max(260, line.clientWidth * 0.72), behavior: "smooth" });
+}
+$("#metro-prev").addEventListener("click", () => scrollMetro(-1));
+$("#metro-next").addEventListener("click", () => scrollMetro(1));
 
 render();
 if (EMBED_MAP && "ResizeObserver" in window) {

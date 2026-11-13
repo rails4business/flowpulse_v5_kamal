@@ -1,0 +1,188 @@
+<% content_for :title, "Metropolitana #{@domain.display_hostname}" %>
+<% content_for :description, "Mappa amministrativa dei Node e dei collegamenti del dominio #{@domain.display_hostname}." %>
+
+<div
+  class="h-screen overflow-hidden bg-slate-50 text-slate-900"
+  data-controller="metro-map"
+  data-metro-map-graph-value="<%= json_escape(@metro_graph.to_json) %>"
+  data-metro-map-save-url-value="<%= flowpulse_metro_map_positions_path(hostname: @domain.display_hostname) %>"
+>
+  <section data-metro-map-target="stage" class="relative flex h-full min-h-0 flex-col overflow-hidden bg-slate-50">
+    <header class="z-20 flex min-h-12 flex-nowrap items-center gap-2 border-b border-slate-200 bg-white px-2 py-1.5 shadow-sm sm:px-3">
+      <div class="flex min-w-0 flex-1 items-center gap-2">
+        <span class="hidden rounded-md bg-violet-50 px-1.5 py-1 text-[9px] font-black uppercase tracking-wider text-violet-700 sm:inline">Admin</span>
+        <h1 class="truncate text-sm font-black tracking-tight text-slate-950 sm:text-base"><%= @domain.display_hostname %></h1>
+        <p data-metro-map-target="renderStatus" class="hidden truncate text-[10px] font-semibold text-slate-400 md:block">Preparazione…</p>
+      </div>
+
+      <label class="hidden items-center gap-1 text-xs font-bold text-slate-500 sm:flex">
+        <select aria-label="Cambia dominio" data-action="change->metro-map#changeDomain" class="max-w-48 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs font-bold text-slate-800">
+          <% @domains.each do |domain| %>
+            <option value="<%= flowpulse_metro_map_path(hostname: domain.display_hostname) %>" <%= "selected" if domain.id == @domain.id %>><%= domain.display_hostname %></option>
+          <% end %>
+        </select>
+      </label>
+
+      <div class="flex shrink-0 items-center gap-1">
+        <button type="button" data-action="metro-map#openLinePanel" class="rounded-md border border-blue-200 bg-blue-50 px-2 py-1.5 text-[11px] font-black text-blue-800 hover:bg-blue-100">Linea</button>
+        <button type="button" data-action="metro-map#openOfferPanel" class="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-[11px] font-black text-amber-800 hover:bg-amber-100">Offerta</button>
+        <button type="button" data-action="metro-map#toggleExportPanel" class="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-black text-slate-700 hover:bg-slate-50">YAML</button>
+        <button type="button" data-metro-map-target="structureButton" data-action="metro-map#openStructurePanel" hidden class="rounded-md border border-rose-200 bg-rose-50 px-2 py-1.5 text-[11px] font-black text-rose-800 hover:bg-rose-100">Struttura</button>
+        <button type="button" data-metro-map-target="editButton" data-action="metro-map#toggleEdit" class="rounded-md border border-violet-200 bg-violet-50 px-2 py-1.5 text-[11px] font-black text-violet-800 hover:bg-violet-100">Modifica</button>
+        <button type="button" data-metro-map-target="moveModeButton" data-action="metro-map#toggleMoveMode" hidden class="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-black text-slate-700">Node + figli</button>
+        <button type="button" data-metro-map-target="saveButton" data-action="metro-map#savePositions" hidden class="rounded-md bg-violet-700 px-2 py-1.5 text-[11px] font-black text-white hover:bg-violet-800">Salva</button>
+        <button type="button" data-action="metro-map#zoomOut" class="grid size-7 place-items-center rounded-md border border-slate-200 bg-white font-black text-slate-600" aria-label="Riduci" title="Riduci (tasto −)">−</button>
+        <button type="button" data-action="metro-map#fit" class="hidden rounded-md border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-black text-slate-600 sm:block" title="Adatta alla finestra (tasto 0)">Adatta</button>
+        <button type="button" data-action="metro-map#zoomIn" class="grid size-7 place-items-center rounded-md border border-slate-200 bg-white font-black text-slate-600" aria-label="Ingrandisci" title="Ingrandisci (tasto +)">+</button>
+        <button type="button" data-metro-map-target="fullscreenButton" data-action="metro-map#toggleFullscreen" class="grid size-7 place-items-center rounded-md border border-slate-200 bg-white font-black text-blue-700" aria-label="Schermo intero" title="Schermo intero">⛶</button>
+      </div>
+    </header>
+
+    <div class="relative min-h-0 flex-1 overflow-hidden">
+      <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 22px 22px;"></div>
+      <div data-metro-map-target="canvas" class="absolute inset-0"></div>
+
+      <aside data-metro-map-target="legendPanel" hidden aria-label="Linee e offerte" class="absolute left-3 top-3 z-10 max-h-[calc(100%-1.5rem)] w-[min(19rem,calc(100%-1.5rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur"></aside>
+
+      <aside data-metro-map-target="linePanel" hidden class="absolute right-3 top-3 z-30 w-[min(25rem,calc(100%-1.5rem))] rounded-2xl border border-blue-200 bg-white p-5 shadow-2xl">
+        <div class="flex items-start justify-between gap-4">
+          <div><p class="text-[10px] font-black uppercase tracking-[.14em] text-blue-600">Nuova linea</p><h2 class="mt-1 text-lg font-black">Seleziona le stazioni in ordine</h2></div>
+          <button type="button" data-action="metro-map#closePanels" class="text-xl font-bold text-slate-400" aria-label="Chiudi">×</button>
+        </div>
+        <%= form_with url: flowpulse_metro_map_lines_path(hostname: @domain.display_hostname), method: :post, class: "mt-4 space-y-3" do %>
+          <input name="title" required placeholder="Nome linea" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold">
+          <input name="slug" required placeholder="slug-linea" pattern="[a-z0-9-]+" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+          <textarea name="description" rows="2" placeholder="Descrizione facoltativa" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"></textarea>
+          <input data-metro-map-target="lineStationIds" type="hidden" name="station_node_ids">
+          <div class="rounded-xl bg-slate-50 p-3">
+            <p class="text-[10px] font-black uppercase tracking-wider text-slate-500">Ordine stazioni</p>
+            <ol data-metro-map-target="lineStationList" class="mt-2 space-y-1 text-xs font-bold text-slate-700"><li class="text-slate-400">Clicca almeno due stazioni sulla mappa.</li></ol>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" data-action="metro-map#undoLineStation" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-black">Annulla ultima</button>
+            <button type="button" data-action="metro-map#resetLineStations" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-black">Azzera</button>
+            <button type="submit" class="ml-auto rounded-lg bg-blue-700 px-4 py-2 text-xs font-black text-white">Salva linea</button>
+          </div>
+        <% end %>
+      </aside>
+
+      <aside data-metro-map-target="offerPanel" hidden class="absolute right-3 top-3 z-30 max-h-[calc(100%-1.5rem)] w-[min(27rem,calc(100%-1.5rem))] overflow-y-auto rounded-2xl border border-amber-200 bg-white p-5 shadow-2xl">
+        <div class="flex items-start justify-between gap-4">
+          <div><p class="text-[10px] font-black uppercase tracking-[.14em] text-amber-600">Nuova offerta</p><h2 class="mt-1 text-lg font-black">Definisci la tratta inclusa</h2></div>
+          <button type="button" data-action="metro-map#closePanels" class="text-xl font-bold text-slate-400" aria-label="Chiudi">×</button>
+        </div>
+        <%= form_with url: flowpulse_metro_map_offers_path(hostname: @domain.display_hostname), method: :post, class: "mt-4 space-y-3" do %>
+          <input name="title" required placeholder="Nome offerta" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold">
+          <input name="slug" required placeholder="slug-offerta" pattern="[a-z0-9-]+" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+          <select name="metro_line_id" required data-metro-map-target="offerLine" data-action="change->metro-map#offerLineChanged" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold">
+            <option value="">Scegli la linea…</option>
+            <% @metro_lines.each do |line| %>
+              <option value="<%= line.id %>" data-station-ids="<%= line.ordered_nodes.map(&:id).join(',') %>"><%= line.title %></option>
+            <% end %>
+          </select>
+          <input data-metro-map-target="offerStartId" type="hidden" name="start_node_id">
+          <input data-metro-map-target="offerEndId" type="hidden" name="end_node_id">
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" data-metro-map-target="offerStartButton" data-action="metro-map#selectOfferStart" class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-left text-xs font-black text-amber-900">1. Seleziona inizio</button>
+            <button type="button" data-metro-map-target="offerEndButton" data-action="metro-map#selectOfferEnd" class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-left text-xs font-black text-amber-900">2. Seleziona fine</button>
+          </div>
+          <textarea name="description" rows="2" placeholder="Descrizione facoltativa" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"></textarea>
+          <% if @offers.any? %>
+            <fieldset class="rounded-xl border border-slate-200 p-3"><legend class="px-1 text-[10px] font-black uppercase tracking-wider text-slate-500">Offerte precedenti incluse</legend>
+              <% @offers.each do |offer| %><label class="mt-2 flex gap-2 text-xs font-bold"><%= check_box_tag "included_offer_slugs[]", offer.slug, false, class: "rounded" %><span><%= offer.title %> <small class="text-slate-400">(<%= offer.metro_line.title %>)</small></span></label><% end %>
+            </fieldset>
+          <% end %>
+          <div class="grid grid-cols-2 gap-2">
+            <select name="previous_purchase_mode" data-action="change->metro-map#purchaseModeChanged" class="rounded-xl border border-slate-200 px-3 py-2 text-sm"><option value="none">Nessun credito</option><option value="credit">Credito acquisto precedente</option><option value="discount">Sconto percentuale</option></select>
+            <input data-metro-map-target="discountPercent" name="discount_percent" type="number" min="0" max="100" step="0.01" placeholder="Sconto %" disabled class="rounded-xl border border-slate-200 px-3 py-2 text-sm disabled:bg-slate-100">
+          </div>
+          <button type="submit" class="w-full rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-black text-white">Salva offerta</button>
+        <% end %>
+      </aside>
+
+      <aside data-metro-map-target="exportPanel" hidden class="absolute right-3 top-3 z-30 w-[min(22rem,calc(100%-1.5rem))] rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
+        <div class="flex items-start justify-between"><div><p class="text-[10px] font-black uppercase tracking-[.14em] text-slate-500">Cataloghi</p><h2 class="mt-1 text-lg font-black">Scarica YAML</h2></div><button type="button" data-action="metro-map#closePanels" class="text-xl font-bold text-slate-400">×</button></div>
+        <div class="mt-4 grid gap-2">
+          <%= link_to "Tutte le mappe · metro_maps.yml (titolo e stato)", flowpulse_metro_map_export_path(hostname: @domain.display_hostname, catalog: "map"), class: "rounded-xl border border-slate-200 p-3 text-xs font-black text-slate-700 hover:bg-slate-50" %>
+          <%= link_to "Tutte le linee · metro_lines.yml", flowpulse_metro_map_export_path(hostname: @domain.display_hostname, catalog: "lines"), class: "rounded-xl border border-slate-200 p-3 text-xs font-black text-slate-700 hover:bg-slate-50" %>
+          <%= link_to "Tutte le offerte · offers.yml", flowpulse_metro_map_export_path(hostname: @domain.display_hostname, catalog: "offers"), class: "rounded-xl border border-slate-200 p-3 text-xs font-black text-slate-700 hover:bg-slate-50" %>
+          <%= link_to "Node con coordinate e +/− · nodes.yml", flowpulse_metro_map_export_path(hostname: @domain.display_hostname, catalog: "nodes"), class: "rounded-xl border border-slate-200 p-3 text-xs font-black text-slate-700 hover:bg-slate-50" %>
+        </div>
+        <p class="mt-3 text-[11px] leading-5 text-slate-500">Le coordinate sono salvate dentro ogni Node in nodes.yml, separate per dominio (map_placements). Linee, offerte e appartenenze dei Node restano cataloghi globali.</p>
+      </aside>
+
+      <aside data-metro-map-target="structurePanel" hidden class="absolute right-3 top-3 z-30 max-h-[calc(100%-1.5rem)] w-[min(29rem,calc(100%-1.5rem))] overflow-y-auto rounded-2xl border border-rose-200 bg-white p-5 shadow-2xl">
+        <div class="flex items-start justify-between"><div><p class="text-[10px] font-black uppercase tracking-[.14em] text-rose-600">Modifica struttura</p><h2 class="mt-1 text-lg font-black">Node e collegamenti</h2></div><button type="button" data-action="metro-map#closePanels" class="text-xl font-bold text-slate-400">×</button></div>
+        <nav class="mt-4 grid grid-cols-3 rounded-xl bg-slate-100 p-1">
+          <button type="button" data-structure-tab="node" data-action="metro-map#showStructureTab" class="rounded-lg bg-white px-2 py-2 text-xs font-black text-slate-900 shadow-sm">Nuovo Node</button>
+          <button type="button" data-structure-tab="bridge" data-action="metro-map#showStructureTab" class="rounded-lg px-2 py-2 text-xs font-black text-slate-500">Ponti</button>
+          <button type="button" data-structure-tab="parent" data-action="metro-map#showStructureTab" class="rounded-lg px-2 py-2 text-xs font-black text-slate-500">Genitore</button>
+        </nav>
+
+        <section data-metro-map-target="nodeTab" class="mt-3 rounded-xl border border-slate-200 p-3">
+          <h3 class="text-sm font-black">Aggiungi un Node</h3>
+          <p class="mt-1 text-[11px] text-slate-500">Compila il titolo e seleziona sulla mappa il Node genitore.</p>
+          <%= form_with url: flowpulse_metro_map_nodes_path(hostname: @domain.display_hostname), method: :post, class: "mt-3 space-y-2" do %>
+            <input name="title" required placeholder="Titolo del nuovo Node" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold">
+            <input name="slug" placeholder="slug facoltativo" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs">
+            <textarea name="description" rows="2" placeholder="Descrizione facoltativa" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs"></textarea>
+            <input data-metro-map-target="newNodeParentId" type="hidden" name="parent_node_id">
+            <button data-metro-map-target="newNodeParentButton" data-action="metro-map#selectNewNodeParent" type="button" class="w-full rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 p-3 text-left text-xs font-black text-blue-900">Genitore: non selezionato</button>
+            <div class="flex items-center gap-2"><label class="text-[11px] font-bold text-slate-500">Colore</label><input name="map_color" type="color" value="#2563EB" class="h-8 w-12 rounded border border-slate-200"></div>
+            <button type="submit" class="w-full rounded-lg bg-blue-700 px-3 py-2 text-xs font-black text-white">Aggiungi Node</button>
+          <% end %>
+        </section>
+
+        <section data-metro-map-target="bridgeTab" hidden class="mt-3 rounded-xl border border-slate-200 p-3">
+          <h3 class="text-sm font-black">Nuovo ponte</h3>
+          <p class="mt-1 text-[11px] text-slate-500">Seleziona prima l’origine e poi la destinazione.</p>
+          <%= form_with url: flowpulse_metro_map_bridges_path(hostname: @domain.display_hostname), method: :post, class: "mt-3" do %>
+            <input data-metro-map-target="bridgeSourceId" type="hidden" name="source_node_id">
+            <input data-metro-map-target="bridgeTargetId" type="hidden" name="target_node_id">
+            <div class="grid gap-2">
+              <button data-metro-map-target="bridgeSourceButton" data-action="metro-map#selectBridgeSource" type="button" class="rounded-lg border-2 border-dashed border-rose-300 bg-rose-50 p-3 text-left text-xs font-black text-rose-900">Origine: non selezionata</button>
+              <button data-metro-map-target="bridgeTargetButton" data-action="metro-map#selectBridgeTarget" type="button" class="rounded-lg border-2 border-dashed border-rose-300 bg-rose-50 p-3 text-left text-xs font-black text-rose-900">Destinazione: non selezionata</button>
+            </div>
+            <button type="submit" class="mt-2 w-full rounded-lg bg-rose-600 px-3 py-2 text-xs font-black text-white">Crea ponte</button>
+          <% end %>
+          <h3 class="mt-5 border-t border-slate-100 pt-4 text-sm font-black">Ponti esistenti</h3>
+          <% if @bridges.any? %>
+            <div class="mt-2 space-y-2">
+              <% @bridges.each do |bridge| %>
+                <div class="flex items-center gap-2 rounded-lg bg-slate-50 p-2 text-[11px]">
+                  <span class="min-w-0 flex-1 truncate font-bold"><%= bridge.parent.title %> → <%= bridge.link_node.title %></span>
+                  <%= button_to "Elimina", flowpulse_metro_map_bridge_path(hostname: @domain.display_hostname, id: bridge.id), method: :delete, form: { data: { turbo_confirm: "Eliminare questo ponte?" } }, class: "font-black text-rose-700" %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="mt-2 text-xs text-slate-400">Nessun ponte presente.</p>
+          <% end %>
+        </section>
+
+        <section data-metro-map-target="parentTab" hidden class="mt-3 rounded-xl border border-slate-200 p-3">
+          <h3 class="text-sm font-black">Cambia genitore</h3>
+          <p class="mt-1 text-[11px] text-slate-500">Seleziona il Node da spostare e il suo nuovo genitore.</p>
+          <%= form_with url: flowpulse_metro_map_parent_path(hostname: @domain.display_hostname), method: :patch, class: "mt-3" do %>
+            <input data-metro-map-target="moveNodeId" type="hidden" name="node_id">
+            <input data-metro-map-target="moveParentId" type="hidden" name="parent_node_id">
+            <div class="grid gap-2">
+              <button data-metro-map-target="moveNodeButton" data-action="metro-map#selectMoveNode" type="button" class="rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-3 text-left text-xs font-black">Node da spostare: non selezionato</button>
+              <button data-metro-map-target="moveParentButton" data-action="metro-map#selectMoveParent" type="button" class="rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-3 text-left text-xs font-black">Nuovo genitore: non selezionato</button>
+            </div>
+            <button type="submit" class="mt-2 w-full rounded-lg bg-slate-800 px-3 py-2 text-xs font-black text-white">Sposta Node e discendenti</button>
+          <% end %>
+        </section>
+      </aside>
+
+      <aside data-metro-map-target="detailsPanel" hidden class="absolute bottom-3 left-3 z-10 w-[min(20rem,calc(100%-1.5rem))] rounded-xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur">
+        <p data-metro-map-target="empty" hidden></p>
+        <h2 data-metro-map-target="title" class="text-base font-black text-slate-950">Seleziona una stazione</h2>
+        <p data-metro-map-target="meta" class="mt-1 text-xs leading-5 text-slate-500"></p>
+        <a data-metro-map-target="openLink" href="#" hidden class="mt-2 inline-flex text-xs font-black text-blue-700 hover:text-blue-900">Apri Node →</a>
+        <a data-metro-map-target="openMetroLink" href="#" hidden class="ml-3 mt-2 inline-flex text-xs font-black text-emerald-700 hover:text-emerald-900">Apri mappa →</a>
+        <a data-metro-map-target="editNodeLink" href="#" hidden class="ml-3 mt-2 inline-flex text-xs font-black text-violet-700 hover:text-violet-900">Modifica →</a>
+      </aside>
+    </div>
+  </section>
+</div>

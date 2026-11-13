@@ -1,0 +1,33 @@
+default: &default
+  removed_slugs:
+    - prima-settimana-posturacorretta
+
+  offers:
+    igiene-posturale:
+      title: Percorso Igiene Posturale
+      description: Dall'Area Massaggio e recupero fino all'ultima lezione del corso Igiene Posturale.
+      line_slug: postura-recupero
+      start_node_slug: area-massaggio-terapie-manuali-tecniche-corporee
+      end_node_slug: igiene-posturale-recettori-sensoriali
+      status: published
+      previous_purchase_mode: none
+
+    area-massaggio-recupero:
+      title: Percorso Area Massaggio e recupero
+      description: Percorso esteso lungo l'intera prima linea PosturaCorretta.
+      line_slug: postura-recupero
+      start_node_slug: area-massaggio-terapie-manuali-tecniche-corporee
+      end_node_slug: altre-metodiche-posturali
+      included_offer_slugs:
+        - igiene-posturale
+      status: draft
+      previous_purchase_mode: credit
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

@@ -7,6 +7,12 @@ module Brands
       load_site
     end
 
+    def model
+      load_site
+      @advanced_model = true
+      render :index
+    end
+
     def docs
       load_site
       data = YAML.safe_load_file(docs_index_path, permitted_classes: [], aliases: false) || {}

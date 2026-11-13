@@ -62,7 +62,8 @@
     </script>
   </head>
 
-  <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+  <% landing_body_class = "pc-domain-landing" if @node&.slug == "posturacorretta" && @posturacorretta_landing %>
+  <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans <%= landing_body_class %>">
     <% nav_brand = @navigation_domain&.site_title.presence || @navigation_domain&.display_hostname.presence || @navigation_root_node&.title.presence || "Flowpulse" %>
     <%
       nav_siblings = Array(@siblings)
@@ -85,13 +86,12 @@
 
         <%= link_to public_node_domain_home_path, class: "flex min-w-0 flex-shrink-0 items-center gap-2", aria: { label: "#{nav_brand} · Home" } do %>
           <% if @navigation_domain&.logo_full_url.present? %>
-            <%= image_tag @navigation_domain.logo_full_url, alt: nav_brand, class: "hidden h-10 max-w-[190px] object-contain sm:block" %>
+            <%= image_tag @navigation_domain.logo_full_url, alt: nav_brand, class: "block h-8 w-auto max-w-[138px] object-contain object-left sm:h-10 sm:max-w-[190px]" %>
           <% elsif @navigation_domain&.logo_square_url.present? %>
-            <%= image_tag @navigation_domain.logo_square_url, alt: nav_brand, class: "hidden h-10 w-10 object-contain sm:block" %>
+            <%= image_tag @navigation_domain.logo_square_url, alt: nav_brand, class: "block h-8 w-8 object-contain sm:h-10 sm:w-10" %>
           <% else %>
-            <span class="hidden text-lg font-black tracking-tight text-slate-950 sm:block"><%= nav_brand %></span>
+            <span class="max-w-36 truncate text-base font-black tracking-tight text-slate-950 sm:max-w-none sm:text-lg"><%= nav_brand %></span>
           <% end %>
-          <span class="max-w-36 truncate text-base font-black tracking-tight text-slate-950 sm:hidden"><%= nav_brand %></span>
         <% end %>
 
         <div class="ml-4 hidden min-w-0 flex-1 items-center gap-1 lg:flex" <%= "hidden" unless content_for?(:public_node_navigation) %>>
@@ -218,11 +218,13 @@
         <%= yield %>
       </main>
 
-      <%= render "nodes/reading_nav",
-        previous_sibling: @previous_sibling,
-        parent_node: @parent_node,
-        first_child: @children&.first,
-        next_sibling: @next_sibling %>
+      <% unless content_for?(:hide_node_reading_nav) %>
+        <%= render "nodes/reading_nav",
+          previous_sibling: @previous_sibling,
+          parent_node: @parent_node,
+          first_child: @children&.first,
+          next_sibling: @next_sibling %>
+      <% end %>
     </div>
 
 

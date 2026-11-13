@@ -1,7 +1,22 @@
 default: &default
+  removed_slugs:
+    - accesso-area-massaggio-da-postura-e-fisiologia
+    - accesso-area-massaggio-da-prima-settimana
+    - lezione-1-inizia-con-posturacorretta
+    - programma-area-massaggio-recupero
+    - programma-igiene-posturale
+    - programma-principi-di-fisioterapia
+    - programma-biomeccanica-comportamentale-gds
+    - programma-principi-di-osteopatia
+    - programma-introduzione-corpo-e-coscienza
+    - programma-introduzione-kinesiologia-applicata
+    - programma-altre-metodiche-posturali
+    - altre-metodiche-posturali-sintesi-percorso
+    - area-massaggio-orientarsi
   nodes:
     markpostura:
       title: MarkPostura
+      lane_container: true
       node_type: professional
       owner_username: markpostura
       primary_profile_username: markpostura
@@ -10,6 +25,7 @@ default: &default
 
     flowpulse:
       title: Flowpulse
+      lane_container: true
       description: Piattaforma trasversale che ospita, collega e rende percorribili Brand, linee di apprendimento, servizi ed esperienze.
       node_type: project
       parent_slug: markpostura
@@ -19,6 +35,7 @@ default: &default
 
     rails4business:
       title: Rails4Business
+      lane_container: true
       map_color: "#F59E0B"
       description: Mondo dedicato alla scoperta del potenziale, alla gestione delle risorse e alla costruzione di processi riutilizzabili.
       node_type: project
@@ -26,12 +43,17 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": 95.0
 
     posturacorretta:
       title: PosturaCorretta
+      lane_container: true
       map_color: "#2563EB"
       node_type: project
-      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
+      parent_slug: markpostura
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -43,93 +65,240 @@ default: &default
           - key: home
             label: Home
             home: true
+          - key: problema
+            path: /posturacorretta#inizia
+            label: Percorso
           - key: servizi
             label: Servizi
             group: true
             children:
-              - slug: apprendimento-1-espressione
-                label: Postura e fisiologia
-              - slug: apprendimento-2-connessione
-                label: Consapevolezza
-              - slug: metodiche-posturali
-                label: Metodiche posturali
-              - slug: categorie-generali
-                label: Attività settimanali
-              - slug: categorie-specifiche
-                label: Corsi mirati
-          - key: ecosistema
-            label: Ecosistema
-            group: true
-            children:
-              - slug: stato-di-salute
-                label: Stato di Salute
-              - slug: percorso-integrato
-                label: Percorso Integrato
-              - slug: dalla-posturacorretta-al-giardino-del-corpo
-                label: Dalla PosturaCorretta al Giardino del Corpo
+              - key: percorsi
+                path: /posturacorretta#problema
+                label: Voglio risolvere un problema
+              - key: orientamento
+                path: /posturacorretta#servizi
+                label: Servizi e pacchetti
+              - key: metodiche
+                path: /posturacorretta#consapevolezza
+                label: Consapevolezza e metodiche
+              - key: rete
+                path: /posturacorretta#diventa-insegnante
+                label: Diventa insegnante
+              - key: oltre-la-postura
+                path: /posturacorretta#giardino
+                label: Il Giardino del Corpo
           - key: vecchio-menu
-            label: Vecchio menu
+            label: Percorso online
             path: /percorso-posturacorretta
             audience: superadmin
+      map_placements:
+        posturacorretta.org:
+          x: 0.0
+          "y": 0.0
 
     stato-di-salute:
       title: Stato di Salute
+      lane_container: true
       map_color: "#0F766E"
       node_type: project
-      parent_slug: markpostura
+      parent_slug: inizia-percorso-integrato
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     dalla-posturacorretta-al-giardino-del-corpo:
-      title: Dalla PosturaCorretta al Giardino del Corpo
+      title: Educazione 3 · Connessione dalla PosturaCorretta al Giardino del Corpo
+      lane_container: true
       map_color: "#7C3AED"
       description: Linea di apprendimento che parte dalla conoscenza della postura e conduce alla scoperta e alla connessione con il corpo, le persone e l'ambiente.
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: posturacorretta
+      position: 4
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 238.0
+          "y": -95.0
 
     percorso-integrato:
       title: Percorso Integrato
+      lane_container: true
       map_color: "#E11D48"
       description: Percorsi coordinati per orientare bisogni, programmi, professionisti e verifiche nella salute e nel benessere.
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: markpostura
       professional_owner_slug: markpostura
       status: published
       visibility: public
       operator_roles:
         - professionista
         - segreteria
+      map_placements:
+        posturacorretta.org:
+          x: -340.0
+          "y": 0.0
+
+    professionisti-salute-patologie-sintomi:
+      title: Professionisti della salute · Patologie e sintomi
+      map_color: "#E11D48"
+      node_type: project
+      parent_slug: con-chi-iniziare
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    professionisti-benessere-prevenzione-qualita-vita:
+      title: Professionisti del benessere · Prevenzione e qualità della vita
+      map_color: "#16A34A"
+      node_type: project
+      parent_slug: con-chi-iniziare
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    educazione-alla-salute:
+      title: Insegnanti PosturaCorretta · Educazione alla salute
+      map_color: "#38BDF8"
+      node_type: project
+      parent_slug: con-chi-iniziare
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    paradigmi-scelta-cura:
+      title: Osservazione e metodo scientifico · Paradigmi di scelta della cura
+      description: Orientamento tra dati osservabili, esperienza personale e spettro soggettivo-oggettivo nella scelta della cura.
+      map_color: "#64748B"
+      node_type: project
+      parent_slug: percorso-integrato
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    con-chi-iniziare:
+      title: Con chi iniziare
+      lane_container: true
+      map_color: "#E11D48"
+      node_type: project
+      parent_slug: percorso-integrato
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    linee-guida-percorso-integrato:
+      title: Linee guida per creare un Percorso Integrato
+      description: Indicazioni per osservare la situazione, definire priorità, scegliere risorse e verificare il percorso nel tempo.
+      map_color: "#64748B"
+      node_type: project
+      parent_slug: percorso-integrato
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    inizia-percorso-integrato:
+      title: Inizia il Percorso Integrato
+      map_color: "#64748B"
+      node_type: project
+      parent_slug: percorso-integrato
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    questionario-orientamento-stato-di-salute:
+      title: Questionario di orientamento sullo stato di salute
+      lane_container: true
+      description: Strumento di orientamento che non sostituisce diagnosi, valutazioni o indicazioni professionali.
+      map_color: "#64748B"
+      node_type: project
+      parent_slug: stato-di-salute
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    comuni:
+      title: Comuni
+      description: Contenitore dei Comuni coinvolti nella rete territoriale.
+      map_color: "#16A34A"
+      node_type: project
+      parent_slug: stato-di-salute
+      position: 20
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    centri:
+      title: Centri
+      description: Contenitore dei Centri che offrono servizi e attività sul territorio.
+      map_color: "#16A34A"
+      node_type: project
+      parent_slug: stato-di-salute
+      position: 21
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    professioni:
+      title: Professioni
+      description: Contenitore delle professioni della salute e del benessere.
+      map_color: "#16A34A"
+      node_type: project
+      parent_slug: stato-di-salute
+      position: 22
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    scuole-formazione-professionisti:
+      title: Scuole · Formazione professionisti
+      description: Contenitore delle scuole e dei percorsi di formazione professionale.
+      map_color: "#16A34A"
+      node_type: project
+      parent_slug: stato-di-salute
+      position: 23
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
 
     stop-al-dolore:
       title: Stop al dolore
       map_color: "#DC2626"
       description: Percorso dedicato alla fase acuta, ai sintomi persistenti e all'orientamento verso il professionista più adatto.
       node_type: project
-      parent_slug: percorso-integrato
+      parent_slug: questionario-orientamento-stato-di-salute
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     prevenzione:
-      title: Prevenzione
+      title: Prevenzione e rischi della tua attività principale
       map_color: "#F97316"
       description: Percorso per riconoscere i fattori di rischio, consolidare abitudini utili e prevenire nuove difficoltà.
       node_type: project
-      parent_slug: percorso-integrato
+      parent_slug: stop-al-dolore
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     performance:
-      title: Performance
+      title: Performance e risorse
       map_color: "#EAB308"
       description: Percorso per sviluppare capacità, recupero e qualità del movimento in relazione agli obiettivi personali.
       node_type: project
-      parent_slug: percorso-integrato
+      parent_slug: prevenzione
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -139,95 +308,699 @@ default: &default
       map_color: "#16A34A"
       description: Percorso integrato rivolto al benessere quotidiano, all'equilibrio e alla cura continuativa della persona.
       node_type: project
-      parent_slug: percorso-integrato
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    accesso-posturacorretta-da-percorso-integrato:
-      title: Accesso a PosturaCorretta da Percorso Integrato
-      description: Ponte tecnico che rende PosturaCorretta raggiungibile direttamente da Percorso Integrato.
-      node_type: project
-      view_type: access_bridge
-      parent_slug: percorso-integrato
-      link_node_slug: posturacorretta
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    apprendimento-1-espressione:
-      title: Apprendimento 1 · Espressione — Postura e fisiologia
-      map_color: "#2E1065"
-      description: Educazione alla salute attraverso postura, fisiologia e le cinque aree di esperienza del corpo.
-      node_type: project
-      parent_slug: posturacorretta
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    area-massaggio-terapie-manuali-tecniche-corporee:
-      title: Area Massaggio - terapie manuali e tecniche corporee · Postura, recupero e coscienza corporea
-      map_color: "#2E1065"
-      description: Area dedicata a massaggio, terapie manuali, tecniche corporee, recupero e sviluppo della coscienza corporea.
-      node_type: project
-      parent_slug: apprendimento-1-espressione
+      parent_slug: performance
       position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
-    area-movimento-postura-attivita-motoria:
-      title: Area Movimento · Postura, movimento e attività motoria
-      map_color: "#0F766E"
+    educazione-alla-salute-metodiche-posturali:
+      title: Educazione alla salute con le metodiche posturali
+      map_color: "#38BDF8"
       node_type: project
+      parent_slug: percorso-benessere
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-posturacorretta-da-percorso-integrato:
+      title: Accesso a Postura e fisiologia dall'Educazione alla salute
+      description: Ponte tecnico che collega la sequenza del Percorso Integrato al percorso educativo PosturaCorretta.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: educazione-alla-salute-metodiche-posturali
+      link_node_slug: postura-e-fisiologia
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    introduzione-al-percorso-integrato:
+      title: Introduzione al Percorso Integrato
+      description: Prima lezione, indipendente dalle altre - tre percorsi complementari, il paradigma e il metodo scientifico, il tuo stato di salute e le tre Educazioni.
+      node_type: project
+      view_type: course_lesson
       parent_slug: apprendimento-1-espressione
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 476.0
+          "y": -950.0
+
+    apprendimento-1-espressione:
+      title: Educazione 1 · Come si esprime il corpo
+      lane_container: true
+      map_color: "#38BDF8"
+      description: Educazione alla salute attraverso postura, fisiologia e le cinque aree di esperienza del corpo.
+      node_type: project
+      parent_slug: posturacorretta
       position: 2
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 238.0
+          "y": -570.0
+
+    postura-e-fisiologia:
+      title: Postura e fisiologia
+      lane_container: true
+      map_color: "#38BDF8"
+      description: Percorso dedicato ai sistemi fisiologici e alle cinque aree attraverso cui osservare come il corpo si esprime.
+      node_type: project
+      view_type: course
+      parent_slug: la-prima-settimana-con-posturacorretta
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 816.0
+          "y": -1064.0
+
+    introduzione-postura-e-fisiologia:
+      title: Introduzione a Postura e fisiologia
+      description: Prima lezione del corso Postura e fisiologia - introduce le cinque aree attraverso cui il corpo si esprime.
+      node_type: project
+      view_type: course_lesson
+      parent_slug: postura-e-fisiologia
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 816.0
+          "y": -950.0
+
+    area-massaggio-terapie-manuali-tecniche-corporee:
+      title: Area Massaggio e recupero
+      view_type: course_lesson
+      map_color: "#2E1065"
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
+      description: Area dedicata a massaggio, terapie manuali, tecniche corporee, recupero e sviluppo della coscienza corporea.
+      node_type: project
+      parent_slug: introduzione-postura-e-fisiologia
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -950.0
+
+    valutazione-mobilita-articolare:
+      title: Valutazione della mobilità articolare
+      description: Valutazione orientativa della mobilità articolare prima di iniziare il percorso di Igiene Posturale.
+      node_type: project
+      view_type: assessment
+      parent_slug: posturacorretta
+      position: 6
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -340.0
+          "y": -190.0
+
+    area-movimento-postura-attivita-motoria:
+      title: Area Movimento · Postura, movimento e attività motoria
+      view_type: course_lesson
+      map_color: "#0F766E"
+      node_type: project
+      parent_slug: area-massaggio-terapie-manuali-tecniche-corporee
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -760.0
 
     area-mente-postura-ascolto-consapevolezza:
       title: Area Mente · Postura, ascolto e consapevolezza
+      view_type: course_lesson
       map_color: "#B91C1C"
       node_type: project
-      parent_slug: apprendimento-1-espressione
+      parent_slug: area-movimento-postura-attivita-motoria
       position: 3
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -570.0
 
-    area-alimentazione-postura-nutrimento-fisiologia:
-      title: Area Alimentazione · Postura, nutrimento e fisiologia
-      map_color: "#CA8A04"
+    percorso-salute-nutrire-il-corpo:
+      title: Percorso salute · Nutrire il corpo
+      description: Ingresso dello slot Percorso salute. Nutrire il corpo non è solo cibo - piante, erbe, socialità, stagionalità e ritmi, per capire la tipologia delle persone come in una medicina di gruppo. Da qui partono due linee che si alternano lungo l'anno - Alimentazione e Farmaci.
       node_type: project
-      parent_slug: apprendimento-1-espressione
+      view_type: course_lesson
+      parent_slug: area-mente-postura-ascolto-consapevolezza
       position: 4
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -323.0
+
+    area-alimentazione-postura-nutrimento-fisiologia:
+      title: Area Alimentazione · Postura, nutrimento e fisiologia
+      view_type: course_lesson
+      map_color: "#CA8A04"
+      node_type: project
+      parent_slug: percorso-salute-nutrire-il-corpo
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1156.0
+          "y": -380.0
 
     area-farmaci-postura-regolazione-medicamenti:
       title: Area Farmaci · Postura, regolazione e medicamenti
+      view_type: course_lesson
       map_color: "#2563EB"
       node_type: project
-      parent_slug: apprendimento-1-espressione
+      parent_slug: percorso-salute-nutrire-il-corpo
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1326.0
+          "y": -266.0
+
+    rinforzo-muscolare:
+      title: Rinforzo muscolare
+      node_type: project
+      view_type: course
+      parent_slug: area-movimento-postura-attivita-motoria
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1156.0
+          "y": -760.0
+
+    sequenza-kinesiologia:
+      title: Una sequenza dalla kinesiologia
+      node_type: project
+      view_type: course
+      parent_slug: rinforzo-muscolare
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1326.0
+          "y": -760.0
+
+    cinque-tibetani:
+      title: I cinque tibetani
+      node_type: project
+      view_type: course
+      parent_slug: sequenza-kinesiologia
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1496.0
+          "y": -760.0
+
+    otto-pezzi-di-brocato:
+      title: Gli 8 pezzi di brocato
+      node_type: project
+      view_type: course
+      parent_slug: cinque-tibetani
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1666.0
+          "y": -760.0
+
+    sequenza-yoga:
+      title: Una sequenza dello yoga
+      node_type: project
+      view_type: course
+      parent_slug: otto-pezzi-di-brocato
       position: 5
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1836.0
+          "y": -760.0
+
+    sviluppo-movimento-bambini-dns:
+      title: Lo sviluppo del movimento dei bambini DNS
+      node_type: project
+      view_type: course
+      parent_slug: sequenza-yoga
+      position: 6
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2006.0
+          "y": -760.0
+
+    animal-flow:
+      title: Animal Flow
+      node_type: project
+      view_type: course
+      parent_slug: sviluppo-movimento-bambini-dns
+      position: 7
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2176.0
+          "y": -760.0
+
+    movimenti-arcaici:
+      title: Movimenti arcaici
+      node_type: project
+      view_type: course
+      parent_slug: animal-flow
+      position: 8
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2346.0
+          "y": -760.0
+
+    capoeira:
+      title: La capoeira
+      node_type: project
+      view_type: course
+      parent_slug: movimenti-arcaici
+      position: 9
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2516.0
+          "y": -760.0
+
+    tai-chi:
+      title: Il tai chi
+      node_type: project
+      view_type: course
+      parent_slug: capoeira
+      position: 10
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2686.0
+          "y": -760.0
+
+    morfopsicologia:
+      title: La morfopsicologia
+      node_type: project
+      view_type: course
+      parent_slug: area-mente-postura-ascolto-consapevolezza
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1156.0
+          "y": -570.0
+
+    human-design:
+      title: Human design
+      node_type: project
+      view_type: course
+      parent_slug: morfopsicologia
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1326.0
+          "y": -570.0
+
+    caycedo-sofrologia:
+      title: Caycedo Sofrologia
+      node_type: project
+      view_type: course
+      parent_slug: human-design
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1496.0
+          "y": -570.0
+
+    corso-corpo-e-coscienza:
+      title: Corpo e coscienza
+      node_type: project
+      view_type: course
+      parent_slug: caycedo-sofrologia
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1666.0
+          "y": -570.0
+
+    yoga-nozioni-avanzate:
+      title: "Yoga: nozioni avanzate"
+      node_type: project
+      view_type: course
+      parent_slug: corso-corpo-e-coscienza
+      position: 5
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1836.0
+          "y": -570.0
+
+    su-wen:
+      title: "Su Wen: medicina cinese e fenomenologia"
+      node_type: project
+      view_type: course
+      parent_slug: yoga-nozioni-avanzate
+      position: 6
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2006.0
+          "y": -570.0
+
+    siamo-fatti-di-parole:
+      title: Siamo fatti di parole
+      node_type: project
+      view_type: course
+      parent_slug: su-wen
+      position: 7
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2176.0
+          "y": -570.0
+
+    potere-delle-storie:
+      title: Il potere delle storie
+      node_type: project
+      view_type: course
+      parent_slug: siamo-fatti-di-parole
+      position: 8
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2346.0
+          "y": -570.0
+
+    efficacia-personale:
+      title: Efficacia personale
+      node_type: project
+      view_type: course
+      parent_slug: potere-delle-storie
+      position: 9
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2516.0
+          "y": -570.0
+
+    viaggio-dell-eroe:
+      title: Il viaggio dell'eroe
+      node_type: project
+      view_type: course
+      parent_slug: efficacia-personale
+      position: 10
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2686.0
+          "y": -570.0
+
+    medicina-del-suono:
+      title: La medicina del suono
+      node_type: project
+      view_type: course
+      parent_slug: viaggio-dell-eroe
+      position: 11
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2856.0
+          "y": -570.0
+
+    teatro:
+      title: Il teatro
+      node_type: project
+      view_type: course
+      parent_slug: medicina-del-suono
+      position: 12
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3026.0
+          "y": -570.0
+
+    corso-il-giardino-del-corpo:
+      title: Il giardino del corpo
+      node_type: project
+      view_type: course
+      parent_slug: teatro
+      position: 13
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3196.0
+          "y": -570.0
+
+    bagno-di-foresta:
+      title: Bagno di foresta
+      node_type: project
+      view_type: course
+      parent_slug: corso-il-giardino-del-corpo
+      position: 14
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3366.0
+          "y": -570.0
+
+    viaggio-sonoro:
+      title: Viaggio sonoro
+      node_type: project
+      view_type: course
+      parent_slug: bagno-di-foresta
+      position: 15
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3536.0
+          "y": -570.0
+
+    cosa-stiamo-mangiando:
+      title: Cosa stiamo mangiando?
+      node_type: project
+      view_type: course
+      parent_slug: area-alimentazione-postura-nutrimento-fisiologia
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1496.0
+          "y": -380.0
+
+    cosa-e-il-cibo:
+      title: Cos'è il cibo?
+      node_type: project
+      view_type: course
+      parent_slug: cosa-stiamo-mangiando
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1836.0
+          "y": -380.0
+
+    cibo-viene-dalla-terra:
+      title: Il cibo viene dalla terra
+      node_type: project
+      view_type: course
+      parent_slug: cosa-e-il-cibo
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2176.0
+          "y": -380.0
+
+    cibo-e-industrializzazione:
+      title: Cibo e industrializzazione
+      node_type: project
+      view_type: course
+      parent_slug: cibo-viene-dalla-terra
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2516.0
+          "y": -380.0
+
+    cibo-trasmettere-energia:
+      title: Il cibo come mezzo per trasmettere energia
+      node_type: project
+      view_type: course
+      parent_slug: cibo-e-industrializzazione
+      position: 5
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2856.0
+          "y": -380.0
+
+    medicina-dei-semplici:
+      title: La medicina dei semplici · Dr. Abbiati
+      node_type: project
+      view_type: course
+      parent_slug: area-farmaci-postura-regolazione-medicamenti
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1666.0
+          "y": -266.0
+
+    medicina-mediterranea:
+      title: Medicina mediterranea
+      node_type: project
+      view_type: course
+      parent_slug: medicina-dei-semplici
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2006.0
+          "y": -266.0
+
+    medicina-cinese:
+      title: Medicina cinese
+      node_type: project
+      view_type: course
+      parent_slug: medicina-mediterranea
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2346.0
+          "y": -266.0
+
+    ayurveda:
+      title: Ayurveda
+      node_type: project
+      view_type: course
+      parent_slug: medicina-cinese
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2686.0
+          "y": -266.0
 
     apprendimento-2-connessione:
-      title: Apprendimento 2 · Consapevolezza con le metodiche posturali
+      title: Educazione 2 · Consapevolezza con le metodiche posturali
+      lane_container: true
       map_color: "#4F46E5"
       description: Incontri, pratiche ed esperienze per sviluppare consapevolezza attraverso discipline e metodiche corporee.
       node_type: project
       parent_slug: posturacorretta
+      position: 3
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -238.0
+          "y": 570.0
 
     categorie-generali:
-      title: Attività settimanali
+      title: Attività generali · Servizi settimanali
+      lane_container: true
       description: Attività e incontri ricorrenti per esplorare il movimento, la postura e la consapevolezza nel tempo.
       node_type: project
       parent_slug: apprendimento-2-connessione
@@ -235,9 +1008,14 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -476.0
+          "y": 570.0
 
     categorie-specifiche:
-      title: Corsi mirati
+      title: Attività specifiche · Percorsi mirati
+      lane_container: true
       description: Percorsi focalizzati su condizioni, bisogni, attività e contesti specifici.
       node_type: project
       parent_slug: apprendimento-2-connessione
@@ -245,29 +1023,56 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -476.0
+          "y": 722.0
 
     condizioni-e-patologie:
-      title: Condizioni e patologie
+      title: Condizioni
       description: Corsi educativi organizzati intorno a condizioni, sintomi, prevenzione e bisogni specifici, senza sostituire diagnosi o cure professionali.
       node_type: project
-      parent_slug: categorie-specifiche
+      parent_slug: categorie-generali
       position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -714.0
+          "y": 570.0
+
+    eta:
+      title: Età
+      description: Attività e servizi organizzati in relazione alle diverse fasi della vita.
+      node_type: project
+      parent_slug: categorie-generali
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -884.0
+          "y": 570.0
 
     attivita-e-contesti:
       title: Attività e contesti
       description: Corsi mirati alle attività quotidiane, sportive e professionali e ai diversi contesti in cui viene utilizzato il corpo.
       node_type: project
       parent_slug: categorie-specifiche
-      position: 2
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -714.0
+          "y": 722.0
 
     metodiche-posturali:
       title: Metodiche posturali
+      lane_container: true
       description: Spazio dedicato alla presentazione e all’esplorazione progressiva delle diverse metodiche posturali.
       node_type: project
       parent_slug: apprendimento-2-connessione
@@ -275,6 +1080,11 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -476.0
+          "y": 874.0
+          collapsed: true
 
     fisioterapia:
       title: Fisioterapia
@@ -287,6 +1097,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -714.0
+          "y": 874.0
 
     gds:
       title: Biomeccanica Comportamentale GDS
@@ -299,6 +1113,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -884.0
+          "y": 874.0
 
     osteopatia:
       title: Osteopatia
@@ -311,6 +1129,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -1054.0
+          "y": 874.0
 
     mezieres:
       title: Mézières
@@ -323,6 +1145,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -1224.0
+          "y": 874.0
 
     rpg:
       title: RPG
@@ -335,6 +1161,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -1394.0
+          "y": 874.0
 
     souchard:
       title: Metodo Souchard
@@ -347,6 +1177,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -1564.0
+          "y": 874.0
 
     feldenkrais:
       title: Feldenkrais
@@ -359,6 +1193,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -1734.0
+          "y": 874.0
 
     alexander:
       title: Tecnica Alexander
@@ -371,6 +1209,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -1904.0
+          "y": 874.0
 
     kinesiologia-applicata:
       title: Kinesiologia Applicata
@@ -383,6 +1225,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -2074.0
+          "y": 874.0
 
     bioritmi-corpo-coscienza:
       title: Corpo e Coscienza
@@ -395,6 +1241,10 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -2244.0
+          "y": 874.0
 
     sessanta-movimenti-alla-scrivania:
       title: 60 movimenti alla scrivania
@@ -405,78 +1255,164 @@ default: &default
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -884.0
+          "y": 722.0
 
     la-prima-settimana-con-posturacorretta:
       title: La prima settimana con PosturaCorretta
+      lane_container: true
+      course_key: inizia-con-posturacorretta
+      academy_module_key: introduzione
       map_color: "#2E1065"
       description: Un primo incontro con la postura attraverso una settimana di osservazione, una prima scheda personale, pratica e orientamento.
       node_type: project
-      parent_slug: area-massaggio-terapie-manuali-tecniche-corporee
+      view_type: course_lesson
+      parent_slug: introduzione-al-percorso-integrato
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 646.0
+          "y": -950.0
+
+    accesso-area-movimento-da-prima-settimana:
+      title: Accesso all'Area Movimento da Introduzione a Postura e fisiologia
+      node_type: project
+      view_type: access_bridge
+      parent_slug: introduzione-postura-e-fisiologia
+      link_node_slug: area-movimento-postura-attivita-motoria
+      position: 91
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
-    accesso-posturacorretta-da-prima-settimana:
-      title: Collegamento tra Prima settimana e PosturaCorretta
-      description: Ponte tecnico che rende La prima settimana con PosturaCorretta raggiungibile direttamente da PosturaCorretta.
+    accesso-area-mente-da-prima-settimana:
+      title: Accesso all'Area Mente da Introduzione a Postura e fisiologia
       node_type: project
       view_type: access_bridge
-      parent_slug: la-prima-settimana-con-posturacorretta
-      link_node_slug: posturacorretta
+      parent_slug: introduzione-postura-e-fisiologia
+      link_node_slug: area-mente-postura-ascolto-consapevolezza
+      position: 92
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
     pacchetto-gruppi:
-      title: Pacchetto gruppi
-      description: Proposta dedicata ad aziende, società sportive, associazioni e altri gruppi organizzati.
+      title: Servizi personalizzati
+      description: Servizi e percorsi costruiti sui bisogni della persona, delle aziende e delle associazioni sportive.
       node_type: project
-      parent_slug: la-prima-settimana-con-posturacorretta
+      parent_slug: apprendimento-1-espressione
+      position: 3
+      lane_container: true
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -476.0
+          "y": -570.0
+
+    diventa-insegnante-posturacorretta:
+      title: Diventa insegnante PosturaCorretta
+      description: Percorso professionale dedicato a formazione, pratica personale, tirocinio supervisionato e futura abilitazione.
+      node_type: project
+      lane_container: true
+      parent_slug: posturacorretta
+      position: 5
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -238.0
+          "y": 1045.0
+
+    accesso-percorso-integrato-da-posturacorretta:
+      title: Accesso al Percorso Integrato da PosturaCorretta
+      description: Ponte diretto dalla rete PosturaCorretta al Percorso Integrato.
+      node_type: project
+      view_type: access_bridge
+      parent_slug: posturacorretta
+      link_node_slug: percorso-integrato
+      position: 90
       professional_owner_slug: markpostura
       status: published
       visibility: public
 
+    servizi-personalizzati-individuali:
+      title: Individuali
+      description: Un percorso costruito sui bisogni della persona.
+      node_type: project
+      parent_slug: pacchetto-gruppi
+      position: 1
+      lane_container: true
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -714.0
+          "y": -570.0
+
+    trattamento-singolo:
+      title: Trattamento singolo
+      description: Un singolo trattamento individuale costruito sui bisogni della persona.
+      node_type: project
+      parent_slug: servizi-personalizzati-individuali
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -884.0
+          "y": -570.0
+
+    pacchetto-percorso-singolo:
+      title: Pacchetto percorso
+      description: Un percorso individuale composto da più incontri coordinati.
+      node_type: project
+      parent_slug: servizi-personalizzati-individuali
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -1054.0
+          "y": -570.0
+
+    percorso-aziende-associazioni-sportive:
+      title: Percorso Aziende e associazioni sportive
+      description: Un percorso personalizzato per aziende, associazioni e società sportive.
+      node_type: project
+      parent_slug: pacchetto-gruppi
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: -714.0
+          "y": -418.0
+
     ilgiardinodelcorpo:
-      title: Apprendimento 3 · Connessione — Il Giardino del Corpo
+      title: Il Giardino del Corpo
+      lane_container: true
       map_color: "#7C3AED"
       node_type: project
       parent_slug: dalla-posturacorretta-al-giardino-del-corpo
       professional_owner_slug: markpostura
       status: published
       visibility: public
-
-    accesso-stato-di-salute-da-posturacorretta:
-      title: Accesso a Stato di Salute da PosturaCorretta
-      description: Ponte visibile da PosturaCorretta verso Stato di Salute, ma non nella direzione opposta.
-      node_type: project
-      view_type: backlink_bridge
-      parent_slug: stato-di-salute
-      link_node_slug: posturacorretta
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    accesso-stato-di-salute-da-giardino-del-corpo:
-      title: Accesso a Stato di Salute dal Giardino del Corpo
-      description: Ponte visibile dal Giardino del Corpo verso Stato di Salute, ma non nella direzione opposta.
-      node_type: project
-      view_type: backlink_bridge
-      parent_slug: stato-di-salute
-      link_node_slug: ilgiardinodelcorpo
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    accesso-percorso-integrato-da-linea-postura-giardino:
-      title: Collegamento tra la linea narrativa e Percorso Integrato
-      description: Ponte tecnico reciproco tra la linea Dalla PosturaCorretta al Giardino del Corpo e Percorso Integrato.
-      node_type: project
-      view_type: access_bridge
-      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
-      link_node_slug: percorso-integrato
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -95.0
 
     insideadventure:
       title: Inside Adventure
@@ -488,6 +1424,7 @@ default: &default
 
     corpoecoscienza:
       title: Corpo e Coscienza
+      lane_container: true
       node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
@@ -499,6 +1436,7 @@ default: &default
 
     cantachetipassa:
       title: Canta che ti passa
+      lane_container: true
       node_type: project
       parent_slug: markpostura
       professional_owner_slug: markpostura
@@ -510,6 +1448,7 @@ default: &default
 
     generaimpresa:
       title: GeneraImpresa
+      lane_container: true
       description: Mondo nel quale idee e bisogni diventano progetti da definire, sviluppare e realizzare.
       node_type: project
       parent_slug: markpostura
@@ -519,6 +1458,7 @@ default: &default
 
     impegno:
       title: 1Impegno
+      lane_container: true
       description: Mondo operativo per organizzare impegni e risorse attraverso calendari, eventi ed esperienze.
       node_type: project
       parent_slug: markpostura
@@ -543,6 +1483,7 @@ default: &default
 
     igieneposturale:
       title: IgienePosturale.it
+      lane_container: true
       map_color: "#2563EB"
       description: Landing pubblica del dominio igieneposturale.it, collegata al corso didattico ospitato in PosturaCorretta.
       node_type: project
@@ -553,25 +1494,23 @@ default: &default
 
     igiene-posturale:
       title: Igiene Posturale
+      lane_container: true
       description: Corso di PosturaCorretta dedicato alle basi dell'igiene posturale e alla pratica quotidiana.
       node_type: project
       view_type: course
-      parent_slug: la-prima-settimana-con-posturacorretta
-      position: 1
+      academy_module_key: igiene-posturale
+      program_course_key: igiene-posturale
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
+      parent_slug: area-massaggio-terapie-manuali-tecniche-corporee
+      position: 2
       professional_owner_slug: markpostura
       status: published
       visibility: public
-
-    programma-igiene-posturale:
-      title: Programma · Igiene Posturale
-      description: Capitoli, concetti e materiali del corso Igiene Posturale.
-      node_type: project
-      view_type: program
-      parent_slug: igiene-posturale
-      position: 1
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1156.0
+          "y": -1064.0
 
     accesso-corso-igiene-posturale-da-landing:
       title: Accesso al corso Igiene Posturale dalla landing
@@ -584,107 +1523,201 @@ default: &default
       status: published
       visibility: public
 
+    igiene-posturale-introduzione:
+      title: Introduzione all'Igiene Posturale
+      description: Lezione introduttiva del corso Igiene Posturale.
+      node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
+      parent_slug: igiene-posturale
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1156.0
+          "y": -950.0
+
     igiene-posturale-mobilita-articolare:
       title: Mobilità articolare
       node_type: project
-      parent_slug: programma-igiene-posturale
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
+      parent_slug: igiene-posturale-introduzione
       position: 7
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1326.0
+          "y": -950.0
 
     igiene-posturale-punti-di-tensione:
       title: Punti di tensione
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
       parent_slug: igiene-posturale-mobilita-articolare
       position: 8
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1496.0
+          "y": -950.0
 
     igiene-posturale-vie-di-discesa:
       title: Vie di discesa
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
       parent_slug: igiene-posturale-punti-di-tensione
       position: 9
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1666.0
+          "y": -950.0
 
     igiene-posturale-recettori-sensoriali:
       title: Recettori sensoriali
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [igiene-posturale, area-massaggio-recupero]
       parent_slug: igiene-posturale-vie-di-discesa
       position: 10
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 1836.0
+          "y": -950.0
 
     principi-di-fisioterapia:
-      title: Primo incontro con la Fisioterapia
+      title: Principi di Fisioterapia
+      lane_container: true
       node_type: project
       view_type: course
-      parent_slug: igiene-posturale
-      position: 11
+      academy_module_key: principi-di-fisioterapia
+      program_course_key: principi-di-fisioterapia
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: igiene-posturale-recettori-sensoriali
+      position: 3
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2006.0
+          "y": -1064.0
 
-    programma-principi-di-fisioterapia:
-      title: Programma · Principi di Fisioterapia
-      description: Capitoli, sistemi e approfondimenti del corso Principi di Fisioterapia.
+    principi-di-fisioterapia-introduzione-riabilitazione-sistemi:
+      title: Fisioterapia, riabilitazione e cinque sistemi fisiologici
       node_type: project
-      view_type: program
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-fisioterapia
-      position: 1
+      position: 10
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2006.0
+          "y": -950.0
 
     principi-di-fisioterapia-sistema-respiratorio:
       title: Sistema respiratorio
       node_type: project
-      parent_slug: programma-principi-di-fisioterapia
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: principi-di-fisioterapia-introduzione-riabilitazione-sistemi
       position: 11
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2176.0
+          "y": -950.0
 
     principi-di-fisioterapia-sistema-nervoso-urogenitale:
       title: Sistema nervoso e urogenitale
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-fisioterapia-sistema-respiratorio
       position: 12
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2346.0
+          "y": -950.0
 
     principi-di-fisioterapia-sistema-muscolo-scheletrico:
       title: Sistema muscolo-scheletrico
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-fisioterapia-sistema-nervoso-urogenitale
       position: 13
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2516.0
+          "y": -950.0
 
     principi-di-fisioterapia-sistema-cardiocircolatorio:
       title: Sistema cardiocircolatorio
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-fisioterapia-sistema-muscolo-scheletrico
       position: 14
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2686.0
+          "y": -950.0
 
     principi-di-fisioterapia-sistema-linfatico-digerente:
       title: Sistema linfatico e digerente
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-fisioterapia-sistema-cardiocircolatorio
       position: 15
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 2856.0
+          "y": -950.0
 
     principi-di-fisioterapia-approfondimento-fisioterapia:
       title: Scopri di più sulla Fisioterapia
@@ -692,83 +1725,127 @@ default: &default
       parent_slug: principi-di-fisioterapia-sistema-linfatico-digerente
       position: 16
       professional_owner_slug: markpostura
-      status: published
-      visibility: public
+      status: draft
+      visibility: private
+      map_placements:
+        posturacorretta.org:
+          x: 2856.0
+          "y": -1064.0
 
     biomeccanica-comportamentale-gds:
-      title: Primo incontro con la GDS
+      title: Introduzione alla biomeccanica comportamentale (GDS)
+      lane_container: true
       node_type: project
       view_type: course
-      parent_slug: principi-di-fisioterapia
-      position: 17
+      academy_module_key: biomeccanica-comportamentale-gds
+      program_course_key: biomeccanica-comportamentale-gds
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: principi-di-fisioterapia-sistema-linfatico-digerente
+      position: 4
       professional_owner_slug: markpostura
       status: published
       visibility: public
-
-    programma-biomeccanica-comportamentale-gds:
-      title: Programma · Biomeccanica comportamentale (GDS)
-      description: Capitoli, catene e approfondimenti del corso di Biomeccanica comportamentale GDS.
-      node_type: project
-      view_type: program
-      parent_slug: biomeccanica-comportamentale-gds
-      position: 1
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3026.0
+          "y": -1064.0
 
     biomeccanica-comportamentale-gds-cinque-direzioni-movimento:
       title: Le 5 direzioni di movimento
       node_type: project
-      parent_slug: programma-biomeccanica-comportamentale-gds
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: biomeccanica-comportamentale-gds
       position: 17
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3026.0
+          "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-am:
       title: Catena AM
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: biomeccanica-comportamentale-gds-cinque-direzioni-movimento
       position: 18
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3196.0
+          "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-al:
       title: Catena AL
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: biomeccanica-comportamentale-gds-catena-am
       position: 19
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3366.0
+          "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-pm:
       title: Catena PM
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: biomeccanica-comportamentale-gds-catena-al
       position: 20
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3536.0
+          "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-pl:
       title: Catena PL
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: biomeccanica-comportamentale-gds-catena-pm
       position: 21
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3706.0
+          "y": -950.0
 
     biomeccanica-comportamentale-gds-catene-pa-ap:
       title: Catene PA/AP
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: biomeccanica-comportamentale-gds-catena-pl
       position: 22
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 3876.0
+          "y": -950.0
 
     biomeccanica-comportamentale-gds-approfondimento-gds:
       title: Scopri di più sulla metodica GDS
@@ -776,158 +1853,257 @@ default: &default
       parent_slug: biomeccanica-comportamentale-gds-catene-pa-ap
       position: 23
       professional_owner_slug: markpostura
-      status: published
-      visibility: public
+      status: draft
+      visibility: private
+      map_placements:
+        posturacorretta.org:
+          x: 3876.0
+          "y": -1064.0
 
     principi-di-osteopatia:
-      title: Primo incontro con l’Osteopatia
+      title: Principi di Osteopatia
+      lane_container: true
       node_type: project
       view_type: course
-      parent_slug: biomeccanica-comportamentale-gds
-      position: 24
+      academy_module_key: principi-di-osteopatia
+      program_course_key: principi-di-osteopatia
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: biomeccanica-comportamentale-gds-catene-pa-ap
+      position: 5
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 4046.0
+          "y": -1064.0
 
-    programma-principi-di-osteopatia:
-      title: Programma · Principi di Osteopatia
-      description: Capitoli, sistemi e approfondimenti del corso Principi di Osteopatia.
+    principi-di-osteopatia-disfunzioni-cosa-sono:
+      title: "Osteopatia e disfunzioni: che cosa sono?"
+      legacy_slugs:
+        - principi-di-osteopatia-eliminare-disfunzioni
       node_type: project
-      view_type: program
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-osteopatia
-      position: 1
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    principi-di-osteopatia-eliminare-disfunzioni:
-      title: Eliminare le disfunzioni
-      node_type: project
-      parent_slug: programma-principi-di-osteopatia
       position: 24
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 4046.0
+          "y": -950.0
 
     principi-di-osteopatia-sistema-fasciale:
       title: Il sistema fasciale
       node_type: project
-      parent_slug: principi-di-osteopatia-eliminare-disfunzioni
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: principi-di-osteopatia-disfunzioni-cosa-sono
       position: 25
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 4216.0
+          "y": -950.0
 
     principi-di-osteopatia-sistema-viscerale:
       title: Il sistema viscerale
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-osteopatia-sistema-fasciale
       position: 26
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 4386.0
+          "y": -950.0
 
     principi-di-osteopatia-sistema-cranio-sacrale:
       title: Il sistema cranio-sacrale
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-osteopatia-sistema-viscerale
       position: 27
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 4556.0
+          "y": -950.0
 
     principi-di-osteopatia-sistema-neurovegetativo:
-      title: Il sistema neurovegetativo
+      title: Il sistema neurovegetativo e il nervo vago
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-osteopatia-sistema-cranio-sacrale
       position: 28
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 4726.0
+          "y": -950.0
 
-    principi-di-osteopatia-approfondimento-osteopatia:
-      title: Scopri di più sull'Osteopatia
+    principi-di-osteopatia-introduzione-pnei:
+      title: Introduzione alla PNEI · Corpo, emozioni e sistemi di regolazione
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: principi-di-osteopatia-sistema-neurovegetativo
       position: 29
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 4896.0
+          "y": -950.0
 
-    introduzione-al-metodo-corpo-e-coscienza:
-      title: Primo incontro con Corpo e Coscienza
+    principi-di-osteopatia-approfondimento-osteopatia:
+      title: Scopri di più sull'Osteopatia
       node_type: project
-      view_type: course
-      parent_slug: principi-di-osteopatia
+      parent_slug: principi-di-osteopatia-introduzione-pnei
       position: 30
       professional_owner_slug: markpostura
-      status: published
-      visibility: public
+      status: draft
+      visibility: private
+      map_placements:
+        posturacorretta.org:
+          x: 4896.0
+          "y": -1064.0
 
-    programma-introduzione-corpo-e-coscienza:
-      title: Programma · Corpo e Coscienza
-      description: Capitoli, principi e approfondimenti del corso Corpo e Coscienza.
+    introduzione-al-metodo-corpo-e-coscienza:
+      title: Introduzione al metodo Corpo e Coscienza
+      lane_container: true
       node_type: project
-      view_type: program
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
-      position: 1
+      view_type: course
+      academy_module_key: introduzione-al-metodo-corpo-e-coscienza
+      program_course_key: introduzione-al-metodo-corpo-e-coscienza
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: principi-di-osteopatia-introduzione-pnei
+      position: 6
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 5066.0
+          "y": -1064.0
 
     introduzione-al-metodo-corpo-e-coscienza-due-circolazioni:
       title: Le 2 circolazioni
       node_type: project
-      parent_slug: programma-introduzione-corpo-e-coscienza
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza
       position: 30
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 5066.0
+          "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita:
       title: I 3 centri di gravità
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: introduzione-al-metodo-corpo-e-coscienza-due-circolazioni
       position: 31
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 5236.0
+          "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento:
       title: I 4 tipi di movimento
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita
       position: 32
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 5406.0
+          "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-cinque-elementi:
       title: I 5 elementi
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento
       position: 33
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 5576.0
+          "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani:
       title: Le 6 coppie di meridiani
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: introduzione-al-metodo-corpo-e-coscienza-cinque-elementi
       position: 34
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 5746.0
+          "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici:
       title: I 7 centri neurolinfatici
       node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
       parent_slug: introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani
       position: 35
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 5916.0
+          "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-approfondimento-corpo-coscienza:
       title: Scopri di più su Corpo e Coscienza
@@ -935,29 +2111,69 @@ default: &default
       parent_slug: introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici
       position: 36
       professional_owner_slug: markpostura
-      status: published
-      visibility: public
+      status: draft
+      visibility: private
+      map_placements:
+        posturacorretta.org:
+          x: 5916.0
+          "y": -1064.0
 
-    primo-incontro-kinesiologia-applicata:
-      title: Primo incontro con la Kinesiologia Applicata
+    introduzione-alla-kinesiologia-applicata:
+      title: Introduzione alla Kinesiologia Applicata
+      legacy_slugs:
+        - primo-incontro-kinesiologia-applicata
+      lane_container: true
       description: Un assaggio educativo dei principi della Kinesiologia Applicata nel percorso PosturaCorretta.
       node_type: project
       view_type: course
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
-      position: 37
+      academy_module_key: altre-metodiche-posturali
+      program_course_key: introduzione-alla-kinesiologia-applicata
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici
+      position: 7
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 6086.0
+          "y": -1064.0
+
+    introduzione-kinesiologia-sequenza:
+      title: Sequenza di Kinesiologia Applicata
+      node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: introduzione-alla-kinesiologia-applicata
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 6086.0
+          "y": -950.0
 
     altre-metodiche-posturali:
       title: Altre metodiche posturali
+      lane_container: true
       node_type: project
       view_type: course
-      parent_slug: primo-incontro-kinesiologia-applicata
-      position: 38
+      academy_module_key: altre-metodiche-posturali
+      program_course_key: altre-metodiche-posturali
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: introduzione-kinesiologia-sequenza
+      position: 8
       professional_owner_slug: markpostura
       status: published
       visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 6256.0
+          "y": -950.0
 
     accesso-fisioterapia-da-primo-incontro:
       title: Collegamento tra Fisioterapia e primo incontro
@@ -1008,11 +2224,11 @@ default: &default
       visibility: public
 
     accesso-kinesiologia-da-primo-incontro:
-      title: Collegamento tra Kinesiologia Applicata e primo incontro
+      title: Collegamento tra Kinesiologia Applicata e il corso introduttivo
       description: Ponte tecnico tra la metodica Kinesiologia Applicata e il relativo assaggio educativo PosturaCorretta.
       node_type: project
       view_type: access_bridge
-      parent_slug: primo-incontro-kinesiologia-applicata
+      parent_slug: introduzione-alla-kinesiologia-applicata
       link_node_slug: kinesiologia-applicata
       position: 99
       professional_owner_slug: markpostura

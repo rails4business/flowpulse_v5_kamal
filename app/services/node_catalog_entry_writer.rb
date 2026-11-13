@@ -6,6 +6,22 @@ class NodeCatalogEntryWriter
     @path = Pathname(path)
   end
 
+  def self.delete!(slug, path: PATH)
+    raise "Editor catalogo Node non abilitato" unless NodeCatalogEditor.enabled?
+
+    path = Pathname(path)
+    source = path.read
+    pattern = /^    #{Regexp.escape(slug)}:\n.*?(?=^    [a-z0-9][a-z0-9-]*:\n|^development:|\z)/m
+    updated = source.sub(pattern, "")
+    unless updated.match?(/^  removed_slugs:\n(?:    - .*\n)*    - #{Regexp.escape(slug)}$/)
+      updated.sub!(/^  removed_slugs:\n/, "  removed_slugs:\n    - #{slug}\n")
+    end
+    raise "Impossibile rimuovere #{slug} da config/nodes.yml" if updated == source
+
+    path.write(updated)
+    path
+  end
+
   def write!
     raise "Editor catalogo Node non abilitato" unless NodeCatalogEditor.enabled?
 
@@ -43,6 +59,9 @@ class NodeCatalogEntryWriter
       "parent_slug" => node.parent&.slug,
       "position" => node.position,
       "map_color" => node.map_color.presence,
+      "lane_container" => node.lane_container_before_type_cast ? true : nil,
+      "line_slugs" => node.line_slugs.presence,
+      "offer_slugs" => node.offer_slugs.presence,
       "professional_owner_slug" => node.professional_owner_node&.slug,
       "status" => node.status,
       "visibility" => node.visibility,

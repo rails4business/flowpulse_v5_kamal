@@ -66,6 +66,50 @@ class Flowpulse::NetworkControllerTest < ActionDispatch::IntegrationTest
     assert_select "th[scope='row'] a", text: "Brand Personale", count: 0
   end
 
+  test "lane network starts from a domain and exposes progressive columns" do
+    child = Node.create!(
+      role_assignment: @owner_role,
+      parent: @project,
+      title: "Corso nella corsia",
+      slug: "network-lane-course",
+      node_type: :project,
+      status: "published"
+    )
+
+    get flowpulse_network_lanes_url(@project.slug, vista: "brand")
+
+    assert_response :success
+    assert_select "[data-controller='node-lanes'][data-node-lanes-selected-value='#{@project.slug}']", count: 1
+    assert_select "[data-controller='node-lanes'][data-node-lanes-open-value='']", count: 1
+    assert_select "svg[data-node-lanes-target='connections']", count: 1
+    assert_select "select[data-node-lanes-target='domainSelect'] option[value='#{@project.slug}'][selected]", count: 1
+    assert_includes response.body, child.title
+    assert_not_includes response.body, @professional.title
+    assert_select "a[href='#{flowpulse_automatic_network_node_path("all", @project.slug, vista: "brand")}']", text: "Centralità"
+  end
+
+  test "lane network canonicalizes its root and preserves open containers" do
+    get flowpulse_network_lanes_root_url(vista: "brand")
+
+    assert_response :redirect
+    assert_match %r{/flowpulse/rete/globale/corsie/[^?]+\?vista=brand}, response.location
+
+    get flowpulse_network_lanes_url(@project.slug, vista: "brand", corsie: @project.slug)
+
+    assert_response :success
+    assert_select "[data-controller='node-lanes'][data-node-lanes-open-value='#{@project.slug}']", count: 1
+    assert_includes response.body, "parent_id"
+  end
+
+  test "professional lanes do not mix project nodes" do
+    get flowpulse_network_lanes_url(@professional.slug, vista: "professional")
+
+    assert_response :success
+    assert_includes response.body, @professional.title
+    assert_not_includes response.body, @project.title
+    assert_select "a[href='#{flowpulse_automatic_network_node_path("all", @professional.slug, vista: "professional")}']", text: "Centralità"
+  end
+
   test "professional directory lists professional brands and opens their focused graph" do
     sign_in(@owner)
 

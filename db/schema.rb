@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_090100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_12_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -364,6 +364,46 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_090100) do
     t.index ["profile_id"], name: "index_impegno_places_on_profile_id"
   end
 
+  create_table "metro_lines", force: :cascade do |t|
+    t.bigint "domain_id", null: false
+    t.bigint "start_node_id", null: false
+    t.bigint "end_node_id", null: false
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "status", default: "draft", null: false
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "station_node_ids", default: [], null: false, array: true
+    t.index ["domain_id"], name: "index_metro_lines_on_domain_id"
+    t.index ["end_node_id"], name: "index_metro_lines_on_end_node_id"
+    t.index ["slug"], name: "index_metro_lines_on_slug", unique: true
+    t.index ["start_node_id"], name: "index_metro_lines_on_start_node_id"
+  end
+
+  create_table "metro_map_placements", force: :cascade do |t|
+    t.bigint "metro_map_id", null: false
+    t.bigint "node_id", null: false
+    t.float "x", null: false
+    t.float "y", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "collapsed", default: false, null: false
+    t.index ["metro_map_id", "node_id"], name: "index_metro_map_placements_on_metro_map_id_and_node_id", unique: true
+    t.index ["metro_map_id"], name: "index_metro_map_placements_on_metro_map_id"
+    t.index ["node_id"], name: "index_metro_map_placements_on_node_id"
+  end
+
+  create_table "metro_maps", force: :cascade do |t|
+    t.bigint "domain_id", null: false
+    t.string "title", null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain_id"], name: "index_metro_maps_on_domain_id", unique: true
+  end
+
   create_table "node_contents", force: :cascade do |t|
     t.bigint "node_id", null: false
     t.text "body_html"
@@ -450,14 +490,41 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_090100) do
     t.integer "node_type", default: 1, null: false
     t.string "map_color"
     t.jsonb "navigation"
+    t.boolean "lane_container", default: false, null: false
+    t.string "line_slugs", default: [], null: false, array: true
+    t.string "offer_slugs", default: [], null: false, array: true
+    t.index ["lane_container"], name: "index_nodes_on_lane_container"
+    t.index ["line_slugs"], name: "index_nodes_on_line_slugs", using: :gin
     t.index ["link_node_id"], name: "index_nodes_on_link_node_id"
     t.index ["node_type"], name: "index_nodes_on_node_type"
+    t.index ["offer_slugs"], name: "index_nodes_on_offer_slugs", using: :gin
     t.index ["parent_id"], name: "index_nodes_on_parent_id"
     t.index ["professional_owner_node_id"], name: "index_nodes_on_professional_owner_node_id"
     t.index ["role_assignment_id"], name: "index_nodes_on_role_assignment_id"
     t.index ["status"], name: "index_nodes_on_status"
     t.index ["view_type"], name: "index_nodes_on_view_type"
     t.index ["visibility"], name: "index_nodes_on_visibility"
+  end
+
+  create_table "offers", force: :cascade do |t|
+    t.bigint "metro_line_id", null: false
+    t.bigint "start_node_id", null: false
+    t.bigint "end_node_id", null: false
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "status", default: "draft", null: false
+    t.string "previous_purchase_mode", default: "none", null: false
+    t.string "included_offer_slugs", default: [], null: false, array: true
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "discount_percent", precision: 5, scale: 2
+    t.index ["end_node_id"], name: "index_offers_on_end_node_id"
+    t.index ["included_offer_slugs"], name: "index_offers_on_included_offer_slugs", using: :gin
+    t.index ["metro_line_id"], name: "index_offers_on_metro_line_id"
+    t.index ["slug"], name: "index_offers_on_slug", unique: true
+    t.index ["start_node_id"], name: "index_offers_on_start_node_id"
   end
 
   create_table "password_reset_requests", force: :cascade do |t|
@@ -786,6 +853,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_090100) do
   add_foreign_key "impegno_contacts", "profiles"
   add_foreign_key "impegno_places", "domains"
   add_foreign_key "impegno_places", "profiles"
+  add_foreign_key "metro_lines", "domains"
+  add_foreign_key "metro_lines", "nodes", column: "end_node_id"
+  add_foreign_key "metro_lines", "nodes", column: "start_node_id"
+  add_foreign_key "metro_map_placements", "metro_maps"
+  add_foreign_key "metro_map_placements", "nodes"
+  add_foreign_key "metro_maps", "domains"
   add_foreign_key "node_contents", "nodes"
   add_foreign_key "node_events", "nodes"
   add_foreign_key "node_events", "users", column: "performed_by_user_id"
@@ -798,6 +871,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_090100) do
   add_foreign_key "nodes", "nodes", column: "parent_id"
   add_foreign_key "nodes", "nodes", column: "professional_owner_node_id"
   add_foreign_key "nodes", "role_assignments"
+  add_foreign_key "offers", "metro_lines"
+  add_foreign_key "offers", "nodes", column: "end_node_id"
+  add_foreign_key "offers", "nodes", column: "start_node_id"
   add_foreign_key "password_reset_requests", "users"
   add_foreign_key "posturacorretta_directory_people", "domains"
   add_foreign_key "posturacorretta_directory_people", "profiles"

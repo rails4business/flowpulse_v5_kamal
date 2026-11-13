@@ -1,0 +1,26 @@
+default: &default
+  maps:
+    posturacorretta.org:
+      title: Metropolitana posturacorretta.org
+      status: draft
+      # Tabella delle lezioni: sessioni sulle colonne, slot sulle righe (coordinate della mappa).
+      grid:
+        column_label: Sessione
+        first_x: 476
+        column_step: 170
+        rows:
+          - { y: -950, label: "Slot 1 · Massaggio e recupero" }
+          - { y: -760, label: "Slot 2 · Movimento" }
+          - { y: -570, label: "Slot 3 · Meditazione e consapevolezza" }
+          - { y: -323, label: "Slot 4 · Percorso salute" }
+          - { y: -95, label: "Slot 5 · Giardino del Corpo" }
+          - { y: 95, label: "Slot 6 · Rails4Business" }
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

@@ -6,19 +6,32 @@ module Brands
       get percorso_integrato_path
 
       assert_response :success
-      assert_select "h1", text: "Costruisci e migliora il tuo percorso, un passo alla volta."
+      assert_select "h1", text: "Il tuo percorso di salute, tre competenze che collaborano"
       assert_select "nav[aria-label='Navigazione Percorso Integrato']"
       assert_select "details.pi-mobile-menu summary[aria-label='Apri il menu di Percorso Integrato']", text: /Menu/
       assert_select "nav[aria-label='Navigazione mobile Percorso Integrato']" do
         assert_select "a[href='#{percorso_integrato_path}']", text: "Home"
-        assert_select "a[href='#{percorso_integrato_path(anchor: "ruoli")}']", text: "Chi partecipa"
+        assert_select "a[href='#{percorso_integrato_model_path}']", text: "Modello esteso"
+        assert_select "a[href='#{percorso_integrato_model_path(anchor: "ruoli")}']", text: "Chi partecipa"
         assert_select "a[href='#{percorso_integrato_path(anchor: "inizia")}']", text: "Inizia"
       end
       assert_select "header img[src*='percorso_integrato_vecchio.png']"
       assert_select "nav[aria-label='Navigazione Percorso Integrato'] a", text: "Docs"
-      assert_select "a[href='#{percorso_integrato_docs_path}']", text: "Apri le Docs"
-      assert_select "a.pi-button.pi-button--primary", minimum: 3
-      assert_select "a.pi-button.pi-button--secondary", text: "Apri le Docs"
+      assert_select "#tre-campi", text: /Cura delle patologie.*Benessere.*Educazione PosturaCorretta/m
+      assert_select "main", text: /Non è lo strumento a fare la differenza/
+      assert_select "a[href='#{percorso_integrato_model_path}']", text: /Apri il modello esteso/
+      assert_select "#come-funziona", count: 0
+      assert_select "#percorso", count: 0
+      assert_select "#inizia"
+      assert_select "a[href^='https://wa.me/393792891488']", text: "Scrivi su WhatsApp"
+    end
+
+    test "keeps the complete framework in a separate advanced model" do
+      get percorso_integrato_model_path
+
+      assert_response :success
+      assert_select "h1", text: "Il modello esteso del Percorso Integrato"
+      assert_select "a[href='#{percorso_integrato_path}']", text: /Torna al modello essenziale/
       assert_select "#come-funziona"
       assert_select "#presa-in-carico", text: /un professionista apre il primo programma/
       assert_select "#presa-in-carico", text: /consulenze, trattamenti, lavoro individuale o di gruppo, eventi e attività da svolgere in autonomia/

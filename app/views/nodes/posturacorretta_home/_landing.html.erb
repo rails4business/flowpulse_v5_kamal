@@ -1,0 +1,169 @@
+<% prima_linea = Posturacorretta::LandingLine.find("postura-recupero") %>
+<% postura_fisiologia = Posturacorretta::LandingLine.find("postura-fisiologia") %>
+<% sentence = ->(items) { items.to_sentence(words_connector: ", ", two_words_connector: " e ", last_word_connector: " e ") } %>
+
+<div class="pc-landing-home">
+  <section id="inizia" class="pc-hero">
+    <div class="pc-hero__content">
+      <p class="pc-landing-eyebrow">Educazione 1 · Come si esprime il corpo</p>
+      <h1>Scopri come funziona il corpo e come riattivare i tuoi sistemi fisiologici</h1>
+      <p class="pc-hero__lead">Inizia da un’esperienza semplice, continua con l’igiene posturale oppure scegli un percorso più completo di recupero e consapevolezza.</p>
+      <div class="pc-landing-actions">
+        <%= link_to "Inizia con PosturaCorretta", posturacorretta_postura_recupero_path(tappa: "la-prima-settimana-con-posturacorretta", tab: "online"), class: "pc-landing-primary-action" %>
+        <a href="#prima-linea" class="pc-landing-secondary-action">Confronta le possibilità</a>
+      </div>
+    </div>
+
+    <% if prima_linea || postura_fisiologia %>
+      <aside class="pc-hero__lines" aria-label="Da dove partire">
+        <p class="pc-hero__lines-title">Da dove partire</p>
+        <% [[prima_linea, "prima-linea", "Linea 1", "pc-line--recovery"], [postura_fisiologia, "postura-fisiologia", "Linea 2", "pc-line--physiology"]].each do |line, anchor, label, variant| %>
+          <% next unless line %>
+          <a href="#<%= anchor %>" class="pc-hero__line <%= variant %>">
+            <span class="pc-hero__line-label"><%= label %> · <%= line.title %></span>
+            <span class="pc-hero__line-track" aria-hidden="true">
+              <% line.stations.first(6).each do %><i></i><% end %>
+            </span>
+            <span class="pc-hero__line-meta"><%= line.stations.first.title %> → <%= line.stations.last.title %></span>
+          </a>
+        <% end %>
+      </aside>
+    <% end %>
+  </section>
+
+  <% if prima_linea %>
+    <section id="prima-linea" class="pc-landing-section pc-line pc-line--recovery">
+      <div class="pc-landing-section-heading">
+        <p class="pc-landing-eyebrow">Linea 1 · <%= prima_linea.title %></p>
+        <h2>Dalla prima settimana all’Area Massaggio e recupero</h2>
+        <p>Una sola linea, più modi per entrare: ogni offerta comprende quelle precedenti e prosegue da dove sei arrivato.</p>
+      </div>
+
+      <% stops = prima_linea.stations.size > 6 ? (prima_linea.stations.size / 2.0).ceil : prima_linea.stations.size %>
+      <ol class="pc-line__route <%= "pc-line__route--wrap" if stops < prima_linea.stations.size %>" style="--pc-stops: <%= stops %>" aria-label="Stazioni della linea <%= prima_linea.title %>">
+        <% prima_linea.stations.each_with_index do |station, index| %>
+          <li><span class="pc-line__number"><%= index + 1 %></span><span class="pc-line__name"><%= station.title %></span></li>
+        <% end %>
+      </ol>
+
+      <div class="pc-offers" aria-label="Offerte della linea <%= prima_linea.title %>">
+        <% prima_linea.offers.each_with_index do |offer, index| %>
+          <article class="pc-offer <%= "is-soon" unless offer.available? %>">
+            <div class="pc-offer__head">
+              <span class="pc-offer__step"><%= format("%02d", index + 1) %></span>
+              <h3><%= offer.title %></h3>
+              <span class="pc-offer__badge"><%= offer.available? ? "Disponibile" : "In preparazione" %></span>
+            </div>
+            <div class="pc-offer__coverage" aria-hidden="true"><span style="width: <%= offer.coverage %>%"></span></div>
+            <p class="pc-offer__route">
+              <% if offer.from_title == offer.to_title %><%= offer.from_title %><% else %>Da <strong><%= offer.from_title %></strong> a <strong><%= offer.to_title %></strong><% end %>
+            </p>
+            <% if offer.description.present? %><p class="pc-offer__text"><%= offer.description %></p><% end %>
+            <% if offer.included_titles.any? %><p class="pc-offer__includes">Comprende <%= sentence.call(offer.included_titles) %></p><% end %>
+            <% if offer.available? %>
+              <%= link_to index.zero? ? "Inizia il percorso" : "Prosegui il percorso", posturacorretta_postura_recupero_path(tappa: offer.entry_slug, tab: "online"), class: "pc-offer__action" %>
+            <% end %>
+          </article>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <% if postura_fisiologia %>
+    <section id="postura-fisiologia" class="pc-landing-section pc-line pc-line--physiology">
+      <div class="pc-landing-section-heading">
+        <p class="pc-landing-eyebrow">Linea 2 · <%= postura_fisiologia.title %></p>
+        <h2>Comprendi i sistemi fisiologici e come il corpo si esprime</h2>
+        <p>Una linea autonoma attraverso le cinque aree, percorribile anche senza la prima linea.</p>
+      </div>
+
+      <% stops = postura_fisiologia.stations.size > 6 ? (postura_fisiologia.stations.size / 2.0).ceil : postura_fisiologia.stations.size %>
+      <ol class="pc-line__route <%= "pc-line__route--wrap" if stops < postura_fisiologia.stations.size %>" style="--pc-stops: <%= stops %>" aria-label="Stazioni della linea <%= postura_fisiologia.title %>">
+        <% postura_fisiologia.stations.each_with_index do |station, index| %>
+          <li><span class="pc-line__number"><%= index + 1 %></span><span class="pc-line__name"><%= station.title %></span></li>
+        <% end %>
+      </ol>
+
+      <%= link_to "Esplora la linea", flowpulse_network_lanes_path("postura-e-fisiologia", vista: "brand"), class: "pc-landing-secondary-action pc-line__action" %>
+    </section>
+  <% end %>
+
+  <section id="problema" class="pc-landing-section pc-landing-section-split">
+    <div class="pc-landing-section-heading">
+      <p class="pc-landing-eyebrow">Hai un’esigenza specifica?</p>
+      <h2>Voglio risolvere un problema</h2>
+      <p>Il Percorso Integrato aiuta a orientarsi tra stato di salute, bisogni, professionisti e possibili programmi senza partire da una soluzione già decisa.</p>
+      <%= link_to "Vai al Percorso Integrato", percorso_integrato_path, class: "pc-landing-primary-action" %>
+    </div>
+    <ol class="pc-landing-simple-route">
+      <li><span>1</span><strong>Comprendi la situazione</strong></li>
+      <li><span>2</span><strong>Definisci priorità e risorse</strong></li>
+      <li><span>3</span><strong>Costruisci il percorso</strong></li>
+    </ol>
+  </section>
+
+  <section id="servizi" class="pc-landing-section pc-landing-section--soft">
+    <div class="pc-landing-section-heading">
+      <p class="pc-landing-eyebrow">Educazione 1 · Servizi personalizzati</p>
+      <h2>Servizi personalizzati</h2>
+      <p>Percorsi costruiti sui bisogni della persona, delle aziende e delle associazioni sportive. Prezzi e modalità (percorso online, lezione individuale o di gruppo) in definizione.</p>
+    </div>
+    <div class="pc-card-grid pc-card-grid--two">
+      <article class="pc-card">
+        <span class="pc-card__kicker">Per la persona</span>
+        <h3>Individuali</h3>
+        <p>Un percorso costruito sui bisogni della persona.</p>
+        <ul class="pc-card__list"><li>Trattamento singolo</li><li>Pacchetto percorso</li></ul>
+      </article>
+      <article class="pc-card">
+        <span class="pc-card__kicker">Per le organizzazioni</span>
+        <h3>Aziende e associazioni sportive</h3>
+        <p>Un percorso personalizzato per organizzazioni, associazioni e società sportive.</p>
+        <%= link_to "Scopri il servizio", flowpulse_network_lanes_path("pacchetto-gruppi", vista: "brand"), class: "pc-landing-text-action" %>
+      </article>
+    </div>
+  </section>
+
+  <section id="consapevolezza" class="pc-landing-section">
+    <div class="pc-landing-section-heading">
+      <p class="pc-landing-eyebrow">Educazione 2</p>
+      <h2>Consapevolezza con le metodiche posturali</h2>
+      <p>Attività, percorsi mirati e metodiche da conoscere attraverso la pratica.</p>
+    </div>
+    <div class="pc-card-grid">
+      <article class="pc-card">
+        <span class="pc-card__kicker">Attività generali</span>
+        <h3>Servizi settimanali</h3>
+        <p>Proposte continuative organizzate per condizioni, età, attività e contesti.</p>
+        <%= link_to "Scopri le attività", flowpulse_network_lanes_path("categorie-generali", vista: "brand"), class: "pc-landing-text-action" %>
+      </article>
+      <article class="pc-card">
+        <span class="pc-card__kicker">Attività specifiche</span>
+        <h3>Percorsi mirati</h3>
+        <p>Programmi focalizzati su esigenze e obiettivi più precisi.</p>
+        <%= link_to "Scopri i percorsi", flowpulse_network_lanes_path("categorie-specifiche", vista: "brand"), class: "pc-landing-text-action" %>
+      </article>
+      <article class="pc-card">
+        <span class="pc-card__kicker">Pratica e scoperta</span>
+        <h3>Metodiche posturali</h3>
+        <p>Scopri le metodiche, incontra chi le insegna e inizia a praticare.</p>
+        <%= link_to "Esplora le metodiche", flowpulse_network_lanes_path("metodiche-posturali", vista: "brand"), class: "pc-landing-text-action" %>
+      </article>
+    </div>
+  </section>
+
+  <section class="pc-landing-section pc-card-grid pc-card-grid--two pc-next-steps" aria-label="Prossimi passi">
+    <article id="giardino" class="pc-card pc-card--feature">
+      <span class="pc-card__kicker">Educazione 3 · Connessione</span>
+      <h3>Dalla PosturaCorretta al Giardino del Corpo</h3>
+      <p>Dopo aver ascoltato e conosciuto il corpo, il percorso si apre alla natura, alle persone, all’arte e agli stili di vita.</p>
+      <%= link_to "Scopri il percorso", flowpulse_network_lanes_path("dalla-posturacorretta-al-giardino-del-corpo", vista: "brand"), class: "pc-landing-text-action" %>
+    </article>
+    <article id="diventa-insegnante" class="pc-card pc-card--feature pc-card--dark">
+      <span class="pc-card__kicker">Percorso professionale</span>
+      <h3>Diventa insegnante PosturaCorretta</h3>
+      <p>Formazione, pratica personale, tirocinio supervisionato e futura abilitazione.</p>
+      <%= link_to "Scopri il percorso", flowpulse_network_lanes_path("diventa-insegnante-posturacorretta", vista: "brand"), class: "pc-landing-text-action" %>
+    </article>
+  </section>
+</div>

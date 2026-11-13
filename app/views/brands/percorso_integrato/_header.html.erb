@@ -5,8 +5,9 @@
       <span class="truncate">Percorso Integrato</span>
     <% end %>
     <nav class="hidden items-center gap-6 md:flex" aria-label="Navigazione Percorso Integrato">
+      <%= link_to "Modello", percorso_integrato_model_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Docs", percorso_integrato_docs_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
-      <%= link_to "Chi partecipa", percorso_integrato_path(anchor: "ruoli"), class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
+      <%= link_to "Chi partecipa", percorso_integrato_model_path(anchor: "ruoli"), class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Professionisti", percorso_integrato_professionals_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Centri", percorso_integrato_places_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Servizi", percorso_integrato_services_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
@@ -23,8 +24,9 @@
       </summary>
       <nav class="pi-mobile-menu__panel" aria-label="Navigazione mobile Percorso Integrato">
         <%= link_to "Home", percorso_integrato_path %>
+        <%= link_to "Modello esteso", percorso_integrato_model_path %>
         <%= link_to "Docs", percorso_integrato_docs_path %>
-        <%= link_to "Chi partecipa", percorso_integrato_path(anchor: "ruoli") %>
+        <%= link_to "Chi partecipa", percorso_integrato_model_path(anchor: "ruoli") %>
         <%= link_to "Professionisti", percorso_integrato_professionals_path %>
         <%= link_to "Centri", percorso_integrato_places_path %>
         <%= link_to "Servizi", percorso_integrato_services_path %>

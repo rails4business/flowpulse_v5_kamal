@@ -3,7 +3,8 @@ namespace :deploy do
   task sync_catalogs: :environment do
     username = ENV.fetch("OWNER", "markpostura")
 
-    node_result = NodeCatalog.from_config.import!
+    node_catalog = NodeCatalog.from_config
+    node_result = node_catalog.import!(remove_configured: false)
     puts "Imported #{node_result.nodes} nodes and linked #{node_result.profiles} primary profiles."
 
     skill_count = ReusableSkillSnapshot.for_owner(username).import!
@@ -19,5 +20,10 @@ namespace :deploy do
 
     Domain.import_from_config!
     puts "Imported #{Domain.count} domains."
+
+    commercial = LineOfferCatalog.from_config.import!
+    maps = MetroMapCatalog.from_config.import!
+    puts "Importate #{commercial.lines} linee, #{commercial.offers} offerte, #{maps.maps} mappe e #{maps.placements} posizioni."
+    puts "Rimossi #{node_catalog.remove_configured!} Node obsoleti."
   end
 end

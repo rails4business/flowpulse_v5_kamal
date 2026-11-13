@@ -1,6 +1,16 @@
 require "test_helper"
 
 class NodeTest < ActiveSupport::TestCase
+  test "normalizes line and offer slug inputs" do
+    @node_a.line_slugs_input = " Postura-Recupero\npostura-recupero "
+    @node_a.offer_slugs_input = "prima-settimana, igiene-posturale"
+
+    @node_a.validate
+
+    assert_equal ["postura-recupero"], @node_a.line_slugs
+    assert_equal %w[prima-settimana igiene-posturale], @node_a.offer_slugs
+  end
+
   setup do
     @user = User.create!(email_address: "creator@flowpulse.test", password: "password123", password_confirmation: "password123")
     @user.create_profile!(display_name: "Creator")
@@ -192,6 +202,17 @@ class NodeTest < ActiveSupport::TestCase
 
     assert @node_a.brand?
     assert_equal @node_a, @node_b.site_node
+  end
+
+  test "a lane column can come from an explicit flag or an active domain" do
+    assert_not @node_a.lane_column?
+
+    @node_a.update!(lane_container: true)
+    assert @node_a.lane_column?
+
+    @node_a.update!(lane_container: false)
+    Domain.create!(hostname: "lane-column.example", node: @node_a, locale: "it", active: true)
+    assert @node_a.lane_column?
   end
 
   test "accepts free subscription visibility" do

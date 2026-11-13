@@ -1,0 +1,15 @@
+<section id="mappa" class="pc-home-journey" aria-label="Percorso PosturaCorretta">
+  <nav class="pc-home-tabs" aria-label="Contenuti della tappa">
+    <% journey.tabs.each do |tab, label| %>
+      <%= link_to label,
+        posturacorretta_postura_recupero_path(tappa: journey.station.fetch("slug"), tab: tab),
+        class: "pc-home-tab pc-home-tab--#{tab} #{'is-selected' if tab == journey.tab}",
+        aria: { current: ("page" if tab == journey.tab) } %>
+    <% end %>
+  </nav>
+
+  <div class="pc-home-panel pc-home-panel--<%= journey.tab %>">
+    <%= render "nodes/posturacorretta_home/metro", journey: journey %>
+    <%= render "nodes/posturacorretta_home/#{journey.tab}", journey: journey, data: journey.course_data %>
+  </div>
+</section>

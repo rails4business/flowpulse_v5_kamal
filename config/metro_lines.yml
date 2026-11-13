@@ -1,0 +1,21 @@
+default: &default
+  removed_slugs:
+    - postura-fisiologia
+
+  lines:
+    postura-recupero:
+      title: Postura e recupero
+      description: Prima linea PosturaCorretta, dall'avvio all'esplorazione delle metodiche dell'Area Massaggio e recupero.
+      domain_hostname: posturacorretta.org
+      start_node_slug: area-massaggio-terapie-manuali-tecniche-corporee
+      end_node_slug: altre-metodiche-posturali
+      status: published
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

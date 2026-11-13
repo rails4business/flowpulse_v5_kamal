@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Percorso PosturaCorretta · Educazione alla salute</title>
+<meta name="description" content="Il percorso educativo alla salute grazie alle metodiche posturali: percorso online, lezioni con un insegnante, tirocinio per insegnanti.">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#f6f8fc;--fg:#0f1b33;--mut:#4a5a78;--card:#fff;--bd:#d9e1ef;
+  --brand:#1d4ed8;--on:#fff;
+  --online:#1d4ed8;--lezioni:#7c3aed;--tirocinio:#c2620a;--insegnanti:#0f7a55;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0a1222;--fg:#e8eefb;--mut:#9fb0cc;--card:#111c33;--bd:#25345a;
+    --brand:#6b9bff;--on:#0a1222;
+    --online:#6b9bff;--lezioni:#b79bff;--tirocinio:#f2a54a;--insegnanti:#4cc79a;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.55 Georgia,"Iowan Old Style","Palatino Linotype",serif}
+h1,h2,h3,button,select,.btn,nav,.sans{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--brand)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--bd);background:var(--card)}
+header.top .wrap{display:flex;gap:16px;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+header.top strong{font:700 1.05rem system-ui,sans-serif}
+nav{display:flex;gap:18px;flex-wrap:wrap;font-size:.95rem}
+nav a{text-decoration:none;color:var(--fg)}
+nav a:hover{color:var(--brand)}
+.hero{padding:52px 0 26px}
+.hero h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.1;margin:0 0 14px;max-width:18ch;letter-spacing:-.02em}
+.hero p{max-width:56ch;color:var(--mut);margin:0 0 22px}
+.btn{display:inline-block;background:var(--c,var(--brand));color:var(--on);padding:11px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.95rem;border:0;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--brand);border:2px solid var(--brand);margin-left:8px}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+
+.mapbox{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px 18px 22px;scroll-margin-top:12px}
+.bar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 4px}
+.bar h2{margin:0;font-size:1.2rem}
+.ruolo{font:.85rem system-ui,sans-serif;color:var(--mut);display:flex;gap:8px;align-items:center}
+.ruolo select{font:inherit;padding:5px 8px;border-radius:6px;border:1px solid var(--bd);background:var(--bg);color:var(--fg)}
+.sub{margin:0 0 14px;color:var(--mut);font-size:.95rem}
+
+/* una sola riga di stazioni + 4 tab */
+.linea{display:flex}
+.stz{flex:1 1 0;min-width:0;background:none;border:0;color:var(--fg);padding:0;margin:0;cursor:pointer;display:flex;flex-direction:column;align-items:stretch}
+.stz .nm{font:600 .85rem/1.25 system-ui,sans-serif;text-align:center;padding:0 4px 10px;height:4.4em;display:flex;align-items:flex-end;justify-content:center}
+.stz[aria-pressed="true"] .nm{color:var(--c);text-decoration:underline;text-underline-offset:4px}
+.track{position:relative;width:100%;height:56px;display:flex;align-items:center;justify-content:center}
+.track::before{content:"";position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;background:var(--c)}
+.stz:first-child .track::before{left:50%}
+.stz:last-child .track::before{right:50%}
+.dot{position:relative;z-index:1;width:30px;height:30px;border-radius:50%;border:4px solid var(--c);background:var(--card);display:grid;place-items:center;color:var(--card);font:700 14px/1 system-ui,sans-serif}
+.dot.attiva,.dot.fatta{background:var(--c)}
+.dot.fatta::after{content:"✓"}
+.dot.qui{width:38px;height:38px;box-shadow:0 0 0 5px var(--card),0 0 0 8px var(--c)}
+.dot.arrivo{border-style:dashed}
+.dot.num{width:34px;height:34px;color:var(--c);font-size:.85rem}
+.dot.num.zero{border-style:dashed;color:var(--mut)}
+.stz[aria-pressed="true"] .dot{transform:scale(1.2);box-shadow:0 0 0 4px var(--card),0 0 0 7px var(--c)}
+.cap{font:.82rem system-ui,sans-serif;color:var(--mut);margin:8px 0 0;min-height:2.6em}
+.tabs{display:grid;grid-template-columns:repeat(var(--nt,4),1fr);gap:6px;margin:12px 0 0}
+.tabs button{padding:11px 6px;border:2px solid var(--bd);border-bottom:0;background:transparent;color:var(--fg);border-radius:9px 9px 0 0;font-weight:600;font-size:.88rem;cursor:pointer}
+.tabs button[aria-selected="true"]{border-color:var(--c);background:var(--c);color:var(--on)}
+.tabs .lk{display:block;font-weight:400;font-size:.72rem;opacity:.8}
+.panel{border:2px solid var(--c);border-radius:0 0 12px 12px;padding:18px 20px 22px;min-height:200px}
+.panel h3{margin:0 0 4px;font-size:1.2rem}
+.panel .st{font:.85rem system-ui,sans-serif;color:var(--mut);margin:0 0 12px}
+.panel p{margin:0 0 12px;max-width:64ch}
+.list{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
+.list li{display:flex;gap:10px;align-items:flex-start;font-size:.97rem}
+.ck{flex:none;width:20px;height:20px;border-radius:5px;border:2px solid var(--c);margin-top:3px;display:grid;place-items:center;font:700 13px/1 system-ui,sans-serif;color:var(--on)}
+.ck.ok{background:var(--c)}
+.ck.ok::after{content:"✓"}
+.date{display:grid;grid-template-columns:76px 1fr auto;gap:14px;align-items:center;border:1px solid var(--bd);border-radius:10px;padding:10px 14px;margin:0 0 8px}
+.date .gg{text-align:center;font:700 1.5rem/1 system-ui,sans-serif;color:var(--c)}
+.date .gg small{display:block;font:600 .7rem system-ui,sans-serif;text-transform:capitalize;color:var(--mut);margin-top:3px}
+.date b{font:600 1rem system-ui,sans-serif}
+.date span{display:block;font:.85rem system-ui,sans-serif;color:var(--mut)}
+.ins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.ins-card{border:1px solid var(--bd);border-radius:10px;padding:12px 14px}
+.ins-card b{font:700 1rem system-ui,sans-serif;display:block}
+.ins-card span{display:block;font:.85rem/1.4 system-ui,sans-serif;color:var(--mut)}
+.vuoto{color:var(--mut)}
+.seq{margin:30px 0 0;text-align:center;color:var(--mut)}
+.seq b{color:var(--fg)}
+footer{margin-top:50px;border-top:1px solid var(--bd);padding:26px 0 38px;font:.9rem system-ui,sans-serif;color:var(--mut)}
+footer .wrap{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between}
+footer a{color:var(--mut)}
+@media (max-width:640px){
+  .stz .nm{font-size:.72rem;padding:0 1px 8px;height:5.6em}
+  .dot{width:26px;height:26px}
+  .dot.qui{width:32px;height:32px}
+  .dot.num{width:30px;height:30px}
+  .tabs{grid-template-columns:repeat(var(--mc,2),1fr)}
+  .tabs button{border-radius:9px;border-bottom:2px solid var(--bd)}
+  .tabs button[aria-selected="true"]{border-bottom-color:var(--c)}
+  .panel{border-radius:12px;margin-top:8px}
+  .date{grid-template-columns:60px 1fr}
+  .date .btn{grid-column:1/-1;text-align:center}
+  .btn.ghost{margin:10px 0 0}
+}
+@media (prefers-reduced-motion:no-preference){.dot{transition:transform .15s}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <strong>PosturaCorretta</strong>
+    <nav aria-label="Principale">
+      <a href="#mappa" data-goto="online">Percorso</a>
+      <a href="#mappa" data-goto="lezioni">Lezioni</a>
+      <a href="#mappa" data-goto="insegnanti">Insegnante</a>
+      <a href="/posturacorretta/eventi">Eventi</a>
+      <a href="/session/new">Accedi</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  
+
+  <section class="mapbox" id="mappa" aria-labelledby="t-mappa">
+    <div class="bar">
+      <h2 id="t-mappa">Il percorso</h2>
+      <label class="ruolo">Anteprima come
+        <select id="ruolo">
+          <option value="utente">Utente</option>
+          <option value="tirocinante">Tirocinante</option>
+          <option value="insegnante">Insegnante</option>
+        </select>
+      </label>
+    </div>
+    <!--p class="sub">Scegli una stazione, poi un servizio: la linea cambia e sotto trovi il corso, le lezioni con le date, le cose da fare per il tirocinio o gli insegnanti.</p-->
+
+    <div class="linea" id="linea" role="group" aria-label="Stazioni del percorso"></div>
+    <p class="cap" id="cap"></p>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="panel" id="panel" aria-live="polite"></div>
+  </section>
+
+  <p class="seq">Prima <b>scopri</b>, poi <b>pratichi</b>, poi, se vuoi, <b>insegni</b>.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>PosturaCorretta · Educazione posturale e percorsi di consapevolezza</span>
+    <span><a href="/posturacorretta/collabora">Collabora</a> · <a href="/posturacorretta/visione">Visione</a> · <a href="/contatti">Contatti</a></span>
+  </div>
+</footer>
+
+<script>
+/* ==================================================================
+   DATI. Stazioni, lezioni, tirocinio e insegnanti vivono qui.
+   In Rails: JSON generato dal server, già FILTRATO per i permessi
+   (i tab non permessi non vanno nel JSON, non basta nasconderli).
+   ================================================================== */
+const TAB = [
+  { id: "online",      nome: "Percorso online",  sub: "Fai da solo, a tuo ritmo" },
+  { id: "lezioni",     nome: "Lezioni utenti",   sub: "Con un insegnante" },
+  { id: "tirocinio",   nome: "Tirocinio",        sub: "Affianchi, poi insegni" },
+  { id: "insegnanti",  nome: "Insegnanti",       sub: "Chi insegna e chi ha formato" }
+];
+
+/* Chi vede cosa (simulato). Il controllo vero lo fa il server. */
+const PERMESSI = {
+  utente:      ["online", "lezioni"],
+  tirocinante: ["online", "lezioni", "tirocinio"],
+  insegnante:  ["online", "lezioni", "tirocinio", "insegnanti"]
+};
+
+/* Insegnanti di esempio: sostituisci con quelli veri. formatoDa = id di un altro insegnante. */
+const INSEGNANTI = [
+  { id: "a", nome: "Insegnante A (esempio)", citta: "Torino",  formatoDa: null },
+  { id: "b", nome: "Insegnante B (esempio)", citta: "Milano",  formatoDa: "a" },
+  { id: "c", nome: "Insegnante C (esempio)", citta: "Roma",    formatoDa: "a" },
+  { id: "d", nome: "Insegnante D (esempio)", citta: "Torino",  formatoDa: "b" }
+];
+
+/* Per ogni stazione: corso online, lezioni con data, tirocinio (cose da fare), insegnanti abilitati. */
+const STAZIONI = [
+  { id: "prima", nome: "Prima settimana",
+    online: { attivo: true, titolo: "Inizia con PosturaCorretta", href: "/posturacorretta/corsi/inizia-con-posturacorretta/capitoli/postura-salute-altri-aspetti",
+      testo: "Un primo incontro con la postura e una settimana di osservazione e pratica.",
+      moduli: [ { t: "Postura e salute", fatto: true }, { t: "Osservare il proprio corpo", fatto: true }, { t: "Prima pratica guidata", fatto: false } ] },
+    lezioni: [
+      { data: "2026-11-14", ora: "10:00", luogo: "Torino, campo da rugby", insegnante: "a", posti: 8,  href: "/posturacorretta/eventi" },
+      { data: "2026-11-21", ora: "18:30", luogo: "Online",                 insegnante: "b", posti: 20, href: "/posturacorretta/eventi" } ],
+    tirocinio: { attivo: true,
+      testo: "Per iniziare il tirocinio su questa stazione:",
+      cose: [ { t: "Completa il corso online", fatto: true }, { t: "Partecipa a una lezione introduttiva", fatto: false },
+              { t: "Assisti a 2 lezioni come osservatore", fatto: false }, { t: "Conduci una lezione affiancato da un insegnante", fatto: false } ] },
+    insegnanti: ["a", "b", "d"] },
+
+  { id: "integrato", nome: "Percorso integrato",
+    online: { attivo: true, titolo: "Il tuo stato di salute", href: "/posturacorretta/corsi",
+      testo: "Osservi il tuo stato di salute e capisci se ti serve un percorso con altri professionisti.",
+      moduli: [ { t: "Cosa osservare", fatto: false }, { t: "Quando rivolgersi a un professionista", fatto: false } ] },
+    lezioni: [],
+    tirocinio: { attivo: false },
+    insegnanti: ["a"] },
+
+  { id: "aree", nome: "Cinque aree",
+    online: { attivo: true, titolo: "Massaggio, movimento, mente, alimentazione, farmaci", href: "/posturacorretta/corsi",
+      testo: "Come ognuna delle cinque aree influenza la fisiologia. Parte il massaggio.",
+      moduli: [ { t: "Area massaggio", fatto: false }, { t: "Area movimento", fatto: false }, { t: "Area mente", fatto: false } ] },
+    lezioni: [ { data: "2026-12-05", ora: "15:00", luogo: "Milano", insegnante: "b", posti: 6, href: "/posturacorretta/eventi" } ],
+    tirocinio: { attivo: true,
+      testo: "Per ogni area, in ordine:",
+      cose: [ { t: "Frequenta le lezioni dell’area", fatto: false }, { t: "Prova su te stesso la pratica per 2 settimane", fatto: false },
+              { t: "Affianca un insegnante in 3 lezioni", fatto: false }, { t: "Conduci una lezione con valutazione", fatto: false } ] },
+    insegnanti: ["b", "c"] },
+
+  { id: "metodiche", nome: "Metodiche",
+    online: { attivo: true, titolo: "Le metodiche posturali", href: "/posturacorretta/metodiche",
+      testo: "Corpo e Coscienza, GDS, Osteopatia, Fisioterapia e altre: i principi di ognuna.",
+      moduli: [ { t: "Corpo e Coscienza", fatto: false }, { t: "GDS", fatto: false }, { t: "Osteopatia", fatto: false } ] },
+    lezioni: [],
+    tirocinio: { attivo: false },
+    insegnanti: ["c"] },
+
+  { id: "giardino", nome: "Giardino del corpo",
+    online: { attivo: false },
+    lezioni: [],
+    tirocinio: { attivo: false },
+    insegnanti: [] }
+];
+/* ================================================================== */
+
+const $ = s => document.querySelector(s);
+const ins = id => INSEGNANTI.find(x => x.id === id);
+const formati = id => INSEGNANTI.filter(x => x.formatoDa === id).length;
+let sel = { tab: "online", st: STAZIONI[0].id };
+let ruolo = "utente";
+
+function statoDot(s) {
+  if (!s.online.attivo) return "arrivo";
+  if (ruolo === "visitatore" || !s.online.moduli) return "attiva";
+  const f = s.online.moduli.filter(m => m.fatto).length;
+  if (f === s.online.moduli.length) return "fatta";
+  return f > 0 ? "qui" : "attiva";
+}
+
+const ETICHETTE = { fatta: "completata", qui: "sei qui", attiva: "disponibile", arrivo: "in preparazione" };
+const DID = {
+  online:     "Pieno: corso disponibile · spunta: completato · grande con anello: sei qui · tratteggiato: in preparazione",
+  lezioni:    "Il numero indica le lezioni in programma · tratteggiato: nessuna data per ora",
+  tirocinio:  "Pieno: tirocinio aperto · tratteggiato: non ancora previsto",
+  insegnanti: "Il numero indica gli insegnanti abilitati · tratteggiato: nessuno per ora"
+};
+
+function dotInfo(s) {
+  const t = sel.tab;
+  if (!PERMESSI[ruolo].includes(t)) return { cls: "arrivo", txt: "", label: "con accesso" };
+  if (t === "online") { const c = statoDot(s); return { cls: c, txt: "", label: ETICHETTE[c] }; }
+  if (t === "tirocinio") return s.tirocinio.attivo
+    ? { cls: "attiva", txt: "", label: "disponibile" }
+    : { cls: "arrivo", txt: "", label: "in preparazione" };
+  const n = (t === "lezioni" ? s.lezioni : s.insegnanti).length;
+  return { cls: "num" + (n ? "" : " zero"), txt: n, label: n + (t === "lezioni" ? " lezioni" : " insegnanti") };
+}
+
+function renderLinea() {
+  const l = $("#linea");
+  l.style.setProperty("--c", "var(--" + sel.tab + ")");
+  l.innerHTML = STAZIONI.map(s => {
+    const d = dotInfo(s);
+    return '<button class="stz" data-st="' + s.id + '" aria-pressed="' + (s.id === sel.st) + '" aria-label="' + s.nome + ": " + d.label + '">' +
+      '<span class="nm">' + s.nome + "</span>" +
+      '<span class="track"><span class="dot ' + d.cls + '">' + d.txt + "</span></span></button>";
+  }).join("");
+  $("#cap").textContent = PERMESSI[ruolo].includes(sel.tab) ? DID[sel.tab] : "Disponibile dopo l’accesso.";
+}
+
+function renderTabs() {
+  const visibili = TAB.filter(t => PERMESSI[ruolo].includes(t.id));
+  const box = $("#tabs");
+  box.style.setProperty("--nt", visibili.length);
+  box.style.setProperty("--mc", visibili.length === 4 ? 2 : visibili.length);
+  box.innerHTML = visibili.map(t =>
+    '<button role="tab" data-tab="' + t.id + '" aria-selected="' + (sel.tab === t.id) + '" style="--c:var(--' + t.id + ')">' + t.nome + "</button>").join("");
+}
+
+function dataIT(iso) {
+  const d = new Date(iso + "T12:00:00");
+  return { g: d.getDate(), m: d.toLocaleDateString("it-IT", { month: "short", weekday: "short" }) };
+}
+
+function panelOnline(s) {
+  const o = s.online;
+  if (!o.attivo) return '<p class="vuoto">Il corso online per questa stazione è in preparazione.</p>';
+  const mostra = ruolo !== "visitatore";
+  return "<h3>" + o.titolo + "</h3><p>" + o.testo + "</p>" +
+    '<ul class="list">' + o.moduli.map(m =>
+      '<li><span class="ck ' + (mostra && m.fatto ? "ok" : "") + '"></span>' + m.t + "</li>").join("") + "</ul>" +
+    '<a class="btn" href="' + o.href + '">' + (mostra ? "Continua il corso" : "Inizia gratis") + "</a>";
+}
+
+function panelLezioni(s) {
+  if (!s.lezioni.length) return '<p class="vuoto">Nessuna lezione in programma per questa stazione. Controlla gli <a href="/posturacorretta/eventi">eventi</a> o scrivici per avere un avviso.</p>';
+  return "<h3>Prossime lezioni</h3><p class=\"st\">Con un insegnante, in gruppo o singole.</p>" +
+    s.lezioni.map(l => {
+      const d = dataIT(l.data);
+      return '<div class="date"><div class="gg">' + d.g + "<small>" + d.m + "</small></div>" +
+        "<div><b>" + l.ora + " · " + l.luogo + "</b><span>con " + ins(l.insegnante).nome + " · " + l.posti + " posti</span></div>" +
+        '<a class="btn" href="' + l.href + '">Prenota</a></div>';
+    }).join("");
+}
+
+function panelTirocinio(s) {
+  const t = s.tirocinio;
+  if (!t.attivo) return '<p class="vuoto">Il tirocinio non è ancora previsto per questa stazione.</p>';
+  return "<h3>Cose da fare</h3><p>" + t.testo + "</p>" +
+    '<ul class="list">' + t.cose.map(c =>
+      '<li><span class="ck ' + (c.fatto ? "ok" : "") + '"></span>' + c.t + "</li>").join("") + "</ul>" +
+    '<a class="btn" href="/accesso/richiesta/new">Richiedi accesso al tirocinio</a>';
+}
+
+function panelInsegnanti(s) {
+  if (!s.insegnanti.length) return '<p class="vuoto">Per ora non ci sono insegnanti abilitati su questa stazione. <a href="/accesso/richiesta/new">Diventa il primo</a>.</p>';
+  return "<h3>Insegnanti abilitati</h3><p class=\"st\">Chi insegna questa stazione e da chi è stato formato.</p>" +
+    '<div class="ins-grid">' + s.insegnanti.map(id => {
+      const i = ins(id), n = formati(id);
+      return '<div class="ins-card"><b>' + i.nome + "</b><span>" + i.citta + "</span>" +
+        "<span>" + (i.formatoDa ? "Formato da " + ins(i.formatoDa).nome : "Formatore di riferimento") + "</span>" +
+        (n ? "<span>Ha formato " + n + (n === 1 ? " insegnante" : " insegnanti") + "</span>" : "") + "</div>";
+    }).join("") + "</div>";
+}
+
+function renderPanel() {
+  const s = STAZIONI.find(x => x.id === sel.st);
+  const tab = TAB.find(t => t.id === sel.tab);
+  const p = $("#panel");
+  p.style.setProperty("--c", "var(--" + tab.id + ")");
+  let h = '<p class="st">' + s.nome + " · " + tab.nome + "</p>";
+  if (!PERMESSI[ruolo].includes(tab.id)) {
+    h += "<h3>Disponibile dopo l’accesso</h3><p>Questa parte è riservata a chi ha un account abilitato.</p>" +
+         '<a class="btn" href="/session/new">Accedi</a>';
+  } else {
+    h += { online: panelOnline, lezioni: panelLezioni, tirocinio: panelTirocinio, insegnanti: panelInsegnanti }[tab.id](s);
+  }
+  p.innerHTML = h;
+}
+
+function render() { renderLinea(); renderTabs(); renderPanel(); }
+
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-goto]");
+  if (g) {
+    if (PERMESSI[ruolo].includes(g.dataset.goto)) { sel.tab = g.dataset.goto; render(); }
+    else if (g.dataset.goto === "tirocinio") { e.preventDefault(); location.href = "/accesso/richiesta/new"; }
+    return;
+  }
+  const st = e.target.closest("[data-st]");
+  if (st) { sel.st = st.dataset.st; render(); return; }
+  const tab = e.target.closest("[data-tab]");
+  if (tab) { sel.tab = tab.dataset.tab; render(); }
+});
+$("#ruolo").addEventListener("change", e => {
+  ruolo = e.target.value;
+  if (!PERMESSI[ruolo].includes(sel.tab)) sel.tab = "online";
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

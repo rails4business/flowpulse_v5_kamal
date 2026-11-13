@@ -7,7 +7,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     program = YAML.safe_load_file(Posturacorretta::LearningController::GUIDED_PATH, permitted_classes: [], aliases: false)
     learning = YAML.safe_load_file(Posturacorretta::LearningController::LEARNING_PATH, permitted_classes: [], aliases: false)
 
-    assert_equal({ "content_id" => "inizia-con-posturacorretta" }, titles.dig("path", "courses", 0))
+    assert_equal({ "content_id" => "percorso-integrato" }, titles.dig("path", "courses", 0))
     assert_equal "course", contents.dig("contents", 0, "format")
     assert_equal "inizia-con-posturacorretta", contents.dig("contents", 1, "parent_id")
     assert_equal "chapter", contents.dig("contents", 1, "format")
@@ -107,9 +107,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_equal %w[
-      inizia-con-posturacorretta
-      il-tuo-stato-di-salute
       percorso-integrato
+      il-tuo-stato-di-salute
+      inizia-con-posturacorretta
       postura-e-fisiologia
       muoviti-ed-esplora
       corpo-come-un-giardino

@@ -57,6 +57,44 @@ Rails.application.routes.draw do
   get "flowpulse/professionisti" => redirect("/flowpulse/rete/globale?vista=professional", status: 301), as: :flowpulse_professionals
   get "flowpulse/rete" => "flowpulse/network#show", as: :flowpulse_network
   get "flowpulse/rete/globale" => "flowpulse/network#global", as: :flowpulse_global_network
+  get "flowpulse/rete/globale/corsie" => "flowpulse/network#lanes", as: :flowpulse_network_lanes_root
+  get "flowpulse/rete/globale/corsie/primo-incontro-kinesiologia-applicata" =>
+      redirect("/flowpulse/rete/globale/corsie/introduzione-alla-kinesiologia-applicata", status: 301)
+  get "flowpulse/rete/globale/corsie/:node" => "flowpulse/network#lanes",
+      as: :flowpulse_network_lanes,
+      constraints: { node: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+  get "flowpulse/rete/metropolitana/:hostname" => "admin/metro_maps#show",
+      as: :flowpulse_metro_map,
+      format: false,
+      constraints: { hostname: /[^\/]+/ }
+  patch "flowpulse/rete/metropolitana/:hostname/posizioni" => "admin/metro_maps#update_positions",
+      as: :flowpulse_metro_map_positions,
+      format: false,
+      constraints: { hostname: /[^\/]+/ }
+  post "flowpulse/rete/metropolitana/:hostname/linee" => "admin/metro_maps#create_line",
+      as: :flowpulse_metro_map_lines,
+      constraints: { hostname: /[^\/]+/ }
+  post "flowpulse/rete/metropolitana/:hostname/offerte" => "admin/metro_maps#create_offer",
+      as: :flowpulse_metro_map_offers,
+      constraints: { hostname: /[^\/]+/ }
+  post "flowpulse/rete/metropolitana/:hostname/ponti" => "admin/metro_maps#create_bridge",
+      as: :flowpulse_metro_map_bridges,
+      constraints: { hostname: /[^\/]+/ }
+  post "flowpulse/rete/metropolitana/:hostname/nodi" => "admin/metro_maps#create_node",
+      as: :flowpulse_metro_map_nodes,
+      constraints: { hostname: /[^\/]+/ }
+  delete "flowpulse/rete/metropolitana/:hostname/ponti/:id" => "admin/metro_maps#destroy_bridge",
+      as: :flowpulse_metro_map_bridge,
+      constraints: { hostname: /[^\/]+/ }
+  patch "flowpulse/rete/metropolitana/:hostname/genitore" => "admin/metro_maps#update_parent",
+      as: :flowpulse_metro_map_parent,
+      constraints: { hostname: /[^\/]+/ }
+  get "flowpulse/rete/metropolitana/:hostname/esporta/:catalog" => "admin/metro_maps#export_catalog",
+      as: :flowpulse_metro_map_export,
+      constraints: { hostname: /[^\/]+/, catalog: /map|lines|offers|nodes/ }
+  get "flowpulse/rete/globale/centralita/:modalita/primo-incontro-kinesiologia-applicata" =>
+      redirect("/flowpulse/rete/globale/centralita/%{modalita}/introduzione-alla-kinesiologia-applicata", status: 301),
+      constraints: { modalita: /only|all/ }
   get "flowpulse/rete/globale/centralita/:modalita/:node" => "flowpulse/network#automatic",
       as: :flowpulse_automatic_network_node,
       constraints: { modalita: /only|all/, node: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
@@ -122,6 +160,7 @@ Rails.application.routes.draw do
   get "giardino-del-corpo" => redirect("/il-giardino-del-corpo", status: 301)
   direct(:il_giardino_del_corpo) { "/il-giardino-del-corpo" }
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
+  get "percorso-integrato/modello" => "brands/percorso_integrato#model", as: :percorso_integrato_model
   get "corpo-e-coscienza" => "brands/corpo_e_coscienza#index", as: :corpo_e_coscienza
   get "corpo-e-coscienza/profilo" => "brands/corpo_e_coscienza#profile", as: :corpo_e_coscienza_profile
   get "corpo-e-coscienza/privacy" => "brands/corpo_e_coscienza#privacy", as: :corpo_e_coscienza_privacy
@@ -159,6 +198,12 @@ Rails.application.routes.draw do
   get "posturacorretta" => "nodes#domain_home",
       defaults: { path_slug: "posturacorretta" },
       as: :posturacorretta
+  get "posturacorretta/percorsi/postura-recupero" => "nodes#domain_journey",
+      defaults: { path_slug: "posturacorretta" },
+      as: :posturacorretta_postura_recupero
+  get "posturacorretta/course-data/:node_slug" => "posturacorretta#course_data",
+      as: :posturacorretta_course_data,
+      constraints: { node_slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
   get "posturacorretta/profilo" => "posturacorretta#profile", as: :posturacorretta_profile
   get "posturacorretta/presentazione-posturacorretta" => "posturacorretta#triathlon_handout", as: :posturacorretta_presentation
   get "posturacorretta/guida-triatlon" => redirect("/posturacorretta/presentazione-posturacorretta", status: 301)

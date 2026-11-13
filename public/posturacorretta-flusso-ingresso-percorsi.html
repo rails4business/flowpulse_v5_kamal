@@ -89,6 +89,27 @@
       box-shadow: 0 12px 35px rgba(26, 40, 58, .06);
     }
 
+    .section--full-width {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: clamp(20px, 3vw, 42px);
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .section--full-width > h2,
+    .section--full-width > .scroll-hint {
+      width: min(1500px, calc(100% - 32px));
+      margin-inline: auto;
+    }
+
+    .section--full-width .diagram {
+      width: 100%;
+      margin-top: 20px;
+    }
+
     .section-intro { max-width: 850px; color: var(--muted); }
 
     .diagram {
@@ -102,6 +123,18 @@
 
     .mermaid { width: max-content; min-width: 100%; text-align: left; }
     .diagram .mermaid svg { max-width: none !important; height: auto; }
+    .diagram--fit .mermaid {
+      width: 100%;
+      min-width: 0;
+      text-align: center;
+    }
+    .diagram--fit .mermaid svg {
+      display: block;
+      width: 92% !important;
+      max-width: 92% !important;
+      height: auto !important;
+      margin-inline: auto;
+    }
     .diagram .mermaid .edgePath path {
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -112,6 +145,90 @@
       color: var(--muted);
       font-size: .82rem;
       text-align: center;
+    }
+
+    .print-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .print-button {
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--blue);
+      color: #fff;
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 750;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, .2);
+    }
+
+    .print-button:hover { background: #1d4ed8; }
+
+    @page {
+      size: A4 landscape;
+      margin: 8mm;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html,
+      body {
+        width: 281mm;
+        min-height: 194mm;
+        margin: 0;
+        background: #fff;
+      }
+
+      main {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      main > *:not(.section--full-width) { display: none !important; }
+
+      .section--full-width {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        break-inside: avoid;
+      }
+
+      .section--full-width > h2 {
+        width: 100%;
+        margin: 0 0 2mm;
+        font-size: 14pt;
+      }
+
+      .section--full-width > .scroll-hint,
+      .print-actions {
+        display: none !important;
+      }
+
+      .section--full-width .diagram {
+        width: 100%;
+        margin: 0;
+        padding: 2mm;
+        overflow: visible;
+        border: 0;
+        background: #fff;
+      }
+
+      .diagram--fit .mermaid,
+      .diagram--fit .mermaid svg {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 182mm !important;
+        margin: 0 auto;
+      }
     }
 
     .cards {
@@ -236,10 +353,7 @@ flowchart LR
     PC --> A["Apprendimento 1 Espressione - <br/>Postura e fisiologia<br/> Esprimere il corpo con il percorso di Educazione alla salute - Le cinque aree"]
     PC --> IND["Apprendimento 2 · Consapevolezza con le metodiche posturali:<br/>incontri settimanali per categorie generali, pratiche di varie discipline e tecniche corporee"]
 
-    A --> R["Area Massaggio - terapie manuali e tecniche corporee<br/>Postura, recupero e coscienza corporea"]
-    R --> S["La prima settimana con PosturaCorretta<br/>prima scheda + trattamento"]
-    S --> PSTANP["pacchetto gruppi - aziende società sportive associazioni"]
-    S --> IG["Igiene Posturale"]
+    A --> S["La prima settimana con PosturaCorretta<br/>prima scheda + trattamento"] --> PSTANP["pacchetto gruppi - aziende società sportive associazioni"]
     PC -. accesso diretto .-> S
     IND --> GEN["Categorie generali"]
     IND --> SPEC["Categorie specifiche"]
@@ -417,6 +531,207 @@ flowchart LR
     click A "https://posturacorretta.org/posturacorretta/corsi/postura-e-fisiologia" "Apri Apprendimento 1" _blank
     click C07 "https://igieneposturale.it" "Apri Igiene Posturale" _blank
     click C11 "https://corpoecoscienza.org" "Apri Corpo e Coscienza" _blank
+        </pre>
+      </div>
+    </section>
+
+    <section class="section--full-width" aria-labelledby="percorso-corsi-title">
+      <h2 id="percorso-corsi-title">2. Percorso PosturaCorretta</h2>
+      <p class="scroll-hint">Scorri orizzontalmente per seguire l’ordine dei corsi →</p>
+      <div class="print-actions">
+        <button class="print-button" type="button" onclick="window.print()">Stampa schema in A4 orizzontale</button>
+      </div>
+
+      <div class="diagram diagram--fit">
+        <pre class="mermaid">
+swimlane-beta TD
+    accTitle: Percorso PosturaCorretta organizzato per dominio
+    accDescr: Il Percorso Integrato orienta la persona. Lo Stato di Salute collega professioni, formazione, rete territoriale e fasi del percorso; l'educazione prosegue poi in PosturaCorretta.
+
+
+    subgraph INTEGRATED [percorsointegrato.it]
+      PINTEGRATO["1. Il Percorso<br/>Integrato"]
+      METODO["Osservazione e metodo scientifico<br/><small>Paradigmi di scelta della cura</small>"]
+      CON_CHI["Con chi iniziare"]
+      PATOLOGIA["Professionisti della salute<br/>Patologie e sintomi"]
+      BENESSERE["Professionisti del benessere<br/>Prevenzione e qualità della vita"]
+      EDU_SALUTE["Insegnanti posturacorretta<br/>Educazione alla salute"]
+      LINEE_GUIDA["Linee guida per creare<br/>un Percorso Integrato"]
+      INIZIA_PERCORSO["Inizia il Percorso Integrato"]
+
+
+    end
+
+    subgraph HEALTH [statodisalute.it]
+      C02["2. Il tuo stato<br/>di salute"]
+      QUESTIONARIO["Questionario di orientamento<br/>sullo stato di salute"]
+      PROFESSIONI["Professioni"]
+      SCUOLE_FORMAZIONE["Scuole<br/>Formazione professionisti"]
+      COMUNI["Comuni<br/><small>coordinamento sul territorio</small>"]
+      CENTRI["Centri<br/><small>servizi e attività sul territorio</small>"]
+      PI_DOLOR["Stop al dolore"]
+      PI_PREV["Prevenzione e rischi<br/>della tua attività principale"]
+      PI_PERF["Performance e risorse"]
+      PI_BENE["Percorso Benessere"]
+      EDU_SALUTE_POSTURA["Educazione alla salute<br/>con le metodiche posturali"]
+
+    end
+
+    subgraph POSTURACORRETTA [posturacorretta.org]
+      PC["postura corretta"]
+      INIZIA_PC["La prima settimana<br/>con PosturaCorretta"]
+      C04["3. Postura<br/>e fisiologia"]
+      C05["4. Postura<br/>e consapevolezza"]
+      C06["5. Il corpo, un mondo da scoprire<br/>Dalla PosturaCorretta<br/>al Giardino del Corpo"]
+
+    end
+
+    subgraph MASSAGGIO_RECUPERO [Massaggio e recupero]
+      R["Area Massaggio - terapie manuali e tecniche corporee Postura, recupero<br/>e coscienza corporea"]
+
+      COURSE_IGIENE["Igiene Posturale<br/><small>igieneposturale.it</small>"]
+      COURSE_FISIO["Principi di Fisioterapia"]
+      COURSE_GDS["Biomeccanica comportamentale GDS"]
+      COURSE_OSTEO["Principi di Osteopatia"]
+      COURSE_CORPO["Corpo e Coscienza<br/><small>corpoecoscienza.org</small>"]
+      COURSE_KINESIO["Una sequenza dalla kinesiologia"]
+      COURSE_ALTRE["Altre metodiche posturali"]
+
+     R --> COURSE_IGIENE --> COURSE_FISIO --> COURSE_GDS --> COURSE_OSTEO --> COURSE_CORPO --> COURSE_KINESIO --> COURSE_ALTRE
+    end
+
+    subgraph MOVIMENTO [Movimento]
+      MOV["Area Movimento<br/>Postura, movimento e attività motoria"]
+      MOV01["Rinforzo muscolare"]
+      MOV02["Una sequenza dalla kinesiologia"]
+      MOV03["I cinque tibetani"]
+      MOV04["Gli 8 pezzi di brocato"]
+      MOV05["Una sequenza dello yoga"]
+      MOV06["Lo sviluppo del movimento dei bambini DNS"]
+      MOV07["Animal Flow"]
+      MOV08["Movimenti arcaici"]
+      MOV09["La capoeira"]
+      MOV10["Il tai chi"]
+
+      MOV --> MOV01 --> MOV02 --> MOV03 --> MOV04 --> MOV05 --> MOV06 --> MOV07 --> MOV08 --> MOV09 --> MOV10
+    end
+
+    subgraph MENTE [Mente e consapevolezza]
+      MED["Area Mente<br/>Postura, ascolto e consapevolezza"]
+      MED01["La morfopsicologia"]
+      MED02["Human design"]
+      MED03["Caycedo Sofrologia"]
+      MED04["Corpo e coscienza"]
+      MED05["Yoga: nozioni avanzate"]
+      MED06["Su Wen: medicina cinese e fenomenologia"]
+      MED07["Siamo fatti di parole"]
+      MED08["Il potere delle storie"]
+      MED09["Efficacia personale"]
+      MED10["Il viaggio dell'eroe"]
+      MED11["La medicina del suono"]
+      MED12["Il teatro"]
+      MED13["Il giardino del corpo"]
+      MED14["Bagno di foresta"]
+      MED15["Viaggio sonoro"]
+
+      MED --> MED01 --> MED02 --> MED03 --> MED04 --> MED05 --> MED06 --> MED07 --> MED08 --> MED09 --> MED10 --> MED11 --> MED12 --> MED13 --> MED14 --> MED15
+    end
+
+    subgraph ALIMENTAZIONE [Alimentazione]
+      ALI["Area Alimentazione<br/>Postura, nutrimento e fisiologia"]
+      ALI01["Cosa stiamo mangiando?"]
+      ALI02["Cos'è il cibo?"]
+      ALI03["Il cibo viene dalla terra"]
+      ALI04["Cibo e industrializzazione"]
+      ALI05["Il cibo come mezzo per trasmettere energia"]
+
+      ALI --> ALI01 --> ALI02 --> ALI03 --> ALI04 --> ALI05
+    end
+
+    subgraph FARMACI [Farmaci e medicamenti]
+      FAR["Area Farmaci<br/>Postura, regolazione e medicamenti"]
+      FAR01["La medicina dei semplici · Dr. Abbiati"]
+      FAR02["Medicina mediterranea"]
+      FAR03["Medicina cinese"]
+      FAR04["Ayurveda"]
+
+      FAR --> FAR01 --> FAR02 --> FAR03 --> FAR04
+    end
+
+    PINTEGRATO --> METODO
+    PINTEGRATO --> CON_CHI
+    CON_CHI --> PATOLOGIA
+    CON_CHI --> BENESSERE
+    CON_CHI --> EDU_SALUTE
+    PINTEGRATO --> LINEE_GUIDA
+    PINTEGRATO --> INIZIA_PERCORSO
+    INIZIA_PERCORSO --> C02
+    C02 --> QUESTIONARIO
+    QUESTIONARIO --> PI_DOLOR --> PI_PREV --> PI_PERF --> PI_BENE --> EDU_SALUTE_POSTURA
+    C02 -. territorio .-> COMUNI
+    C02 -. territorio .-> CENTRI
+    C02 -. orientamento .-> PROFESSIONI
+    C02 -. formazione .-> SCUOLE_FORMAZIONE
+    PC --> INIZIA_PC --> C04
+    EDU_SALUTE_POSTURA --> C04 --> C05 --> C06
+    C04 --> R --> MOV --> MED --> ALI --> FAR
+
+    INIZIA_PC --> R
+    INIZIA_PC --> MOV
+    INIZIA_PC --> MED
+
+
+    classDef firstWeek fill:#eaf2ff,color:#17458f,stroke:#2563eb,stroke-width:2px;
+    classDef introductory fill:#f1f3f5,color:#344054,stroke:#98a2b3,stroke-width:2px;
+    classDef health fill:#e9f8f1,color:#145c43,stroke:#2b9a70,stroke-width:2px;
+    classDef integrated fill:#fff0f1,color:#8f2530,stroke:#e87983,stroke-width:2px;
+    classDef expression fill:#e8f7fb,color:#164e63,stroke:#38bdf8,stroke-width:2px;
+    classDef awareness fill:#eef2ff,color:#37308f,stroke:#818cf8,stroke-width:2px;
+    classDef discovery fill:#f3e8ff,color:#6b21a8,stroke:#9333ea,stroke-width:2px;
+    classDef garden fill:#faf5ff,color:#6b259e,stroke:#c084fc,stroke-width:2px;
+    classDef resources fill:#fff5df,color:#78450a,stroke:#d28a1d,stroke-width:2px;
+    classDef pain fill:#fff0f1,color:#8f2530,stroke:#e87983,stroke-width:2px;
+    classDef prevention fill:#fff2e8,color:#8a431a,stroke:#ef955c,stroke-width:2px;
+    classDef performance fill:#fff8df,color:#72540b,stroke:#d9ae32,stroke-width:2px;
+    classDef wellbeing fill:#edf9f3,color:#175d45,stroke:#63b68f,stroke-width:2px;
+    classDef areaMassage fill:#ddd0ec,color:#3d2354,stroke:#69418a,stroke-width:2px;
+    classDef areaMovement fill:#e2faf5,color:#0f625c,stroke:#2aa79d,stroke-width:2px;
+    classDef areaMind fill:#fff0ef,color:#8f2f29,stroke:#e4776f,stroke-width:2px;
+    classDef areaFood fill:#fff7dc,color:#76570a,stroke:#d6a927,stroke-width:2px;
+    classDef areaMedicine fill:#eaf2ff,color:#1e4f9d,stroke:#4b82d0,stroke-width:2px;
+    classDef introCourse fill:#eee7f6,color:#3d2354,stroke:#69418a,stroke-width:2px;
+    classDef movementCourse fill:#f0fcf9,color:#0f625c,stroke:#68c9c0,stroke-width:2px;
+    classDef mindCourse fill:#fff7f6,color:#8f2f29,stroke:#efaaa5,stroke-width:2px;
+    classDef foodCourse fill:#fffbec,color:#76570a,stroke:#e8cb6b,stroke-width:2px;
+    classDef medicineCourse fill:#f3f7ff,color:#1e4f9d,stroke:#8eb2e8,stroke-width:2px;
+    class PINTEGRATO integrated;
+    class METODO,LINEE_GUIDA,INIZIA_PERCORSO,C02,QUESTIONARIO introductory;
+    class CON_CHI integrated;
+    class PROFESSIONI,SCUOLE_FORMAZIONE,COMUNI,CENTRI health;
+    class PATOLOGIA pain;
+    class BENESSERE wellbeing;
+    class INIZIA_PC firstWeek;
+    class C04 expression;
+    class EDU_SALUTE,EDU_SALUTE_POSTURA expression;
+    class PC expression;
+
+    class C05 awareness;
+    class C06 discovery;
+    class C07 resources;
+    class PI_DOLOR pain;
+    class PI_PREV prevention;
+    class PI_PERF performance;
+    class PI_BENE wellbeing;
+    class R areaMassage;
+    class MOV areaMovement;
+    class MED areaMind;
+    class ALI areaFood;
+    class FAR areaMedicine;
+    class COURSE_IGIENE,COURSE_FISIO,COURSE_GDS,COURSE_OSTEO,COURSE_CORPO,COURSE_KINESIO,COURSE_ALTRE introCourse;
+    class MOV01,MOV02,MOV03,MOV04,MOV05,MOV06,MOV07,MOV08,MOV09,MOV10 movementCourse;
+    class MED01,MED02,MED03,MED04,MED05,MED06,MED07,MED08,MED09,MED10,MED11,MED12,MED13,MED14,MED15 mindCourse;
+    class ALI01,ALI02,ALI03,ALI04,ALI05 foodCourse;
+    class FAR01,FAR02,FAR03,FAR04 medicineCourse;
         </pre>
       </div>
     </section>

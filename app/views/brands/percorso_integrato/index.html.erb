@@ -1,17 +1,18 @@
-<% content_for :title, "Percorso Integrato — Programmi, professionisti e verifiche" %>
-<% content_for :description, @site.fetch("description") %>
+<% content_for :title, @advanced_model ? "Modello esteso — Percorso Integrato" : "Percorso Integrato — Cura, benessere ed educazione" %>
+<% content_for :description, @advanced_model ? "Il modello esteso di Percorso Integrato: persone, professionisti, programmi e verifiche." : "Percorso Integrato collega cura, benessere ed educazione PosturaCorretta in percorsi personali, sostenibili e verificabili." %>
 <% content_for :landing_nav do %><%= render "brands/percorso_integrato/header" %><% end %>
 
+<% if @advanced_model %>
 <div class="pi-upgrade min-h-screen text-slate-950">
   <main>
     <section class="overflow-hidden border-b border-emerald-100 bg-white">
       <div class="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:px-8">
         <div>
-          <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700"><%= @site.fetch("eyebrow") %></p>
-          <h1 class="mt-5 max-w-4xl text-5xl font-black leading-[.98] tracking-[-.045em] text-slate-950 sm:text-6xl"><%= @site.fetch("title") %></h1>
-          <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600"><%= @site.fetch("description") %></p>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Funzione avanzata</p>
+          <h1 class="mt-5 max-w-4xl text-5xl font-black leading-[.98] tracking-[-.045em] text-slate-950 sm:text-6xl">Il modello esteso del Percorso Integrato</h1>
+          <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600">Approfondisci come persone, professionisti, programmi, modalità di partecipazione e strumenti di verifica possono coordinarsi nel tempo.</p>
           <div class="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a href="#inizia" class="pi-button pi-button--primary rounded-xl px-6 py-3.5 font-bold shadow-lg shadow-emerald-900/10">Capisci da dove iniziare</a>
+            <%= link_to "← Torna al modello essenziale", percorso_integrato_path, class: "pi-button pi-button--primary rounded-xl px-6 py-3.5 font-bold shadow-lg shadow-emerald-900/10" %>
             <%= link_to "Apri le Docs", percorso_integrato_docs_path, class: "pi-button pi-button--secondary rounded-xl border border-emerald-200 px-6 py-3.5 font-bold hover:border-emerald-400" %>
           </div>
         </div>
@@ -131,7 +132,7 @@
       <div class="mx-auto max-w-7xl">
         <p class="text-xs font-black uppercase tracking-[.18em] text-orange-700">Il cammino</p>
         <h2 class="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">Si parte da dove sei. Si sale un livello alla volta.</h2>
-        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Quattro livelli, dal recuperare la salute allo stare bene. Non devi attraversarli tutti: il percorso comincia dal bisogno reale della persona.</p>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Dal recuperare la salute all'educazione. Fai il test per capire di cosa hai bisogno.</p>
 
         <% primary_levels = [
           ["1", "Salute a rischio", "La mia salute è a rischio", "Recuperare", "#c0392b", "⚕"],
@@ -202,3 +203,122 @@
   </main>
   <%= render "posturacorretta/footer" %>
 </div>
+<% else %>
+<div class="min-h-screen bg-slate-50 text-slate-950">
+  <main>
+    <section class="overflow-hidden border-b border-slate-200 bg-white">
+      <div class="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:px-8">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Percorso Integrato</p>
+          <h1 class="mt-5 max-w-4xl text-5xl font-black leading-[.98] tracking-[-.045em] text-slate-950 sm:text-6xl">Tre aspetti complementare per lavorare sulla tua salute.</h1>
+          <p class="mt-6 max-w-2xl text-xl font-bold leading-8 text-slate-700">Curare la patologia. Curare il benessere. Capire come funzioniamo.</p>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600">Percorso Integrato mette in relazione professionisti della salute, professionisti del benessere ed l'educazione alla salute con PosturaCorretta. Linee guida per aiutarti a creare un percorso graduale, sostenibile.</p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="#inizia" class="pi-button pi-button--primary rounded-xl px-6 py-3.5 font-bold shadow-lg shadow-emerald-900/10">Scopri da dove iniziare</a>
+            <a href="#tre-campi" class="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center font-bold text-slate-800 hover:border-slate-400 hover:bg-slate-50">Esplora i tre campi</a>
+          </div>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-slate-50 p-5 shadow-xl shadow-slate-900/5 sm:p-7" aria-label="I tre campi del Percorso Integrato">
+          <div class="space-y-3">
+            <article class="rounded-2xl border border-red-200 bg-red-50 p-5">
+              <div class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full bg-red-600 font-black text-white" aria-hidden="true">＋</span><div><p class="text-[10px] font-black uppercase tracking-[.14em] text-red-700">Professionisti Salute</p><h2 class="text-lg font-black text-slate-950">Affronta una patologia</h2></div></div>
+            </article>
+            <article class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+              <div class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full bg-emerald-600 font-black text-white" aria-hidden="true">◎</span><div><p class="text-[10px] font-black uppercase tracking-[.14em] text-emerald-700">Professionisti Benessere</p><h2 class="text-lg font-black text-slate-950">Migliora sul tuo benessere</h2></div></div>
+            </article>
+            <article class="rounded-2xl border border-blue-200 bg-blue-50 p-5">
+              <div class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full bg-blue-600 font-black text-white" aria-hidden="true">i</span><div><p class="text-[10px] font-black uppercase tracking-[.14em] text-blue-700">Educazione alla salute</p><h2 class="text-lg font-black text-slate-950">Comprendi come funziona il corpo</h2></div></div>
+            </article>
+          </div>
+          <p class="mt-5 text-sm leading-6 text-slate-600">Non sono livelli di gravità né tappe obbligatorie: sono campi distinti che possono collaborare quando utile.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tre-campi" class="scroll-mt-24 px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="mx-auto max-w-4xl text-center">
+          <p class="text-xs font-black uppercase tracking-[.18em] text-slate-500">Tre campi, un percorso</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Distinti nelle responsabilità, complementari quando serve.</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-600">La salute riguarda la persona nel suo insieme. Percorso Integrato collega gli ambiti senza confonderne finalità, competenze e limiti.</p>
+        </div>
+
+        <div class="mt-12 grid gap-5 lg:grid-cols-3">
+          <article class="rounded-3xl border border-red-200 bg-white p-7 shadow-sm">
+            <p class="text-xs font-black uppercase tracking-[.14em] text-red-700">Cura delle patologie</p>
+            <h3 class="mt-3 text-2xl font-black">Qual è il problema e quale assistenza serve?</h3>
+            <p class="mt-4 leading-7 text-slate-600">Professionisti della salute valutano problemi e sintomi, formulano diagnosi quando rientra nelle loro competenze e propongono cure, riabilitazione e verifiche appropriate.</p>
+            <p class="mt-5 border-t border-red-100 pt-4 text-sm font-bold text-red-800">Obiettivo: tutelare la salute e affrontare il problema clinico.</p>
+          </article>
+          <article class="rounded-3xl border border-emerald-200 bg-white p-7 shadow-sm">
+            <p class="text-xs font-black uppercase tracking-[.14em] text-emerald-700">Benessere</p>
+            <h3 class="mt-3 text-2xl font-black">Quali pratiche possono aiutarmi a stare meglio?</h3>
+            <p class="mt-4 leading-7 text-slate-600">Professionisti e operatori del benessere propongono attività, tecniche e pratiche per sostenere movimento, abitudini e qualità della vita, nei rispettivi ambiti.</p>
+            <p class="mt-5 border-t border-emerald-100 pt-4 text-sm font-bold text-emerald-800">Obiettivo: coltivare capacità e condizioni di benessere.</p>
+          </article>
+          <article class="rounded-3xl border border-blue-200 bg-white p-7 shadow-sm">
+            <p class="text-xs font-black uppercase tracking-[.14em] text-blue-700">Educazione PosturaCorretta</p>
+            <h3 class="mt-3 text-2xl font-black">Come funziona e come si esprime il mio corpo?</h3>
+            <p class="mt-4 leading-7 text-slate-600">L’educazione aiuta a osservare il corpo, conoscere fisiologia e postura e sviluppare consapevolezza e autonomia, senza sostituire l’assistenza sanitaria.</p>
+            <p class="mt-5 border-t border-blue-100 pt-4 text-sm font-bold text-blue-800">Obiettivo: comprendere, riconoscere e sostenere le proprie capacità.</p>
+            <%= link_to "Conosci PosturaCorretta →", posturacorretta_path, class: "mt-5 inline-flex text-sm font-black text-blue-700 hover:underline" %>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-white px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
+          <div>
+            <p class="text-xs font-black uppercase tracking-[.18em] text-violet-700">Un principio essenziale</p>
+            <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Strumenti e campi di applicazione.</h2>
+            <p class="mt-5 text-lg leading-8 text-slate-600">Non sono gli strumenti a fare la differenza ma il campo di applicazione, lo scopo, le competenze necessarie, ogni professione e ogni professionista hanno compiti specifici.</p>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-3">
+            <article class="rounded-2xl border border-red-200 bg-red-50 p-5"><p class="text-xs font-black text-red-700">MOVIMENTO · CURA</p><h3 class="mt-2 font-black">Riabilitazione</h3><p class="mt-2 text-sm leading-6 text-slate-600">Inserito in un programma sanitario appropriato.</p></article>
+            <article class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"><p class="text-xs font-black text-emerald-700">MOVIMENTO · BENESSERE</p><h3 class="mt-2 font-black">Pratica guidata</h3><p class="mt-2 text-sm leading-6 text-slate-600">Per sostenere attività, abitudini e qualità della vita.</p></article>
+            <article class="rounded-2xl border border-blue-200 bg-blue-50 p-5"><p class="text-xs font-black text-blue-700">MOVIMENTO · EDUCAZIONE</p><h3 class="mt-2 font-black">Esperienza didattica</h3><p class="mt-2 text-sm leading-6 text-slate-600">Per imparare ad ascoltare e comprendere il corpo.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2">
+        <article class="rounded-[2rem] bg-[#173f43] p-8 text-white sm:p-10">
+          <p class="text-xs font-black uppercase tracking-[.16em] text-teal-200">La persona al centro</p>
+          <h2 class="mt-4 text-3xl font-black">Un percorso adtto alle tue possibilità e alle tue risorse.</h2>
+          <p class="mt-5 leading-7 text-teal-50">Si parte dalla situazione, dagli obiettivi, dalle necessità sanitarie e dalle risorse disponibili: tempo, energie, attenzione e possibilità concrete.</p>
+          <p class="mt-5 font-bold text-white">Meglio un programma semplice che si riesce a seguire di uno perfetto ma impraticabile.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="inizia" class="scroll-mt-24 border-y border-emerald-100 bg-white px-5 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_.8fr] lg:items-center">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Primo passo</p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Racconta da dove parti.</h2>
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">Il primo contatto serve a comprendere la situazione e orientarti verso il campo, la modalità o il professionista più appropriato. Nessun programma viene deciso senza discuterne obiettivi, tempi e condizioni.</p>
+          <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+            <%= link_to "Scrivi su WhatsApp", "https://wa.me/#{@site.fetch("whatsapp_number")}?text=#{ERB::Util.url_encode(@site.fetch("whatsapp_message"))}", target: "_blank", rel: "noopener noreferrer", class: "pi-button pi-button--primary rounded-xl px-6 py-3.5 font-bold" %>
+            <%= link_to "Trova un professionista", percorso_integrato_professionals_path, class: "rounded-xl border border-emerald-200 bg-white px-6 py-3.5 text-center font-bold text-emerald-900 hover:bg-emerald-50" %>
+          </div>
+        </div>
+        <aside class="rounded-3xl border border-slate-200 bg-slate-50 p-7">
+          <p class="text-xs font-black uppercase tracking-[.14em] text-slate-500">Funzione avanzata</p>
+          <h2 class="mt-3 text-2xl font-black">Vuoi approfondire il modello?</h2>
+          <p class="mt-3 text-sm leading-6 text-slate-600">Esplora ciclo, modalità, programmi, verifiche, mappe orientative e livelli del percorso in una pagina separata.</p>
+          <%= link_to "Apri il modello esteso →", percorso_integrato_model_path, class: "mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-3 text-sm font-black text-white hover:bg-slate-700" %>
+        </aside>
+      </div>
+    </section>
+
+    <%#= render "shared/ecosystem/three_projects_connection", current_project: :percorso_integrato %>
+  </main>
+  <%= render "posturacorretta/footer" %>
+</div>
+<% end %>

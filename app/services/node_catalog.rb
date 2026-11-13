@@ -3,16 +3,19 @@ class NodeCatalog
 
   ALLOWED_ATTRIBUTES = %w[
     title description node_type view_type status visibility
-    operator_roles map_color position
+    operator_roles map_color position lane_container line_slugs offer_slugs
   ].freeze
 
   def self.from_config(environment = Rails.env)
-    new(Rails.application.config_for(:nodes, env: environment))
+    new(Rails.application.config_for(:nodes, env: environment), validate_line_offers: true)
   end
 
-  def initialize(config)
+  def initialize(config = nil, validate_line_offers: false, **config_keywords)
+    config ||= config_keywords
     @config = config.to_h.deep_stringify_keys
     @definitions = @config.fetch("nodes", {}).to_h.deep_stringify_keys
+    @removed_slugs = Array(@config["removed_slugs"]).filter_map(&:presence)
+    @validate_line_offers = validate_line_offers
   end
 
   def validate!
@@ -32,6 +35,13 @@ class NodeCatalog
         raise ArgumentError, "Node #{slug}: link_node_slug sconosciuto #{link_slug}"
       end
 
+      attributes.fetch("map_placements", {}).to_h.each do |hostname, placement|
+        Float(placement.to_h.fetch("x"))
+        Float(placement.to_h.fetch("y"))
+      rescue KeyError, ArgumentError, TypeError
+        raise ArgumentError, "Node #{slug}: coordinate non valide per la mappa #{hostname}"
+      end
+
 
       navigation_slugs(attributes["navigation"]).each do |navigation_slug|
         next if definitions.key?(navigation_slug)
@@ -41,10 +51,15 @@ class NodeCatalog
     end
 
     detect_parent_cycles!
+    duplicate_removed_slugs = removed_slugs & definitions.keys
+    if duplicate_removed_slugs.any?
+      raise ArgumentError, "Node presenti sia nel catalogo sia in removed_slugs: #{duplicate_removed_slugs.join(', ')}"
+    end
+    LineOfferCatalog.from_config.validate!(node_definitions: definitions) if validate_line_offers
     true
   end
 
-  def import!(dry_run: false, prune: false)
+  def import!(dry_run: false, prune: false, remove_configured: true)
     validate!
     if prune && Rails.env.production?
       raise ArgumentError, "Il pruning del catalogo Node non è consentito in produzione"
@@ -75,6 +90,18 @@ class NodeCatalog
         associated_profiles += 1
       end
 
+      removed_slugs.each do |slug|
+        node = Node.find_by(slug:)
+        next unless node
+
+        if remove_configured
+          remove_node!(node)
+          pruned += 1
+        else
+          node.update!(line_slugs: [], offer_slugs: [])
+        end
+      end
+
       if prune
         removable_nodes = Node.where.not(slug: definitions.keys).to_a
           .sort_by { |node| -node.self_and_ancestors.count }
@@ -92,9 +119,30 @@ class NodeCatalog
     Result.new(nodes: imported.size, profiles: associated_profiles, pruned: pruned)
   end
 
+  def remove_configured!
+    removed = 0
+    ActiveRecord::Base.transaction do
+      removed_slugs.each do |slug|
+        node = Node.find_by(slug:)
+        next unless node
+
+        remove_node!(node)
+        removed += 1
+      end
+    end
+    removed
+  end
+
   private
 
-    attr_reader :definitions
+    attr_reader :definitions, :removed_slugs, :validate_line_offers
+
+    def remove_node!(node)
+      if node.children.exists? || node.domains.exists?
+        raise ArgumentError, "Impossibile rimuovere il Node #{node.slug}: possiede ancora figli o domini"
+      end
+      node.destroy!
+    end
 
     def navigation_slugs(navigation)
       items = navigation.to_h["items"] || navigation.to_h[:items]
@@ -114,11 +162,14 @@ class NodeCatalog
       parent = import_node!(parent_slug, imported, stack + [slug]) if parent_slug
       role_assignment = parent&.role_assignment || find_root_role_assignment!(slug, attributes)
 
-      matches = Node.where(slug: slug).limit(2).to_a
+      legacy_slugs = Array(attributes["legacy_slugs"]).filter_map(&:presence)
+      matches = Node.where(slug: [slug, *legacy_slugs]).limit(3).to_a
       raise ArgumentError, "Slug Node non univoco nel database: #{slug}" if matches.many?
 
-      node = matches.first || Node.new(slug: slug)
-      node.assign_attributes(attributes.slice(*ALLOWED_ATTRIBUTES))
+      node = matches.first || Node.new
+      node.slug = slug
+      # Linee e offerte assenti nel catalogo vengono svuotate, così toglierle dallo YAML le toglie anche dal Node.
+      node.assign_attributes({ "line_slugs" => [], "offer_slugs" => [] }.merge(attributes.slice(*ALLOWED_ATTRIBUTES)))
       node.parent = parent
       node.role_assignment = role_assignment
       node.save!

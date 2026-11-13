@@ -20,6 +20,7 @@ class Node < ApplicationRecord
   has_many :services, dependent: :restrict_with_error
   has_many :node_processes, dependent: :restrict_with_error
   has_many :node_events, dependent: :destroy
+  has_many :metro_map_placements, dependent: :destroy
   has_many :problem_solving_cycle_nodes, dependent: :destroy
   has_many :problem_solving_cycles, through: :problem_solving_cycle_nodes
   has_many :reusable_skill_nodes, dependent: :destroy
@@ -63,6 +64,8 @@ class Node < ApplicationRecord
 
   attr_writer :navigation_mode
 
+  before_validation :normalize_line_and_offer_slugs
+
   before_validation :apply_navigation_form
 
   before_validation :set_slug, if: -> { slug.blank? && title.present? }
@@ -90,6 +93,27 @@ class Node < ApplicationRecord
 
   scope :published_public, -> { where(status: "published", visibility: "public") }
   scope :published_free, -> { where(status: "published", visibility: %w[public subscription]) }
+  scope :lane_containers, -> { where(lane_container: true) }
+
+  def line_slugs_input
+    line_slugs.join("\n")
+  end
+
+  def line_slugs_input=(value)
+    self.line_slugs = split_reference_slugs(value)
+  end
+
+  def offer_slugs_input
+    offer_slugs.join("\n")
+  end
+
+  def offer_slugs_input=(value)
+    self.offer_slugs = split_reference_slugs(value)
+  end
+
+  def lane_column?
+    lane_container? || domains.active.exists?
+  end
 
   def self.visibility_label(visibility)
     VISIBILITY_LABELS.fetch(visibility.to_s, visibility.to_s.humanize)
@@ -185,6 +209,19 @@ class Node < ApplicationRecord
   end
 
   private
+
+  def normalize_line_and_offer_slugs
+    self.line_slugs = normalize_reference_slugs(line_slugs)
+    self.offer_slugs = normalize_reference_slugs(offer_slugs)
+  end
+
+  def split_reference_slugs(value)
+    normalize_reference_slugs(value.to_s.split(/[\s,]+/))
+  end
+
+  def normalize_reference_slugs(values)
+    Array(values).filter_map { |value| value.to_s.strip.downcase.presence }.uniq
+  end
 
   def apply_navigation_form
     return unless defined?(@navigation_mode) || @navigation_input_assigned

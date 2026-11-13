@@ -1,7 +1,7 @@
 module Flowpulse
   class NetworkController < ApplicationController
     layout "landing"
-    allow_unauthenticated_access only: %i[global automatic]
+    allow_unauthenticated_access only: %i[global automatic lanes]
 
     def global
       @catalog_editor_enabled = NodeCatalogEditor.enabled?
@@ -25,6 +25,66 @@ module Flowpulse
       @automatic_center = params[:modalita] != "all"
       global
       render :global
+    end
+
+    def lanes
+      nodes = Node.published_public
+        .includes(:parent, :link_node, :domains)
+        .order(:position, :title, :id)
+        .to_a
+      hidden_view_types = %w[access_bridge backlink_bridge methodology_preview]
+      @lane_mode = params[:vista] == "professional" ? "professional" : "brand"
+      visible_nodes = nodes.reject { |node| hidden_view_types.include?(node.view_type) }
+        .select { |node| @lane_mode == "professional" ? node.professional? : node.project? }
+      visible_ids = visible_nodes.map(&:id).to_set
+      nodes_by_id = nodes.index_by(&:id)
+
+      @lane_nodes = visible_nodes.map do |node|
+        domains = node.domains.select(&:active?).sort_by(&:display_hostname)
+        {
+          id: node.id,
+          parent_id: node.parent_id,
+          slug: node.slug,
+          title: node.title,
+          description: node.description.to_s,
+          color: effective_lane_color(node, nodes_by_id),
+          domains: domains.map(&:display_hostname),
+          has_domain: domains.any?,
+          lane_container: node.lane_column?,
+          position: node.position,
+          node_type: node.node_type,
+          domain_owner_id: lane_domain_owner_id(node, nodes_by_id),
+          url: node_path(node)
+        }
+      end
+
+      @lane_relations = visible_nodes.filter_map do |node|
+        next if node.parent_id.blank? || !visible_ids.include?(node.parent_id)
+
+        { source: node.parent_id, target: node.id, kind: "Gerarchia" }
+      end
+
+      @lane_relations.concat(nodes.filter_map do |node|
+        next if node.link_node_id.blank? || !visible_ids.include?(node.link_node_id)
+
+        source = hidden_view_types.include?(node.view_type) ? node.parent : node
+        next if source.blank? || !visible_ids.include?(source.id) || source.id == node.link_node_id
+
+        { source: source.id, target: node.link_node_id, kind: "Ponte" }
+      end)
+      @lane_relations.uniq!
+
+      @lane_domains = visible_nodes.select { |node| node.domains.any?(&:active?) }
+        .sort_by { |node| [node.title.downcase, node.id] }
+      @lane_selected = @lane_domains.find { |node| node.slug == params[:node] } ||
+        visible_nodes.find { |node| node.slug == params[:node] } ||
+        @lane_domains.first || visible_nodes.first
+      requested_open_slugs = params[:corsie].to_s.split(",").map(&:strip).reject(&:blank?).uniq
+      valid_container_slugs = visible_nodes.select(&:lane_column?).map(&:slug).to_set
+      @lane_open_slugs = requested_open_slugs.select { |slug| valid_container_slugs.include?(slug) }
+      if params[:node].blank? && @lane_selected.present?
+        return redirect_to flowpulse_network_lanes_path(@lane_selected.slug, **request.query_parameters.symbolize_keys)
+      end
     end
 
     def destroy_node
@@ -59,6 +119,30 @@ module Flowpulse
     end
 
     private
+
+      def effective_lane_color(node, nodes_by_id)
+        current = node
+        visited = Set.new
+        while current && !visited.include?(current.id)
+          return current.map_color.upcase if current.map_color.present?
+
+          visited << current.id
+          current = nodes_by_id[current.parent_id]
+        end
+        "#64748B"
+      end
+
+      def lane_domain_owner_id(node, nodes_by_id)
+        current = node
+        visited = Set.new
+        while current && !visited.include?(current.id)
+          return current.id if current.domains.any?(&:active?)
+
+          visited << current.id
+          current = nodes_by_id[current.parent_id]
+        end
+        nil
+      end
 
       def can_manage_node?(node)
         return false if Current.user.blank?
