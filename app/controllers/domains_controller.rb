@@ -122,6 +122,7 @@ class DomainsController < ApplicationController
     def render_public_node(node)
       if public_node_visible?(node)
         prepare_public_node(node, navigation_domain: Current.domain, domain_root: true)
+        @posturacorretta_landing = node.slug == "posturacorretta"
         render "nodes/show", layout: "public_node"
         true
       else

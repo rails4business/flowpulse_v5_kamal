@@ -34,6 +34,18 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Flowpulse"
   end
 
+  test "renders the PosturaCorretta price list home on its own domain" do
+    brand = Node.create!(role_assignment: @role_assignment, title: "PosturaCorretta", slug: "posturacorretta", status: "published", visibility: "public")
+    Domain.create!(hostname: "posturacorretta.org", node: brand, role_assignment: @role_assignment, home_mode: "node", locale: "it")
+    host! "posturacorretta.org"
+
+    get root_url
+
+    assert_response :success
+    assert_select ".pc-landing-home", count: 1
+    assert_select ".pc-home-tabs", count: 0
+  end
+
   test "renders configured domain target" do
     Domain.create!(
       hostname: "posturacorretta.org",
@@ -223,7 +235,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Costruisci e migliora il tuo percorso, un passo alla volta."
+    assert_select "h1", text: "Tre aspetti complementare per lavorare sulla tua salute."
     assert_select "title", text: /Percorso Integrato/
   end
 

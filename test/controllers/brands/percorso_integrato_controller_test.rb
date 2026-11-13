@@ -6,7 +6,7 @@ module Brands
       get percorso_integrato_path
 
       assert_response :success
-      assert_select "h1", text: "Il tuo percorso di salute, tre competenze che collaborano"
+      assert_select "h1", text: "Tre aspetti complementare per lavorare sulla tua salute."
       assert_select "nav[aria-label='Navigazione Percorso Integrato']"
       assert_select "details.pi-mobile-menu summary[aria-label='Apri il menu di Percorso Integrato']", text: /Menu/
       assert_select "nav[aria-label='Navigazione mobile Percorso Integrato']" do
@@ -18,7 +18,6 @@ module Brands
       assert_select "header img[src*='percorso_integrato_vecchio.png']"
       assert_select "nav[aria-label='Navigazione Percorso Integrato'] a", text: "Docs"
       assert_select "#tre-campi", text: /Cura delle patologie.*Benessere.*Educazione PosturaCorretta/m
-      assert_select "main", text: /Non è lo strumento a fare la differenza/
       assert_select "a[href='#{percorso_integrato_model_path}']", text: /Apri il modello esteso/
       assert_select "#come-funziona", count: 0
       assert_select "#percorso", count: 0

@@ -4,7 +4,8 @@
   sidebar_siblings = Array(@siblings)
   sidebar_children = Array(@children)
   landing_mode = @node.slug == "posturacorretta" && @current_host_domain_root
-  home_selection_mode = landing_mode && @posturacorretta_landing
+  # Senza un percorso preparato (tappa e tab) la home del dominio mostra il listino.
+  home_selection_mode = landing_mode && (@posturacorretta_landing || @posturacorretta_home.nil?)
   content_for(:hide_node_reading_nav, "true") if landing_mode
   has_real_siblings = sidebar_siblings.any? { |sibling| sibling != @node }
   sidebar_items = if has_real_siblings || @parent_node.present?
