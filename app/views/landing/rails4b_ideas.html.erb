@@ -1,0 +1,28 @@
+<% content_for :title, "Idee — Rails4Business" %>
+
+<main class="min-h-screen bg-stone-50 text-slate-900">
+  <%= render "landing/rails4b_nav", active: :ideas %>
+
+  <div class="mx-auto max-w-5xl px-5 py-6 sm:px-6 sm:py-10">
+    <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Idee</h1>
+    <p class="mt-3 max-w-2xl leading-7 text-slate-600">Progetti ancora da avviare. Quando un'idea supera il primo passo e trova un responsabile, passa in GeneraImpresa.</p>
+
+    <ul id="rails4b-ideas" class="mt-8 divide-y divide-slate-200 border-y border-slate-200">
+      <% @rails4b_ideas.each do |idea| %>
+        <li id="idea-<%= idea.fetch("slug") %>" class="grid gap-3 py-6 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:items-start sm:gap-6">
+          <p class="text-xs font-extrabold uppercase tracking-[0.13em] text-blue-700"><%= idea.fetch("category") %></p>
+          <div>
+            <h2 class="text-xl font-black tracking-tight text-slate-950">
+              <% if idea["path"].present? %><%= link_to idea.fetch("title"), idea.fetch("path"), class: "hover:text-blue-700" %><% else %><%= idea.fetch("title") %><% end %>
+            </h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600"><%= idea.fetch("summary") %></p>
+            <% if idea["prototype"].present? && Current.user&.superadmin_user? %>
+              <%= link_to "Prototipo", admin_prototype_path(idea.fetch("prototype")), class: "mt-3 inline-block text-sm font-bold text-amber-700 hover:text-amber-900", target: "_blank", rel: "noopener" %>
+            <% end %>
+          </div>
+          <span class="text-sm font-bold text-slate-400"><%= idea["path"].present? ? "→" : "In arrivo" %></span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</main>

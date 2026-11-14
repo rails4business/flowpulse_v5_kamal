@@ -31,6 +31,7 @@
           <% end %>
         </div>
       </details>
+      <%= link_to "Idee", rails4b_ideas_path, class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
       <%= link_to "Rete", flowpulse_global_network_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/network' && action_name == 'global' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <% if Current.user&.superadmin_user? %>
         <span class="<%= vertical ? 'my-1 h-px w-full bg-slate-200' : 'mx-1 hidden h-6 w-px bg-slate-200 sm:block' %>" aria-hidden="true"></span>

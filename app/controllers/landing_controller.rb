@@ -81,6 +81,10 @@ class LandingController < ApplicationController
     end
   end
 
+  def rails4b_ideas
+    @rails4b_ideas = YAML.safe_load_file(Rails.root.join("config/data/rails4b/idee.yml"), permitted_classes: [], aliases: false).fetch("ideas")
+  end
+
   def rails4b_track
     load_rails4b
     @rails4b_track = @rails4b_path.fetch("tracks").find { |track| track.fetch("slug") == params[:slug] }

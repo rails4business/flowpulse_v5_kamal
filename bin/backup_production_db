@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Automatizza il backup già fatto a mano: pg_dump nel container del database via SSH,
+# salvato in ~/Documents/Backups/flowpulse con permessi 600 e SHA256SUMS.txt aggiornato.
+# Uso: bin/backup_production_db
+set -euo pipefail
+
+DEST_DIR="${HOME}/Documents/Backups/flowpulse"
+KEEP=8
+
+mkdir -p "$DEST_DIR"
+file="$DEST_DIR/flowpulse-$(date +%Y-%m-%d_%H-%M).dump"
+
+ssh -o BatchMode=yes -o ConnectTimeout=20 root@178.105.106.247 \
+  "docker exec flowpulse_v_5-db pg_dump -U flowpulse -d flowpulse_v_5_production -Fc" \
+  > "$file.partial"
+
+# Un dump vuoto o non leggibile non sostituisce i backup precedenti.
+if [ ! -s "$file.partial" ] || ! pg_restore --list "$file.partial" > /dev/null 2>&1; then
+  rm -f "$file.partial"
+  echo "Backup non valido: controlla la connessione al server" >&2
+  exit 1
+fi
+mv "$file.partial" "$file"
+chmod 600 "$file"
+
+# Tiene solo gli ultimi $KEEP backup.
+ls -1t "$DEST_DIR"/flowpulse-*.dump | tail -n +$((KEEP + 1)) | while read -r old; do rm -f "$old"; done
+
+(cd "$DEST_DIR" && shasum -a 256 flowpulse-*.dump > SHA256SUMS.txt)
+echo "Backup salvato in $file ($(du -h "$file" | cut -f1))"

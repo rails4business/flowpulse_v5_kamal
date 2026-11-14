@@ -115,6 +115,7 @@ Rails.application.routes.draw do
   get "rails4b" => "landing#rails4b", as: :rails4b
   get "rails4b/percorsi/:slug" => "landing#rails4b_track", as: :rails4b_track
   get "rails4b/contenuti" => "landing#rails4b_contents", as: :rails4b_contents
+  get "rails4b/idee" => "landing#rails4b_ideas", as: :rails4b_ideas
   get "rails4b/contenuti/:slug" => "landing#rails4b_content", as: :rails4b_content
   scope path: "rails4b", as: :rails4b do
     resources :problems,

@@ -1,16 +1,14 @@
 <% listino = Posturacorretta::Listino.sections(superadmin: Current.user&.superadmin_user?) %>
 <% items = listino.flat_map(&:items) %>
-<% nodes = Node.published_public.where(slug: items.filter_map(&:node_slug)).index_by(&:slug) %>
 <% offers = Offer.where(slug: items.filter_map(&:offer_slug)).index_by(&:slug) %>
 <% offer_titles = Offer.where(slug: offers.values.flat_map(&:included_offer_slugs)).pluck(:slug, :title).to_h %>
 <% journey_slugs = Posturacorretta::HomeJourney::STATIONS.map { |station| station.fetch("slug") } %>
 <% sentence = ->(values) { values.to_sentence(words_connector: ", ", two_words_connector: " e ", last_word_connector: " e ") } %>
-<%# Le tappe della prima linea si aprono nella pagina del percorso; le altre voci nella loro corsia. %>
+<%# Le tappe della prima linea si aprono nella pagina del percorso. Le altre voci restano "In arrivo"
+    finché non hanno una pagina su posturacorretta.org (la vista a corsie vive su flowpulse.net). %>
 <% item_path = lambda do |slug|
-     if slug.blank? then nil
-     elsif journey_slugs.include?(slug) then posturacorretta_postura_recupero_path(tappa: slug, tab: "online")
+     if journey_slugs.include?(slug) then posturacorretta_postura_recupero_path(tappa: slug, tab: "online")
      elsif slug == "percorso-integrato" then percorso_integrato_path
-     elsif nodes.key?(slug) then flowpulse_network_lanes_path(slug, vista: "brand")
      end
    end %>
 <% includes_for = ->(item) { offers[item.offer_slug]&.included_offer_slugs.to_a.filter_map { |slug| offer_titles[slug] } } %>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Backup settimanale del database di produzione: lunedì alle 9:00.
+     Se il Mac è in stop a quell'ora, launchd lo esegue al risveglio.
+     Installazione: vedi docs/backup_database.md -->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>net.flowpulse.backup-db</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-lc</string>
+    <string>"$HOME/Documents/Code/flowpulse_v_5/bin/backup_production_db"</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>
+    <integer>1</integer>
+    <key>Hour</key>
+    <integer>9</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>/tmp/flowpulse-backup-db.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/flowpulse-backup-db.log</string>
+</dict>
+</plist>

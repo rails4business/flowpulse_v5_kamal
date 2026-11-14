@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Se tutto il mondo facesse PosturaCorretta in Lombardia</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--bg:#f7f7f4;--card:#fff;--ink:#1b1f22;--mut:#5d676d;--line:#dde1e3;--acc:#0f6b7a;--acc2:#e07a3f;--near:#b9bec0;--far:#d6d9da;--sea:#e8eef0;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#12171a;--card:#1b2125;--ink:#e8ecee;--mut:#98a3a9;--line:#2d363b;--acc:#6cc3d2;--near:#4a5459;--far:#2f383c;--sea:#12171a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 48px}
+h1{font:700 clamp(28px,5vw,46px)/1.1 "Iowan Old Style",Georgia,serif;margin:8px 0 12px;color:var(--acc)}
+.sub{color:var(--mut);font-size:17px;margin:0 0 20px;max-width:760px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+#wrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+#map{height:520px;background:var(--sea)}
+.leaflet-container{font:inherit}
+#msg{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;z-index:1000;background:var(--card);color:var(--ink)}
+#tip{position:absolute;z-index:1001;pointer-events:none;display:none;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;box-shadow:0 4px 14px #0003;max-width:240px}
+#tip b{color:var(--acc)}
+.sl{margin:14px 0 6px}
+.sl input{width:100%;accent-color:var(--acc)}
+.lbls{display:flex;justify-content:space-between;gap:8px}
+.lbls button{background:none;border:0;padding:4px 6px;color:var(--mut);font-weight:600}
+.lbls button.on{color:var(--acc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.card h3{margin:0 0 10px;font-size:15px}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.sq{width:72px;height:72px;border:2px dashed var(--acc2);flex:none;border-radius:2px}
+.num{font:700 28px/1.1 "Iowan Old Style",Georgia,serif;color:var(--acc2)}
+.small{color:var(--mut);font-size:13px}
+.res{margin:16px 0;border-width:2px;border-color:var(--acc)}
+.res h2{font:700 clamp(26px,4.5vw,40px)/1.15 "Iowan Old Style",Georgia,serif;margin:0 0 8px;color:var(--acc)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.kpi{background:var(--bg);border-radius:10px;padding:10px 12px}
+.kpi b{display:block;font-size:24px;color:var(--acc2);font-family:"Iowan Old Style",Georgia,serif}
+.kpi span{font-size:13px;color:var(--mut)}
+.seg{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 10px}
+.seg button{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+.seg button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:600}
+#leg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px 12px}
+.it{display:flex;gap:8px;align-items:center;padding:4px 6px;border-radius:6px;font-size:14px;cursor:default}
+.it:hover,.it:focus{background:var(--line)}
+.it i{width:12px;height:12px;border-radius:50%;flex:none}
+.it em{margin-left:auto;font-style:normal;color:var(--mut)}
+footer{margin-top:24px;color:var(--mut);font-size:13px}
+@media (max-width:700px){#map{height:420px}.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Se tutto il mondo facesse PosturaCorretta in Lombardia</h1>
+<p class="sub">8,2 miliardi di persone, ognuna sdraiata sul proprio materassino da 2 m² (2 × 1 m), dentro i confini della Lombardia. Domanda: ci stanno tutti?</p>
+
+<div id="wrap"><div id="map"></div><div id="msg" role="alert"></div><div id="tip"></div></div>
+
+<div class="sl card" style="margin-top:12px">
+  <input id="zoom" type="range" min="0" max="100" step="1" value="0" aria-label="Zoom progressivo: dal mondo alla Lombardia">
+  <div class="lbls"><span class="small">Mappa del Mondo</span><span class="small" id="zlbl">zoom 2.0</span><span class="small">Dettaglio Lombardia</span></div>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Il materassino (scala reale)</h3>
+    <div class="row">
+      <svg width="180" height="117" viewBox="0 0 120 78" role="img" aria-label="Uomo di 1,80 m sdraiato su un materassino di 2 m per 1 m">
+        <rect x="0.5" y="0.5" width="119" height="59" rx="3" fill="none" stroke="#e07a3f" stroke-width="1.5"/>
+        <g fill="#0f6b7a" opacity=".85">
+          <circle cx="12" cy="30" r="6.5"/>
+          <rect x="19" y="16.5" width="46" height="27" rx="6"/>
+          <rect x="22" y="9" width="38" height="6.5" rx="3"/>
+          <rect x="22" y="44.5" width="38" height="6.5" rx="3"/>
+          <rect x="65" y="21" width="49" height="8.5" rx="4"/>
+          <rect x="65" y="30.5" width="49" height="8.5" rx="4"/>
+        </g>
+        <line x1="6" y1="67" x2="114" y2="67" stroke="currentColor" stroke-width=".8"/>
+        <line x1="6" y1="64" x2="6" y2="70" stroke="currentColor" stroke-width=".8"/>
+        <line x1="114" y1="64" x2="114" y2="70" stroke="currentColor" stroke-width=".8"/>
+        <text x="60" y="77" font-size="7" text-anchor="middle" fill="currentColor">1,80 m</text>
+      </svg>
+      <div><div class="num">2 m × 1 m = 2 m²</div><div class="small">Altezza uomo: 1,80 m</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Quante persone in questo quadrato?</h3>
+    <div class="row">
+      <div class="sq" aria-hidden="true"></div>
+      <div><div class="num" id="sqN">–</div><div class="small" id="sqA"></div><div class="small" id="sqE"></div></div>
+    </div>
+  </div>
+</div>
+
+<section class="card res" aria-live="polite">
+  <h2 id="resT"></h2><p id="resP" style="margin:0"></p>
+  <div class="kpis" id="kpis"></div>
+</section>
+
+<div class="seg" id="seg" role="group" aria-label="Categoria"></div>
+<div id="leg" class="card"></div>
+
+<footer>
+Fonti: confini regionali ISTAT via <a href="https://github.com/guglielmo/geojson-italy" style="color:var(--acc)">geojson-italy</a> (CC-BY); mappa con Leaflet; popolazione mondiale ~8,2 miliardi, stime ONU/Pew. Le percentuali sono normalizzate a 100%. La superficie occupata è riempita dal basso verso l'alto: ogni fascia colorata è proporzionale alla popolazione della categoria. Lo slider fa uno zoom progressivo dalla mappa del mondo alla Lombardia.
+</footer>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+function showMsg(t){const m=document.getElementById("msg");m.textContent=t;m.style.display="flex"}
+window.addEventListener("error",e=>showMsg("Errore: "+e.message));
+window.addEventListener("unhandledrejection",e=>showMsg("Errore: "+(e.reason&&e.reason.message||e.reason)));
+if(typeof L==="undefined"){showMsg("Leaflet non si è caricato. Apri il file in un browser con internet attivo.");throw new Error("Leaflet mancante")}
+
+const T=8.2e9, KM2=23864, M2=2;
+const GEO="https://raw.githubusercontent.com/guglielmo/geojson-italy/master/geojson/limits_IT_regions.geojson";
+const NEAR=["Piemonte","Veneto","Emilia-Romagna","Liguria","Trentino-Alto Adige"];
+
+const norm=a=>{const s=a.reduce((x,y)=>x+y[1],0);return a.map(([n,v])=>[n,v/s])};
+const NAZ=[["India",1450],["Cina",1410],["Stati Uniti",342],["Indonesia",284],["Pakistan",251],["Nigeria",237],["Brasile",212],["Bangladesh",175],["Russia",144],["Etiopia",135],["Messico",131],["Giappone",123],["Egitto",118],["Filippine",116],["RD Congo",110],["Vietnam",101],["Iran",92],["Turchia",87],["Germania",84],["Thailandia",72],["Tanzania",69],["Regno Unito",69],["Francia",66],["Sudafrica",64],["Italia",59]];
+NAZ.push(["Altri paesi",8200-NAZ.reduce((a,b)=>a+b[1],0)]);
+
+const CATS=[
+ ["Nazionalità",norm(NAZ)],
+ ["Religione",norm([["Cristiani",28.8],["Musulmani",25.6],["Senza religione",24.2],["Indù",14.9],["Buddisti",4.1],["Religioni popolari",4.3],["Altre religioni",1],["Ebrei",.2]])],
+ ["Continente",norm([["Asia",59],["Africa",18.5],["Europa",9],["America Latina e Caraibi",8],["Nord America",4.5],["Oceania",.55]])],
+ ["Età",norm([["0–14 anni",24],["15–24 anni",15.5],["25–64 anni",50],["65+ anni",10.5]])],
+ ["Sesso",norm([["Uomini",50.3],["Donne",49.7]])],
+ ["Città o campagna",norm([["Vive in città",58],["Vive in campagna",42]])]
+];
+
+const nf=new Intl.NumberFormat("it-IT");
+const dec=(n,d)=>n.toLocaleString("it-IT",{maximumFractionDigits:d});
+const short=n=>n>=1e9?dec(n/1e9,1)+" mld":n>=1e6?dec(n/1e6,1)+" mln":n>=1e3?Math.round(n/1e3)+"k":String(Math.round(n));
+const pct=p=>dec(p*100,p<.01?2:1)+"%";
+const $=id=>document.getElementById(id);
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ---- Card risultato ---- */
+(function(){
+  const occ=T*M2/1e6, perc=occ/KM2*100, av=KM2-occ;
+  if(occ<=KM2){
+    $("resT").textContent="Sì, ci stanno tutti e avanza spazio.";
+    $("resP").textContent=`8,2 mld × 2 m² = ${nf.format(Math.round(occ))} km²: occupano il ${dec(perc,1)}% della Lombardia (${nf.format(KM2)} km²) e avanzano ${nf.format(Math.round(av))} km².`;
+  }else{
+    $("resT").textContent="No, non ci stanno tutti.";
+    $("resP").textContent=`Servono ${nf.format(Math.round(occ))} km², la Lombardia ne ha ${nf.format(KM2)}: mancano ${nf.format(Math.round(-av))} km².`;
+  }
+  $("kpis").innerHTML=[[nf.format(Math.round(occ))+" km²","superficie occupata"],[dec(perc,1)+"%","della Lombardia occupata"],[nf.format(Math.round(Math.max(av,0)))+" km²","spazio che avanza"],["8,2 mld","persone totali"]]
+    .map(k=>`<div class="kpi"><b>${k[0]}</b><span>${k[1]}</span></div>`).join("");
+})();
+
+/* ---- Mappa ---- */
+const rend=L.canvas({padding:.5,tolerance:4});
+const map=L.map("map",{
+  preferCanvas:true, renderer:rend,
+  zoomSnap:0, minZoom:1, maxZoom:12,
+  worldCopyJump:false,
+  dragging:false, scrollWheelZoom:false, doubleClickZoom:false,
+  touchZoom:false, boxZoom:false, keyboard:false, tap:false,
+  zoomControl:false, attributionControl:true,
+  fadeAnimation:false, zoomAnimation:false
+}).setView([20, 0], 2); // Vista iniziale sul mondo
+
+const mq=matchMedia("(prefers-color-scheme: dark)");
+let tiles, geoLayer=null, lombLayer=null, geom=null, bounds=null, cur=0, overlay=null, hitLayer=null;
+let lastCats=[], maskCache=null;
+
+function theme(){
+  const url = `https://{s}.basemaps.cartocdn.com/${mq.matches ? "dark" : "light"}_nolabels/{z}/{x}/{y}{r}.png`;
+  if(!tiles) {
+    tiles = L.tileLayer(url, {attribution:"© OpenStreetMap © CARTO", subdomains:"abcd", maxZoom:19}).addTo(map);
+  } else {
+    tiles.setUrl(url);
+  }
+  if(geoLayer) geoLayer.setStyle(style);
+}
+mq.addEventListener("change",theme);
+theme();
+
+function style(f){
+  const n=f.properties.reg_name;
+  // La Lombardia ha un bordo evidente, le altre regioni sono solo sfondo
+  return n==="Lombardia" ? {renderer:rend, interactive:false, color:css("--acc"), weight:3, fillColor:css("--acc"), fillOpacity:0} // fillOpacity 0 così si vede il riempimento sotto
+   : {renderer:rend, interactive:false, color:css("--line"), weight:1, fillColor:css("--far"), fillOpacity: mq.matches ? 0.1 : 0.3};
+}
+
+function makeMask(){
+  const b=bounds, w=1400;
+  const dLng=b.getEast()-b.getWest();
+  const dLat=b.getNorth()-b.getSouth();
+  const h=Math.round(w*dLat/(dLng*Math.cos(b.getCenter().lat*Math.PI/180)));
+  const c=document.createElement("canvas");c.width=w;c.height=h;
+  const x=c.getContext("2d");x.beginPath();
+  const polys=geom.type==="Polygon"?[geom.coordinates]:geom.coordinates;
+  polys.forEach(p=>p.forEach(r=>{
+    r.forEach(([lng,lat],i)=>{const px=(lng-b.getWest())/dLng*w,py=(b.getNorth()-lat)/dLat*h;i?x.lineTo(px,py):x.moveTo(px,py)});
+    x.closePath();
+  }));
+  x.fillStyle = "#000";
+  x.fill("evenodd");
+  const imgData = x.getImageData(0,0,w,h).data;
+  const inside = [];
+  for(let py=h-1; py>=0; py--){
+    const row = py*w;
+    for(let px=0; px<w; px++){
+      if(imgData[(row+px)*4+3] > 128) inside.push(row+px);
+    }
+  }
+  if(inside.length === 0) throw new Error("Maschera vuota");
+  
+  const km2PerPixel = KM2 / inside.length;
+  const occKm2 = T*M2/1e6;
+  const nFill = Math.min(inside.length, Math.round(occKm2 / km2PerPixel));
+  
+  const pos = new Uint32Array(w * h).fill(0xFFFFFFFF);
+  for(let i=0; i<nFill; i++){
+    pos[inside[i]] = i;
+  }
+  
+  return {d:imgData, w, h, dLng, dLat, inside, nFill, pos, km2PerPixel, occKm2};
+}
+
+const tip=$("tip");
+function showTip(e,c){
+  const r=$("wrap").getBoundingClientRect(),ev=e.originalEvent||e;
+  const people=c.p*T;
+  tip.innerHTML=`<b>${c.n}</b><br>${pct(c.p)} · ${short(people)} persone<br>${nf.format(Math.round(people*M2/1e6))} km² occupati`;
+  tip.style.display="block";
+  const cx=(ev.clientX!==undefined)?ev.clientX:r.left+20;
+  const cy=(ev.clientY!==undefined)?ev.clientY:r.top+20;
+  tip.style.left=Math.min(cx-r.left+12,r.width-tip.offsetWidth-6)+"px";
+  tip.style.top=Math.max(cy-r.top-tip.offsetHeight-10,4)+"px";
+}
+
+function paintSurface(mask, items, highlight){
+  const {w,h,inside,nFill}=mask;
+  const cum=[]; let acc=0;
+  for(const c of items){acc+=c.p;cum.push(acc);}
+
+  const cnv=document.createElement("canvas");cnv.width=w;cnv.height=h;
+  const ctx=cnv.getContext("2d");
+  const img=ctx.createImageData(w,h);
+  const px=img.data;
+
+  const tmp=document.createElement("span");
+  tmp.style.display="none";document.body.appendChild(tmp);
+  const rgb=items.map(c=>{
+    tmp.style.color=c.col;
+    const col=getComputedStyle(tmp).color;
+    const m=col.match(/\d+/g);
+    return m?[+m[0],+m[1],+m[2]]:[128,128,128];
+  });
+  tmp.remove();
+
+  for(let i=0;i<nFill;i++){
+    const idx=inside[i];
+    const u=(i+.5)/nFill;
+    let k=0; while(u>cum[k]&&k<items.length-1)k++;
+    const a = (highlight<0) ? 210 : (k===highlight ? 255 : 60);
+    const [r,g,b]=rgb[k];
+    const o=idx*4;
+    px[o]=r;px[o+1]=g;px[o+2]=b;px[o+3]=a;
+  }
+  ctx.putImageData(img,0,0);
+  return {canvas:cnv};
+}
+
+function build(){
+  if(!geom)return;
+  if(!maskCache) maskCache=makeMask();
+  const items=CATS[cur][1].map(([n,p],i)=>({n,p,col:`hsl(${(i*137.5)%360},62%,52%)`}));
+  lastCats=items;
+  const res=paintSurface(maskCache, items, -1);
+
+  if(overlay){map.removeLayer(overlay);overlay=null;}
+  // L'overlay è vincolato ai confini della Lombardia (bounds), quindi apparirà SOLO lì sopra
+  overlay=L.imageOverlay(res.canvas.toDataURL("image/png"), bounds, {
+    opacity:0.9, interactive:false, className:"surf-overlay"
+  }).addTo(map);
+
+  if(hitLayer){map.removeLayer(hitLayer);hitLayer=null;}
+  hitLayer=L.rectangle(bounds,{renderer:rend,color:"transparent",weight:0,fillOpacity:0,interactive:true}).addTo(map);
+  hitLayer.on("mousemove click",e=>{
+    const cat=catAtLatLng(e.latlng);
+    if(cat) showTip(e,cat); else tip.style.display="none";
+  });
+  hitLayer.on("mouseout",()=>tip.style.display="none");
+
+  $("leg").innerHTML=items.map((c,i)=>`<div class="it" tabindex="0" data-i="${i}"><i style="background:${c.col}"></i>${c.n}<em>${pct(c.p)}</em></div>`).join("");
+  $("leg").querySelectorAll(".it").forEach(el=>{
+    const on=()=>hl(+el.dataset.i), off=()=>hl(-1);
+    el.addEventListener("mouseenter",on);el.addEventListener("focus",on);
+    el.addEventListener("mouseleave",off);el.addEventListener("blur",off);
+    el.addEventListener("touchstart",on,{passive:true});
+  });
+}
+
+function catAtLatLng(ll){
+  if(!maskCache) return null;
+  const m=maskCache;
+  const px=Math.floor((ll.lng-bounds.getWest())/m.dLng*m.w);
+  const py=Math.floor((bounds.getNorth()-ll.lat)/m.dLat*m.h);
+  if(px<0||py<0||px>=m.w||py>=m.h) return null;
+  const idx=py*m.w+px;
+  if(m.d[idx*4+3]<=128) return null;
+  
+  const pos = m.pos[idx];
+  if(pos === 0xFFFFFFFF) return null;
+  
+  const items=lastCats;
+  const u=(pos+.5)/m.nFill;
+  let k=0, cum=0;
+  for(;k<items.length;k++){
+    cum+=items[k].p;
+    if(u<=cum) break;
+  }
+  return items[Math.min(k,items.length-1)];
+}
+
+function hl(i){
+  if(!maskCache) return;
+  const res=paintSurface(maskCache, lastCats, i);
+  if(overlay) overlay.setUrl(res.canvas.toDataURL("image/png"));
+}
+
+/* ---- Selettore categorie ---- */
+$("seg").innerHTML=CATS.map((c,i)=>`<button data-i="${i}" aria-pressed="${i===0}">${c[0]}</button>`).join("");
+$("seg").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  cur=+b.dataset.i;
+  $("seg").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  build();
+});
+
+/* ---- Slider zoom progressivo mondo → Lombardia ---- */
+let zMin=2, zMax=8, cA=[20, 0], cB=[45.6, 9.9];
+function computeRange(){
+  // Forza una vista mondiale pulita all'inizio
+  map.setView([20, 0], 2);
+  zMin = 2;
+  if(bounds){
+    map.fitBounds(bounds, {padding: [40, 40], animate: false});
+    zMax = map.getZoom();
+    cB = [bounds.getCenter().lat, bounds.getCenter().lng];
+  }
+  cA = [20, 0];
+}
+function go(p){
+  p=Math.max(0,Math.min(100,p))/100;
+  const z=zMin+(zMax-zMin)*p;
+  const lat=cA[0]+(cB[0]-cA[0])*p;
+  const lng=cA[1]+(cB[1]-cA[1])*p;
+  map.setView([lat,lng],z,{animate:false});
+  $("zlbl").textContent="zoom "+dec(z,1);
+  tip.style.display="none";
+}
+$("zoom").addEventListener("input",e=>go(+e.target.value));
+
+/* ---- Quadrato campione ---- */
+function sq(){
+  const mPerPx=156543.03392*Math.cos(map.getCenter().lat*Math.PI/180)/Math.pow(2,map.getZoom());
+  const side=72*mPerPx,area=side*side,pers=area/M2;
+  $("sqN").textContent="≈ "+short(pers);
+  $("sqA").textContent=`${dec(area/1e6,area<1e6?3:1)} km²`;
+  $("sqE").textContent=`${nf.format(Math.round(pers))} persone`;
+}
+map.on("zoom zoomend moveend",sq);sq();
+
+/* ---- Caricamento confini reali ---- */
+function simp(c,eps){
+  const out=[c[0]];let last=c[0];
+  for(let i=1;i<c.length-1;i++){const p=c[i];if(Math.abs(p[0]-last[0])+Math.abs(p[1]-last[1])>eps){out.push(p);last=p}}
+  out.push(c[c.length-1]);return out.length>=4?out:c;
+}
+function simpGeom(g,eps){
+  return g.type==="Polygon"?{type:"Polygon",coordinates:g.coordinates.map(r=>simp(r,eps))}
+   :{type:"MultiPolygon",coordinates:g.coordinates.map(p=>p.map(r=>simp(r,eps)))};
+}
+
+showMsg("Carico i confini della Lombardia…");
+fetch(GEO).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(gj=>{
+  const f=gj.features.find(x=>x.properties&&x.properties.reg_name==="Lombardia");
+  if(!f){
+    console.error("Feature Lombardia non trovata.");
+    showMsg("Non ho trovato la Lombardia nei dati dei confini.");return;
+  }
+  geom=f.geometry;
+  lombLayer=L.geoJSON(f);bounds=lombLayer.getBounds();
+  
+  const light={type:"FeatureCollection",features:gj.features.map(x=>({type:"Feature",properties:x.properties,
+    geometry:simpGeom(x.geometry, x === f ? 0.002 : 0.01)}))};
+    
+  geoLayer=L.geoJSON(light,{style}).addTo(map);
+  $("msg").style.display="none";
+  build();
+  computeRange();
+  go(0);
+  sq();
+}).catch(err=>{
+  console.error("Errore nel caricamento del GeoJSON:",err);
+  showMsg("Impossibile caricare i confini ("+err.message+"). Controlla la connessione.");
+});
+</script>
+</body>
+</html>

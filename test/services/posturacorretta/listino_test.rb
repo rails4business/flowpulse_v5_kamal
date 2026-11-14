@@ -15,10 +15,11 @@ module Posturacorretta
     test "hides superadmin sections and items from other visitors" do
       public_sections = Listino.sections
       all_titles = Listino.sections(superadmin: true).first.items.map(&:title)
+      area_mente = all_titles.find { |title| title.start_with?("Area Mente") }
 
       assert_equal %w[lezioni-e-percorsi], public_sections.map(&:slug)
-      assert_includes all_titles, "Area Mente"
-      assert_not_includes public_sections.first.items.map(&:title), "Area Mente"
+      assert area_mente
+      assert_not_includes public_sections.first.items.map(&:title), area_mente
     end
 
     test "links only to nodes declared in the catalog" do

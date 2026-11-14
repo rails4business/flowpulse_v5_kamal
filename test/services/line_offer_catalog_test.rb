@@ -36,7 +36,7 @@ class LineOfferCatalogTest < ActiveSupport::TestCase
     assert_equal first, second
     assert_equal "posturacorretta.org", line.domain.hostname
     assert_equal "corso-introduzione-al-percorso-integrato", line.start_node.slug
-    assert_equal "altre-metodiche-posturali", line.end_node.slug
+    assert_equal "altre-metodiche-posturali-sintesi-percorso", line.end_node.slug
     assert_equal [
       "corso-introduzione-al-percorso-integrato",
       "introduzione-al-percorso-integrato",
@@ -47,7 +47,7 @@ class LineOfferCatalogTest < ActiveSupport::TestCase
       "area-massaggio-terapie-manuali-tecniche-corporee",
       "igiene-posturale"
     ], line.ordered_nodes.first(8).map(&:slug)
-    assert_equal "altre-metodiche-posturali", line.ordered_nodes.last.slug
+    assert_equal "altre-metodiche-posturali-sintesi-percorso", line.ordered_nodes.last.slug
     assert_not_includes line.nodes, Node.find_by!(slug: "valutazione-mobilita-articolare")
     assert_equal %w[corso-introduzione-al-percorso-integrato corso-la-prima-settimana-con-posturacorretta introduzione-al-percorso-integrato la-prima-settimana-con-posturacorretta], initial.nodes.order(:id).pluck(:slug).sort
     assert_equal [initial], hygiene.included_offers.to_a

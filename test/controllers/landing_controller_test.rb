@@ -51,6 +51,25 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", new_session_path(return_to: rails4b_skills_path)
   end
 
+  test "Rails4Business lists the ideas not yet started" do
+    get rails4b_ideas_url
+
+    assert_response :success
+    assert_select "nav[aria-label='Navigazione Rails4Business'] a[href=?]", rails4b_ideas_path, text: "Idee"
+    assert_select "#rails4b-ideas li", count: 5
+    assert_select "#idea-ripartire-con-dash a[href=?]", "/generaimpresa/progetti/ripartire-con-dash"
+    assert_select "#idea-posturacorretta-in-lombardia", text: /In arrivo/
+    assert_select "a[href^='/admin/prototipi']", count: 0
+  end
+
+  test "GeneraImpresa and Flowpulse link to the Rails4Business ideas" do
+    get flowpulse_url
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href=?]", rails4b_ideas_path, text: "Idee"
+
+    get genera_impresa_url
+    assert_select "nav[aria-label='GeneraImpresa'] a[href=?]", rails4b_ideas_path, text: "Idee"
+  end
+
   test "Flowpulse presents MarkPostura as one world rather than the whole platform" do
     get flowpulse_url
 

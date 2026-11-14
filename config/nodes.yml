@@ -11,7 +11,6 @@ default: &default
     - programma-introduzione-corpo-e-coscienza
     - programma-introduzione-kinesiologia-applicata
     - programma-altre-metodiche-posturali
-    - altre-metodiche-posturali-sintesi-percorso
     - area-massaggio-orientarsi
   nodes:
     markpostura:
@@ -2195,6 +2194,23 @@ default: &default
       map_placements:
         posturacorretta.org:
           x: 6256.0
+          "y": -950.0
+
+    altre-metodiche-posturali-sintesi-percorso:
+      title: Sintesi del percorso
+      description: Incontro conclusivo · Scegli come proseguire. Rilegge il percorso, confronta le metodiche conosciute e aiuta a scegliere la pratica con cui continuare.
+      node_type: project
+      view_type: course_lesson
+      line_slugs: [postura-recupero]
+      offer_slugs: [area-massaggio-recupero]
+      parent_slug: altre-metodiche-posturali
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 6426.0
           "y": -950.0
 
     accesso-fisioterapia-da-primo-incontro:
