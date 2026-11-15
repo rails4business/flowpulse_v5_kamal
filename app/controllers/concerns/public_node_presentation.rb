@@ -10,9 +10,10 @@ module PublicNodePresentation
       @navigation_domain = navigation_domain || public_node_navigation_domain(@node)
       @navigation_root_node = @navigation_domain&.node
       @navigation_source_node = @node.navigation_source_node
-      @public_navigation_items = resolve_public_navigation(@node.effective_navigation_items)
       boundary_node = @navigation_root_node
       @current_host_domain_root = domain_root.nil? ? public_node_domain_root?(@node) : domain_root
+      @public_navigation_ancestor_ids = @node.self_and_ancestors.map(&:id)
+      @public_navigation_items = resolve_public_navigation(@node.effective_navigation_items)
 
       all_ancestors = @node.self_and_ancestors.reverse
       @breadcrumbs = if boundary_node.present?
@@ -52,15 +53,49 @@ module PublicNodePresentation
         target = @node.role_assignment.nodes.find_by(slug: item["slug"]) if item["slug"].present?
         next if item["slug"].present? && (target.blank? || !public_node_navigable?(target))
 
+        node = target&.bridge_node? ? target.resolve_target : target
+        children = resolve_public_navigation(item["children"])
+        home = item["home"] == true
+
         {
-          node: target&.bridge_node? ? target.resolve_target : target,
+          node: node,
           label: item["label"].presence || target&.title,
           group: item["group"] == true,
-          home: item["home"] == true,
+          home: home,
           path: item["path"].presence,
-          children: resolve_public_navigation(item["children"])
+          current: public_navigation_current?(node, home) || children.any? { |child| child[:current] },
+          children: children
         }
       end
+    end
+
+    # La voce è selezionata sul suo nodo e sulle pagine sotto di esso; la voce home sulla home del dominio.
+    def public_navigation_current?(node, home)
+      return @current_host_domain_root == true if home
+      return false if node.blank?
+
+      @public_navigation_ancestor_ids.include?(node.id)
+    end
+
+    def prepare_posturacorretta_home(node)
+      return unless node.slug == "posturacorretta"
+
+      @posturacorretta_home = Posturacorretta::HomeJourney.new(
+        tappa: params[:tappa],
+        tab: params[:tab],
+        risorsa: params[:risorsa],
+        completed_chapters: posturacorretta_completed_chapters
+      )
+    end
+
+    def posturacorretta_completed_chapters
+      domain = Domain.find_for_host("posturacorretta.org")
+      return {} unless current_profile && domain
+
+      current_profile.data_commitments.where(domain: domain, kind: "academy", status: "completed").to_a
+        .select { |item| item.metadata.to_h["record_type"] == "chapter_completion" }
+        .group_by { |item| item.metadata.to_h["course_slug"] }
+        .transform_values { |items| items.map(&:content_key).uniq }
     end
 
     def public_node_domain_root?(node)

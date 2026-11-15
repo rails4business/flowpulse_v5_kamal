@@ -1,80 +1,171 @@
-<% listino = Posturacorretta::Listino.sections(superadmin: Current.user&.superadmin_user?) %>
-<% items = listino.flat_map(&:items) %>
-<% offers = Offer.where(slug: items.filter_map(&:offer_slug)).index_by(&:slug) %>
-<% offer_titles = Offer.where(slug: offers.values.flat_map(&:included_offer_slugs)).pluck(:slug, :title).to_h %>
-<% journey_slugs = Posturacorretta::HomeJourney::STATIONS.map { |station| station.fetch("slug") } %>
-<% sentence = ->(values) { values.to_sentence(words_connector: ", ", two_words_connector: " e ", last_word_connector: " e ") } %>
-<%# Le tappe della prima linea si aprono nella pagina del percorso. Le altre voci restano "In arrivo"
-    finché non hanno una pagina su posturacorretta.org (la vista a corsie vive su flowpulse.net). %>
-<% item_path = lambda do |slug|
-     if journey_slugs.include?(slug) then posturacorretta_postura_recupero_path(tappa: slug, tab: "online")
-     elsif slug == "percorso-integrato" then percorso_integrato_path
-     end
-   end %>
-<% includes_for = ->(item) { offers[item.offer_slug]&.included_offer_slugs.to_a.filter_map { |slug| offer_titles[slug] } } %>
+<%
+  program_parts = [
+    { slug: "intro", label: "Intro" },
+    { slug: "recupero-massaggio", label: "Recupero e massaggio" },
+    { slug: "movimento-allenamento", label: "Movimento e allenamento" },
+    { slug: "mente", label: "Mente e aspetti emotivi e mentali" },
+    { slug: "fisiologia", label: "Fisiologia, mangiare e medicamenti" },
+    { slug: "corpo", label: "Il corpo, un mondo da scoprire" },
+    { slug: "risorse", label: "Gestione risorse e progetto" }
+  ]
+  selected_part = params[:parte].presence_in(program_parts.map { |part| part.fetch(:slug) }) || "intro"
+  intro_sessions = [
+    { course: Node.find_by(slug: "corso-introduzione-al-percorso-integrato"), course_title: "Introduzione al Percorso Integrato", lesson: Node.find_by(slug: "introduzione-al-percorso-integrato"), lesson_title: "Lezione · Introduzione al Percorso Integrato", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-al-percorso-integrato" } },
+    { course: Node.find_by(slug: "corso-la-prima-settimana-con-posturacorretta"), course_title: "La prima settimana con PosturaCorretta", lesson: Node.find_by(slug: "la-prima-settimana-con-posturacorretta"), lesson_title: "Lezione · La prima settimana con PosturaCorretta", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "la-prima-settimana-con-posturacorretta" } },
+    { course: Node.find_by(slug: "postura-e-fisiologia"), course_title: "Postura e fisiologia", lesson: Node.find_by(slug: "introduzione-postura-e-fisiologia"), lesson_title: "Introduzione a Postura e fisiologia", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-postura-e-fisiologia" } }
+  ]
+%>
 
 <div class="pc-landing-home">
-  <section id="inizia" class="pc-hero pc-hero--simple">
-    <div class="pc-hero__content">
-      <p class="pc-landing-eyebrow">Postura · Salute · Educazione</p>
-      <h1>Ascolta il tuo corpo, riattiva la tua fisiologia</h1>
-      <p class="pc-hero__lead">Da dove vuoi iniziare?</p>
-      <div class="pc-landing-actions">
-        <%= link_to "Inizia con PosturaCorretta", posturacorretta_postura_recupero_path(tappa: "introduzione-al-percorso-integrato", tab: "online"), class: "pc-landing-primary-action" %>
-      </div>
-      <% if listino.many? %>
-        <nav class="pc-listino-nav" aria-label="Sezioni del listino">
-          <% listino.each do |section| %>
-            <a href="#<%= section.slug %>"><%= section.title %></a>
-          <% end %>
-        </nav>
+  <nav class="pc-expression-tabs" aria-label="Aree di Espressione">
+    <% program_parts.each do |part| %>
+      <% if part.fetch(:slug) == selected_part %>
+        <span class="pc-expression-tab is-selected" aria-current="page"><%= part.fetch(:label) %></span>
+      <% else %>
+        <%= link_to part.fetch(:label), posturacorretta_path(parte: part.fetch(:slug)), class: "pc-expression-tab" %>
       <% end %>
-    </div>
-  </section>
+    <% end %>
+  </nav>
 
-  <% listino.each do |section| %>
-    <section id="<%= section.slug %>" class="pc-landing-section pc-listino">
-      <header class="pc-listino__head">
-        <h2><%= section.title %></h2>
-        <% unless section.priced? %><p class="pc-listino__note">Prezzi in definizione</p><% end %>
-        <% if section.description.present? %><p><%= section.description %></p><% end %>
+  <% if selected_part == "intro" %>
+  <section class="pc-sheet pc-intro-sheet" aria-labelledby="pc-intro-title" data-controller="print-date">
+    <div class="pc-intro-sheet__hero">
+      <div>
+        <h1 id="pc-intro-title">Non è solo stare ben dritti con la schiena.</h1>
+        <p>Salute perfetta con PosturaCorretta</p>
+      </div>
+      <img src="https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777" alt="Salute perfetta con PosturaCorretta">
+    </div>
+
+    <div class="pc-intro-sheet__path">
+      <h2>Percorso PosturaCorretta</h2>
+      <p>Conoscere i nostri sistemi fisiologici e imparare a riattivarli attraverso un percorso di educazione alla salute basato sui principi delle principali metodiche posturali.</p>
+
+      <ol class="pc-intro-sheet__principles">
+        <li><span>01</span><div><h3>Scopri</h3><p>Con il corso online, impara ad ascoltare il corpo, osserva come funziona e sperimenta come riattivare i suoi sistemi.</p></div></li>
+        <li><span>02</span><div><h3>Pratica</h3><p>Affronta le lezioni con un insegnante PosturaCorretta, che ti accompagna nel percorso educativo, alla scoperta delle metodiche posturali.</p></div></li>
+        <li><span>03</span><div><h3>Approfondisci</h3><p>Hai trovato una metodica che ti piace? Vuoi iniziare un percorso personalizzato? Ogni metodica ha una scuola. Trova un professionista formato che possa seguirti nel tuo percorso.</p></div></li>
+      </ol>
+
+      <div class="pc-intro-actions">
+        <%= link_to "Inizia", posturacorretta_postura_recupero_path(tappa: "introduzione-al-percorso-integrato", tab: "online"), class: "pc-landing-primary-action" %>
+        <%= link_to "Per saperne di più", posturacorretta_about_path, class: "pc-landing-secondary-action" %>
+      </div>
+    </div>
+
+    <div class="pc-intro-sheet__program">
+      <h2>Programma Intro</h2>
+      <% unless authenticated? %>
+        <p class="pc-sheet__login"><%= link_to "Accedi", new_session_path(return_to: request.fullpath) %> per vedere il tuo avanzamento.</p>
+      <% end %>
+
+      <div class="pc-sheet__scroll">
+        <table class="pc-sheet__table pc-intro-sheet__table">
+          <thead>
+            <tr>
+              <th scope="col">Corso / lezione</th>
+              <th scope="col"><span class="sr-only">Stato</span></th>
+              <th scope="col">Data e ora</th>
+              <th scope="col">Centro</th>
+              <th scope="col">Insegnante</th>
+            </tr>
+          </thead>
+          <% intro_sessions.each_with_index do |session, index| %>
+            <% progress = @posturacorretta_home.online_progress(session.fetch(:station)) %>
+            <% completed = progress[:total].positive? && progress[:done] == progress[:total] %>
+            <% destination = posturacorretta_postura_recupero_path(tappa: session.fetch(:station).fetch("slug"), tab: "online") %>
+            <tbody>
+              <tr class="pc-sheet__course">
+                <th scope="rowgroup"><%= index + 1 %> · <%= link_to session.fetch(:course)&.title || session.fetch(:course_title), destination %></th>
+                <td>
+                  <span class="pc-my-path__dot <%= "is-online-done" if completed %>" aria-hidden="true"></span>
+                  <span class="sr-only"><%= completed ? "Completato" : "Da completare" %></span>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><%= link_to session.fetch(:lesson)&.title || session.fetch(:lesson_title), destination %></td>
+                <td></td>
+                <td class="pc-sheet__blank"></td>
+                <td class="pc-sheet__blank"></td>
+                <td class="pc-sheet__blank"></td>
+              </tr>
+            </tbody>
+          <% end %>
+        </table>
+      </div>
+    </div>
+
+    <footer class="pc-sheet__head pc-intro-sheet__footer">
+      <div>
+        <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
+        <p class="pc-sheet__meta">Intro · scheda del <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></p>
+      </div>
+      <div class="pc-sheet__download">
+        <button type="button" data-action="print-date#print" class="pc-sheet__print" title="Nella finestra di stampa scegli «Salva come PDF»">Scarica o stampa Intro</button>
+        <span>Parte 1 di 7</span>
+        <%= link_to posturacorretta_path(parte: "recupero-massaggio") do %>
+          <small>Continua</small>
+          <strong>Recupero e massaggio <span aria-hidden="true">→</span></strong>
+        <% end %>
+      </div>
+    </footer>
+  </section>
+  <% elsif selected_part == "recupero-massaggio" %>
+    <% recovery_courses = @posturacorretta_home.sheet_courses.drop(3) %>
+    <section class="pc-sheet pc-intro-sheet" aria-labelledby="pc-recovery-title" data-controller="print-date">
+      <header class="pc-program-sheet__intro">
+        <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
+        <h1 id="pc-recovery-title">Recupero e massaggio</h1>
+        <p>La parte del programma dedicata a massaggio, terapie manuali, tecniche corporee e recupero.</p>
       </header>
 
-      <% if section.steps? %>
-        <ol class="pc-listino-steps">
-          <% section.items.each_with_index do |item, index| %>
-            <% path = item_path.call(item.node_slug) %>
-            <% included = includes_for.call(item) %>
-            <li class="pc-listino-step <%= "is-first" if index.zero? %> <%= "is-soon" unless path %>">
-              <div class="pc-listino-step__top">
-                <span class="pc-listino-step__number"><%= index + 1 %></span>
-                <% if index.zero? %><span class="pc-listino-step__badge">Inizia da qui</span><% end %>
-              </div>
-              <h3><% if path %><%= link_to item.title, path, class: "pc-listino__link" %><% else %><%= item.title %><% end %></h3>
-              <% if item.detail.present? %><p><%= item.detail %></p><% end %>
-              <% if included.any? %><p class="pc-listino-step__includes" title="Comprende <%= sentence.call(included) %>">Comprende i passi precedenti</p><% end %>
-              <div class="pc-listino-step__foot">
-                <% if item.price %><strong><%= item.price %></strong><% end %>
-                <span class="pc-listino__cta" aria-hidden="true"><%= path ? "Scopri →" : "In arrivo" %></span>
-              </div>
-            </li>
+      <div class="pc-intro-sheet__program pc-program-sheet__table pc-sheet__scroll">
+        <table class="pc-sheet__table pc-intro-sheet__table">
+          <thead>
+            <tr><th scope="col">Corso / lezione</th><th scope="col"><span class="sr-only">Stato</span></th><th scope="col">Data e ora</th><th scope="col">Centro</th><th scope="col">Insegnante</th></tr>
+          </thead>
+          <% recovery_courses.each_with_index do |course, index| %>
+            <% progress = course.station ? @posturacorretta_home.online_progress(course.station) : { done: 0, total: 0 } %>
+            <% completed = progress[:total].positive? && progress[:done] == progress[:total] %>
+            <% destination = course.station ? posturacorretta_postura_recupero_path(tappa: course.station.fetch("slug"), tab: "online") : flowtree_public_node_path(course.node) %>
+            <tbody>
+              <tr class="pc-sheet__course">
+                <th scope="rowgroup"><%= index + 1 %> · <%= link_to course.node.title, destination %></th>
+                <td><span class="pc-my-path__dot <%= "is-online-done" if completed %>" aria-hidden="true"></span><span class="sr-only"><%= completed ? "Completato" : "Da completare" %></span></td>
+                <td></td><td></td><td></td>
+              </tr>
+              <% course.lessons.each do |lesson| %>
+                <tr>
+                  <td><%= link_to lesson.title, destination %></td>
+                  <td></td><td class="pc-sheet__blank"></td><td class="pc-sheet__blank"></td><td class="pc-sheet__blank"></td>
+                </tr>
+              <% end %>
+            </tbody>
           <% end %>
-        </ol>
-      <% else %>
-        <ul class="pc-listino-list">
-          <% section.items.each do |item| %>
-            <% path = item_path.call(item.node_slug) %>
-            <li class="pc-listino-row <%= "is-soon" unless path %>">
-              <div>
-                <h3><% if path %><%= link_to item.title, path, class: "pc-listino__link" %><% else %><%= item.title %><% end %></h3>
-                <% if item.detail.present? %><p><%= item.detail %></p><% end %>
-              </div>
-              <% if item.price %><strong class="pc-listino-row__price"><%= item.price %></strong><% end %>
-              <span class="pc-listino__cta" aria-hidden="true"><%= path ? "→" : "In arrivo" %></span>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
+        </table>
+      </div>
+
+      <footer class="pc-sheet__head pc-intro-sheet__footer">
+        <div>
+          <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
+          <p class="pc-sheet__meta">Recupero e massaggio · scheda del <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></p>
+        </div>
+        <div class="pc-sheet__download">
+          <button type="button" data-action="print-date#print" class="pc-sheet__print">Scarica o stampa Recupero e massaggio</button>
+          <span>Parte 2 di 7</span>
+          <%= link_to posturacorretta_path(parte: "movimento-allenamento") do %><small>Continua</small><strong>Movimento e allenamento <span aria-hidden="true">→</span></strong><% end %>
+        </div>
+      </footer>
+    </section>
+  <% else %>
+    <% current_part = program_parts.find { |part| part.fetch(:slug) == selected_part } %>
+    <section class="pc-sheet pc-intro-sheet pc-program-placeholder">
+      <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
+      <h1><%= current_part.fetch(:label) %></h1>
+      <p>Questa parte del programma è in preparazione.</p>
     </section>
   <% end %>
 </div>

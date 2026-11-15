@@ -88,24 +88,54 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".pc-landing-home", count: 1
-    assert_select "a[href='#{posturacorretta_postura_recupero_path(tappa: 'introduzione-al-percorso-integrato', tab: 'online')}']", text: /Inizia con PosturaCorretta/
-    assert_select "#lezioni-e-percorsi .pc-listino-step", minimum: 1
-    assert_select "#avanzati", count: 0
-    assert_select "#servizi-personalizzati", count: 0
-    assert_select ".pc-listino__note", text: "Prezzi in definizione", minimum: 1
+    assert_select "a[href='#{posturacorretta_postura_recupero_path(tappa: 'introduzione-al-percorso-integrato', tab: 'online')}']", text: "Inizia"
+    assert_select ".pc-expression-tabs .pc-expression-tab", count: 7
+    assert_select ".pc-expression-tab.is-selected", text: "Intro"
+    assert_select ".pc-expression-tab[href='#{posturacorretta_path(parte: "recupero-massaggio")}']", text: "Recupero e massaggio"
+    assert_select ".pc-sheet.pc-intro-sheet", count: 1
+    assert_select ".pc-intro-sheet__hero h1", text: "Non è solo stare ben dritti con la schiena."
+    assert_select ".pc-intro-sheet__hero img[src*='posturacorretta_home.png']", count: 1
+    assert_select ".pc-intro-sheet__principles > li", count: 3
+    assert_select ".pc-intro-sheet__table thead th", count: 5
+    assert_select ".pc-intro-sheet__table tbody", count: 3
+    assert_select ".pc-intro-sheet__table tbody tr", count: 6
+    assert_select ".pc-intro-sheet__table tbody" do |sessions|
+      sessions.each { |session| assert_select session, "tr", count: 2 }
+    end
+    assert_select ".pc-sheet__print", text: "Scarica o stampa Intro"
+    assert_select ".pc-intro-sheet__table tbody tr:nth-child(2) a[href^='#{posturacorretta_postura_recupero_path}']", minimum: 1
+    assert_select "#lezioni-e-percorsi", count: 0
+    assert_select ".pc-listino__note", count: 0
     assert_select ".pc-home-tabs", count: 0
+
+    get posturacorretta_url(parte: "recupero-massaggio")
+
+    assert_response :success
+    assert_select ".pc-expression-tab.is-selected", text: "Recupero e massaggio"
+    assert_select ".pc-program-sheet__intro h1", text: "Recupero e massaggio"
+    assert_select ".pc-sheet__print", text: "Scarica o stampa Recupero e massaggio"
 
     get posturacorretta_postura_recupero_url(tappa: "la-prima-settimana-con-posturacorretta", tab: "lezioni")
 
     assert_response :success
     assert_select "iframe", count: 0
     assert_select ".pc-landing-home", count: 0
-    assert_select ".pc-home-tabs a", count: 4
+    assert_select ".pc-home-tabs a", count: 5
     assert_select ".pc-home-panel .pc-home-metro", count: 1
     assert_select ".pc-home-journey > .pc-home-metro", count: 0
     assert_select ".pc-home-panel--lezioni", text: /Lezione 1/
     assert_select ".pc-home-station[href^='#{posturacorretta_postura_recupero_path}']", minimum: 1
     assert_select ".node-public-reading-nav-static", count: 0
+
+    get posturacorretta_postura_recupero_url(tab: "percorso")
+
+    assert_response :success
+    assert_select ".pc-home-tab.is-selected", text: "Il mio percorso"
+    assert_select ".pc-home-panel--percorso .pc-home-metro", count: 0
+    assert_select ".pc-sheet__print", text: "Stampa o salva PDF"
+    assert_select ".pc-sheet__private", count: 0
+    assert_select ".pc-sheet__login a", text: "Accedi"
+    assert_select ".pc-sheet__upcoming li", count: 3
   end
 
   test "public visitor cannot view free subscription node" do
@@ -408,6 +438,8 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "header nav[aria-label='Navigazione principale'] > a[href=?][aria-label='bounded.example · Home']", root_path
     assert_select "header nav[aria-label='Navigazione principale'] a[href=?]", node_path(child), text: "Domain Child"
     assert_select "header nav[aria-label='Navigazione principale'] a[href=?]", node_path(sibling), text: "Domain Sibling"
+    assert_select "header nav[aria-label='Navigazione principale'] a[aria-current='page'][href=?]", node_path(child), text: "Domain Child"
+    assert_select "header nav[aria-label='Navigazione principale'] a[aria-current='page'][href=?]", node_path(sibling), count: 0
     assert_select ".node-public-reading-nav-static"
     assert_no_match "www.bounded.example", css_select(".node-public-breadcrumb").to_s
     assert_no_match "Top Root", response.body

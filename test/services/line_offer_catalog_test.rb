@@ -86,4 +86,16 @@ class LineOfferCatalogTest < ActiveSupport::TestCase
     error = assert_raises(ArgumentError) { LineOfferCatalog.from_config("test").import! }
     assert_match "Node fuori dalla tratta dichiarano l'offerta: principi-di-fisioterapia", error.message
   end
+
+  test "the path sheet groups the lessons of the line under their courses" do
+    LineOfferCatalog.from_config("test").import!
+
+    courses = Posturacorretta::HomeJourney.new(tappa: nil, tab: "percorso").sheet_courses
+
+    assert_equal "corso-introduzione-al-percorso-integrato", courses.first.node.slug
+    assert_equal %w[introduzione-al-percorso-integrato], courses.first.lessons.map(&:slug)
+    assert_equal 35, courses.sum { |course| course.lessons.size }
+    assert_equal "altre-metodiche-posturali-sintesi-percorso", courses.last.lessons.last.slug
+    assert_equal "igiene-posturale", courses.find { |course| course.node.slug == "igiene-posturale" }.station.fetch("slug")
+  end
 end

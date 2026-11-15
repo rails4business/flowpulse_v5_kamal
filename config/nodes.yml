@@ -61,9 +61,24 @@ default: &default
         - segreteria
       navigation:
         items:
-          - key: home
-            label: Home
+          - key: espressione
+            label: Espressione
             home: true
+          - key: consapevolezza
+            label: Consapevolezza
+            slug: apprendimento-2-connessione
+          - key: connessione
+            label: Connessione
+            slug: dalla-posturacorretta-al-giardino-del-corpo
+          - key: partecipa
+            label: Partecipa
+            slug: partecipa-posturacorretta
+          - key: servizi
+            label: Servizi
+            slug: servizi-posturacorretta
+          - key: about
+            label: About
+            slug: about-posturacorretta
           - key: vecchio-menu
             label: Percorso online
             path: /percorso-posturacorretta
@@ -1352,6 +1367,124 @@ default: &default
           x: -238.0
           "y": 1045.0
 
+    about-posturacorretta:
+      title: About
+      description: Postura Corretta non è solo stare ben dritti con la schiena.
+      node_type: project
+      parent_slug: posturacorretta
+      position: 9
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    partecipa-posturacorretta:
+      title: Partecipa
+      description: Incontri, percorsi individuali e di gruppo e formazione per partecipare alle attività PosturaCorretta.
+      node_type: project
+      parent_slug: posturacorretta
+      position: 7
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-incontri-settimanali-da-partecipa:
+      title: Incontri settimanali
+      node_type: project
+      view_type: access_bridge
+      parent_slug: partecipa-posturacorretta
+      link_node_slug: categorie-generali
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-trattamento-singolo-da-partecipa:
+      title: Trattamento personalizzato singolo
+      node_type: project
+      view_type: access_bridge
+      parent_slug: partecipa-posturacorretta
+      link_node_slug: trattamento-singolo
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-pacchetto-singolo-da-partecipa:
+      title: Pacchetto percorso personalizzato singolo
+      node_type: project
+      view_type: access_bridge
+      parent_slug: partecipa-posturacorretta
+      link_node_slug: pacchetto-percorso-singolo
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-percorso-gruppo-da-partecipa:
+      title: Percorso gruppo · Aziende e associazioni sportive
+      node_type: project
+      view_type: access_bridge
+      parent_slug: partecipa-posturacorretta
+      link_node_slug: percorso-aziende-associazioni-sportive
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-diventa-insegnante-da-partecipa:
+      title: Diventa insegnante PosturaCorretta
+      node_type: project
+      view_type: access_bridge
+      parent_slug: partecipa-posturacorretta
+      link_node_slug: diventa-insegnante-posturacorretta
+      position: 5
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    servizi-posturacorretta:
+      title: Servizi
+      description: Valutazioni, consulenze e orientamento per costruire un Percorso Integrato adatto alla persona.
+      node_type: project
+      parent_slug: posturacorretta
+      position: 8
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-stato-salute-da-servizi:
+      title: Stato di salute
+      node_type: project
+      view_type: access_bridge
+      parent_slug: servizi-posturacorretta
+      link_node_slug: stato-di-salute
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-mobilita-articolare-da-servizi:
+      title: Valutazione della mobilità articolare
+      node_type: project
+      view_type: access_bridge
+      parent_slug: servizi-posturacorretta
+      link_node_slug: valutazione-mobilita-articolare
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    accesso-percorso-integrato-da-servizi:
+      title: Percorso Integrato
+      node_type: project
+      view_type: access_bridge
+      parent_slug: servizi-posturacorretta
+      link_node_slug: percorso-integrato
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     accesso-percorso-integrato-da-posturacorretta:
       title: Accesso al Percorso Integrato da PosturaCorretta
       description: Ponte diretto dalla rete PosturaCorretta al Percorso Integrato.
@@ -1517,6 +1650,7 @@ default: &default
       title: Igiene Posturale
       lane_container: true
       description: Corso di PosturaCorretta dedicato alle basi dell'igiene posturale e alla pratica quotidiana.
+      image: https://ik.imagekit.io/posturacorretta/immagini_brand/igiene-posturale.png?updatedAt=1763752348993
       node_type: project
       view_type: course
       academy_module_key: igiene-posturale
@@ -1789,7 +1923,7 @@ default: &default
           "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-am:
-      title: Catena AM
+      title: "Catena AM · Flessione: postura del riposo, recupero e accoglienza · cambio stagione"
       node_type: project
       view_type: course_lesson
       line_slugs: [postura-recupero]
@@ -1805,7 +1939,7 @@ default: &default
           "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-al:
-      title: Catena AL
+      title: "Catena AL · Intrarotazione: focus e precisione · autunno"
       node_type: project
       view_type: course_lesson
       line_slugs: [postura-recupero]
@@ -1821,7 +1955,7 @@ default: &default
           "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-pm:
-      title: Catena PM
+      title: "Catena PM · Estensione: atteggiamento del fare · inverno, l'imprenditore"
       node_type: project
       view_type: course_lesson
       line_slugs: [postura-recupero]
@@ -1837,7 +1971,7 @@ default: &default
           "y": -950.0
 
     biomeccanica-comportamentale-gds-catena-pl:
-      title: Catena PL
+      title: "Catena PL · Extrarotazione: apertura, il cowboy · primavera"
       node_type: project
       view_type: course_lesson
       line_slugs: [postura-recupero]
@@ -1853,7 +1987,7 @@ default: &default
           "y": -950.0
 
     biomeccanica-comportamentale-gds-catene-pa-ap:
-      title: Catene PA/AP
+      title: "Catene PA/AP · Gioco e ricerca: lasso e rigido, espansione · estate"
       node_type: project
       view_type: course_lesson
       line_slugs: [postura-recupero]
@@ -2079,7 +2213,7 @@ default: &default
           "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-cinque-elementi:
-      title: I 5 elementi
+      title: I 5 elementi e il ciclo stagionale
       node_type: project
       view_type: course_lesson
       line_slugs: [postura-recupero]
@@ -2095,7 +2229,7 @@ default: &default
           "y": -950.0
 
     introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani:
-      title: Le 6 coppie di meridiani
+      title: Le 6 coppie di meridiani e il ciclo circadiano
       node_type: project
       view_type: course_lesson
       line_slugs: [postura-recupero]

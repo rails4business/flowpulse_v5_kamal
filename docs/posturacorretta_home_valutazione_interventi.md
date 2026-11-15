@@ -109,3 +109,149 @@ Si procede con un solo intervento alla volta. Ogni punto viene prima verificato 
 - L'eventuale pagamento non viene presentato come una “valutazione”: è legato a un intervento umano, come accompagnamento, lezioni o supervisione.
 - L'attestato può essere a pagamento soltanto se comprende una verifica reale svolta da una persona.
 - Un abbonamento alla piattaforma sarà valutato in futuro soltanto in presenza di un servizio continuativo; per ora non viene introdotto.
+
+## Review UX della landing a listino — 15 novembre 2026
+
+### Sintesi
+
+La home attuale è pulita e leggibile, ma comunica più un **catalogo in costruzione** che un percorso
+affidabile per una persona che cerca orientamento o aiuto. La priorità non è aggiungere molte sezioni:
+è rendere più chiari il primo passo, il funzionamento del percorso e le ragioni per fidarsi.
+
+Questa review riguarda la landing attiva in
+`app/views/nodes/posturacorretta_home/_landing.html.erb` e il listino in
+`config/data/posturacorretta/listino.yml`. Non sostituisce le decisioni precedenti: raccoglie i punti
+da discutere prima di intervenire.
+
+### Problemi osservati e possibili interventi
+
+#### 1. “Da dove vuoi iniziare?” offre una sola risposta
+
+La domanda promette una scelta, ma nella parte iniziale compare soltanto il pulsante
+“Inizia con PosturaCorretta”. Le due alternative da valutare sono:
+
+- sostituire la domanda con **“Il primo passo consigliato”**, mantenendo un'unica azione;
+- mantenere la domanda e offrire due o tre ingressi reali per bisogno, per esempio:
+  **“Ho dolore o un problema”**, **“Voglio conoscere e prevenire”**, **“Sono un professionista”**.
+
+Non vanno introdotte scelte che conducono a pagine vuote o percorsi non ancora disponibili.
+
+#### 2. La promessa iniziale è evocativa ma poco concreta
+
+“Ascolta il tuo corpo, riattiva la tua fisiologia” esprime la visione, ma non spiega subito che cosa
+offre PosturaCorretta. Può restare come titolo se viene accompagnato da una frase concreta, ad esempio:
+
+> Un percorso educativo di lezioni, pratica e professionisti per conoscere il corpo e orientarti
+> nelle scelte di salute.
+
+Il testo definitivo deve evitare promesse terapeutiche e descrivere soltanto ciò che è realmente
+disponibile.
+
+#### 3. La home entra troppo presto nel listino
+
+Tra l'hero e le offerte manca un breve ponte che chiarisca:
+
+- per chi è il percorso;
+- come funziona;
+- che cosa ottiene la persona;
+- perché può fidarsi del progetto.
+
+Per un progetto legato alla salute, orientamento e fiducia devono precedere la proposta economica.
+Il ponte dovrebbe essere compatto e non trasformarsi in una seconda pagina di presentazione.
+
+#### 4. La progressione non usa ancora un ordine univoco
+
+Nella home “Igiene Posturale” precede “Area Massaggio e recupero”; nella sequenza interna di
+`Posturacorretta::HomeJourney::STATIONS` l'Area Massaggio precede Igiene Posturale. Occorre decidere
+un solo ordine didattico e applicarlo a:
+
+- card della home;
+- mappa del percorso;
+- corsi e lezioni;
+- offerte cumulative;
+- testi che descrivono il passo precedente e quello successivo.
+
+Finché l'ordine non è condiviso, non conviene rafforzare graficamente la numerazione delle tappe.
+
+#### 5. Troppi elementi comunicano incompiutezza
+
+La dicitura “Prezzi in definizione” e la presenza ripetuta di “In arrivo” possono far percepire il
+progetto come non pronto. Per la versione pubblica si propone di:
+
+- mostrare in primo piano soltanto ciò che è disponibile;
+- raccogliere le anticipazioni in un'unica sezione discreta “Prossimamente”;
+- non mostrare un avviso sui prezzi se in quella fase la persona non può ancora acquistare;
+- mantenere le voci operative o sperimentali riservate al superadmin.
+
+#### 6. Le card descrivono soprattutto il formato
+
+Indicazioni come “1 lezione + corso online” sono utili, ma non spiegano il beneficio. Ogni card
+dovrebbe usare questa gerarchia:
+
+1. risultato o utilità per la persona;
+2. formato e impegno richiesto;
+3. cosa comprende;
+4. azione disponibile.
+
+Esempio di direzione editoriale:
+
+> Comprendi come orientarti tra i diversi professionisti e costruisci la base del tuo percorso.
+
+Il testo va poi completato con informazioni verificabili su lezione, corso online, durata e costo.
+
+#### 7. Mancano elementi immediati di affidabilità
+
+Prima del listino serve una fascia sintetica che mostri almeno alcuni elementi verificabili:
+
+- chi cura e promuove il progetto;
+- formazione e responsabilità professionali pertinenti;
+- metodo educativo e limiti del servizio;
+- professionisti, sedi o esperienze reali già disponibili;
+- eventuali testimonianze reali, solo con consenso e fonte verificabile.
+
+Questo punto si collega alla sezione “Fiducia, formazione e rete professionale” del presente documento
+e alla futura pagina dedicata alle persone. Non vanno inventati numeri, risultati o prove sociali.
+
+#### 8. La progressione è lunga su mobile
+
+Le card passano correttamente a una colonna, ma cinque blocchi consecutivi possono sembrare cinque
+prodotti separati. Su mobile una timeline verticale compatta renderebbe più evidente che si tratta di
+passaggi cumulativi dello stesso cammino.
+
+La timeline deve comunque lasciare chiari:
+
+- il punto di partenza;
+- le tappe disponibili;
+- ciò che è compreso nei passaggi successivi;
+- la differenza tra contenuto online, lezione e servizio umano.
+
+### Struttura proposta della home
+
+Ordine da valutare, senza considerarlo ancora approvato:
+
+1. **Promessa chiara** — visione più spiegazione concreta dell'offerta.
+2. **Primo passo consigliato** — una sola azione se esiste un ingresso valido per tutti.
+3. **Ingressi per bisogno** — soltanto se portano a destinazioni reali e differenti.
+4. **Come funziona** — spiegazione sintetica in tre passaggi.
+5. **Percorso e listino disponibile** — tappe pubblicate, ordine univoco, benefici prima del formato.
+6. **Fiducia** — persone, competenze, metodo, limiti e presenza sul territorio.
+7. **Azione conclusiva** — ripresa coerente del primo passo o contatto appropriato.
+
+### Prima proposta operativa
+
+Il primo intervento consigliato è limitato alla parte iniziale:
+
+1. decidere se la home propone un unico primo passo o più ingressi per bisogno;
+2. riscrivere hero, sottotitolo e CTA in base a quella decisione;
+3. aggiungere un ponte molto breve prima del listino;
+4. verificare il risultato su desktop e mobile;
+5. soltanto dopo, semplificare il listino e progettare il blocco fiducia.
+
+### Decisioni da prendere
+
+- [ ] La home deve suggerire un solo primo passo oppure offrire ingressi diversi per bisogno?
+- [ ] Qual è l'ordine didattico definitivo tra Igiene Posturale e Area Massaggio e recupero?
+- [ ] Quali tappe sono realmente disponibili e quindi mostrabili al pubblico oggi?
+- [ ] Quali informazioni su durata, gratuità, prezzo e modalità possiamo dichiarare con certezza?
+- [ ] Quali elementi reali di fiducia sono pronti per essere pubblicati nella home?
+- [ ] Il listino resta nella home oppure la home presenta il percorso e rimanda a una pagina dedicata?

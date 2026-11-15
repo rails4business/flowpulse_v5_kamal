@@ -92,6 +92,12 @@ class Node < ApplicationRecord
   validate :navigation_items_are_valid
 
   scope :published_public, -> { where(status: "published", visibility: "public") }
+
+  # Titolo breve per mappe e spazi stretti: senza "Lezione · " e senza la parte dopo i due punti
+  # ("Catena AM · Flessione: postura del riposo…" → "Catena AM · Flessione").
+  def short_title
+    title.delete_prefix("Lezione · ").split(":").first.strip
+  end
   scope :published_free, -> { where(status: "published", visibility: %w[public subscription]) }
   scope :lane_containers, -> { where(lane_container: true) }
 

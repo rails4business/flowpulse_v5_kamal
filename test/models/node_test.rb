@@ -275,4 +275,10 @@ class NodeTest < ActiveSupport::TestCase
 
     assert_not @node_a.administered_by?(other_user)
   end
+
+  test "short title drops the lesson prefix and the part after the colon" do
+    assert_equal "Catena AM · Flessione", Node.new(title: "Catena AM · Flessione: postura del riposo, recupero e accoglienza · cambio stagione").short_title
+    assert_equal "Introduzione al Percorso Integrato", Node.new(title: "Lezione · Introduzione al Percorso Integrato").short_title
+    assert_equal "I 5 elementi e il ciclo stagionale", Node.new(title: "I 5 elementi e il ciclo stagionale").short_title
+  end
 end

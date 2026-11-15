@@ -21,6 +21,7 @@ class NodesController < ApplicationController
     response.set_header("X-Robots-Tag", "noindex, nofollow")
     prepare_public_node(node, navigation_domain: domain, domain_root: true)
     @posturacorretta_landing = node.slug == "posturacorretta"
+    prepare_posturacorretta_home(node)
     render :show
   end
 
@@ -83,16 +84,6 @@ class NodesController < ApplicationController
   end
 
   private
-
-  def prepare_posturacorretta_home(node)
-    return unless node.slug == "posturacorretta"
-
-    @posturacorretta_home = Posturacorretta::HomeJourney.new(
-      tappa: params[:tappa],
-      tab: params[:tab],
-      risorsa: params[:risorsa]
-    )
-  end
 
   def redirect_hidden_node
     redirect_to root_path, alert: "Questo nodo non è pubblico o non è accessibile."

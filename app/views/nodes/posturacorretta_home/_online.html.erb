@@ -8,11 +8,10 @@
           <div class="relative min-h-56 overflow-hidden bg-gradient-to-br from-blue-950 via-blue-700 to-cyan-400">
             <% if course["image"].present? %><%= image_tag course.fetch("image"), alt: "", class: "absolute inset-0 size-full object-cover" %><% end %>
             <span class="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-transparent"></span>
-            <span class="absolute bottom-4 left-4 rounded-full bg-white/95 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[.13em] text-slate-900 shadow-sm">Corso 1 di 7</span>
           </div>
           <div class="flex min-w-0 flex-col p-5 sm:p-7">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="text-[11px] font-bold uppercase tracking-[.13em] text-blue-700">Corso 1 di 7</span>
+              <span class="text-[11px] font-bold uppercase tracking-[.13em] text-blue-700">Tappa <%= journey.station_number %> di <%= journey.stations.size %></span>
               <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700">Libero</span>
             </div>
             <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950"><%= course.fetch("title") %></h2>

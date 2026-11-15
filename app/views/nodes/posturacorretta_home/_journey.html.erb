@@ -9,7 +9,7 @@
   </nav>
 
   <div class="pc-home-panel pc-home-panel--<%= journey.tab %>">
-    <%= render "nodes/posturacorretta_home/metro", journey: journey %>
+    <%= render "nodes/posturacorretta_home/metro", journey: journey unless journey.tab == "percorso" %>
     <%= render "nodes/posturacorretta_home/#{journey.tab}", journey: journey, data: journey.course_data %>
   </div>
 </section>

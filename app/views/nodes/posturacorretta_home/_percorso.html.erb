@@ -1,0 +1,72 @@
+<%# Scheda del percorso: si legge come la mappa (corso e poi le sue lezioni) e si stampa su A4.
+    Data, centro, insegnante e firma si riempiranno con le presenze alle lezioni; sulla stampa
+    restano spazi da compilare a mano. %>
+<% courses = journey.sheet_courses %>
+<% lesson_count = courses.sum { |course| course.lessons.size } %>
+<% lesson_number = 0 %>
+<% upcoming_lines = ["Movimento e allenamento", "Mente · aspetti emotivi, mentali ed energetici", "Nutrire il corpo · Piante medicinali e fisiologia"] %>
+<%# Oltre la postura: per ora visibili solo al superadmin. %>
+<% private_lines = Current.user&.superadmin_user? ? ["Oltre la postura · Il corpo, un mondo da scoprire: dalla PosturaCorretta al Giardino del Corpo", "Risorse e impresa · Rails4Business"] : [] %>
+<section class="pc-sheet" aria-labelledby="pc-sheet-title" data-controller="print-date">
+  <header class="pc-sheet__head">
+    <div>
+      <p class="pc-sheet__eyebrow">PosturaCorretta · Scheda del percorso</p>
+      <h2 id="pc-sheet-title">Linea Postura e recupero</h2>
+      <p class="pc-sheet__meta"><%= courses.size %> corsi · <%= lesson_count %> lezioni · scheda del <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></p>
+    </div>
+    <button type="button" data-action="print-date#print" class="pc-sheet__print" title="Nella finestra di stampa scegli «Salva come PDF»">Stampa o salva PDF</button>
+  </header>
+
+  <dl class="pc-sheet__person">
+    <div><dt>Nome</dt><dd><%= Current.user&.profile&.display_name %></dd></div>
+  </dl>
+  <% unless authenticated? %>
+    <p class="pc-sheet__login"><%= link_to "Accedi", new_session_path(return_to: request.fullpath) %> per vedere i corsi e le lezioni che hai già fatto.</p>
+  <% end %>
+
+  <div class="pc-sheet__scroll">
+    <table class="pc-sheet__table">
+      <thead>
+        <tr><th scope="col">N.</th><th scope="col">Corso / lezione</th><th scope="col">Online</th><th scope="col">Data e ora</th><th scope="col">Centro</th><th scope="col">Insegnante</th><th scope="col">Firma</th></tr>
+      </thead>
+      <% courses.each_with_index do |course, index| %>
+        <% progress = course.station ? journey.online_progress(course.station) : { done: 0, total: 0 } %>
+        <tbody>
+          <tr class="pc-sheet__course">
+            <td></td>
+            <th scope="rowgroup"><%= index + 1 %> · <%= course.node.title %></th>
+            <td colspan="5">
+              <% if progress[:total].zero? %>
+                <span class="pc-sheet__muted">Online in preparazione</span>
+              <% else %>
+                <span class="pc-my-path__dot <%= 'is-online-done' if progress[:done] == progress[:total] %>" aria-hidden="true"></span>
+                <%= progress[:done] %> di <%= progress[:total] %> capitoli online
+              <% end %>
+            </td>
+          </tr>
+          <% course.lessons.each do |lesson| %>
+            <% lesson_number += 1 %>
+            <tr>
+              <td class="pc-sheet__number"><%= lesson_number %></td>
+              <td><%= lesson.title.delete_prefix("Lezione · ") %></td>
+              <td class="pc-sheet__muted">–</td>
+              <td class="pc-sheet__blank"></td>
+              <td class="pc-sheet__blank"></td>
+              <td class="pc-sheet__blank"></td>
+              <td class="pc-sheet__blank"></td>
+            </tr>
+          <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
+
+  <ul class="pc-sheet__upcoming" aria-label="Altre linee">
+    <% upcoming_lines.each do |title| %>
+      <li><strong>Linea <%= title %></strong><span>In preparazione</span></li>
+    <% end %>
+    <% private_lines.each do |title| %>
+      <li class="pc-sheet__private"><strong>Linea <%= title %></strong><span>Solo superadmin</span></li>
+    <% end %>
+  </ul>
+</section>

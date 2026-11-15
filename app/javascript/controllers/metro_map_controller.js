@@ -163,7 +163,7 @@ export default class extends Controller {
     group.setAttribute("transform", `translate(${position.x} ${position.y})`)
     group.setAttribute("tabindex", "0")
     group.setAttribute("role", "button")
-    group.setAttribute("aria-label", node.label)
+    group.setAttribute("aria-label", node.title || node.label)
     group.dataset.stationId = node.id
     group.style.cursor = "pointer"
     group.addEventListener("click", () => this.activateStation(node, group))
@@ -909,7 +909,7 @@ export default class extends Controller {
     this.svg.querySelectorAll(".station-outline").forEach((outline) => outline.setAttribute("stroke", "#e2e8f0"))
     group.querySelector(".station-outline")?.setAttribute("stroke", "#0f172a")
     this.emptyTarget.hidden = true
-    this.titleTarget.textContent = node.label
+    this.titleTarget.textContent = node.title || node.label
     const location = node.internal ? this.graphValue.domain : (node.destinationDomain || node.domains?.join(", ") || "Altro dominio")
     const type = node.terminal ? "Uscita verso un altro progetto" : (node.nodeType === "professional" ? "Professional" : "Project")
     this.metaTarget.textContent = `${type} · ${location}`

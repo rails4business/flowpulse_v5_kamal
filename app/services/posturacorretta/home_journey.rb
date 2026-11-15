@@ -8,7 +8,8 @@ module Posturacorretta
       "online" => "Percorso online",
       "lezioni" => "Programma lezioni",
       "insegnanti" => "Insegnanti",
-      "centri" => "Centri"
+      "centri" => "Centri",
+      "percorso" => "Il mio percorso"
     }.freeze
 
     STATIONS = [
@@ -27,15 +28,33 @@ module Posturacorretta
 
     attr_reader :tab, :station, :resource
 
-    def initialize(tappa:, tab:, risorsa: nil)
+    # completed_chapters: { course_slug => [chapter_slug, ...] } dei capitoli completati dalla persona.
+    def initialize(tappa:, tab:, risorsa: nil, completed_chapters: {})
       tappa = LEGACY_STATION_SLUGS.fetch(tappa, tappa)
       @station = STATIONS.find { |item| item.fetch("slug") == tappa } || STATIONS.first
       @tab = tab.to_s.presence_in(TABS.keys) || "online"
       @resource = risorsa.to_s.presence
+      @completed_chapters = completed_chapters
     end
 
     def tabs = TABS
     def stations = STATIONS
+    def station_number = STATIONS.index(station) + 1
+
+    # Metà online del pallino: tutti i capitoli del corso della tappa sono completati.
+    def online_completed?(item)
+      progress = online_progress(item)
+      progress[:total].positive? && progress[:done] == progress[:total]
+    end
+
+    def online_progress(item)
+      data = station_data(item)
+      chapters = Array(data&.fetch(:chapters, nil)).map { |chapter| chapter.fetch("slug") }
+      return { done: 0, total: 0 } if chapters.empty?
+
+      done = Array(@completed_chapters[data.fetch(:course)["slug"]])
+      { done: chapters.count { |slug| done.include?(slug) }, total: chapters.size }
+    end
 
     def course_data
       station_data(station)
@@ -46,6 +65,8 @@ module Posturacorretta
       return false if data.blank?
 
       case tab
+      when "percorso"
+        true
       when "lezioni"
         data.fetch(:program_lessons, []).any?
       when "centri"
@@ -70,6 +91,26 @@ module Posturacorretta
       key = tab == "centri" ? :centres : :teachers
       items = Array(course_data&.fetch(key, []))
       resource.present? ? items.select { |item| item.fetch("slug") == resource } : items
+    end
+
+    # Scheda del percorso: i corsi della linea in ordine, ciascuno con le sue lezioni.
+    # Le lezioni che seguono una lezione senza corso proprio restano nel corso precedente.
+    SheetCourse = Data.define(:node, :station, :lessons)
+
+    def sheet_courses(line_slug = "postura-recupero")
+      line = MetroLine.find_by(slug: line_slug)
+      return [] unless line
+
+      line.ordered_nodes.each_with_object([]) do |node, courses|
+        if node.view_type == "course"
+          courses << SheetCourse.new(node: node, station: nil, lessons: [])
+        elsif node.view_type == "course_lesson" && courses.any?
+          courses.last.lessons << node
+        end
+      end.map do |course|
+        slugs = [course.node.slug, *course.lessons.map(&:slug)]
+        course.with(station: STATIONS.find { |item| slugs.include?(item.fetch("slug")) })
+      end
     end
 
     def station_data(item)

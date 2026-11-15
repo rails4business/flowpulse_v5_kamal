@@ -23,6 +23,7 @@ module Posturacorretta
         "slug" => node_slug,
         "title" => definition.fetch("title"),
         "description" => definition["description"],
+        "image" => definition["image"],
         "access" => "free",
         "status" => definition.fetch("status", "published")
       }

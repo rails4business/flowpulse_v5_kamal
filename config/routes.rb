@@ -199,6 +199,8 @@ Rails.application.routes.draw do
   get "posturacorretta" => "nodes#domain_home",
       defaults: { path_slug: "posturacorretta" },
       as: :posturacorretta
+  get "posturacorretta/about" => redirect("/posturacorretta/guida?sezione=progetto&capitolo=visione", status: 302),
+      as: :posturacorretta_about
   get "posturacorretta/percorsi/postura-recupero" => "nodes#domain_journey",
       defaults: { path_slug: "posturacorretta" },
       as: :posturacorretta_postura_recupero

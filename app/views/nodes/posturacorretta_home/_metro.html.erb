@@ -1,14 +1,15 @@
 <div class="pc-home-metro-wrap">
-  <div class="pc-home-metro" data-controller="horizontal-scroll">
+  <div class="pc-home-metro" data-controller="horizontal-scroll" data-horizontal-scroll-center-selected-value="true">
     <button type="button" class="pc-home-metro-arrow" data-action="horizontal-scroll#previous" aria-label="Mostra le tappe precedenti">‹</button>
     <div class="pc-home-metro-track" data-horizontal-scroll-target="track">
       <% journey.stations.each do |station| %>
         <% selected = station == journey.station %>
         <% available = journey.station_available?(station) %>
         <%= link_to posturacorretta_postura_recupero_path(tappa: station.fetch("slug"), tab: journey.tab, risorsa: journey.resource),
-          class: "pc-home-station #{'is-selected' if selected} #{'is-unavailable' unless available}",
+          class: "pc-home-station #{'is-selected' if selected} #{'is-unavailable' unless available} #{'is-online-done' if journey.online_completed?(station)}",
+          title: (journey.online_completed?(station) ? "Percorso online completato" : nil),
           aria: { current: ("step" if selected), disabled: (!available).to_s } do %>
-          <span class="pc-home-station-name"><%= station.fetch("title") %></span>
+          <span class="pc-home-station-name"><span><%= station.fetch("title") %></span></span>
           <span class="pc-home-station-rail"><span class="pc-home-station-dot"></span></span>
         <% end %>
       <% end %>
