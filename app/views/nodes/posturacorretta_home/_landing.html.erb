@@ -1,12 +1,14 @@
 <%
-  program_parts = [
+  available_parts = [
     { slug: "intro", label: "Intro" },
     { slug: "recupero-massaggio", label: "Recupero e terapie manuali" },
     { slug: "movimento-allenamento", label: "Movimento e allenamento" },
     { slug: "mente", label: "Mente e aspetti emotivi e mentali" },
     { slug: "fisiologia", label: "Fisiologia, mangiare e medicamenti" }
   ]
-  selected_part = params[:parte].presence_in(program_parts.map { |part| part.fetch(:slug) }) || "intro"
+  program_parts = available_parts.reject { |part| part.fetch(:slug) == "intro" }
+  selected_part = local_assigns[:selected_part].to_s.presence_in(available_parts.map { |part| part.fetch(:slug) }) || params[:parte].presence_in(program_parts.map { |part| part.fetch(:slug) }) || "recupero-massaggio"
+  show_navigation = local_assigns.fetch(:show_navigation, true)
   intro_sessions = [
     { course: Node.find_by(slug: "corso-introduzione-al-percorso-integrato"), course_title: "Introduzione al Percorso Integrato", lesson: Node.find_by(slug: "introduzione-al-percorso-integrato"), lesson_title: "Lezione · Introduzione al Percorso Integrato", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-al-percorso-integrato" } },
     { course: Node.find_by(slug: "corso-la-prima-settimana-con-posturacorretta"), course_title: "La prima settimana con PosturaCorretta", lesson: Node.find_by(slug: "la-prima-settimana-con-posturacorretta"), lesson_title: "Lezione · La prima settimana con PosturaCorretta", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "la-prima-settimana-con-posturacorretta" } },
@@ -15,15 +17,18 @@
 %>
 
 <div class="pc-landing-home">
-  <nav class="pc-expression-tabs" aria-label="Aree di Espressione">
-    <% program_parts.each do |part| %>
-      <% if part.fetch(:slug) == selected_part %>
-        <span class="pc-expression-tab is-selected" aria-current="page"><%= part.fetch(:label) %></span>
-      <% else %>
-        <%= link_to part.fetch(:label), posturacorretta_espressione_path(parte: part.fetch(:slug)), class: "pc-expression-tab" %>
+  <% if show_navigation %>
+    <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Espressione" %>
+    <nav class="pc-expression-tabs" aria-label="Aree di Espressione">
+      <% program_parts.each do |part| %>
+        <% if part.fetch(:slug) == selected_part %>
+          <span class="pc-expression-tab is-selected" aria-current="page"><%= part.fetch(:label) %></span>
+        <% else %>
+          <%= link_to part.fetch(:label), posturacorretta_espressione_path(parte: part.fetch(:slug)), class: "pc-expression-tab" %>
+        <% end %>
       <% end %>
-    <% end %>
-  </nav>
+    </nav>
+  <% end %>
 
   <% if selected_part == "intro" %>
   <section class="pc-sheet pc-intro-sheet" aria-labelledby="pc-intro-title" data-controller="print-date">
@@ -111,10 +116,6 @@
         <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
         <h1 id="pc-recovery-title">Recupero e terapie manuali</h1>
         <p>La parte del programma dedicata alle terapie manuali, alle tecniche corporee e al recupero.</p>
-        <!--div class="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-slate-700">
-          <strong class="block text-slate-950">Perché “terapie manuali” e non soltanto “massaggio”?</strong>
-          <p class="mt-2">Il massaggio è una delle pratiche che possono rientrare nelle terapie manuali. L’area è più ampia: comprende approcci, tecniche e attività di recupero differenti, scelti e applicati dai professionisti secondo competenze, obiettivi e confini del proprio ruolo.</p>
-        </div-->
       </header>
 
       <div class="pc-intro-sheet__program pc-program-sheet__table pc-sheet__scroll">

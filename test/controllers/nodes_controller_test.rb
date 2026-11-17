@@ -104,7 +104,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "Incontri settimanali"
 
     get posturacorretta_about_url
-    assert_select ".pc-faq-page h1", text: "Le domande prima di iniziare."
+    assert_select ".pc-faq-page h1", text: "Hai domande?"
     assert_select ".pc-faq-list details", count: 5
     assert_select ".pc-faq-list details[open]", count: 1
   end
@@ -203,6 +203,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[aria-current='page']", text: "Il corpo"
     assert_select "h2", text: "Dalla PosturaCorretta al Giardino del Corpo"
     assert_select "a[href='#{posturacorretta_course_path('corpo-come-un-giardino')}']", text: /Inizia il corso/
+    assert_select "a[href='#{book_path('il-corpo-un-mondo-da-scoprire')}']", text: /Il corpo, un mondo da scoprire/
 
     get posturacorretta_connessione_url(tab: "risorse")
 
@@ -281,42 +282,51 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_url
 
     assert_response :success
-    assert_select "h1", text: /Conosci il corpo.*Partecipa alla tua salute/
-    assert_select ".pc-path-overview__eyebrow", text: "Educazione alla salute"
-    assert_select ".pc-path-overview__map span", count: 3
-    assert_select ".pc-path-overview__steps > li", count: 3
-    assert_select ".pc-path-overview__steps > li.is-first .pc-path-overview__status", text: "Da qui si comincia"
-    assert_select ".pc-path-overview__mini-steps > li", count: 3
-    assert_select "a[href='#{posturacorretta_espressione_path}'] h3", text: "Espressione"
-    assert_select "a[href='#{posturacorretta_consapevolezza_path}'] h3", text: "Consapevolezza"
-    assert_select "a[href='#{posturacorretta_connessione_path}'] h3", text: "Connessione"
-    assert_select ".pc-landing-home", count: 0
+    assert_select ".pc-intro-sheet__hero h1", text: "Non è solo stare ben dritti con la schiena."
+    assert_select ".pc-index-cabinet__tabs > a", count: 4
+    assert_select ".pc-index-cabinet__tab.is-active", text: "Intro"
+    assert_select ".pc-landing-home", count: 1
+    assert_select ".pc-expression-tabs", count: 0
+    assert_select ".pc-intro-sheet__hero img[src*='posturacorretta_home.png']", count: 1
+    assert_select ".pc-intro-sheet__principles > li", count: 3
+    assert_select ".pc-intro-sheet__table thead th", count: 4
+    assert_select ".pc-intro-sheet__table tbody tr", count: 6
+    assert_select ".pc-sheet__print", text: "Scarica o stampa Intro"
+
+    get posturacorretta_url(area: "espressione")
+    assert_response :success
+    assert_select ".pc-index-cabinet__tab.is-active", text: "Espressione"
+    assert_select "nav[aria-label='Sezioni di Espressione'] > *", count: 4
+    assert_select "nav[aria-label='Sezioni di Espressione'] > .is-active", text: "Recupero e terapie manuali"
+    assert_select ".pc-program-sheet__intro h1", text: "Recupero e terapie manuali"
+
+    get posturacorretta_url(area: "espressione", parte: "mente")
+    assert_response :success
+    assert_select "nav[aria-label='Sezioni di Espressione'] > .is-active", text: "Mente e aspetti emotivi e mentali"
+    assert_select ".pc-program-placeholder h1", text: "Mente e aspetti emotivi e mentali"
+
+    get posturacorretta_url(area: "consapevolezza")
+    assert_response :success
+    assert_select ".pc-index-cabinet__tab.is-active", text: "Consapevolezza"
+    assert_select "nav[aria-label='Sezioni di Consapevolezza'] a[aria-current='page']", text: "Corso"
+    assert_select "p", text: "Corso online"
+    assert_select "span", text: "In preparazione"
+
+    get posturacorretta_url(area: "consapevolezza", tab: "metodiche")
+    assert_response :success
+    assert_select "nav[aria-label='Sezioni di Consapevolezza'] a[aria-current='page']", text: "Metodiche posturali"
+    assert_select "a[href='#{posturacorretta_metodica_path('gds')}']", minimum: 1
 
     get posturacorretta_espressione_url
 
     assert_response :success
     assert_select ".pc-landing-home", count: 1
     assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Percorso.*Espressione/
-    assert_select "a[href='#{posturacorretta_espressione_path}'][aria-current='page']", text: "Espressione"
-    assert_select "a[href='#{posturacorretta_postura_recupero_path(tappa: 'introduzione-al-percorso-integrato', tab: 'online')}']", text: "Inizia"
-    assert_select ".pc-expression-tabs .pc-expression-tab", count: 5
-    assert_select ".pc-expression-tab.is-selected", text: "Intro"
-    assert_select ".pc-expression-tab[href='#{posturacorretta_espressione_path(parte: "recupero-massaggio")}']", text: "Recupero e terapie manuali"
+    assert_select ".pc-expression-tabs .pc-expression-tab", count: 4
+    assert_select ".pc-expression-tab.is-selected", text: "Recupero e terapie manuali"
     assert_select ".pc-expression-tab", text: "Il corpo, un mondo da scoprire", count: 0
     assert_select ".pc-expression-tab", text: "Gestione risorse e progetto", count: 0
-    assert_select ".pc-sheet.pc-intro-sheet", count: 1
-    assert_select ".pc-intro-sheet__hero h1", text: "Non è solo stare ben dritti con la schiena."
-    assert_select ".pc-intro-sheet__hero img[src*='posturacorretta_home.png']", count: 1
-    assert_select ".pc-intro-sheet__principles > li", count: 3
-    assert_select ".pc-intro-sheet__table thead th", count: 4
-    assert_select ".pc-intro-sheet__table .pc-my-path__dot", count: 0
-    assert_select ".pc-intro-sheet__table tbody", count: 3
-    assert_select ".pc-intro-sheet__table tbody tr", count: 6
-    assert_select ".pc-intro-sheet__table tbody" do |sessions|
-      sessions.each { |session| assert_select session, "tr", count: 2 }
-    end
-    assert_select ".pc-sheet__print", text: "Scarica o stampa Intro"
-    assert_select ".pc-intro-sheet__table tbody tr:nth-child(2) a[href^='#{posturacorretta_postura_recupero_path}']", minimum: 1
+    assert_select ".pc-program-sheet__intro h1", text: "Recupero e terapie manuali"
     assert_select "#lezioni-e-percorsi", count: 0
     assert_select ".pc-listino__note", count: 0
     assert_select ".pc-home-tabs", count: 0
@@ -326,8 +336,12 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select ".pc-expression-tab.is-selected", text: "Recupero e terapie manuali"
     assert_select ".pc-program-sheet__intro h1", text: "Recupero e terapie manuali"
-    assert_select ".pc-program-sheet__intro", text: /Il massaggio è una delle pratiche/
+    assert_select ".pc-program-sheet__intro", text: /Il massaggio è una delle pratiche/, count: 0
     assert_select ".pc-sheet__print", text: "Scarica o stampa Recupero e terapie manuali"
+
+    get posturacorretta_espressione_url(parte: "intro")
+    assert_redirected_to posturacorretta_url(area: "intro")
+    assert_response :moved_permanently
 
     get posturacorretta_url(parte: "recupero-massaggio")
     assert_redirected_to posturacorretta_espressione_url(parte: "recupero-massaggio")

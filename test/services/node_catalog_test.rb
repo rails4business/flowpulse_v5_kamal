@@ -172,6 +172,12 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal prima_settimana, postura_fisiologia.parent
     assert_equal "course", postura_fisiologia.view_type
     assert_equal postura, Node.find_by!(slug: "diventa-insegnante-posturacorretta").parent
+    servizi_posturacorretta = Node.find_by!(slug: "servizi-posturacorretta")
+    assert_equal servizi_posturacorretta, Node.find_by!(slug: "accesso-incontri-settimanali-da-partecipa").parent
+    assert_equal servizi_posturacorretta, Node.find_by!(slug: "accesso-trattamento-singolo-da-partecipa").parent
+    assert_equal servizi_posturacorretta, Node.find_by!(slug: "accesso-pacchetto-singolo-da-partecipa").parent
+    assert_equal servizi_posturacorretta, Node.find_by!(slug: "accesso-percorso-gruppo-da-partecipa").parent
+    assert_equal servizi_posturacorretta, Node.find_by!(slug: "accesso-diventa-insegnante-da-partecipa").parent
     assert_equal "Educazione 2 · Consapevolezza con le metodiche posturali", apprendimento_consapevolezza.title
     assert_equal "#4F46E5", apprendimento_consapevolezza.map_color
     assert apprendimento_consapevolezza.lane_container?

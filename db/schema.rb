@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_12_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -122,6 +122,87 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_190000) do
     t.index ["subject_type", "subject_id"], name: "index_brand_requests_on_subject_type_and_subject_id"
   end
 
+  create_table "content_contributions", force: :cascade do |t|
+    t.bigint "content_id", null: false
+    t.bigint "profile_id"
+    t.bigint "contact_id"
+    t.string "role", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contact_id"], name: "index_content_contributions_on_contact_id"
+    t.index ["content_id", "role", "contact_id"], name: "index_content_contributions_on_contact_role", unique: true, where: "(contact_id IS NOT NULL)"
+    t.index ["content_id", "role", "profile_id"], name: "index_content_contributions_on_profile_role", unique: true, where: "(profile_id IS NOT NULL)"
+    t.index ["content_id"], name: "index_content_contributions_on_content_id"
+    t.index ["profile_id"], name: "index_content_contributions_on_profile_id"
+    t.check_constraint "num_nonnulls(profile_id, contact_id) = 1", name: "content_contributions_one_contributor"
+  end
+
+  create_table "content_links", force: :cascade do |t|
+    t.bigint "source_content_id"
+    t.bigint "source_node_id"
+    t.bigint "target_content_id", null: false
+    t.string "kind", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_content_id"], name: "index_content_links_on_source_content_id"
+    t.index ["source_node_id"], name: "index_content_links_on_source_node_id"
+    t.index ["target_content_id"], name: "index_content_links_on_target_content_id"
+    t.check_constraint "num_nonnulls(source_content_id, source_node_id) = 1", name: "content_links_one_source"
+  end
+
+  create_table "content_publications", force: :cascade do |t|
+    t.bigint "content_id", null: false
+    t.string "key", null: false
+    t.string "platform", null: false
+    t.string "format", null: false
+    t.string "url"
+    t.string "external_id"
+    t.string "title"
+    t.text "body"
+    t.integer "position", default: 0, null: false
+    t.datetime "scheduled_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.string "publication_status", default: "draft", null: false
+    t.string "publication_visibility", default: "private", null: false
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_id", "key"], name: "index_content_publications_on_content_id_and_key", unique: true
+    t.index ["content_id"], name: "index_content_publications_on_content_id"
+    t.index ["platform", "external_id"], name: "index_content_publications_on_platform_and_external_id"
+  end
+
+  create_table "contents", force: :cascade do |t|
+    t.bigint "node_id", null: false
+    t.bigint "parent_id"
+    t.string "key", null: false
+    t.string "slug", null: false
+    t.string "format", null: false
+    t.integer "position", default: 0, null: false
+    t.string "title", null: false
+    t.text "description"
+    t.text "body_md"
+    t.string "source_path"
+    t.string "source_checksum"
+    t.jsonb "data", default: {}, null: false
+    t.date "written_on"
+    t.datetime "revised_at"
+    t.string "publication_status", default: "draft", null: false
+    t.string "publication_visibility", default: "private", null: false
+    t.string "access_modes", default: [], null: false, array: true
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["format"], name: "index_contents_on_format"
+    t.index ["key"], name: "index_contents_on_key", unique: true
+    t.index ["node_id", "parent_id", "slug"], name: "index_contents_on_node_id_and_parent_id_and_slug", unique: true, nulls_not_distinct: true
+    t.index ["node_id"], name: "index_contents_on_node_id"
+    t.index ["parent_id"], name: "index_contents_on_parent_id"
+    t.index ["publication_status"], name: "index_contents_on_publication_status"
+  end
+
   create_table "data_commitment_imports", force: :cascade do |t|
     t.bigint "uploaded_by_user_id", null: false
     t.string "status", default: "pending", null: false
@@ -195,10 +276,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_190000) do
     t.datetime "resolved_at"
     t.bigint "skill_product_id"
     t.bigint "brand_request_id"
+    t.bigint "content_id"
+    t.bigint "content_publication_id"
     t.index ["access_modes"], name: "index_data_commitments_on_access_modes", using: :gin
     t.index ["actual_started_at"], name: "index_data_commitments_on_actual_started_at"
     t.index ["assignee_profile_id"], name: "index_data_commitments_on_assignee_profile_id"
     t.index ["brand_request_id"], name: "index_data_commitments_on_brand_request_id"
+    t.index ["content_id"], name: "index_data_commitments_on_content_id"
+    t.index ["content_publication_id"], name: "index_data_commitments_on_content_publication_id"
     t.index ["created_by_profile_id"], name: "index_data_commitments_on_created_by_profile_id"
     t.index ["data_experience_id", "position"], name: "index_data_commitments_on_data_experience_id_and_position"
     t.index ["data_experience_id", "starts_at"], name: "index_data_commitments_on_data_experience_id_and_starts_at"
@@ -816,9 +901,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_190000) do
   add_foreign_key "brand_requests", "nodes", column: "brand_node_id"
   add_foreign_key "brand_requests", "profiles", column: "assigned_to_profile_id"
   add_foreign_key "brand_requests", "profiles", column: "requester_profile_id"
+  add_foreign_key "content_contributions", "contents"
+  add_foreign_key "content_contributions", "impegno_contacts", column: "contact_id"
+  add_foreign_key "content_contributions", "profiles"
+  add_foreign_key "content_links", "contents", column: "source_content_id"
+  add_foreign_key "content_links", "contents", column: "target_content_id"
+  add_foreign_key "content_links", "nodes", column: "source_node_id"
+  add_foreign_key "content_publications", "contents"
+  add_foreign_key "contents", "contents", column: "parent_id"
+  add_foreign_key "contents", "nodes"
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "brand_requests"
+  add_foreign_key "data_commitments", "content_publications"
+  add_foreign_key "data_commitments", "contents"
   add_foreign_key "data_commitments", "data_commitments", column: "parent_id"
   add_foreign_key "data_commitments", "data_commitments", column: "previous_publication_commitment_id"
   add_foreign_key "data_commitments", "data_experiences"

@@ -61,22 +61,9 @@ default: &default
         - segreteria
       navigation:
         items:
-          - key: percorso
-            label: Percorso
+          - key: home
+            label: Home
             path: /posturacorretta
-            children:
-              - key: espressione
-                label: Espressione
-                path: /posturacorretta/espressione
-              - key: consapevolezza
-                label: Consapevolezza
-                slug: apprendimento-2-connessione
-              - key: connessione
-                label: Connessione
-                slug: dalla-posturacorretta-al-giardino-del-corpo
-          - key: partecipa
-            label: Partecipa
-            slug: partecipa-posturacorretta
           - key: servizi
             label: Servizi
             slug: servizi-posturacorretta
@@ -86,6 +73,7 @@ default: &default
           - key: esplora
             label: Esplora
             group: true
+            audience: superadmin
             children:
               - key: contenuti
                 label: Contenuti
@@ -93,12 +81,32 @@ default: &default
               - key: eventi
                 label: Eventi
                 path: /posturacorretta/eventi
-              - key: metodiche
-                label: Metodiche
-                path: /posturacorretta/metodiche
               - key: libri
                 label: Libri
                 path: /posturacorretta/libri
+              - key: strumenti-interni
+                label: Strumenti interni
+                group: true
+                audience: superadmin
+                children:
+                  - key: archivio-didattico
+                    label: Archivio didattico
+                    path: /posturacorretta/accademia
+                  - key: tre-progetti
+                    label: I tre progetti
+                    path: /posturacorretta/tre-progetti
+                  - key: collabora
+                    label: Collabora
+                    path: /posturacorretta/collabora
+                  - key: area-corsi
+                    label: Area corsi
+                    path: /posturacorretta/lezioni
+                  - key: area-insegnanti
+                    label: Area insegnanti
+                    path: /posturacorretta/area-insegnanti
+                  - key: visione-progetto
+                    label: Visione e progetto · Bozza
+                    path: /posturacorretta/guida?sezione=progetto
           - key: vecchio-menu
             label: Percorso online
             path: /percorso-posturacorretta
@@ -1411,9 +1419,9 @@ default: &default
       title: Incontri settimanali
       node_type: project
       view_type: access_bridge
-      parent_slug: partecipa-posturacorretta
+      parent_slug: servizi-posturacorretta
       link_node_slug: categorie-generali
-      position: 1
+      position: 4
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1422,9 +1430,9 @@ default: &default
       title: Trattamento personalizzato singolo
       node_type: project
       view_type: access_bridge
-      parent_slug: partecipa-posturacorretta
+      parent_slug: servizi-posturacorretta
       link_node_slug: trattamento-singolo
-      position: 2
+      position: 5
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1433,9 +1441,9 @@ default: &default
       title: Pacchetto percorso personalizzato singolo
       node_type: project
       view_type: access_bridge
-      parent_slug: partecipa-posturacorretta
+      parent_slug: servizi-posturacorretta
       link_node_slug: pacchetto-percorso-singolo
-      position: 3
+      position: 6
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1444,9 +1452,9 @@ default: &default
       title: Percorso gruppo · Aziende e associazioni sportive
       node_type: project
       view_type: access_bridge
-      parent_slug: partecipa-posturacorretta
+      parent_slug: servizi-posturacorretta
       link_node_slug: percorso-aziende-associazioni-sportive
-      position: 4
+      position: 7
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1455,9 +1463,9 @@ default: &default
       title: Diventa insegnante PosturaCorretta
       node_type: project
       view_type: access_bridge
-      parent_slug: partecipa-posturacorretta
+      parent_slug: servizi-posturacorretta
       link_node_slug: diventa-insegnante-posturacorretta
-      position: 5
+      position: 8
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1478,7 +1486,7 @@ default: &default
       view_type: access_bridge
       parent_slug: servizi-posturacorretta
       link_node_slug: stato-di-salute
-      position: 1
+      position: 2
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1489,7 +1497,7 @@ default: &default
       view_type: access_bridge
       parent_slug: servizi-posturacorretta
       link_node_slug: valutazione-mobilita-articolare
-      position: 2
+      position: 3
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1500,7 +1508,7 @@ default: &default
       view_type: access_bridge
       parent_slug: servizi-posturacorretta
       link_node_slug: percorso-integrato
-      position: 3
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public

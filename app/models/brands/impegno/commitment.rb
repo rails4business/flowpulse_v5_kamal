@@ -35,6 +35,8 @@ module Brands
   belongs_to :data_slot, optional: true
   belongs_to :skill_product, optional: true, inverse_of: :data_commitments
   belongs_to :brand_request, optional: true, inverse_of: :data_commitments
+  belongs_to :content, optional: true, inverse_of: :data_commitments
+  belongs_to :content_publication, optional: true, inverse_of: :data_commitments
   has_many :children, class_name: "Brands::Impegno::Commitment", foreign_key: :parent_id,
            inverse_of: :parent, dependent: :restrict_with_error
 
@@ -63,6 +65,10 @@ module Brands
   before_validation :normalize_access_modes
   before_validation :set_default_calendar_identity
   before_validation :calculate_hourly_total
+  before_validation :assign_content_from_key
+  validate :content_matches_content_key
+
+  after_commit :apply_publication_decision, if: :publication_decision_concluded?
 
   scope :for_genera_impresa_project, ->(slug) {
     where("genera_impresa @> ?", { project_slug: slug }.to_json)
@@ -145,6 +151,48 @@ module Brands
       return unless pricing_type == "hourly" && hourly_rate.present? && duration_minutes
 
       self.total_price = (duration_minutes / 60.0 * hourly_rate).round(2)
+    end
+
+    # content_key resta la chiave stabile del YAML; content_id è il collegamento nel database.
+    # Il collegamento automatico vale solo per le decisioni di pubblicazione, che usano la chiave del Content:
+    # iscrizioni e completamenti usano slug non univoci e si collegano con il backfill della fase 2.
+    def assign_content_from_key
+      self.content_key = content.key if content && content_key.blank?
+      return unless kind == "content" && content.nil? && content_key.present?
+
+      self.content = content_publication&.content || Content.find_by(key: content_key)
+    end
+
+    def content_matches_content_key
+      if content && content_key.present? && content.key != content_key
+        errors.add(:content_key, "non corrisponde al contenuto collegato")
+      end
+      if content_publication && content && content_publication.content_id != content.id
+        errors.add(:content_publication, "appartiene a un altro contenuto")
+      end
+    end
+
+    def publication_decision_concluded?
+      publication_requested? && status == "completed" && content.present? &&
+        (previously_new_record? || saved_change_to_status?)
+    end
+
+    # L'ultima decisione conclusa determina lo stato visibile del contenuto in questo ambiente.
+    def apply_publication_decision
+      decided_at = published_at || actual_ended_at || updated_at
+      target = content_publication || content
+      attributes = { publication_status:, publication_visibility: }
+      attributes[:access_modes] = access_modes if target.is_a?(Content)
+
+      case publication_change_kind
+      when "update", "fix"
+        attributes[:published_at] = target.published_at || decided_at
+        attributes[:revised_at] = decided_at if target.is_a?(Content)
+      else
+        attributes[:published_at] = publication_status == "published" ? decided_at : nil
+      end
+
+      target.update!(attributes)
     end
 
     def ends_after_start

@@ -107,10 +107,8 @@
       <% end %>
 
       <% if consapevolezza_mode %>
-        <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Consapevolezza" %>
         <%= render "nodes/posturacorretta_consapevolezza/landing" %>
       <% elsif connessione_mode %>
-        <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Connessione" %>
         <%= render "nodes/posturacorretta_connessione/landing" %>
       <% elsif posturacorretta_section_mode %>
         <%= render "nodes/posturacorretta_sections/#{@posturacorretta_public_section}", node: @node, children: sidebar_children %>
@@ -176,7 +174,6 @@
         <% if home_selection_mode %>
           <%= render "nodes/posturacorretta_home/overview" %>
         <% elsif @posturacorretta_expression %>
-          <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Espressione" %>
           <%= render "nodes/posturacorretta_home/landing" %>
         <% else %>
           <%= render "nodes/posturacorretta_home/journey", journey: @posturacorretta_home %>

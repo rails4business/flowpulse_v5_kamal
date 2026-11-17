@@ -464,6 +464,21 @@ funzionanti.
   (punto 1, punto 4).
 - Le pagine continuano a leggere i YAML come oggi.
 
+**Stato fase 1 — implementata, da verificare**
+- Migrazione `db/migrate/20261117100000_create_contents.rb` (reversibile, provata con rollback).
+- Model: `Content`, `ContentPublication`, `ContentContribution`, `ContentLink`; collegamenti su `Node`
+  (`editorial_contents`, `outgoing_content_links`), `Profile`, `Brands::Impegno::Contact`,
+  `Brands::Impegno::Commitment` (`content`, `content_publication`, callback di pubblicazione).
+- Import: `app/services/content_catalog.rb`, `bin/rails contents:validate` e `bin/rails contents:import`.
+- Autore ed editore letti anche dall'intestazione YAML dei Markdown dei capitoli (69 file su 85 la hanno);
+  i valori del `course.yml` hanno la precedenza. Un capitolo resta nel node del suo corso.
+- In sviluppo: 90 contenuti (10 corsi, 78 capitoli, 2 articoli), tutti in bozza, 76 contributi d'autore;
+  il secondo import non crea nulla di nuovo.
+- Test: `test/models/content_test.rb`, `test/services/content_catalog_test.rb`, nuovi casi in
+  `test/models/brands/impegno/commitment_test.rb`.
+- Le regole di pubblicazione nel controller degli impegni non sono ancora state spostate: il callback legge
+  i campi già impostati dal controller. Lo spostamento completo si fa con la fase 2.
+
 **Fase 2 — Corsi e capitoli dal database**
 - Backfill di `content_id` sugli impegni esistenti (punto 7), con elenco di quelli non trovati.
 - `learning_controller` e `ContentRepository` leggono da Content; lo stato visibile è quello del Content.

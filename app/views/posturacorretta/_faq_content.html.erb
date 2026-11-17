@@ -1,14 +1,17 @@
 <main class="pc-faq-page">
   <section class="pc-faq-hero" aria-labelledby="pc-faq-title">
     <div>
-      <p class="pc-faq-eyebrow">PosturaCorretta · FAQ</p>
-      <h1 id="pc-faq-title">Le domande prima di iniziare.</h1>
-      <p>Risposte semplici per capire da dove partire, quali figure puoi incontrare e come integrare il percorso con i professionisti che già ti seguono.</p>
+      <p class="pc-faq-eyebrow">PosturaCorretta · F.A.Q.</p>
+      <h1 id="pc-faq-title">Hai domande?</h1>
+      <p>Qui trovi risposte alle domande più frequenti.</p>
     </div>
     <aside>
       <strong>Non trovi la tua domanda?</strong>
       <p>Scrivici descrivendo brevemente che cosa vuoi comprendere. Ti aiuteremo a individuare la pagina o il passo più adatto.</p>
       <a href="mailto:markpostura@gmail.com">Scrivi a PosturaCorretta →</a>
+      <% if teacher_node.present? %>
+        <%= link_to "Scopri come diventare insegnante →", flowtree_public_node_path(teacher_node) %>
+      <% end %>
     </aside>
   </section>
 

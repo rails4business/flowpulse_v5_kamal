@@ -67,7 +67,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     get percorso_posturacorretta_path
 
     assert_response :success
-    assert_select "a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
+    assert_select "a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona", count: 0
     assert_select "a[href='#{percorso_integrato_docs_path}']", count: 0
   end
 
@@ -101,13 +101,13 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     desktop_links = css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
-    assert_equal ["Partecipa", "Servizi", "About"], desktop_links
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Percorso/
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/
+    assert_equal ["Home", "Servizi", "About"], desktop_links
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a[href='#{posturacorretta_path}']", text: "Home"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/, count: 0
 
     mobile_links = css_select("nav[aria-label='Navigazione app PosturaCorretta'] > a small").map { |label| label.text.squish }
-    assert_equal ["Percorso", "Lezioni", "Metodiche"], mobile_links
-    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > details.pc-app-explore > summary", text: /Esplora/
+    assert_equal ["Home", "Lezioni", "Metodiche"], mobile_links
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > details.pc-app-explore > summary", text: /Esplora/, count: 0
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > details.pc-app-account > summary", text: /Profilo/
   end
 
@@ -280,9 +280,9 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Metodiche posturali"
     assert_includes response.body, "Biomeccanica Comportamentale GDS"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/, count: 0
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}'].is-active", text: /Metodiche/
-    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", minimum: 1
+    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", count: 0
   end
 
   test "FAQ uses the dedicated template and the unified PosturaCorretta menu" do
@@ -290,17 +290,14 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "title", text: "Domande frequenti — PosturaCorretta"
-    assert_select ".pc-faq-page h1", text: "Le domande prima di iniziare."
+    assert_select ".pc-faq-page h1", text: "Hai domande?"
     assert_select ".pc-faq-list details", count: 5
     assert_select ".pc-faq-list details[open]", count: 1
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Percorso/
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details a", text: "Espressione"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details a", text: "Consapevolezza"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details a", text: "Connessione"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Partecipa"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a[href='#{posturacorretta_path}']", text: "Home"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Partecipa", count: 0
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Servizi"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "About"
-    assert_select "a[href='#{posturacorretta_faq_path}']", text: "Domande frequenti", minimum: 1
+    assert_select "a[href='#{posturacorretta_faq_path}']", text: "Domande frequenti", count: 0
   end
 
   test "reassures visitors when a public listing is temporarily rate limited" do

@@ -1,61 +1,67 @@
-<section class="pc-path-overview" aria-labelledby="pc-path-overview-title">
-  <div class="pc-path-overview__hero">
-    <div class="pc-path-overview__intro">
-      <p class="pc-path-overview__eyebrow">Educazione alla salute</p>
-      <h1 id="pc-path-overview-title">Conosci il corpo.<br>Partecipa alla tua salute.</h1>
-      <p>PosturaCorretta è un percorso educativo per osservare come si esprime il corpo, imparare a riattivare i sistemi fisiologici e orientarsi tra professionisti e metodiche.</p>
-      <%= link_to posturacorretta_espressione_path, class: "pc-path-overview__primary-action" do %>
-        Inizia dall’Espressione <span aria-hidden="true">→</span>
-      <% end %>
-    </div>
+<%
+  active_area = params[:area].to_s.presence_in(%w[intro espressione consapevolezza connessione]) || "intro"
+  areas = [["intro", "Intro"], ["espressione", "Espressione"], ["consapevolezza", "Consapevolezza"], ["connessione", "Connessione"]]
+  expression_parts = [
+    ["recupero-massaggio", "Recupero e terapie manuali"],
+    ["movimento-allenamento", "Movimento e allenamento"],
+    ["mente", "Mente e aspetti emotivi e mentali"],
+    ["fisiologia", "Fisiologia, mangiare e medicamenti"]
+  ]
+  active_expression_part = params[:parte].to_s.presence_in(expression_parts.map(&:first)) || "recupero-massaggio"
+  active_awareness_tab = params[:tab].to_s.presence_in(%w[corso metodiche]) || "corso"
+%>
 
-    <div class="pc-path-overview__map" aria-label="Le tre fasi del percorso">
-      <span class="is-current"><i>1</i><strong>Espressione</strong><small>Osserva e riattiva</small></span>
-      <span><i>2</i><strong>Consapevolezza</strong><small>Percepisci e comprendi</small></span>
-      <span><i>3</i><strong>Connessione</strong><small>Collega</small></span>
-    </div>
+<main class="pc-index-cabinet" aria-label="PosturaCorretta">
+  <nav class="pc-index-cabinet__tabs" aria-label="Aree del percorso PosturaCorretta">
+    <% areas.each do |key, label| %>
+      <%= link_to label, posturacorretta_path(area: key), class: "pc-index-cabinet__tab #{'is-active' if active_area == key}", aria: { current: ("page" if active_area == key) } %>
+    <% end %>
+  </nav>
+
+  <div class="pc-index-cabinet__body">
+    <% if active_area == "intro" %>
+      <%= render "nodes/posturacorretta_home/landing", selected_part: "intro", show_navigation: false %>
+    <% elsif active_area == "espressione" %>
+      <section class="pc-index-cabinet__panel" aria-labelledby="pc-index-title">
+        <p class="pc-index-cabinet__eyebrow">PosturaCorretta · Primo momento</p>
+        <h1 id="pc-index-title">Espressione</h1>
+        <p class="pc-index-cabinet__lead">Osserva come si esprime il corpo e scopri modi diversi per sostenerne il recupero e la fisiologia.</p>
+        <nav class="pc-index-cabinet__subtabs" aria-label="Sezioni di Espressione">
+          <% expression_parts.each do |key, label| %>
+            <% if key == active_expression_part %>
+              <span class="is-active" aria-current="page"><%= label %></span>
+            <% else %>
+              <%= link_to label, posturacorretta_path(area: "espressione", parte: key) %>
+            <% end %>
+          <% end %>
+        </nav>
+        <%= render "nodes/posturacorretta_home/landing", selected_part: active_expression_part, show_navigation: false %>
+      </section>
+    <% elsif active_area == "consapevolezza" %>
+      <section class="pc-index-cabinet__panel" aria-labelledby="pc-index-title">
+        <p class="pc-index-cabinet__eyebrow">PosturaCorretta · Secondo momento</p>
+        <h1 id="pc-index-title">Consapevolezza</h1>
+        <p class="pc-index-cabinet__lead">Allena la percezione del corpo e integra ciò che senti con ciò che comprendi.</p>
+        <%= render "nodes/posturacorretta_consapevolezza/landing", active_tab: active_awareness_tab, show_navigation: false, show_tabs: true, embedded: true %>
+      </section>
+    <% else %>
+      <section class="pc-index-cabinet__panel" aria-labelledby="pc-index-title">
+        <p class="pc-index-cabinet__eyebrow">PosturaCorretta · Terzo momento</p>
+        <h1 id="pc-index-title">Connessione</h1>
+        <p class="pc-index-cabinet__lead">Collega corpo, risorse e conoscenze con le relazioni, il lavoro e l’ambiente.</p>
+        <nav class="pc-index-cabinet__subtabs" aria-label="Sezioni di Connessione">
+          <%= link_to "Il corpo, un mondo da scoprire", posturacorretta_connessione_path(tab: "corpo") %>
+          <%= link_to "Le tue risorse", posturacorretta_connessione_path(tab: "risorse") %>
+        </nav>
+        <div class="pc-index-cabinet__card">
+          <div><span>03</span><h2>Dal corpo alle connessioni</h2></div>
+          <p>Approfondisci il rapporto tra corpo, ambiente e risorse personali, oppure prosegui con il libro.</p>
+          <div class="pc-index-cabinet__links">
+            <%= link_to "Apri Connessione →", posturacorretta_connessione_path %>
+            <%= link_to "Vai al libro →", book_path("il-corpo-un-mondo-da-scoprire") %>
+          </div>
+        </div>
+      </section>
+    <% end %>
   </div>
-
-  <div class="pc-path-overview__heading">
-    <div>
-      <p class="pc-path-overview__eyebrow">I tre momenti</p>
-      <h2>Sono parti dello stesso percorso.</h2>
-    </div>
-    <p>Puoi esplorarle liberamente. Se è la prima volta, ti consigliamo di partire dall’Espressione.</p>
-  </div>
-
-  <ol class="pc-path-overview__steps">
-    <li class="is-first">
-      <%= link_to posturacorretta_espressione_path do %>
-        <span class="pc-path-overview__number">01</span>
-        <span class="pc-path-overview__status">Da qui si comincia</span>
-        <h3>Espressione</h3>
-        <strong>Educazione alla salute in tre passi.</strong>
-        <ol class="pc-path-overview__mini-steps">
-          <li><i>1</i><span>Osserva come si esprime il corpo.</span></li>
-          <li><i>2</i><span>Impara a riattivare i sistemi fisiologici.</span></li>
-          <li><i>3</i><span>Conosci professionisti e metodiche.</span></li>
-        </ol>
-        <span class="pc-path-overview__link">Inizia il percorso <i aria-hidden="true">→</i></span>
-      <% end %>
-    </li>
-    <li>
-      <%= link_to posturacorretta_consapevolezza_path do %>
-        <span class="pc-path-overview__number">02</span>
-        <h3>Consapevolezza</h3>
-        <strong>Allena la percezione del corpo.</strong>
-        <p>Fai pratica per integrare ciò che senti con ciò che comprendi, riconoscendo segnali, cambiamenti e possibilità con maggiore consapevolezza.</p>
-        <span class="pc-path-overview__link">Esplora le metodiche <i aria-hidden="true">→</i></span>
-      <% end %>
-    </li>
-    <li>
-      <%= link_to posturacorretta_connessione_path do %>
-        <span class="pc-path-overview__number">03</span>
-        <h3>Connessione</h3>
-        <strong>Collega ciò che hai scoperto.</strong>
-        <p>Metti in relazione corpo, risorse e conoscenze per costruire una visione più integrata del tuo percorso di salute.</p>
-        <span class="pc-path-overview__link">Scopri le connessioni <i aria-hidden="true">→</i></span>
-      <% end %>
-    </li>
-  </ol>
-</section>
+</main>

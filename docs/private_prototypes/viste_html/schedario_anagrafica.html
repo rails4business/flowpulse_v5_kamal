@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PosturaCorretta — Schedario</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #243449; background: #f3f6fa; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 44px 18px; }
+    .schedario { max-width: 1050px; margin: auto; }
+    .tabs-principali { display: flex; gap: 5px; align-items: end; flex-wrap: wrap; padding-left: 12px; }
+    .tab-principale { border: 1px solid #cbd5e1; border-bottom: 0; background: #e3eaf3; color: #385069; border-radius: 12px 12px 0 0; padding: 15px 22px; font: inherit; font-weight: 650; cursor: pointer; }
+    .tab-principale.attiva { background: white; color: #16599a; padding-top: 19px; position: relative; z-index: 2; }
+    .contenitore { background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 30px; min-height: 310px; box-shadow: 0 12px 30px #24344910; }
+    .intro { margin: 0 0 22px; color: #64748b; font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+    h1 { margin: 0 0 22px; font-size: clamp(25px, 4vw, 34px); }
+    .sotto-tabs { display: flex; align-items: end; flex-wrap: wrap; gap: 5px; border-bottom: 1px solid #cbd5e1; padding-left: 8px; }
+    .sotto-tab { display: inline-block; text-decoration: none; color: #435871; background: #eaf0f7; border: 1px solid #cbd5e1; border-radius: 9px 9px 0 0; padding: 12px 16px; font-size: 14px; font-weight: 600; margin-bottom: -1px; }
+    .sotto-tab.attiva { background: #fff; color: #1762a5; border-bottom-color: white; }
+    .scheda { padding: 25px 12px; line-height: 1.6; }
+    .scheda h2 { font-size: 23px; margin: 0 0 8px; }
+    .scheda p { color: #64748b; margin: 0 0 16px; }
+    .apri { color: #1762a5; font-weight: 600; }
+    [hidden] { display: none !important; }
+    @media (max-width: 650px) { body { padding: 20px 10px; } .contenitore { padding: 22px 14px; } .tab-principale { padding: 12px 13px; font-size: 13px; } .tab-principale.attiva { padding-top: 15px; } .sotto-tab { font-size: 12px; padding: 10px; } }
+  </style>
+</head>
+<body>
+  <main class="schedario">
+    <nav class="tabs-principali" aria-label="Aree principali">
+      <button class="tab-principale attiva" data-area="intro" aria-selected="true">Intro</button>
+      <button class="tab-principale" data-area="espressione" aria-selected="false">Espressione</button>
+      <button class="tab-principale" data-area="consapevolezza" aria-selected="false">Consapevolezza</button>
+      <button class="tab-principale" data-area="connessione" aria-selected="false">Connessione</button>
+    </nav>
+    <div class="contenitore">
+      <section data-sezione="intro">
+        <p class="intro">PosturaCorretta</p>
+        <h1>Intro</h1>
+        <div class="scheda"><p>Introduzione al percorso PosturaCorretta.</p></div>
+      </section>
+      <section data-sezione="espressione" hidden>
+        <p class="intro">PosturaCorretta</p>
+        <h1>Espressione</h1>
+        <nav class="sotto-tabs" aria-label="Sezioni Espressione">
+          <a class="sotto-tab attiva" href="http://localhost:3000/posturacorretta/espressione?parte=recupero-massaggio">Recupero e terapie manuali</a>
+          <a class="sotto-tab" href="http://localhost:3000/posturacorretta/espressione?parte=movimento-allenamento">Movimento e allenamento</a>
+          <a class="sotto-tab" href="http://localhost:3000/posturacorretta/espressione?parte=mente">Mente e aspetti emotivi e mentali</a>
+          <a class="sotto-tab" href="http://localhost:3000/posturacorretta/espressione?parte=fisiologia">Fisiologia, mangiare e medicamenti</a>
+        </nav>
+        <div class="scheda"><h2>Recupero e terapie manuali</h2><p>Seleziona una linguetta per aprire la relativa pagina.</p></div>
+      </section>
+      <section data-sezione="consapevolezza" hidden>
+        <p class="intro">PosturaCorretta</p>
+        <h1>Consapevolezza</h1>
+        <nav class="sotto-tabs" aria-label="Sezioni Consapevolezza">
+          <a class="sotto-tab attiva" href="http://localhost:3000/posturacorretta/consapevolezza?tab=corso">Intro</a>
+          <a class="sotto-tab" href="http://localhost:3000/posturacorretta/consapevolezza?tab=metodiche">Metodiche posturali</a>
+          <a class="sotto-tab" href="http://localhost:3000/posturacorretta/consapevolezza?tab=percorsi">Percorsi mirati</a>
+        </nav>
+        <div class="scheda"><h2>Intro</h2><p>Seleziona una linguetta per aprire la relativa pagina.</p></div>
+      </section>
+      <section data-sezione="connessione" hidden>
+        <p class="intro">PosturaCorretta</p>
+        <h1>Connessione</h1>
+        <nav class="sotto-tabs" aria-label="Sezioni Connessione">
+          <a class="sotto-tab attiva" href="http://localhost:3000/posturacorretta/connessione?tab=corpo">Il corpo, un mondo da scoprire</a>
+          <a class="sotto-tab" href="http://localhost:3000/posturacorretta/connessione?tab=risorse">Le tue risorse</a>
+        </nav>
+        <div class="scheda"><h2>Il corpo, un mondo da scoprire</h2><p>Seleziona una linguetta per aprire la relativa pagina.</p></div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const tabs = document.querySelectorAll('[data-area]');
+    const sezioni = document.querySelectorAll('[data-sezione]');
+    function mostraArea(area) {
+      tabs.forEach(tab => {
+        const attiva = tab.dataset.area === area;
+        tab.classList.toggle('attiva', attiva);
+        tab.setAttribute('aria-selected', String(attiva));
+      });
+      sezioni.forEach(sezione => sezione.hidden = sezione.dataset.sezione !== area);
+    }
+    tabs.forEach(tab => tab.addEventListener('click', () => mostraArea(tab.dataset.area)));
+  </script>
+</body>
+</html>

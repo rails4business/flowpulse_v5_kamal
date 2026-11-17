@@ -1,11 +1,10 @@
 <%
   nav_link_class = ->(active) { "block rounded-lg px-3 py-2 text-sm font-bold transition hover:bg-slate-100 hover:text-slate-950 #{active ? 'bg-blue-50 text-blue-700' : 'text-slate-600'}" }
   nav_group_class = ->(active) { "flex cursor-pointer list-none items-center gap-1 rounded-lg px-3 py-2 text-sm font-bold transition hover:bg-slate-100 #{active ? 'bg-blue-50 text-blue-700' : 'text-slate-600'}" }
-  partecipa_active = request.path.start_with?(posturacorretta_partecipa_path)
   servizi_active = request.path.start_with?(posturacorretta_servizi_path)
   about_active = request.path.start_with?(posturacorretta_about_path) || request.path == posturacorretta_faq_path
   explore_active = request.path.start_with?(posturacorretta_contenuti_path, posturacorretta_eventi_path, posturacorretta_eventi_sportivi_path, posturacorretta_libri_path, posturacorretta_metodiche_path)
-  percorso_active = request.path.in?([posturacorretta_path, posturacorretta_espressione_path, posturacorretta_consapevolezza_path, posturacorretta_connessione_path])
+  home_active = request.path == posturacorretta_path
 %>
 
 <header class="pc-site-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
@@ -16,26 +15,19 @@
     <% end %>
 
     <nav class="flex min-w-0 items-center justify-start gap-1 overflow-x-auto" aria-label="Navigazione principale PosturaCorretta">
-      <details class="group relative shrink-0" data-close-on-outside>
-        <summary class="<%= nav_group_class.call(percorso_active) %>">Percorso <span class="text-[9px] transition group-open:rotate-180">▼</span></summary>
-        <div class="absolute left-0 z-[80] mt-2 w-64 rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
-          <%= link_to "Percorso", posturacorretta_path, class: "block rounded-lg px-3 py-2 text-sm font-black text-slate-950 hover:bg-slate-100" %>
-          <%= link_to "Espressione", posturacorretta_espressione_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" %>
-          <%= link_to "Consapevolezza", posturacorretta_consapevolezza_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" %>
-          <%= link_to "Connessione", posturacorretta_connessione_path, class: "block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" %>
-        </div>
-      </details>
+      <%= link_to "Home", posturacorretta_path, aria: { current: ("page" if home_active) }, class: nav_link_class.call(home_active) %>
 
-      <%= link_to "Partecipa", posturacorretta_partecipa_path, aria: { current: ("page" if partecipa_active) }, class: nav_link_class.call(partecipa_active) %>
       <%= link_to "Servizi", posturacorretta_servizi_path, aria: { current: ("page" if servizi_active) }, class: nav_link_class.call(servizi_active) %>
       <%= link_to "About", posturacorretta_about_path, aria: { current: ("page" if about_active) }, class: nav_link_class.call(about_active) %>
 
-      <details class="group relative shrink-0" data-close-on-outside>
-        <summary class="<%= nav_group_class.call(explore_active) %>">Esplora <span class="text-[9px] transition group-open:rotate-180">▼</span></summary>
-        <div class="absolute right-0 z-[80] mt-2 max-h-[calc(100vh-5rem)] w-64 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-xl" aria-label="Esplora PosturaCorretta">
-          <%= render "posturacorretta/explore_links" %>
-        </div>
-      </details>
+      <% if Current.user&.superadmin_user? %>
+        <details class="group relative shrink-0" data-close-on-outside>
+          <summary class="<%= nav_group_class.call(explore_active) %>">Esplora <span class="text-[9px] transition group-open:rotate-180">▼</span></summary>
+          <div class="absolute right-0 z-[80] mt-2 max-h-[calc(100vh-5rem)] w-64 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-xl" aria-label="Esplora PosturaCorretta">
+            <%= render "posturacorretta/explore_links" %>
+          </div>
+        </details>
+      <% end %>
     </nav>
 
     <div class="shrink-0 justify-self-end"><%= render "posturacorretta/account_nav" %></div>

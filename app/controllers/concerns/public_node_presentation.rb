@@ -75,36 +75,39 @@ module PublicNodePresentation
       items = Array(items)
       return items unless @navigation_root_node&.slug == "posturacorretta"
 
-      phase_keys = %w[espressione consapevolezza connessione]
-      percorso = items.find { |item| item["key"] == "percorso" }
-      phases = (items + Array(percorso&.fetch("children", nil))).select { |item| item["key"].in?(phase_keys) }.index_by { |item| item["key"] }
-      phases["espressione"] = { "key" => "espressione", "label" => "Espressione", "path" => "/posturacorretta/espressione" }
-      phases["consapevolezza"] ||= { "key" => "consapevolezza", "label" => "Consapevolezza", "path" => "/posturacorretta/consapevolezza" }
-      phases["connessione"] ||= { "key" => "connessione", "label" => "Connessione", "path" => "/posturacorretta/connessione" }
-
-      percorso = (percorso || { "key" => "percorso", "label" => "Percorso" }).except("group").merge(
-        "path" => "/posturacorretta",
-        "children" => phase_keys.map { |key| phases.fetch(key) }
-      )
-      first_phase_index = items.index { |item| item["key"].in?(["percorso", *phase_keys]) } || 0
-      items = items.reject { |item| item["key"].in?(["percorso", *phase_keys]) }
-      items.insert(first_phase_index, percorso)
+      path_keys = %w[home percorso espressione consapevolezza connessione]
+      home_index = items.index { |item| item["key"].in?(path_keys) } || 0
+      items = items.reject { |item| item["key"].in?(["partecipa", *path_keys]) }
+      items.insert(home_index, { "key" => "home", "label" => "Home", "path" => "/posturacorretta" })
 
       items.map do |item|
         normalized = item["key"].in?(%w[partecipa servizi about]) ? item.except("children", "group") : item.dup
         normalized
       end.then do |normalized_items|
-        next normalized_items if normalized_items.any? { |item| item["key"] == "esplora" }
-
-        normalized_items + [{
-          "key" => "esplora", "label" => "Esplora", "group" => true,
+        explore = {
+          "key" => "esplora", "label" => "Esplora", "group" => true, "audience" => "superadmin",
           "children" => [
             { "key" => "contenuti", "label" => "Contenuti", "path" => "/posturacorretta/contenuti" },
             { "key" => "eventi", "label" => "Eventi", "path" => "/posturacorretta/eventi" },
-            { "key" => "metodiche", "label" => "Metodiche", "path" => "/posturacorretta/metodiche" },
-            { "key" => "libri", "label" => "Libri", "path" => "/posturacorretta/libri" }
+            { "key" => "libri", "label" => "Libri", "path" => "/posturacorretta/libri" },
+            {
+              "key" => "strumenti-interni", "label" => "Strumenti interni", "group" => true, "audience" => "superadmin",
+              "children" => [
+                { "key" => "archivio-didattico", "label" => "Archivio didattico", "path" => "/posturacorretta/accademia" },
+                { "key" => "tre-progetti", "label" => "I tre progetti", "path" => "/posturacorretta/tre-progetti" },
+                { "key" => "collabora", "label" => "Collabora", "path" => "/posturacorretta/collabora" },
+                { "key" => "area-corsi", "label" => "Area corsi", "path" => "/posturacorretta/lezioni" },
+                { "key" => "area-insegnanti", "label" => "Area insegnanti", "path" => "/posturacorretta/area-insegnanti" },
+                { "key" => "visione-progetto", "label" => "Visione e progetto · Bozza", "path" => "/posturacorretta/guida?sezione=progetto" }
+              ]
+            }
           ]
-        }]
+        }
+        if normalized_items.any? { |item| item["key"] == "esplora" }
+          normalized_items.map { |item| item["key"] == "esplora" ? explore : item }
+        else
+          normalized_items + [explore]
+        end
       end
     end
 
@@ -180,6 +183,7 @@ module PublicNodePresentation
 
       @posturacorretta_public_section = node.slug.delete_suffix("-posturacorretta")
       @faq_items = posturacorretta_faq_items if node.slug == "about-posturacorretta"
+      @posturacorretta_teacher_node = node.self_and_descendants.find_by(slug: "diventa-insegnante-posturacorretta") || Node.find_by(slug: "diventa-insegnante-posturacorretta") if node.slug == "about-posturacorretta"
     end
 
     def posturacorretta_faq_items

@@ -129,7 +129,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#inizia-con-posturacorretta", text: /In arrivo/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a", count: 3
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}']", text: /Metodiche/
-    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details summary", text: /Esplora/
+    assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details summary", text: /Esplora/, count: 0
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] details.pc-app-account summary", text: /Profilo/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] .pc-app-account-menu a[href*='session/new']", text: "Accedi"
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] a.pc-app-logo img", count: 1
@@ -160,11 +160,11 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "div", text: /La postura può aiutarti nella salute e in altri aspetti della vita/
     assert_select "div", text: /Ricordi quando hai preso la patente?/m
     assert_not_includes response.body, "Uscita "
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] summary", text: /Esplora/, count: 0
     assert_equal ["Percorso", "Lezioni", "Metodiche"], css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Come funziona", count: 0
     assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", count: 0
-    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
+    assert_select "[aria-label='Esplora PosturaCorretta']", count: 0
   end
 
   test "redirects the migrated Percorso Integrato course to its own domain area" do

@@ -2,4 +2,4 @@
 <% content_for :description, "Risposte alle domande più frequenti sul percorso educativo PosturaCorretta." %>
 <% content_for :landing_nav do %><%= render "posturacorretta/header" %><% end %>
 
-<%= render "posturacorretta/faq_content", faq_items: @faq_items %>
+<%= render "posturacorretta/faq_content", faq_items: @faq_items, teacher_node: nil %>

@@ -57,6 +57,16 @@ class Node < ApplicationRecord
     class_name: "NodeContent",
     dependent: :destroy,
     inverse_of: :node
+  # Contenuti delle raccolte del node (articoli, corsi, schede); `content` è invece il corpo della pagina.
+  has_many :editorial_contents,
+    class_name: "Content",
+    dependent: :restrict_with_error,
+    inverse_of: :node
+  has_many :outgoing_content_links,
+    class_name: "ContentLink",
+    foreign_key: :source_node_id,
+    dependent: :destroy,
+    inverse_of: :source_node
 
   acts_as_list scope: [:parent_id, :role_assignment_id]
 

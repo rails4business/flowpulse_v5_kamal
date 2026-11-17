@@ -8,6 +8,7 @@
 %>
 
 <section class="mx-auto w-full max-w-6xl pb-12 pt-2" aria-labelledby="connessione-title">
+  <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Connessione" %>
   <header class="px-1 pb-8 text-center sm:px-6 sm:pb-10">
     <p class="text-xs font-black uppercase tracking-[.2em] text-violet-700">Connessione</p>
     <h1 id="connessione-title" class="mt-3 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Corpo e risorse</h1>
@@ -39,6 +40,15 @@
         <% end %>
       <% else %>
         <span class="mt-7 inline-flex rounded-xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600">In preparazione</span>
+      <% end %>
+
+      <% if active_tab == "corpo" %>
+        <div class="mt-8 border-t border-violet-100 pt-6">
+          <p class="text-xs font-black uppercase tracking-[.16em] text-violet-600">Approfondisci</p>
+          <%= link_to book_path("il-corpo-un-mondo-da-scoprire"), class: "mt-3 inline-flex items-center gap-2 text-base font-black text-slate-950 transition hover:text-violet-700" do %>
+            Il corpo, un mondo da scoprire <span aria-hidden="true">→</span>
+          <% end %>
+        </div>
       <% end %>
     </section>
   </div>

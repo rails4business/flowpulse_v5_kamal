@@ -1,17 +1,33 @@
-<section class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-  <header class="overflow-hidden rounded-[2rem] bg-gradient-to-br <%= gradient %> px-6 py-10 text-white shadow-xl sm:px-10 sm:py-14">
-    <h1 class="max-w-4xl text-4xl font-black tracking-tight sm:text-6xl"><%= title %></h1>
-    <p class="mt-5 max-w-3xl text-lg font-medium leading-8 text-white/85"><%= description %></p>
+<% accent_classes = accent == "violet" ? {
+  shell: "border-violet-100 bg-violet-50/60",
+  label: "text-violet-700",
+  marker: "bg-violet-600",
+  card_hover: "hover:border-violet-300",
+  link: "text-violet-700 group-hover:text-violet-800"
+} : {
+  shell: "border-blue-100 bg-blue-50/60",
+  label: "text-blue-700",
+  marker: "bg-blue-600",
+  card_hover: "hover:border-blue-300",
+  link: "text-blue-700 group-hover:text-blue-800"
+} %>
+
+<section class="mx-auto w-full max-w-6xl px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pb-14">
+  <header class="relative overflow-hidden rounded-[1.75rem] border <%= accent_classes.fetch(:shell) %> px-6 py-7 sm:px-9 sm:py-9">
+    <span class="absolute -right-12 -top-16 size-52 rounded-full <%= accent_classes.fetch(:marker) %> opacity-[.07]" aria-hidden="true"></span>
+    <p class="relative text-xs font-black uppercase tracking-[.2em] <%= accent_classes.fetch(:label) %>"><%= section_label %></p>
+    <h1 class="relative mt-3 max-w-4xl text-3xl font-black tracking-tight text-slate-950 sm:text-5xl"><%= title %></h1>
+    <p class="relative mt-4 max-w-3xl text-base font-medium leading-7 text-slate-600 sm:text-lg"><%= description %></p>
   </header>
 
-  <div class="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+  <div class="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
     <% children.each_with_index do |child, index| %>
       <% target = child.bridge_node? ? child.resolve_target : child %>
-      <%= link_to flowtree_public_node_path(target), class: "group flex min-h-56 flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl" do %>
-        <span class="flex size-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white"><%= format("%02d", index + 1) %></span>
-        <h2 class="mt-6 text-xl font-black tracking-tight text-slate-950 group-hover:text-blue-700"><%= child.title.sub(/\AAccesso\s+/i, "") %></h2>
+      <%= link_to flowtree_public_node_path(target), class: "group flex min-h-52 flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 #{accent_classes.fetch(:card_hover)} hover:shadow-lg" do %>
+        <span class="flex size-9 items-center justify-center rounded-xl <%= accent_classes.fetch(:marker) %> text-xs font-black text-white"><%= format("%02d", index + 1) %></span>
+        <h2 class="mt-5 text-xl font-black tracking-tight text-slate-950"><%= child.title.sub(/\AAccesso\s+/i, "") %></h2>
         <% if child.description.present? %><p class="mt-3 text-sm leading-6 text-slate-600"><%= child.description %></p><% end %>
-        <span class="mt-auto pt-6 text-sm font-black text-blue-700">Scopri di più <span aria-hidden="true">→</span></span>
+        <span class="mt-auto pt-5 text-sm font-black <%= accent_classes.fetch(:link) %>">Scopri di più <span aria-hidden="true">→</span></span>
       <% end %>
     <% end %>
   </div>
