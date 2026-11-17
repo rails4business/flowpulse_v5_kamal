@@ -4,16 +4,19 @@
   sidebar_siblings = Array(@siblings)
   sidebar_children = Array(@children)
   landing_mode = @node.slug == "posturacorretta" && @current_host_domain_root
+  consapevolezza_mode = @node.slug == "apprendimento-2-connessione"
+  connessione_mode = @node.slug == "dalla-posturacorretta-al-giardino-del-corpo"
+  posturacorretta_section_mode = @posturacorretta_public_section.present?
   # Senza un percorso preparato (tappa e tab) la home del dominio mostra il listino.
-  home_selection_mode = landing_mode && (@posturacorretta_landing || @posturacorretta_home.nil?)
-  content_for(:hide_node_reading_nav, "true") if landing_mode
+  home_selection_mode = landing_mode && @posturacorretta_overview
+  content_for(:hide_node_reading_nav, "true") if landing_mode || consapevolezza_mode || connessione_mode || posturacorretta_section_mode
   has_real_siblings = sidebar_siblings.any? { |sibling| sibling != @node }
   sidebar_items = if has_real_siblings || @parent_node.present?
     sidebar_siblings
   else
     sidebar_children
   end
-  has_sidebar = !landing_mode && (@parent_node.present? || has_real_siblings || sidebar_children.any?)
+  has_sidebar = !landing_mode && !consapevolezza_mode && !connessione_mode && !posturacorretta_section_mode && (@parent_node.present? || has_real_siblings || sidebar_children.any?)
 %>
 
 <% content_for :public_node_navigation do %>
@@ -36,7 +39,7 @@
   <% end %>
 <% end %>
 
-<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> <%= 'node-public-landing' if landing_mode %> <%= 'node-public-landing-home' if home_selection_mode %> lg:min-h-0">
+<div class="node-public-page <%= has_sidebar ? 'node-public-with-sidebar' : 'node-public-no-sidebar' %> <%= 'node-public-landing' if landing_mode || consapevolezza_mode || connessione_mode || posturacorretta_section_mode %> <%= 'node-public-landing-home' if home_selection_mode %> lg:min-h-0">
   <div class="node-public-layout lg:min-h-0">
     <% if has_sidebar %>
       <aside class="node-public-sidebar lg:min-h-0">
@@ -97,12 +100,21 @@
     <% end %>
 
     <main class="node-public-article lg:min-h-0">
-      <% if content_for?(:navbar_breadcrumbs) %>
+      <% if content_for?(:navbar_breadcrumbs) && !consapevolezza_mode && !connessione_mode && !posturacorretta_section_mode %>
         <div class="mb-4 overflow-x-auto">
           <%= yield :navbar_breadcrumbs %>
         </div>
       <% end %>
 
+      <% if consapevolezza_mode %>
+        <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Consapevolezza" %>
+        <%= render "nodes/posturacorretta_consapevolezza/landing" %>
+      <% elsif connessione_mode %>
+        <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Connessione" %>
+        <%= render "nodes/posturacorretta_connessione/landing" %>
+      <% elsif posturacorretta_section_mode %>
+        <%= render "nodes/posturacorretta_sections/#{@posturacorretta_public_section}", node: @node, children: sidebar_children %>
+      <% else %>
       <p class="node-public-kicker">
         <%= @node.node_type.presence || @node.content_type.presence || "Articolo" %>
       </p>
@@ -162,6 +174,9 @@
 
       <% if landing_mode %>
         <% if home_selection_mode %>
+          <%= render "nodes/posturacorretta_home/overview" %>
+        <% elsif @posturacorretta_expression %>
+          <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Espressione" %>
           <%= render "nodes/posturacorretta_home/landing" %>
         <% else %>
           <%= render "nodes/posturacorretta_home/journey", journey: @posturacorretta_home %>
@@ -190,11 +205,12 @@
       <%
         brand_city = @navigation_domain&.display_hostname&.split(".")&.first&.titleize || "Cesena"
       %>
+      <% end %>
      
     </main>
 
     <!-- Right Sidebar Table of Contents (TOC) -->
-    <% unless landing_mode %>
+    <% unless landing_mode || consapevolezza_mode || connessione_mode || posturacorretta_section_mode %>
     <aside data-controller="toc" class="node-public-toc-sidebar xl:min-h-0">
       <div class="node-public-sidebar-mobile-header xl:hidden flex justify-between items-center px-4 py-3 border-b border-slate-100 mb-4 bg-slate-50 rounded-t-xl">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Indice</span>

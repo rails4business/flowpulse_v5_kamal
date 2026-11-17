@@ -43,6 +43,188 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".node-public-status", false
   end
 
+  test "PosturaCorretta public sections use branded URLs and dedicated landings" do
+    brand = Node.create!(
+      title: "PosturaCorretta",
+      slug: "posturacorretta",
+      role_assignment: @assignment,
+      status: "published",
+      visibility: "public"
+    )
+    sections = {
+      "partecipa-posturacorretta" => ["Partecipa", posturacorretta_partecipa_url],
+      "servizi-posturacorretta" => ["Servizi", posturacorretta_servizi_url],
+      "about-posturacorretta" => ["About", posturacorretta_about_url]
+    }
+    nodes = sections.to_h do |slug, (title, _url)|
+      node = Node.create!(
+        title: title,
+        slug: slug,
+        role_assignment: @assignment,
+        parent: brand,
+        status: "published",
+        visibility: "public"
+      )
+      node.content.update!(body_md: "## Contenuto #{title}")
+      [slug, node]
+    end
+    Node.create!(
+      title: "Incontri settimanali",
+      role_assignment: @assignment,
+      parent: nodes.fetch("partecipa-posturacorretta"),
+      status: "published",
+      visibility: "public"
+    )
+    Domain.create!(
+      hostname: "posturacorretta-public-sections.test",
+      node: brand,
+      role_assignment: @assignment,
+      path_slug: "posturacorretta",
+      home_mode: "node",
+      locale: "it"
+    )
+
+    sections.each do |slug, (title, public_url)|
+      get public_url
+
+      assert_response :success
+      assert_select "body.pc-posturacorretta-site", count: 1
+      assert_select ".node-public-page.node-public-landing", count: 1
+      assert_select "h1", minimum: 1
+      assert_select ".node-public-breadcrumb", count: 0
+      assert_select ".node-public-sidebar", count: 0
+      assert_select ".node-public-toc-sidebar", count: 0
+
+      get node_url(nodes.fetch(slug))
+      assert_redirected_to public_url
+      assert_response :moved_permanently
+    end
+
+    get posturacorretta_partecipa_url
+    assert_select "h2", text: "Incontri settimanali"
+
+    get posturacorretta_about_url
+    assert_select ".pc-faq-page h1", text: "Le domande prima di iniziare."
+    assert_select ".pc-faq-list details", count: 5
+    assert_select ".pc-faq-list details[open]", count: 1
+  end
+
+  test "PosturaCorretta Consapevolezza renders its three-section landing" do
+    brand = Node.create!(
+      title: "PosturaCorretta",
+      slug: "posturacorretta",
+      role_assignment: @assignment,
+      status: "published",
+      visibility: "public"
+    )
+    node = Node.create!(
+      title: "Educazione 2 · Consapevolezza con le metodiche posturali",
+      slug: "apprendimento-2-connessione",
+      role_assignment: @assignment,
+      parent: brand,
+      status: "published",
+      visibility: "public"
+    )
+    Domain.create!(
+      hostname: "posturacorretta-consapevolezza.test",
+      node: brand,
+      role_assignment: @assignment,
+      path_slug: "posturacorretta",
+      home_mode: "node",
+      locale: "it"
+    )
+
+    get posturacorretta_consapevolezza_url
+
+    assert_response :success
+    assert_select ".node-public-page.node-public-landing", count: 1
+    assert_select "h1", text: "Attività e percorsi"
+    assert_select "nav[aria-label='Sezioni di Consapevolezza'] a", count: 3
+    assert_select "a[aria-current='page']", text: "Corso"
+    assert_select "h2", text: "Postura e consapevolezza"
+    assert_select "span", text: "In preparazione"
+
+    get posturacorretta_consapevolezza_url(tab: "metodiche")
+
+    assert_response :success
+    assert_select "a[aria-current='page']", text: "Metodiche posturali"
+    assert_select "a[href='#{posturacorretta_metodica_path('feldenkrais')}']", minimum: 1
+
+    get posturacorretta_consapevolezza_url(tab: "percorsi")
+
+    assert_response :success
+    assert_select "a[aria-current='page']", text: "Percorsi mirati"
+    assert_select "nav[aria-label='Tipi di percorsi mirati'] a", count: 3
+    assert_select "nav[aria-label='Tipi di percorsi mirati'] a[aria-selected='true']", text: "Persone e fasi della vita"
+    assert_select "[role='tabpanel']", text: /Percorsi pensati per età/
+
+    get posturacorretta_consapevolezza_url(tab: "percorsi", percorso: "attivita")
+
+    assert_response :success
+    assert_select "nav[aria-label='Tipi di percorsi mirati'] a[aria-selected='true']", text: "Attività e contesti"
+    assert_select "[role='tabpanel']", text: /Percorsi collegati al lavoro/
+
+    get node_url(node, tab: "percorsi")
+
+    assert_redirected_to posturacorretta_consapevolezza_url(tab: "percorsi")
+    assert_response :moved_permanently
+  end
+
+  test "PosturaCorretta Connessione renders Corpo and Risorse" do
+    brand = Node.create!(
+      title: "PosturaCorretta",
+      slug: "posturacorretta",
+      role_assignment: @assignment,
+      status: "published",
+      visibility: "public"
+    )
+    node = Node.create!(
+      title: "Educazione 3 · Connessione dalla PosturaCorretta al Giardino del Corpo",
+      slug: "dalla-posturacorretta-al-giardino-del-corpo",
+      role_assignment: @assignment,
+      parent: brand,
+      status: "published",
+      visibility: "public"
+    )
+    Domain.create!(
+      hostname: "posturacorretta-connessione.test",
+      node: brand,
+      role_assignment: @assignment,
+      path_slug: "posturacorretta",
+      home_mode: "node",
+      locale: "it"
+    )
+
+    get posturacorretta_connessione_url
+
+    assert_response :success
+    assert_select ".node-public-page.node-public-landing", count: 1
+    assert_select "nav[aria-label='Sezioni di Connessione'] a", count: 2
+    assert_select "a[aria-current='page']", text: "Il corpo"
+    assert_select "h2", text: "Dalla PosturaCorretta al Giardino del Corpo"
+    assert_select "a[href='#{posturacorretta_course_path('corpo-come-un-giardino')}']", text: /Inizia il corso/
+
+    get posturacorretta_connessione_url(tab: "risorse")
+
+    assert_response :success
+    assert_select "a[aria-current='page']", text: "Le tue risorse"
+    assert_select "h2", text: "Le tue risorse"
+    assert_select "span", text: "In preparazione"
+
+    get posturacorretta_url(parte: "corpo")
+    assert_redirected_to posturacorretta_connessione_url(tab: "corpo")
+    assert_response :moved_permanently
+
+    get posturacorretta_url(parte: "risorse")
+    assert_redirected_to posturacorretta_connessione_url(tab: "risorse")
+    assert_response :moved_permanently
+
+    get node_url(node, tab: "risorse")
+
+    assert_redirected_to posturacorretta_connessione_url(tab: "risorse")
+    assert_response :moved_permanently
+  end
+
   test "local brand path renders the Node Show assigned to its domain" do
     Domain.create!(
       hostname: "posturacorretta.org",
@@ -60,13 +242,25 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
   end
 
-  test "PosturaCorretta domain home selects the first line and the dedicated path renders its tabs" do
+  test "PosturaCorretta home presents three choices and Expression keeps the program tabs" do
     brand = Node.create!(
       title: "PosturaCorretta",
       slug: "posturacorretta",
       role_assignment: @assignment,
       status: "published",
-      visibility: "public"
+      visibility: "public",
+      navigation: {
+        "items" => [
+          {
+            "key" => "percorso",
+            "label" => "Percorso",
+            "group" => true,
+            "children" => [
+              { "key" => "espressione", "label" => "Espressione", "path" => "/posturacorretta/espressione" }
+            ]
+          }
+        ]
+      }
     )
     Node.create!(
       title: "Child course",
@@ -87,16 +281,35 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_url
 
     assert_response :success
+    assert_select "h1", text: /Conosci il corpo.*Partecipa alla tua salute/
+    assert_select ".pc-path-overview__eyebrow", text: "Educazione alla salute"
+    assert_select ".pc-path-overview__map span", count: 3
+    assert_select ".pc-path-overview__steps > li", count: 3
+    assert_select ".pc-path-overview__steps > li.is-first .pc-path-overview__status", text: "Da qui si comincia"
+    assert_select ".pc-path-overview__mini-steps > li", count: 3
+    assert_select "a[href='#{posturacorretta_espressione_path}'] h3", text: "Espressione"
+    assert_select "a[href='#{posturacorretta_consapevolezza_path}'] h3", text: "Consapevolezza"
+    assert_select "a[href='#{posturacorretta_connessione_path}'] h3", text: "Connessione"
+    assert_select ".pc-landing-home", count: 0
+
+    get posturacorretta_espressione_url
+
+    assert_response :success
     assert_select ".pc-landing-home", count: 1
+    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Percorso.*Espressione/
+    assert_select "a[href='#{posturacorretta_espressione_path}'][aria-current='page']", text: "Espressione"
     assert_select "a[href='#{posturacorretta_postura_recupero_path(tappa: 'introduzione-al-percorso-integrato', tab: 'online')}']", text: "Inizia"
-    assert_select ".pc-expression-tabs .pc-expression-tab", count: 7
+    assert_select ".pc-expression-tabs .pc-expression-tab", count: 5
     assert_select ".pc-expression-tab.is-selected", text: "Intro"
-    assert_select ".pc-expression-tab[href='#{posturacorretta_path(parte: "recupero-massaggio")}']", text: "Recupero e massaggio"
+    assert_select ".pc-expression-tab[href='#{posturacorretta_espressione_path(parte: "recupero-massaggio")}']", text: "Recupero e terapie manuali"
+    assert_select ".pc-expression-tab", text: "Il corpo, un mondo da scoprire", count: 0
+    assert_select ".pc-expression-tab", text: "Gestione risorse e progetto", count: 0
     assert_select ".pc-sheet.pc-intro-sheet", count: 1
     assert_select ".pc-intro-sheet__hero h1", text: "Non è solo stare ben dritti con la schiena."
     assert_select ".pc-intro-sheet__hero img[src*='posturacorretta_home.png']", count: 1
     assert_select ".pc-intro-sheet__principles > li", count: 3
-    assert_select ".pc-intro-sheet__table thead th", count: 5
+    assert_select ".pc-intro-sheet__table thead th", count: 4
+    assert_select ".pc-intro-sheet__table .pc-my-path__dot", count: 0
     assert_select ".pc-intro-sheet__table tbody", count: 3
     assert_select ".pc-intro-sheet__table tbody tr", count: 6
     assert_select ".pc-intro-sheet__table tbody" do |sessions|
@@ -108,12 +321,17 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".pc-listino__note", count: 0
     assert_select ".pc-home-tabs", count: 0
 
-    get posturacorretta_url(parte: "recupero-massaggio")
+    get posturacorretta_espressione_url(parte: "recupero-massaggio")
 
     assert_response :success
-    assert_select ".pc-expression-tab.is-selected", text: "Recupero e massaggio"
-    assert_select ".pc-program-sheet__intro h1", text: "Recupero e massaggio"
-    assert_select ".pc-sheet__print", text: "Scarica o stampa Recupero e massaggio"
+    assert_select ".pc-expression-tab.is-selected", text: "Recupero e terapie manuali"
+    assert_select ".pc-program-sheet__intro h1", text: "Recupero e terapie manuali"
+    assert_select ".pc-program-sheet__intro", text: /Il massaggio è una delle pratiche/
+    assert_select ".pc-sheet__print", text: "Scarica o stampa Recupero e terapie manuali"
+
+    get posturacorretta_url(parte: "recupero-massaggio")
+    assert_redirected_to posturacorretta_espressione_url(parte: "recupero-massaggio")
+    assert_response :moved_permanently
 
     get posturacorretta_postura_recupero_url(tappa: "la-prima-settimana-con-posturacorretta", tab: "lezioni")
 

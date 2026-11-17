@@ -15,6 +15,22 @@ module Brands
 
     def docs
       load_site
+      load_docs
+    end
+
+    def course
+      load_site
+      load_course_chapters
+      load_docs
+      @course_mode = true
+      @course_chapter = @course_chapters.find { |chapter| chapter.fetch("slug") == params[:capitolo] }
+      raise ActiveRecord::RecordNotFound, "Capitolo non trovato" if params[:capitolo].present? && @course_chapter.blank?
+
+      @course_chapter_markdown = load_course_chapter_markdown(@course_chapter) if @course_chapter
+      render :docs
+    end
+
+    def load_docs
       data = YAML.safe_load_file(docs_index_path, permitted_classes: [], aliases: false) || {}
       @docs_sections = visible_docs_sections(data.fetch("sections", []))
       @current_doc = @docs_sections.flat_map { |section| section.fetch("items", []) }
@@ -22,6 +38,27 @@ module Brands
       @current_doc ||= @docs_sections.first&.fetch("items", [])&.first
       @doc_component = docs_component(@current_doc)
       @doc_markdown = @doc_component ? "" : load_doc_markdown(@current_doc)
+    end
+
+    def load_course_chapters
+      path = Rails.root.join("config/data/brands/posturacorretta/courses/percorso-integrato/course.yml")
+      data = YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
+      contents = data.fetch("contents", [])
+      base = contents.select { |item| item["parent_id"] == "percorso-integrato" }.sort_by { |item| item.fetch("position", 0) }
+      extras = %w[matrice-per-orientarsi-salute-benessere tre-colori-professionisti-insegnanti].filter_map do |slug|
+        contents.find { |item| item["slug"] == slug }
+      end
+      @course_chapters = base + extras
+    end
+
+    def load_course_chapter_markdown(chapter)
+      return "" unless chapter
+
+      root = Rails.root.join("config/data").cleanpath
+      path = root.join(chapter.fetch("content_path")).cleanpath
+      return "" unless path.to_s.start_with?("#{root}/") && path.extname == ".md" && path.file?
+
+      path.read.sub(/\A---\s*\n.*?\n---\s*\n/m, "")
     end
 
     def professionals

@@ -53,7 +53,7 @@ class MetroMapCatalogTest < ActiveSupport::TestCase
   test "reads the sessions and slots grid and rejects rows without coordinates" do
     grid = MetroMapCatalog.grid_for("posturacorretta.org", "test")
     assert_equal "Sessione", grid["column_label"]
-    assert_equal "Slot 1 · Massaggio e recupero", grid["rows"].first["label"]
+    assert_equal "Slot 1 · Recupero e terapie manuali", grid["rows"].first["label"]
 
     catalog = MetroMapCatalog.new(
       { "maps" => { "posturacorretta.org" => { "title" => "Mappa", "grid" => { "first_x" => 0, "column_step" => 170, "rows" => [{ "label" => "Slot 1" }] } } } }

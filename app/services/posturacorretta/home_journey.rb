@@ -16,7 +16,7 @@ module Posturacorretta
       ["introduzione-al-percorso-integrato", "Introduzione al Percorso Integrato"],
       ["la-prima-settimana-con-posturacorretta", "Prima settimana"],
       ["introduzione-postura-e-fisiologia", "Postura e fisiologia"],
-      ["area-massaggio-terapie-manuali-tecniche-corporee", "Area Massaggio e recupero"],
+      ["area-massaggio-terapie-manuali-tecniche-corporee", "Area Recupero e terapie manuali"],
       ["igiene-posturale", "Igiene Posturale"],
       ["principi-di-fisioterapia", "Principi di Fisioterapia"],
       ["biomeccanica-comportamentale-gds", "Biomeccanica GDS"],

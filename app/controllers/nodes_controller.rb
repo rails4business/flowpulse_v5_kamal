@@ -2,9 +2,19 @@ class NodesController < ApplicationController
   include PublicNodePresentation
 
   layout "public_node"
-  allow_unauthenticated_access only: [:show, :domain_home, :domain_journey]
+  allow_unauthenticated_access only: [:show, :domain_home, :domain_expression, :domain_node, :domain_journey]
 
   def domain_home
+    if params[:parte].to_s.in?(%w[corpo risorse])
+      redirect_to posturacorretta_connessione_path(tab: params[:parte]), status: :moved_permanently
+      return
+    end
+
+    if params[:parte].present?
+      redirect_to posturacorretta_espressione_path(request.query_parameters), status: :moved_permanently
+      return
+    end
+
     domain = Domain.find_for_path_slug(params[:path_slug])
     # Il percorso locale si comporta come la root del dominio configurato,
     # anche se la richiesta arriva da localhost.
@@ -21,6 +31,25 @@ class NodesController < ApplicationController
     response.set_header("X-Robots-Tag", "noindex, nofollow")
     prepare_public_node(node, navigation_domain: domain, domain_root: true)
     @posturacorretta_landing = node.slug == "posturacorretta"
+    @posturacorretta_overview = @posturacorretta_landing
+    prepare_posturacorretta_home(node)
+    render :show
+  end
+
+  def domain_expression
+    domain = Domain.find_for_path_slug(params[:path_slug])
+    Current.domain = domain if domain.present?
+    node = domain&.node
+
+    if node.blank? || node.slug != "posturacorretta" || !public_node_visible?(node)
+      redirect_hidden_node
+      return
+    end
+
+    response.set_header("X-Robots-Tag", "noindex, nofollow")
+    prepare_public_node(node, navigation_domain: domain, domain_root: true)
+    @posturacorretta_landing = true
+    @posturacorretta_expression = true
     prepare_posturacorretta_home(node)
     render :show
   end
@@ -41,6 +70,25 @@ class NodesController < ApplicationController
     render :show
   end
 
+  def domain_node
+    domain = Domain.find_for_path_slug(params[:path_slug])
+    Current.domain = domain if domain.present?
+    node = domain&.node&.self_and_descendants&.find_by(slug: params[:node_slug])
+
+    if node.blank? || !public_node_visible?(node)
+      redirect_hidden_node
+      return
+    end
+
+    # Il percorso con prefisso Brand è l'URL pubblico canonico anche in locale.
+    response.set_header("X-Robots-Tag", "noindex, nofollow")
+    prepare_public_node(node, navigation_domain: domain, domain_root: false)
+    prepare_posturacorretta_consapevolezza(node)
+    prepare_posturacorretta_connessione(node)
+    prepare_posturacorretta_public_section(node)
+    render :show
+  end
+
   def show
     @node = Node.find_by(id: params[:id])
     if @node.blank? || !public_node_visible?(@node)
@@ -49,6 +97,26 @@ class NodesController < ApplicationController
     end
 
     response.set_header("X-Robots-Tag", "noindex, nofollow") unless PublicDiscovery::AccessPolicy.new.public_node?(@node)
+
+    if @node.slug == "apprendimento-2-connessione"
+      redirect_to posturacorretta_consapevolezza_path(request.query_parameters), status: :moved_permanently
+      return
+    end
+
+    if @node.slug == "dalla-posturacorretta-al-giardino-del-corpo"
+      redirect_to posturacorretta_connessione_path(request.query_parameters), status: :moved_permanently
+      return
+    end
+
+    posturacorretta_section_paths = {
+      "partecipa-posturacorretta" => posturacorretta_partecipa_path,
+      "servizi-posturacorretta" => posturacorretta_servizi_path,
+      "about-posturacorretta" => posturacorretta_about_path
+    }
+    if posturacorretta_section_paths.key?(@node.slug)
+      redirect_to posturacorretta_section_paths.fetch(@node.slug), status: :moved_permanently
+      return
+    end
 
     if (target_path = domain_target_redirect_path(@node))
       redirect_to target_path, status: :found
@@ -66,6 +134,9 @@ class NodesController < ApplicationController
     end
 
     prepare_public_node(@node)
+    prepare_posturacorretta_consapevolezza(@node)
+    prepare_posturacorretta_connessione(@node)
+    prepare_posturacorretta_public_section(@node)
     @posturacorretta_landing = true if @current_host_domain_root && @node.slug == "posturacorretta"
   end
 

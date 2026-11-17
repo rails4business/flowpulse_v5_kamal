@@ -61,15 +61,19 @@ default: &default
         - segreteria
       navigation:
         items:
-          - key: espressione
-            label: Espressione
-            home: true
-          - key: consapevolezza
-            label: Consapevolezza
-            slug: apprendimento-2-connessione
-          - key: connessione
-            label: Connessione
-            slug: dalla-posturacorretta-al-giardino-del-corpo
+          - key: percorso
+            label: Percorso
+            path: /posturacorretta
+            children:
+              - key: espressione
+                label: Espressione
+                path: /posturacorretta/espressione
+              - key: consapevolezza
+                label: Consapevolezza
+                slug: apprendimento-2-connessione
+              - key: connessione
+                label: Connessione
+                slug: dalla-posturacorretta-al-giardino-del-corpo
           - key: partecipa
             label: Partecipa
             slug: partecipa-posturacorretta
@@ -79,6 +83,22 @@ default: &default
           - key: about
             label: About
             slug: about-posturacorretta
+          - key: esplora
+            label: Esplora
+            group: true
+            children:
+              - key: contenuti
+                label: Contenuti
+                path: /posturacorretta/contenuti
+              - key: eventi
+                label: Eventi
+                path: /posturacorretta/eventi
+              - key: metodiche
+                label: Metodiche
+                path: /posturacorretta/metodiche
+              - key: libri
+                label: Libri
+                path: /posturacorretta/libri
           - key: vecchio-menu
             label: Percorso online
             path: /percorso-posturacorretta
@@ -416,7 +436,7 @@ default: &default
           "y": -950.0
 
     area-massaggio-terapie-manuali-tecniche-corporee:
-      title: Area Massaggio e recupero
+      title: Area Recupero e terapie manuali
       view_type: course_lesson
       map_color: "#2E1065"
       line_slugs: [postura-recupero]

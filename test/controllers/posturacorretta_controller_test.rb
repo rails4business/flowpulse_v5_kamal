@@ -96,12 +96,13 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Percorso PosturaCorretta"
   end
 
-  test "orders the primary navigation around path lessons methodologies and explore" do
+  test "uses the unified PosturaCorretta primary navigation" do
     get percorso_posturacorretta_url
 
     assert_response :success
     desktop_links = css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
-    assert_equal ["Percorso", "Lezioni", "Metodiche"], desktop_links
+    assert_equal ["Partecipa", "Servizi", "About"], desktop_links
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Percorso/
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/
 
     mobile_links = css_select("nav[aria-label='Navigazione app PosturaCorretta'] > a small").map { |label| label.text.squish }
@@ -279,9 +280,27 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Metodiche posturali"
     assert_includes response.body, "Biomeccanica Comportamentale GDS"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}'][aria-current='page']", text: "Metodiche"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/
     assert_select "nav[aria-label='Navigazione app PosturaCorretta'] > a[href='#{posturacorretta_metodiche_path}'].is-active", text: /Metodiche/
-    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", count: 0
+    assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", minimum: 1
+  end
+
+  test "FAQ uses the dedicated template and the unified PosturaCorretta menu" do
+    get posturacorretta_faq_url
+
+    assert_response :success
+    assert_select "title", text: "Domande frequenti — PosturaCorretta"
+    assert_select ".pc-faq-page h1", text: "Le domande prima di iniziare."
+    assert_select ".pc-faq-list details", count: 5
+    assert_select ".pc-faq-list details[open]", count: 1
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Percorso/
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details a", text: "Espressione"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details a", text: "Consapevolezza"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details a", text: "Connessione"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Partecipa"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Servizi"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "About"
+    assert_select "a[href='#{posturacorretta_faq_path}']", text: "Domande frequenti", minimum: 1
   end
 
   test "reassures visitors when a public listing is temporarily rate limited" do
@@ -307,7 +326,11 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
 
   test "should get metodica show" do
     get posturacorretta_metodica_url("gds")
+
     assert_response :success
+    assert_select ".pc-site-header > div.grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\]", count: 1
+    assert_select ".pc-site-header a[aria-label='PosturaCorretta home'].justify-self-start", count: 1
+    assert_select ".pc-site-header .justify-self-end", count: 1
     assert_includes response.body, "Godelieve Denys-Struyf"
     assert_includes response.body, "Professionisti collegati"
     assert_select "body.posturacorretta-ui"

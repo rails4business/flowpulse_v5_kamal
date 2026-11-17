@@ -28,6 +28,9 @@ module Posturacorretta
   end
 
   def programma
+    return redirect_to(percorso_integrato_course_path, status: :moved_permanently) if params[:corso] == "percorso-integrato"
+    return redirect_to(stato_di_salute_course_path, status: :moved_permanently) if params[:corso] == "il-tuo-stato-di-salute"
+
     load_curriculum_sources
     @courses = build_courses
     load_lesson_meetings
@@ -40,6 +43,9 @@ module Posturacorretta
   end
 
   def course
+    return redirect_to(percorso_integrato_course_path, status: :moved_permanently) if params[:corso] == "percorso-integrato"
+    return redirect_to(stato_di_salute_course_path, status: :moved_permanently) if params[:corso] == "il-tuo-stato-di-salute"
+
     if params[:corso] == "postura-corretta-in-un-mese"
       return redirect_to(book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: "copertina"), status: :moved_permanently)
     end
@@ -171,6 +177,18 @@ module Posturacorretta
   end
 
   def percorso_educativo
+    if params[:corso] == "percorso-integrato"
+      destination = params[:capitolo].present? ? percorso_integrato_course_chapter_path(params[:capitolo]) : percorso_integrato_course_path
+      return redirect_to(destination, status: :moved_permanently)
+    end
+    if params[:corso] == "il-tuo-stato-di-salute"
+      if params[:capitolo].in?(%w[matrice-per-orientarsi-salute-benessere tre-colori-professionisti-insegnanti])
+        return redirect_to(percorso_integrato_course_chapter_path(params[:capitolo]), status: :moved_permanently)
+      end
+      destination = params[:capitolo].present? ? stato_di_salute_course_chapter_path(params[:capitolo]) : stato_di_salute_course_path
+      return redirect_to(destination, status: :moved_permanently)
+    end
+
     if params[:corso] == "postura-corretta-in-un-mese"
       destination = if params[:capitolo].present?
         book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: params[:capitolo])
@@ -267,7 +285,9 @@ module Posturacorretta
     @didactic_courses = @didactic_path.fetch("courses").filter_map { |course| decorate_path_course(course, learning_by_course) }
     @didactic_sections = @didactic_path.fetch("sections", []).map do |section|
       section.merge(
-      "courses" => section.fetch("courses", []).filter_map { |course| decorate_path_course(course, learning_by_course) }
+      "courses" => section.fetch("courses", [])
+        .reject { |course| course["content_id"].in?(%w[percorso-integrato il-tuo-stato-di-salute]) }
+        .filter_map { |course| decorate_path_course(course, learning_by_course) }
       )
     end
     section_courses = @didactic_sections.flat_map do |section|

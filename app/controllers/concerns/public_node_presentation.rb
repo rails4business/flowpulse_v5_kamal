@@ -13,7 +13,7 @@ module PublicNodePresentation
       boundary_node = @navigation_root_node
       @current_host_domain_root = domain_root.nil? ? public_node_domain_root?(@node) : domain_root
       @public_navigation_ancestor_ids = @node.self_and_ancestors.map(&:id)
-      @public_navigation_items = resolve_public_navigation(@node.effective_navigation_items)
+      @public_navigation_items = resolve_public_navigation(public_navigation_source_items(@node.effective_navigation_items))
 
       all_ancestors = @node.self_and_ancestors.reverse
       @breadcrumbs = if boundary_node.present?
@@ -63,9 +63,48 @@ module PublicNodePresentation
           group: item["group"] == true,
           home: home,
           path: item["path"].presence,
-          current: public_navigation_current?(node, home) || children.any? { |child| child[:current] },
+          current: public_navigation_current?(node, home) || public_navigation_path_current?(item["path"]) || children.any? { |child| child[:current] },
           children: children
         }
+      end
+    end
+
+    # Compatibilità con cataloghi già importati: raggruppa le tre fasi anche
+    # prima del successivo sync di config/nodes.yml.
+    def public_navigation_source_items(items)
+      items = Array(items)
+      return items unless @navigation_root_node&.slug == "posturacorretta"
+
+      phase_keys = %w[espressione consapevolezza connessione]
+      percorso = items.find { |item| item["key"] == "percorso" }
+      phases = (items + Array(percorso&.fetch("children", nil))).select { |item| item["key"].in?(phase_keys) }.index_by { |item| item["key"] }
+      phases["espressione"] = { "key" => "espressione", "label" => "Espressione", "path" => "/posturacorretta/espressione" }
+      phases["consapevolezza"] ||= { "key" => "consapevolezza", "label" => "Consapevolezza", "path" => "/posturacorretta/consapevolezza" }
+      phases["connessione"] ||= { "key" => "connessione", "label" => "Connessione", "path" => "/posturacorretta/connessione" }
+
+      percorso = (percorso || { "key" => "percorso", "label" => "Percorso" }).except("group").merge(
+        "path" => "/posturacorretta",
+        "children" => phase_keys.map { |key| phases.fetch(key) }
+      )
+      first_phase_index = items.index { |item| item["key"].in?(["percorso", *phase_keys]) } || 0
+      items = items.reject { |item| item["key"].in?(["percorso", *phase_keys]) }
+      items.insert(first_phase_index, percorso)
+
+      items.map do |item|
+        normalized = item["key"].in?(%w[partecipa servizi about]) ? item.except("children", "group") : item.dup
+        normalized
+      end.then do |normalized_items|
+        next normalized_items if normalized_items.any? { |item| item["key"] == "esplora" }
+
+        normalized_items + [{
+          "key" => "esplora", "label" => "Esplora", "group" => true,
+          "children" => [
+            { "key" => "contenuti", "label" => "Contenuti", "path" => "/posturacorretta/contenuti" },
+            { "key" => "eventi", "label" => "Eventi", "path" => "/posturacorretta/eventi" },
+            { "key" => "metodiche", "label" => "Metodiche", "path" => "/posturacorretta/metodiche" },
+            { "key" => "libri", "label" => "Libri", "path" => "/posturacorretta/libri" }
+          ]
+        }]
       end
     end
 
@@ -77,6 +116,12 @@ module PublicNodePresentation
       @public_navigation_ancestor_ids.include?(node.id)
     end
 
+    def public_navigation_path_current?(path)
+      path.present? && request.path == URI.parse(path).path
+    rescue URI::InvalidURIError
+      false
+    end
+
     def prepare_posturacorretta_home(node)
       return unless node.slug == "posturacorretta"
 
@@ -86,6 +131,70 @@ module PublicNodePresentation
         risorsa: params[:risorsa],
         completed_chapters: posturacorretta_completed_chapters
       )
+    end
+
+    def prepare_posturacorretta_consapevolezza(node)
+      return unless node.slug == "apprendimento-2-connessione"
+
+      data = PosturacorrettaMethodologies.load
+      @consapevolezza_tab = params[:tab].to_s.presence_in(%w[corso metodiche percorsi]) || "corso"
+      @consapevolezza_course = Posturacorretta::ContentRepository.new(include_scheduled: true)
+        .course_by_id("muoviti-ed-esplora")
+      @consapevolezza_path_tab = params[:percorso].to_s.presence_in(%w[persone attivita problemi]) || "persone"
+      @consapevolezza_methodologies = data.fetch("methodologies")
+      @consapevolezza_path_groups = [
+        {
+          key: "persone",
+          label: "Persone e fasi della vita",
+          description: "Percorsi pensati per età, momenti di cambiamento e bisogni delle persone.",
+          node: node.self_and_descendants.find_by(slug: "eta")
+        },
+        {
+          key: "attivita",
+          label: "Attività e contesti",
+          description: "Percorsi collegati al lavoro, alla vita quotidiana, allo sport e agli ambienti frequentati.",
+          node: node.self_and_descendants.find_by(slug: "attivita-e-contesti")
+        },
+        {
+          key: "problemi",
+          label: "Problemi ed esigenze",
+          description: "Percorsi educativi per orientarsi tra condizioni, sintomi ed esigenze specifiche.",
+          node: node.self_and_descendants.find_by(slug: "condizioni-e-patologie")
+        }
+      ]
+    end
+
+    def prepare_posturacorretta_connessione(node)
+      return unless node.slug == "dalla-posturacorretta-al-giardino-del-corpo"
+
+      @connessione_tab = params[:tab].to_s.presence_in(%w[corpo risorse]) || "corpo"
+      repository = Posturacorretta::ContentRepository.new(include_scheduled: true)
+      @connessione_courses = {
+        "corpo" => repository.course_by_id("corpo-come-un-giardino"),
+        "risorse" => repository.course_by_id("ascolta-gli-aspetti-vitali")
+      }
+    end
+
+    def prepare_posturacorretta_public_section(node)
+      return unless node.slug.in?(%w[partecipa-posturacorretta servizi-posturacorretta about-posturacorretta])
+
+      @posturacorretta_public_section = node.slug.delete_suffix("-posturacorretta")
+      @faq_items = posturacorretta_faq_items if node.slug == "about-posturacorretta"
+    end
+
+    def posturacorretta_faq_items
+      docs_root = Rails.root.join("config/data/brands/percorso-integrato/docs/02_persone").cleanpath
+      [
+        ["Da dove comincio?", "01_da_dove_comincio.md"],
+        ["Posso iniziare senza una diagnosi?", "02_senza_diagnosi.md"],
+        ["Che differenza c’è tra insegnante e professionista?", "03_insegnante_professionista.md"],
+        ["Posso coinvolgere il mio professionista?", "04_coinvolgere_professionista.md"],
+        ["Quanto dura un programma?", "05_durata_programma.md"]
+      ].map do |question, filename|
+        path = docs_root.join(filename).cleanpath
+        body = path.to_s.start_with?("#{docs_root}/") && path.file? ? path.read.sub(/\A# .+\n+/, "") : ""
+        { question: question, answer: body }
+      end
     end
 
     def posturacorretta_completed_chapters

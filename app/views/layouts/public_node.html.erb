@@ -62,8 +62,12 @@
     </script>
   </head>
 
-  <% landing_body_class = "pc-domain-landing" if @node&.slug == "posturacorretta" && @posturacorretta_landing %>
-  <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans <%= landing_body_class %>">
+  <%
+    public_node_body_classes = []
+    public_node_body_classes << "pc-posturacorretta-site" if @navigation_root_node&.slug == "posturacorretta"
+    public_node_body_classes << "pc-domain-landing" if @node&.slug == "posturacorretta" && @posturacorretta_landing
+  %>
+  <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans <%= public_node_body_classes.join(' ') %>">
     <% nav_brand = @navigation_domain&.site_title.presence || @navigation_domain&.display_hostname.presence || @navigation_root_node&.title.presence || "Flowpulse" %>
     <%
       nav_siblings = Array(@siblings)

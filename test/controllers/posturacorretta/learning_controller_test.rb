@@ -112,8 +112,6 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       postura-e-fisiologia
     ], css_select("#primi-corsi article[id]").map { |course| course["id"] }
     assert_equal %w[
-      percorso-integrato
-      il-tuo-stato-di-salute
       muoviti-ed-esplora
       corpo-come-un-giardino
       ascolta-gli-aspetti-vitali
@@ -138,8 +136,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "#pc-week-focus-title", count: 0
     assert_select "link[rel='manifest'][href='#{posturacorretta_pwa_manifest_path}']"
     assert_select "h3", text: "La prima settimana con PosturaCorretta"
-    assert_select "h3", text: "Il tuo stato di salute"
-    assert_select "h3", text: "Il Percorso Integrato"
+    assert_select "h3", text: "Il tuo stato di salute", count: 0
+    assert_select "h3", text: "Il Percorso Integrato", count: 0
     assert_select "h3", text: "Postura e fisiologia"
     assert_includes response.body, "Apprendimento 1: imparare ad ascoltare il corpo e a riattivare i nostri sistemi per capire come si esprime."
     assert_select "h3", text: "Postura e consapevolezza"
@@ -167,6 +165,20 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a", text: "Come funziona", count: 0
     assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_metodiche_path}']", count: 0
     assert_select "[aria-label='Esplora PosturaCorretta'] a[href='#{posturacorretta_guida_path(sezione: "accademia", capitolo: "educazione")}']", text: "Come funziona"
+  end
+
+  test "redirects the migrated Percorso Integrato course to its own domain area" do
+    get posturacorretta_course_path(corso: "percorso-integrato")
+    assert_redirected_to percorso_integrato_course_url
+    assert_response :moved_permanently
+
+    get posturacorretta_course_chapter_path(corso: "percorso-integrato", capitolo: "a-ognuno-il-suo-ruolo")
+    assert_redirected_to percorso_integrato_course_chapter_url("a-ognuno-il-suo-ruolo")
+    assert_response :moved_permanently
+
+    get posturacorretta_course_lessons_path(corso: "percorso-integrato")
+    assert_redirected_to percorso_integrato_course_url
+    assert_response :moved_permanently
   end
 
   test "serves the installable PosturaCorretta PWA files" do
@@ -341,7 +353,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_student_dashboard_path(corso: "igiene-posturale", participation: "group")
 
     assert_response :success
-    assert_select "a[aria-current='step'][aria-label^='7. Igiene Posturale']", count: 1
+    assert_select "a[aria-current='step'][aria-label*='Igiene Posturale']", count: 1
     assert_select "h2", text: "Igiene Posturale", count: 1
     assert_select "ol[aria-label='Lezioni di Igiene Posturale'] > li", count: 4
     assert_select "a[href='#{posturacorretta_course_chapter_path(corso: 'igiene-posturale', capitolo: 'punti-di-tensione')}']", count: 0

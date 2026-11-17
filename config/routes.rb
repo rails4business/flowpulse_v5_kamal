@@ -49,6 +49,9 @@ Rails.application.routes.draw do
   get "esperienze/:id" => redirect("/eventi/%{id}", status: 301), as: :esperienza
   get "flowpulse" => "landing#flowpulse", as: :flowpulse
   get "stato-di-salute" => "landing#stato_di_salute", as: :stato_di_salute
+  get "stato-di-salute/corso" => "landing#stato_di_salute_course", as: :stato_di_salute_course
+  get "stato-di-salute/corso/:capitolo" => "landing#stato_di_salute_course", as: :stato_di_salute_course_chapter,
+      constraints: { capitolo: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
   get "stato-di-salute/about" => "landing#stato_di_salute_about", as: :stato_di_salute_about
   get "stato_di_salute" => redirect("/stato-di-salute", status: 301)
   get "generaimpresa/brand/inside-adventure" => "landing#inside_adventure", as: :inside_adventure
@@ -162,6 +165,9 @@ Rails.application.routes.draw do
   direct(:il_giardino_del_corpo) { "/il-giardino-del-corpo" }
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
   get "percorso-integrato/modello" => "brands/percorso_integrato#model", as: :percorso_integrato_model
+  get "percorso-integrato/corso" => "brands/percorso_integrato#course", as: :percorso_integrato_course
+  get "percorso-integrato/corso/:capitolo" => "brands/percorso_integrato#course", as: :percorso_integrato_course_chapter,
+      constraints: { capitolo: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
   get "corpo-e-coscienza" => "brands/corpo_e_coscienza#index", as: :corpo_e_coscienza
   get "corpo-e-coscienza/profilo" => "brands/corpo_e_coscienza#profile", as: :corpo_e_coscienza_profile
   get "corpo-e-coscienza/privacy" => "brands/corpo_e_coscienza#privacy", as: :corpo_e_coscienza_privacy
@@ -199,8 +205,25 @@ Rails.application.routes.draw do
   get "posturacorretta" => "nodes#domain_home",
       defaults: { path_slug: "posturacorretta" },
       as: :posturacorretta
-  get "posturacorretta/about" => redirect("/posturacorretta/guida?sezione=progetto&capitolo=visione", status: 302),
+  get "posturacorretta/espressione" => "nodes#domain_expression",
+      defaults: { path_slug: "posturacorretta" },
+      as: :posturacorretta_espressione
+  get "posturacorretta/consapevolezza" => "nodes#domain_node",
+      defaults: { path_slug: "posturacorretta", node_slug: "apprendimento-2-connessione" },
+      as: :posturacorretta_consapevolezza
+  get "posturacorretta/connessione" => "nodes#domain_node",
+      defaults: { path_slug: "posturacorretta", node_slug: "dalla-posturacorretta-al-giardino-del-corpo" },
+      as: :posturacorretta_connessione
+  get "posturacorretta/partecipa" => "nodes#domain_node",
+      defaults: { path_slug: "posturacorretta", node_slug: "partecipa-posturacorretta" },
+      as: :posturacorretta_partecipa
+  get "posturacorretta/servizi" => "nodes#domain_node",
+      defaults: { path_slug: "posturacorretta", node_slug: "servizi-posturacorretta" },
+      as: :posturacorretta_servizi
+  get "posturacorretta/about" => "nodes#domain_node",
+      defaults: { path_slug: "posturacorretta", node_slug: "about-posturacorretta" },
       as: :posturacorretta_about
+  get "posturacorretta/faq" => "brands/posturacorretta#faq", as: :posturacorretta_faq
   get "posturacorretta/percorsi/postura-recupero" => "nodes#domain_journey",
       defaults: { path_slug: "posturacorretta" },
       as: :posturacorretta_postura_recupero

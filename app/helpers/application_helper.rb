@@ -45,7 +45,14 @@ module ApplicationHelper
 
   def flowtree_public_node_path(node, *args)
     return nil if node.nil?
-    node_path(node.resolve_target, *args)
+    target = node.resolve_target
+    return posturacorretta_consapevolezza_path(*args) if target.slug == "apprendimento-2-connessione"
+    return posturacorretta_connessione_path(*args) if target.slug == "dalla-posturacorretta-al-giardino-del-corpo"
+    return posturacorretta_partecipa_path(*args) if target.slug == "partecipa-posturacorretta"
+    return posturacorretta_servizi_path(*args) if target.slug == "servizi-posturacorretta"
+    return posturacorretta_about_path(*args) if target.slug == "about-posturacorretta"
+
+    node_path(target, *args)
   end
 
   def public_node_navigation_item_path(item)
@@ -76,6 +83,7 @@ module ApplicationHelper
     domain_node = (Current.domain || current_domain)&.node
     path_slug = request.path.split("/").second
     candidate = domain_node&.brand? ? domain_node : Node.includes(:domains, role_assignment: :profile).find_by(slug: path_slug)
+    candidate ||= Node.includes(:domains, role_assignment: :profile).find_by(slug: "posturacorretta") if request.path.start_with?("/posturacorretta", "/percorso-posturacorretta")
 
     @current_brand_admin_node = candidate if candidate&.brand? && candidate.administered_by?(Current.user)
   end

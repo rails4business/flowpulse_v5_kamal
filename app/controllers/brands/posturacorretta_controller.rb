@@ -48,6 +48,22 @@ module Brands
       render "brands/posturacorretta/three_projects"
     end
 
+    def faq
+      docs_root = Rails.root.join("config/data/brands/percorso-integrato/docs/02_persone").cleanpath
+      questions = [
+        ["Da dove comincio?", "01_da_dove_comincio.md"],
+        ["Posso iniziare senza una diagnosi?", "02_senza_diagnosi.md"],
+        ["Che differenza c’è tra insegnante e professionista?", "03_insegnante_professionista.md"],
+        ["Posso coinvolgere il mio professionista?", "04_coinvolgere_professionista.md"],
+        ["Quanto dura un programma?", "05_durata_programma.md"]
+      ]
+      @faq_items = questions.map do |question, filename|
+        path = docs_root.join(filename).cleanpath
+        body = path.to_s.start_with?("#{docs_root}/") && path.file? ? path.read.sub(/\A# .+\n+/, "") : ""
+        { question: question, answer: body }
+      end
+    end
+
     def guide
       return redirect_first_month_to_book if first_month_guide_request?
       return redirect_percorso_integrato_docs if params[:sezione] == "percorso"

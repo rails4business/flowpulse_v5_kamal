@@ -84,6 +84,33 @@ module Brands
       assert_select "a[href^='/posturacorretta']", count: 0
     end
 
+    test "exposes the documentation as the Percorso Integrato course" do
+      get percorso_integrato_course_path
+
+      assert_response :success
+      assert_select "p", text: "Corso · Percorso Integrato"
+      assert_select "aside[aria-label='Indice Corso Percorso Integrato']"
+      assert_select "aside a[href^='#{percorso_integrato_course_path}']", minimum: 1
+      assert_select "nav[aria-label='Navigazione Percorso Integrato'] a[href='#{percorso_integrato_course_path}']", text: "Corso"
+      assert_select "aside nav[aria-label='Capitoli del corso'] a", count: 8
+      assert_select "aside nav[aria-label='Capitoli del corso'] a:first-child", text: /Capitolo 01.*In arrivo.*Questionario iniziale del Percorso Integrato/m
+      assert_select "a[href='#{percorso_integrato_course_chapter_path('questionario-iniziale-percorso-integrato')}']", text: /Questionario iniziale del Percorso Integrato/
+      assert_select "a[href='#{percorso_integrato_course_chapter_path('rete-professionisti-centri-pubbliche-amministrazioni')}']", text: /Costruire una rete tra professionisti, centri e pubbliche amministrazioni/
+      assert_select "a[href='#{percorso_integrato_course_chapter_path('matrice-per-orientarsi-salute-benessere')}']", text: /Una Matrice per orientarsi nella salute e nel benessere/
+      assert_select "a[href='#{percorso_integrato_course_chapter_path('tre-colori-professionisti-insegnanti')}']", text: /Semplifichiamo con tre colori/
+
+      get percorso_integrato_course_chapter_path("rete-professionisti-centri-pubbliche-amministrazioni")
+
+      assert_response :success
+      assert_select ".editorial-rich-text", text: /La rete cresce informando persone, professionisti, centri e pubbliche amministrazioni/
+      assert_not_includes response.body, "author_node_slug"
+
+      get percorso_integrato_course_chapter_path("questionario-iniziale-percorso-integrato")
+
+      assert_response :success
+      assert_select ".editorial-rich-text", text: /Questionario iniziale del Percorso Integrato/
+    end
+
     test "keeps professionals and places inside Percorso Integrato" do
       get percorso_integrato_professionals_path
       assert_response :success

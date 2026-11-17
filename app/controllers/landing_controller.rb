@@ -11,6 +11,34 @@ class LandingController < ApplicationController
     @scopes = PosturacorrettaTaxonomies.load.fetch("scopes", {})
   end
 
+  def stato_di_salute_course
+    source = Rails.root.join("config/data/brands/posturacorretta/courses/percorso-integrato/course.yml")
+    data = YAML.safe_load_file(source, permitted_classes: [], aliases: false) || {}
+    original = data.fetch("contents", []).select { |item| item["parent_id"] == "il-tuo-stato-di-salute" }
+      .reject { |item| item["slug"].in?(%w[matrice-per-orientarsi-salute-benessere tre-colori-professionisti-insegnanti]) }
+      .sort_by { |item| item.fetch("position", 0) }
+    domains = [
+      ["salute-cura-riabilitazione", "Salute, cura e riabilitazione", "Osservare sicurezza, sintomi, autonomia e necessità di assistenza professionale."],
+      ["prevenzione", "Prevenzione", "Riconoscere rischi, abitudini e azioni utili nella vita quotidiana, nel lavoro e nello sport."],
+      ["performance", "Performance", "Osservare energia, attenzione, recupero e capacità di sostenere attività e obiettivi."],
+      ["benessere", "Benessere", "Esplorare riposo, alimentazione, equilibrio emotivo e soddisfazione personale."],
+      ["conoscenza-espressione-corpo", "Conoscenza ed espressione del corpo", "Imparare a riconoscere, descrivere e comunicare i segnali del corpo."],
+      ["consapevolezza", "Consapevolezza", "Osservare l’incontro tra corpo, pensieri, emozioni, abitudini e scelte."],
+      ["evoluzione-connessione", "Evoluzione e connessione", "Considerare relazioni, ambiente, comunità, natura, valori e direzione personale."]
+    ].map.with_index do |(slug, title, description), index|
+      { "slug" => slug, "title" => title, "description" => description, "position" => index + 5, "generated" => true }
+    end
+    @health_course_chapters = original + domains
+    @health_course_chapter = @health_course_chapters.find { |item| item.fetch("slug") == params[:capitolo] }
+    raise ActiveRecord::RecordNotFound, "Capitolo non trovato" if params[:capitolo].present? && @health_course_chapter.blank?
+
+    if @health_course_chapter && !@health_course_chapter["generated"]
+      root = Rails.root.join("config/data").cleanpath
+      path = root.join(@health_course_chapter.fetch("content_path")).cleanpath
+      @health_course_markdown = path.read.sub(/\A---\s*\n.*?\n---\s*\n/m, "") if path.to_s.start_with?("#{root}/") && path.file?
+    end
+  end
+
   def stato_di_salute_about
   end
 
