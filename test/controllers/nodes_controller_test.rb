@@ -156,6 +156,17 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[aria-current='page']", text: "Percorsi mirati"
     assert_select "nav[aria-label='Tipi di percorsi mirati'] a", count: 3
     assert_select "nav[aria-label='Tipi di percorsi mirati'] a[aria-selected='true']", text: "Persone e fasi della vita"
+
+    get posturacorretta_url(area: "connessione", tab: "corpo")
+    assert_response :success
+    assert_select ".pc-index-cabinet__tab.is-active", text: "Connessione"
+    assert_select "nav[aria-label='Sezioni di Connessione'] a[aria-current='page']", text: "Il corpo"
+    assert_select "a[href='#{book_path('il-corpo-un-mondo-da-scoprire')}']", text: /Il corpo, un mondo da scoprire/
+
+    get posturacorretta_url(area: "connessione", tab: "risorse")
+    assert_response :success
+    assert_select "nav[aria-label='Sezioni di Connessione'] a[aria-current='page']", text: "Le tue risorse"
+    assert_select "h2", text: /Le tue risorse|Ascolta gli aspetti vitali/
     assert_select "[role='tabpanel']", text: /Percorsi pensati per età/
 
     get posturacorretta_consapevolezza_url(tab: "percorsi", percorso: "attivita")
@@ -296,14 +307,17 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_url(area: "espressione")
     assert_response :success
     assert_select ".pc-index-cabinet__tab.is-active", text: "Espressione"
-    assert_select "nav[aria-label='Sezioni di Espressione'] > *", count: 4
-    assert_select "nav[aria-label='Sezioni di Espressione'] > .is-active", text: "Recupero e terapie manuali"
+    assert_select "nav[aria-label='Sezioni di Espressione'] > a", count: 4
+    assert_select "nav[aria-label='Sezioni di Espressione'] > a[aria-current='page']", text: "Recupero e terapie manuali"
     assert_select ".pc-program-sheet__intro h1", text: "Recupero e terapie manuali"
+    assert_select "a[href='#{posturacorretta_path(area: "espressione", parte: "movimento-allenamento")}']", text: /Continua.*Movimento e allenamento/
+    assert_select "a[href='#{posturacorretta_path(area: "intro")}']", text: /Indietro.*Intro/
 
     get posturacorretta_url(area: "espressione", parte: "mente")
     assert_response :success
-    assert_select "nav[aria-label='Sezioni di Espressione'] > .is-active", text: "Mente e aspetti emotivi e mentali"
+    assert_select "nav[aria-label='Sezioni di Espressione'] > a[aria-current='page']", text: "Mente e aspetti emotivi e mentali"
     assert_select ".pc-program-placeholder h1", text: "Mente e aspetti emotivi e mentali"
+    assert_select "span", text: "Parte 4 di 7"
 
     get posturacorretta_url(area: "consapevolezza")
     assert_response :success
@@ -316,6 +330,12 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "nav[aria-label='Sezioni di Consapevolezza'] a[aria-current='page']", text: "Metodiche posturali"
     assert_select "a[href='#{posturacorretta_metodica_path('gds')}']", minimum: 1
+
+    get posturacorretta_url(area: "consapevolezza", tab: "percorsi")
+    assert_response :success
+    assert_select "nav[aria-label='Sezioni di Consapevolezza'] a[aria-current='page']", text: "Percorsi mirati"
+    assert_select "nav[aria-label='Tipi di percorsi mirati'] a", count: 3
+    assert_select "nav[aria-label='Tipi di percorsi mirati'] a[aria-selected='true']", text: "Persone e fasi della vita"
 
     get posturacorretta_espressione_url
 

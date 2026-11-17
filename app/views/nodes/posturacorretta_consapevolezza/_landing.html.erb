@@ -3,6 +3,7 @@
   show_navigation = local_assigns.fetch(:show_navigation, true)
   show_tabs = local_assigns.fetch(:show_tabs, true)
   embedded = local_assigns.fetch(:embedded, false)
+  active_path_tab = params[:percorso].to_s.presence_in(%w[persone attivita problemi]) || @consapevolezza_path_tab || "persone"
   tabs = [
     ["corso", "Corso"],
     ["metodiche", "Metodiche posturali"],
@@ -26,7 +27,7 @@
       <% tabs.each_with_index do |tab, index| %>
         <% tab_key, label = tab %>
         <% selected = active_tab == tab_key %>
-        <% destination = embedded && tab_key.in?(%w[corso metodiche]) ? posturacorretta_path(area: "consapevolezza", tab: tab_key) : posturacorretta_consapevolezza_path(tab: tab_key) %>
+        <% destination = embedded ? posturacorretta_path(area: "consapevolezza", tab: tab_key) : posturacorretta_consapevolezza_path(tab: tab_key) %>
         <%= link_to destination,
             class: "flex min-h-16 items-center justify-center border px-3 py-3 text-center text-sm font-black leading-5 transition sm:text-base #{selected ? '-mb-px border-indigo-200 border-b-white bg-white text-indigo-800 shadow-[0_-8px_22px_rgba(79,70,229,.08)]' : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-white hover:text-indigo-700'} #{'rounded-tl-2xl' if index.zero?} #{'rounded-tr-2xl' if index == tabs.length - 1}",
             aria: { current: ("page" if selected) } do %>
@@ -36,7 +37,7 @@
     </nav>
   <% end %>
 
-  <div class="relative rounded-[1.75rem] border border-indigo-200 bg-white px-5 py-8 shadow-[0_22px_60px_rgba(15,23,42,.08)] sm:px-9 sm:py-10">
+  <div class="relative rounded-[1.75rem] border border-indigo-200 bg-white px-5 py-8 shadow-[0_22px_60px_rgba(15,23,42,.08)] sm:px-9 sm:py-10 <%= 'pc-embedded-panel' if embedded %>">
     <% if active_tab == "corso" %>
       <% course = @consapevolezza_course || Posturacorretta::ContentRepository.new(include_scheduled: true).course_by_id("muoviti-ed-esplora") %>
       <section class="mx-auto max-w-3xl py-2 sm:py-5">
@@ -64,13 +65,18 @@
         <% end %>
       </div>
     <% else %>
-      <% path_groups = @consapevolezza_path_groups.to_a %>
-      <% active_path_group = path_groups.find { |group| group.fetch(:key) == @consapevolezza_path_tab } || path_groups.first %>
+      <% path_groups = @consapevolezza_path_groups.presence || [
+        { key: "persone", label: "Persone e fasi della vita", description: "Percorsi pensati per età, momenti di cambiamento e bisogni delle persone.", node: Node.find_by(slug: "eta") },
+        { key: "attivita", label: "Attività e contesti", description: "Percorsi collegati al lavoro, alla vita quotidiana, allo sport e agli ambienti frequentati.", node: Node.find_by(slug: "attivita-e-contesti") },
+        { key: "problemi", label: "Problemi ed esigenze", description: "Percorsi educativi per orientarsi tra condizioni, sintomi ed esigenze specifiche.", node: Node.find_by(slug: "condizioni-e-patologie") }
+      ] %>
+      <% active_path_group = path_groups.find { |group| group.fetch(:key) == active_path_tab } || path_groups.first %>
 
       <nav class="grid grid-cols-3 items-end" aria-label="Tipi di percorsi mirati" role="tablist">
         <% path_groups.each_with_index do |group, index| %>
           <% selected = group == active_path_group %>
-          <%= link_to posturacorretta_consapevolezza_path(tab: "percorsi", percorso: group.fetch(:key)),
+          <% destination = embedded ? posturacorretta_path(area: "consapevolezza", tab: "percorsi", percorso: group.fetch(:key)) : posturacorretta_consapevolezza_path(tab: "percorsi", percorso: group.fetch(:key)) %>
+          <%= link_to destination,
               class: "flex min-h-16 items-center justify-center border px-2 py-3 text-center text-xs font-black leading-4 transition sm:px-4 sm:text-sm sm:leading-5 #{selected ? '-mb-px border-indigo-200 border-b-white bg-white text-indigo-800' : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-white hover:text-indigo-700'} #{'rounded-tl-xl' if index.zero?} #{'rounded-tr-xl' if index == path_groups.length - 1}",
               role: "tab",
               aria: { selected: selected, controls: "percorso-#{group.fetch(:key)}" } do %>

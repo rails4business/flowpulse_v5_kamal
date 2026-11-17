@@ -24,7 +24,7 @@
         <% if part.fetch(:slug) == selected_part %>
           <span class="pc-expression-tab is-selected" aria-current="page"><%= part.fetch(:label) %></span>
         <% else %>
-          <%= link_to part.fetch(:label), posturacorretta_espressione_path(parte: part.fetch(:slug)), class: "pc-expression-tab" %>
+          <%= link_to part.fetch(:label), posturacorretta_path(area: "espressione", parte: part.fetch(:slug)), class: "pc-expression-tab" %>
         <% end %>
       <% end %>
     </nav>
@@ -94,20 +94,12 @@
       </div>
     </div>
 
-    <footer class="pc-sheet__head pc-intro-sheet__footer">
-      <div>
-        <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
-        <p class="pc-sheet__meta">Intro · scheda del <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></p>
-      </div>
-      <div class="pc-sheet__download">
-        <button type="button" data-action="print-date#print" class="pc-sheet__print" title="Nella finestra di stampa scegli «Salva come PDF»">Scarica o stampa Intro</button>
-        <span>Parte 1 di 7</span>
-        <%= link_to posturacorretta_espressione_path(parte: "recupero-massaggio") do %>
-          <small>Continua</small>
-          <strong>Recupero e terapie manuali <span aria-hidden="true">→</span></strong>
-        <% end %>
-      </div>
-    </footer>
+    <%= render "nodes/posturacorretta_home/journey_footer",
+      part_number: 1,
+      meta: "Intro · scheda aggiornata",
+      print_label: "Intro",
+      next_path: posturacorretta_path(area: "espressione", parte: "recupero-massaggio"),
+      next_label: "Recupero e terapie manuali" %>
   </section>
   <% elsif selected_part == "recupero-massaggio" %>
     <% recovery_courses = @posturacorretta_home.sheet_courses.drop(3) %>
@@ -141,24 +133,28 @@
         </table>
       </div>
 
-      <footer class="pc-sheet__head pc-intro-sheet__footer">
-        <div>
-          <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
-          <p class="pc-sheet__meta">Recupero e terapie manuali · scheda del <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></p>
-        </div>
-        <div class="pc-sheet__download">
-          <button type="button" data-action="print-date#print" class="pc-sheet__print">Scarica o stampa Recupero e terapie manuali</button>
-          <span>Parte 2 di 7</span>
-          <%= link_to posturacorretta_espressione_path(parte: "movimento-allenamento") do %><small>Continua</small><strong>Movimento e allenamento <span aria-hidden="true">→</span></strong><% end %>
-        </div>
-      </footer>
+      <%= render "nodes/posturacorretta_home/journey_footer",
+        part_number: 2,
+        meta: "Recupero e terapie manuali · scheda aggiornata",
+        print_label: "Recupero e terapie manuali",
+        previous_path: posturacorretta_path(area: "intro"), previous_label: "Intro",
+        next_path: posturacorretta_path(area: "espressione", parte: "movimento-allenamento"), next_label: "Movimento e allenamento" %>
     </section>
   <% else %>
     <% current_part = program_parts.find { |part| part.fetch(:slug) == selected_part } %>
+    <% current_index = program_parts.index(current_part) %>
+    <% previous_part = program_parts[current_index - 1] if current_index.positive? %>
+    <% next_part = program_parts[current_index + 1] %>
     <section class="pc-sheet pc-intro-sheet pc-program-placeholder">
       <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
       <h1><%= current_part.fetch(:label) %></h1>
       <p>Questa parte del programma è in preparazione.</p>
+      <%= render "nodes/posturacorretta_home/journey_footer",
+        part_number: current_index + 2,
+        previous_path: posturacorretta_path(area: "espressione", parte: previous_part&.fetch(:slug) || "recupero-massaggio"),
+        previous_label: previous_part&.fetch(:label) || "Recupero e terapie manuali",
+        next_path: next_part.present? ? posturacorretta_path(area: "espressione", parte: next_part.fetch(:slug)) : posturacorretta_path(area: "consapevolezza", tab: "corso"),
+        next_label: next_part.present? ? next_part.fetch(:label) : "Consapevolezza" %>
     </section>
   <% end %>
 </div>

@@ -8,7 +8,8 @@
     ["fisiologia", "Fisiologia, mangiare e medicamenti"]
   ]
   active_expression_part = params[:parte].to_s.presence_in(expression_parts.map(&:first)) || "recupero-massaggio"
-  active_awareness_tab = params[:tab].to_s.presence_in(%w[corso metodiche]) || "corso"
+  active_awareness_tab = params[:tab].to_s.presence_in(%w[corso metodiche percorsi]) || "corso"
+  active_connection_tab = params[:tab].to_s.presence_in(%w[corpo risorse]) || "corpo"
 %>
 
 <main class="pc-index-cabinet" aria-label="PosturaCorretta">
@@ -22,45 +23,34 @@
     <% if active_area == "intro" %>
       <%= render "nodes/posturacorretta_home/landing", selected_part: "intro", show_navigation: false %>
     <% elsif active_area == "espressione" %>
-      <section class="pc-index-cabinet__panel" aria-labelledby="pc-index-title">
-        <p class="pc-index-cabinet__eyebrow">PosturaCorretta · Primo momento</p>
-        <h1 id="pc-index-title">Espressione</h1>
-        <p class="pc-index-cabinet__lead">Osserva come si esprime il corpo e scopri modi diversi per sostenerne il recupero e la fisiologia.</p>
-        <nav class="pc-index-cabinet__subtabs" aria-label="Sezioni di Espressione">
-          <% expression_parts.each do |key, label| %>
-            <% if key == active_expression_part %>
-              <span class="is-active" aria-current="page"><%= label %></span>
-            <% else %>
-              <%= link_to label, posturacorretta_path(area: "espressione", parte: key) %>
+      <section class="pc-index-cabinet__panel" aria-label="Espressione">
+        <nav class="relative z-10 mx-auto grid w-full max-w-[70rem] grid-cols-4 items-end px-3 sm:px-8" aria-label="Sezioni di Espressione">
+          <% expression_parts.each_with_index do |(key, label), index| %>
+            <% selected = key == active_expression_part %>
+            <%= link_to posturacorretta_path(area: "espressione", parte: key),
+                class: "flex min-h-16 items-center justify-center border px-2 py-3 text-center text-xs font-black leading-4 transition sm:px-3 sm:text-sm sm:leading-5 #{selected ? '-mb-px border-blue-200 border-b-white bg-white text-blue-800 shadow-[0_-8px_22px_rgba(37,99,235,.08)]' : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-white hover:text-blue-700'} #{'rounded-tl-2xl' if index.zero?} #{'rounded-tr-2xl' if index == expression_parts.length - 1}",
+                aria: { current: ("page" if selected) } do %>
+              <%= label %>
             <% end %>
           <% end %>
         </nav>
         <%= render "nodes/posturacorretta_home/landing", selected_part: active_expression_part, show_navigation: false %>
       </section>
     <% elsif active_area == "consapevolezza" %>
-      <section class="pc-index-cabinet__panel" aria-labelledby="pc-index-title">
-        <p class="pc-index-cabinet__eyebrow">PosturaCorretta · Secondo momento</p>
-        <h1 id="pc-index-title">Consapevolezza</h1>
-        <p class="pc-index-cabinet__lead">Allena la percezione del corpo e integra ciò che senti con ciò che comprendi.</p>
+      <section class="pc-index-cabinet__panel" aria-label="Consapevolezza">
         <%= render "nodes/posturacorretta_consapevolezza/landing", active_tab: active_awareness_tab, show_navigation: false, show_tabs: true, embedded: true %>
+        <%= render "nodes/posturacorretta_home/journey_footer",
+          part_number: 6,
+          previous_path: posturacorretta_path(area: "espressione", parte: "fisiologia"), previous_label: "Fisiologia",
+          next_path: posturacorretta_path(area: "connessione", tab: "corpo"), next_label: "Connessione" %>
       </section>
     <% else %>
-      <section class="pc-index-cabinet__panel" aria-labelledby="pc-index-title">
-        <p class="pc-index-cabinet__eyebrow">PosturaCorretta · Terzo momento</p>
-        <h1 id="pc-index-title">Connessione</h1>
-        <p class="pc-index-cabinet__lead">Collega corpo, risorse e conoscenze con le relazioni, il lavoro e l’ambiente.</p>
-        <nav class="pc-index-cabinet__subtabs" aria-label="Sezioni di Connessione">
-          <%= link_to "Il corpo, un mondo da scoprire", posturacorretta_connessione_path(tab: "corpo") %>
-          <%= link_to "Le tue risorse", posturacorretta_connessione_path(tab: "risorse") %>
-        </nav>
-        <div class="pc-index-cabinet__card">
-          <div><span>03</span><h2>Dal corpo alle connessioni</h2></div>
-          <p>Approfondisci il rapporto tra corpo, ambiente e risorse personali, oppure prosegui con il libro.</p>
-          <div class="pc-index-cabinet__links">
-            <%= link_to "Apri Connessione →", posturacorretta_connessione_path %>
-            <%= link_to "Vai al libro →", book_path("il-corpo-un-mondo-da-scoprire") %>
-          </div>
-        </div>
+      <section class="pc-index-cabinet__panel" aria-label="Connessione">
+        <%= render "nodes/posturacorretta_connessione/landing", active_tab: active_connection_tab, show_navigation: false, show_tabs: true, embedded: true %>
+        <%= render "nodes/posturacorretta_home/journey_footer",
+          part_number: 7,
+          previous_path: posturacorretta_path(area: "consapevolezza", tab: "corso"), previous_label: "Consapevolezza",
+          complete: true %>
       </section>
     <% end %>
   </div>

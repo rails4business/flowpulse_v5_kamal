@@ -1,0 +1,26 @@
+<footer class="pc-journey-footer">
+  <% if local_assigns[:meta].present? || local_assigns[:print_label].present? %>
+    <div class="pc-journey-footer__utility">
+      <% if local_assigns[:meta].present? %><span><%= meta %></span><% end %>
+      <% if local_assigns[:print_label].present? %>
+        <button type="button" data-action="print-date#print" class="pc-sheet__print">Scarica o stampa <%= print_label %></button>
+      <% end %>
+    </div>
+  <% end %>
+
+  <nav class="pc-journey-footer__nav" aria-label="Navigazione del percorso">
+    <div class="pc-journey-footer__side is-previous">
+      <% if local_assigns[:previous_path].present? %>
+        <%= link_to previous_path do %><span aria-hidden="true">←</span><span><small>Indietro</small><strong><%= previous_label %></strong></span><% end %>
+      <% end %>
+    </div>
+    <span class="pc-journey-footer__progress"><%= part_number %> / 7</span>
+    <div class="pc-journey-footer__side is-next">
+      <% if local_assigns[:next_path].present? %>
+        <%= link_to next_path do %><span><small>Continua</small><strong><%= next_label %></strong></span><span aria-hidden="true">→</span><% end %>
+      <% elsif local_assigns[:complete] %>
+        <span class="pc-journey-footer__complete">Percorso completo</span>
+      <% end %>
+    </div>
+  </nav>
+</footer>
