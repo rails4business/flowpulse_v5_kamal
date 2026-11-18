@@ -60,6 +60,11 @@ class NodesController < ApplicationController
   end
 
   def domain_journey
+    if params[:tab] == "percorso"
+      redirect_to posturacorretta_path(area: "intro"), status: :moved_permanently
+      return
+    end
+
     domain = Domain.find_for_path_slug(params[:path_slug])
     Current.domain = domain if domain.present?
     node = domain&.node

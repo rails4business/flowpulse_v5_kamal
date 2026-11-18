@@ -35,6 +35,11 @@
           <% end %></li>
         <% end %>
       </ol>
+      <% unless journey.tabs.key?("lezioni") || journey.tabs.key?("prenota") %>
+        <div class="border-t border-blue-100 bg-blue-50/60 px-5 py-4 text-sm text-slate-600 sm:px-7">
+          La ricerca di un insegnante per questa tappa sarà disponibile prossimamente.
+        </div>
+      <% end %>
     </details>
   </article>
 <% else %>

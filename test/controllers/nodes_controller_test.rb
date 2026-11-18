@@ -300,8 +300,8 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".pc-expression-tabs", count: 0
     assert_select ".pc-intro-sheet__hero img[src*='posturacorretta_home.png']", count: 1
     assert_select ".pc-intro-sheet__principles > li", count: 3
-    assert_select ".pc-intro-sheet__table thead th", count: 4
-    assert_select ".pc-intro-sheet__table tbody tr", count: 6
+    assert_select ".pc-intro-sheet__program .pc-intro-program-list__row.is-course", count: 3
+    assert_select ".pc-intro-sheet__program .pc-intro-program-list__row.is-lesson", count: 3
     assert_select ".pc-sheet__print", text: "Scarica o stampa Intro"
 
     get posturacorretta_url(area: "espressione")
@@ -317,7 +317,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "nav[aria-label='Sezioni di Espressione'] > a[aria-current='page']", text: "Mente e aspetti emotivi e mentali"
     assert_select ".pc-program-placeholder h1", text: "Mente e aspetti emotivi e mentali"
-    assert_select "span", text: "Parte 4 di 7"
+    assert_select ".pc-journey-footer__progress", text: "4 / 7"
 
     get posturacorretta_url(area: "consapevolezza")
     assert_response :success
@@ -372,22 +372,21 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "iframe", count: 0
     assert_select ".pc-landing-home", count: 0
-    assert_select ".pc-home-tabs a", count: 5
-    assert_select ".pc-home-panel .pc-home-metro", count: 1
-    assert_select ".pc-home-journey > .pc-home-metro", count: 0
+    assert_select ".pc-home-tabs a", minimum: 2
+    assert_select ".pc-home-tab", text: "Percorso online"
+    assert_select ".pc-home-tab", text: "Lezione"
+    assert_select ".pc-home-journey__breadcrumb", text: /Prima settimana/
+    assert_select ".pc-home-journey__aside .pc-program-stepper", count: 1
+    assert_select ".pc-home-journey__aside", text: /Prima linea · Per iniziare/
+    assert_select ".pc-home-journey__aside .pc-program-stepper__step--course", count: 3
+    assert_select ".pc-home-journey__aside .pc-program-stepper__step--lesson", count: 3
     assert_select ".pc-home-panel--lezioni", text: /Lezione 1/
-    assert_select ".pc-home-station[href^='#{posturacorretta_postura_recupero_path}']", minimum: 1
+    assert_select ".pc-program-stepper__step[href^='#{posturacorretta_postura_recupero_path}']", minimum: 1
     assert_select ".node-public-reading-nav-static", count: 0
 
     get posturacorretta_postura_recupero_url(tab: "percorso")
-
-    assert_response :success
-    assert_select ".pc-home-tab.is-selected", text: "Il mio percorso"
-    assert_select ".pc-home-panel--percorso .pc-home-metro", count: 0
-    assert_select ".pc-sheet__print", text: "Stampa o salva PDF"
-    assert_select ".pc-sheet__private", count: 0
-    assert_select ".pc-sheet__login a", text: "Accedi"
-    assert_select ".pc-sheet__upcoming li", count: 3
+    assert_redirected_to posturacorretta_url(area: "intro")
+    assert_response :moved_permanently
   end
 
   test "public visitor cannot view free subscription node" do

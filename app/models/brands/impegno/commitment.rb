@@ -68,7 +68,7 @@ module Brands
   before_validation :assign_content_from_key
   validate :content_matches_content_key
 
-  after_commit :apply_publication_decision, if: :publication_decision_concluded?
+  after_commit :apply_publication_decision!, if: :publication_decision_concluded?
 
   scope :for_genera_impresa_project, ->(slug) {
     where("genera_impresa @> ?", { project_slug: slug }.to_json)
@@ -114,6 +114,47 @@ module Brands
     kind == "content" && publish_on_completion?
   end
 
+  # Il Content indicato da content_key, solo se è uno e uno solo.
+  # Le decisioni di pubblicazione usano la chiave del Content; iscrizioni e completamenti usano ancora
+  # lo slug del corso o del capitolo (il capitolo dentro metadata.course_slug).
+  def matching_content
+    return content_publication.content if content_publication
+    return if content_key.blank?
+
+    candidates = case metadata.to_h["record_type"]
+    when "course_enrollment"
+      Content.where(format: "course", parent_id: nil, slug: content_key)
+    when "chapter_completion"
+      Content.where(format: "chapter", slug: content_key, parent: Content.where(format: "course", slug: metadata.to_h["course_slug"]))
+    else
+      Content.where(key: content_key) if kind == "content"
+    end
+    found = candidates&.limit(2)&.to_a
+    found.first if found&.one?
+  end
+
+  def publication_decided_at
+    published_at || actual_ended_at || updated_at
+  end
+
+  # L'ultima decisione conclusa determina lo stato visibile del contenuto in questo ambiente.
+  def apply_publication_decision!
+    decided_at = publication_decided_at
+    target = content_publication || content
+    attributes = { publication_status:, publication_visibility: }
+    attributes[:access_modes] = access_modes if target.is_a?(Content)
+
+    case publication_change_kind
+    when "update", "fix"
+      attributes[:published_at] = target.published_at || decided_at
+      attributes[:revised_at] = decided_at if target.is_a?(Content)
+    else
+      attributes[:published_at] = publication_status == "published" ? decided_at : nil
+    end
+
+    target.update!(attributes)
+  end
+
   private
 
     def normalize_access_modes
@@ -154,17 +195,14 @@ module Brands
     end
 
     # content_key resta la chiave stabile del YAML; content_id è il collegamento nel database.
-    # Il collegamento automatico vale solo per le decisioni di pubblicazione, che usano la chiave del Content:
-    # iscrizioni e completamenti usano slug non univoci e si collegano con il backfill della fase 2.
     def assign_content_from_key
       self.content_key = content.key if content && content_key.blank?
-      return unless kind == "content" && content.nil? && content_key.present?
-
-      self.content = content_publication&.content || Content.find_by(key: content_key)
+      self.content ||= matching_content
     end
 
+    # Iscrizioni e completamenti salvano lo slug, che per i contenuti legacy fa da chiave.
     def content_matches_content_key
-      if content && content_key.present? && content.key != content_key
+      if content && content_key.present? && !content_key.in?([content.key, content.slug])
         errors.add(:content_key, "non corrisponde al contenuto collegato")
       end
       if content_publication && content && content_publication.content_id != content.id
@@ -175,24 +213,6 @@ module Brands
     def publication_decision_concluded?
       publication_requested? && status == "completed" && content.present? &&
         (previously_new_record? || saved_change_to_status?)
-    end
-
-    # L'ultima decisione conclusa determina lo stato visibile del contenuto in questo ambiente.
-    def apply_publication_decision
-      decided_at = published_at || actual_ended_at || updated_at
-      target = content_publication || content
-      attributes = { publication_status:, publication_visibility: }
-      attributes[:access_modes] = access_modes if target.is_a?(Content)
-
-      case publication_change_kind
-      when "update", "fix"
-        attributes[:published_at] = target.published_at || decided_at
-        attributes[:revised_at] = decided_at if target.is_a?(Content)
-      else
-        attributes[:published_at] = publication_status == "published" ? decided_at : nil
-      end
-
-      target.update!(attributes)
     end
 
     def ends_after_start

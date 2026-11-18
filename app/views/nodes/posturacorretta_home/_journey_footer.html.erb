@@ -1,7 +1,12 @@
 <footer class="pc-journey-footer">
-  <% if local_assigns[:meta].present? || local_assigns[:print_label].present? %>
+  <% if local_assigns[:sheet_label].present? || local_assigns[:print_label].present? %>
     <div class="pc-journey-footer__utility">
-      <% if local_assigns[:meta].present? %><span><%= meta %></span><% end %>
+      <% if local_assigns[:sheet_label].present? %>
+        <div class="pc-journey-footer__identity">
+          <span class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</span>
+          <span class="pc-sheet__meta"><%= sheet_label %> · scheda del <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></span>
+        </div>
+      <% end %>
       <% if local_assigns[:print_label].present? %>
         <button type="button" data-action="print-date#print" class="pc-sheet__print">Scarica o stampa <%= print_label %></button>
       <% end %>

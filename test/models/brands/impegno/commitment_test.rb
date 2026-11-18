@@ -187,12 +187,43 @@ module Brands
         assert_includes commitment.errors[:content_key], "non corrisponde al contenuto collegato"
       end
 
+      test "enrollments and chapter completions link to their Content by slug" do
+        content = create_content
+        course = Content.create!(node: content.node, key: "corso-impegni", slug: "corso", format: "course", title: "Corso")
+        content.update!(parent: course)
+
+        enrollment = create_learning_record(content_key: "corso", metadata: { "record_type" => "course_enrollment", "course_slug" => "corso" })
+        completion = create_learning_record(content_key: "capitolo", metadata: { "record_type" => "chapter_completion", "course_slug" => "corso" })
+        other_course = create_learning_record(content_key: "capitolo", metadata: { "record_type" => "chapter_completion", "course_slug" => "altro-corso" })
+
+        assert_equal course, enrollment.content
+        assert_equal "corso", enrollment.content_key
+        assert_equal content, completion.content
+        assert_nil other_course.content, "lo slug del capitolo vale solo dentro il suo corso"
+      end
+
       private
 
         def create_content
           role_assignment = RoleAssignment.create!(profile: @profile, role: :creator_of_worlds)
           node = Node.create!(title: "Raccolta", slug: "raccolta-impegni", role_assignment: role_assignment)
           Content.create!(node: node, key: "capitolo-da-pubblicare", slug: "capitolo", format: "chapter", title: "Capitolo")
+        end
+
+        def create_learning_record(content_key:, metadata:)
+          @profile.data_commitments.create!(
+            created_by_profile: @profile,
+            domain: @domain,
+            title: "Percorso",
+            kind: "academy",
+            status: "completed",
+            starts_at: Time.current,
+            blocks_calendar: false,
+            pricing_type: "none",
+            contribution_type: "unpaid",
+            content_key: content_key,
+            metadata: metadata
+          )
         end
 
         def create_publication_decision(**options)

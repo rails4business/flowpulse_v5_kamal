@@ -485,6 +485,21 @@ funzionanti.
 - `status`, `visibility`, `access` tolti dai `course.yml`; `contenuti/contents.yml` tolto.
 - Export `contents:export` verso i YAML.
 
+**Stato fase 2 — passo 1 (backfill) fatto**
+- `DataCommitment#matching_content`: le decisioni trovano il Content per chiave, le iscrizioni per slug del
+  corso, i completamenti per slug del capitolo dentro `metadata.course_slug`. Se i Content sono zero o più di
+  uno, l'impegno non viene collegato. Lo stesso collegamento avviene a ogni salvataggio.
+- `content_key` può essere la chiave o lo slug del Content collegato (iscrizioni e completamenti legacy).
+- `ContentCommitmentLinks` + `bin/rails contents:link_commitments` (`DRY_RUN=1` per provare): collega gli
+  impegni che hanno solo `content_key` e riapplica in ordine le decisioni concluse dei Content collegati.
+  `contents:import` lo esegue alla fine, così un database ricostruito dai YAML si ricollega da solo.
+- In sviluppo: 12 impegni collegati su 13, 11 decisioni riapplicate (`inizia-trama-postura-fisiologia`
+  pubblicato). Non collegato: il completamento 8, con lo slug `trama-postura-fisiologia`; nel `course.yml`
+  quel capitolo oggi ha lo slug `postura-salute-altri-aspetti`, e l'id `inizia-trama-postura-fisiologia` è
+  rimasto lo stesso.
+- Da fare nel passo 2: iscrizioni e completamenti nuovi salvano la chiave del Content (`id`), non lo slug,
+  così un cambio di slug non li stacca più.
+
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.
 - `DomainContentCatalog` legge da Content.

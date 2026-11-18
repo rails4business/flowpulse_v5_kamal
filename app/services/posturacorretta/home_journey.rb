@@ -4,12 +4,10 @@ module Posturacorretta
       "primo-incontro-kinesiologia-applicata" => "introduzione-alla-kinesiologia-applicata"
     }.freeze
 
-    TABS = {
+    TAB_LABELS = {
       "online" => "Percorso online",
-      "lezioni" => "Programma lezioni",
-      "insegnanti" => "Insegnanti",
-      "centri" => "Centri",
-      "percorso" => "Il mio percorso"
+      "lezioni" => "Lezione",
+      "prenota" => "Prenota"
     }.freeze
 
     STATIONS = [
@@ -32,12 +30,22 @@ module Posturacorretta
     def initialize(tappa:, tab:, risorsa: nil, completed_chapters: {})
       tappa = LEGACY_STATION_SLUGS.fetch(tappa, tappa)
       @station = STATIONS.find { |item| item.fetch("slug") == tappa } || STATIONS.first
-      @tab = tab.to_s.presence_in(TABS.keys) || "online"
+      requested_tab = { "insegnanti" => "prenota", "centri" => "prenota" }.fetch(tab.to_s, tab.to_s)
+      @tab = requested_tab.presence_in(tabs.keys) || tabs.keys.first || "online"
       @resource = risorsa.to_s.presence
       @completed_chapters = completed_chapters
     end
 
-    def tabs = TABS
+    def tabs
+      data = course_data
+      return { "online" => TAB_LABELS.fetch("online") } if data.blank?
+
+      {}.tap do |available|
+        available["online"] = TAB_LABELS.fetch("online") if data[:course].present?
+        available["lezioni"] = TAB_LABELS.fetch("lezioni") if Array(data[:program_lessons]).any?
+        available["prenota"] = TAB_LABELS.fetch("prenota") if Array(data[:teachers]).any? || Array(data[:centres]).any?
+      end
+    end
     def stations = STATIONS
     def station_number = STATIONS.index(station) + 1
 
@@ -65,32 +73,29 @@ module Posturacorretta
       return false if data.blank?
 
       case tab
-      when "percorso"
-        true
       when "lezioni"
         data.fetch(:program_lessons, []).any?
-      when "centri"
-        resource_available?(data.fetch(:centres, []))
-      when "insegnanti"
-        resource_available?(data.fetch(:teachers, []))
+      when "prenota"
+        resource_available?([*data.fetch(:teachers, []), *data.fetch(:centres, [])])
       else
         data[:course].present?
       end
     end
 
     def resource_options
-      return [] unless %w[centri insegnanti].include?(tab)
+      return [] unless tab == "prenota"
 
-      key = tab == "centri" ? :centres : :teachers
-      STATIONS.flat_map { |item| Array(station_data(item)&.fetch(key, [])) }
+      STATIONS.flat_map { |item| [*Array(station_data(item)&.fetch(:teachers, [])), *Array(station_data(item)&.fetch(:centres, []))] }
         .uniq { |item| item.fetch("slug") }
         .sort_by { |item| item.fetch("name").downcase }
     end
 
-    def filtered_resources
-      key = tab == "centri" ? :centres : :teachers
-      items = Array(course_data&.fetch(key, []))
-      resource.present? ? items.select { |item| item.fetch("slug") == resource } : items
+    def teachers
+      filter_resources(course_data&.fetch(:teachers, []))
+    end
+
+    def centres
+      filter_resources(course_data&.fetch(:centres, []))
     end
 
     # Scheda del percorso: i corsi della linea in ordine, ciascuno con le sue lezioni.
@@ -126,6 +131,11 @@ module Posturacorretta
         return items.any? if resource.blank?
 
         items.any? { |item| item.fetch("slug") == resource }
+      end
+
+      def filter_resources(items)
+        items = Array(items)
+        resource.present? ? items.select { |item| item.fetch("slug") == resource } : items
       end
   end
 end

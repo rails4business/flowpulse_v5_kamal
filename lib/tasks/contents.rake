@@ -11,5 +11,14 @@ namespace :contents do
     result = ContentCatalog.new.import!
     puts "Importati #{result.contents} contenuti (#{result.created} nuovi), #{result.publications} pubblicazioni e #{result.contributions} nuovi contributi."
     result.warnings.each { |warning| puts "Avviso: #{warning}" }
+    Rake::Task["contents:link_commitments"].invoke
+  end
+
+  desc "Link commitments that only have a content_key to their Content and replay their publication decisions (DRY_RUN=1 to preview)"
+  task link_commitments: :environment do
+    dry_run = ENV["DRY_RUN"].present?
+    result = ContentCommitmentLinks.new.link!(dry_run:)
+    puts "#{'[prova] ' if dry_run}Impegni collegati: #{result.linked}, decisioni di pubblicazione riapplicate: #{result.replayed}."
+    result.missing.each { |missing| puts "Non trovato: #{missing}" }
   end
 end

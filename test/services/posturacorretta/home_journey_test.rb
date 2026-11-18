@@ -21,14 +21,24 @@ module Posturacorretta
       assert_not HomeJourney.new(tappa: nil, tab: "online").online_completed?(station)
     end
 
-    test "the personal path tab shows every station with its online progress" do
+    test "a retired personal path tab falls back to online data" do
       chapters = HomeCourseCatalog.fetch("la-prima-settimana-con-posturacorretta").fetch(:chapters).map { |chapter| chapter.fetch("slug") }
       journey = HomeJourney.new(tappa: nil, tab: "percorso", completed_chapters: { "inizia-con-posturacorretta" => chapters.first(3) })
       station = journey.stations.second
 
-      assert_equal "Il mio percorso", journey.tabs.fetch("percorso")
-      assert journey.station_available?(journey.stations.last)
+      assert_equal "online", journey.tab
+      assert_not journey.tabs.key?("percorso")
       assert_equal({ done: 3, total: chapters.size }, journey.online_progress(station))
+    end
+
+    test "only exposes content available for the selected station" do
+      journey = HomeJourney.new(tappa: "la-prima-settimana-con-posturacorretta", tab: "lezioni")
+
+      assert journey.tabs.key?("online")
+      assert journey.tabs.key?("lezioni")
+      assert_equal "Lezione", journey.tabs.fetch("lezioni")
+      assert_not journey.tabs.key?("insegnanti")
+      assert_not journey.tabs.key?("centri")
     end
   end
 end
