@@ -117,6 +117,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
       status: "published",
       visibility: "public"
     )
+    import_posturacorretta_contents
     node = Node.create!(
       title: "Educazione 2 · Consapevolezza con le metodiche posturali",
       slug: "apprendimento-2-connessione",
@@ -189,6 +190,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
       status: "published",
       visibility: "public"
     )
+    import_posturacorretta_contents
     node = Node.create!(
       title: "Educazione 3 · Connessione dalla PosturaCorretta al Giardino del Corpo",
       slug: "dalla-posturacorretta-al-giardino-del-corpo",
@@ -274,6 +276,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
         ]
       }
     )
+    import_posturacorretta_contents
     Node.create!(
       title: "Child course",
       role_assignment: @assignment,

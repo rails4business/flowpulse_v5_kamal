@@ -1,6 +1,8 @@
 require "test_helper"
 
 class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
+  setup { import_posturacorretta_contents }
+
   test "keeps path references content tree program activities and legacy learning sources separate" do
     titles = YAML.safe_load_file(Posturacorretta::LearningController::DIDACTIC_PATH, permitted_classes: [], aliases: false)
     contents = YAML.safe_load_file(Posturacorretta::LearningController::CONTENT_CATALOG_PATH, permitted_classes: [], aliases: false)
@@ -570,7 +572,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     owner = create_test_user("posturacorretta-owner-controls@example.com")
     owner_profile = owner.create_profile!(display_name: "Owner PosturaCorretta", username: "pc_owner_controls")
     owner_role = RoleAssignment.create!(profile: owner_profile, role: :ideatore)
-    brand = Node.create!(title: "PosturaCorretta", slug: "posturacorretta", role_assignment: owner_role, node_type: :project)
+    brand = Node.find_by!(slug: "posturacorretta")
+    brand.update!(role_assignment: owner_role, node_type: :project)
     domain = Domain.find_or_create_by!(hostname: "posturacorretta.org") do |record|
       record.locale = "it"
       record.target_controller = "brands/posturacorretta"

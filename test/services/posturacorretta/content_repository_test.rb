@@ -2,6 +2,8 @@ require "test_helper"
 
 module Posturacorretta
   class ContentRepositoryTest < ActiveSupport::TestCase
+    setup { import_posturacorretta_contents }
+
     test "hydrates a course from chapter contents through parent_id" do
       repository = ContentRepository.new
       course = repository.course_by_id("inizia-con-posturacorretta")
@@ -50,43 +52,6 @@ module Posturacorretta
       assert chapters.all? { |chapter| chapter.fetch("content_path").start_with?("brands/posturacorretta/courses/") }
       assert chapters.all? { |chapter| Rails.root.join("config/data", chapter.fetch("content_path")).file? }
       assert_equal 7, repository.course_by_id("inizia-con-posturacorretta").fetch("chapters").size
-    end
-
-    test "rejects duplicate course slugs and duplicate chapter slugs inside a course" do
-      repository = ContentRepository.new
-      course = {
-        "id" => "course-one", "format" => "course", "slug" => "corso",
-        "status" => "published", "access" => "free"
-      }
-      second_course = course.merge("id" => "course-two")
-
-      course_error = assert_raises(KeyError) do
-        repository.send(:validate!, [course, second_course])
-      end
-      assert_includes course_error.message, "Slug course duplicati: corso"
-
-      chapter = {
-        "id" => "chapter-one", "parent_id" => "course-one", "format" => "chapter",
-        "slug" => "introduzione", "status" => "published", "access" => "free"
-      }
-      second_chapter = chapter.merge("id" => "chapter-two")
-
-      chapter_error = assert_raises(KeyError) do
-        repository.send(:validate!, [course, chapter, second_chapter])
-      end
-      assert_includes chapter_error.message, "course-one/introduzione"
-    end
-
-    test "allows the same chapter slug in different courses" do
-      repository = ContentRepository.new
-      courses = %w[one two].map do |suffix|
-        { "id" => "course-#{suffix}", "format" => "course", "slug" => "corso-#{suffix}", "status" => "published", "access" => "free" }
-      end
-      chapters = courses.map.with_index do |course, index|
-        { "id" => "chapter-#{index}", "parent_id" => course.fetch("id"), "format" => "chapter", "slug" => "introduzione", "status" => "published", "access" => "free" }
-      end
-
-      assert_nothing_raised { repository.send(:validate!, courses + chapters) }
     end
   end
 end

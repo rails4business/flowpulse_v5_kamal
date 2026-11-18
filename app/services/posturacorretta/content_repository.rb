@@ -1,20 +1,22 @@
 module Posturacorretta
+  # Corsi e capitoli di PosturaCorretta letti dai Content importati da
+  # config/data/brands/posturacorretta/courses (bin/rails contents:import).
+  # Restituisce gli stessi hash del vecchio catalogo YAML, così pagine e viste non cambiano.
   class ContentRepository
-    ALLOWED_FORMATS = %w[course chapter].freeze
-    ALLOWED_ACCESS = %w[free paid].freeze
+    NODE_SLUG = "posturacorretta".freeze
+    FORMATS = %w[course chapter].freeze
     CANONICAL_COURSES_ROOT = Rails.root.join("config/data/brands/posturacorretta/courses").freeze
+    DATA_ROOT = "config/data/".freeze
+    # Fase 2a del piano contenuti: finché lo stato visibile non passa al Content,
+    # status, visibility e access si leggono ancora dai course.yml.
+    ENVIRONMENT_KEYS = %w[status visibility access].freeze
 
-    ALLOWED_STATUSES = %w[draft published scheduled].freeze
-
-    def initialize(path: Rails.root.join("config/data/posturacorretta/contenuti/contents.yml"), include_scheduled: false)
-      @path = path
+    def initialize(include_scheduled: false)
       @include_scheduled = include_scheduled
     end
 
     def courses
-      contents.select { |content| content.fetch("format") == "course" }
-        .sort_by { |content| content.fetch("position", 0) }
-        .map { |course| hydrate_course(course) }
+      contents.select { |content| content.fetch("format") == "course" }.map { |course| hydrate_course(course) }
     end
 
     def course_by_id(content_id)
@@ -31,18 +33,34 @@ module Posturacorretta
 
     private
 
-    attr_reader :path, :include_scheduled
+    attr_reader :include_scheduled
 
-    def data
-      @data ||= YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
+    # Già in ordine di posizione e, a parità, di chiave (uguale in ogni ambiente).
+    def contents
+      @contents ||= records.map { |record| to_item(record) }.select { |content| visible?(content) }
     end
 
-    def contents
-      @contents ||= begin
-        items = merge_canonical_courses(data.fetch("contents"))
-        validate!(items)
-        items.map(&:deep_stringify_keys).select { |content| visible?(content) }
-      end
+    def records
+      Content.joins(:node).where(nodes: { slug: NODE_SLUG }, format: FORMATS).includes(:parent).order(:position, :key)
+    end
+
+    def to_item(record)
+      record.data.merge(
+        "id" => record.key,
+        "parent_id" => record.parent&.key,
+        "format" => record.format,
+        "slug" => record.slug,
+        "position" => record.position,
+        "title" => record.title,
+        "description" => record.description,
+        "content_path" => record.source_path&.delete_prefix(DATA_ROOT)
+      ).merge(environment_values.fetch(record.key, {})).compact
+    end
+
+    def environment_values
+      @environment_values ||= Dir.glob(CANONICAL_COURSES_ROOT.join("*", "course.yml")).sort.flat_map do |course_path|
+        YAML.safe_load_file(course_path, permitted_classes: [], aliases: false).to_h.fetch("contents", [])
+      end.to_h { |item| [item.fetch("id"), item.slice(*ENVIRONMENT_KEYS)] }
     end
 
     def visible?(content)
@@ -54,81 +72,12 @@ module Posturacorretta
       Time.zone.parse(content.fetch("published_at")) <= Time.current
     end
 
-    # Durante la migrazione il catalogo storico continua a contenere tutti i
-    # corsi. Un course.yml sotto il Brand sostituisce soltanto le voci con gli
-    # stessi id, permettendo di migrare un corso alla volta senza duplicarlo.
-    def merge_canonical_courses(legacy_items)
-      canonical_items = Dir.glob(CANONICAL_COURSES_ROOT.join("*", "course.yml")).sort.flat_map do |course_path|
-        YAML.safe_load_file(course_path, permitted_classes: [], aliases: false).to_h.fetch("contents", [])
-      end
-      overrides = canonical_items.index_by { |item| item.fetch("id") }
-
-      legacy_items.map { |item| overrides.delete(item.fetch("id")) || item } + overrides.values
-    end
-
     def by_id
       @by_id ||= contents.index_by { |content| content.fetch("id") }
     end
 
     def hydrate_course(course)
-      course.merge(
-        "chapters" => contents
-          .select { |content| content.fetch("parent_id", nil) == course.fetch("id") }
-          .sort_by { |content| content.fetch("position", 0) }
-      )
-    end
-
-    def validate!(items)
-      raise KeyError, "contents deve essere un elenco" unless items.is_a?(Array)
-
-      normalized = items.map(&:deep_stringify_keys)
-      ids = normalized.map { |content| content.fetch("id") }
-      duplicate_ids = ids.tally.select { |_id, count| count > 1 }.keys
-      raise KeyError, "Content id duplicati: #{duplicate_ids.join(', ')}" if duplicate_ids.any?
-
-      missing_slug_ids = normalized.filter_map { |content| content.fetch("id") if content["slug"].blank? }
-      raise KeyError, "Content senza slug: #{missing_slug_ids.join(', ')}" if missing_slug_ids.any?
-
-      duplicate_course_slugs = normalized
-        .select { |content| content["format"] == "course" }
-        .map { |content| content.fetch("slug") }
-        .tally.select { |_slug, count| count > 1 }.keys
-      if duplicate_course_slugs.any?
-        raise KeyError, "Slug course duplicati: #{duplicate_course_slugs.join(', ')}"
-      end
-
-      duplicate_chapter_slugs = normalized
-        .select { |content| content["format"] == "chapter" }
-        .group_by { |content| [content["parent_id"], content.fetch("slug")] }
-        .select { |_key, chapters| chapters.many? }.keys
-      if duplicate_chapter_slugs.any?
-        labels = duplicate_chapter_slugs.map { |parent_id, slug| "#{parent_id}/#{slug}" }
-        raise KeyError, "Slug chapter duplicati nello stesso course: #{labels.join(', ')}"
-      end
-
-      normalized.each do |content|
-        format = content.fetch("format")
-        raise KeyError, "Content format non valido: #{format}" unless format.in?(ALLOWED_FORMATS)
-        status = content.fetch("status", "draft")
-        raise KeyError, "Content status non valido: #{status}" unless status.in?(ALLOWED_STATUSES)
-        if status == "scheduled" && content["published_at"].blank?
-          raise KeyError, "Content scheduled senza published_at: #{content.fetch('id')}"
-        end
-        access = content.fetch("access")
-        raise KeyError, "Content access non valido: #{access}" unless access.in?(ALLOWED_ACCESS)
-
-        parent_id = content["parent_id"]
-        if format == "course" && parent_id.present?
-          raise KeyError, "Un course non può avere parent_id: #{content.fetch('id')}"
-        end
-        next unless format == "chapter"
-
-        raise KeyError, "Chapter senza parent_id: #{content.fetch('id')}" if parent_id.blank?
-        parent = normalized.find { |candidate| candidate.fetch("id") == parent_id }
-        unless parent&.fetch("format") == "course"
-          raise KeyError, "Il parent di #{content.fetch('id')} deve essere un course"
-        end
-      end
+      course.merge("chapters" => contents.select { |content| content.fetch("parent_id", nil) == course.fetch("id") })
     end
   end
 end

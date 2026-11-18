@@ -1,6 +1,8 @@
 require "test_helper"
 
 class PosturacorrettaContentsControllerTest < ActionDispatch::IntegrationTest
+  setup { import_posturacorretta_contents }
+
   test "renders the YAML Content course and its chapters without a separate sheets tab" do
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
 

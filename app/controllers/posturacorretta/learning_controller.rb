@@ -270,7 +270,6 @@ module Posturacorretta
     didactic_data = YAML.safe_load_file(DIDACTIC_PATH, permitted_classes: [], aliases: false)
     learning_data = YAML.safe_load_file(LEARNING_PATH, permitted_classes: [], aliases: false)
     @content_repository = Posturacorretta::ContentRepository.new(
-      path: CONTENT_CATALOG_PATH,
       # Il catalogo mostra anche titoli e struttura in preparazione; l'accesso al
       # corpo del capitolo resta governato dal DataCommitment editoriale.
       include_scheduled: true

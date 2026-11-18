@@ -500,6 +500,21 @@ funzionanti.
 - Da fare nel passo 2: iscrizioni e completamenti nuovi salvano la chiave del Content (`id`), non lo slug,
   così un cambio di slug non li stacca più.
 
+**Stato fase 2 — passo 2a (struttura dal database) fatto**
+- `deploy:sync_catalogs` (hook `post-deploy` di Kamal) importa i contenuti dopo i Node e collega gli impegni:
+  a ogni deploy YAML e Markdown aggiornano testo e struttura, mai lo stato di pubblicazione.
+- `Posturacorretta::ContentRepository` legge i Content del node `posturacorretta` e restituisce gli stessi
+  hash di prima; lo usano le pagine del corso, Consapevolezza e Connessione (i loro file non cambiano).
+  A parità di posizione l'ordine è per chiave, uguale in ogni ambiente.
+- Confronto prima/dopo in sviluppo: stessi corsi, capitoli, ordine e stato. Unica aggiunta: i capitoli
+  riportano autore ed editore dell'intestazione del Markdown.
+- Solo per il 2a, `status`, `visibility`, `access` si leggono ancora dai `course.yml`
+  (`ContentRepository::ENVIRONMENT_KEYS`).
+- Test: `import_posturacorretta_contents` in `test/test_helper.rb` importa i Content dove servono.
+
+**Passo 2b — da fare**: lo stato visibile diventa quello del Content; prima, elenco dei corsi che oggi si
+vedono solo grazie al `status` del YAML.
+
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.
 - `DomainContentCatalog` legge da Content.
