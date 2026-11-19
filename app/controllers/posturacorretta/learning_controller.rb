@@ -72,7 +72,7 @@ module Posturacorretta
     return redirect_to(percorso_posturacorretta_path, alert: "Corso non trovato") unless course
     return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
 
-    commitment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
+    commitment = learning_commitments.find { |item| course_enrollment?(item) && item.learning_slug == course.fetch("slug") && item.status != "cancelled" }
     unless commitment
       now = Time.current
       started_at = now - 1.second
@@ -89,7 +89,7 @@ module Posturacorretta
         blocks_calendar: false,
         pricing_type: "none",
         contribution_type: "unpaid",
-        content_key: course.fetch("slug"),
+        content_key: course["id"].presence || course.fetch("slug"),
         metadata: { "record_type" => "course_enrollment", "course_slug" => course.fetch("slug"), "access" => "free" }
       )
     end
@@ -111,13 +111,13 @@ module Posturacorretta
     return redirect_to(percorso_posturacorretta_path, alert: "Capitolo non trovato") unless course && chapter
     return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
 
-    enrollment = learning_commitments.find { |item| course_enrollment?(item) && item.content_key == course.fetch("slug") && item.status != "cancelled" }
+    enrollment = learning_commitments.find { |item| course_enrollment?(item) && item.learning_slug == course.fetch("slug") && item.status != "cancelled" }
     return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Inizia il corso prima di registrare i capitoli completati.") unless enrollment
 
     chapter_index = course.fetch("chapters", []).index(chapter)
     completed_before = learning_commitments.select do |item|
-      chapter_completion?(item) && item.metadata.to_h["course_slug"] == course.fetch("slug") && item.status == "completed"
-    end.map(&:content_key).uniq
+      chapter_completion?(item) && item.learning_course_slug == course.fetch("slug") && item.status == "completed"
+    end.map(&:learning_slug).uniq
     previous_slugs = course.fetch("chapters", []).first(chapter_index).map { |item| item.fetch("slug") }
     if (previous_slugs - completed_before).any?
       return redirect_to(
@@ -127,7 +127,7 @@ module Posturacorretta
     end
 
     completed = learning_commitments.find do |item|
-      chapter_completion?(item) && item.content_key == chapter.fetch("slug") && item.metadata.to_h["course_slug"] == course.fetch("slug")
+      chapter_completion?(item) && item.learning_slug == chapter.fetch("slug") && item.learning_course_slug == course.fetch("slug")
     end
     if completed
       completed.update!(status: "completed", actual_ended_at: Time.current) unless completed.status == "completed"
@@ -145,11 +145,11 @@ module Posturacorretta
         blocks_calendar: false,
         pricing_type: "none",
         contribution_type: "unpaid",
-        content_key: chapter.fetch("slug"),
+        content_key: chapter["id"].presence || chapter.fetch("slug"),
         metadata: { "record_type" => "chapter_completion", "course_slug" => course.fetch("slug"), "chapter_slug" => chapter.fetch("slug"), "access" => "free" }
       )
     end
-    completed_slugs = learning_commitments.select { |item| chapter_completion?(item) && item.metadata.to_h["course_slug"] == course.fetch("slug") && item.status == "completed" }.map(&:content_key).uniq
+    completed_slugs = learning_commitments.select { |item| chapter_completion?(item) && item.learning_course_slug == course.fetch("slug") && item.status == "completed" }.map(&:learning_slug).uniq
     if course.fetch("chapters", []).any? && (course.fetch("chapters").map { |item| item.fetch("slug") } - completed_slugs).empty?
       enrollment.update!(status: "completed", actual_ended_at: Time.current)
     end
@@ -637,11 +637,11 @@ module Posturacorretta
     return unless authenticated?
 
     commitments = learning_commitments.to_a
-    @course_enrollment = commitments.find { |item| course_enrollment?(item) && item.content_key == course_slug && item.status != "cancelled" }
+    @course_enrollment = commitments.find { |item| course_enrollment?(item) && item.learning_slug == course_slug && item.status != "cancelled" }
     completed_commitments = commitments.select do |item|
-      chapter_completion?(item) && item.metadata.to_h["course_slug"] == course_slug && item.status == "completed"
+      chapter_completion?(item) && item.learning_course_slug == course_slug && item.status == "completed"
     end
-    @completed_chapter_commitments = completed_commitments.group_by(&:content_key).transform_values do |items|
+    @completed_chapter_commitments = completed_commitments.group_by(&:learning_slug).transform_values do |items|
       items.max_by { |item| item.actual_ended_at || item.updated_at }
     end
     @completed_chapter_slugs = @completed_chapter_commitments.keys
@@ -650,15 +650,15 @@ module Posturacorretta
 
   def load_home_course_progress
     commitments = authenticated? ? learning_commitments.to_a : []
-    enrollments = commitments.select { |item| course_enrollment?(item) && item.status != "cancelled" }.index_by(&:content_key)
-    completions = commitments.select { |item| chapter_completion?(item) && item.status == "completed" }.group_by { |item| item.metadata.to_h["course_slug"] }
+    enrollments = commitments.select { |item| course_enrollment?(item) && item.status != "cancelled" }.index_by(&:learning_slug)
+    completions = commitments.select { |item| chapter_completion?(item) && item.status == "completed" }.group_by(&:learning_course_slug)
 
     @home_course_progress = @all_didactic_courses.to_h do |course|
       chapter_slugs = course.fetch("chapters", []).map { |chapter| chapter.fetch("slug") }
-      completed_count = Array(completions[course.fetch("slug")]).map(&:content_key).uniq.count { |slug| chapter_slugs.include?(slug) }
+      completed_count = Array(completions[course.fetch("slug")]).map(&:learning_slug).uniq.count { |slug| chapter_slugs.include?(slug) }
       chapter_count = chapter_slugs.size
       enrollment = enrollments[course.fetch("slug")]
-      completion_dates = Array(completions[course.fetch("slug")]).group_by(&:content_key).transform_values do |items|
+      completion_dates = Array(completions[course.fetch("slug")]).group_by(&:learning_slug).transform_values do |items|
         items.filter_map(&:actual_ended_at).max
       end
       state = if chapter_count.positive? && completed_count == chapter_count
@@ -672,7 +672,7 @@ module Posturacorretta
       progress = {
         "chapter_count" => chapter_count,
         "completed_count" => completed_count,
-        "completed_slugs" => Array(completions[course.fetch("slug")]).map(&:content_key).uniq,
+        "completed_slugs" => Array(completions[course.fetch("slug")]).map(&:learning_slug).uniq,
         "completion_dates" => completion_dates,
         "started" => enrollment.present?,
         "percent" => chapter_count.positive? ? ((completed_count.to_f / chapter_count) * 100).round : 0,
@@ -685,7 +685,7 @@ module Posturacorretta
   def learning_commitments
     return current_profile.data_commitments.none unless posturacorretta_domain
 
-    current_profile.data_commitments.where(domain: posturacorretta_domain, kind: "academy")
+    current_profile.data_commitments.where(domain: posturacorretta_domain, kind: "academy").includes(content: :parent)
   end
 
   def posturacorretta_domain
@@ -695,11 +695,11 @@ module Posturacorretta
   end
 
   def course_enrollment?(commitment)
-    commitment.metadata.to_h["record_type"] == "course_enrollment"
+    commitment.course_enrollment?
   end
 
   def chapter_completion?(commitment)
-    commitment.metadata.to_h["record_type"] == "chapter_completion"
+    commitment.chapter_completion?
   end
 
   def redirect_legacy_learning_path

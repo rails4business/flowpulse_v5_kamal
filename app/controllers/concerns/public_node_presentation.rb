@@ -205,10 +205,10 @@ module PublicNodePresentation
       domain = Domain.find_for_host("posturacorretta.org")
       return {} unless current_profile && domain
 
-      current_profile.data_commitments.where(domain: domain, kind: "academy", status: "completed").to_a
-        .select { |item| item.metadata.to_h["record_type"] == "chapter_completion" }
-        .group_by { |item| item.metadata.to_h["course_slug"] }
-        .transform_values { |items| items.map(&:content_key).uniq }
+      current_profile.data_commitments.where(domain: domain, kind: "academy", status: "completed").includes(content: :parent).to_a
+        .select(&:chapter_completion?)
+        .group_by(&:learning_course_slug)
+        .transform_values { |items| items.map(&:learning_slug).uniq }
     end
 
     def public_node_domain_root?(node)

@@ -524,8 +524,18 @@ funzionanti.
   vedevano solo con una decisione.
 - Non toccato (home): `Posturacorretta::HomeCourseCatalog` legge ancora i `course.yml`; `status` e `access`
   ora mancano solo dalla sua risposta JSON, che la home non usa.
-- Ancora da fare nella fase 2: iscrizioni e completamenti con la chiave del Content, `contents:export`,
-  regole di pubblicazione dal controller degli impegni al model.
+- Ancora da fare nella fase 2: `contents:export`, regole di pubblicazione dal controller degli impegni al model.
+
+**Stato fase 2 — passo 2c (iscrizioni e completamenti con la chiave) fatto**
+
+- Le nuove iscrizioni e i nuovi completamenti salvano in `content_key` la chiave del Content (l'`id` del
+  YAML) e quindi anche `content_id`; i corsi senza `id` (sezioni e primo mese storici) usano ancora lo slug.
+  In `metadata` restano `course_slug` e `chapter_slug` com'erano al momento.
+- I progressi si leggono con `learning_slug` e `learning_course_slug` del model: lo slug attuale del Content
+  collegato, altrimenti quello salvato. Così un cambio di slug non perde i progressi già registrati.
+- `matching_content` per iscrizioni e completamenti cerca prima la chiave, poi lo slug (record storici).
+- Unico ritocco fuori dal corso: `posturacorretta_completed_chapters` in `PublicNodePresentation` usa gli
+  stessi metodi; la home riceve lo stesso formato `{ course_slug => [chapter_slug] }` di prima.
 - `contenuti/contents.yml` resta per ora (deciso il 2026-11-18): il vincolo iniziale dice di non eliminare
   YAML e lo leggono ancora un test, la pagina admin delle sorgenti didattiche e il materiale editoriale.
 

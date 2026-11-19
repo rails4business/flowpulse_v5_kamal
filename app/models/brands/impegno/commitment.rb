@@ -115,26 +115,44 @@ module Brands
   end
 
   # Il Content indicato da content_key, solo se è uno e uno solo.
-  # Le decisioni di pubblicazione usano la chiave del Content, o lo slug per i contenuti storici senza id;
-  # iscrizioni e completamenti usano ancora lo slug del corso o del capitolo (il capitolo dentro
-  # metadata.course_slug).
+  # content_key è la chiave del Content; lo slug vale per i record storici: decisioni su contenuti senza id,
+  # iscrizioni e completamenti salvati prima della chiave (il capitolo solo dentro metadata.course_slug).
   def matching_content
     return content_publication.content if content_publication
     return if content_key.blank?
 
     candidates = case metadata.to_h["record_type"]
     when "course_enrollment"
-      Content.where(format: "course", parent_id: nil, slug: content_key)
+      content_by_key_or_slug(Content.where(format: "course", parent_id: nil))
     when "chapter_completion"
-      Content.where(format: "chapter", slug: content_key, parent: Content.where(format: "course", slug: metadata.to_h["course_slug"]))
+      chapters = Content.where(format: "chapter")
+      content_by_key_or_slug(chapters, chapters.where(parent: Content.where(format: "course", slug: metadata.to_h["course_slug"])))
     else
       return unless kind == "content"
 
-      by_key = Content.where(key: content_key)
-      by_key.exists? ? by_key : Content.where(slug: content_key)
+      content_by_key_or_slug(Content.all)
     end
-    found = candidates&.limit(2)&.to_a
-    found.first if found&.one?
+    found = candidates.limit(2).to_a
+    found.first if found.one?
+  end
+
+  def course_enrollment?
+    metadata.to_h["record_type"] == "course_enrollment"
+  end
+
+  def chapter_completion?
+    metadata.to_h["record_type"] == "chapter_completion"
+  end
+
+  # Lo slug attuale del corso (iscrizione) o del capitolo (completamento): quello del Content collegato,
+  # altrimenti quello salvato quando l'impegno è nato.
+  def learning_slug
+    content&.slug || metadata.to_h[chapter_completion? ? "chapter_slug" : "course_slug"].presence || content_key
+  end
+
+  # Lo slug attuale del corso a cui appartiene l'iscrizione o il capitolo completato.
+  def learning_course_slug
+    (chapter_completion? ? content&.parent&.slug : content&.slug) || metadata.to_h["course_slug"]
   end
 
   def publication_decided_at
@@ -204,7 +222,7 @@ module Brands
       self.content ||= matching_content
     end
 
-    # Iscrizioni e completamenti salvano lo slug, che per i contenuti legacy fa da chiave.
+    # I record storici salvano lo slug, che per loro fa da chiave.
     def content_matches_content_key
       if content && content_key.present? && !content_key.in?([content.key, content.slug])
         errors.add(:content_key, "non corrisponde al contenuto collegato")
@@ -215,6 +233,11 @@ module Brands
     end
 
     # Una decisione conclusa che nasce, cambia o viene cancellata ricalcola lo stato del suo Content.
+    def content_by_key_or_slug(scope, slug_scope = scope)
+      by_key = scope.where(key: content_key)
+      by_key.exists? ? by_key : slug_scope.where(slug: content_key)
+    end
+
     def publication_decision_affected?
       publication_requested? && content.present? && (status == "completed" || status_before_last_save == "completed")
     end

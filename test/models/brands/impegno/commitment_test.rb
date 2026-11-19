@@ -214,6 +214,32 @@ module Brands
         assert_nil other_course.content, "lo slug del capitolo vale solo dentro il suo corso"
       end
 
+      test "new learning records link by Content key and follow its current slug" do
+        content = create_content
+        course = Content.create!(node: content.node, key: "corso-impegni", slug: "corso", format: "course", title: "Corso")
+        content.update!(parent: course)
+
+        enrollment = create_learning_record(content_key: "corso-impegni", metadata: { "record_type" => "course_enrollment", "course_slug" => "corso" })
+        completion = create_learning_record(content_key: "capitolo-da-pubblicare", metadata: { "record_type" => "chapter_completion", "course_slug" => "corso", "chapter_slug" => "capitolo" })
+        assert_equal course, enrollment.content
+        assert_equal content, completion.content
+
+        course.update!(slug: "corso-rinominato")
+        content.update!(slug: "capitolo-rinominato")
+        completion.reload
+        assert_equal "corso-rinominato", enrollment.reload.learning_slug
+        assert_equal "capitolo-rinominato", completion.learning_slug
+        assert_equal "corso-rinominato", completion.learning_course_slug
+      end
+
+      test "unlinked learning records keep the slugs they were saved with" do
+        completion = create_learning_record(content_key: "vecchio-capitolo", metadata: { "record_type" => "chapter_completion", "course_slug" => "vecchio-corso", "chapter_slug" => "vecchio-capitolo" })
+
+        assert_nil completion.content
+        assert_equal "vecchio-capitolo", completion.learning_slug
+        assert_equal "vecchio-corso", completion.learning_course_slug
+      end
+
       private
 
         def create_content

@@ -698,8 +698,10 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     post posturacorretta_course_chapter_completion_path(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
     assert_redirected_to posturacorretta_course_chapter_url(corso: "inizia-con-posturacorretta", capitolo: "ricordi-quando-hai-preso-la-patente")
 
-    completion = user.profile.data_commitments.find_by!(content_key: "ricordi-quando-hai-preso-la-patente", kind: "academy")
+    completion = user.profile.data_commitments.find_by!(content_key: "inizia-incontro-salute-metodiche", kind: "academy")
     assert_equal "chapter_completion", completion.metadata.fetch("record_type")
+    assert_equal Content.find_by!(key: "inizia-incontro-salute-metodiche"), completion.content
+    assert_equal Content.find_by!(key: "inizia-con-posturacorretta"), enrollment.content
     assert_equal enrollment, completion.parent
     assert_equal "completed", completion.status
     assert completion.actual_ended_at.present?
