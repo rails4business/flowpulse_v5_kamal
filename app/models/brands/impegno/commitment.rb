@@ -68,7 +68,7 @@ module Brands
   before_validation :assign_content_from_key
   validate :content_matches_content_key
 
-  after_commit :apply_publication_decision!, if: :publication_decision_concluded?
+  after_commit :replay_content_publication_decisions, if: :publication_decision_affected?
 
   scope :for_genera_impresa_project, ->(slug) {
     where("genera_impresa @> ?", { project_slug: slug }.to_json)
@@ -115,8 +115,9 @@ module Brands
   end
 
   # Il Content indicato da content_key, solo se è uno e uno solo.
-  # Le decisioni di pubblicazione usano la chiave del Content; iscrizioni e completamenti usano ancora
-  # lo slug del corso o del capitolo (il capitolo dentro metadata.course_slug).
+  # Le decisioni di pubblicazione usano la chiave del Content, o lo slug per i contenuti storici senza id;
+  # iscrizioni e completamenti usano ancora lo slug del corso o del capitolo (il capitolo dentro
+  # metadata.course_slug).
   def matching_content
     return content_publication.content if content_publication
     return if content_key.blank?
@@ -127,7 +128,10 @@ module Brands
     when "chapter_completion"
       Content.where(format: "chapter", slug: content_key, parent: Content.where(format: "course", slug: metadata.to_h["course_slug"]))
     else
-      Content.where(key: content_key) if kind == "content"
+      return unless kind == "content"
+
+      by_key = Content.where(key: content_key)
+      by_key.exists? ? by_key : Content.where(slug: content_key)
     end
     found = candidates&.limit(2)&.to_a
     found.first if found&.one?
@@ -137,7 +141,7 @@ module Brands
     published_at || actual_ended_at || updated_at
   end
 
-  # L'ultima decisione conclusa determina lo stato visibile del contenuto in questo ambiente.
+  # Applica questa decisione sopra lo stato attuale; l'ordine lo decide Content#replay_publication_decisions!.
   def apply_publication_decision!
     decided_at = publication_decided_at
     target = content_publication || content
@@ -210,9 +214,13 @@ module Brands
       end
     end
 
-    def publication_decision_concluded?
-      publication_requested? && status == "completed" && content.present? &&
-        (previously_new_record? || saved_change_to_status?)
+    # Una decisione conclusa che nasce, cambia o viene cancellata ricalcola lo stato del suo Content.
+    def publication_decision_affected?
+      publication_requested? && content.present? && (status == "completed" || status_before_last_save == "completed")
+    end
+
+    def replay_content_publication_decisions
+      Content.find(content_id).replay_publication_decisions!
     end
 
     def ends_after_start

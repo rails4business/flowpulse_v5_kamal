@@ -447,7 +447,7 @@ module Posturacorretta
     decorated = decorated.merge("publication_node_id" => course_node&.id, "publication_node_slug" => course_node_slug)
     course_commitment = chapter_publication_commitment(decorated)
     decorated = decorated.merge(
-      "show_available" => editorial_item_show_available?(decorated, course_commitment),
+      "show_available" => published_for_public?(decorated),
       "publication_commitment" => course_commitment,
       "publication_history" => (chapter_publication_history(decorated) if posturacorretta_chapter_editor?(decorated))
     )
@@ -459,7 +459,7 @@ module Posturacorretta
       publication_commitment = chapter_publication_commitment(chapter)
       chapter.merge(
         "show_available" => chapter_show_available?(chapter),
-        "published_for_public" => publication_commitment&.publication_status == "published" && publication_commitment.publication_visibility == "public" && publication_commitment.access_modes.include?("free"),
+        "published_for_public" => published_for_public?(chapter),
         "publication_commitment" => publication_commitment,
         "publication_history" => (chapter_publication_history(chapter) if posturacorretta_chapter_editor?(chapter))
       )
@@ -467,14 +467,9 @@ module Posturacorretta
     decorated.merge("release_locked" => false, "chapters" => chapters)
   end
 
-  def editorial_item_show_available?(item, commitment)
-    if commitment
-      commitment.publication_status == "published" &&
-        commitment.publication_visibility == "public" &&
-        commitment.access_modes.include?("free")
-    else
-      item.fetch("status", "draft") == "published" && item.fetch("visibility", "public") == "public"
-    end
+  # Lo stato è quello del Content, scritto dall'ultima decisione di pubblicazione conclusa.
+  def published_for_public?(item)
+    item["status"] == "published" && item["visibility"] == "public" && item["access"] == "free"
   end
 
   def scheduled_course_placeholder(content_id)
@@ -570,10 +565,7 @@ module Posturacorretta
   def chapter_show_available?(chapter)
     return true if posturacorretta_chapter_editor?(chapter)
 
-    commitment = chapter_publication_commitment(chapter)
-    commitment&.publication_status == "published" &&
-      commitment.publication_visibility == "public" &&
-      commitment.access_modes.include?("free")
+    published_for_public?(chapter)
   end
 
   def chapter_publication_commitment(chapter)

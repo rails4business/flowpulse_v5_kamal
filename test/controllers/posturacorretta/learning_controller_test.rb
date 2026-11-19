@@ -790,6 +790,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       pricing_type: "none",
       contribution_type: "unpaid",
       content_key: content_key,
+      publish_on_completion: true,
       publication_status: "published",
       publication_visibility: "public",
       access_modes: ["free"],

@@ -152,6 +152,18 @@ module Brands
         assert_nil content.published_at
       end
 
+      test "editing or deleting a concluded decision recalculates the content" do
+        content = create_content
+        create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 2.hours.ago)
+        latest = create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 1.hour.ago)
+
+        latest.update!(publication_status: "draft", publication_change_kind: "unpublish", published_at: nil, actual_ended_at: Time.current)
+        assert_equal "draft", content.reload.publication_status
+
+        latest.destroy!
+        assert_equal "published", content.reload.publication_status
+      end
+
       test "a decision not yet concluded leaves the content unchanged" do
         content = create_content
 

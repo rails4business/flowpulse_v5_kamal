@@ -5,7 +5,7 @@ module Posturacorretta
     setup { import_posturacorretta_contents }
 
     test "hydrates a course from chapter contents through parent_id" do
-      repository = ContentRepository.new
+      repository = ContentRepository.new(include_scheduled: true)
       course = repository.course_by_id("inizia-con-posturacorretta")
 
       assert_equal "course", course.fetch("format")

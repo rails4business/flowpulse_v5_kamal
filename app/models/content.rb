@@ -36,6 +36,22 @@ class Content < ApplicationRecord
     publication_status == "published" && publication_visibility == "public"
   end
 
+  def publication_decisions
+    data_commitments.where(kind: "content", publish_on_completion: true, status: "completed")
+  end
+
+  # Lo stato di pubblicazione in questo ambiente è il risultato delle decisioni concluse, riapplicate
+  # in ordine di data: vince l'ultima, e una decisione modificata o cancellata viene ricalcolata.
+  def replay_publication_decisions!
+    decisions = publication_decisions.sort_by { |decision| [decision.publication_decided_at, decision.id] }
+    transaction do
+      update!(publication_status: "draft", publication_visibility: "private", access_modes: [], published_at: nil, revised_at: nil)
+      publications.each { |publication| publication.update!(publication_status: "draft", publication_visibility: "private", published_at: nil) }
+      decisions.each(&:apply_publication_decision!)
+    end
+    decisions.size
+  end
+
   private
 
     def access_modes_are_valid

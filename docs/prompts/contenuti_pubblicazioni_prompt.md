@@ -512,8 +512,22 @@ funzionanti.
   (`ContentRepository::ENVIRONMENT_KEYS`).
 - Test: `import_posturacorretta_contents` in `test/test_helper.rb` importa i Content dove servono.
 
-**Passo 2b — da fare**: lo stato visibile diventa quello del Content; prima, elenco dei corsi che oggi si
-vedono solo grazie al `status` del YAML.
+**Stato fase 2 — passo 2b (stato dal Content) fatto**
+- `ContentRepository` restituisce `status`, `visibility`, `access` del Content (`access`: `free` se l'accesso
+  è libero o non ancora deciso, altrimenti `paid`); senza `include_scheduled` mostra solo i pubblicati.
+- `learning_controller`: corso e capitolo sono disponibili se il Content è pubblicato, pubblico e libero
+  (`published_for_public?`). Gli impegni restano per la cronologia nella barra editoriale.
+- Tolti `status`, `visibility`, `access` dai 9 `course.yml` (264 righe).
+- Corsi che si vedevano solo grazie al YAML e vanno ripubblicati con un impegno, in ogni ambiente:
+  `corpo-come-un-giardino`, `inizia-con-posturacorretta`, `introduzione-percorso-integrato-posturacorretta`,
+  `il-tuo-stato-di-salute`, `percorso-integrato`, `postura-e-fisiologia`. I capitoli no: già prima si
+  vedevano solo con una decisione.
+- Non toccato (home): `Posturacorretta::HomeCourseCatalog` legge ancora i `course.yml`; `status` e `access`
+  ora mancano solo dalla sua risposta JSON, che la home non usa.
+- Ancora da fare nella fase 2: iscrizioni e completamenti con la chiave del Content, `contents:export`,
+  regole di pubblicazione dal controller degli impegni al model.
+- `contenuti/contents.yml` resta per ora (deciso il 2026-11-18): il vincolo iniziale dice di non eliminare
+  YAML e lo leggono ancora un test, la pagina admin delle sorgenti didattiche e il materiale editoriale.
 
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.

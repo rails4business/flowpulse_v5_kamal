@@ -5,12 +5,11 @@ module Posturacorretta
   class ContentRepository
     NODE_SLUG = "posturacorretta".freeze
     FORMATS = %w[course chapter].freeze
-    CANONICAL_COURSES_ROOT = Rails.root.join("config/data/brands/posturacorretta/courses").freeze
     DATA_ROOT = "config/data/".freeze
-    # Fase 2a del piano contenuti: finché lo stato visibile non passa al Content,
-    # status, visibility e access si leggono ancora dai course.yml.
-    ENVIRONMENT_KEYS = %w[status visibility access].freeze
 
+    # status, visibility e access sono lo stato di pubblicazione del Content in questo ambiente,
+    # deciso dall'ultimo impegno di pubblicazione concluso (mai dal YAML).
+    # include_scheduled: true mostra anche le bozze, per titoli e struttura in preparazione.
     def initialize(include_scheduled: false)
       @include_scheduled = include_scheduled
     end
@@ -53,23 +52,20 @@ module Posturacorretta
         "position" => record.position,
         "title" => record.title,
         "description" => record.description,
-        "content_path" => record.source_path&.delete_prefix(DATA_ROOT)
-      ).merge(environment_values.fetch(record.key, {})).compact
+        "content_path" => record.source_path&.delete_prefix(DATA_ROOT),
+        "status" => record.publication_status,
+        "visibility" => record.publication_visibility,
+        "access" => access_for(record)
+      ).compact
     end
 
-    def environment_values
-      @environment_values ||= Dir.glob(CANONICAL_COURSES_ROOT.join("*", "course.yml")).sort.flat_map do |course_path|
-        YAML.safe_load_file(course_path, permitted_classes: [], aliases: false).to_h.fetch("contents", [])
-      end.to_h { |item| [item.fetch("id"), item.slice(*ENVIRONMENT_KEYS)] }
+    # Le viste conoscono solo libero o a pagamento; senza una decisione il contenuto resta libero.
+    def access_for(record)
+      record.access_modes.empty? || record.access_modes.include?("free") ? "free" : "paid"
     end
 
     def visible?(content)
-      status = content.fetch("status", "draft")
-      return true if include_scheduled
-      return true if status == "published"
-      return false unless status == "scheduled" && content["published_at"].present?
-
-      Time.zone.parse(content.fetch("published_at")) <= Time.current
+      include_scheduled || content.fetch("status") == "published"
     end
 
     def by_id

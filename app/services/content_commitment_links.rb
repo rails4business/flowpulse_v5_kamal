@@ -37,12 +37,6 @@ class ContentCommitmentLinks
   private
 
     def replay!(content_ids)
-      return 0 if content_ids.empty?
-
-      decisions = DataCommitment
-        .where(content_id: content_ids.to_a, kind: "content", publish_on_completion: true, status: "completed")
-        .sort_by { |commitment| [commitment.publication_decided_at, commitment.id] }
-      decisions.each(&:apply_publication_decision!)
-      decisions.size
+      Content.where(id: content_ids.to_a).sum(&:replay_publication_decisions!)
     end
 end
