@@ -55,7 +55,8 @@ solo per il criterio di ordinamento.
 **Chiarito**: per contenuti e pubblicazioni vale lo stesso flusso dei node (`config/nodes.yml` →
 `bin/rails nodes:import`):
 - in sviluppo il YAML è la fonte e si importa nel database;
-- le modifiche fatte nell'admin scrivono nel database e si riportano nel YAML con un export;
+- testi e struttura si modificano solo nei YAML e nei Markdown, non dall'admin: nessun export dal database
+  verso i file (deciso il 2026-11-19);
 - le pagine leggono dal database.
 
 Il YAML sta nel repository e viene importato **sia in sviluppo sia in produzione** a ogni deploy.
@@ -483,7 +484,7 @@ funzionanti.
 - Backfill di `content_id` sugli impegni esistenti (punto 7), con elenco di quelli non trovati.
 - `learning_controller` e `ContentRepository` leggono da Content; lo stato visibile è quello del Content.
 - `status`, `visibility`, `access` tolti dai `course.yml`; `contenuti/contents.yml` tolto.
-- Export `contents:export` verso i YAML.
+- ~~Export `contents:export` verso i YAML~~: tolto, i file restano l'unica fonte di testi e struttura.
 
 **Stato fase 2 — passo 1 (backfill) fatto**
 - `DataCommitment#matching_content`: le decisioni trovano il Content per chiave, le iscrizioni per slug del
@@ -524,7 +525,7 @@ funzionanti.
   vedevano solo con una decisione.
 - Non toccato (home): `Posturacorretta::HomeCourseCatalog` legge ancora i `course.yml`; `status` e `access`
   ora mancano solo dalla sua risposta JSON, che la home non usa.
-- Ancora da fare nella fase 2: `contents:export`.
+- Fase 2 chiusa: `contents:export` non si fa, i file restano l'unica fonte di testi e struttura.
 
 **Stato fase 2 — passo 2c (iscrizioni e completamenti con la chiave) fatto**
 
