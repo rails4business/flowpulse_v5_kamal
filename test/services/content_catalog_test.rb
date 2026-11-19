@@ -92,6 +92,22 @@ class ContentCatalogTest < ActiveSupport::TestCase
     assert_equal ["youtube"], article.publications.map(&:platform)
   end
 
+  test "an article can keep its text where it is with content_path" do
+    write "autore-test/contenuti/articoli/2026-09-01-vecchio.md", "Testo rimasto al suo posto.\n"
+    write "brands/autore-test/contents/vecchio/content.yml", <<~YAML
+      slug: vecchio
+      title: Articolo con il testo altrove
+      format: post
+      author_node_slug: autore-test
+      content_path: autore-test/contenuti/articoli/2026-09-01-vecchio.md
+    YAML
+
+    ContentCatalog.new(root: @root).import!
+
+    article = Content.find_by!(key: "vecchio")
+    assert_equal "Testo rimasto al suo posto.\n", article.body_md
+  end
+
   test "status, visibility and access in the YAML never decide publication" do
     ContentCatalog.new(root: @root).import!
 

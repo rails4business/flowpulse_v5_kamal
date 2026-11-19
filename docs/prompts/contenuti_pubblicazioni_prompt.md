@@ -569,6 +569,15 @@ funzionanti.
   sotto `generaimpresa`. Nessuna posizione sulle mappe.
 - Le pagine `rails4b/percorsi/...` e `rails4b/contenuti/...` leggono ancora `percorso.yml` e `catalog.yml`.
 
+**Stato fase 3 — passo 2 (articoli di markpostura e rails4b) fatto**
+
+- Un node per gli articoli di ogni brand: `articoli-markpostura` (sotto `markpostura`, 8 articoli) e
+  `articoli-rails4business` (sotto `rails4business`, 8 articoli + `dal-nodeevent-alla-scheda-markdown`).
+- Ogni articolo è `brands/<brand>/contents/<slug>/content.yml` (`format: post`); il testo resta nei vecchi
+  `articoli/<anno>/` tramite `content_path`, la data diventa `written_on`. I cataloghi vecchi restano.
+- `DomainContentCatalog` usa il `content.md` canonico solo se esiste, così le pagine attuali trovano ancora il
+  testo nei vecchi percorsi. Le pagine leggono ancora i cataloghi: il passaggio a Content è il prossimo passo.
+
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.
 - `DomainContentCatalog` legge da Content.

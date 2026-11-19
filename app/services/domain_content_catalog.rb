@@ -156,7 +156,8 @@ class DomainContentCatalog
         return {} unless path
 
         data = YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
-        data["brand_source"] ||= Pathname(path).dirname.join("content.md").relative_path_from(root).to_s
+        markdown = Pathname(path).dirname.join("content.md")
+        data["brand_source"] ||= markdown.relative_path_from(root).to_s if markdown.file?
         data
       rescue Psych::SyntaxError => error
         Rails.logger.error("Contenuto canonico non valido #{domain_key}/#{slug}: #{error.message}")

@@ -30,6 +30,12 @@ module ActiveSupport
           create_catalog_test_node(slug, parent: brand, view_type: "course_lesson") unless Node.exists?(slug:)
         end
       end
+      Dir[Rails.root.join("config/data/brands/*/contents/*/content.yml")].sort.each do |path|
+        folder_slug = Pathname(path).each_filename.to_a[-4]
+        folder = Node.find_by(slug: folder_slug) || create_catalog_test_node(folder_slug)
+        publisher_slug = YAML.safe_load_file(path)["publisher_node_slug"]
+        create_catalog_test_node(publisher_slug, parent: folder) if publisher_slug.present? && !Node.exists?(slug: publisher_slug)
+      end
       ContentCatalog.new.import!
       Content.where(key: published_courses, format: "course").update_all(
         publication_status: "published", publication_visibility: "public", access_modes: ["free"], published_at: Time.current

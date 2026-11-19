@@ -160,7 +160,8 @@ class ContentCatalog
       Dir.glob(root.join("brands/*/contents/*/content.yml")).sort.map do |path|
         folder_node = Pathname(path).relative_path_from(root.join("brands")).each_filename.first
         item = load_yaml(path)
-        markdown = Pathname(path).dirname.join("content.md")
+        # Il testo sta in content.md accanto al YAML, oppure dove indica content_path (testi non ancora spostati).
+        markdown = item["content_path"].present? ? root.join(item["content_path"]).cleanpath : Pathname(path).dirname.join("content.md")
         build_entry(
           item.reverse_merge("format" => "post"),
           source: relative(path),
