@@ -200,7 +200,7 @@ module Brands
         return redirect_to commitment_return_path(commitment), alert: "Non hai i permessi per pubblicare questo contenuto."
       end
 
-      apply_publication_decision_on_completion(commitment)
+      commitment.published_by_profile = current_profile
     end
     commitment.save!
     notice = commitment.publication_requested? ? publication_decision_notice(commitment.publication_status) : "Attività conclusa."
@@ -273,7 +273,7 @@ module Brands
       end
 
       change_kind = attributes[:publication_change_kind].presence_in(Commitment::PUBLICATION_CHANGE_KINDS) || "publish"
-      publication_status = attributes[:publication_status].presence_in(Commitment::PUBLICATION_STATUSES) || publication_status_for(change_kind)
+      publication_status = attributes[:publication_status].presence_in(Commitment::PUBLICATION_STATUSES)
       publication_visibility = attributes[:publication_visibility].presence_in(Commitment::PUBLICATION_VISIBILITIES) || "public"
       access_modes = Array(attributes[:access_modes]).compact_blank
       access_modes = ["free"] if access_modes.empty?
@@ -299,15 +299,13 @@ module Brands
         publication_change_kind: change_kind,
         publication_note_md: attributes[:publication_note_md],
         access_modes: access_modes,
-        published_at: (now if publication_status == "published"),
         published_by_profile: current_profile,
         metadata: { "content_path" => safe_return_path }
       )
-      assign_previous_publication_commitment(commitment)
       assign_calendar_identity(commitment)
 
       if commitment.save
-        redirect_to personal_commitment_return_path, notice: publication_decision_notice(publication_status)
+        redirect_to personal_commitment_return_path, notice: publication_decision_notice(commitment.publication_status)
       else
         redirect_to personal_commitment_return_path, alert: commitment.errors.full_messages.to_sentence
       end
@@ -340,22 +338,6 @@ module Brands
       return product if product && product.node == subject
 
       nil
-    end
-
-    def publication_status_for(change_kind)
-      return "archived" if change_kind == "archive"
-      return "draft" if change_kind == "unpublish"
-
-      "published"
-    end
-
-    def apply_publication_decision_on_completion(commitment)
-      now = commitment.actual_ended_at || Time.current
-      commitment.publication_status = publication_status_for(commitment.publication_change_kind)
-      commitment.published_at = commitment.publication_status == "published" ? now : nil
-      commitment.published_by_profile = current_profile
-      commitment.blocks_calendar = false
-      assign_previous_publication_commitment(commitment) unless commitment.previous_publication_commitment_id.present?
     end
 
     def publication_decision_notice(publication_status)
@@ -401,7 +383,6 @@ module Brands
       commitment.domain = domain
       assign_subject_node(commitment, subject_node_id, domain:)
       commitment.skill_product = skill_product_for(skill_product_id, commitment.subject) if skill_product_id.present?
-      assign_previous_publication_commitment(commitment)
       assign_calendar_identity(commitment)
       start_now = ActiveModel::Type::Boolean.new.cast(params[:start_now])
       if start_now
@@ -581,16 +562,6 @@ module Brands
 
       node_id = requested_id.presence || domain.node_id
       commitment.subject = node_id.present? ? available_commitment_nodes.find(node_id) : nil
-    end
-
-    def assign_previous_publication_commitment(commitment)
-      return unless commitment.kind == "content" && commitment.content_key.present? && commitment.domain
-
-      previous_scope = Commitment
-        .where(domain: commitment.domain, kind: "content", content_key: commitment.content_key)
-        .where(subject: commitment.subject)
-      previous_scope = previous_scope.where.not(id: commitment.id) if commitment.persisted?
-      commitment.previous_publication_commitment = previous_scope.order(created_at: :desc, id: :desc).first
     end
 
     def project_path(project, step, task)

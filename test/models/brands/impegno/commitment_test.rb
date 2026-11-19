@@ -164,6 +164,30 @@ module Brands
         assert_equal "published", content.reload.publication_status
       end
 
+      test "a planned decision takes its status and date from the moment it is concluded" do
+        content = create_content
+        first = create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 1.day.ago)
+        planned = create_publication_decision(content_key: content.key, change_kind: "unpublish", publication_status: "published", status: "planned")
+        ended_at = Time.zone.parse("2026-11-19 09:30")
+
+        planned.update!(status: "completed", actual_ended_at: ended_at)
+
+        assert_equal "draft", planned.publication_status
+        assert_nil planned.published_at
+        assert_equal first, planned.previous_publication_commitment
+        assert_equal "draft", content.reload.publication_status
+      end
+
+      test "a decision recorded as concluded without a status takes it from the change kind" do
+        content = create_content
+
+        commitment = create_publication_decision(content_key: content.key, change_kind: "archive", publication_status: "", visibility: "private")
+
+        assert_equal "archived", commitment.publication_status
+        assert_nil commitment.published_at
+        assert_equal "archived", content.reload.publication_status
+      end
+
       test "a decision not yet concluded leaves the content unchanged" do
         content = create_content
 

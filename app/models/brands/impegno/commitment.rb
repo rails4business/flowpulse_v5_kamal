@@ -66,6 +66,8 @@ module Brands
   before_validation :set_default_calendar_identity
   before_validation :calculate_hourly_total
   before_validation :assign_content_from_key
+  before_validation :prepare_publication_decision, if: :publication_requested?
+  before_validation :assign_previous_publication_commitment
   validate :content_matches_content_key
 
   after_commit :replay_content_publication_decisions, if: :publication_decision_affected?
@@ -107,6 +109,14 @@ module Brands
       actual_started_at...actual_ended_at
     elsif starts_at.present? && ends_at.present?
       starts_at...ends_at
+    end
+  end
+
+  def self.publication_status_for(change_kind)
+    case change_kind
+    when "archive" then "archived"
+    when "unpublish" then "draft"
+    else "published"
     end
   end
 
@@ -230,6 +240,37 @@ module Brands
       if content_publication && content && content_publication.content_id != content.id
         errors.add(:content_publication, "appartiene a un altro contenuto")
       end
+    end
+
+    def concluding?
+      status == "completed" && (new_record? || will_save_change_to_status?)
+    end
+
+    # Una decisione registrata già conclusa tiene lo stato indicato (o quello del tipo di cambiamento); una
+    # decisione pianificata che si conclude prende lo stato dal tipo di cambiamento e la data di conclusione.
+    def prepare_publication_decision
+      return unless concluding?
+
+      if new_record?
+        self.publication_status = self.class.publication_status_for(publication_change_kind) if publication_status.blank?
+        decided_at = published_at || Time.current
+      else
+        self.publication_status = self.class.publication_status_for(publication_change_kind)
+        decided_at = actual_ended_at || Time.current
+      end
+      self.published_at = publication_status == "published" ? decided_at : nil
+      self.blocks_calendar = false
+    end
+
+    # La decisione precedente sullo stesso contenuto e soggetto, fissata quando l'impegno nasce o si conclude.
+    def assign_previous_publication_commitment
+      return unless kind == "content" && content_key.present? && domain
+      return if previous_publication_commitment_id.present?
+      return unless new_record? || concluding?
+
+      previous_scope = self.class.where(domain:, kind: "content", content_key:, subject:)
+      previous_scope = previous_scope.where.not(id:) if persisted?
+      self.previous_publication_commitment = previous_scope.order(created_at: :desc, id: :desc).first
     end
 
     # Una decisione conclusa che nasce, cambia o viene cancellata ricalcola lo stato del suo Content.

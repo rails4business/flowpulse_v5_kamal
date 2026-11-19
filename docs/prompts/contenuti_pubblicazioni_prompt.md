@@ -524,7 +524,7 @@ funzionanti.
   vedevano solo con una decisione.
 - Non toccato (home): `Posturacorretta::HomeCourseCatalog` legge ancora i `course.yml`; `status` e `access`
   ora mancano solo dalla sua risposta JSON, che la home non usa.
-- Ancora da fare nella fase 2: `contents:export`, regole di pubblicazione dal controller degli impegni al model.
+- Ancora da fare nella fase 2: `contents:export`.
 
 **Stato fase 2 — passo 2c (iscrizioni e completamenti con la chiave) fatto**
 
@@ -536,6 +536,16 @@ funzionanti.
 - `matching_content` per iscrizioni e completamenti cerca prima la chiave, poi lo slug (record storici).
 - Unico ritocco fuori dal corso: `posturacorretta_completed_chapters` in `PublicNodePresentation` usa gli
   stessi metodi; la home riceve lo stesso formato `{ course_slug => [chapter_slug] }` di prima.
+
+**Stato fase 2 — passo 2d (regole di pubblicazione nel model) fatto**
+
+- `publication_status_for`, la data di pubblicazione, `blocks_calendar` e la decisione precedente
+  (`previous_publication_commitment`) sono ora in `Brands::Impegno::Commitment` (callback `before_validation`);
+  il controller degli impegni imposta solo chi decide (`published_by_profile`) e controlla i permessi.
+- Una decisione registrata già conclusa tiene lo stato indicato, o quello del tipo di cambiamento se manca, e
+  la data indicata o l'ora attuale. Una decisione pianificata che si conclude prende lo stato dal tipo di
+  cambiamento e la data di conclusione, da qualunque punto venga conclusa (prima valeva solo per l'azione
+  "Concludi" del controller).
 - `contenuti/contents.yml` resta per ora (deciso il 2026-11-18): il vincolo iniziale dice di non eliminare
   YAML e lo leggono ancora un test, la pagina admin delle sorgenti didattiche e il materiale editoriale.
 
