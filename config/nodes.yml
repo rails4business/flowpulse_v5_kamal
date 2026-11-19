@@ -38,14 +38,10 @@ default: &default
       map_color: "#F59E0B"
       description: Mondo dedicato alla scoperta del potenziale, alla gestione delle risorse e alla costruzione di processi riutilizzabili.
       node_type: project
-      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
+      parent_slug: markpostura
       professional_owner_slug: markpostura
       status: published
       visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: 986.0
-          "y": 95.0
 
     posturacorretta:
       title: PosturaCorretta
@@ -64,6 +60,12 @@ default: &default
           - key: home
             label: Home
             path: /posturacorretta
+          - key: insegnanti
+            label: Insegnanti
+            path: /posturacorretta/insegnanti
+          - key: centri
+            label: Centri
+            path: /posturacorretta/centri
           - key: servizi
             label: Servizi
             slug: servizi-posturacorretta
@@ -142,6 +144,84 @@ default: &default
         posturacorretta.org:
           x: 238.0
           "y": -95.0
+
+    corso-corpo-come-un-giardino:
+      title: Il corpo, un mondo da scoprire
+      node_type: project
+      view_type: course
+      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -209.0
+
+    corpo-come-un-giardino:
+      title: Lezione · Dalla PosturaCorretta al Giardino del Corpo
+      node_type: project
+      view_type: course_lesson
+      parent_slug: corso-corpo-come-un-giardino
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -95.0
+
+    accesso-giardino-del-corpo-da-corpo-come-un-giardino:
+      title: Accesso al Giardino del Corpo
+      node_type: project
+      view_type: access_bridge
+      parent_slug: corpo-come-un-giardino
+      link_node_slug: ilgiardinodelcorpo
+      position: 91
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    corso-le-tue-risorse:
+      title: Le tue risorse
+      node_type: project
+      view_type: course
+      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": -19.0
+
+    le-tue-risorse:
+      title: Lezione · Le tue risorse
+      node_type: project
+      view_type: course_lesson
+      parent_slug: corso-le-tue-risorse
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+      map_placements:
+        posturacorretta.org:
+          x: 986.0
+          "y": 95.0
+
+    accesso-rails4business-da-le-tue-risorse:
+      title: Accesso a Rails4Business
+      node_type: project
+      view_type: access_bridge
+      parent_slug: le-tue-risorse
+      link_node_slug: rails4business
+      position: 91
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
 
     percorso-integrato:
       title: Percorso Integrato
@@ -230,6 +310,46 @@ default: &default
       node_type: project
       parent_slug: percorso-integrato
       position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    corso-il-tuo-stato-di-salute:
+      title: Il tuo stato di salute
+      node_type: project
+      view_type: course
+      parent_slug: stato-di-salute
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    il-tuo-stato-di-salute:
+      title: Lezione · Il tuo stato di salute
+      node_type: project
+      view_type: course_lesson
+      parent_slug: corso-il-tuo-stato-di-salute
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    corso-percorso-integrato:
+      title: Percorso Integrato
+      node_type: project
+      view_type: course
+      parent_slug: percorso-integrato
+      position: 5
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    lezione-percorso-integrato:
+      title: Lezione · Percorso Integrato
+      node_type: project
+      view_type: course_lesson
+      parent_slug: corso-percorso-integrato
+      position: 1
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -1587,14 +1707,10 @@ default: &default
       lane_container: true
       map_color: "#7C3AED"
       node_type: project
-      parent_slug: dalla-posturacorretta-al-giardino-del-corpo
+      parent_slug: markpostura
       professional_owner_slug: markpostura
       status: published
       visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: 986.0
-          "y": -95.0
 
     insideadventure:
       title: Inside Adventure

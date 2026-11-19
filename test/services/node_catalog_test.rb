@@ -114,7 +114,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_nil Node.find_by(slug: "accesso-stato-di-salute-da-posturacorretta")
     assert_nil Node.find_by(slug: "accesso-stato-di-salute-da-giardino-del-corpo")
     assert_nil Node.find_by(slug: "accesso-percorso-integrato-da-linea-postura-giardino")
-    assert_equal %w[questionario-orientamento-stato-di-salute comuni centri professioni scuole-formazione-professionisti], stato_di_salute.children.order(:position).pluck(:slug)
+    assert_equal %w[questionario-orientamento-stato-di-salute corso-il-tuo-stato-di-salute comuni centri professioni scuole-formazione-professionisti], stato_di_salute.children.order(:position).pluck(:slug)
     assert_equal "Attività generali · Servizi settimanali", Node.find_by!(slug: "categorie-generali").title
     assert Node.find_by!(slug: "categorie-generali").lane_container?
     assert_equal "Attività specifiche · Percorsi mirati", Node.find_by!(slug: "categorie-specifiche").title
@@ -162,7 +162,8 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal individuali, Node.find_by!(slug: "trattamento-singolo").parent
     assert_equal individuali, Node.find_by!(slug: "pacchetto-percorso-singolo").parent
     assert_equal servizi_personalizzati, Node.find_by!(slug: "percorso-aziende-associazioni-sportive").parent
-    assert_equal linea_postura_giardino, giardino_del_corpo.parent
+    assert_equal mark, giardino_del_corpo.parent
+    assert_equal giardino_del_corpo, Node.find_by!(slug: "accesso-giardino-del-corpo-da-corpo-come-un-giardino").link_node
     assert_equal genera_impresa, inside_adventure.parent
     assert_equal mark, postura.professional_owner_node
     assert_equal "#2563EB", postura.map_color
@@ -245,7 +246,8 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal "#7C3AED", linea_postura_giardino.map_color
     assert_equal "#7C3AED", giardino_del_corpo.map_color
     assert_equal "Il Giardino del Corpo", giardino_del_corpo.title
-    assert_equal linea_postura_giardino, rails4business.parent
+    assert_equal mark, rails4business.parent
+    assert_equal rails4business, Node.find_by!(slug: "accesso-rails4business-da-le-tue-risorse").link_node
     assert_equal "#F59E0B", rails4business.map_color
     assert_equal mark, Node.find_by!(slug: "flowpulse").parent
     assert_match(/Piattaforma trasversale/, Node.find_by!(slug: "flowpulse").description)

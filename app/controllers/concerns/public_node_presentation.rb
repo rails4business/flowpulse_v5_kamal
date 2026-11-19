@@ -79,6 +79,9 @@ module PublicNodePresentation
       home_index = items.index { |item| item["key"].in?(path_keys) } || 0
       items = items.reject { |item| item["key"].in?(["partecipa", *path_keys]) }
       items.insert(home_index, { "key" => "home", "label" => "Home", "path" => "/posturacorretta" })
+      items = items.reject { |item| item["key"].in?(%w[insegnanti centri]) }
+      items.insert(home_index + 1, { "key" => "insegnanti", "label" => "Insegnanti", "path" => "/posturacorretta/insegnanti" })
+      items.insert(home_index + 2, { "key" => "centri", "label" => "Centri", "path" => "/posturacorretta/centri" })
 
       items.map do |item|
         normalized = item["key"].in?(%w[partecipa servizi about]) ? item.except("children", "group") : item.dup

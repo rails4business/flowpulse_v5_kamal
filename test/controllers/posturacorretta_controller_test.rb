@@ -101,7 +101,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     desktop_links = css_select("nav[aria-label='Navigazione principale PosturaCorretta'] > a").map { |link| link.text.squish }
-    assert_equal ["Home", "Servizi", "About"], desktop_links
+    assert_equal ["Home", "Insegnanti", "Centri", "Servizi", "About"], desktop_links
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > a[href='#{posturacorretta_path}']", text: "Home"
     assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] > details > summary", text: /Esplora/, count: 0
 
@@ -197,7 +197,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows only PosturaCorretta places in its directory" do
-    get posturacorretta_lesson_centres_path
+    get posturacorretta_centres_path
     assert_response :success
     assert_select "h1", text: "Centri PosturaCorretta"
     assert_select "nav[aria-label='Lezioni PosturaCorretta']"
@@ -210,6 +210,10 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "Studio Movimento", count: 0
     assert_select "a[href='#{posturacorretta_centre_path("centro-posturacorretta")}']"
     assert_select "h2", text: "Giardino del Corpo", count: 0
+
+    get posturacorretta_lesson_centres_path
+    assert_redirected_to posturacorretta_centres_url
+    assert_response :moved_permanently
 
     get posturacorretta_centre_path("centro-posturacorretta")
     assert_response :success
@@ -325,9 +329,10 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_metodica_url("gds")
 
     assert_response :success
-    assert_select ".pc-site-header > div.grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\]", count: 1
-    assert_select ".pc-site-header a[aria-label='PosturaCorretta home'].justify-self-start", count: 1
-    assert_select ".pc-site-header .justify-self-end", count: 1
+    assert_select ".pc-site-header > div", count: 1
+    assert_select ".pc-site-header a[aria-label='PosturaCorretta home']", count: 1
+    assert_select ".pc-site-header summary[aria-label='Apri menu principale']", count: 1
+    assert_select ".pc-site-header .pc-site-header__account", count: 1
     assert_includes response.body, "Godelieve Denys-Struyf"
     assert_includes response.body, "Professionisti collegati"
     assert_select "body.posturacorretta-ui"

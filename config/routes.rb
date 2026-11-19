@@ -248,7 +248,8 @@ Rails.application.routes.draw do
   get "posturacorretta/seme/percorsi-integrati" => redirect("/posturacorretta", status: 301), as: :posturacorretta_seme_integrated_paths
   get "posturacorretta/seme/dashboard/studente" => redirect("/posturacorretta/lezioni", status: 301), as: :posturacorretta_seme_student_dashboard
   get "posturacorretta/lezioni" => "posturacorretta/learning#dashboard_student", as: :posturacorretta_student_dashboard
-  get "posturacorretta/lezioni/centri" => "brands/posturacorretta#lesson_centres", as: :posturacorretta_lesson_centres
+  get "posturacorretta/lezioni/centri" => redirect("/posturacorretta/centri", status: 301), as: :posturacorretta_lesson_centres
+  get "posturacorretta/centri" => "brands/posturacorretta#lesson_centres", as: :posturacorretta_centres
   get "posturacorretta/centri/:slug" => "brands/posturacorretta#centre", as: :posturacorretta_centre
   get "posturacorretta/lezioni/appuntamenti" => "posturacorretta/learning#dashboard_appointments", as: :posturacorretta_student_appointments
   get "posturacorretta/dashboard" => redirect("/posturacorretta/lezioni", status: 301)

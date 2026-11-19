@@ -336,8 +336,10 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Il tuo percorso", count: 0
     assert_select "p", text: "Gruppo"
     assert_select "[role='progressbar']", count: 0
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[aria-current='page']", text: "Lezioni"
-    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{percorso_posturacorretta_path}']", text: "Percorso"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a", text: "Lezioni", count: 0
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_insegnanti_path}']", text: "Insegnanti"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_centres_path}']", text: "Centri"
+    assert_select "nav[aria-label='Navigazione principale PosturaCorretta'] a[href='#{posturacorretta_path}']", text: "Home"
     assert_select "h1", text: "Programma lezioni PosturaCorretta", count: 1
     assert_select "nav[aria-label='Corsi del programma lezioni']"
     assert_select "div[aria-label='Corso introduttivo']", count: 0
@@ -427,7 +429,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_student_dashboard_path
 
     assert_response :success
-    assert_select "nav[aria-label='Lezioni PosturaCorretta'] a[href='#{posturacorretta_lesson_centres_path}']", text: "Centri"
+    assert_select "nav[aria-label='Lezioni PosturaCorretta'] a[href='#{posturacorretta_centres_path}']", text: "Centri"
     assert_select "h2", text: "Programmi attivi", count: 0
   end
 

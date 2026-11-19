@@ -116,7 +116,7 @@ class PosturacorrettaController < ApplicationController
   def centre
     curriculum = AcademyCurriculum.load
     @centre = curriculum.fetch("locations", {}).fetch(params[:slug], nil)
-    return redirect_to(posturacorretta_lesson_centres_path, alert: "Centro non trovato") unless @centre && Array(@centre["projects"]).include?("posturacorretta")
+    return redirect_to(posturacorretta_centres_path, alert: "Centro non trovato") unless @centre && Array(@centre["projects"]).include?("posturacorretta")
 
     @centre_modules = curriculum.fetch("modules", []).select { |academy_module| @centre.fetch("active_modules", []).include?(academy_module.fetch("slug")) }
     @centre_teachers = curriculum.fetch("teachers", {}).values.select do |teacher|

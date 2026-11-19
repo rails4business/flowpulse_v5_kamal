@@ -3,20 +3,40 @@
   nav_group_class = ->(active) { "flex cursor-pointer list-none items-center gap-1 rounded-lg px-3 py-2 text-sm font-bold transition hover:bg-slate-100 #{active ? 'bg-blue-50 text-blue-700' : 'text-slate-600'}" }
   servizi_active = request.path.start_with?(posturacorretta_servizi_path)
   about_active = request.path.start_with?(posturacorretta_about_path) || request.path == posturacorretta_faq_path
+  teachers_active = request.path.start_with?(posturacorretta_insegnanti_path)
+  centres_active = request.path.start_with?(posturacorretta_centres_path)
   explore_active = request.path.start_with?(posturacorretta_contenuti_path, posturacorretta_eventi_path, posturacorretta_eventi_sportivi_path, posturacorretta_libri_path, posturacorretta_metodiche_path)
   home_active = request.path == posturacorretta_path
 %>
 
-<header class="pc-site-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
-  <div class="mx-auto grid min-h-16 max-w-[76rem] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-2 sm:px-6 lg:px-8">
-    <%= link_to posturacorretta_path, class: "flex shrink-0 items-center justify-self-start", aria: { label: "PosturaCorretta home" } do %>
-      <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="hidden h-7 w-auto sm:block">
-      <img src="https://ik.imagekit.io/posturacorretta/Sassi-icona-cerchio-bianco.png?updatedAt=1785386494945" alt="" class="size-9 rounded-full bg-blue-600 object-cover sm:hidden">
+<header class="pc-site-header sticky top-0 z-30 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+  <div class="pc-site-header__inner mx-auto min-h-16 w-full max-w-8xl items-center gap-3 px-4 py-2 sm:px-6 lg:px-8">
+    <details class="pc-site-header__mobile-menu group relative shrink-0">
+      <summary class="grid size-10 cursor-pointer list-none place-items-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50" aria-label="Apri menu principale">
+        <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </summary>
+      <nav class="absolute left-0 top-full z-[90] mt-2 grid w-64 gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-xl" aria-label="Navigazione mobile PosturaCorretta">
+        <%= link_to "Home", posturacorretta_path, aria: { current: ("page" if home_active) }, class: nav_link_class.call(home_active) %>
+        <%= link_to "Insegnanti", posturacorretta_insegnanti_path, aria: { current: ("page" if teachers_active) }, class: nav_link_class.call(teachers_active) %>
+        <%= link_to "Centri", posturacorretta_centres_path, aria: { current: ("page" if centres_active) }, class: nav_link_class.call(centres_active) %>
+        <%= link_to "Servizi", posturacorretta_servizi_path, aria: { current: ("page" if servizi_active) }, class: nav_link_class.call(servizi_active) %>
+        <%= link_to "About", posturacorretta_about_path, aria: { current: ("page" if about_active) }, class: nav_link_class.call(about_active) %>
+        <% if Current.user&.superadmin_user? %>
+          <div class="mt-1 border-t border-slate-200 pt-2"><%= render "posturacorretta/explore_links" %></div>
+        <% end %>
+      </nav>
+    </details>
+
+    <%= link_to posturacorretta_path, class: "pc-site-header__brand flex min-w-0 items-center", aria: { label: "PosturaCorretta home" } do %>
+      <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="block h-8 w-auto max-w-[138px] object-contain object-left sm:h-10 sm:max-w-[190px]">
     <% end %>
 
-    <nav class="flex min-w-0 items-center justify-start gap-1 overflow-x-auto" aria-label="Navigazione principale PosturaCorretta">
+    <nav class="pc-site-header__desktop-nav min-w-0 items-center justify-start gap-1 overflow-x-auto" aria-label="Navigazione principale PosturaCorretta">
       <%= link_to "Home", posturacorretta_path, aria: { current: ("page" if home_active) }, class: nav_link_class.call(home_active) %>
-
+      <%= link_to "Insegnanti", posturacorretta_insegnanti_path, aria: { current: ("page" if teachers_active) }, class: nav_link_class.call(teachers_active) %>
+      <%= link_to "Centri", posturacorretta_centres_path, aria: { current: ("page" if centres_active) }, class: nav_link_class.call(centres_active) %>
       <%= link_to "Servizi", posturacorretta_servizi_path, aria: { current: ("page" if servizi_active) }, class: nav_link_class.call(servizi_active) %>
       <%= link_to "About", posturacorretta_about_path, aria: { current: ("page" if about_active) }, class: nav_link_class.call(about_active) %>
 
@@ -30,6 +50,6 @@
       <% end %>
     </nav>
 
-    <div class="shrink-0 justify-self-end"><%= render "posturacorretta/account_nav" %></div>
+    <div class="pc-site-header__account shrink-0"><%= render "posturacorretta/account_nav" %></div>
   </div>
 </header>
