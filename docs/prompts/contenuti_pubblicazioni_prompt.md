@@ -550,6 +550,16 @@ funzionanti.
 - `contenuti/contents.yml` resta per ora (deciso il 2026-11-18): il vincolo iniziale dice di non eliminare
   YAML e lo leggono ancora un test, la pagina admin delle sorgenti didattiche e il materiale editoriale.
 
+**Stato fase 2 — passo 2e (capitoli nei node delle lezioni) fatto**
+
+- Ogni capitolo ha `lesson_node_slug` nel `course.yml` e l'import lo mette in quel node (`view_type:
+  course_lesson`); i corsi restano nel node `posturacorretta`. `ContentRepository` trova i capitoli dal corso.
+- Node nuovi in `config/nodes.yml`: corso e lezione per Il tuo stato di salute (sotto `stato-di-salute`), per
+  Percorso Integrato (sotto `percorso-integrato`) e, in Educazione 3, "Il corpo, un mondo da scoprire" e "Le tue
+  risorse", ciascuno con il ponte verso `ilgiardinodelcorpo` e `rails4business`. Questi due brand sono ora figli
+  di `markpostura` (domini invariati) e lasciano le righe 5 e 6 della mappa alle due lezioni.
+- In produzione le due posizioni vecchie sulla mappa vanno tolte a mano: l'import non cancella posizioni.
+
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.
 - `DomainContentCatalog` legge da Content.

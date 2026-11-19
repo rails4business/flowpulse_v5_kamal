@@ -18,14 +18,21 @@ module ActiveSupport
       percorso-integrato postura-e-fisiologia corpo-come-un-giardino
     ].freeze
 
-    # Corsi e capitoli PosturaCorretta come dopo il deploy (deploy:sync_catalogs): Content importati
-    # dai course.yml nel node posturacorretta, che viene creato se il test non l'ha già fatto.
+    # Corsi e capitoli PosturaCorretta come dopo il deploy (deploy:sync_catalogs): i corsi nel node
+    # posturacorretta, i capitoli nei node delle loro lezioni; i node mancanti vengono creati.
     # I corsi indicati sono pubblicati come da una decisione conclusa; i capitoli restano in bozza.
     def import_posturacorretta_contents(published_courses: POSTURACORRETTA_PUBLISHED_COURSES)
       unless Node.exists?(slug: "posturacorretta")
         user = User.create!(email_address: "posturacorretta-contents@example.com", password: "password123", password_confirmation: "password123")
         owner = RoleAssignment.create!(profile: user.create_profile!(display_name: "PosturaCorretta"), role: :ideatore)
         Node.create!(title: "PosturaCorretta", slug: "posturacorretta", role_assignment: owner, node_type: :project)
+      end
+      brand = Node.find_by!(slug: "posturacorretta")
+      lesson_slugs = Dir[Rails.root.join("config/data/brands/posturacorretta/courses/*/course.yml")].flat_map do |path|
+        YAML.safe_load_file(path).fetch("contents").filter_map { |item| item["lesson_node_slug"] }
+      end
+      (lesson_slugs.uniq - Node.where(slug: lesson_slugs).pluck(:slug)).each do |slug|
+        Node.create!(title: slug.humanize, slug:, parent: brand, view_type: "course_lesson", role_assignment: brand.role_assignment, node_type: :project)
       end
       ContentCatalog.new.import!
       Content.where(key: published_courses, format: "course").update_all(

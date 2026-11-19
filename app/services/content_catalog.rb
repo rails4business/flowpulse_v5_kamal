@@ -15,7 +15,7 @@ class ContentCatalog
   ENVIRONMENT_KEYS = %w[status visibility access].freeze
   CONTENT_KEYS = %w[
     id parent_id slug format position title description excerpt content_path
-    publication_at written_on publications
+    publication_at written_on publications lesson_node_slug
   ].freeze
   PUBLICATION_KEYS = %w[key platform format url external_id title body position scheduled_at].freeze
 
@@ -183,7 +183,7 @@ class ContentCatalog
         title: item["title"],
         description: item["description"].presence || item["excerpt"],
         written_on: parse_date(item["written_on"] || item["publication_at"]),
-        node_slug: item["publisher_node_slug"].presence || (item["author_node_slug"].presence unless item["parent_id"].present?),
+        node_slug: item["lesson_node_slug"].presence || item["publisher_node_slug"].presence || (item["author_node_slug"].presence unless item["parent_id"].present?),
         folder_node: folder_node,
         author_node_slug: item["author_node_slug"].presence,
         body_path: body_path,
@@ -193,7 +193,8 @@ class ContentCatalog
       }
     end
 
-    # Un capitolo senza node proprio sta nel node del suo corso; in mancanza, nel node della cartella.
+    # Un capitolo sta nel node della sua lezione (lesson_node_slug); senza lezione, nel node del suo corso;
+    # in mancanza, nel node della cartella.
     def inherit_nodes!(items)
       by_key = items.index_by { |entry| entry.fetch(:key) }
       items.each do |entry|

@@ -39,8 +39,11 @@ module Posturacorretta
       @contents ||= records.map { |record| to_item(record) }.select { |content| visible?(content) }
     end
 
+    # I corsi stanno nel node posturacorretta; i capitoli nei node delle lezioni, e si trovano dal corso.
     def records
-      Content.joins(:node).where(nodes: { slug: NODE_SLUG }, format: FORMATS).includes(:parent).order(:position, :key)
+      course_ids = Content.joins(:node).where(nodes: { slug: NODE_SLUG }, format: "course").select(:id)
+      Content.where(id: course_ids).or(Content.where(parent_id: course_ids, format: "chapter"))
+        .includes(:parent).order(:position, :key)
     end
 
     def to_item(record)

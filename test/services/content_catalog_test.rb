@@ -8,6 +8,7 @@ class ContentCatalogTest < ActiveSupport::TestCase
     role_assignment = RoleAssignment.create!(profile: @profile, role: :creator_of_worlds)
     @project = Node.create!(title: "Progetto", slug: "progetto-test", role_assignment: role_assignment)
     @author = Node.create!(title: "Autore", slug: "autore-test", node_type: "professional", role_assignment: role_assignment)
+    @lesson = Node.create!(title: "Lezione", slug: "lezione-test", parent: @project, view_type: "course_lesson", role_assignment: role_assignment)
     @profile.update!(primary_node: @author)
 
     write "brands/progetto-test/courses/corso/course.yml", <<~YAML
@@ -32,6 +33,13 @@ class ContentCatalogTest < ActiveSupport::TestCase
           status: published
           title: Capitolo
           content_path: brands/progetto-test/courses/corso/chapters/capitolo.md
+        - id: corso-test-capitolo-lezione
+          parent_id: corso-test
+          lesson_node_slug: lezione-test
+          format: chapter
+          slug: capitolo-lezione
+          position: 2
+          title: Capitolo della lezione
     YAML
     write "brands/progetto-test/courses/corso/chapters/capitolo.md", "---\nauthor: Autore Test\nauthor_node_slug: autore-test\n---\n# Capitolo\n\nTesto.\n"
     write "brands/autore-test/contents/articolo/content.yml", <<~YAML
@@ -59,14 +67,18 @@ class ContentCatalogTest < ActiveSupport::TestCase
   test "imports courses, chapters and articles with their node, body and author" do
     result = ContentCatalog.new(root: @root).import!
 
-    assert_equal 3, result.contents
-    assert_equal 3, result.created
+    assert_equal 4, result.contents
+    assert_equal 4, result.created
     course = Content.find_by!(key: "corso-test")
     chapter = Content.find_by!(key: "corso-test-capitolo")
     article = Content.find_by!(key: "articolo-test")
 
     assert_equal @project, course.node
-    assert_equal @project, chapter.node, "il capitolo eredita il node del corso"
+    assert_equal @project, chapter.node, "senza lezione il capitolo eredita il node del corso"
+    lesson_chapter = Content.find_by!(key: "corso-test-capitolo-lezione")
+    assert_equal @lesson, lesson_chapter.node, "il capitolo sta nel node della sua lezione"
+    assert_equal course, lesson_chapter.parent
+    assert_not lesson_chapter.data.key?("lesson_node_slug")
     assert_equal course, chapter.parent
     assert_equal "---\nauthor: Autore Test\nauthor_node_slug: autore-test\n---\n# Capitolo\n\nTesto.\n", chapter.body_md
     assert_equal [@profile], chapter.contributions.map(&:profile), "autore letto dall'intestazione del Markdown"
@@ -120,7 +132,7 @@ class ContentCatalogTest < ActiveSupport::TestCase
   test "dry run validates without saving" do
     result = ContentCatalog.new(root: @root).import!(dry_run: true)
 
-    assert_equal 3, result.contents
+    assert_equal 4, result.contents
     assert_equal 0, Content.count
   end
 
