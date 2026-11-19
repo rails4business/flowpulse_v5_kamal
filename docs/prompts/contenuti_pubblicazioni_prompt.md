@@ -560,6 +560,15 @@ funzionanti.
   di `markpostura` (domini invariati) e lasciano le righe 5 e 6 della mappa alle due lezioni.
 - In produzione le due posizioni vecchie sulla mappa vanno tolte a mano: l'import non cancella posizioni.
 
+**Stato fase 3 — passo 1 (percorsi di Rails4Business) fatto**
+
+- I due percorsi di `rails4b/percorso.yml` sono corsi: `brands/rails4business/courses/voglio-collaborare` e
+  `brands/generaimpresa/courses/ho-un-progetto`, con le 5 guide ciascuno come capitoli. I testi restano in
+  `config/data/rails4b/contenuti` (`content_path`); `publication_at` diventa `written_on`.
+- Un node per percorso, dove stanno le guide: `voglio-collaborare` sotto `rails4business` e `ho-un-progetto`
+  sotto `generaimpresa`. Nessuna posizione sulle mappe.
+- Le pagine `rails4b/percorsi/...` e `rails4b/contenuti/...` leggono ancora `percorso.yml` e `catalog.yml`.
+
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.
 - `DomainContentCatalog` legge da Content.

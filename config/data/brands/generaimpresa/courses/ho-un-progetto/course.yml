@@ -1,0 +1,72 @@
+schema_version: 1
+
+# Percorso di rails4b/percorso.yml: i testi restano in config/data/rails4b/contenuti.
+contents:
+  - id: ho-un-progetto
+    format: course
+    slug: ho-un-progetto
+    position: 1
+    title: "Ho un progetto"
+    description: "Cinque passi per partire da un bisogno reale e arrivare a un piccolo pilota."
+    author_node_slug: markpostura
+    publisher_node_slug: generaimpresa
+
+  - id: parti-dal-bisogno
+    parent_id: ho-un-progetto
+    lesson_node_slug: ho-un-progetto
+    format: chapter
+    slug: parti-dal-bisogno
+    position: 1
+    eyebrow: "Il tuo progetto"
+    title: "Parti dal bisogno"
+    description: "Prima chiarisci la persona, la situazione e il cambiamento che vuoi rendere possibile."
+    publication_at: "2026-09-18T09:00:00+02:00"
+    content_path: rails4b/contenuti/parti-dal-bisogno.md
+
+  - id: guarda-generaimpresa
+    parent_id: ho-un-progetto
+    lesson_node_slug: ho-un-progetto
+    format: chapter
+    slug: guarda-generaimpresa
+    position: 2
+    eyebrow: "Il tuo progetto"
+    title: "Guarda GeneraImpresa"
+    description: "Capisci come dare forma, priorità e sostenibilità a un progetto."
+    publication_at: "2026-09-19T09:00:00+02:00"
+    content_path: rails4b/contenuti/guarda-generaimpresa.md
+
+  - id: scegli-un-primo-pilota
+    parent_id: ho-un-progetto
+    lesson_node_slug: ho-un-progetto
+    format: chapter
+    slug: scegli-un-primo-pilota
+    position: 3
+    eyebrow: "Il tuo progetto"
+    title: "Scegli un primo pilota"
+    description: "Non costruire tutto: individua la prima cosa utile da provare con persone reali."
+    publication_at: "2026-09-20T09:00:00+02:00"
+    content_path: rails4b/contenuti/scegli-un-primo-pilota.md
+
+  - id: organizza-il-lavoro
+    parent_id: ho-un-progetto
+    lesson_node_slug: ho-un-progetto
+    format: chapter
+    slug: organizza-il-lavoro
+    position: 4
+    eyebrow: "Il tuo progetto"
+    title: "Organizza il lavoro"
+    description: "Quando il pilota è chiaro, usa 1Impegno per luoghi, persone e attività."
+    publication_at: "2026-09-21T09:00:00+02:00"
+    content_path: rails4b/contenuti/organizza-il-lavoro.md
+
+  - id: proponi-il-prossimo-passo
+    parent_id: ho-un-progetto
+    lesson_node_slug: ho-un-progetto
+    format: chapter
+    slug: proponi-il-prossimo-passo
+    position: 5
+    eyebrow: "Il tuo progetto"
+    title: "Proponi il prossimo passo"
+    description: "Porta una richiesta concreta: ciò che serve, chi partecipa e quale risultato vuoi verificare."
+    publication_at: "2026-09-22T09:00:00+02:00"
+    content_path: rails4b/contenuti/proponi-il-prossimo-passo.md

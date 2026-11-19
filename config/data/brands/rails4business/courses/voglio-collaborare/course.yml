@@ -1,0 +1,72 @@
+schema_version: 1
+
+# Percorso di rails4b/percorso.yml: i testi restano in config/data/rails4b/contenuti.
+contents:
+  - id: voglio-collaborare
+    format: course
+    slug: voglio-collaborare
+    position: 1
+    title: "Voglio collaborare"
+    description: "Cinque passi per conoscere la rete e proporre un contributo concreto."
+    author_node_slug: markpostura
+    publisher_node_slug: rails4business
+
+  - id: guarda-flowpulse
+    parent_id: voglio-collaborare
+    lesson_node_slug: voglio-collaborare
+    format: chapter
+    slug: guarda-flowpulse
+    position: 1
+    eyebrow: "Collaborare"
+    title: "Guarda Flowpulse"
+    description: "Prima capisci cosa stiamo costruendo."
+    publication_at: "2026-09-10T09:00:00+02:00"
+    content_path: rails4b/contenuti/guarda-flowpulse.md
+
+  - id: guarda-i-progetti
+    parent_id: voglio-collaborare
+    lesson_node_slug: voglio-collaborare
+    format: chapter
+    slug: guarda-i-progetti
+    position: 2
+    eyebrow: "Collaborare"
+    title: "Guarda i progetti"
+    description: "PosturaCorretta, 1Impegno e gli altri progetti della rete."
+    publication_at: "2026-09-11T09:00:00+02:00"
+    content_path: rails4b/contenuti/guarda-i-progetti.md
+
+  - id: installa-dash-wallet
+    parent_id: voglio-collaborare
+    lesson_node_slug: voglio-collaborare
+    format: chapter
+    slug: installa-dash-wallet
+    position: 3
+    eyebrow: "Collaborare"
+    title: "Installa Dash Wallet"
+    description: "Prima di una proposta, installa e prova un portafoglio Dash."
+    publication_at: "2026-09-15T09:00:00+02:00"
+    content_path: rails4b/contenuti/installa-dash-wallet.md
+
+  - id: prepara-il-curriculum
+    parent_id: voglio-collaborare
+    lesson_node_slug: voglio-collaborare
+    format: chapter
+    slug: prepara-il-curriculum
+    position: 4
+    eyebrow: "Collaborare"
+    title: "Prepara il curriculum"
+    description: "Competenze, lavori fatti e disponibilità."
+    publication_at: "2026-09-16T09:00:00+02:00"
+    content_path: rails4b/contenuti/prepara-il-curriculum.md
+
+  - id: fai-una-proposta
+    parent_id: voglio-collaborare
+    lesson_node_slug: voglio-collaborare
+    format: chapter
+    slug: fai-una-proposta
+    position: 5
+    eyebrow: "Collaborare"
+    title: "Poi fai una proposta"
+    description: "Solo se hai visto un bisogno concreto a cui puoi contribuire."
+    publication_at: "2026-09-17T09:00:00+02:00"
+    content_path: rails4b/contenuti/fai-una-proposta.md
