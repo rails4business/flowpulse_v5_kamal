@@ -25,6 +25,13 @@ class DomainContentCatalog
     }
   }.freeze
 
+  # Domini i cui articoli sono già Content: i node che li raccolgono. Il loro catalogo YAML non si legge più;
+  # pubblicazione e visibilità sono quelle del Content in questo ambiente.
+  CONTENT_NODES = {
+    "markpostura" => %w[articoli-markpostura],
+    "rails4b" => %w[articoli-rails4business voglio-collaborare ho-un-progetto]
+  }.freeze
+
   class << self
     def for_domain(domain_key, include_scheduled: false)
       all(include_scheduled: include_scheduled).select { |article| article.fetch("domain_key") == domain_key.to_s }
@@ -42,7 +49,7 @@ class DomainContentCatalog
     end
 
     def all(include_scheduled: false)
-      catalog_paths.flat_map { |path| load_catalog(path, include_scheduled:) }
+      (catalog_paths.flat_map { |path| load_catalog(path, include_scheduled:) } + content_articles(include_scheduled:))
                    .uniq { |article| [article.fetch("domain_key"), article.fetch("slug")] }
                    .sort_by { |article| article_sort_key(article) }
     end
@@ -50,7 +57,45 @@ class DomainContentCatalog
     private
 
       def catalog_paths
-        Dir.glob(CONTENT_ROOT.join("*/contenuti/catalog.yml")).sort
+        Dir.glob(CONTENT_ROOT.join("*/contenuti/catalog.yml")).sort.reject do |path|
+          CONTENT_NODES.key?(Pathname(path).relative_path_from(CONTENT_ROOT).each_filename.first)
+        end
+      end
+
+      def content_articles(include_scheduled:)
+        CONTENT_NODES.flat_map do |domain_key, node_slugs|
+          Content.joins(:node).where(nodes: { slug: node_slugs }, format: %w[post chapter]).order(:key)
+            .filter_map { |content| content_article(content, domain_key, include_scheduled:) }
+        end
+      end
+
+      def content_article(content, domain_key, include_scheduled:)
+        draft = content.publication_status != "published"
+        restricted = content.publication_visibility != "public"
+        return if (draft || restricted) && !include_scheduled
+
+        settings = DOMAIN_SETTINGS.fetch(domain_key, default_domain_settings(domain_key))
+        article_path = format(settings.fetch("article_path"), slug: content.slug)
+        content.data.merge(
+          "slug" => content.slug,
+          "title" => content.title,
+          "excerpt" => content.description,
+          "description" => content.description,
+          "author" => content.data["author"].to_s.delete_prefix("@").downcase,
+          "domain_key" => domain_key,
+          "domain_name" => settings.fetch("name"),
+          "domain_host" => settings.fetch("host"),
+          "category_key" => nil,
+          "category_name" => content.data["eyebrow"],
+          "publication_date" => content.written_on,
+          "publication_label" => content.written_on&.strftime("%d/%m/%Y"),
+          "draft" => draft,
+          "restricted" => restricted,
+          "scheduled" => false,
+          "content_path" => (Rails.root.join(content.source_path).to_s if content.source_path.present?),
+          "path" => article_path,
+          "url" => "https://#{settings.fetch('host')}#{article_path}"
+        )
       end
 
       def load_catalog(path, include_scheduled:)

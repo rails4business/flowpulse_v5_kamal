@@ -76,6 +76,9 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows contents attributed to markpostura across domains" do
+    import_posturacorretta_contents
+    publish_test_contents("costruire-un-sistema-economico-nuovo")
+
     get markpostura_contents_path
 
     assert_response :success

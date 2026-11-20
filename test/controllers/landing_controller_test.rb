@@ -210,6 +210,9 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "MarkPostura publishes the bio psycho social article" do
+    import_posturacorretta_contents
+    publish_test_contents("dal-bio-psico-sociale-al-vivere-comprendere-costruire")
+
     get markpostura_content_url("dal-bio-psico-sociale-al-vivere-comprendere-costruire")
 
     assert_response :success

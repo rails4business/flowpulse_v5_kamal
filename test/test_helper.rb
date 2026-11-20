@@ -42,6 +42,13 @@ module ActiveSupport
       )
     end
 
+    # Contenuti pubblicati come da una decisione conclusa (dopo import_posturacorretta_contents).
+    def publish_test_contents(*keys)
+      Content.where(key: keys).update_all(
+        publication_status: "published", publication_visibility: "public", access_modes: ["free"], published_at: Time.current
+      )
+    end
+
     def create_catalog_test_node(slug, parent: nil, view_type: "default")
       role_assignment = parent&.role_assignment || begin
         user = User.create!(email_address: "#{slug}-contents@example.com", password: "password123", password_confirmation: "password123")

@@ -578,6 +578,15 @@ funzionanti.
 - `DomainContentCatalog` usa il `content.md` canonico solo se esiste, così le pagine attuali trovano ancora il
   testo nei vecchi percorsi. Le pagine leggono ancora i cataloghi: il passaggio a Content è il prossimo passo.
 
+**Stato fase 3 — passo 3 (DomainContentCatalog da Content) fatto**
+
+- Per `markpostura` e `rails4b` `DomainContentCatalog` legge i Content dei node in `CONTENT_NODES`
+  (`articoli-markpostura`; `articoli-rails4business`, `voglio-collaborare`, `ho-un-progetto`) e non più il loro
+  `catalog.yml`. Visibilità = stato del Content; una data futura non nasconde più nulla.
+- PosturaCorretta e flowpulse restano sul catalogo YAML.
+- Dopo il deploy i 17 articoli e le 10 guide sono in bozza: vanno pubblicati con un impegno (`content_key` =
+  chiave dell'articolo, cioè lo slug). Le pagine `rails4b/percorsi` e `rails4b/contenuti` leggono ancora i YAML.
+
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.
 - `DomainContentCatalog` legge da Content.
