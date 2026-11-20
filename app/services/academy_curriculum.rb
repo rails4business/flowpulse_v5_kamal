@@ -6,6 +6,10 @@ class AcademyCurriculum
   TEACHERS_DIRECTORY = "teachers"
   TEACHERS_INDEX_FILENAME = "index.yml"
   CENTERS_FILENAME = "centers.yml"
+  # Insegnanti e centri sono schede Content nelle raccolte Risorse di PosturaCorretta; teachers/ e centers.yml
+  # restano come copia. "public" è lo stato di pubblicazione del Content, deciso dagli impegni.
+  TEACHERS_NODE_SLUG = "insegnanti-posturacorretta"
+  CENTERS_NODE_SLUG = "centri-posturacorretta"
   METHODOLOGIES_PATH = Rails.root.join("config/data/posturacorretta/metodiche/metodiche.yml")
 
   REQUIRED_MODULE_KEYS = %w[
@@ -29,7 +33,7 @@ class AcademyCurriculum
   def load
     data = load_yaml(@path)
     data["teachers"] = load_teachers
-    data["locations"] = load_yaml(@directory.join(CENTERS_FILENAME)).fetch("centers", {})
+    data["locations"] = content_cards(CENTERS_NODE_SLUG, "centro")
     data["methodologies"] = load_yaml(METHODOLOGIES_PATH).fetch("methodologies", []).index_by { |methodology| methodology.fetch("slug") }
     attach_module_relations!(data)
     attach_paths!(data)
@@ -43,18 +47,20 @@ class AcademyCurriculum
     YAML.safe_load_file(path, permitted_classes: [], aliases: false) || {}
   end
 
+  def content_cards(node_slug, format)
+    Content.joins(:node).where(nodes: { slug: node_slug }, format:).order(:position, :key).to_h do |content|
+      published = content.publication_status == "published" && content.publication_visibility == "public"
+      [content.slug, content.data.merge("slug" => content.slug, "public" => published)]
+    end
+  end
+
   def load_teachers
-    teachers_root = @directory.join(TEACHERS_DIRECTORY)
-    index = load_yaml(teachers_root.join(TEACHERS_INDEX_FILENAME))
     people = PersonProfileCatalog.all
 
-    index.fetch("teachers", []).each_with_object({}) do |slug, teachers|
-      teacher_path = teachers_root.join("#{slug}.yml")
-      raise ArgumentError, "File insegnante academy mancante: #{slug}" unless teacher_path.file?
-
-      teacher = load_yaml(teacher_path)
+    content_cards(TEACHERS_NODE_SLUG, "insegnante").each_with_object({}) do |(slug, teacher), teachers|
       person = people[teacher.fetch("person_profile_slug", slug)] || {}
-      teachers[slug] = teacher.merge(
+      teachers[slug] = teacher.except("teacher_status").merge(
+        "status" => teacher["teacher_status"],
         "img" => teacher["img"].presence || person["image_url"],
         "video" => teacher["video"].presence || person["video"],
         "certifications" => teacher["certifications"].presence || person.fetch("certifications", [])

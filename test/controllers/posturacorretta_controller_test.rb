@@ -1,7 +1,25 @@
 require "test_helper"
 
 class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
+  # Insegnanti e centri sono schede Content: importate e pubblicate come dopo un impegno concluso.
+  def import_academy_cards
+    import_posturacorretta_contents
+    publish_test_contents("insegnante-markpostura", "insegnante-davide-cattaneo", "insegnante-antonio-ventura", "centro-posturacorretta")
+  end
+
+  # La Sede come luogo aperto di posturacorretta.org, raccontata dalla scheda del centro (Flowpulse → Luoghi).
+  def create_posturacorretta_seat(status: "open")
+    brand = Node.find_by!(slug: "posturacorretta")
+    domain = Domain.find_by(hostname: "posturacorretta.org") ||
+      Domain.create!(hostname: "posturacorretta.org", node: brand, role_assignment: brand.role_assignment, active: true, primary: true)
+    place = Place.create!(name: "Sede PosturaCorretta · Cascina Bordonala", slug: "sede-posturacorretta", city: "Viadana di Calvisano · Brescia",
+      latitude: 45.370258, longitude: 10.344, status:, publication_status: "published", publication_visibility: "public")
+    place.place_domains.create!(domain:, content: Content.find_by!(key: "centro-posturacorretta"))
+    place
+  end
+
   test "exposes the first-week home course prototype from its canonical YAML sources" do
+    import_academy_cards
     get posturacorretta_course_data_path("la-prima-settimana-con-posturacorretta")
 
     assert_response :success
@@ -130,6 +148,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows teachers in PosturaCorretta and redirects professionals to Percorso Integrato" do
+    import_academy_cards
     get posturacorretta_insegnanti_path
     assert_response :success
     assert_select "h1", text: "Insegnanti PosturaCorretta"
@@ -196,14 +215,32 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_response :moved_permanently
   end
 
+  test "centres list only open and published places of the domain and link the card only when published" do
+    import_academy_cards
+    place = create_posturacorretta_seat
+    Content.find_by!(key: "centro-posturacorretta").update!(publication_status: "draft")
+
+    get posturacorretta_centres_path
+    assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala"
+    assert_select "a[href='#{posturacorretta_centre_path("centro-posturacorretta")}']", count: 0
+
+    place.update!(publication_status: "draft")
+    get posturacorretta_centres_path
+    assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala", count: 0, message: "un luogo in bozza non compare"
+
+    place.update!(publication_status: "published", status: "closed")
+    get posturacorretta_centres_path
+    assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala", count: 0
+  end
+
   test "shows only PosturaCorretta places in its directory" do
+    import_academy_cards
+    create_posturacorretta_seat
     get posturacorretta_centres_path
     assert_response :success
     assert_select "h1", text: "Centri PosturaCorretta"
-    assert_select "nav[aria-label='Lezioni PosturaCorretta']"
-    assert_select "section[aria-label='Modalità delle lezioni']", text: /Singolo/
-    assert_select "section[aria-label='Modalità delle lezioni']", text: /Gruppo/
-    assert_select "section[aria-label='Modalità delle lezioni']", text: /Online/
+    assert_select "nav[aria-label='Lezioni PosturaCorretta']", count: 0
+    assert_select "section[aria-label='Modalità delle lezioni']", count: 0
     assert_select "section[aria-label='Mappa dei centri PosturaCorretta'] #posturacorretta-centres-map[data-centres]"
     assert_select "iframe", count: 0
     assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala"
@@ -233,6 +270,7 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows the teacher YAML source only to a superadmin" do
+    import_academy_cards
     get posturacorretta_insegnante_path("markpostura")
     assert_select "aside[aria-label='Sorgente profilo insegnante']", count: 0
 

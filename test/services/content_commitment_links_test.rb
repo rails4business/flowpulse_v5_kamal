@@ -9,33 +9,18 @@ class ContentCommitmentLinksTest < ActiveSupport::TestCase
     @node = Node.create!(title: "Raccolta", slug: "raccolta-links", role_assignment: role_assignment)
   end
 
-  test "links commitments that only have a key and replays their decisions in order" do
-    published = Time.zone.parse("2026-11-01 10:00")
-    revised = Time.zone.parse("2026-11-10 10:00")
-    decision(change_kind: "publish", publication_status: "published", published_at: published)
-    decision(change_kind: "update", publication_status: "published", published_at: revised)
+  test "links commitments that only have a key, as history, without changing publication" do
+    decision(change_kind: "publish", publication_status: "published", published_at: 2.days.ago)
+    decision(change_kind: "update", publication_status: "published", published_at: 1.day.ago)
     content = Content.create!(node: @node, key: "capitolo-links", slug: "capitolo", format: "chapter", title: "Capitolo")
 
     result = ContentCommitmentLinks.new.link!
 
     assert_equal 2, result.linked
-    assert_equal 2, result.replayed
     assert_empty result.missing
     content.reload
     assert_equal 2, content.data_commitments.count
-    assert_equal "published", content.publication_status
-    assert_equal published, content.published_at
-    assert_equal revised, content.revised_at
-  end
-
-  test "the last concluded decision wins" do
-    decision(change_kind: "publish", publication_status: "published", published_at: 2.days.ago)
-    decision(change_kind: "unpublish", publication_status: "draft", published_at: nil, visibility: "private")
-    content = Content.create!(node: @node, key: "capitolo-links", slug: "capitolo", format: "chapter", title: "Capitolo")
-
-    ContentCommitmentLinks.new.link!
-
-    assert_equal "draft", content.reload.publication_status
+    assert_equal "draft", content.publication_status
     assert_nil content.published_at
   end
 

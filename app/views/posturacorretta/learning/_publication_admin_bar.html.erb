@@ -1,41 +1,39 @@
-<% if posturacorretta_chapter_editor?(chapter) %>
-  <% commitment = chapter["publication_commitment"] %>
+<% if posturacorretta_chapter_editor?(chapter) && chapter["id"].present? %>
+  <%# Stato del Content, modificato direttamente; gli impegni di pubblicazione passati restano come storico. %>
   <% history = Array(chapter["publication_history"]) %>
   <% dialog_id = "publication-#{chapter.fetch('slug').parameterize}" %>
+  <% status = chapter["status"].presence || "draft" %>
+  <% published = status == "published" %>
+  <% shown_at = chapter["revised_at"] || chapter["published_at"] %>
+  <% publication_path = posturacorretta_content_publication_path(chapter.fetch("id")) %>
   <aside class="<%= local_assigns[:inline] ? 'contents' : 'mt-3 flex flex-wrap items-center gap-2' %> text-xs" aria-label="Stato editoriale del contenuto">
-    <% if commitment %>
-      <% end_time = commitment.actual_ended_at || commitment.ends_at || publication_decision_time(commitment) %>
-      <% pill_classes = commitment.publication_status == "published" ? "bg-emerald-100 text-emerald-800 ring-emerald-200" : commitment.publication_status == "archived" ? "bg-slate-200 text-slate-700 ring-slate-300" : "bg-amber-100 text-amber-800 ring-amber-200" %>
-      <% status_label = commitment.publication_status == "published" ? "Pubblicato" : commitment.publication_status == "archived" ? "Archiviato" : "Bozza" %>
-      <button type="button" onclick="document.getElementById('<%= dialog_id %>')?.showModal()" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-black ring-1 <%= pill_classes %>" title="Apri informazioni editoriali"><span aria-hidden="true"><%= commitment.publication_status == 'published' ? '✓' : commitment.publication_status == 'archived' ? '■' : '●' %></span><%= status_label %> · <%= l(end_time, format: :short) %></button>
-      <% if commitment.publication_status == "published" %>
-        <%= button_to "Aggiorna", data_commitments_path,
-              params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Aggiorna · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "update", publication_status: commitment.publication_status, publication_visibility: commitment.publication_visibility, subject_node_id: chapter["publication_node_id"], access_modes: commitment.access_modes } },
-              class: "pc-action-button pc-action-button--update pc-action-button--compact",
-              form: { data: { turbo_confirm: "Aggiornare questo contenuto?" } } %>
-        <%= button_to "Sospendi", data_commitments_path,
-              params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Sospendi · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "unpublish", publication_status: "draft", publication_visibility: "private", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
-              class: "pc-action-button pc-action-button--warning pc-action-button--compact",
-              form: { data: { turbo_confirm: "Sospendere la visibilità di questo contenuto?" } } %>
-      <% else %>
-        <%= button_to "Pubblica", data_commitments_path,
-              params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Pubblica · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
-              class: "pc-action-button pc-action-button--success pc-action-button--compact",
-              form: { data: { turbo_confirm: "Pubblicare questo contenuto?" } } %>
-      <% end %>
+    <% pill_classes = published ? "bg-emerald-100 text-emerald-800 ring-emerald-200" : status == "archived" ? "bg-slate-200 text-slate-700 ring-slate-300" : "bg-amber-100 text-amber-800 ring-amber-200" %>
+    <% status_label = published ? "Pubblicato" : status == "archived" ? "Archiviato" : "Bozza" %>
+    <button type="button" onclick="document.getElementById('<%= dialog_id %>')?.showModal()" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-black ring-1 <%= pill_classes %>" title="Apri informazioni editoriali"><span aria-hidden="true"><%= published ? '✓' : status == 'archived' ? '■' : '●' %></span><%= status_label %><%= " · #{l(shown_at, format: :short)}" if shown_at %></button>
+    <% if published %>
+      <%= button_to "Aggiorna", publication_path, method: :patch, params: { change: "update" },
+            class: "pc-action-button pc-action-button--update pc-action-button--compact",
+            form: { data: { turbo_confirm: "Segnare questo contenuto come aggiornato?" } } %>
+      <%= button_to "Sospendi", publication_path, method: :patch, params: { change: "suspend" },
+            class: "pc-action-button pc-action-button--warning pc-action-button--compact",
+            form: { data: { turbo_confirm: "Sospendere la visibilità di questo contenuto?" } } %>
     <% else %>
-      <%= button_to "Pubblica", data_commitments_path,
-            params: { publication_decision: "1", context_brand: "posturacorretta", return_to: request.fullpath, data_commitment: { title: "Pubblica · #{chapter.fetch('title')}", content_key: chapter["id"].presence || chapter.fetch("slug"), publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: chapter["publication_node_id"], access_modes: ["free"] } },
+      <%= button_to "Pubblica", publication_path, method: :patch, params: { change: "publish" },
             class: "pc-action-button pc-action-button--success pc-action-button--compact",
             form: { data: { turbo_confirm: "Pubblicare questo contenuto?" } } %>
     <% end %>
   </aside>
-  <% if commitment %>
-    <dialog id="<%= dialog_id %>" class="w-[min(42rem,calc(100%-2rem))] rounded-2xl border border-slate-300 p-0 shadow-2xl backdrop:bg-slate-950/40"><div class="space-y-5 p-6">
-      <div class="flex items-start justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Ultima decisione editoriale</p><h2 class="mt-1 text-xl font-extrabold"><%= chapter.fetch("title") %></h2></div><button type="button" onclick="this.closest('dialog').close()" class="rounded-lg px-2 py-1 text-slate-500">×</button></div>
-      <dl class="grid gap-3 text-sm sm:grid-cols-2"><div><dt class="font-bold text-slate-500">Stato</dt><dd><%= commitment.publication_status.humanize %></dd></div><div><dt class="font-bold text-slate-500">Intervento</dt><dd><%= commitment.publication_change_kind.presence&.humanize || "—" %></dd></div><div><dt class="font-bold text-slate-500">Visibilità</dt><dd><%= commitment.publication_visibility.humanize %></dd></div><div><dt class="font-bold text-slate-500">Accesso</dt><dd><%= commitment.access_modes.map(&:humanize).join(" + ") %></dd></div><div><dt class="font-bold text-slate-500">Nodo</dt><dd><%= commitment.subject_type == "Node" ? commitment.subject.title : "—" %></dd></div><div><dt class="font-bold text-slate-500">Data</dt><dd><%= l(publication_decision_time(commitment), format: :long) %></dd></div></dl>
-      <% if commitment.publication_note_md.present? %><div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="text-xs font-black uppercase tracking-wide text-slate-500">Note</p><div class="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700"><%= commitment.publication_note_md %></div></div><% end %>
-      <details class="rounded-xl border border-slate-200 p-4"><summary class="cursor-pointer font-black text-violet-700">Vedi storico (<%= history.size %>)</summary><ol class="mt-4 space-y-3"><% history.each do |item| %><li class="rounded-lg bg-slate-50 p-3 text-sm"><div class="flex flex-wrap gap-2"><strong><%= item.publication_status.humanize %></strong><span>· <%= item.publication_change_kind.presence&.humanize || "Intervento" %></span><time class="text-slate-500"><%= l(publication_decision_time(item), format: :short) %></time></div><% if item.publication_note_md.present? %><p class="mt-2 whitespace-pre-wrap text-slate-600"><%= item.publication_note_md %></p><% end %></li><% end %></ol></details>
-    </div></dialog>
-  <% end %>
+  <dialog id="<%= dialog_id %>" class="w-[min(42rem,calc(100%-2rem))] rounded-2xl border border-slate-300 p-0 shadow-2xl backdrop:bg-slate-950/40"><div class="space-y-5 p-6">
+    <div class="flex items-start justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-wide text-violet-700">Pubblicazione</p><h2 class="mt-1 text-xl font-extrabold"><%= chapter.fetch("title") %></h2></div><button type="button" onclick="this.closest('dialog').close()" class="rounded-lg px-2 py-1 text-slate-500">×</button></div>
+    <dl class="grid gap-3 text-sm sm:grid-cols-2">
+      <div><dt class="font-bold text-slate-500">Stato</dt><dd><%= status_label %></dd></div>
+      <div><dt class="font-bold text-slate-500">Visibilità</dt><dd><%= { "public" => "Pubblico", "member" => "Membri", "private" => "Privato" }.fetch(chapter["visibility"].to_s, "—") %></dd></div>
+      <div><dt class="font-bold text-slate-500">Accesso</dt><dd><%= chapter["access"] == "paid" ? "A pagamento" : "Libero" %></dd></div>
+      <div><dt class="font-bold text-slate-500">Pubblicato il</dt><dd><%= chapter["published_at"] ? l(chapter["published_at"], format: :long) : "—" %></dd></div>
+      <div><dt class="font-bold text-slate-500">Aggiornato il</dt><dd><%= chapter["revised_at"] ? l(chapter["revised_at"], format: :long) : "—" %></dd></div>
+    </dl>
+    <% if history.any? %>
+      <details class="rounded-xl border border-slate-200 p-4"><summary class="cursor-pointer font-black text-violet-700">Storico degli impegni di pubblicazione (<%= history.size %>)</summary><ol class="mt-4 space-y-3"><% history.each do |item| %><li class="rounded-lg bg-slate-50 p-3 text-sm"><div class="flex flex-wrap gap-2"><strong><%= item.publication_status.humanize %></strong><span>· <%= item.publication_change_kind.presence&.humanize || "Intervento" %></span><time class="text-slate-500"><%= l(publication_decision_time(item), format: :short) %></time></div><% if item.publication_note_md.present? %><p class="mt-2 whitespace-pre-wrap text-slate-600"><%= item.publication_note_md %></p><% end %></li><% end %></ol></details>
+    <% end %>
+  </div></dialog>
 <% end %>

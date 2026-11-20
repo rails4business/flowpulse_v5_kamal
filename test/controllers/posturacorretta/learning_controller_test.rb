@@ -311,7 +311,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
       assert_select "h1", text: "I benefici di una postura corretta e i problemi legati alla postura"
-      assert_select "form input[name='data_commitment[content_key]'][value='inizia-benefici-postura-corretta']", minimum: 1
+      assert_select "form[action='#{posturacorretta_content_publication_path("inizia-benefici-postura-corretta")}']", minimum: 1
     end
   end
 
@@ -554,7 +554,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Ricordi quando hai preso la patente?"
   end
 
-  test "superadmin quick publish form includes the PosturaCorretta brand context" do
+  test "superadmin quick publish changes the content directly" do
     superadmin = create_test_user("posturacorretta-quick-publish@example.com")
     superadmin.update!(superadmin: true, active_role: :superadmin)
     sign_in(superadmin)
@@ -562,12 +562,11 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
 
     assert_response :success
-    assert_select "form[action='#{data_commitments_path}']" do
-      assert_select "button", text: "Pubblica", minimum: 1
-      assert_select "button", text: "Aggiorna", count: 0
-      assert_select "input[name='context_brand'][value='posturacorretta']", minimum: 1
-      assert_select "input[name='publication_decision'][value='1']", minimum: 1
+    assert_select "form[action='#{posturacorretta_content_publication_path("inizia-incontro-salute-metodiche")}']" do
+      assert_select "button", text: "Pubblica"
+      assert_select "input[name='change'][value='publish']"
     end
+    assert_select "form[action='#{data_commitments_path}']", count: 0
   end
 
   test "publication controls are visible to brand node administrators and hidden from learners" do
@@ -592,21 +591,29 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
     assert_response :success
-    assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Pubblica", minimum: 1
-    assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Aggiorna", count: 0
+    chapter_form = "aside[aria-label='Stato editoriale del contenuto'] form[action='#{posturacorretta_content_publication_path("inizia-incontro-salute-metodiche")}']"
+    assert_select "#{chapter_form} button", text: "Pubblica"
+    assert_select "#{chapter_form} button", text: "Aggiorna", count: 0
 
-    post data_commitments_path, params: {
-      publication_decision: "1", context_brand: "posturacorretta", return_to: posturacorretta_course_path(corso: "inizia-con-posturacorretta"),
-      data_commitment: { title: "Pubblica capitolo", content_key: "ricordi-quando-hai-preso-la-patente", publication_change_kind: "publish", publication_status: "published", publication_visibility: "public", subject_node_id: brand.id, access_modes: ["free"] }
-    }
+    assert_no_difference -> { DataCommitment.count } do
+      patch posturacorretta_content_publication_path("inizia-incontro-salute-metodiche"), params: { change: "publish" }
+    end
     assert_response :redirect
+    chapter = Content.find_by!(key: "inizia-incontro-salute-metodiche")
+    assert chapter.published_for_public?
+    assert chapter.published_at.present?
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
     assert_response :success
     assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Aggiorna", minimum: 1
-    assert_select "aside[aria-label='Stato editoriale del contenuto'] form[data-turbo-confirm='Aggiornare questo contenuto?']", minimum: 1
+    assert_select "aside[aria-label='Stato editoriale del contenuto'] form[data-turbo-confirm='Segnare questo contenuto come aggiornato?']", minimum: 1
     assert_select "aside[aria-label='Stato editoriale del contenuto'] button", text: "Sospendi", minimum: 1
     assert_select "aside[aria-label='Stato editoriale del contenuto'] form[data-turbo-confirm]", minimum: 1
+
+    patch posturacorretta_content_publication_path("inizia-incontro-salute-metodiche"), params: { change: "update" }
+    assert chapter.reload.revised_at.present?
+    patch posturacorretta_content_publication_path("inizia-incontro-salute-metodiche"), params: { change: "suspend" }
+    assert_equal "draft", chapter.reload.publication_status
 
     delete session_path
     learner = create_test_user("posturacorretta-learner-controls@example.com")
@@ -614,19 +621,13 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
     assert_response :success
     assert_select "aside[aria-label='Stato editoriale del contenuto']", count: 0
+    patch posturacorretta_content_publication_path("inizia-incontro-salute-metodiche"), params: { change: "publish" }
+    assert_response :forbidden
+    assert_equal "draft", chapter.reload.publication_status
   end
 
-  test "the latest completed editorial commitment can return a chapter to draft" do
-    published = publish_content!("ricordi-quando-hai-preso-la-patente")
-    published.update!(published_at: 2.hours.ago)
-    latest = publish_content!("ricordi-quando-hai-preso-la-patente")
-    latest.update!(
-      publication_status: "draft",
-      publication_change_kind: "unpublish",
-      publication_note_md: "Ritirato per una nuova revisione.",
-      published_at: nil,
-      actual_ended_at: Time.current
-    )
+  test "a chapter returned to draft is no longer available to learners" do
+    publish_content!("ricordi-quando-hai-preso-la-patente").update!(publication_status: "draft", publication_visibility: "private")
 
     get posturacorretta_course_chapter_path(
       corso: "inizia-con-posturacorretta",
@@ -637,16 +638,7 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "a suspended course is unavailable to learners independently from its chapters" do
-    published = publish_content!("inizia-con-posturacorretta")
-    published.update!(published_at: 2.hours.ago)
-    suspended = publish_content!("inizia-con-posturacorretta")
-    suspended.update!(
-      publication_status: "draft",
-      publication_visibility: "private",
-      publication_change_kind: "unpublish",
-      published_at: nil,
-      actual_ended_at: Time.current
-    )
+    Content.find_by!(key: "inizia-con-posturacorretta").update!(publication_status: "draft", publication_visibility: "private")
 
     get posturacorretta_course_path(corso: "inizia-con-posturacorretta")
 
@@ -770,6 +762,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
 
   private
 
+  # Pubblica direttamente il Content (per chiave o, per i contenuti storici, per slug unico); crea anche il
+  # dominio posturacorretta.org che iscrizioni e completamenti richiedono.
   def publish_content!(content_key)
     domain = Domain.find_or_create_by!(hostname: "posturacorretta.org") do |record|
       record.locale = "it"
@@ -779,27 +773,9 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       record.active = true
     end
     domain.update!(active: true) unless domain.active?
-    publisher = create_test_user("publisher-#{SecureRandom.hex(6)}@example.com")
-    profile = publisher.create_profile!(display_name: "Publisher #{content_key}", username: "publisher_#{SecureRandom.hex(5)}")
-    DataCommitment.create!(
-      profile: profile,
-      created_by_profile: profile,
-      published_by_profile: profile,
-      domain: domain,
-      title: "Pubblicazione #{content_key}",
-      kind: "content",
-      status: "completed",
-      starts_at: 2.hours.ago,
-      ends_at: 1.hour.ago,
-      pricing_type: "none",
-      contribution_type: "unpaid",
-      content_key: content_key,
-      publish_on_completion: true,
-      publication_status: "published",
-      publication_visibility: "public",
-      access_modes: ["free"],
-      published_at: Time.current
-    )
+    content = Content.find_by(key: content_key) || Content.where(slug: content_key).sole
+    content.update!(publication_status: "published", publication_visibility: "public", access_modes: [ "free" ], published_at: Time.current)
+    content
   end
 
   def create_test_user(email)

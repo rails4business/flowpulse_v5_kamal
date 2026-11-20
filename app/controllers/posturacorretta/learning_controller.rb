@@ -2,7 +2,7 @@ module Posturacorretta
   class LearningController < ApplicationController
   layout "landing"
   allow_unauthenticated_access
-  before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher, :enroll, :complete_chapter]
+  before_action :require_authentication, only: [:dashboard_appointments, :dashboard_teacher, :enroll, :complete_chapter, :update_publication]
   helper_method :posturacorretta_editorial_preview?, :posturacorretta_chapter_editor?, :publication_decision_time
 
   GUIDE_INDEX_PATH = Rails.root.join("config/data/posturacorretta/guide/indice.yml").freeze
@@ -102,6 +102,33 @@ module Posturacorretta
       posturacorretta_course_path(corso: course.fetch("slug"))
     end
     redirect_to destination, notice: "Corso iniziato."
+  end
+
+  # Barra editoriale: pubblica, aggiorna o sospende direttamente il Content del corso o del capitolo.
+  PUBLICATION_CHANGES = {
+    "publish" => { publication_status: "published", publication_visibility: "public" },
+    "suspend" => { publication_status: "draft", publication_visibility: "private" }
+  }.freeze
+
+  def update_publication
+    content = Content.find_by!(key: params[:content_key], format: %w[course chapter])
+    return head(:forbidden) unless content_publication_editor?(content)
+
+    change = params[:change].to_s
+    attributes = case change
+    when "publish"
+      PUBLICATION_CHANGES.fetch(change).merge(access_modes: content.access_modes.presence || [ "free" ])
+    when "suspend"
+      PUBLICATION_CHANGES.fetch(change)
+    when "update"
+      { revised_at: Time.current }
+    else
+      return head(:unprocessable_entity)
+    end
+    content.update!(attributes)
+
+    notice = { "publish" => "Contenuto pubblicato.", "suspend" => "Contenuto riportato in bozza.", "update" => "Aggiornamento registrato." }.fetch(change)
+    redirect_back_or_to percorso_posturacorretta_path, notice: notice
   end
 
   def complete_chapter
@@ -590,6 +617,10 @@ module Posturacorretta
     return false unless Current.user && chapter["publication_node_id"].present?
 
     Node.find_by(id: chapter["publication_node_id"])&.administered_by?(Current.user) || false
+  end
+
+  def content_publication_editor?(content)
+    posturacorretta_editorial_preview? || content.node.administered_by?(Current.user)
   end
 
   def posturacorretta_brand_node

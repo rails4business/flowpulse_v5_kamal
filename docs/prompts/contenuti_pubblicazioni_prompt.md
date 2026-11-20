@@ -442,6 +442,57 @@ genitore/figlio, con un tipo di legame:
 **Deciso — nomi dei tipi**: generici (`insegnante`, `professionista`, `founder`, `centro`, `scuola`,
 `metodica`); il progetto è dato dal node della raccolta.
 
+## Punto 12 — Luoghi ⏳
+
+**Indicato dall'utente**: le sedi servono (es. la Sede PosturaCorretta), un luogo può essere chiuso (il Giardino
+del Corpo), può valere per più domini e può avere un articolo diverso a seconda del dominio; per ora i luoghi
+nascono dall'admin.
+
+**Deciso**:
+- `Place` è il luogo fisico: `name`, `slug` (unico), `address`, `city`, `province`, `latitude`, `longitude`,
+  `status` (`open`/`closed`), `closed_on`, `description`, `created_by_profile`, `metadata`. Un luogo chiuso non
+  si cancella: resta per la storia ma non compare tra i luoghi attivi (`Place.open`).
+- `PlaceDomain` collega il luogo a un dominio, con un **Content facoltativo** che lo racconta in quel dominio
+  (es. la scheda `centro-posturacorretta` su posturacorretta.org). Il Content deve stare nel node del dominio o
+  in un suo discendente. Nessuna tabella content_places: un luogo ha al più un Content per dominio.
+- `posturacorretta_directory_places` (un solo dominio, senza coordinate né stato) confluirà in `Place`.
+
+**Fatto (non committato)**: migrazione `20261120100000_create_places`, model `Place` e `PlaceDomain`, test.
+In sviluppo: `sede-posturacorretta`, su posturacorretta.org (con `centro-posturacorretta`) e su
+percorsointegrato.it (senza Content).
+
+**Admin (fatto, non committato)**: `/flowpulse/rete/luoghi`, solo superadmin (`Admin::PlacesController`,
+`Admin::PlaceDomainsController`): elenco con filtro per dominio, nuovo/modifica, chiusura con data, collegamento
+ai domini con il Content scelto tra quelli del dominio.
+
+**Pagina Centri di PosturaCorretta (fatto, non committato)**: elenco e mappa dai luoghi aperti collegati a
+posturacorretta.org (`PlaceDomain`); un luogo rimanda alla scheda del centro solo se è pubblicata.
+
+**Ancora da fare**: confluenza di `posturacorretta_directory_places` → accesso dei professionisti → altri domini
+che mostrano i loro luoghi.
+
+## Punto 13 — Pubblicazione modificata direttamente, non più dagli impegni ⏳
+
+**Deciso dall'utente (2026-11-20)**: la pubblicazione non passa più dagli impegni. `publication_status`,
+`publication_visibility` e `published_at` si modificano direttamente, per Content e per Place; alla nascita sono
+in bozza e privati.
+
+- I Content si modificano nell'admin di ogni brand (`/<brand>/admin/contents`): i Content del node del brand e dei
+  discendenti; nel brand del titolare anche i suoi Content che stanno in altri brand (`profile_id` su Content,
+  dall'`author_node_slug` per quelli dei YAML).
+- I luoghi restano nell'admin di Flowpulse (solo superadmin per ora).
+- I pulsanti Pubblica/Aggiorna/Sospendi della barra editoriale dei capitoli modificano direttamente il Content.
+- Gli impegni di pubblicazione già fatti restano come storia, ma non cambiano più lo stato; il deploy non
+  riapplica più le decisioni.
+
+**Ordine**: 1) pubblicazione su Place ✅ → 2) `profile_id` su Content ✅ (entrambi non committati; il titolare
+si assegna all'import una volta sola: l'autore, o il titolare del corso per i capitoli; poi cambia solo
+dall'admin) → 3) pagina Contenuti ✅ (non committata: `/<brand>/admin/contents`, `Brands::Admin::ContentsController`) → 4) ✅ (non committato) nessun ricalcolo dagli impegni né al deploy
+(`ContentCommitmentLinks` collega solo); la barra editoriale chiama
+`PATCH /posturacorretta/contenuti-editoriali/:content_key/pubblicazione` (`publish`, `update` = `revised_at`,
+`suspend`), permesso agli amministratori del node del Content o del brand PosturaCorretta
+nell'admin del brand → 4) impegni che non decidono più + barra editoriale con modifica diretta.
+
 ## Punto 9 — Fasi di implementazione ⏳
 
 **Proposta**. Ogni fase è un commit a sé, con test, reversibile (migrazioni con `down`), e lascia le pagine
@@ -614,6 +665,15 @@ funzionanti.
   `format` (`insegnante`, `centro`, `metodica`, `scuola`, `professionista`, `founder`) e `publisher_node_slug` =
   node della raccolta; entrano con l'import. Metodica e scuola sono distinte: la scuola forma nella metodica
   (legame ContentLink).
+
+**Fase 4 — passo 2 (insegnanti e Sede) fatto, non committato**
+
+- Schede `insegnante-markpostura`, `insegnante-davide-cattaneo`, `insegnante-antonio-ventura` (in
+  `insegnanti-posturacorretta`) e `centro-posturacorretta` (in `centri-posturacorretta`); testi dai vecchi `.md`.
+  Gli altri centri di `centers.yml` non esistono più e non sono stati convertiti (il file resta).
+- `AcademyCurriculum` prende insegnanti e centri dai Content; `public` = pubblicazione del Content.
+  Lo stato dell'insegnante resta come `teacher_status` (in Content `status` è riservato alla pubblicazione).
+- Senza luoghi aperti la landing del Giardino del Corpo non mostra la sezione Luoghi.
 
 **Fase 4 — Schede e metodiche**
 - Schede `insegnante`, `professionista`, `founder`, `centro`, `scuola`, `metodica` (punto 11).

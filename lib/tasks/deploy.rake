@@ -8,12 +8,12 @@ namespace :deploy do
     puts "Imported #{node_result.nodes} nodes and linked #{node_result.profiles} primary profiles."
 
     # Dopo i Node, perché ogni Content appartiene a un Node. Lo stato di pubblicazione resta quello
-    # dell'ambiente: l'import non lo tocca e il collegamento riapplica solo le decisioni già concluse.
+    # dell'ambiente: né l'import né il collegamento degli impegni (solo storia) lo toccano.
     content_result = ContentCatalog.new.import!
     puts "Importati #{content_result.contents} contenuti (#{content_result.created} nuovi) e #{content_result.publications} pubblicazioni."
     content_result.warnings.each { |warning| puts "Avviso: #{warning}" }
     links = ContentCommitmentLinks.new.link!
-    puts "Impegni collegati ai contenuti: #{links.linked}, decisioni riapplicate: #{links.replayed}, non trovati: #{links.missing.size}."
+    puts "Impegni collegati ai contenuti: #{links.linked}, non trovati: #{links.missing.size}."
 
     skill_count = ReusableSkillSnapshot.for_owner(username).import!
     puts "Importate o aggiornate #{skill_count} Skill per @#{username}."

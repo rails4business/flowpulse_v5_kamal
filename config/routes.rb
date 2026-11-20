@@ -66,6 +66,12 @@ Rails.application.routes.draw do
   get "flowpulse/rete/globale/corsie/:node" => "flowpulse/network#lanes",
       as: :flowpulse_network_lanes,
       constraints: { node: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+  # Luoghi fisici di tutta la rete (piano contenuti, punto 12); ogni dominio mostra solo i suoi.
+  scope "flowpulse/rete", as: :flowpulse do
+    resources :places, path: "luoghi", controller: "admin/places", only: %i[index new create edit update] do
+      resources :place_domains, path: "domini", controller: "admin/place_domains", only: %i[create update destroy]
+    end
+  end
   get "flowpulse/rete/metropolitana/:hostname" => "admin/metro_maps#show",
       as: :flowpulse_metro_map,
       format: false,
@@ -240,6 +246,7 @@ Rails.application.routes.draw do
   get "posturacorretta/corsi/:corso/capitoli" => "posturacorretta/learning#percorso_educativo", as: :posturacorretta_course_chapters
   get "posturacorretta/corsi/:corso/capitoli/:capitolo" => "posturacorretta/learning#percorso_educativo", as: :posturacorretta_course_chapter
   post "posturacorretta/corsi/:corso/capitoli/:capitolo/completamento" => "posturacorretta/learning#complete_chapter", as: :posturacorretta_course_chapter_completion
+  patch "posturacorretta/contenuti-editoriali/:content_key/pubblicazione" => "posturacorretta/learning#update_publication", as: :posturacorretta_content_publication
   get "posturacorretta/programma" => "posturacorretta/learning#legacy_programma", as: :posturacorretta_programma
   get "posturacorretta/percorso-educativo" => "posturacorretta/learning#legacy_percorso_educativo", as: :posturacorretta_percorso_educativo
   get "posturacorretta/tre-progetti" => "brands/posturacorretta#three_projects", as: :posturacorretta_three_projects
@@ -453,6 +460,7 @@ Rails.application.routes.draw do
     patch "requests/:id/state", to: "brand_requests#update_state", as: :request_state
     post "requests/:id/invitation", to: "brand_requests#create_invitation", as: :request_invitation
     get "data-commitments", to: "data_commitments#index", as: :data_commitments
+    resources :contents, only: %i[index update]
   end
 
   namespace :sync do

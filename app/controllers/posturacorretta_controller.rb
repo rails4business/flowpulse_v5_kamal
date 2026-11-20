@@ -103,11 +103,12 @@ class PosturacorrettaController < ApplicationController
 
   # A dedicated lessons view: it deliberately does not inherit the old
   # territory-directory page so Programma, Insegnanti and Centri stay coherent.
+  # I luoghi aperti e pubblici collegati a posturacorretta.org (Flowpulse → Luoghi); un luogo rimanda alla scheda del centro
+  # che lo racconta nel dominio, se è pubblicata.
   def lesson_centres
-    curriculum = AcademyCurriculum.load
-    @posturacorretta_centres = curriculum.fetch("locations", {}).values.select do |centre|
-      centre["city"] != "Online" && Array(centre["projects"]).include?("posturacorretta")
-    end
+    domain = Domain.find_for_host("posturacorretta.org")&.canonical_domain_record
+    place_domains = domain ? PlaceDomain.joins(:place).merge(Place.open.published_for_public).where(domain:).includes(:place, :content).order(:position, "places.name") : []
+    @posturacorretta_centres = place_domains.map { |place_domain| centre_from_place(place_domain) }
     build_centres_map(@posturacorretta_centres)
 
     render "posturacorretta/lesson_centres"
@@ -116,7 +117,7 @@ class PosturacorrettaController < ApplicationController
   def centre
     curriculum = AcademyCurriculum.load
     @centre = curriculum.fetch("locations", {}).fetch(params[:slug], nil)
-    return redirect_to(posturacorretta_centres_path, alert: "Centro non trovato") unless @centre && Array(@centre["projects"]).include?("posturacorretta")
+    return redirect_to(posturacorretta_centres_path, alert: "Centro non trovato") unless @centre&.fetch("public", true) && Array(@centre["projects"]).include?("posturacorretta")
 
     @centre_modules = curriculum.fetch("modules", []).select { |academy_module| @centre.fetch("active_modules", []).include?(academy_module.fetch("slug")) }
     @centre_teachers = curriculum.fetch("teachers", {}).values.select do |teacher|
@@ -486,6 +487,21 @@ class PosturacorrettaController < ApplicationController
     AcademyCurriculum.load.fetch("teachers", {}).each_key { |slug| sections[slug] << "accademia" }
 
     sections.transform_values(&:uniq)
+  end
+
+  def centre_from_place(place_domain)
+    place = place_domain.place
+    card = place_domain.content
+    published = card && card.publication_status == "published" && card.publication_visibility == "public"
+    {
+      "name" => place.name,
+      "slug" => card&.slug || place.slug,
+      "city" => place.city,
+      "type" => card&.data&.dig("type"),
+      "latitude" => place.latitude&.to_f,
+      "longitude" => place.longitude&.to_f,
+      "url" => (posturacorretta_centre_path(card.slug) if published)
+    }
   end
 
   def build_centres_map(centres)

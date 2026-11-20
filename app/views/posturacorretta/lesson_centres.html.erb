@@ -8,16 +8,10 @@
 
 <main class="min-h-screen bg-white px-4 py-8 sm:px-6 sm:py-10">
   <div class="mx-auto max-w-4xl">
-    <%= render "posturacorretta/lessons_page_intro", active: :centres, title: "Centri PosturaCorretta", description: "I luoghi in cui possono partire le lezioni e i percorsi PosturaCorretta." %>
-
-    <section class="mt-6 grid gap-3 sm:grid-cols-3" aria-label="Modalità delle lezioni">
-      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p class="text-xs font-black uppercase tracking-[.14em] text-blue-700">Singolo</p><p class="mt-2 text-sm leading-6 text-slate-600">Lezioni e percorsi individuali, su appuntamento.</p></article>
-      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p class="text-xs font-black uppercase tracking-[.14em] text-blue-700">Gruppo</p><p class="mt-2 text-sm leading-6 text-slate-600">Date e sedi pubblicate quando il gruppo viene attivato.</p></article>
-      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p class="text-xs font-black uppercase tracking-[.14em] text-blue-700">Online</p><p class="mt-2 text-sm leading-6 text-slate-600">Incontri in diretta video, quando previsti dal programma.</p></article>
-    </section>
+    <%= render "posturacorretta/lessons_page_intro", active: :centres, show_tabs: false, eyebrow: "PosturaCorretta", title: "Centri PosturaCorretta", description: "I luoghi in cui possono partire le lezioni e i percorsi PosturaCorretta." %>
 
     <% if @centres_map_points.any? %>
-      <% map_centres = @centres_map_points.map { |centre| centre.slice("name", "slug", "latitude", "longitude").merge("url" => posturacorretta_centre_path(centre.fetch("slug"))) } %>
+      <% map_centres = @centres_map_points.map { |centre| centre.slice("name", "slug", "latitude", "longitude", "url") } %>
       <section class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm" aria-label="Mappa dei centri PosturaCorretta" data-turbo-cache="false">
         <div id="posturacorretta-centres-map" class="h-72 w-full sm:h-80" data-centres="<%= map_centres.to_json %>"></div>
       </section>
@@ -25,13 +19,18 @@
 
     <div class="mt-6 grid gap-4 md:grid-cols-2">
       <% @posturacorretta_centres.each do |centre| %>
-        <%= link_to posturacorretta_centre_path(centre.fetch("slug")), class: "block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:p-7" do %>
+        <% card = capture do %>
           <article>
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= centre.fetch("type") %></p>
+            <% if centre["type"].present? %><p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700"><%= centre["type"] %></p><% end %>
             <h2 class="mt-2 text-xl font-black text-slate-950"><%= centre.fetch("name") %></h2>
-            <p class="mt-2 text-sm font-semibold text-slate-700"><%= centre.fetch("city") %></p>
-            <span class="mt-5 inline-flex text-sm font-bold text-blue-700">Apri centro →</span>
+            <p class="mt-2 text-sm font-semibold text-slate-700"><%= centre["city"] %></p>
+            <% if centre["url"] %><span class="mt-5 inline-flex text-sm font-bold text-blue-700">Apri centro →</span><% end %>
           </article>
+        <% end %>
+        <% if centre["url"] %>
+          <%= link_to card, centre["url"], class: "block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:p-7" %>
+        <% else %>
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7"><%= card %></div>
         <% end %>
       <% end %>
     </div>
@@ -62,6 +61,7 @@
 
       const map = L.map(element, { scrollWheelZoom: false })
       element._posturacorrettaMap = map
+      map.attributionControl.setPrefix(false)
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
         maxZoom: 19
@@ -74,10 +74,13 @@
         const popup = document.createElement("div")
         const title = document.createElement("strong")
         title.textContent = centre.name
-        const link = document.createElement("a")
-        link.href = centre.url
-        link.textContent = "Apri centro →"
-        popup.append(title, document.createElement("br"), link)
+        popup.append(title)
+        if (centre.url) {
+          const link = document.createElement("a")
+          link.href = centre.url
+          link.textContent = "Apri centro →"
+          popup.append(document.createElement("br"), link)
+        }
         L.marker(coordinates).addTo(map).bindPopup(popup)
       })
 

@@ -92,6 +92,20 @@ class ContentCatalogTest < ActiveSupport::TestCase
     assert_equal ["youtube"], article.publications.map(&:platform)
   end
 
+  test "the owner is the author, chapters without author take the course owner, and import never changes it" do
+    ContentCatalog.new(root: @root).import!
+
+    course = Content.find_by!(key: "corso-test")
+    assert_equal @profile, course.profile
+    assert_equal @profile, Content.find_by!(key: "corso-test-capitolo-lezione").profile, "capitolo senza autore: titolare del corso"
+
+    other = User.create!(email_address: "nuovo-titolare@flowpulse.test", password: "password123", password_confirmation: "password123").create_profile!(display_name: "Nuovo")
+    course.update!(profile: other)
+    ContentCatalog.new(root: @root).import!
+
+    assert_equal other, course.reload.profile
+  end
+
   test "an article can keep its text where it is with content_path" do
     write "autore-test/contenuti/articoli/2026-09-01-vecchio.md", "Testo rimasto al suo posto.\n"
     write "brands/autore-test/contents/vecchio/content.yml", <<~YAML

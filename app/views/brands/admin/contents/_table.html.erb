@@ -1,0 +1,42 @@
+<div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <table class="min-w-full divide-y divide-slate-200 text-sm">
+    <thead class="bg-slate-50 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+      <tr><th class="px-4 py-3">Contenuto</th><th class="px-4 py-3">Pubblicazione</th></tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      <% contents.each do |content| %>
+        <tr id="<%= dom_id(content) %>">
+          <td class="px-4 py-3 align-top">
+            <p class="text-xs font-bold uppercase tracking-wider text-teal-700"><%= format_label(content.format) %><%= " · #{content.parent.title}" if content.parent %></p>
+            <p class="mt-1 font-bold text-slate-900"><%= content.title %></p>
+            <p class="font-mono text-xs text-slate-500"><%= content.key %> · <%= content.node.slug %></p>
+          </td>
+          <td class="px-4 py-3">
+            <%= form_with model: content, url: brand_admin_content_path(@brand.slug, content), method: :patch, class: "flex flex-wrap items-end gap-2" do |form| %>
+              <label class="text-xs font-bold text-slate-600">Stato
+                <%= form.select :publication_status, [ [ "Bozza", "draft" ], [ "Pubblicato", "published" ], [ "Archiviato", "archived" ] ], {}, class: "mt-1 block rounded-lg border border-slate-300 px-2 py-1.5 text-sm" %>
+              </label>
+              <label class="text-xs font-bold text-slate-600">Visibilità
+                <%= form.select :publication_visibility, [ [ "Privato", "private" ], [ "Membri", "member" ], [ "Pubblico", "public" ] ], {}, class: "mt-1 block rounded-lg border border-slate-300 px-2 py-1.5 text-sm" %>
+              </label>
+              <label class="text-xs font-bold text-slate-600">Pubblicato il
+                <%= form.datetime_field :published_at, class: "mt-1 block rounded-lg border border-slate-300 px-2 py-1.5 text-sm" %>
+              </label>
+              <label class="text-xs font-bold text-slate-600">Aggiornato il
+                <%= form.datetime_field :revised_at, class: "mt-1 block rounded-lg border border-slate-300 px-2 py-1.5 text-sm" %>
+              </label>
+              <fieldset class="text-xs font-bold text-slate-600">
+                <legend>Accesso</legend>
+                <%= hidden_field_tag "content[access_modes][]", "", id: nil %>
+                <% [ [ "free", "Libero" ], [ "subscription", "Abbonamento" ], [ "purchase", "Acquisto" ] ].each do |mode, label| %>
+                  <label class="mr-2 inline-flex items-center gap-1 font-semibold"><%= check_box_tag "content[access_modes][]", mode, content.access_modes.include?(mode), id: nil %><%= label %></label>
+                <% end %>
+              </fieldset>
+              <%= form.submit "Salva", class: "rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-bold text-white hover:bg-teal-800" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

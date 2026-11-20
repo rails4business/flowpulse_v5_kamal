@@ -172,6 +172,11 @@ class LandingController < ApplicationController
     index = YAML.safe_load_file(root.join("index.yml"), permitted_classes: [], aliases: false) || {}
     @accordion_pages = index.fetch("pages")
     @accordion_page_slug = params[:page].presence_in(@accordion_pages.map { |page| page.fetch("slug") }) || @accordion_pages.first.fetch("slug")
+    if @accordion_page_slug == "casa-di-riposo-2066"
+      prototype = Rails.root.join("docs/private_prototypes/viste_html/casa_di_riposo_2066_fisarmonica.html")
+      render html: prototype.read.html_safe, layout: false
+      return
+    end
     @accordion_page = YAML.safe_load_file(root.join("pages", "#{@accordion_page_slug}.yml"), permitted_classes: [], aliases: false) || {}
     @accordion_chapters = @accordion_page.fetch("chapters", []).map do |chapter|
       source = root.join(chapter.fetch("source")).cleanpath

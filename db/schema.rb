@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -195,11 +195,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_100000) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "profile_id"
     t.index ["format"], name: "index_contents_on_format"
     t.index ["key"], name: "index_contents_on_key", unique: true
     t.index ["node_id", "parent_id", "slug"], name: "index_contents_on_node_id_and_parent_id_and_slug", unique: true, nulls_not_distinct: true
     t.index ["node_id"], name: "index_contents_on_node_id"
     t.index ["parent_id"], name: "index_contents_on_parent_id"
+    t.index ["profile_id"], name: "index_contents_on_profile_id"
     t.index ["publication_status"], name: "index_contents_on_publication_status"
   end
 
@@ -622,6 +624,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_100000) do
     t.index ["user_id"], name: "index_password_reset_requests_on_user_id"
   end
 
+  create_table "place_domains", force: :cascade do |t|
+    t.bigint "place_id", null: false
+    t.bigint "domain_id", null: false
+    t.bigint "content_id"
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_id"], name: "index_place_domains_on_content_id"
+    t.index ["domain_id"], name: "index_place_domains_on_domain_id"
+    t.index ["place_id", "domain_id"], name: "index_place_domains_on_place_id_and_domain_id", unique: true
+    t.index ["place_id"], name: "index_place_domains_on_place_id"
+  end
+
+  create_table "places", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "address"
+    t.string "city"
+    t.string "province"
+    t.decimal "latitude", precision: 10, scale: 7
+    t.decimal "longitude", precision: 10, scale: 7
+    t.string "status", default: "open", null: false
+    t.date "closed_on"
+    t.text "description"
+    t.bigint "created_by_profile_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "publication_status", default: "draft", null: false
+    t.string "publication_visibility", default: "private", null: false
+    t.datetime "published_at"
+    t.index ["created_by_profile_id"], name: "index_places_on_created_by_profile_id"
+    t.index ["publication_status"], name: "index_places_on_publication_status"
+    t.index ["slug"], name: "index_places_on_slug", unique: true
+    t.index ["status"], name: "index_places_on_status"
+  end
+
   create_table "posturacorretta_directory_people", force: :cascade do |t|
     t.bigint "domain_id", null: false
     t.bigint "profile_id"
@@ -910,6 +949,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_100000) do
   add_foreign_key "content_publications", "contents"
   add_foreign_key "contents", "contents", column: "parent_id"
   add_foreign_key "contents", "nodes"
+  add_foreign_key "contents", "profiles"
   add_foreign_key "data_commitment_imports", "profiles", column: "target_profile_id"
   add_foreign_key "data_commitment_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "data_commitments", "brand_requests"
@@ -971,6 +1011,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_100000) do
   add_foreign_key "offers", "nodes", column: "end_node_id"
   add_foreign_key "offers", "nodes", column: "start_node_id"
   add_foreign_key "password_reset_requests", "users"
+  add_foreign_key "place_domains", "contents"
+  add_foreign_key "place_domains", "domains"
+  add_foreign_key "place_domains", "places"
+  add_foreign_key "places", "profiles", column: "created_by_profile_id"
   add_foreign_key "posturacorretta_directory_people", "domains"
   add_foreign_key "posturacorretta_directory_people", "profiles"
   add_foreign_key "posturacorretta_directory_places", "domains"

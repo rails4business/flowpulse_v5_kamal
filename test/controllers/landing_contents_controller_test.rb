@@ -23,8 +23,8 @@ class LandingContentsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#eventi"
     assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=contenuti']", text: "Contenuti"
     assert_select "nav[aria-label='Contenuti ed eventi'] a[href*='tab=eventi']", text: "Eventi"
-    assert_select "#luoghi"
-    assert_select "#luoghi h3", text: "Giardino del Corpo"
+    assert_select "#luoghi", count: 0, message: "senza luoghi aperti la sezione Luoghi non compare"
+    assert_select "a[href$='#luoghi']", count: 0
     assert_select "a[href='#{posturacorretta_path}']", minimum: 1
     assert_select "a[href='#{flowpulse_path}']", minimum: 1
     assert_select "a[href='https://il-giardino-del-corpo-5xsl9ik.gamma.site/']", text: /Vecchia versione/

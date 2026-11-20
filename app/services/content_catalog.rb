@@ -98,9 +98,10 @@ class ContentCatalog
         imported[entry.fetch(:key)] = content
 
         publications += import_publications!(content, entry.fetch(:publications))
-        added, warning = import_author!(content, entry)
+        added, warning, author = import_author!(content, entry)
         contributions += added
         warnings << warning if warning
+        assign_owner!(content, author)
       end
 
       Result.new(contents: imported.size, created:, publications:, contributions:, warnings:)
@@ -129,16 +130,25 @@ class ContentCatalog
     # L'autore indicato come node diventa un contributo del profilo che ha quel node come principale.
     def import_author!(content, entry)
       author_slug = entry[:author_node_slug]
-      return [0, nil] if author_slug.blank?
+      return [0, nil, nil] if author_slug.blank?
 
       profile = Profile.joins(:primary_node).find_by(nodes: { slug: author_slug })
-      return [0, "#{entry.fetch(:key)}: nessun profilo con node principale #{author_slug}"] unless profile
+      return [0, "#{entry.fetch(:key)}: nessun profilo con node principale #{author_slug}", nil] unless profile
 
       contribution = content.contributions.find_or_initialize_by(profile: profile, role: "autore")
-      return [0, nil] if contribution.persisted?
+      return [0, nil, profile] if contribution.persisted?
 
       contribution.save!
-      [1, nil]
+      [1, nil, profile]
+    end
+
+    # Il titolare si assegna una volta sola (poi può cambiare dall'admin): l'autore, altrimenti il titolare del
+    # genitore (un capitolo senza autore è del titolare del corso).
+    def assign_owner!(content, author)
+      return if content.profile_id.present?
+
+      owner_id = author&.id || content.parent&.profile_id
+      content.update_column(:profile_id, owner_id) if owner_id
     end
 
     def course_entries

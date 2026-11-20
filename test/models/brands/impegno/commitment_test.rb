@@ -113,55 +113,17 @@ module Brands
         assert_includes commitment.errors[:metadata], "contiene item_type non valido"
       end
 
-      test "a concluded publish decision publishes the content linked by its key" do
+      test "a concluded publish decision is linked to its content as history but does not publish it" do
         content = create_content
-        decided_at = Time.zone.parse("2026-11-17 10:00")
 
-        commitment = create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: decided_at)
+        commitment = create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 1.hour.ago)
 
         assert_equal content, commitment.content
-        content.reload
-        assert_equal "published", content.publication_status
-        assert_equal "public", content.publication_visibility
-        assert_equal ["free"], content.access_modes
-        assert_equal decided_at, content.published_at
-        assert_nil content.revised_at
-      end
-
-      test "an update decision sets the revision date and keeps the first publication date" do
-        content = create_content
-        first = Time.zone.parse("2026-11-01 10:00")
-        revised = Time.zone.parse("2026-11-17 10:00")
-        create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: first)
-
-        create_publication_decision(content_key: content.key, change_kind: "update", publication_status: "published", published_at: revised)
-
-        content.reload
-        assert_equal first, content.published_at
-        assert_equal revised, content.revised_at
-      end
-
-      test "an unpublish decision brings the content back to draft" do
-        content = create_content
-        create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 1.day.ago)
-
-        create_publication_decision(content_key: content.key, change_kind: "unpublish", publication_status: "draft", visibility: "private")
-
+        assert_includes content.publication_decisions, commitment
         content.reload
         assert_equal "draft", content.publication_status
+        assert_equal "private", content.publication_visibility
         assert_nil content.published_at
-      end
-
-      test "editing or deleting a concluded decision recalculates the content" do
-        content = create_content
-        create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 2.hours.ago)
-        latest = create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 1.hour.ago)
-
-        latest.update!(publication_status: "draft", publication_change_kind: "unpublish", published_at: nil, actual_ended_at: Time.current)
-        assert_equal "draft", content.reload.publication_status
-
-        latest.destroy!
-        assert_equal "published", content.reload.publication_status
       end
 
       test "a planned decision takes its status and date from the moment it is concluded" do
@@ -175,7 +137,6 @@ module Brands
         assert_equal "draft", planned.publication_status
         assert_nil planned.published_at
         assert_equal first, planned.previous_publication_commitment
-        assert_equal "draft", content.reload.publication_status
       end
 
       test "a decision recorded as concluded without a status takes it from the change kind" do
@@ -185,7 +146,6 @@ module Brands
 
         assert_equal "archived", commitment.publication_status
         assert_nil commitment.published_at
-        assert_equal "archived", content.reload.publication_status
       end
 
       test "a decision not yet concluded leaves the content unchanged" do
@@ -196,14 +156,14 @@ module Brands
         assert_equal "draft", content.reload.publication_status
       end
 
-      test "a decision on a platform publication updates only that publication" do
+      test "a decision on a platform publication is linked to its content" do
         content = create_content
         publication = content.publications.create!(key: "youtube-video", platform: "youtube", format: "video")
 
         commitment = create_publication_decision(content_key: content.key, content_publication: publication, change_kind: "publish", publication_status: "published", published_at: 1.hour.ago)
 
         assert_equal content, commitment.content
-        assert_equal "published", publication.reload.publication_status
+        assert_equal "draft", publication.reload.publication_status
         assert_equal "draft", content.reload.publication_status
       end
 

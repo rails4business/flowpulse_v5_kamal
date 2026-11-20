@@ -70,8 +70,6 @@ module Brands
   before_validation :assign_previous_publication_commitment
   validate :content_matches_content_key
 
-  after_commit :replay_content_publication_decisions, if: :publication_decision_affected?
-
   scope :for_genera_impresa_project, ->(slug) {
     where("genera_impresa @> ?", { project_slug: slug }.to_json)
   }
@@ -165,28 +163,6 @@ module Brands
     (chapter_completion? ? content&.parent&.slug : content&.slug) || metadata.to_h["course_slug"]
   end
 
-  def publication_decided_at
-    published_at || actual_ended_at || updated_at
-  end
-
-  # Applica questa decisione sopra lo stato attuale; l'ordine lo decide Content#replay_publication_decisions!.
-  def apply_publication_decision!
-    decided_at = publication_decided_at
-    target = content_publication || content
-    attributes = { publication_status:, publication_visibility: }
-    attributes[:access_modes] = access_modes if target.is_a?(Content)
-
-    case publication_change_kind
-    when "update", "fix"
-      attributes[:published_at] = target.published_at || decided_at
-      attributes[:revised_at] = decided_at if target.is_a?(Content)
-    else
-      attributes[:published_at] = publication_status == "published" ? decided_at : nil
-    end
-
-    target.update!(attributes)
-  end
-
   private
 
     def normalize_access_modes
@@ -277,14 +253,6 @@ module Brands
     def content_by_key_or_slug(scope, slug_scope = scope)
       by_key = scope.where(key: content_key)
       by_key.exists? ? by_key : slug_scope.where(slug: content_key)
-    end
-
-    def publication_decision_affected?
-      publication_requested? && content.present? && (status == "completed" || status_before_last_save == "completed")
-    end
-
-    def replay_content_publication_decisions
-      Content.find(content_id).replay_publication_decisions!
     end
 
     def ends_after_start

@@ -9,7 +9,7 @@
       <%= link_to "Visione", "#{home_url}#visione", class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Esperienze", "#{home_url}#esperienze", class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Eventi", "#{home_url}#eventi", class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
-      <%= link_to "Luoghi", "#{home_url}#luoghi", class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
+      <%= link_to "Luoghi", "#{home_url}#luoghi", class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" unless @garden_places&.empty? %>
       <%= link_to "PosturaCorretta", posturacorretta_path, class: "text-sm font-semibold text-slate-600 hover:text-blue-700" %>
       <%= link_to "Flowpulse", flowpulse_path, class: "text-sm font-semibold text-slate-600 hover:text-violet-700" %>
     </nav>

@@ -14,6 +14,10 @@ class DomainsController < ApplicationController
         return redirect_to_canonical_host
       end
 
+      if current_domain_host == "posturacorretta.org" && request.path == "/"
+        return redirect_to posturacorretta_path, status: :moved_permanently
+      end
+
       return redirect_unpublished_domain_to_genera_impresa if unpublished_domain_node?
 
       dispatch_domain_action

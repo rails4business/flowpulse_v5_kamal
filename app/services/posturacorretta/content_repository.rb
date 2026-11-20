@@ -58,6 +58,8 @@ module Posturacorretta
         "content_path" => record.source_path&.delete_prefix(DATA_ROOT),
         "status" => record.publication_status,
         "visibility" => record.publication_visibility,
+        "published_at" => record.published_at,
+        "revised_at" => record.revised_at,
         "access" => access_for(record)
       ).compact
     end

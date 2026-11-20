@@ -34,16 +34,15 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Flowpulse"
   end
 
-  test "renders the PosturaCorretta price list home on its own domain" do
+  test "redirects the PosturaCorretta domain root to its canonical path" do
     brand = Node.create!(role_assignment: @role_assignment, title: "PosturaCorretta", slug: "posturacorretta", status: "published", visibility: "public")
     Domain.create!(hostname: "posturacorretta.org", node: brand, role_assignment: @role_assignment, home_mode: "node", locale: "it")
     host! "posturacorretta.org"
 
     get root_url
 
-    assert_response :success
-    assert_select ".pc-landing-home", count: 1
-    assert_select ".pc-home-tabs", count: 0
+    assert_redirected_to "http://posturacorretta.org/posturacorretta"
+    assert_response :moved_permanently
   end
 
   test "renders configured domain target" do
@@ -62,13 +61,8 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     get root_url
 
-    assert_response :success
-    assert_includes response.body, "PosturaCorretta"
-    assert_select "title", text: "Cambiare punto di vista fa la differenza"
-    assert_select "link[rel='icon'][href='https://cdn.example.com/posturacorretta-icon.png']"
-    assert_select "meta[property='og:title'][content='Cambiare punto di vista fa la differenza']"
-    assert_select "meta[property='og:image'][content='https://cdn.example.com/posturacorretta-social.png']"
-    assert_select "meta[name='twitter:image'][content='https://cdn.example.com/posturacorretta-social.png']"
+    assert_redirected_to "http://posturacorretta.org/posturacorretta"
+    assert_response :moved_permanently
   end
 
   test "resolves current domain from forwarded host" do
@@ -77,8 +71,8 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     get root_url, headers: { "X-Forwarded-Host" => "posturacorretta.org" }
 
-    assert_response :success
-    assert_includes response.body, "PosturaCorretta"
+    assert_redirected_to "http://posturacorretta.org/posturacorretta"
+    assert_response :moved_permanently
   end
 
   test "resolves current domain when forwarded host includes port" do
@@ -87,8 +81,8 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     get root_url, headers: { "X-Forwarded-Host" => "posturacorretta.org:443" }
 
-    assert_response :success
-    assert_includes response.body, "PosturaCorretta"
+    assert_redirected_to "http://posturacorretta.org:443/posturacorretta"
+    assert_response :moved_permanently
   end
 
   test "renders configured controller target" do
@@ -330,7 +324,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: /Trova la giusta posizione/, count: 0
   end
 
-  test "posturacorretta root reaches the domain resolver and renders its Node Show" do
+  test "posturacorretta root uses the canonical PosturaCorretta path" do
     Domain.create!(
       hostname: "posturacorretta.org",
       home_mode: "node",
@@ -345,9 +339,8 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
 
     get root_url
 
-    assert_response :success
-    assert_includes response.body, "Specific Target Node"
-    assert_select "h1", text: "Specific Target Node"
+    assert_redirected_to "http://posturacorretta.org/posturacorretta"
+    assert_response :moved_permanently
   end
 
   test "keeps the previous posturacorretta home at its percorso path" do

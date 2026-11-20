@@ -1,0 +1,45 @@
+<% content_for :title, @place.name %>
+
+<div class="space-y-6">
+  <header>
+    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Flowpulse · Luoghi</p>
+    <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950"><%= @place.name %></h1>
+  </header>
+
+  <%= render "form", place: @place %>
+
+  <section class="space-y-4 rounded-xl border border-slate-200 bg-white p-6" aria-labelledby="place-domains-title">
+    <div>
+      <h2 id="place-domains-title" class="text-xl font-extrabold text-slate-950">Domini</h2>
+      <p class="mt-1 text-sm text-slate-600">In ogni dominio il luogo può avere un contenuto che lo racconta, scelto tra quelli del dominio.</p>
+    </div>
+
+    <% @place.place_domains.includes(:domain, :content).each do |place_domain| %>
+      <div class="flex flex-col gap-3 rounded-lg border border-slate-200 p-4 sm:flex-row sm:items-end">
+        <p class="font-bold text-slate-900 sm:w-56"><%= place_domain.domain.hostname %></p>
+        <%= form_with model: place_domain, url: flowpulse_place_place_domain_path(@place, place_domain), method: :patch, class: "flex flex-1 flex-wrap items-end gap-2" do |form| %>
+          <label class="flex-1 text-sm font-bold text-slate-700">
+            Contenuto
+            <%= form.collection_select :content_id, Place.content_choices_for(place_domain.domain), :id, :title, { include_blank: "Nessuno" },
+                  class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" %>
+          </label>
+          <%= form.submit "Salva", class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" %>
+        <% end %>
+        <%= button_to "Scollega", flowpulse_place_place_domain_path(@place, place_domain), method: :delete,
+              class: "rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-bold text-red-700 hover:bg-red-100",
+              form: { data: { turbo_confirm: "Scollegare #{place_domain.domain.hostname}?" } } %>
+      </div>
+    <% end %>
+
+    <% free_domains = @domains.reject { |domain| @place.place_domains.any? { |place_domain| place_domain.domain_id == domain.id } } %>
+    <% if free_domains.any? %>
+      <%= form_with model: PlaceDomain.new, url: flowpulse_place_place_domains_path(@place), class: "flex flex-wrap items-end gap-2" do |form| %>
+        <label class="text-sm font-bold text-slate-700">
+          Aggiungi dominio
+          <%= form.collection_select :domain_id, free_domains, :id, :hostname, {}, class: "mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" %>
+        </label>
+        <%= form.submit "Collega", class: "rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500" %>
+      <% end %>
+    <% end %>
+  </section>
+</div>

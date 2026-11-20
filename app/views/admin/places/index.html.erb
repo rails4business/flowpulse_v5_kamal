@@ -1,0 +1,54 @@
+<% content_for :title, "Luoghi" %>
+
+<div class="space-y-6">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Flowpulse · Rete</p>
+      <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-950">Luoghi</h1>
+      <p class="mt-2 text-sm text-slate-600">Tutti i luoghi della rete. Ogni dominio mostra solo i luoghi aperti collegati a lui.</p>
+    </div>
+    <%= link_to "Nuovo luogo", new_flowpulse_place_path, class: "inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500" %>
+  </header>
+
+  <%= form_with url: flowpulse_places_path, method: :get, class: "flex flex-wrap items-end gap-2" do %>
+    <label class="text-sm font-bold text-slate-700">
+      Dominio
+      <%= select_tag :dominio, options_for_select([ [ "Tutti", "" ] ] + @domains.map { |domain| [ domain.hostname, domain.hostname ] }, @domain&.hostname),
+            class: "mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" %>
+    </label>
+    <button class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">Filtra</button>
+  <% end %>
+
+  <% if @places.any? %>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+          <tr><th class="px-4 py-3">Luogo</th><th class="px-4 py-3">Città</th><th class="px-4 py-3">Stato</th><th class="px-4 py-3">Domini</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% @places.each do |place| %>
+            <tr>
+              <td class="px-4 py-3"><%= link_to place.name, edit_flowpulse_place_path(place), class: "font-bold text-blue-700 hover:underline" %><span class="block font-mono text-xs text-slate-500"><%= place.slug %></span></td>
+              <td class="px-4 py-3 text-slate-700"><%= place.city %></td>
+              <td class="px-4 py-3">
+                <% if place.open? %>
+                  <span class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">Aperto</span>
+                <% else %>
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600">Chiuso<%= " dal #{l(place.closed_on)}" if place.closed_on %></span>
+                <% end %>
+                <span class="mt-1 block text-xs font-bold <%= place.published? && place.publication_visibility == "public" ? "text-blue-700" : "text-amber-700" %>"><%= place.published? ? "Pubblicato" : "Bozza" %> · <%= { "public" => "pubblico", "member" => "membri", "private" => "privato" }.fetch(place.publication_visibility) %></span>
+              </td>
+              <td class="px-4 py-3 text-slate-700">
+                <% place.place_domains.each do |place_domain| %>
+                  <span class="block"><%= place_domain.domain.hostname %><%= " · #{place_domain.content.title}" if place_domain.content %></span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">Nessun luogo<%= " per #{@domain.hostname}" if @domain %>.</p>
+  <% end %>
+</div>
