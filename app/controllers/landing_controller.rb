@@ -120,6 +120,8 @@ class LandingController < ApplicationController
 
     @rails4b_track_steps = rails4b_steps_for(@rails4b_track)
     @rails4b_article = @rails4b_track_steps.find { |content| content.fetch("slug") == params[:contenuto] } || @rails4b_track_steps.first
+    return redirect_to(rails4b_path, alert: "Percorso non trovato") unless @rails4b_article
+
     load_rails4b_article_body
   end
 
@@ -271,24 +273,45 @@ class LandingController < ApplicationController
   def load_rails4b
     @rails4b = YAML.safe_load_file(Rails.root.join("config/data/rails4b/landing.yml"), permitted_classes: [], aliases: false) || {}
     @rails4b_path = YAML.safe_load_file(Rails.root.join("config/data/rails4b/percorso.yml"), permitted_classes: [], aliases: false) || {}
-    @rails4b_content_catalog = YAML.safe_load_file(Rails.root.join("config/data/rails4b/contenuti/catalog.yml"), permitted_classes: [], aliases: false) || {}
-    @rails4b_contents_by_slug = @rails4b_content_catalog.fetch("items", []).index_by { |content| content.fetch("slug") }
-    @rails4b_track_by_content_slug = @rails4b_path.fetch("tracks").each_with_object({}) do |track, index|
-      track.fetch("steps").each { |step| index[step.fetch("content_slug")] = track.fetch("slug") }
+    # Articoli e guide sono Content (vedi DomainContentCatalog::CONTENT_NODES); lo stato è quello dell'ambiente.
+    contents = Content.joins(:node).where(nodes: { slug: DomainContentCatalog::CONTENT_NODES.fetch("rails4b") }, format: %w[post chapter])
+      .includes(:parent).order(:position, :key).to_a
+    @rails4b_content_catalog = { "items" => contents.map { |content| rails4b_item(content) } }
+    @rails4b_contents_by_slug = @rails4b_content_catalog.fetch("items").index_by { |content| content.fetch("slug") }
+    @rails4b_track_step_slugs = @rails4b_path.fetch("tracks").to_h do |track|
+      [track.fetch("slug"), contents.select { |content| content.parent&.key == track.fetch("course_key") }.map(&:slug)]
+    end
+    @rails4b_track_by_content_slug = @rails4b_track_step_slugs.each_with_object({}) do |(track_slug, slugs), index|
+      slugs.each { |slug| index[slug] = track_slug }
     end
   end
 
+  # Una guida non pubblicata resta nel trenino come "in preparazione" (titolo sì, testo no), come i capitoli
+  # dei corsi; un articolo non pubblicato è una bozza visibile solo al superadmin.
+  def rails4b_item(content)
+    published = content.publication_status == "published" && content.publication_visibility == "public"
+    content.data.merge(
+      "slug" => content.slug,
+      "kind" => content.format == "chapter" ? "guida" : "articolo",
+      "title" => content.title,
+      "description" => content.description,
+      "publication_at" => content.written_on&.iso8601,
+      "status" => published ? "published" : (content.format == "chapter" ? "scheduled" : "draft"),
+      "source_path" => content.source_path
+    )
+  end
+
   def rails4b_steps_for(track)
-    track.fetch("steps").map do |step|
-      @rails4b_contents_by_slug.fetch(step.fetch("content_slug")).merge("number" => step.fetch("number"))
+    @rails4b_track_step_slugs.fetch(track.fetch("slug")).each_with_index.map do |slug, index|
+      @rails4b_contents_by_slug.fetch(slug).merge("number" => (index + 1).to_s)
     end
   end
 
   def load_rails4b_article_body
-    source_path = Rails.root.join("config/data/rails4b/contenuti", @rails4b_article.fetch("source")).cleanpath
-    content_root = Rails.root.join("config/data/rails4b/contenuti").to_s
+    source_path = @rails4b_article["source_path"].present? ? Rails.root.join(@rails4b_article.fetch("source_path")).cleanpath : nil
+    content_root = Rails.root.join("config/data").to_s
     @rails4b_draft_preview = @rails4b_article.fetch("status") != "published" && Current.user&.superadmin_user?
-    @rails4b_markdown = source_path.read if (@rails4b_article.fetch("status") == "published" || @rails4b_draft_preview) && source_path.to_s.start_with?(content_root) && source_path.file?
+    @rails4b_markdown = source_path.read if source_path && (@rails4b_article.fetch("status") == "published" || @rails4b_draft_preview) && source_path.to_s.start_with?("#{content_root}/") && source_path.file?
   end
 
   def load_radioestesia_timeline

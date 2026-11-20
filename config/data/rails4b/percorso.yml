@@ -1,6 +1,8 @@
-# Solo ordine e destinazione dei due trenini: testi, date e stato sono nel catalogo contenuti.
+# Titolo e indirizzo dei due trenini. Le guide e il loro ordine vengono dal corso indicato da course_key
+# (Content importato da brands/*/courses); gli steps qui sotto restano come copia e non vengono più letti.
 tracks:
   - slug: collaborare
+    course_key: voglio-collaborare
     title: "Voglio collaborare"
     description: "Cinque passi per conoscere la rete e proporre un contributo concreto."
     steps:
@@ -15,6 +17,7 @@ tracks:
       - number: "5"
         content_slug: fai-una-proposta
   - slug: progetto
+    course_key: ho-un-progetto
     title: "Ho un progetto"
     description: "Cinque passi per partire da un bisogno reale e arrivare a un piccolo pilota."
     steps:

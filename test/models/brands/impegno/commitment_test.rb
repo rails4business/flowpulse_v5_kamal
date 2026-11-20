@@ -168,7 +168,7 @@ module Brands
         content = create_content
         first = create_publication_decision(content_key: content.key, change_kind: "publish", publication_status: "published", published_at: 1.day.ago)
         planned = create_publication_decision(content_key: content.key, change_kind: "unpublish", publication_status: "published", status: "planned")
-        ended_at = Time.zone.parse("2026-11-19 09:30")
+        ended_at = 1.minute.ago.change(usec: 0)
 
         planned.update!(status: "completed", actual_ended_at: ended_at)
 

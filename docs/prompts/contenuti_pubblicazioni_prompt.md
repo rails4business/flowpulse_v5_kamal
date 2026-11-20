@@ -587,6 +587,16 @@ funzionanti.
 - Dopo il deploy i 17 articoli e le 10 guide sono in bozza: vanno pubblicati con un impegno (`content_key` =
   chiave dell'articolo, cioè lo slug). Le pagine `rails4b/percorsi` e `rails4b/contenuti` leggono ancora i YAML.
 
+**Stato fase 3 — passo 4 (pagine rails4b da Content) fatto**
+
+- `rails4b/contenuti`, `rails4b/contenuti/:slug` e `rails4b/percorsi/:slug` leggono articoli e guide dai Content.
+  `percorso.yml` dà solo titolo e indirizzo dei trenini, più `course_key` (il corso con le guide in ordine); i
+  suoi `steps` e `catalog.yml` restano come copia ma non vengono letti.
+- Una guida non pubblicata resta nel trenino "in preparazione" (titolo sì, testo no); un articolo non
+  pubblicato è visibile solo al superadmin. Le date mostrano il giorno di scrittura, senza ora.
+- Ancora sul YAML: la home di rails4b.com in `domains_controller.rb` (`prepare_rails4b_landing`), lasciata per
+  non toccare modifiche in corso in quel file.
+
 **Fase 3 — Articoli**
 - Conversione dei cataloghi di `markpostura` e `rails4b` nella forma `brands/<node>/contents/`.
 - `DomainContentCatalog` legge da Content.

@@ -333,7 +333,19 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{rails4b_contents_path}']", text: /contenuti/i, minimum: 1
   end
 
+  # Articoli e guide Rails4Business pubblicati come nel vecchio catalogo; le altre guide restano in preparazione.
+  def import_rails4b_contents
+    import_posturacorretta_contents
+    publish_test_contents(
+      "guarda-flowpulse", "guarda-i-progetti", "flusso-e-battito-per-la-costruzione-di-nuovi-mondi-con-flowpulse",
+      "riprenderci-la-politica-partendo-dall-economia", "dal-nodeevent-alla-scheda-markdown", "dalla-banca-alla-cellula-sociale",
+      "la-salute-oltre-l-euro", "l-ai-non-mappa-la-realta", "il-giardino-del-corpo-geografia-della-vita",
+      "costruire-un-sistema-economico-nuovo", "dalla-moneta-alla-comunita-economia-circolare-dash"
+    )
+  end
+
   test "Rails4Business renders a published path article" do
+    import_rails4b_contents
     get rails4b_content_url("guarda-flowpulse")
 
     assert_response :success
@@ -342,6 +354,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Rails4Business hides scheduled drafts from the public" do
+    import_rails4b_contents
     get rails4b_content_url("parti-dal-bisogno")
 
     assert_response :success
@@ -350,6 +363,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Rails4Business publishes the cellula sociale article" do
+    import_rails4b_contents
     get rails4b_content_url("dalla-banca-alla-cellula-sociale")
 
     assert_response :success
@@ -363,6 +377,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Rails4Business publishes the politics and economy article" do
+    import_rails4b_contents
     get rails4b_content_url("riprenderci-la-politica-partendo-dall-economia")
 
     assert_response :success
@@ -376,6 +391,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Rails4Business separates dated content from the permanent train" do
+    import_rails4b_contents
     get rails4b_contents_url
 
     assert_response :success
@@ -396,6 +412,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Rails4Business renders a track show with its content aside" do
+    import_rails4b_contents
     get rails4b_track_url("collaborare", contenuto: "guarda-flowpulse")
 
     assert_response :success
