@@ -114,7 +114,8 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_nil Node.find_by(slug: "accesso-stato-di-salute-da-posturacorretta")
     assert_nil Node.find_by(slug: "accesso-stato-di-salute-da-giardino-del-corpo")
     assert_nil Node.find_by(slug: "accesso-percorso-integrato-da-linea-postura-giardino")
-    assert_equal %w[questionario-orientamento-stato-di-salute corso-il-tuo-stato-di-salute comuni centri professioni scuole-formazione-professionisti], stato_di_salute.children.order(:position).pluck(:slug)
+    assert_equal %w[questionario-orientamento-stato-di-salute corso-il-tuo-stato-di-salute risorse-stato-di-salute], stato_di_salute.children.order(:position).pluck(:slug)
+    assert_equal %w[comuni centri professioni scuole-formazione-professionisti], Node.find_by!(slug: "risorse-stato-di-salute").children.order(:position).pluck(:slug)
     assert_equal "Attività generali · Servizi settimanali", Node.find_by!(slug: "categorie-generali").title
     assert Node.find_by!(slug: "categorie-generali").lane_container?
     assert_equal "Attività specifiche · Percorsi mirati", Node.find_by!(slug: "categorie-specifiche").title

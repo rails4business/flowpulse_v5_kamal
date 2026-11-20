@@ -603,6 +603,18 @@ funzionanti.
 - `posturacorretta/contenuti/catalog.yml` resta finché non si decide la migrazione di home e Consapevolezza
   (punto 5).
 
+**Fase 4 — passo 1 (node Risorse) fatto**
+
+- Ogni dominio raccoglie le sue raccolte di schede e articoli in un node "Risorse" (senza posizione sulla mappa):
+  - `risorse-posturacorretta` → `insegnanti-posturacorretta`, `centri-posturacorretta`,
+    `metodiche-posturacorretta`, `scuole-posturacorretta` (vuoti);
+  - `risorse-stato-di-salute` → `comuni`, `centri`, `professioni`, `scuole-formazione-professionisti` (spostati);
+  - `risorse-markpostura` → `articoli-markpostura`; `risorse-rails4business` → `articoli-rails4business`.
+- Le schede si scrivono come gli articoli: `brands/<brand>/contents/<slug>/content.yml` + `content.md`, con
+  `format` (`insegnante`, `centro`, `metodica`, `scuola`, `professionista`, `founder`) e `publisher_node_slug` =
+  node della raccolta; entrano con l'import. Metodica e scuola sono distinte: la scuola forma nella metodica
+  (legame ContentLink).
+
 **Fase 4 — Schede e metodiche**
 - Schede `insegnante`, `professionista`, `founder`, `centro`, `scuola`, `metodica` (punto 11).
 - Metodiche da node a Content; tolti i 10 node delle metodiche, i 5 ponti e `MethodologyNodeImporter`;

@@ -53,10 +53,82 @@ default: &default
       status: published
       visibility: public
 
+    risorse-posturacorretta:
+      title: Risorse
+      node_type: project
+      parent_slug: posturacorretta
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    insegnanti-posturacorretta:
+      title: Insegnanti
+      node_type: project
+      parent_slug: risorse-posturacorretta
+      position: 1
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    centri-posturacorretta:
+      title: Centri
+      node_type: project
+      parent_slug: risorse-posturacorretta
+      position: 2
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    metodiche-posturacorretta:
+      title: Metodiche
+      node_type: project
+      parent_slug: risorse-posturacorretta
+      position: 3
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    scuole-posturacorretta:
+      title: Scuole
+      node_type: project
+      parent_slug: risorse-posturacorretta
+      position: 4
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    risorse-stato-di-salute:
+      title: Risorse
+      node_type: project
+      parent_slug: stato-di-salute
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    risorse-markpostura:
+      title: Risorse
+      node_type: project
+      parent_slug: markpostura
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
+    risorse-rails4business:
+      title: Risorse
+      node_type: project
+      parent_slug: rails4business
+      position: 99
+      professional_owner_slug: markpostura
+      status: published
+      visibility: public
+
     articoli-markpostura:
       title: Articoli
       node_type: project
-      parent_slug: markpostura
+      parent_slug: risorse-markpostura
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -64,7 +136,7 @@ default: &default
     articoli-rails4business:
       title: Articoli
       node_type: project
-      parent_slug: rails4business
+      parent_slug: risorse-rails4business
       professional_owner_slug: markpostura
       status: published
       visibility: public
@@ -397,7 +469,7 @@ default: &default
       description: Contenitore dei Comuni coinvolti nella rete territoriale.
       map_color: "#16A34A"
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: risorse-stato-di-salute
       position: 20
       professional_owner_slug: markpostura
       status: published
@@ -408,7 +480,7 @@ default: &default
       description: Contenitore dei Centri che offrono servizi e attività sul territorio.
       map_color: "#16A34A"
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: risorse-stato-di-salute
       position: 21
       professional_owner_slug: markpostura
       status: published
@@ -419,7 +491,7 @@ default: &default
       description: Contenitore delle professioni della salute e del benessere.
       map_color: "#16A34A"
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: risorse-stato-di-salute
       position: 22
       professional_owner_slug: markpostura
       status: published
@@ -430,7 +502,7 @@ default: &default
       description: Contenitore delle scuole e dei percorsi di formazione professionale.
       map_color: "#16A34A"
       node_type: project
-      parent_slug: stato-di-salute
+      parent_slug: risorse-stato-di-salute
       position: 23
       professional_owner_slug: markpostura
       status: published
