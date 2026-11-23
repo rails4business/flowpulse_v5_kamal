@@ -23,6 +23,18 @@ class PlaceTest < ActiveSupport::TestCase
     assert_includes @domain.places, @place
   end
 
+  test "a domain shows only its open and public places" do
+    @place.update!(publication_status: "published", publication_visibility: "public")
+    @place.place_domains.create!(domain: @domain)
+    elsewhere = Place.create!(name: "Altrove", slug: "altrove-luoghi", publication_status: "published", publication_visibility: "public")
+    elsewhere.place_domains.create!(domain: @other_domain)
+
+    assert_equal [ @place ], Place.shown_on(@domain).to_a
+
+    @place.update!(status: "closed")
+    assert_empty Place.shown_on(@domain)
+  end
+
   test "the content of a place in a domain must belong to that domain" do
     card = Content.create!(node: @other_brand, key: "centro-altrove", slug: "centro-altrove", format: "centro", title: "Altrove")
 

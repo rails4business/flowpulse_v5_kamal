@@ -1,14 +1,16 @@
 <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
   <table class="min-w-full divide-y divide-slate-200 text-sm">
     <thead class="bg-slate-50 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-      <tr><th class="px-4 py-3">Contenuto</th><th class="px-4 py-3">Pubblicazione</th></tr>
+      <tr><th class="px-4 py-3">Dominio</th><th class="px-4 py-3">Tipo</th><th class="px-4 py-3">Contenuto</th><th class="px-4 py-3">Pubblicazione</th></tr>
     </thead>
     <tbody class="divide-y divide-slate-100">
       <% contents.each do |content| %>
         <tr id="<%= dom_id(content) %>">
+          <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-slate-700"><%= content_domain(content) || "—" %></td>
+          <td class="whitespace-nowrap px-4 py-3 align-top text-xs font-bold uppercase tracking-wider text-teal-700"><%= format_label(content.format) %></td>
           <td class="px-4 py-3 align-top">
-            <p class="text-xs font-bold uppercase tracking-wider text-teal-700"><%= format_label(content.format) %><%= " · #{content.parent.title}" if content.parent %></p>
-            <p class="mt-1 font-bold text-slate-900"><%= content.title %></p>
+            <% if content.parent %><p class="text-xs font-semibold text-slate-500"><%= content.parent.title %></p><% end %>
+            <p class="font-bold text-slate-900"><%= content.title %></p>
             <p class="font-mono text-xs text-slate-500"><%= content.key %> · <%= content.node.slug %></p>
           </td>
           <td class="px-4 py-3">

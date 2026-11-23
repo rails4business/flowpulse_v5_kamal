@@ -6,16 +6,18 @@ require "digest"
 #
 # Il YAML è la fonte di struttura e testo. Lo stato di pubblicazione invece è dell'ambiente:
 # l'import non lo legge e non lo tocca mai, e un contenuto nuovo parte in bozza.
-# L'import non cancella nulla: contenuti, pubblicazioni e contributi assenti dal YAML restano.
+# L'import non cancella nulla: contenuti, pubblicazioni, contributi e legami assenti dal YAML restano.
+# I legami verso altri Content (ContentLink) si scrivono come `links: { <tipo>: [<chiave>, ...] }`; quelli che
+# arrivano da un Node (es. corso introduttivo → metodica) come `links_from_nodes: { <tipo>: [<slug>, ...] }`.
 class ContentCatalog
-  Result = Data.define(:contents, :created, :publications, :contributions, :warnings)
+  Result = Data.define(:contents, :created, :publications, :contributions, :links, :warnings)
 
   ROOT = Rails.root.join("config/data")
   # Decisioni dell'ambiente (piano contenuti, punto 1): restano negli impegni, non nel YAML.
   ENVIRONMENT_KEYS = %w[status visibility access].freeze
   CONTENT_KEYS = %w[
     id parent_id slug format position title description excerpt content_path
-    publication_at written_on publications lesson_node_slug
+    publication_at written_on publications lesson_node_slug links links_from_nodes
   ].freeze
   PUBLICATION_KEYS = %w[key platform format url external_id title body position scheduled_at].freeze
 
@@ -41,6 +43,14 @@ class ContentCatalog
       errors << "#{label}: parent_id sconosciuto #{entry[:parent_key]}" if entry[:parent_key] && !by_key.key?(entry[:parent_key])
       errors << "#{label}: node sconosciuto #{entry[:node_slug]}" unless nodes_by_slug.key?(entry[:node_slug])
       errors << "#{label}: Markdown mancante #{entry[:body_path]}" if entry[:body_path] && !entry[:body_path].file?
+      entry.fetch(:links).each do |kind, target_keys|
+        errors << "#{label}: tipo di legame non valido #{kind}" unless kind.match?(/\A[a-z][a-z0-9_]*\z/)
+        target_keys.each { |target_key| errors << "#{label}: legame verso chiave sconosciuta #{target_key}" unless by_key.key?(target_key) }
+      end
+      entry.fetch(:links_from_nodes).each do |kind, node_slugs|
+        errors << "#{label}: tipo di legame non valido #{kind}" unless kind.match?(/\A[a-z][a-z0-9_]*\z/)
+        node_slugs.each { |node_slug| errors << "#{label}: legame da node sconosciuto #{node_slug}" unless nodes_by_slug.key?(node_slug) }
+      end
       entry.fetch(:publications).each do |publication|
         unless ContentPublication::PLATFORMS.include?(publication["platform"]) && ContentPublication::FORMATS.include?(publication["format"])
           errors << "#{label}: pubblicazione non valida #{publication.slice('platform', 'format').to_json}"
@@ -104,7 +114,24 @@ class ContentCatalog
         assign_owner!(content, author)
       end
 
-      Result.new(contents: imported.size, created:, publications:, contributions:, warnings:)
+      links = entries.sum do |entry|
+        content = imported.fetch(entry.fetch(:key))
+        import_links!(content, entry.fetch(:links), imported) + import_links_from_nodes!(content, entry.fetch(:links_from_nodes))
+      end
+
+      Result.new(contents: imported.size, created:, publications:, contributions:, links:, warnings:)
+    end
+
+    # Aggiunge i legami mancanti; quelli già presenti restano, anche se tolti dal YAML.
+    def import_links!(content, definitions, imported)
+      definitions.sum do |kind, target_keys|
+        target_keys.each_with_index.count do |target_key, index|
+          link = content.outgoing_links.find_or_initialize_by(kind:, target_content: imported.fetch(target_key))
+          next false unless link.new_record?
+
+          link.update!(position: index)
+        end
+      end
     end
 
     def import_publications!(content, definitions)
@@ -199,6 +226,8 @@ class ContentCatalog
         author_node_slug: item["author_node_slug"].presence,
         body_path: body_path,
         publications: Array(item["publications"]).map { |publication| publication.to_h.deep_stringify_keys },
+        links: item["links"].to_h.transform_values { |keys| Array(keys).map(&:to_s) },
+        links_from_nodes: item["links_from_nodes"].to_h.transform_values { |slugs| Array(slugs).map(&:to_s) },
         data: item.except(*CONTENT_KEYS, *ENVIRONMENT_KEYS),
         source: source
       }
@@ -212,6 +241,17 @@ class ContentCatalog
         parent = by_key[entry[:parent_key]]
         entry[:node_slug] ||= parent && (parent[:node_slug] || parent[:folder_node])
         entry[:node_slug] ||= entry.fetch(:folder_node)
+      end
+    end
+
+    def import_links_from_nodes!(content, definitions)
+      definitions.sum do |kind, node_slugs|
+        node_slugs.each_with_index.count do |node_slug, index|
+          link = content.incoming_links.find_or_initialize_by(kind:, source_node: nodes_by_slug.fetch(node_slug))
+          next false unless link.new_record?
+
+          link.update!(position: index)
+        end
       end
     end
 
@@ -231,7 +271,7 @@ class ContentCatalog
     end
 
     def nodes_by_slug
-      @nodes_by_slug ||= Node.where(slug: entries.map { |entry| entry[:node_slug] }.uniq).index_by(&:slug)
+      @nodes_by_slug ||= Node.where(slug: entries.flat_map { |entry| [ entry[:node_slug], *entry.fetch(:links_from_nodes).values.flatten ] }.uniq).index_by(&:slug)
     end
 
     # Molti Markdown dei capitoli dichiarano autore ed editore nell'intestazione YAML;

@@ -33,8 +33,12 @@ module ActiveSupport
       Dir[Rails.root.join("config/data/brands/*/contents/*/content.yml")].sort.each do |path|
         folder_slug = Pathname(path).each_filename.to_a[-4]
         folder = Node.find_by(slug: folder_slug) || create_catalog_test_node(folder_slug)
-        publisher_slug = YAML.safe_load_file(path)["publisher_node_slug"]
+        item = YAML.safe_load_file(path)
+        publisher_slug = item["publisher_node_slug"]
         create_catalog_test_node(publisher_slug, parent: folder) if publisher_slug.present? && !Node.exists?(slug: publisher_slug)
+        item["links_from_nodes"].to_h.values.flatten.each do |slug|
+          create_catalog_test_node(slug, parent: folder) unless Node.exists?(slug:)
+        end
       end
       ContentCatalog.new.import!
       Content.where(key: published_courses, format: "course").update_all(

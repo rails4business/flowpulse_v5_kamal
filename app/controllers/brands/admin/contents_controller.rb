@@ -9,13 +9,16 @@ module Brands
         "metodica" => "Metodica"
       }.freeze
 
-      helper_method :format_label
+      helper_method :format_label, :content_domain
 
+      # Una sola tabella: i Content del brand e quelli del titolare, con il dominio da cui escono e il tipo.
       def index
-        @format = params[:tipo].presence_in(Content::FORMATS)
-        @brand_contents = filtered(Content.in_tree_of(@brand))
-        @owner_profile = @brand.primary_professional_profile
-        @owned_elsewhere = @owner_profile ? filtered(Content.where(profile: @owner_profile).where.not(id: Content.in_tree_of(@brand).select(:id))) : Content.none
+        contents = manageable_contents.includes(:node, :parent).order(:format, :position, :title).to_a
+        @domain_choices = contents.map { |content| content_domain(content) }.compact.uniq.sort
+        @format_choices = contents.map(&:format).uniq.sort_by { |format| format_label(format) }
+        @domain = params[:dominio].presence_in(@domain_choices)
+        @format = params[:tipo].presence_in(@format_choices)
+        @contents = contents.select { |content| (@domain.nil? || content_domain(content) == @domain) && (@format.nil? || content.format == @format) }
       end
 
       def update
@@ -33,9 +36,13 @@ module Brands
           FORMAT_LABELS.fetch(format, format.humanize)
         end
 
-        def filtered(scope)
-          scope = scope.where(format: @format) if @format
-          scope.includes(:node, :parent).order(:format, :position, :title)
+        # Il dominio del primo node con un Domain attivo risalendo dal node del Content.
+        def content_domain(content)
+          @content_domains ||= {}
+          @content_domains.fetch(content.node_id) do
+            site = content.node.site_node
+            @content_domains[content.node_id] = site && (site.primary_domain || site.domains.active.order(:hostname).first)&.hostname
+          end
         end
 
         def manageable_contents

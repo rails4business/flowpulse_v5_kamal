@@ -1,0 +1,12 @@
+# Scheda metodica; c'era solo il node fisioterapia, senza voce in metodiche.yml: testo da scrivere.
+id: metodica-fisioterapia
+slug: metodica-fisioterapia
+format: metodica
+position: 10
+title: Fisioterapia
+publisher_node_slug: metodiche-posturacorretta
+# Il corso introduttivo PosturaCorretta che ne presenta i principi (prima era il ponte sulla mappa).
+links_from_nodes:
+  metodica:
+  - principi-di-fisioterapia
+methodology_slug: fisioterapia

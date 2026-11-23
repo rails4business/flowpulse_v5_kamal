@@ -127,30 +127,17 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal apprendimento_consapevolezza, Node.find_by!(slug: "metodiche-posturali").parent
     assert_equal 3, Node.find_by!(slug: "metodiche-posturali").position
     assert Node.find_by!(slug: "metodiche-posturali").lane_container?
-    assert_equal 10, metodiche_posturali.children.size
-    assert_equal %w[fisioterapia gds osteopatia mezieres rpg souchard feldenkrais alexander kinesiologia-applicata bioritmi-corpo-coscienza], metodiche_posturali.children.order(:position).pluck(:slug)
-    assert metodiche_posturali.children.all? { |node| node.view_type == "methodology" }
-    methodology_course_bridges = {
-      "accesso-fisioterapia-da-primo-incontro" => ["principi-di-fisioterapia", "fisioterapia"],
-      "accesso-gds-da-primo-incontro" => ["biomeccanica-comportamentale-gds", "gds"],
-      "accesso-osteopatia-da-primo-incontro" => ["principi-di-osteopatia", "osteopatia"],
-      "accesso-corpo-coscienza-da-primo-incontro" => ["introduzione-al-metodo-corpo-e-coscienza", "bioritmi-corpo-coscienza"],
-      "accesso-kinesiologia-da-primo-incontro" => ["introduzione-alla-kinesiologia-applicata", "kinesiologia-applicata"],
-      "accesso-categoria-metodiche-da-altre-metodiche" => ["altre-metodiche-posturali", "metodiche-posturali"]
-    }
-    methodology_course_bridges.each do |bridge_slug, targets|
-      course_slug, methodology_slug = targets
-      bridge = Node.find_by!(slug: bridge_slug)
-      assert_equal "access_bridge", bridge.view_type
-      assert_equal course_slug, bridge.parent.slug
-      assert_equal methodology_slug, bridge.link_node.slug
-      assert bridge.bridge_node?
+    # Le metodiche sono schede Content (metodiche-posturacorretta), non più node: restano la categoria e il suo ponte.
+    assert_empty metodiche_posturali.children
+    %w[fisioterapia gds osteopatia mezieres rpg souchard feldenkrais alexander kinesiologia-applicata bioritmi-corpo-coscienza accesso-gds-da-primo-incontro].each do |slug|
+      assert_nil Node.find_by(slug:), "#{slug} è una scheda metodica, non un node"
     end
+    bridge = Node.find_by!(slug: "accesso-categoria-metodiche-da-altre-metodiche")
+    assert_equal "access_bridge", bridge.view_type
+    assert_equal "altre-metodiche-posturali", bridge.parent.slug
+    assert_equal metodiche_posturali, bridge.link_node
     assert_nil Node.find_by(slug: "conosci-gds-con-posturacorretta")
     assert_nil Node.find_by(slug: "conosci-feldenkrais-con-posturacorretta")
-    assert_empty Node.find_by!(slug: "mezieres").children
-    assert_empty Node.find_by!(slug: "rpg").children
-    assert_empty Node.find_by!(slug: "souchard").children
     assert_equal Node.find_by!(slug: "attivita-e-contesti"), Node.find_by!(slug: "sessanta-movimenti-alla-scrivania").parent
     servizi_personalizzati = Node.find_by!(slug: "pacchetto-gruppi")
     individuali = Node.find_by!(slug: "servizi-personalizzati-individuali")

@@ -15,16 +15,26 @@ class Brands::Admin::ContentsControllerTest < ActionDispatch::IntegrationTest
     @stranger = Content.create!(node: @project, key: "corso-altrui", slug: "corso-altrui", format: "course", title: "Corso di altri")
   end
 
-  test "the owner's brand lists its contents and the owner's contents in other brands" do
+  test "the owner's brand lists its contents and the owner's contents in other brands with their domain" do
     sign_in
 
     get brand_admin_contents_url(@professional.slug)
 
     assert_response :success
     assert_select ".brand-admin-nav a[aria-current='page']", text: "Contenuti"
-    assert_select "#brand-contents-title + div", text: /Articolo dell'autrice/
-    assert_select "#owned-contents-title + div", text: /Corso del progetto/
+    assert_select "tr##{ActionView::RecordIdentifier.dom_id(@article)} td", text: "autrice-contenuti.test"
+    assert_select "tr##{ActionView::RecordIdentifier.dom_id(@course)} td", text: "progetto-contenuti.test"
     assert_select "td", text: /Corso di altri/, count: 0
+  end
+
+  test "contents are filtered by domain and type" do
+    sign_in
+
+    get brand_admin_contents_url(@professional.slug, dominio: "progetto-contenuti.test", tipo: "course")
+
+    assert_select "td", text: /Corso del progetto/
+    assert_select "td", text: /Articolo dell'autrice/, count: 0
+    assert_select "select[name=dominio] option[selected]", text: "progetto-contenuti.test"
   end
 
   test "publication is changed directly and the publication date is set when missing" do

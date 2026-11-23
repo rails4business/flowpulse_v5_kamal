@@ -122,6 +122,79 @@ class ContentCatalogTest < ActiveSupport::TestCase
     assert_equal "Testo rimasto al suo posto.\n", article.body_md
   end
 
+  test "links to other contents are added from the YAML and never removed" do
+    write "brands/progetto-test/contents/metodica-prova/content.yml", <<~YAML
+      slug: metodica-prova
+      title: Metodica di prova
+      format: metodica
+    YAML
+    write "brands/progetto-test/contents/scuola-prova/content.yml", <<~YAML
+      slug: scuola-prova
+      title: Scuola di prova
+      format: scuola
+      links:
+        metodica: [metodica-prova]
+    YAML
+
+    assert_equal 1, ContentCatalog.new(root: @root).import!.links
+    assert_equal 0, ContentCatalog.new(root: @root).import!.links
+
+    school = Content.find_by!(key: "scuola-prova")
+    assert_equal [ [ "metodica", "metodica-prova" ] ], school.outgoing_links.map { |link| [ link.kind, link.target_content.key ] }
+    assert_not school.data.key?("links")
+
+    write "brands/progetto-test/contents/scuola-prova/content.yml", <<~YAML
+      slug: scuola-prova
+      title: Scuola di prova
+      format: scuola
+    YAML
+    ContentCatalog.new(root: @root).import!
+    assert_equal 1, school.outgoing_links.count
+  end
+
+  test "links can come from a node, such as the introductory course of a methodology" do
+    write "brands/progetto-test/contents/metodica-dal-corso/content.yml", <<~YAML
+      slug: metodica-dal-corso
+      title: Metodica presentata da un corso
+      format: metodica
+      links_from_nodes:
+        metodica: [lezione-test]
+    YAML
+
+    assert_equal 1, ContentCatalog.new(root: @root).import!.links
+    assert_equal 0, ContentCatalog.new(root: @root).import!.links
+
+    link = Content.find_by!(key: "metodica-dal-corso").incoming_links.sole
+    assert_equal [ @lesson, "metodica" ], [ link.source_node, link.kind ]
+    assert_equal [ link ], @lesson.outgoing_content_links.to_a
+  end
+
+  test "rejects links from unknown nodes" do
+    write "brands/progetto-test/contents/metodica-orfana/content.yml", <<~YAML
+      slug: metodica-orfana
+      title: Metodica senza corso
+      format: metodica
+      links_from_nodes:
+        metodica: [node-inesistente]
+    YAML
+
+    error = assert_raises(ArgumentError) { ContentCatalog.new(root: @root).import! }
+    assert_match "legame da node sconosciuto node-inesistente", error.message
+  end
+
+  test "rejects links to unknown contents" do
+    write "brands/progetto-test/contents/scuola-orfana/content.yml", <<~YAML
+      slug: scuola-orfana
+      title: Scuola senza metodica
+      format: scuola
+      links:
+        metodica: [metodica-inesistente]
+    YAML
+
+    error = assert_raises(ArgumentError) { ContentCatalog.new(root: @root).import! }
+    assert_match "legame verso chiave sconosciuta metodica-inesistente", error.message
+  end
+
   test "status, visibility and access in the YAML never decide publication" do
     ContentCatalog.new(root: @root).import!
 

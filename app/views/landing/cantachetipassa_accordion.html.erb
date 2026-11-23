@@ -18,7 +18,8 @@
       <p>Materiali di studio</p>
       <nav class="accordion-study__tabs" aria-label="Studio della fisarmonica">
         <% @accordion_pages.each do |page| %>
-          <%= link_to page.fetch("title"), cantachetipassa_accordion_path(page: page.fetch("slug"), percorso: @accordion_study_path_slug), aria: ({ current: "page" } if page.fetch("slug") == @accordion_page_slug) %>
+          <% destination = page.fetch("slug") == "casa-di-riposo-2066" ? cantachetipassa_retirement_home_path : cantachetipassa_accordion_path(page: page.fetch("slug"), percorso: @accordion_study_path_slug) %>
+          <%= link_to page.fetch("title"), destination, aria: ({ current: "page" } if page.fetch("slug") == @accordion_page_slug) %>
         <% end %>
       </nav>
     </div>

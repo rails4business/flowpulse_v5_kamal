@@ -78,7 +78,7 @@ class PosturacorrettaController < ApplicationController
 
     if @territory_domain
       @territory_people = Brands::Posturacorretta::DirectoryPerson.where(domain: @territory_domain, visibility: "public").order(:name)
-      @territory_places = Brands::Posturacorretta::DirectoryPlace.where(domain: @territory_domain, visibility: "public").order(:city, :name)
+      @territory_places = Place.shown_on(@territory_domain).order(:city, :name)
     else
       @territory_people = []
       @territory_places = []
@@ -92,12 +92,6 @@ class PosturacorrettaController < ApplicationController
       @territory_catalog_people = @territory_catalog_people.select do |professional|
         @professional_sections_by_slug.fetch(professional.fetch("slug"), []).include?(@professional_area)
       end
-    end
-
-    centers_path = Rails.root.join("config/data/posturacorretta/accademia/centers.yml")
-    centers_data = centers_path.file? ? YAML.safe_load_file(centers_path, permitted_classes: [], aliases: false) || {} : {}
-    @territory_catalog_places = centers_data.fetch("centers", {}).values.select do |place|
-      place["city"] != "Online" && Array(place["projects"]).include?("posturacorretta")
     end
   end
 
@@ -212,7 +206,7 @@ class PosturacorrettaController < ApplicationController
     @content_taxonomy = YAML.safe_load_file(taxonomy_path, permitted_classes: [], aliases: false) || {}
     posturacorretta_domain = Domain.active.find_by(hostname: "posturacorretta.org")
     @content_directory_people = posturacorretta_domain ? Brands::Posturacorretta::DirectoryPerson.where(domain: posturacorretta_domain, visibility: "public").order(:name) : []
-    @content_directory_places = posturacorretta_domain ? Brands::Posturacorretta::DirectoryPlace.where(domain: posturacorretta_domain, visibility: "public").order(:city, :name) : []
+    @content_directory_places = posturacorretta_domain ? Place.shown_on(posturacorretta_domain).order(:city, :name) : []
     @content_people_filter_options = @content_directory_people.map { |person| [person.metadata.fetch("content_creator_key", person.slug), person.name] }
     existing_keys = @content_people_filter_options.map(&:first)
     @content_people_filter_options.concat(

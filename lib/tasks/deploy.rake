@@ -10,7 +10,7 @@ namespace :deploy do
     # Dopo i Node, perché ogni Content appartiene a un Node. Lo stato di pubblicazione resta quello
     # dell'ambiente: né l'import né il collegamento degli impegni (solo storia) lo toccano.
     content_result = ContentCatalog.new.import!
-    puts "Importati #{content_result.contents} contenuti (#{content_result.created} nuovi) e #{content_result.publications} pubblicazioni."
+    puts "Importati #{content_result.contents} contenuti (#{content_result.created} nuovi), #{content_result.publications} pubblicazioni e #{content_result.links} nuovi legami."
     content_result.warnings.each { |warning| puts "Avviso: #{warning}" }
     links = ContentCommitmentLinks.new.link!
     puts "Impegni collegati ai contenuti: #{links.linked}, non trovati: #{links.missing.size}."

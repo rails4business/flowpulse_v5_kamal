@@ -686,6 +686,55 @@ funzionanti.
 - Valutazione di SkillProduct dentro Content.
 - Profili per i contatti che accettano, e ruoli nei progetti (punto 6).
 
+## Da fare — punti aperti (2026-11-20), uno alla volta
+
+**Dopo ogni deploy in produzione (manuale)**
+- Creare la Sede in `/flowpulse/rete/luoghi`, collegarla a posturacorretta.org con la scheda
+  `centro-posturacorretta` e pubblicarla.
+- Una volta sola: `bin/rails contents:publish_backlog` (prima con `DRY_RUN=1`) pubblica le bozze con la data
+  di `config/data/contents_published_on.yml`, generato in locale con `contents:generate_published_on`
+  (written_on del file, altrimenti il primo commit; per un corso il capitolo più vecchio).
+- Una volta sola: `bin/rails places:import_directory` (prima con `DRY_RUN=1`).
+- Togliere dalla mappa di posturacorretta.org le posizioni vecchie di `ilgiardinodelcorpo` e `rails4business`.
+
+**Punti aperti**
+1. ✅ Admin Contenuti del brand: una sola tabella con il dominio da cui esce ogni contenuto e il tipo,
+   filtrabile per dominio e tipo; tutti i contenuti pubblicati con la data recuperata.
+2. ⏳ Luoghi.
+   - ✅ Confluenza: il tab "Centri e luoghi" di percorsi-sul-territorio e il filtro "Luoghi" dei contenuti leggono
+     `Place.shown_on(dominio)` (aperti, pubblici, collegati al dominio). `centers.yml` e la tabella
+     `posturacorretta_directory_places` restano; `bin/rails places:import_directory` (una volta, `DRY_RUN=1` per
+     provare) copia le righe vecchie in `Place` + `PlaceDomain`.
+   - ⏸ Accesso dei creator e altri domini che mostrano i loro luoghi: per ora resta com'è (solo superadmin,
+     luoghi su posturacorretta.org e Giardino). Professionisti e centri andrebbero in Percorso Integrato, non in
+     Stato di salute dove erano stati messi: da riprendere quando si sistema Percorso Integrato.
+3. ⏳ Fase 4: metodiche e scuole come Content, insieme alla decisione su Consapevolezza (punti 5 e 11).
+   - ✅ Passo a: schede `metodica-*` (le 9 di `metodiche.yml` + `metodica-fisioterapia` solo col titolo) in
+     `metodiche-posturacorretta`; il testo resta in `metodiche/contenuti/*.md` (`content_path`). Nascono in
+     bozza. L'import legge `links: { <tipo>: [...] }` e crea i ContentLink; non li toglie mai.
+     `metodiche.yml`, `scuole.yml` e `professionisti.yml` restano; le pagine pubbliche e Consapevolezza li
+     leggono ancora. I professionisti di `professionisti.yml` sono dati di esempio: non convertiti.
+   - **Deciso**: niente schede scuola per ora (quelle di `scuole.yml` sono segnaposto, una per metodica).
+     Distinzione che conta: la **metodica** ha i suoi professionisti formati (e, se ha un sito nostro, è un
+     node con dominio, come `corpoecoscienza`); il **corso PosturaCorretta** (percorso educativo) è seguito e
+     insegnato dagli insegnanti PosturaCorretta e ha corsi introduttivi che presentano i principi di ogni
+     metodica, come assaggio. Il legame corso introduttivo → metodica è quello del passo b.
+   - ✅ Passo b: i 10 node delle metodiche e i 5 ponti `accesso-…-da-primo-incontro` sono in `removed_slugs`
+     di `nodes.yml` (l'import dei node li toglie, anche in produzione); tolti `MethodologyNodeImporter`, la
+     task `posturacorretta:import_methodology_nodes` e il suo test. I 5 legami corso introduttivo → metodica
+     sono ContentLink da node, scritti nelle schede come `links_from_nodes: { metodica: [<corso>] }`.
+     `metodiche-posturali` resta sulla mappa senza figli, con il ponte `accesso-categoria-metodiche-da-altre-metodiche`.
+4. ✅ Home di rails4b.com (`DomainsController#prepare_rails4b_landing`): leggeva `percorso.yml` e
+   `rails4b/contenuti/catalog.yml` per calcolare percorso e tappe che la vista non usava. Ora legge solo i testi
+   di `landing.yml`; percorsi, guide e articoli restano su `LandingController`, che li prende dai Content. Il
+   vecchio `catalog.yml` non lo legge più nessuno (il file resta).
+5. ⏳ Fase 5:
+   - ⏳ SavedContent (punto 8).
+   - ⏳ Programma degli eventi: Content su sessioni e slot (punto 10).
+   - ✖ SkillProduct dentro Content: **deciso di no** (2026-11-21). SkillProduct resta il prodotto di una skill
+     riusabile, con sessioni, slot e impegni suoi.
+   - ⏳ Profili per i contatti e ruoli nei progetti (punto 6): da chiarire.
+
 ## Resoconto finale
 
 Architettura trovata, decisioni prese, file modificati, schema delle relazioni, test eseguiti, parti ancora

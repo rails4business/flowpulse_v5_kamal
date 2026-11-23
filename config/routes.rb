@@ -162,6 +162,7 @@ Rails.application.routes.draw do
   get "posturacorretta/radioestesia/:page" => redirect("/generaimpresa/brand/radioestesia/%{page}", status: 301),
       constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
+  get "cantachetipassa/musica/fisarmonica/casa-di-riposo-2066" => "landing#cantachetipassa_retirement_home", as: :cantachetipassa_retirement_home
   get "cantachetipassa/musica/fisarmonica(/:page)" => "landing#cantachetipassa_accordion",
       as: :cantachetipassa_accordion,
       constraints: { page: /cambieri|anzaghi|tecnica|canzoni|fonti|contenuti/ }

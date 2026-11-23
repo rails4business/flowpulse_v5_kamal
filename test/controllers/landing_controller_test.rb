@@ -137,10 +137,11 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Percorsi della fisarmonica'] a", count: 4 do |tabs|
       assert_equal ["Tecnica classico-internazionale", "Irlandese / Folk", "Italiana", "Francese"], tabs.map { |tab| tab.text.strip }
     end
-    assert_select "nav[aria-label='Studio della fisarmonica'] a", count: 6 do |tabs|
-      assert_equal ["Cambieri-Fugazza-Melocchi", "Metodo Anzaghi", "Tecnica moderna", "Repertorio", "Fonti", "Contenuti"], tabs.map { |tab| tab.text.strip }
+    assert_select "nav[aria-label='Studio della fisarmonica'] a", count: 7 do |tabs|
+      assert_equal ["Cambieri-Fugazza-Melocchi", "Metodo Anzaghi", "Tecnica moderna", "Repertorio", "Fonti", "Contenuti", "Casa di riposo 2066"], tabs.map { |tab| tab.text.strip }
     end
-    assert_select "a[href*='youtube.com/watch']", text: /Metodo per fisarmonica vol.1/
+    assert_select "a[href='#{cantachetipassa_retirement_home_path}']", text: "Casa di riposo 2066"
+    assert_select "a[href*='youtube.com/playlist']", text: /Metodo per fisarmonica, volume 1/
 
     get cantachetipassa_accordion_url(page: "canzoni", percorso: "folk")
     assert_response :success
@@ -166,6 +167,15 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     get cantachetipassa_accordion_url(page: "fonti")
     assert_response :success
     assert_select ".accordion-study__list a", count: 8
+  end
+
+  test "renders the Casa di riposo 2066 accordion repertoire page" do
+    get cantachetipassa_retirement_home_url
+
+    assert_response :success
+    assert_select "h1", text: /La casa di riposo.*del 2066/m
+    assert_select "#songs"
+    assert_includes response.body, "const songs="
   end
 
   test "legacy professionals directory redirects to the Professional Brand tab" do

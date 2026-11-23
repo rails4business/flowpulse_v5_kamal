@@ -35,15 +35,24 @@
     <div class="pc-intro-sheet__hero">
       <div>
         <h1 id="pc-intro-title">Non è solo stare ben dritti con la schiena.</h1>
-        <p>Salute perfetta con PosturaCorretta</p>
-        <p>Impara a leggere la tua fisiologia Scopri come il corpo si esprime.</p>
+        <p>Puoi imparare a usare la postura per mantenerti in salute. Pronto ad iniziare?</p>
+        <h2>Salute perfetta con PosturaCorretta</h2>
+     <div class="pc-intro-actions">
+        <%= link_to "Inizia", posturacorretta_postura_recupero_path(tappa: "introduzione-al-percorso-integrato", tab: "online"), class: "pc-landing-primary-action" %>
+        <%= link_to "Scopri di più", "#scopri", class: "pc-landing-secondary-action" %>
+      </div>
+        <!--p>.</p-->
       </div>
       <img src="https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777" alt="Salute perfetta con PosturaCorretta">
     </div>
 
-    <div class="pc-intro-sheet__path">
-      <h2>Percorso PosturaCorretta</h2>
-      <p>Conoscere i nostri sistemi fisiologici e imparare a riattivarli attraverso un percorso di educazione alla salute basato sui principi delle principali metodiche posturali.</p>
+    <div class="pc-intro-sheet__path" id="scopri">
+     
+      <p class="text-2xl">Percorso educativo PosturaCorretta</p>
+      <p class="text-2xl">10 minuti al giorno per fare la revisione del tuo corpo!</p>
+      
+     
+      <p>Impara come funziona il tuo corpo quali sono e come riattivare i tuoi sistemi fisiologici. Un percorso di educazione alla salute basato sui principi delle principali metodiche posturali.</p>
 
       <ol class="pc-intro-sheet__principles">
         <li><span>01</span><div><h3>Scopri</h3><p>Con il corso online, impara ad ascoltare il corpo, osserva come funziona e sperimenta come riattivare i suoi sistemi.</p></div></li>
@@ -51,10 +60,7 @@
         <li><span>03</span><div><h3>Approfondisci</h3><p>Hai trovato una metodica che ti piace? Vuoi iniziare un percorso personalizzato? Ogni metodica ha una scuola. Trova un professionista formato che possa seguirti nel tuo percorso.</p></div></li>
       </ol>
 
-      <div class="pc-intro-actions">
-        <%= link_to "Inizia", posturacorretta_postura_recupero_path(tappa: "introduzione-al-percorso-integrato", tab: "online"), class: "pc-landing-primary-action" %>
-        <%= link_to "Per saperne di più", posturacorretta_about_path, class: "pc-landing-secondary-action" %>
-      </div>
+      
     </div>
 
     <div class="pc-intro-sheet__program">

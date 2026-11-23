@@ -12,6 +12,21 @@ default: &default
     - programma-introduzione-kinesiologia-applicata
     - programma-altre-metodiche-posturali
     - area-massaggio-orientarsi
+    - accesso-fisioterapia-da-primo-incontro
+    - accesso-gds-da-primo-incontro
+    - accesso-osteopatia-da-primo-incontro
+    - accesso-corpo-coscienza-da-primo-incontro
+    - accesso-kinesiologia-da-primo-incontro
+    - fisioterapia
+    - gds
+    - osteopatia
+    - mezieres
+    - rpg
+    - souchard
+    - feldenkrais
+    - alexander
+    - kinesiologia-applicata
+    - bioritmi-corpo-coscienza
   nodes:
     markpostura:
       title: MarkPostura
@@ -1369,166 +1384,6 @@ default: &default
           "y": 874.0
           collapsed: true
 
-    fisioterapia:
-      title: Fisioterapia
-      description: Professione sanitaria dedicata alla prevenzione, valutazione, cura e riabilitazione delle funzioni motorie e corporee.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 1
-      map_color: "#2E1065"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -714.0
-          "y": 874.0
-
-    gds:
-      title: Biomeccanica Comportamentale GDS
-      description: Una lettura del corpo attraverso catene muscolari, comportamento e direzioni di movimento.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 2
-      map_color: "#2563EB"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -884.0
-          "y": 874.0
-
-    osteopatia:
-      title: Osteopatia
-      description: Un approccio manuale che osserva la relazione tra struttura, funzione, mobilità e capacità di autoregolazione.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 3
-      map_color: "#B91C1C"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -1054.0
-          "y": 874.0
-
-    mezieres:
-      title: Mézières
-      description: Una metodica autonoma di osservazione e lavoro posturale sviluppata da Françoise Mézières.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 4
-      map_color: "#B91C1C"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -1224.0
-          "y": 874.0
-
-    rpg:
-      title: RPG
-      description: La Rieducazione Posturale Globale, presentata come metodica distinta con principi e percorso formativo propri.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 5
-      map_color: "#B91C1C"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -1394.0
-          "y": 874.0
-
-    souchard:
-      title: Metodo Souchard
-      description: La proposta metodologica attribuita a Philippe Souchard, catalogata separatamente dalla RPG e dal metodo Mézières.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 6
-      map_color: "#B91C1C"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -1564.0
-          "y": 874.0
-
-    feldenkrais:
-      title: Feldenkrais
-      description: Un metodo di apprendimento somatico che usa movimento, attenzione e percezione per ampliare le possibilità del corpo.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 7
-      map_color: "#2563EB"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -1734.0
-          "y": 874.0
-
-    alexander:
-      title: Tecnica Alexander
-      description: Una pratica educativa sull’uso di sé, sull’organizzazione del movimento e sulla relazione tra attenzione e postura.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 8
-      map_color: "#2563EB"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -1904.0
-          "y": 874.0
-
-    kinesiologia-applicata:
-      title: Kinesiologia Applicata
-      description: Una sequenza di osservazione, test muscolare e verifica per leggere relazioni funzionali del corpo.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 9
-      map_color: "#15803D"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -2074.0
-          "y": 874.0
-
-    bioritmi-corpo-coscienza:
-      title: Corpo e Coscienza
-      description: Una mappa di ritmi, centri, movimenti ed elementi per leggere il corpo come sistema in relazione.
-      node_type: project
-      view_type: methodology
-      parent_slug: metodiche-posturali
-      position: 10
-      map_color: "#B91C1C"
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-      map_placements:
-        posturacorretta.org:
-          x: -2244.0
-          "y": 874.0
-
     sessanta-movimenti-alla-scrivania:
       title: 60 movimenti alla scrivania
       description: Una sequenza accessibile per esplorare il movimento e lavorare sulla postura utilizzando una sedia.
@@ -2618,66 +2473,6 @@ default: &default
         posturacorretta.org:
           x: 6426.0
           "y": -950.0
-
-    accesso-fisioterapia-da-primo-incontro:
-      title: Collegamento tra Fisioterapia e primo incontro
-      description: Ponte tecnico tra la professione Fisioterapia e il relativo assaggio educativo PosturaCorretta.
-      node_type: project
-      view_type: access_bridge
-      parent_slug: principi-di-fisioterapia
-      link_node_slug: fisioterapia
-      position: 99
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    accesso-gds-da-primo-incontro:
-      title: Collegamento tra GDS e primo incontro
-      description: Ponte tecnico tra la metodica GDS e il relativo assaggio educativo PosturaCorretta.
-      node_type: project
-      view_type: access_bridge
-      parent_slug: biomeccanica-comportamentale-gds
-      link_node_slug: gds
-      position: 99
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    accesso-osteopatia-da-primo-incontro:
-      title: Collegamento tra Osteopatia e primo incontro
-      description: Ponte tecnico tra la metodica Osteopatia e il relativo assaggio educativo PosturaCorretta.
-      node_type: project
-      view_type: access_bridge
-      parent_slug: principi-di-osteopatia
-      link_node_slug: osteopatia
-      position: 99
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    accesso-corpo-coscienza-da-primo-incontro:
-      title: Collegamento tra Corpo e Coscienza e primo incontro
-      description: Ponte tecnico tra la metodica Corpo e Coscienza e il relativo assaggio educativo PosturaCorretta.
-      node_type: project
-      view_type: access_bridge
-      parent_slug: introduzione-al-metodo-corpo-e-coscienza
-      link_node_slug: bioritmi-corpo-coscienza
-      position: 99
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
-
-    accesso-kinesiologia-da-primo-incontro:
-      title: Collegamento tra Kinesiologia Applicata e il corso introduttivo
-      description: Ponte tecnico tra la metodica Kinesiologia Applicata e il relativo assaggio educativo PosturaCorretta.
-      node_type: project
-      view_type: access_bridge
-      parent_slug: introduzione-alla-kinesiologia-applicata
-      link_node_slug: kinesiologia-applicata
-      position: 99
-      professional_owner_slug: markpostura
-      status: published
-      visibility: public
 
     accesso-categoria-metodiche-da-altre-metodiche:
       title: Collegamento tra la categoria e il corso conclusivo sulle metodiche

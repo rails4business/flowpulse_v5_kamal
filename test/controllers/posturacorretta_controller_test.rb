@@ -233,6 +233,22 @@ class PosturacorrettaControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "Sede PosturaCorretta · Cascina Bordonala", count: 0
   end
 
+  test "the territory places tab and the content filter read the places shown on posturacorretta.org" do
+    import_academy_cards
+    place = create_posturacorretta_seat
+    place.update!(description: "Sede dei percorsi")
+
+    get posturacorretta_percorsi_sul_territorio_path(tab: "places")
+    assert_response :success
+    assert_select "article h2", text: "Sede PosturaCorretta · Cascina Bordonala", count: 1
+    assert_select "article p", text: "Sede dei percorsi"
+    assert_select "article h2", text: "Studio Movimento", count: 0
+
+    place.update!(publication_status: "draft")
+    get posturacorretta_percorsi_sul_territorio_path(tab: "places")
+    assert_select "article h2", text: "Sede PosturaCorretta · Cascina Bordonala", count: 0
+  end
+
   test "shows only PosturaCorretta places in its directory" do
     import_academy_cards
     create_posturacorretta_seat

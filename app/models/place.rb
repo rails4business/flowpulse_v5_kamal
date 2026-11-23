@@ -18,6 +18,8 @@ class Place < ApplicationRecord
 
   scope :open, -> { where(status: "open") }
   scope :published_for_public, -> { where(publication_status: "published", publication_visibility: "public") }
+  # I luoghi aperti e pubblici collegati a un dominio: quelli che il sito del dominio mostra.
+  scope :shown_on, ->(domain) { open.published_for_public.where(id: PlaceDomain.where(domain:).select(:place_id)) }
 
   before_save :set_published_at
 

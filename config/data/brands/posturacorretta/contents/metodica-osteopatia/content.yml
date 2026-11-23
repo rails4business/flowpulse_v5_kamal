@@ -1,0 +1,35 @@
+# Scheda metodica; copia da posturacorretta/metodiche/metodiche.yml (che resta).
+id: metodica-osteopatia
+slug: metodica-osteopatia
+format: metodica
+position: 2
+title: Osteopatia
+description: Un approccio manuale che osserva la relazione tra struttura, funzione,
+  mobilità e capacità di autoregolazione.
+publisher_node_slug: metodiche-posturacorretta
+# Il corso introduttivo PosturaCorretta che ne presenta i principi (prima era il ponte sulla mappa).
+links_from_nodes:
+  metodica:
+  - principi-di-osteopatia
+content_path: posturacorretta/metodiche/contenuti/osteopatia.md
+methodology_slug: osteopatia
+typologies:
+- professione-sanitaria
+- terapia-manuale
+ambiti:
+- dolore
+- prevenzione
+aree:
+- cura
+- benessere
+paradigmi:
+- fisiologico
+- globale
+profession: true
+postural_methodology: true
+healing_methodology: true
+founder: Andrew Taylor Still
+founder_image_url: ''
+badge: rosso
+logo_url: ''
+website_url: https://www.osteopathic.org/
