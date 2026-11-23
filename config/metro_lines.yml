@@ -9,6 +9,54 @@ default: &default
       domain_hostname: posturacorretta.org
       start_node_slug: corso-introduzione-al-percorso-integrato
       end_node_slug: altre-metodiche-posturali-sintesi-percorso
+      # Compatibilita temporanea per offerte e LandingLine: l'ordine non puo piu
+      # essere dedotto dai parent/link dei Node, ora organizzati nelle course line.
+      station_node_slugs:
+        - corso-introduzione-al-percorso-integrato
+        - introduzione-al-percorso-integrato
+        - corso-la-prima-settimana-con-posturacorretta
+        - la-prima-settimana-con-posturacorretta
+        - postura-e-fisiologia
+        - introduzione-postura-e-fisiologia
+        - area-massaggio-terapie-manuali-tecniche-corporee
+        - igiene-posturale
+        - igiene-posturale-introduzione
+        - igiene-posturale-mobilita-articolare
+        - igiene-posturale-punti-di-tensione
+        - igiene-posturale-vie-di-discesa
+        - igiene-posturale-recettori-sensoriali
+        - principi-di-fisioterapia
+        - principi-di-fisioterapia-introduzione-riabilitazione-sistemi
+        - principi-di-fisioterapia-sistema-respiratorio
+        - principi-di-fisioterapia-sistema-nervoso-urogenitale
+        - principi-di-fisioterapia-sistema-muscolo-scheletrico
+        - principi-di-fisioterapia-sistema-cardiocircolatorio
+        - principi-di-fisioterapia-sistema-linfatico-digerente
+        - biomeccanica-comportamentale-gds
+        - biomeccanica-comportamentale-gds-cinque-direzioni-movimento
+        - biomeccanica-comportamentale-gds-catena-am
+        - biomeccanica-comportamentale-gds-catena-al
+        - biomeccanica-comportamentale-gds-catena-pm
+        - biomeccanica-comportamentale-gds-catena-pl
+        - biomeccanica-comportamentale-gds-catene-pa-ap
+        - principi-di-osteopatia
+        - principi-di-osteopatia-disfunzioni-cosa-sono
+        - principi-di-osteopatia-sistema-fasciale
+        - principi-di-osteopatia-sistema-viscerale
+        - principi-di-osteopatia-sistema-cranio-sacrale
+        - principi-di-osteopatia-sistema-neurovegetativo
+        - principi-di-osteopatia-introduzione-pnei
+        - introduzione-al-metodo-corpo-e-coscienza
+        - introduzione-al-metodo-corpo-e-coscienza-due-circolazioni
+        - introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita
+        - introduzione-al-metodo-corpo-e-coscienza-quattro-tipi-movimento
+        - introduzione-al-metodo-corpo-e-coscienza-cinque-elementi
+        - introduzione-al-metodo-corpo-e-coscienza-sei-coppie-meridiani
+        - introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici
+        - introduzione-alla-kinesiologia-applicata
+        - introduzione-kinesiologia-sequenza
+        - altre-metodiche-posturali
+        - altre-metodiche-posturali-sintesi-percorso
       status: published
 
 development:

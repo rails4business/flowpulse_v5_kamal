@@ -83,9 +83,6 @@ Rails.application.routes.draw do
   post "flowpulse/rete/metropolitana/:hostname/linee" => "admin/metro_maps#create_line",
       as: :flowpulse_metro_map_lines,
       constraints: { hostname: /[^\/]+/ }
-  post "flowpulse/rete/metropolitana/:hostname/offerte" => "admin/metro_maps#create_offer",
-      as: :flowpulse_metro_map_offers,
-      constraints: { hostname: /[^\/]+/ }
   post "flowpulse/rete/metropolitana/:hostname/ponti" => "admin/metro_maps#create_bridge",
       as: :flowpulse_metro_map_bridges,
       constraints: { hostname: /[^\/]+/ }
@@ -100,7 +97,7 @@ Rails.application.routes.draw do
       constraints: { hostname: /[^\/]+/ }
   get "flowpulse/rete/metropolitana/:hostname/esporta/:catalog" => "admin/metro_maps#export_catalog",
       as: :flowpulse_metro_map_export,
-      constraints: { hostname: /[^\/]+/, catalog: /map|lines|offers|nodes/ }
+      constraints: { hostname: /[^\/]+/, catalog: /map|lines|nodes/ }
   get "flowpulse/rete/globale/centralita/:modalita/primo-incontro-kinesiologia-applicata" =>
       redirect("/flowpulse/rete/globale/centralita/%{modalita}/introduzione-alla-kinesiologia-applicata", status: 301),
       constraints: { modalita: /only|all/ }

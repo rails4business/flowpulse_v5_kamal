@@ -1,14 +1,12 @@
 require "test_helper"
 
 class NodeTest < ActiveSupport::TestCase
-  test "normalizes line and offer slug inputs" do
+  test "normalizes line slug inputs" do
     @node_a.line_slugs_input = " Postura-Recupero\npostura-recupero "
-    @node_a.offer_slugs_input = "prima-settimana, igiene-posturale"
 
     @node_a.validate
 
     assert_equal ["postura-recupero"], @node_a.line_slugs
-    assert_equal %w[prima-settimana igiene-posturale], @node_a.offer_slugs
   end
 
   setup do

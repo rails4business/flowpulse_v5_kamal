@@ -62,7 +62,7 @@ module Admin
       assert_not_includes response.body, "Ponte esterno"
     end
 
-    test "superadmin sees lines with ordered stations and their offers" do
+    test "superadmin sees lines with ordered stations" do
       sign_in(create_superadmin)
       line = MetroLine.create!(
         domain: @domain, slug: "linea-mappa", title: "Linea mappa",
@@ -72,39 +72,12 @@ module Admin
       )
       assert_equal [@root.slug, @child.slug, @second_child.slug], line.station_node_slugs
       [@root, @child, @second_child].each { |node| node.update!(line_slugs: [line.slug]) }
-      Offer.create!(metro_line: line, slug: "avvio", title: "Avvio", start_node: @root, end_node: @root)
-      Offer.create!(metro_line: line, slug: "completa", title: "Completa", start_node: @root, end_node: @second_child,
-        included_offer_slugs: ["avvio"], previous_purchase_mode: "credit")
-
       get flowpulse_metro_map_url(hostname: @domain.hostname)
 
       graph = JSON.parse(css_select("[data-controller='metro-map']").first["data-metro-map-graph-value"])
       line_graph = graph.fetch("lines").sole
       assert_equal "#E11D48", line_graph["color"]
       assert_equal [@root, @child, @second_child].map { |node| "node-#{node.id}" }, line_graph["stationIds"]
-      assert_equal [["avvio", 0, 0, []], ["completa", 0, 2, ["Avvio"]]],
-        line_graph["offers"].map { |offer| offer.values_at("slug", "startIndex", "endIndex", "includes") }
-    end
-
-    test "rejects an offer that includes a longer offer" do
-      sign_in(create_superadmin)
-      line = MetroLine.create!(
-        domain: @domain, slug: "linea-inclusa", title: "Linea inclusa",
-        start_node: @root, end_node: @second_child,
-        station_node_ids: [@root.id, @child.id, @second_child.id]
-      )
-      [@root, @child, @second_child].each { |node| node.update!(line_slugs: [line.slug]) }
-      Offer.create!(metro_line: line, slug: "intera", title: "Intera", start_node: @root, end_node: @second_child)
-
-      post flowpulse_metro_map_offers_url(hostname: @domain.hostname), params: {
-        title: "Breve", slug: "breve", metro_line_id: line.id,
-        start_node_id: @root.id, end_node_id: @child.id,
-        included_offer_slugs: ["intera"], previous_purchase_mode: "credit"
-      }
-
-      assert_redirected_to flowpulse_metro_map_path(hostname: @domain.hostname)
-      assert_equal "L'offerta inclusa Intera esce dalla tratta", flash[:alert]
-      assert_not Offer.exists?(slug: "breve")
     end
 
     test "superadmin saves station positions only for the selected domain map" do
@@ -137,31 +110,6 @@ module Admin
       assert_equal %w[metro-brand prima-stazione seconda-stazione], line.ordered_nodes.map(&:slug)
       assert @root.reload.line_slugs.include?(line.slug)
       assert @second_child.reload.line_slugs.include?(line.slug)
-    end
-
-    test "superadmin creates an offer on a selected line segment" do
-      sign_in(create_superadmin)
-      line = MetroLine.create!(
-        domain: @domain, slug: "linea-offerte", title: "Linea offerte",
-        start_node: @root, end_node: @second_child,
-        station_node_ids: [@root.id, @child.id, @second_child.id]
-      )
-      [@root, @child, @second_child].each { |node| node.update!(line_slugs: [line.slug]) }
-
-      post flowpulse_metro_map_offers_url(hostname: @domain.hostname), params: {
-        title: "Pacchetto iniziale", slug: "pacchetto-iniziale", metro_line_id: line.id,
-        start_node_id: @child.id, end_node_id: @second_child.id,
-        previous_purchase_mode: "discount", discount_percent: "15"
-      }
-
-      assert_redirected_to flowpulse_metro_map_path(hostname: @domain.hostname)
-      offer = Offer.find_by!(slug: "pacchetto-iniziale")
-      assert_equal @child, offer.start_node
-      assert_equal @second_child, offer.end_node
-      assert_equal 15, offer.discount_percent
-      assert_not @root.reload.offer_slugs.include?(offer.slug)
-      assert @child.reload.offer_slugs.include?(offer.slug)
-      assert @second_child.reload.offer_slugs.include?(offer.slug)
     end
 
     test "superadmin downloads domain map and catalog YAML files" do

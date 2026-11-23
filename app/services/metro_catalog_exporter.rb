@@ -15,24 +15,6 @@ class MetroCatalogExporter
     environment_yaml("lines" => definitions)
   end
 
-  def self.offers_yaml
-    definitions = Offer.includes(:metro_line, :start_node, :end_node).order(:slug).each_with_object({}) do |offer, hash|
-      hash[offer.slug] = {
-        "title" => offer.title,
-        "description" => offer.description,
-        "line_slug" => offer.metro_line.slug,
-        "start_node_slug" => offer.start_node.slug,
-        "end_node_slug" => offer.end_node.slug,
-        "included_offer_slugs" => offer.included_offer_slugs.presence,
-        "previous_purchase_mode" => offer.previous_purchase_mode,
-        "discount_percent" => offer.discount_percent,
-        "status" => offer.status,
-        "settings" => offer.settings.presence
-      }.compact
-    end
-    environment_yaml("offers" => definitions)
-  end
-
   def self.maps_yaml
     maps = MetroMap.includes(:domain).order(:id).each_with_object({}) do |metro_map, definitions|
       hostname = metro_map.domain.display_hostname

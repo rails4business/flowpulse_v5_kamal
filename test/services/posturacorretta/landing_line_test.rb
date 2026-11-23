@@ -13,22 +13,16 @@ module Posturacorretta
       NodeCatalog.from_config("test").import!
       root = Node.find_by!(slug: "posturacorretta")
       Domain.create!(hostname: "posturacorretta.org", node: root, role_assignment: root.role_assignment, active: true, primary: true)
-      LineOfferCatalog.from_config("test").import!
+      MetroLineCatalog.from_config("test").import!
     end
 
-    test "presents cumulative offers entering after the included ones" do
-      skip "In pausa (CI #249, 23/11/2026): da riallineare al nuovo lavoro su PosturaCorretta"
+    test "presents the ordered stations" do
       line = LandingLine.find("postura-recupero")
 
       assert_equal "Inizia il percorso", line.stations.first.title
       assert_equal "Inizia il percorso", line.stations.second.title
       assert_equal "La prima settimana con PosturaCorretta", line.stations.third.title
       assert_not_includes line.stations.map(&:slug), "area-massaggio-orientarsi"
-      assert_equal [
-        ["prima-settimana-posturacorretta", [], "introduzione-al-percorso-integrato"],
-        ["igiene-posturale", ["La prima settimana con PosturaCorretta"], "introduzione-postura-e-fisiologia"],
-        ["area-massaggio-recupero", ["La prima settimana con PosturaCorretta", "Percorso Igiene Posturale"], nil]
-      ], line.offers.map { |offer| [offer.slug, offer.included_titles, offer.entry_slug] }
     end
   end
 end

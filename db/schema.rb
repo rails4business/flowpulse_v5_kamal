@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_23_143000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_193000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -594,13 +594,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_143000) do
     t.jsonb "navigation"
     t.boolean "lane_container", default: false, null: false
     t.string "line_slugs", default: [], null: false, array: true
-    t.string "offer_slugs", default: [], null: false, array: true
     t.bigint "show_content_id"
     t.index ["lane_container"], name: "index_nodes_on_lane_container"
     t.index ["line_slugs"], name: "index_nodes_on_line_slugs", using: :gin
     t.index ["link_node_id"], name: "index_nodes_on_link_node_id"
     t.index ["node_type"], name: "index_nodes_on_node_type"
-    t.index ["offer_slugs"], name: "index_nodes_on_offer_slugs", using: :gin
     t.index ["parent_id"], name: "index_nodes_on_parent_id"
     t.index ["professional_owner_node_id"], name: "index_nodes_on_professional_owner_node_id"
     t.index ["role_assignment_id"], name: "index_nodes_on_role_assignment_id"
@@ -608,29 +606,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_143000) do
     t.index ["status"], name: "index_nodes_on_status"
     t.index ["view_type"], name: "index_nodes_on_view_type"
     t.index ["visibility"], name: "index_nodes_on_visibility"
-  end
-
-  create_table "offers", force: :cascade do |t|
-    t.bigint "metro_line_id"
-    t.bigint "start_node_id", null: false
-    t.bigint "end_node_id", null: false
-    t.string "slug", null: false
-    t.string "title", null: false
-    t.text "description"
-    t.string "status", default: "draft", null: false
-    t.string "previous_purchase_mode", default: "none", null: false
-    t.string "included_offer_slugs", default: [], null: false, array: true
-    t.jsonb "settings", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.decimal "discount_percent", precision: 5, scale: 2
-    t.bigint "line_node_id"
-    t.index ["end_node_id"], name: "index_offers_on_end_node_id"
-    t.index ["included_offer_slugs"], name: "index_offers_on_included_offer_slugs", using: :gin
-    t.index ["line_node_id"], name: "index_offers_on_line_node_id"
-    t.index ["metro_line_id"], name: "index_offers_on_metro_line_id"
-    t.index ["slug"], name: "index_offers_on_slug", unique: true
-    t.index ["start_node_id"], name: "index_offers_on_start_node_id"
   end
 
   create_table "password_reset_requests", force: :cascade do |t|
@@ -1028,10 +1003,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_143000) do
   add_foreign_key "nodes", "nodes", column: "parent_id"
   add_foreign_key "nodes", "nodes", column: "professional_owner_node_id"
   add_foreign_key "nodes", "role_assignments"
-  add_foreign_key "offers", "metro_lines"
-  add_foreign_key "offers", "nodes", column: "end_node_id"
-  add_foreign_key "offers", "nodes", column: "line_node_id"
-  add_foreign_key "offers", "nodes", column: "start_node_id"
   add_foreign_key "password_reset_requests", "users"
   add_foreign_key "place_domains", "contents"
   add_foreign_key "place_domains", "domains"

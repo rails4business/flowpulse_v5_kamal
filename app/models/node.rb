@@ -75,7 +75,7 @@ class Node < ApplicationRecord
 
   attr_writer :navigation_mode
 
-  before_validation :normalize_line_and_offer_slugs
+  before_validation :normalize_line_slugs
 
   before_validation :apply_navigation_form
 
@@ -119,14 +119,6 @@ class Node < ApplicationRecord
 
   def line_slugs_input=(value)
     self.line_slugs = split_reference_slugs(value)
-  end
-
-  def offer_slugs_input
-    offer_slugs.join("\n")
-  end
-
-  def offer_slugs_input=(value)
-    self.offer_slugs = split_reference_slugs(value)
   end
 
   def lane_column?
@@ -245,9 +237,8 @@ class Node < ApplicationRecord
     errors.add(:show_content, "deve appartenere al Node o essere collegato esplicitamente")
   end
 
-  def normalize_line_and_offer_slugs
+  def normalize_line_slugs
     self.line_slugs = normalize_reference_slugs(line_slugs)
-    self.offer_slugs = normalize_reference_slugs(offer_slugs)
   end
 
   def split_reference_slugs(value)

@@ -30,30 +30,42 @@
     <% end %>
     <% courses.each_with_index do |course, course_index| %>
       <% lesson_stations = course.lessons.filter_map { |lesson| journey.station_for_node(lesson) } %>
-      <% course_selected = lesson_stations.include?(journey.station) %>
+      <% course_selected = course.station == journey.station || lesson_stations.include?(journey.station) %>
       <% course_content = course.node.show_content %>
       <li class="pc-program-stepper__group <%= 'is-current-group' if course_selected %>">
         <% course_path = course_content ? posturacorretta_course_path(corso: course_content.slug) : flowtree_public_node_path(course.node) %>
-        <%= link_to course_path, class: "pc-program-stepper__step pc-program-stepper__step--course #{'is-parent-selected' if course_selected}" do %>
+        <details class="pc-program-module" <%= "open" if course_selected %>>
+          <summary class="pc-program-stepper__step pc-program-stepper__step--course <%= 'is-parent-selected' if course_selected %>">
             <span class="pc-program-stepper__marker"><%= course_index + 1 %></span>
-            <span><small>Corso</small><strong><%= course.node.title %></strong></span><span class="pc-program-stepper__open" aria-hidden="true">↗</span>
-        <% end %>
-
-        <% course.lessons.each do |lesson| %>
-          <% lesson_station = journey.station_for_node(lesson) %>
-          <% lesson_selected = lesson_station == journey.station %>
-          <% if lesson_station %>
-            <%= link_to posturacorretta_postura_recupero_path(tappa: lesson_station.fetch("slug"), tab: "online"), class: "pc-program-stepper__step pc-program-stepper__step--lesson #{'is-selected' if lesson_selected}", aria: { current: ("step" if lesson_selected) } do %>
-              <span class="pc-program-stepper__marker"></span>
-              <span><small>Lezione</small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
-            <% end %>
-          <% else %>
-            <div class="pc-program-stepper__step pc-program-stepper__step--lesson is-unavailable">
-              <span class="pc-program-stepper__marker"></span>
-              <span><small>Lezione in preparazione</small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
+            <span><small>Corso <%= format("%02d", course_index + 1) %></small><strong><%= course.node.title %></strong></span>
+            <span class="pc-program-stepper__chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="pc-program-module__body">
+            <%= link_to "Apri il corso", course_path, class: "pc-program-module__course-link" %>
+            <div class="pc-program-module__lessons">
+              <% course.lessons.each_with_index do |lesson, lesson_index| %>
+                <% lesson_station = journey.station_for_node(lesson) %>
+                <% lesson_selected = lesson_station == journey.station %>
+                <% if lesson_station %>
+                  <%= link_to posturacorretta_postura_recupero_path(tappa: lesson_station.fetch("slug"), tab: "online"), class: "pc-program-stepper__step pc-program-stepper__step--lesson #{'is-selected' if lesson_selected}", aria: { current: ("step" if lesson_selected) } do %>
+                    <span class="pc-program-stepper__lesson-status" aria-hidden="true"></span>
+                    <span><small><%= course_index + 1 %>.<%= lesson_index + 1 %></small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
+                    <span class="pc-program-stepper__badge">Lezione</span>
+                  <% end %>
+                <% else %>
+                  <div class="pc-program-stepper__step pc-program-stepper__step--lesson is-unavailable">
+                    <span class="pc-program-stepper__lesson-status" aria-hidden="true"></span>
+                    <span><small><%= course_index + 1 %>.<%= lesson_index + 1 %></small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
+                    <span class="pc-program-stepper__badge">In preparazione</span>
+                  </div>
+                <% end %>
+              <% end %>
+              <% if course.lessons.empty? %>
+                <p class="pc-program-module__empty">Le lezioni saranno aggiunte prossimamente.</p>
+              <% end %>
             </div>
-          <% end %>
-        <% end %>
+          </div>
+        </details>
       </li>
     <% end %>
   </ol>

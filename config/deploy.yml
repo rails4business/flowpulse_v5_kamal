@@ -67,6 +67,9 @@ asset_path: /rails/public/assets
 builder:
   arch: amd64
   context: .
+  # L'immagine si costruisce sul server Hetzner (amd64, senza emulazione) e da lì va su ghcr.io:
+  # dal Mac parte solo il codice.
+  remote: ssh://root@178.105.106.247
 
 accessories:
   db:

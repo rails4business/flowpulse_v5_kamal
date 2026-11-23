@@ -29,9 +29,9 @@ namespace :deploy do
     Domain.import_from_config!
     puts "Imported #{Domain.count} domains."
 
-    commercial = LineOfferCatalog.from_config.import!
+    lines = MetroLineCatalog.from_config.import!
     maps = MetroMapCatalog.from_config.import!
-    puts "Importate #{commercial.lines} linee, #{commercial.offers} offerte, #{maps.maps} mappe e #{maps.placements} posizioni."
+    puts "Importate #{lines.lines} linee, #{maps.maps} mappe e #{maps.placements} posizioni."
     puts "Rimossi #{node_catalog.remove_configured!} Node obsoleti."
   end
 end

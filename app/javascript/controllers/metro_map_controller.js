@@ -4,7 +4,7 @@ import { calculateMetroSchematicLayout, routeMetroConnection, routeMetroNetwork 
 const SVG_NS = "http://www.w3.org/2000/svg"
 
 export default class extends Controller {
-  static targets = ["canvas", "stage", "detailsPanel", "title", "meta", "openLink", "openMetroLink", "editNodeLink", "empty", "fullscreenButton", "renderStatus", "editButton", "saveButton", "structureButton", "moveModeButton", "linePanel", "offerPanel", "exportPanel", "structurePanel", "nodeTab", "bridgeTab", "parentTab", "lineStationIds", "lineStationList", "offerLine", "offerStartId", "offerEndId", "offerStartButton", "offerEndButton", "discountPercent", "newNodeParentId", "newNodeParentButton", "bridgeSourceId", "bridgeTargetId", "bridgeSourceButton", "bridgeTargetButton", "moveNodeId", "moveParentId", "moveNodeButton", "moveParentButton", "legendPanel"]
+  static targets = ["canvas", "stage", "detailsPanel", "title", "meta", "openLink", "openMetroLink", "editNodeLink", "empty", "fullscreenButton", "renderStatus", "editButton", "saveButton", "structureButton", "moveModeButton", "linePanel", "exportPanel", "structurePanel", "nodeTab", "bridgeTab", "parentTab", "lineStationIds", "lineStationList", "newNodeParentId", "newNodeParentButton", "bridgeSourceId", "bridgeTargetId", "bridgeSourceButton", "bridgeTargetButton", "moveNodeId", "moveParentId", "moveNodeButton", "moveParentButton", "legendPanel"]
   static values = { graph: Object, saveUrl: String }
 
   connect() {
@@ -527,17 +527,7 @@ export default class extends Controller {
       const track = this.trackElement(stationIds, line.color, 9, offset)
       if (!track) return []
       track.dataset.lineSlug = line.slug
-      const elements = [track]
-      const offer = this.focusedOffer?.line === line.slug ? line.offers.find((item) => item.slug === this.focusedOffer.slug) : null
-      if (offer && Number.isInteger(offer.startIndex) && Number.isInteger(offer.endIndex)) {
-        const offerIds = line.stationIds.slice(offer.startIndex, offer.endIndex + 1).filter((id) => this.positions.has(id) && !this.hiddenIds?.has(id))
-        const highlight = this.trackElement(offerIds, "#f59e0b", 17, offset)
-        if (highlight) {
-          highlight.setAttribute("opacity", "0.55")
-          elements.unshift(highlight)
-        }
-      }
-      return elements
+      return [track]
     }))
     this.applyFocus()
   }
@@ -582,69 +572,26 @@ export default class extends Controller {
       button.querySelector(".truncate").textContent = line.status === "published" ? line.title : `${line.title} (bozza)`
       button.addEventListener("click", () => this.focusLine(this.focusedLine === line.slug ? null : line.slug))
       row.append(button)
-      if (this.focusedLine === line.slug) row.append(this.offerList(line))
       return row
     })
     this.legendPanelTarget.replaceChildren(title, ...rows)
   }
 
-  offerList(line) {
-    const list = document.createElement("div")
-    list.className = "mb-1 ml-8 mt-1 space-y-1.5"
-    if (!line.offers.length) {
-      list.innerHTML = '<p class="text-[11px] text-slate-400">Nessuna offerta su questa linea.</p>'
-      return list
-    }
-    const total = Math.max(1, line.stationIds.length)
-    line.offers.forEach((offer) => {
-      const active = this.focusedOffer?.slug === offer.slug
-      const item = document.createElement("button")
-      item.type = "button"
-      item.className = `block w-full rounded-lg border p-2 text-left ${active ? "border-amber-400 bg-amber-50" : "border-slate-200 hover:bg-slate-50"}`
-      const left = (offer.startIndex ?? 0) / total * 100
-      const width = ((offer.endIndex ?? 0) - (offer.startIndex ?? 0) + 1) / total * 100
-      item.innerHTML = `
-        <span class="flex items-center justify-between gap-2 text-[11px] font-black"><span class="offer-title truncate"></span><span class="shrink-0 text-[9px] uppercase tracking-wider text-slate-400">${offer.status === "published" ? "pubblicata" : "bozza"}</span></span>
-        <span class="relative mt-1.5 block h-1.5 rounded-full bg-slate-200"><span class="absolute inset-y-0 rounded-full bg-amber-500" style="left:${left}%;width:${width}%"></span></span>
-        <span class="offer-meta mt-1 block text-[10px] leading-4 text-slate-500"></span>`
-      item.querySelector(".offer-title").textContent = offer.title
-      const meta = [`Stazioni ${(offer.startIndex ?? 0) + 1}–${(offer.endIndex ?? 0) + 1}`]
-      if (offer.includes.length) meta.push(`comprende ${offer.includes.join(", ")}`)
-      if (offer.previousPurchaseMode === "credit") meta.push("credito sul precedente")
-      if (offer.previousPurchaseMode === "discount") meta.push(`sconto ${offer.discountPercent ?? 0}%`)
-      item.querySelector(".offer-meta").textContent = meta.join(" · ")
-      item.addEventListener("click", () => this.focusOffer(line.slug, active ? null : offer.slug))
-      list.append(item)
-    })
-    return list
-  }
-
   focusLine(slug) {
     this.focusedLine = slug
-    this.focusedOffer = null
     this.renderLegend()
     this.drawLineTracks()
   }
 
-  focusOffer(lineSlug, offerSlug) {
-    this.focusedOffer = offerSlug ? { line: lineSlug, slug: offerSlug } : null
-    this.renderLegend()
-    this.drawLineTracks()
-  }
-
-  // Con una linea selezionata restano in evidenza solo il suo tracciato e le sue stazioni;
-  // con un'offerta selezionata si attenuano anche le stazioni della linea fuori dalla tratta.
+  // Con una linea selezionata restano in evidenza solo il suo tracciato e le sue stazioni.
   applyFocus() {
     const line = this.lines.find((item) => item.slug === this.focusedLine)
     const lineIds = new Set(line?.stationIds || [])
-    const offer = line && this.focusedOffer ? line.offers.find((item) => item.slug === this.focusedOffer.slug) : null
-    const offerIds = new Set(offer ? line.stationIds.slice(offer.startIndex, offer.endIndex + 1) : [])
     this.nodes.forEach((_node, id) => {
       const station = this.svg.querySelector(`[data-station-id="${id}"]`)
       if (!station) return
       let opacity = 1
       if (line && !lineIds.has(id)) opacity = 0.12
-      else if (offer && !offerIds.has(id)) opacity = 0.4
       station.setAttribute("opacity", String(opacity))
     })
     this.edges.forEach((edge) => {
@@ -742,20 +689,6 @@ export default class extends Controller {
       this.select(node, group)
       return
     }
-    if (this.selectionMode === "offer-start" || this.selectionMode === "offer-end") {
-      if (!this.offerStationIds?.includes(node.nodeId)) {
-        this.renderStatusTarget.textContent = "Questa stazione non appartiene alla linea selezionata"
-        return
-      }
-      const start = this.selectionMode === "offer-start"
-      const input = start ? this.offerStartIdTarget : this.offerEndIdTarget
-      const button = start ? this.offerStartButtonTarget : this.offerEndButtonTarget
-      input.value = node.nodeId
-      button.textContent = `${start ? "Inizio" : "Fine"}: ${node.label}`
-      this.selectionMode = null
-      this.select(node, group)
-      return
-    }
     if (["new-node-parent", "bridge-source", "bridge-target", "move-node", "move-parent"].includes(this.selectionMode)) {
       if (!node.internal && this.selectionMode !== "bridge-target") {
         this.renderStatusTarget.textContent = "Per questa operazione seleziona una stazione interna al dominio"
@@ -796,12 +729,6 @@ export default class extends Controller {
     this.renderStatusTarget.textContent = "Clicca le stazioni nell’ordine della nuova linea"
   }
 
-  openOfferPanel() {
-    this.closePanels()
-    this.offerPanelTarget.hidden = false
-    this.renderStatusTarget.textContent = "Scegli una linea, poi seleziona inizio e fine"
-  }
-
   toggleExportPanel() {
     const shouldOpen = this.exportPanelTarget.hidden
     this.closePanels()
@@ -810,7 +737,6 @@ export default class extends Controller {
 
   closePanels() {
     this.linePanelTarget.hidden = true
-    this.offerPanelTarget.hidden = true
     this.exportPanelTarget.hidden = true
     this.structurePanelTarget.hidden = true
     this.selectionMode = null
@@ -869,38 +795,6 @@ export default class extends Controller {
       item.textContent = `${index + 1}. ${node.label}`
       return item
     }))
-  }
-
-  offerLineChanged() {
-    const option = this.offerLineTarget.selectedOptions[0]
-    this.offerStationIds = (option?.dataset.stationIds || "").split(",").filter(Boolean).map(Number)
-    this.offerStartIdTarget.value = ""
-    this.offerEndIdTarget.value = ""
-    this.offerStartButtonTarget.textContent = "1. Seleziona inizio"
-    this.offerEndButtonTarget.textContent = "2. Seleziona fine"
-  }
-
-  selectOfferStart() {
-    if (!this.ensureOfferLine()) return
-    this.selectionMode = "offer-start"
-    this.renderStatusTarget.textContent = "Clicca la stazione iniziale dell’offerta"
-  }
-
-  selectOfferEnd() {
-    if (!this.ensureOfferLine()) return
-    this.selectionMode = "offer-end"
-    this.renderStatusTarget.textContent = "Clicca la stazione finale dell’offerta"
-  }
-
-  ensureOfferLine() {
-    if (this.offerLineTarget.value && this.offerStationIds?.length) return true
-    this.renderStatusTarget.textContent = "Prima scegli una linea"
-    return false
-  }
-
-  purchaseModeChanged(event) {
-    this.discountPercentTarget.disabled = event.currentTarget.value !== "discount"
-    if (this.discountPercentTarget.disabled) this.discountPercentTarget.value = ""
   }
 
   select(node, group) {

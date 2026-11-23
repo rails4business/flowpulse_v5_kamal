@@ -22,7 +22,6 @@ module Admin
 
       @metro_map = MetroMap.includes(:placements).find_by(domain: @domain)
       @metro_lines = MetroLine.where(domain: @domain).includes(:start_node, :end_node).order(:title)
-      @offers = Offer.where(metro_line: @metro_lines).order(:title)
       @bridges = @root_node.self_and_descendants.where(view_type: HIDDEN_BRIDGE_TYPES).where.not(link_node_id: nil).includes(:parent, :link_node).order(:title)
       @metro_graph = build_graph
     end
@@ -130,49 +129,6 @@ module Admin
       redirect_to flowpulse_metro_map_path(hostname: params[:hostname]), alert: error.message
     end
 
-    def create_offer
-      domain = selected_domain
-      line = MetroLine.where(domain:).find(params[:metro_line_id])
-      ordered = line.ordered_nodes
-      start_node = ordered.find { |node| node.id == params[:start_node_id].to_i }
-      end_node = ordered.find { |node| node.id == params[:end_node_id].to_i }
-      raise ArgumentError, "Inizio o fine non appartengono alla linea" unless start_node && end_node
-      start_index = ordered.index(start_node)
-      end_index = ordered.index(end_node)
-      raise ArgumentError, "La fine deve venire dopo l'inizio" if end_index < start_index
-
-      included = Array(params[:included_offer_slugs]).filter_map(&:presence)
-      valid_included = Offer.where(metro_line: line, slug: included).pluck(:slug)
-      raise ArgumentError, "Una delle offerte incluse non appartiene alla linea" unless included.sort == valid_included.sort
-      Offer.where(metro_line: line, slug: included).includes(:start_node, :end_node).each do |included_offer|
-        next if (start_index..end_index).cover?(ordered.index(included_offer.start_node)..ordered.index(included_offer.end_node))
-
-        raise ArgumentError, "L'offerta inclusa #{included_offer.title} esce dalla tratta"
-      end
-
-      offer = Offer.new(
-        metro_line: line,
-        slug: params[:slug].to_s.parameterize,
-        title: params[:title].to_s.strip,
-        description: params[:description].to_s.strip.presence,
-        start_node:,
-        end_node:,
-        included_offer_slugs: included,
-        previous_purchase_mode: params[:previous_purchase_mode],
-        discount_percent: params[:discount_percent].presence,
-        status: "draft"
-      )
-      changed_nodes = ordered[start_index..end_index]
-      Offer.transaction do
-        offer.save!
-        changed_nodes.each { |node| node.update!(offer_slugs: (node.offer_slugs + [offer.slug]).uniq) }
-      end
-      write_node_catalog_entries(changed_nodes)
-      redirect_to flowpulse_metro_map_path(hostname: domain.display_hostname), notice: "Offerta #{offer.title} creata. Esporta i cataloghi YAML prima del deploy."
-    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound, ArgumentError => error
-      redirect_to flowpulse_metro_map_path(hostname: params[:hostname]), alert: error.message
-    end
-
     def export_catalog
       domain = selected_domain
       data, filename = case params[:catalog]
@@ -181,8 +137,6 @@ module Admin
         [MetroCatalogExporter.maps_yaml, "metro_maps.yml"]
       when "lines"
         [MetroCatalogExporter.lines_yaml, "metro_lines.yml"]
-      when "offers"
-        [MetroCatalogExporter.offers_yaml, "offers.yml"]
       when "nodes"
         [MetroCatalogExporter.nodes_yaml, "nodes.yml"]
       else
@@ -371,29 +325,14 @@ module Admin
       end
 
       def metro_lines_graph(nodes_by_id)
-        offers_by_line_id = @offers.group_by(&:metro_line_id)
         @metro_lines.filter_map do |line|
           station_ids = line.ordered_nodes.map(&:id)
-          offers = offers_by_line_id.fetch(line.id, [])
-          titles_by_slug = offers.to_h { |offer| [offer.slug, offer.title] }
           {
             slug: line.slug,
             title: line.title,
             status: line.status,
             color: line.settings.to_h["color"].presence || effective_color(line.start_node, nodes_by_id),
-            stationIds: station_ids.map { |id| "node-#{id}" },
-            offers: offers.sort_by { |offer| [station_ids.index(offer.end_node_id).to_i, offer.title] }.map do |offer|
-              {
-                slug: offer.slug,
-                title: offer.title,
-                status: offer.status,
-                startIndex: station_ids.index(offer.start_node_id),
-                endIndex: station_ids.index(offer.end_node_id),
-                includes: offer.included_offer_slugs.map { |slug| titles_by_slug[slug] || slug },
-                previousPurchaseMode: offer.previous_purchase_mode,
-                discountPercent: offer.discount_percent
-              }
-            end
+            stationIds: station_ids.map { |id| "node-#{id}" }
           }
         rescue MetroLine::InvalidRoute
           nil

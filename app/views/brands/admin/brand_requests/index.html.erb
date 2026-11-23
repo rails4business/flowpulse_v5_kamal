@@ -103,6 +103,11 @@
                 <% if metadata["city"].present? %>
                   <small class="text-slate-500">📍 <%= metadata["city"] %><%= " (#{metadata['country_code']})" if metadata["country_code"].present? %></small>
                 <% end %>
+                <% if (requester = brand_request.requester_profile) %>
+                  <div class="mt-1 text-xs font-bold text-teal-700" data-requester-profile>👤 Profilo: <%= requester.display_name %><%= " (@#{requester.username})" if requester.username.present? %></div>
+                <% else %>
+                  <div class="mt-1 text-xs font-semibold text-slate-400">Senza account</div>
+                <% end %>
               </td>
 
               <td>

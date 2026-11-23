@@ -6,8 +6,6 @@ class MetroLine < ApplicationRecord
   belongs_to :domain
   belongs_to :start_node, class_name: "Node"
   belongs_to :end_node, class_name: "Node"
-  has_many :offers, dependent: :restrict_with_error
-
   validates :slug, presence: true, uniqueness: true,
     format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/ }
   validates :title, presence: true

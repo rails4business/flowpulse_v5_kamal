@@ -195,9 +195,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_empty valutazione_mobilita.line_slugs
     assert_equal area_massaggio, igiene_posturale_course.parent
     assert_equal ["postura-recupero"], prima_settimana.line_slugs
-    assert_equal %w[prima-settimana-posturacorretta igiene-posturale area-massaggio-recupero], prima_settimana.offer_slugs
     assert_equal ["postura-recupero"], area_massaggio.line_slugs
-    assert_equal %w[igiene-posturale area-massaggio-recupero], igiene_posturale_course.offer_slugs
     igiene_posturale_intro = Node.find_by!(slug: "igiene-posturale-introduzione")
     assert_equal igiene_posturale_course, igiene_posturale_intro.parent
     assert_equal "course_lesson", igiene_posturale_intro.view_type
@@ -288,16 +286,15 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_nil Node.find_by(slug: "primo-incontro-kinesiologia-applicata")
   end
 
-  test "clears lines and offers no longer declared in the catalog" do
+  test "clears lines no longer declared in the catalog" do
     catalog = NodeCatalog.from_config("test")
     catalog.import!
-    Node.find_by!(slug: "valutazione-mobilita-articolare").update!(line_slugs: ["postura-recupero"], offer_slugs: ["igiene-posturale"])
+    Node.find_by!(slug: "valutazione-mobilita-articolare").update!(line_slugs: ["postura-recupero"])
 
     catalog.import!
 
     node = Node.find_by!(slug: "valutazione-mobilita-articolare")
     assert_empty node.line_slugs
-    assert_empty node.offer_slugs
   end
 
   test "dry run validates without persisting nodes" do

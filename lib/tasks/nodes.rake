@@ -2,20 +2,20 @@ namespace :nodes do
   desc "Validate config/nodes.yml and its database references without saving"
   task validate: :environment do
     result = NodeCatalog.from_config.import!(dry_run: true, remove_configured: false)
-    commercial = LineOfferCatalog.from_config
-    commercial.validate!
+    lines = MetroLineCatalog.from_config
+    lines.validate!
     MetroMapCatalog.from_config.validate!
-    puts "Valid Node catalog: #{result.nodes} nodes, #{result.profiles} primary profiles. Linee, offerte e mappe valide."
+    puts "Valid Node catalog: #{result.nodes} nodes, #{result.profiles} primary profiles. Linee e mappe valide."
   end
 
   desc "Import config/nodes.yml into the database"
   task import: :environment do
     catalog = NodeCatalog.from_config
     result = catalog.import!(remove_configured: false)
-    commercial = LineOfferCatalog.from_config.import!
+    lines = MetroLineCatalog.from_config.import!
     maps = MetroMapCatalog.from_config.import!
     removed = catalog.remove_configured!
-    puts "Imported #{result.nodes} nodes, #{commercial.lines} linee, #{commercial.offers} offerte, #{maps.maps} mappe e #{maps.placements} posizioni; removed #{removed} obsolete nodes and linked #{result.profiles} primary profiles."
+    puts "Imported #{result.nodes} nodes, #{lines.lines} linee, #{maps.maps} mappe e #{maps.placements} posizioni; removed #{removed} obsolete nodes and linked #{result.profiles} primary profiles."
   end
 
   desc "Synchronize config/nodes.yml and remove unconfigured Nodes (development only)"

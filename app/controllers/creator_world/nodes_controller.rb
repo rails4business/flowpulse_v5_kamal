@@ -330,7 +330,6 @@ module CreatorWorld
         :link_node_id,
         :lane_container,
         :line_slugs_input,
-        :offer_slugs_input,
         :navigation_mode,
         :navigation_input,
         :show_content_id,

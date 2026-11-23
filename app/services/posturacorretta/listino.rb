@@ -8,7 +8,7 @@ module Posturacorretta
       def steps? = style == "steps"
       def priced? = items.any?(&:price)
     end
-    Item = Data.define(:title, :detail, :price, :node_slug, :offer_slug)
+    Item = Data.define(:title, :detail, :price, :node_slug)
 
     def self.sections(path = PATH, superadmin: false)
       visible = ->(entry) { superadmin || entry["audience"] != "superadmin" }
@@ -19,8 +19,7 @@ module Posturacorretta
             title: item.fetch("title"),
             detail: item["detail"],
             price: item["price"].presence,
-            node_slug: item["node_slug"],
-            offer_slug: item["offer_slug"]
+            node_slug: item["node_slug"]
           )
         end
         next if items.empty?

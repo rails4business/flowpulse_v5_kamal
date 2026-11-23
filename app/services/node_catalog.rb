@@ -3,19 +3,19 @@ class NodeCatalog
 
   ALLOWED_ATTRIBUTES = %w[
     title description node_type view_type status visibility
-    operator_roles map_color position lane_container line_slugs offer_slugs
+    operator_roles map_color position lane_container line_slugs
   ].freeze
 
   def self.from_config(environment = Rails.env)
-    new(Rails.application.config_for(:nodes, env: environment), validate_line_offers: true)
+    new(Rails.application.config_for(:nodes, env: environment), validate_lines: true)
   end
 
-  def initialize(config = nil, validate_line_offers: false, **config_keywords)
+  def initialize(config = nil, validate_lines: false, **config_keywords)
     config ||= config_keywords
     @config = config.to_h.deep_stringify_keys
     @definitions = @config.fetch("nodes", {}).to_h.deep_stringify_keys
     @removed_slugs = Array(@config["removed_slugs"]).filter_map(&:presence)
-    @validate_line_offers = validate_line_offers
+    @validate_lines = validate_lines
   end
 
   def validate!
@@ -55,7 +55,7 @@ class NodeCatalog
     if duplicate_removed_slugs.any?
       raise ArgumentError, "Node presenti sia nel catalogo sia in removed_slugs: #{duplicate_removed_slugs.join(', ')}"
     end
-    LineOfferCatalog.from_config.validate!(node_definitions: definitions) if validate_line_offers
+    MetroLineCatalog.from_config.validate!(node_definitions: definitions) if validate_lines
     true
   end
 
@@ -98,7 +98,7 @@ class NodeCatalog
           remove_node!(node)
           pruned += 1
         else
-          node.update!(line_slugs: [], offer_slugs: [])
+          node.update!(line_slugs: [])
         end
       end
 
@@ -139,7 +139,7 @@ class NodeCatalog
 
   private
 
-    attr_reader :definitions, :removed_slugs, :validate_line_offers
+    attr_reader :definitions, :removed_slugs, :validate_lines
 
     def remove_node!(node)
       if node.children.exists? || node.domains.exists?
@@ -173,7 +173,7 @@ class NodeCatalog
       node = matches.first || Node.new
       node.slug = slug
       # Linee e offerte assenti nel catalogo vengono svuotate, così toglierle dallo YAML le toglie anche dal Node.
-      node.assign_attributes({ "line_slugs" => [], "offer_slugs" => [] }.merge(attributes.slice(*ALLOWED_ATTRIBUTES)))
+      node.assign_attributes({ "line_slugs" => [] }.merge(attributes.slice(*ALLOWED_ATTRIBUTES)))
       node.parent = parent
       node.role_assignment = role_assignment
       node.save!

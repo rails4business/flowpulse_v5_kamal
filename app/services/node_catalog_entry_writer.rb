@@ -61,7 +61,6 @@ class NodeCatalogEntryWriter
       "map_color" => node.map_color.presence,
       "lane_container" => node.lane_container_before_type_cast ? true : nil,
       "line_slugs" => node.line_slugs.presence,
-      "offer_slugs" => node.offer_slugs.presence,
       "professional_owner_slug" => node.professional_owner_node&.slug,
       "status" => node.status,
       "visibility" => node.visibility,

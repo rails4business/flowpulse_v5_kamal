@@ -28,6 +28,16 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     assert_select ".brand-admin-filter[aria-current='page']", text: /Aperte · 1/
     assert_select ".brand-admin-badge--request", text: "Ricerca professionista"
     assert_select ".brand-admin-badge--user", text: "Utente"
+    assert_select "#brand-request-#{@brand_request.id}", text: /Senza account/
+  end
+
+  test "requests linked to a profile show it next to the contact" do
+    person = User.create!(email_address: "mario@example.com", password: "password123")
+    @brand_request.update!(requester_profile: person.create_profile!(display_name: "Mario Rossi", username: "mario_rossi"))
+    sign_in(@owner)
+    get brand_admin_requests_url(@brand.slug)
+
+    assert_select "#brand-request-#{@brand_request.id} [data-requester-profile]", text: /Profilo: Mario Rossi \(@mario_rossi\)/
   end
 
   test "owner moves a request through waiting and accepted states" do
