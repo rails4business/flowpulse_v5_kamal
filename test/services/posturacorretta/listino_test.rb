@@ -8,7 +8,7 @@ module Posturacorretta
       assert_equal %w[lezioni-e-percorsi avanzati servizi-personalizzati], sections.map(&:slug)
       first = sections.first.items.second
       assert_equal "La prima settimana con PosturaCorretta", first.title
-      assert_equal "prima-settimana-posturacorretta", first.offer_slug
+      assert_equal "la-prima-settimana-con-posturacorretta", first.node_slug
       assert_nil first.price
     end
 
