@@ -83,7 +83,7 @@ module Flowpulse
       valid_container_slugs = visible_nodes.select(&:lane_column?).map(&:slug).to_set
       @lane_open_slugs = requested_open_slugs.select { |slug| valid_container_slugs.include?(slug) }
       if params[:node].blank? && @lane_selected.present?
-        return redirect_to flowpulse_network_lanes_path(@lane_selected.slug, **request.query_parameters.symbolize_keys)
+        redirect_to flowpulse_network_lanes_path(@lane_selected.slug, **request.query_parameters.symbolize_keys)
       end
     end
 

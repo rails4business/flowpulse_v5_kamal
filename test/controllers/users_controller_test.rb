@@ -48,6 +48,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "invitation", user.sessions.last.authentication_method
     assert_equal "accepted", access_request.reload.status
     assert access_request.resolved_at.present?
+    assert_equal user.profile, access_request.requester_profile
+    assert_equal contact, access_request.participant_contact
     assert_redirected_to "/posturacorretta/dashboard"
   end
 

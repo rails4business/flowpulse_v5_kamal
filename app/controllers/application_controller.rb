@@ -149,7 +149,11 @@ class ApplicationController < ActionController::Base
     def complete_access_request_for!(invitation)
       return if invitation.blank?
 
-      invitation.brand_request&.close_as!("accepted")
+      if (brand_request = invitation.brand_request)
+        # Chi accetta l'invito è la persona della richiesta: la colleghiamo al suo profilo.
+        brand_request.requester_profile ||= invitation.accepted_by_user&.profile
+        brand_request.close_as!("accepted")
+      end
       Brands::Impegno::Commitment
         .where("metadata ->> 'brand_invitation_id' = ?", invitation.id.to_s)
         .update_all(status: "completed", resolved_at: Time.current, updated_at: Time.current)

@@ -41,6 +41,20 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @node, @user.sessions.last.brand_access.brand_node
   end
 
+  test "accepting an invitation while logging in links the access request to the profile" do
+    contact = @owner.profile.impegno_contacts.create!(name: "Traveler", email: @user.email_address)
+    access_request = BrandRequest.create!(
+      domain: @domain, brand_node: @node, subject: @node, participant_contact: contact,
+      title: "Richiesta accesso", kind: "access", status: "invited"
+    )
+    _invitation, raw_token = BrandInvitation.issue!(brand_node: @node, source_domain: @domain, email_address: @user.email_address, invited_by_user: @owner, brand_request: access_request)
+    get brand_invitation_path(raw_token)
+    post session_path, params: { invitation: raw_token, email_address: @user.email_address, password: "password123" }
+
+    assert_equal "accepted", access_request.reload.status
+    assert_equal @user.profile, access_request.requester_profile
+  end
+
   test "invitation cannot be accepted by another email" do
     _invitation, raw_token = BrandInvitation.issue!(brand_node: @node, source_domain: @domain, email_address: "another@example.com", invited_by_user: @owner)
     get brand_invitation_path(raw_token)

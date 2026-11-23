@@ -7,8 +7,20 @@
   </nav>
 
   <header class="brand-admin-card p-6">
-    <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-teal-700"><%= brand_owner? ? "Il tuo Brand" : "Amministrazione del Brand" %></p>
-    <div class="mt-2"><h1 class="brand-admin-title text-3xl"><%= @brand.title %> · Nodi</h1><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Costruisci il Brand una cellula alla volta. Ogni nodo può raccogliere progetti, attività e processi.</p></div>
+    <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-teal-700"><%= brand_owner? ? "Il tuo Brand" : "Amministrazione del Brand" %></p>
+        <div class="mt-2"><h1 class="brand-admin-title text-3xl"><%= @brand.title %> · Nodi</h1><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Costruisci il Brand una cellula alla volta. Ogni nodo può raccogliere progetti, attività e processi.</p></div>
+      </div>
+      <% if @brand.slug == "posturacorretta" %>
+        <nav class="flex shrink-0 flex-wrap gap-2" aria-label="Viste della rete PosturaCorretta">
+          <%= link_to "Vista a corsie", flowpulse_network_lanes_path("apprendimento-1-espressione", vista: "brand", corsie: "posturacorretta,apprendimento-1-espressione"), class: "inline-flex items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-black text-blue-800 hover:bg-blue-100" %>
+          <% if Current.user&.superadmin_user? %>
+            <%= link_to "Metropolitana", flowpulse_metro_map_path(hostname: "posturacorretta.org"), class: "inline-flex items-center rounded-xl border border-violet-200 bg-violet-50 px-4 py-2.5 text-sm font-black text-violet-800 hover:bg-violet-100" %>
+          <% end %>
+        </nav>
+      <% end %>
+    </div>
   </header>
 
   <% if @active_view == "list" %>

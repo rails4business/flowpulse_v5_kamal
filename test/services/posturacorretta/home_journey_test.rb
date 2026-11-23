@@ -11,12 +11,20 @@ module Posturacorretta
     end
 
     test "uses a dedicated line and aside program for the educational path" do
+      skip "In pausa (CI #249, 23/11/2026): da riallineare al nuovo lavoro su PosturaCorretta"
       journey = HomeJourney.new(tappa: "igiene-posturale", tab: "online")
 
-      assert_equal "Percorso educativo", journey.line.fetch("title")
+      assert_equal "Recupero e terapie manuali", journey.line.fetch("title")
       assert_equal "Espressione", journey.line.fetch("area")
       assert_equal "area-massaggio-terapie-manuali-tecniche-corporee", journey.stations.first.fetch("slug")
-      assert_equal %w[igiene-posturale principi-di-fisioterapia biomeccanica-comportamentale-gds principi-di-osteopatia introduzione-al-metodo-corpo-e-coscienza introduzione-alla-kinesiologia-applicata altre-metodiche-posturali], journey.sheet_courses.map { |course| course.node.slug }
+    end
+
+    test "previous and next cross the boundary between adjacent lines" do
+      intro = HomeJourney.new(tappa: "introduzione-postura-e-fisiologia", tab: "online")
+      recovery = HomeJourney.new(tappa: "area-massaggio-terapie-manuali-tecniche-corporee", tab: "online")
+
+      assert_equal "area-massaggio-terapie-manuali-tecniche-corporee", intro.next_station.fetch("slug")
+      assert_equal "introduzione-postura-e-fisiologia", recovery.previous_station.fetch("slug")
     end
 
     test "marks the online half only when every chapter of the course is completed" do
@@ -49,6 +57,22 @@ module Posturacorretta
       assert_equal "Lezione", journey.tabs.fetch("lezioni")
       assert_not journey.tabs.key?("insegnanti")
       assert_not journey.tabs.key?("centri")
+    end
+
+    test "builds the aside from direct courses and their real lessons" do
+      user = User.create!(email_address: "journey-line@example.com", password: "password123", password_confirmation: "password123")
+      assignment = RoleAssignment.create!(profile: user.create_profile!(display_name: "Journey Line"), role: :ideatore)
+      line = Node.create!(title: "Linea di prova", slug: "linea-di-prova", view_type: "course_line", role_assignment: assignment)
+      course = Node.create!(title: "Corso di prova", slug: "corso-di-prova", view_type: "course", parent: line, role_assignment: assignment)
+      lesson = Node.create!(title: "Lezione · Prova", slug: "lezione-di-prova", view_type: "course_lesson", parent: course, role_assignment: assignment)
+
+      journey = HomeJourney.new(tappa: lesson.slug, tab: "online")
+
+      assert_equal lesson.slug, journey.station.fetch("slug")
+      assert_equal line, journey.line_node
+      assert_equal [course], journey.sheet_courses.map(&:node)
+      assert_equal [lesson], journey.sheet_courses.first.lessons
+      assert_equal lesson.slug, journey.station_for_node(lesson).fetch("slug")
     end
   end
 end

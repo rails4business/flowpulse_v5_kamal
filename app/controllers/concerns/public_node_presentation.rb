@@ -145,8 +145,22 @@ module PublicNodePresentation
         .find_by(slug: @posturacorretta_home.station.fetch("slug"), view_type: "course_lesson")
       return unless @journey_lesson_node
 
-      content = @journey_lesson_node.show_content
       preview = Current.user&.superadmin_user?
+      @journey_lesson_chapters = @journey_lesson_node.editorial_contents
+        .where(format: "chapter").includes(:parent).order(:position, :id).select do |chapter|
+          chapter.published_for_public? || preview
+        end.filter_map do |chapter|
+          course_slug = chapter.parent&.slug
+          next unless course_slug
+
+          {
+            "slug" => chapter.slug,
+            "title" => chapter.title,
+            "url" => posturacorretta_course_chapter_path(corso: course_slug, capitolo: chapter.slug)
+          }
+        end
+
+      content = @journey_lesson_node.show_content
       return unless content && (content.published_for_public? || preview)
 
       @journey_lesson_content = content

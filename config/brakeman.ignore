@@ -25,7 +25,7 @@
       "note": "Il book slug viene ristretto a caratteri sicuri e index.yml viene letto soltanto dalla radice libro risolta dal catalogo editoriale."
     },
     {
-      "fingerprint": "2d49dcf69df1d29ab3b946de9bc1d060da5f4936c2832ba7ea673a1083d716ed",
+      "fingerprint": "feb01a1ea349df3f0fa06df3172b59b9717412505fcdb372c3f0791e06f0ff0e",
       "note": "seo_json_ld restituisce JSON.generate e la view applica json_escape prima di inserirlo nel blocco application/ld+json; raw evita l'escaping HTML che renderebbe il JSON-LD non valido."
     },
     {
@@ -39,6 +39,10 @@
     {
       "fingerprint": "bf97e0cf13afe094614b94807fd319815891ef8d636b32369e4693badc1fd414",
       "note": "Il redirect usa canonical_host di un Domain active trovato per hostname e non una destinazione fornita dall'utente; allow_other_host e' necessario per servire llms.txt sul dominio canonico."
+    },
+    {
+      "fingerprint": "71ee450cfb36341bc9b9eee609bc7959714c3e2dea0eeb7751f6c598e8fe5ef5",
+      "note": "Content#role è il tipo di contenuto (validato con inclusion in Content::ROLES), non un ruolo o permesso dell'utente; il controller è riservato al ruolo ideatore (CreatorWorld::BaseController)."
     }
   ],
   "updated": "2026-11-04"

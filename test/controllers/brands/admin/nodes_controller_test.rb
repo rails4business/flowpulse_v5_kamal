@@ -31,6 +31,10 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "body.brand-admin-body"
     assert_select "a", text: "Admin", count: 0
     assert_select ".brand-admin-nav a[aria-current='page']", text: "Nodi"
+    assert_select "nav[aria-label='Viste della rete PosturaCorretta'] a[href=?]",
+      flowpulse_network_lanes_path("apprendimento-1-espressione", vista: "brand", corsie: "posturacorretta,apprendimento-1-espressione"),
+      text: "Vista a corsie"
+    assert_select "a[href=?]", flowpulse_metro_map_path(hostname: "posturacorretta.org"), count: 0
     assert_select "aside[aria-label='Istruzioni superadmin per lo snapshot YAML']", count: 0
   end
 
@@ -415,6 +419,8 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".brand-admin-support", text: /Assistenza superadmin/
+    assert_select "nav[aria-label='Viste della rete PosturaCorretta'] a[href=?]",
+      flowpulse_metro_map_path(hostname: "posturacorretta.org"), text: "Metropolitana"
     assert_select "aside[aria-label='Istruzioni superadmin per lo snapshot YAML']", text: /brand_nodes:export/
   end
 

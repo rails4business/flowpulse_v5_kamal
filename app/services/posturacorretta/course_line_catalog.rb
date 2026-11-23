@@ -39,13 +39,22 @@ module Posturacorretta
       end
 
       def sync_courses!(line, course_slugs)
+        # Le linee sono sequenze semplici: corsi figli diretti ordinati tramite position.
+        # Rimuove gli eventuali ponti creati durante la precedente sperimentazione.
+        line.children.where(view_type: "course_line_item").destroy_all
+
         courses = Node.where(slug: course_slugs).index_by(&:slug)
         missing = course_slugs - courses.keys
         raise ActiveRecord::RecordNotFound, "Corsi mancanti per #{line.slug}: #{missing.join(', ')}" if missing.any?
 
         course_slugs.each_with_index do |slug, index|
-          courses.fetch(slug).update!(parent: line, position: index + 1, view_type: "course")
+          course = courses.fetch(slug)
+          expected = { parent_id: line.id, position: index + 1, view_type: "course" }
+          course.update!(parent: line, position: index + 1, view_type: "course") unless course.attributes.slice(*expected.keys.map(&:to_s)).symbolize_keys == expected
         end
+
+        unexpected_links = line.children.where(view_type: "course").where.not(link_node_id: nil)
+        unexpected_links.update_all(link_node_id: nil, updated_at: Time.current) if unexpected_links.exists?
       end
   end
 end

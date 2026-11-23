@@ -77,29 +77,39 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert prima_settimana.lane_container?
     introduzione_fisiologia = Node.find_by!(slug: "introduzione-postura-e-fisiologia")
     assert_equal postura_fisiologia, introduzione_fisiologia.parent
-    assert_equal introduzione_fisiologia, area_massaggio.parent
+    line_group = Node.find_by!(slug: "linee-percorso-posturacorretta")
+    intro_line = Node.find_by!(slug: "inizia-con-posturacorretta")
+    assert_equal postura, line_group.parent
+    assert_equal line_group, area_massaggio.parent
+    assert_equal "course_line", area_massaggio.view_type
+    Node.where(view_type: "course_line").find_each do |line|
+      courses = line.children.where(view_type: "course").order(:position, :id)
+      assert_equal (1..courses.size).to_a, courses.pluck(:position)
+      assert_empty courses.where.not(link_node_id: nil)
+      assert_empty line.children.where(view_type: "course_line_item")
+    end
     assert_equal introduzione_fisiologia, Node.find_by!(slug: "accesso-area-movimento-da-prima-settimana").parent
     assert_nil Node.find_by(slug: "accesso-area-massaggio-da-postura-e-fisiologia")
-    assert_equal "course_lesson", area_massaggio.view_type
-    assert_equal 1, area_massaggio.position
+    assert_equal 2, area_massaggio.position
     movimento = Node.find_by!(slug: "area-movimento-postura-attivita-motoria")
     mente = Node.find_by!(slug: "area-mente-postura-ascolto-consapevolezza")
     alimentazione = Node.find_by!(slug: "area-alimentazione-postura-nutrimento-fisiologia")
     farmaci = Node.find_by!(slug: "area-farmaci-postura-regolazione-medicamenti")
-    assert_equal area_massaggio, movimento.parent
-    assert_equal movimento, mente.parent
+    assert_equal line_group, movimento.parent
+    assert_equal line_group, mente.parent
     percorso_salute = Node.find_by!(slug: "percorso-salute-nutrire-il-corpo")
-    assert_equal mente, percorso_salute.parent
+    assert_equal line_group, percorso_salute.parent
     assert_equal percorso_salute, alimentazione.parent
     assert_equal percorso_salute, farmaci.parent
-    assert [movimento, mente, alimentazione, farmaci].all? { |node| node.view_type == "course_lesson" }
+    assert [movimento, mente, percorso_salute].all?(&:course_line?)
+    assert [alimentazione, farmaci].all? { |node| node.view_type == "course" }
     corso_introduzione = Node.find_by!(slug: "corso-introduzione-al-percorso-integrato")
     introduzione = Node.find_by!(slug: "introduzione-al-percorso-integrato")
     corso_prima_settimana = Node.find_by!(slug: "corso-la-prima-settimana-con-posturacorretta")
-    assert_equal apprendimento_espressione, corso_introduzione.parent
+    assert_equal intro_line, corso_introduzione.parent
     assert_equal "course", corso_introduzione.view_type
     assert_equal corso_introduzione, introduzione.parent
-    assert_equal introduzione, corso_prima_settimana.parent
+    assert_equal intro_line, corso_prima_settimana.parent
     assert_equal corso_prima_settimana, prima_settimana.parent
     assert_equal "course_lesson", prima_settimana.view_type
     assert_nil Node.find_by(slug: "lezione-1-inizia-con-posturacorretta")
@@ -142,7 +152,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     servizi_personalizzati = Node.find_by!(slug: "pacchetto-gruppi")
     individuali = Node.find_by!(slug: "servizi-personalizzati-individuali")
     assert_equal apprendimento_espressione, servizi_personalizzati.parent
-    assert_equal %w[corso-introduzione-al-percorso-integrato pacchetto-gruppi], apprendimento_espressione.children.order(:position).pluck(:slug)
+    assert_equal %w[pacchetto-gruppi], apprendimento_espressione.children.order(:position).pluck(:slug)
     assert_equal "Servizi personalizzati", servizi_personalizzati.title
     assert servizi_personalizzati.lane_container?
     assert_equal servizi_personalizzati, individuali.parent
@@ -158,7 +168,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal "Educazione 1 · Come si esprime il corpo", apprendimento_espressione.title
     assert_equal "#38BDF8", apprendimento_espressione.map_color
     assert apprendimento_espressione.lane_container?
-    assert_equal prima_settimana, postura_fisiologia.parent
+    assert_equal intro_line, postura_fisiologia.parent
     assert_equal "course", postura_fisiologia.view_type
     assert_equal postura, Node.find_by!(slug: "diventa-insegnante-posturacorretta").parent
     servizi_posturacorretta = Node.find_by!(slug: "servizi-posturacorretta")
@@ -180,7 +190,7 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert ponte_igiene_posturale.bridge_node?
     valutazione_mobilita = Node.find_by!(slug: "valutazione-mobilita-articolare")
     assert_nil Node.find_by(slug: "area-massaggio-orientarsi")
-    assert_equal "course_lesson", area_massaggio.view_type
+    assert_equal "course_line", area_massaggio.view_type
     assert_equal Node.find_by!(slug: "posturacorretta"), valutazione_mobilita.parent
     assert_empty valutazione_mobilita.line_slugs
     assert_equal area_massaggio, igiene_posturale_course.parent
@@ -201,32 +211,32 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal "Principi di Fisioterapia", Node.find_by!(slug: "principi-di-fisioterapia").title
     assert_equal "course", Node.find_by!(slug: "biomeccanica-comportamentale-gds").view_type
     assert_equal "Introduzione alla biomeccanica comportamentale (GDS)", Node.find_by!(slug: "biomeccanica-comportamentale-gds").title
-    assert_equal Node.find_by!(slug: "igiene-posturale-recettori-sensoriali"), Node.find_by!(slug: "principi-di-fisioterapia").parent
+    assert_equal area_massaggio, Node.find_by!(slug: "principi-di-fisioterapia").parent
     assert_equal Node.find_by!(slug: "principi-di-fisioterapia"), Node.find_by!(slug: "principi-di-fisioterapia-introduzione-riabilitazione-sistemi").parent
     assert_equal Node.find_by!(slug: "principi-di-fisioterapia-introduzione-riabilitazione-sistemi"), Node.find_by!(slug: "principi-di-fisioterapia-sistema-respiratorio").parent
     assert_equal Node.find_by!(slug: "principi-di-fisioterapia-sistema-respiratorio"), Node.find_by!(slug: "principi-di-fisioterapia-sistema-nervoso-urogenitale").parent
     assert Node.find_by!(slug: "principi-di-fisioterapia").lane_container?
-    assert_equal Node.find_by!(slug: "principi-di-fisioterapia-sistema-linfatico-digerente"), Node.find_by!(slug: "biomeccanica-comportamentale-gds").parent
+    assert_equal area_massaggio, Node.find_by!(slug: "biomeccanica-comportamentale-gds").parent
     assert_equal Node.find_by!(slug: "biomeccanica-comportamentale-gds"), Node.find_by!(slug: "biomeccanica-comportamentale-gds-cinque-direzioni-movimento").parent
     assert_equal Node.find_by!(slug: "biomeccanica-comportamentale-gds-cinque-direzioni-movimento"), Node.find_by!(slug: "biomeccanica-comportamentale-gds-catena-am").parent
     assert Node.find_by!(slug: "biomeccanica-comportamentale-gds").lane_container?
     assert_equal "Principi di Osteopatia", Node.find_by!(slug: "principi-di-osteopatia").title
-    assert_equal Node.find_by!(slug: "biomeccanica-comportamentale-gds-catene-pa-ap"), Node.find_by!(slug: "principi-di-osteopatia").parent
+    assert_equal area_massaggio, Node.find_by!(slug: "principi-di-osteopatia").parent
     assert_equal Node.find_by!(slug: "principi-di-osteopatia"), Node.find_by!(slug: "principi-di-osteopatia-disfunzioni-cosa-sono").parent
     assert_equal Node.find_by!(slug: "principi-di-osteopatia-disfunzioni-cosa-sono"), Node.find_by!(slug: "principi-di-osteopatia-sistema-fasciale").parent
     assert_equal Node.find_by!(slug: "principi-di-osteopatia-sistema-neurovegetativo"), Node.find_by!(slug: "principi-di-osteopatia-introduzione-pnei").parent
     assert Node.find_by!(slug: "principi-di-osteopatia").lane_container?
     assert_equal "Introduzione al metodo Corpo e Coscienza", Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza").title
-    assert_equal Node.find_by!(slug: "principi-di-osteopatia-introduzione-pnei"), Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza").parent
+    assert_equal area_massaggio, Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza").parent
     assert_equal Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza"), Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza-due-circolazioni").parent
     assert_equal Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza-due-circolazioni"), Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza-tre-centri-gravita").parent
     introduzione_kinesiologia = Node.find_by!(slug: "introduzione-alla-kinesiologia-applicata")
     assert Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza").lane_container?
-    assert_equal Node.find_by!(slug: "introduzione-al-metodo-corpo-e-coscienza-sette-centri-neurolinfatici"), introduzione_kinesiologia.parent
+    assert_equal area_massaggio, introduzione_kinesiologia.parent
     assert_equal "Introduzione alla Kinesiologia Applicata", introduzione_kinesiologia.title
     assert introduzione_kinesiologia.lane_container?
     assert_equal introduzione_kinesiologia, Node.find_by!(slug: "introduzione-kinesiologia-sequenza").parent
-    assert_equal Node.find_by!(slug: "introduzione-kinesiologia-sequenza"), Node.find_by!(slug: "altre-metodiche-posturali").parent
+    assert_equal area_massaggio, Node.find_by!(slug: "altre-metodiche-posturali").parent
     assert Node.find_by!(slug: "altre-metodiche-posturali").lane_container?
     assert_equal "Altre metodiche posturali", Node.find_by!(slug: "altre-metodiche-posturali").title
     assert_empty Node.where(slug: YAML.load_file(Rails.root.join("config/nodes.yml"), aliases: true).dig("test", "removed_slugs"))

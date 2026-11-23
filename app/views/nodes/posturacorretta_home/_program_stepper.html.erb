@@ -33,16 +33,10 @@
       <% course_selected = lesson_stations.include?(journey.station) %>
       <% course_content = course.node.show_content %>
       <li class="pc-program-stepper__group <%= 'is-current-group' if course_selected %>">
-        <% if course_content %>
-          <%= link_to posturacorretta_course_path(corso: course_content.slug), class: "pc-program-stepper__step pc-program-stepper__step--course #{'is-parent-selected' if course_selected}" do %>
+        <% course_path = course_content ? posturacorretta_course_path(corso: course_content.slug) : flowtree_public_node_path(course.node) %>
+        <%= link_to course_path, class: "pc-program-stepper__step pc-program-stepper__step--course #{'is-parent-selected' if course_selected}" do %>
             <span class="pc-program-stepper__marker"><%= course_index + 1 %></span>
             <span><small>Corso</small><strong><%= course.node.title %></strong></span><span class="pc-program-stepper__open" aria-hidden="true">↗</span>
-          <% end %>
-        <% else %>
-          <div class="pc-program-stepper__step pc-program-stepper__step--course is-unavailable">
-            <span class="pc-program-stepper__marker"><%= course_index + 1 %></span>
-            <span><small>Corso</small><strong><%= course.node.title %></strong></span>
-          </div>
         <% end %>
 
         <% course.lessons.each do |lesson| %>

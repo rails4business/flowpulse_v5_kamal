@@ -34,7 +34,7 @@ module Posturacorretta
     # completed_chapters: { course_slug => [chapter_slug, ...] } dei capitoli completati dalla persona.
     def initialize(tappa:, tab:, risorsa: nil, completed_chapters: {})
       tappa = LEGACY_STATION_SLUGS.fetch(tappa, tappa)
-      @station = STATIONS.find { |item| item.fetch("slug") == tappa } || STATIONS.first
+      @station = STATIONS.find { |item| item.fetch("slug") == tappa } || dynamic_station(tappa) || STATIONS.first
       requested_tab = { "insegnanti" => "prenota", "centri" => "prenota" }.fetch(tab.to_s, tab.to_s)
       @tab = requested_tab.presence_in(tabs.keys) || tabs.keys.first || "online"
       @resource = risorsa.to_s.presence
@@ -52,13 +52,15 @@ module Posturacorretta
       end
     end
     def line_node
-      slug = LINE_STATIONS.find { |_line_slug, station_slugs| station_slugs.include?(station.fetch("slug")) }&.first
-      Node.find_by(slug:, view_type: "course_line") || Node.find_by(slug: "inizia-con-posturacorretta")
+      Node.find_by(slug: current_line_slug, view_type: "course_line")
     end
 
     def line
       node = line_node
-      return { "slug" => "inizia-con-posturacorretta", "title" => "Inizia con PosturaCorretta", "area" => "Introduzione" } unless node
+      unless node
+        definition = Posturacorretta::CourseLineCatalog::DEFINITIONS.find { |item| item.fetch(:slug) == current_line_slug }
+        return { "slug" => definition.fetch(:slug), "title" => definition.fetch(:title), "area" => definition.fetch(:area) }
+      end
 
       { "slug" => node.slug, "title" => node.title, "area" => node.content_type.presence || "Percorso" }
     end
@@ -68,7 +70,7 @@ module Posturacorretta
       STATIONS.select { |item| slugs.include?(item.fetch("slug")) }
     end
 
-    def station_number = stations.index(station) + 1
+    def station_number = (stations.index(station) || 0) + 1
 
     def previous_station
       index = STATIONS.index(station)
@@ -81,7 +83,8 @@ module Posturacorretta
     end
 
     def station_for_node(node)
-      STATIONS.find { |item| item.fetch("slug") == node.slug }
+      STATIONS.find { |item| item.fetch("slug") == node.slug } ||
+        ({ "slug" => node.slug, "title" => node.short_title } if node.view_type == "course_lesson" && node.self_and_ancestors.any?(&:course_line?))
     end
 
     # Metà online del pallino: tutti i capitoli del corso della tappa sono completati.
@@ -138,7 +141,7 @@ module Posturacorretta
     SheetCourse = Data.define(:node, :station, :lessons)
 
     def sheet_courses(_legacy_line_slug = nil)
-      return [] unless line_node
+      return legacy_sheet_courses unless line_node
 
       line_node.ordered_line_nodes.map do |course_node|
         lessons = course_node.self_and_descendants.where(view_type: "course_lesson").order(:depth, :position, :id).to_a
@@ -156,6 +159,43 @@ module Posturacorretta
     end
 
     private
+
+      def current_line_slug
+        configured = LINE_STATIONS.find { |_line_slug, station_slugs| station_slugs.include?(station.fetch("slug")) }&.first
+        return configured if configured
+
+        node = Node.find_by(slug: station.fetch("slug"))
+        node&.self_and_ancestors&.find(&:course_line?)&.slug || "inizia-con-posturacorretta"
+      end
+
+      def dynamic_station(slug)
+        return if slug.blank?
+
+        node = Node.find_by(slug:)
+        return unless node&.view_type == "course_lesson" && node.self_and_ancestors.any?(&:course_line?)
+
+        { "slug" => node.slug, "title" => node.short_title }
+      end
+
+      def legacy_sheet_courses
+        metro_line = MetroLine.find_by(slug: "postura-recupero")
+        return [] unless metro_line
+
+        courses = metro_line.ordered_nodes.each_with_object([]) do |node, list|
+          if node.view_type == "course"
+            list << SheetCourse.new(node:, station: nil, lessons: [])
+          elsif node.view_type == "course_lesson" && list.any?
+            list.last.lessons << node
+          end
+        end
+        allowed = Posturacorretta::CourseLineCatalog::DEFINITIONS
+          .find { |definition| definition.fetch(:slug) == line.fetch("slug") }
+          &.fetch(:courses, []) || []
+        courses.select { |course| allowed.include?(course.node.slug) }.map do |course|
+          slugs = [course.node.slug, *course.lessons.map(&:slug)]
+          course.with(station: STATIONS.find { |item| slugs.include?(item.fetch("slug")) })
+        end
+      end
 
       def resource_available?(items)
         return items.any? if resource.blank?

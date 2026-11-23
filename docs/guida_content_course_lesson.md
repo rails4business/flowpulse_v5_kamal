@@ -10,20 +10,25 @@ pubblicazioni appartengono invece a `Content`.
 ## Modello generale
 
 ```text
-MetroLine
-├── Node corso
-│   ├── Content mostrato nello show
-│   ├── altri Content e materiali
-│   └── Node lezione
-│       ├── Content mostrato nello show
-│       ├── Content capitolo
-│       ├── Content capitolo
-│       └── altri Content e materiali
-└── Node corso successivo
+Node gruppo di linee
+├── Node linea
+│   ├── Node corso
+│   │   ├── Content introduttivo e pubblicazione video
+│   │   └── Node lezione
+│   │       ├── dati della lezione
+│   │       └── Content capitolo ordinati
+│   └── Node corso successivo
+└── Node linea successiva
 ```
 
-La linea contiene Node corso e Node lezione. Non contiene gli ID o gli slug dei capitoli: i capitoli si
-caricano dai `Content` assegnati alla lezione e ordinati tramite `position`.
+La linea è un Node con `view_type: course_line`; il gruppo usa `course_line_group`. I corsi sono figli
+diretti ordinati della linea e le lezioni restano sotto il proprio corso. La linea non contiene gli ID o gli
+slug dei capitoli: i capitoli si caricano dai `Content` assegnati alla lezione e ordinati tramite `position`.
+
+Le linee PosturaCorretta sono, nell'ordine: Inizia con PosturaCorretta; Recupero e terapie manuali;
+Movimento e allenamento; Mente, emozioni e consapevolezza; Percorso salute · Nutrire il corpo; Risorse,
+potenzialità e imprenditorialità. L'aside mostra la linea corrente e precedente/successivo può attraversare
+il confine fra due linee.
 
 ## Contenuto mostrato nello show
 
@@ -170,16 +175,18 @@ quel caso lo show presenta la struttura disponibile e un messaggio editoriale al
 
 Lo show del Node lezione presenta:
 
-1. titolo e `show_content` introduttivo;
-2. eventuale `show_publication` video;
-3. riga della lezione con data, centro, insegnante e firma;
-4. capitoli `Content` ordinati per `position`;
-5. materiali aggiuntivi;
-6. navigazione indietro/procedi lungo la linea.
+1. titolo e descrizione operativa;
+2. riga della lezione con data, centro, insegnante e firma;
+3. capitoli `Content` ordinati per `position`;
+4. materiali aggiuntivi;
+5. navigazione indietro/procedi lungo la linea.
+
+Articolo introduttivo, video e durata appartengono allo show del corso e non vengono ripetuti nello show
+della lezione.
 
 L'indice generale mostra invece tutte le lezioni con le colonne complete, senza ripetere i capitoli.
 
-## Aside e MetroLine
+## Aside e Node linea
 
 L'aside mostra l'intero percorso:
 
@@ -188,24 +195,17 @@ L'aside mostra l'intero percorso:
 - evidenza sul Node attivo;
 - comandi indietro/procedi sotto la lista.
 
-Gli identificatori portabili della linea sono gli slug univoci dei Node. Durante l'importazione gli slug
-vengono risolti negli ID locali, usati per la lettura veloce:
-
-```text
-station_node_slugs -> dato portabile
-station_node_ids   -> riferimenti locali
-```
-
-L'esportazione deve sempre ricostruire `station_node_slugs` dagli ID. Non si inseriscono nella linea gli
-slug dei capitoli, perché questi derivano dai Content della lezione.
+La linea è portabile tramite il proprio slug e la gerarchia ordinata dei figli. Non memorizza gli slug dei
+capitoli, perché questi derivano dai Content della lezione.
 
 ### Catena di risoluzione della linea
 
 La linea non collega direttamente Content o ContentPublication. Ogni stazione viene risolta così:
 
 ```text
-MetroLine.station_node_slugs
-  -> Node locale risolto tramite slug
+Node course_line
+  -> Node corso figlio ordinato tramite position
+  -> Node lezione figlio del corso
   -> Node.show_content_id
   -> Content.show_publication_id
   -> ContentPublication eventualmente incorporata nello show
@@ -216,8 +216,7 @@ cambiare senza modificare la linea.
 
 ### Raggruppamento nell'aside
 
-L'ordine dell'aside è quello di `MetroLine#ordered_nodes`. I Node con `view_type: course` aprono un gruppo; i
-Node lezione successivi appartengono a quel corso fino al corso seguente.
+L'ordine dell'aside deriva dai figli diretti `course` del Node linea. Le lezioni derivano dai figli del corso.
 
 - il corso è mostrato come intestazione cliccabile;
 - le lezioni sono mostrate sotto il proprio corso;
@@ -227,7 +226,7 @@ Node lezione successivi appartengono a quel corso fino al corso seguente.
 
 ### Indietro e procedi
 
-“Indietro” e “Procedi” usano la posizione del Node attivo in `ordered_nodes`, non l'ordine dei capitoli.
+“Indietro” e “Procedi” usano l'ordine dei corsi e delle lezioni nei Node linea, non l'ordine dei capitoli.
 
 - dallo show del corso, “Procedi” apre la prima lezione successiva;
 - dallo show di una lezione, “Procedi” apre la stazione successiva della linea;
@@ -344,7 +343,7 @@ Vincoli da aggiungere:
 - [ ] Gli embed YouTube/Vimeo rispettano visibilità e consenso privacy.
 - [ ] Aside e procedi attraversano correttamente tutti i Node della linea.
 - [ ] Le vecchie URL hanno redirect o compatibilità esplicita.
-- [ ] Esportazione e reimportazione ricostruiscono la linea dagli slug.
+- [ ] Esportazione e reimportazione conservano gruppo, linee e `position` dei corsi.
 - [ ] Superadmin vede bozze e materiali; il pubblico vede soltanto quelli autorizzati.
 - [ ] Test e report confermano che nessun testo è stato perso.
 
@@ -355,8 +354,8 @@ Vincoli da aggiungere:
 - aggiunti `Node#show_content` e `Content#show_publication`;
 - aggiunti ruolo, placement, editor, stato e metadati di sincronizzazione a Content;
 - aggiunto Lexxy a Content tramite Action Text;
-- aggiunti slug portabili e ID locali sincronizzati a MetroLine;
-- salvata la linea `postura-recupero` con 45 slug e 45 ID nello stesso ordine.
+- introdotta inizialmente la compatibilità slug/ID per MetroLine, ora mantenuta soltanto durante la
+  migrazione delle offerte verso i Node linea.
 
 ### Fase 2 avviata — sincronizzazione e pilota
 
