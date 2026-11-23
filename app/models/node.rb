@@ -152,6 +152,15 @@ class Node < ApplicationRecord
     link_node_id.present?
   end
 
+  def course_line_group? = view_type == "course_line_group"
+  def course_line? = view_type == "course_line"
+
+  def ordered_line_nodes
+    return [] unless course_line?
+
+    children.where(view_type: "course").order(:position, :id)
+  end
+
   def operator_role?(role_code)
     operator_roles.include?(role_code.to_s)
   end

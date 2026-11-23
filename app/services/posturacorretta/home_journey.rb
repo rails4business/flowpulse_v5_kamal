@@ -24,6 +24,11 @@ module Posturacorretta
       ["altre-metodiche-posturali", "Altre metodiche"]
     ].map { |slug, title| { "slug" => slug, "title" => title } }.freeze
 
+    LINE_STATIONS = {
+      "inizia-con-posturacorretta" => STATIONS.first(3).pluck("slug"),
+      "area-massaggio-terapie-manuali-tecniche-corporee" => STATIONS.drop(3).pluck("slug")
+    }.freeze
+
     attr_reader :tab, :station, :resource
 
     # completed_chapters: { course_slug => [chapter_slug, ...] } dei capitoli completati dalla persona.
@@ -46,10 +51,34 @@ module Posturacorretta
         available["prenota"] = TAB_LABELS.fetch("prenota") if Array(data[:teachers]).any? || Array(data[:centres]).any?
       end
     end
-    def stations = STATIONS
-    def station_number = STATIONS.index(station) + 1
-    def previous_station = STATIONS[station_number - 2] if station_number > 1
-    def next_station = STATIONS[station_number] if station_number < STATIONS.size
+    def line_node
+      slug = LINE_STATIONS.find { |_line_slug, station_slugs| station_slugs.include?(station.fetch("slug")) }&.first
+      Node.find_by(slug:, view_type: "course_line") || Node.find_by(slug: "inizia-con-posturacorretta")
+    end
+
+    def line
+      node = line_node
+      return { "slug" => "inizia-con-posturacorretta", "title" => "Inizia con PosturaCorretta", "area" => "Introduzione" } unless node
+
+      { "slug" => node.slug, "title" => node.title, "area" => node.content_type.presence || "Percorso" }
+    end
+
+    def stations
+      slugs = LINE_STATIONS.fetch(line.fetch("slug"), STATIONS.pluck("slug"))
+      STATIONS.select { |item| slugs.include?(item.fetch("slug")) }
+    end
+
+    def station_number = stations.index(station) + 1
+
+    def previous_station
+      index = STATIONS.index(station)
+      STATIONS[index - 1] if index&.positive?
+    end
+
+    def next_station
+      index = STATIONS.index(station)
+      STATIONS[index + 1] if index && index < STATIONS.size - 1
+    end
 
     def station_for_node(node)
       STATIONS.find { |item| item.fetch("slug") == node.slug }
@@ -108,17 +137,12 @@ module Posturacorretta
     # Le lezioni che seguono una lezione senza corso proprio restano nel corso precedente.
     SheetCourse = Data.define(:node, :station, :lessons)
 
-    def sheet_courses(line_slug = "postura-recupero")
-      line = MetroLine.find_by(slug: line_slug)
-      return [] unless line
+    def sheet_courses(_legacy_line_slug = nil)
+      return [] unless line_node
 
-      line.ordered_nodes.each_with_object([]) do |node, courses|
-        if node.view_type == "course"
-          courses << SheetCourse.new(node: node, station: nil, lessons: [])
-        elsif node.view_type == "course_lesson" && courses.any?
-          courses.last.lessons << node
-        end
-      end.map do |course|
+      line_node.ordered_line_nodes.map do |course_node|
+        lessons = course_node.self_and_descendants.where(view_type: "course_lesson").order(:depth, :position, :id).to_a
+        course = SheetCourse.new(node: course_node, station: nil, lessons: lessons)
         slugs = [course.node.slug, *course.lessons.map(&:slug)]
         course.with(station: STATIONS.find { |item| slugs.include?(item.fetch("slug")) })
       end

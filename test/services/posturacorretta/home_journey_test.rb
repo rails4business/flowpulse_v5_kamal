@@ -6,7 +6,17 @@ module Posturacorretta
       journey = HomeJourney.new(tappa: "introduzione-postura-e-fisiologia", tab: "online")
 
       assert_equal 3, journey.station_number
-      assert_equal 11, journey.stations.size
+      assert_equal 3, journey.stations.size
+      assert_equal "Inizia con PosturaCorretta", journey.line.fetch("title")
+    end
+
+    test "uses a dedicated line and aside program for the educational path" do
+      journey = HomeJourney.new(tappa: "igiene-posturale", tab: "online")
+
+      assert_equal "Percorso educativo", journey.line.fetch("title")
+      assert_equal "Espressione", journey.line.fetch("area")
+      assert_equal "area-massaggio-terapie-manuali-tecniche-corporee", journey.stations.first.fetch("slug")
+      assert_equal %w[igiene-posturale principi-di-fisioterapia biomeccanica-comportamentale-gds principi-di-osteopatia introduzione-al-metodo-corpo-e-coscienza introduzione-alla-kinesiologia-applicata altre-metodiche-posturali], journey.sheet_courses.map { |course| course.node.slug }
     end
 
     test "marks the online half only when every chapter of the course is completed" do

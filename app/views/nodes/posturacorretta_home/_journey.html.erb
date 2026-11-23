@@ -3,7 +3,9 @@
     <nav class="pc-home-journey__breadcrumb" aria-label="Breadcrumb">
       <%= link_to "Home", posturacorretta_path %>
       <span aria-hidden="true">/</span>
-      <span>Postura Recupero</span>
+      <span><%= journey.line.fetch("area") %></span>
+      <span aria-hidden="true">/</span>
+      <span><%= journey.line.fetch("title") %></span>
       <span aria-hidden="true">/</span>
       <strong aria-current="page"><%= journey.station.fetch("title") %></strong>
     </nav>
@@ -13,7 +15,11 @@
 
   <div class="pc-home-journey__layout">
     <aside class="pc-home-journey__aside">
-      <header class="pc-journey-aside__header"><p class="pc-home-journey__aside-title">Postura e recupero</p><strong>Il percorso</strong><span><%= journey.sheet_courses.size %> corsi · <%= journey.stations.size %> tappe</span></header>
+      <header class="pc-journey-aside__header">
+        <p class="pc-home-journey__aside-title"><%= journey.line.fetch("area") %></p>
+        <strong><%= journey.line.fetch("title") %></strong>
+        <span><%= journey.sheet_courses.size %> corsi · <%= journey.stations.size %> tappe</span>
+      </header>
       <%= render "nodes/posturacorretta_home/program_stepper", journey: journey %>
       <nav class="pc-journey-aside__pager" aria-label="Procedi nel percorso">
         <% if journey.previous_station %><%= link_to posturacorretta_postura_recupero_path(tappa: journey.previous_station.fetch("slug"), tab: "online"), class: "is-previous" do %><span aria-hidden="true">←</span><span><small>Indietro</small><strong><%= journey.previous_station.fetch("title") %></strong></span><% end %><% else %><span></span><% end %>

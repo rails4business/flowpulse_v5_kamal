@@ -116,6 +116,10 @@ class NodeCatalog
       raise ActiveRecord::Rollback if dry_run
     end
 
+    if !dry_run && definitions.key?("posturacorretta")
+      Posturacorretta::CourseLineCatalog.new.sync!
+    end
+
     Result.new(nodes: imported.size, profiles: associated_profiles, pruned: pruned)
   end
 

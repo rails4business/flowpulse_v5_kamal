@@ -10,6 +10,8 @@
       </div>
       <h2 id="course-show-content-title" class="mt-2 text-2xl font-semibold tracking-tight text-slate-950"><%= content.title %></h2>
       <% if content.description.present? %><p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"><%= content.description %></p><% end %>
+      <% duration = content.data.to_h["duration"].presence || content.data.to_h["duration_minutes"].presence %>
+      <% if duration %><p class="mt-4 text-xs font-bold uppercase tracking-wide text-slate-500">Durata indicativa · <%= duration.to_s.match?(/\A\d+\z/) ? "#{duration} minuti" : duration %></p><% end %>
       <% if content.body.present? %>
         <div class="node-public-content mt-6"><%= content.body %></div>
       <% elsif content.body_md.present? %>

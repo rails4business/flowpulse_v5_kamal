@@ -298,14 +298,14 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select ".pc-intro-sheet__hero h1", text: "Non è solo stare ben dritti con la schiena."
     assert_select ".pc-index-cabinet__tabs > a", count: 4
-    assert_select ".pc-index-cabinet__tab.is-active", text: "Intro"
+    assert_select ".pc-index-cabinet__tab.is-active", text: "Inizia con PosturaCorretta"
     assert_select ".pc-landing-home", count: 1
     assert_select ".pc-expression-tabs", count: 0
     assert_select ".pc-intro-sheet__hero img[src*='posturacorretta_home.png']", count: 1
     assert_select ".pc-intro-sheet__principles > li", count: 3
     assert_select ".pc-intro-sheet__program .pc-intro-program-list__row.is-course", count: 3
     assert_select ".pc-intro-sheet__program .pc-intro-program-list__row.is-lesson", count: 3
-    assert_select ".pc-sheet__print", text: "Scarica o stampa Intro"
+    assert_select ".pc-sheet__print", text: "Scarica o stampa Inizia il programma"
 
     get posturacorretta_url(area: "espressione")
     assert_response :success
@@ -380,7 +380,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".pc-home-tab", text: "Lezione"
     assert_select ".pc-home-journey__breadcrumb", text: /Prima settimana/
     assert_select ".pc-home-journey__aside .pc-program-stepper", count: 1
-    assert_select ".pc-home-journey__aside", text: /Prima linea · Per iniziare/
+    assert_select ".pc-home-journey__aside", text: /Inizia con PosturaCorretta/
     assert_select ".pc-home-journey__aside .pc-program-stepper__step--course", count: 3
     assert_select ".pc-home-journey__aside .pc-program-stepper__step--lesson", count: 3
     assert_select ".pc-home-panel--lezioni", text: /Lezione 1/
@@ -406,31 +406,25 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
-  test "journey online view renders lesson show Content video row and chapters" do
+  test "journey online view renders the reusable lesson data and chapter template" do
     import_posturacorretta_contents
-    Node.find_by!(slug: "posturacorretta").update!(status: "published", visibility: "public")
+    brand = Node.find_by!(slug: "posturacorretta")
+    brand.update!(status: "published", visibility: "public")
+    Domain.create!(
+      hostname: "posturacorretta-lesson-show.test", node: brand, role_assignment: brand.role_assignment,
+      path_slug: "posturacorretta", home_mode: "node", locale: "it"
+    ) unless Domain.exists?(hostname: "posturacorretta-lesson-show.test")
     lesson_node = Node.find_by!(slug: "introduzione-al-percorso-integrato")
     lesson_node.update!(title: "Lezione · Inizia il percorso", description: "Presentazione della lezione", status: "published")
-    content = Content.create!(
-      node: lesson_node, key: "lesson-show-test", slug: "introduzione-lezione", format: "post",
-      role: "introduction", title: "Prima di iniziare", publication_status: "published", publication_visibility: "public"
-    )
-    ContentEditing::BodySynchronizer.new(content).import_markdown!("Testo introduttivo della lezione.")
-    publication = content.publications.create!(
-      key: "video", platform: "vimeo", format: "video", external_id: "12345", title: "Video della lezione",
-      publication_status: "published", publication_visibility: "public"
-    )
-    content.update!(show_publication: publication)
-    lesson_node.update!(show_content: content)
 
     get posturacorretta_postura_recupero_url(tappa: lesson_node.slug, tab: "online")
 
     assert_response :success
     assert_select "section[aria-labelledby='journey-lesson-title']", count: 1 do
       assert_select "h2", text: "Inizia il percorso"
-      assert_select ".node-public-content", text: /Testo introduttivo/
-      assert_select "iframe[data-privacy-embed-src='https://player.vimeo.com/video/12345']", count: 1
       assert_select ".pc-lesson-session-row", text: /Data e ora.*Centro.*Insegnante.*Firma/m
+      assert_select ".node-public-content", count: 0
+      assert_select "iframe", count: 0
     end
     assert_select ".pc-intro-program-list", count: 0
     assert_select "ol", text: /Percorso Integrato · Tre percorsi complementari/

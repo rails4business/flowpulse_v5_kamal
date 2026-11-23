@@ -1,6 +1,6 @@
 <%
   available_parts = [
-    { slug: "intro", label: "Intro" },
+    { slug: "intro", label: "Inizia con PosturaCorretta" },
     { slug: "recupero-massaggio", label: "Recupero e terapie manuali" },
     { slug: "movimento-allenamento", label: "Movimento e allenamento" },
     { slug: "mente", label: "Mente e aspetti emotivi e mentali" },
@@ -88,7 +88,7 @@
       next_label: "Recupero e terapie manuali" %>
   </section>
   <% elsif selected_part == "recupero-massaggio" %>
-    <% recovery_courses = @posturacorretta_home.sheet_courses.drop(3) %>
+    <% recovery_courses = Posturacorretta::HomeJourney.new(tappa: "area-massaggio-terapie-manuali-tecniche-corporee", tab: "online").sheet_courses %>
     <section class="pc-sheet pc-intro-sheet" aria-labelledby="pc-recovery-title" data-controller="print-date">
       <header class="pc-program-sheet__intro">
         <p class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</p>
@@ -113,7 +113,7 @@
         part_number: 2,
         sheet_label: "Recupero e terapie manuali",
         print_label: "Recupero e terapie manuali",
-        previous_path: posturacorretta_path(area: "intro"), previous_label: "Intro",
+        previous_path: posturacorretta_path(area: "intro"), previous_label: "Inizia con PosturaCorretta",
         next_path: posturacorretta_path(area: "espressione", parte: "movimento-allenamento"), next_label: "Movimento e allenamento" %>
     </section>
   <% else %>
