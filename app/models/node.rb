@@ -14,6 +14,7 @@ class Node < ApplicationRecord
   belongs_to :parent, class_name: "Node", optional: true
   belongs_to :link_node, class_name: "Node", optional: true
   belongs_to :professional_owner_node, class_name: "Node", optional: true
+  belongs_to :show_content, class_name: "Content", optional: true
   has_closure_tree order: "position", dependent: :destroy
 
   has_many :domains, dependent: :nullify
@@ -100,6 +101,7 @@ class Node < ApplicationRecord
   validate :parent_cannot_be_bridge_node
   validate :professional_owner_is_professional
   validate :navigation_items_are_valid
+  validate :show_content_is_available_to_node
 
   scope :published_public, -> { where(status: "published", visibility: "public") }
 
@@ -225,6 +227,14 @@ class Node < ApplicationRecord
   end
 
   private
+
+  def show_content_is_available_to_node
+    return if show_content.blank?
+    return if persisted? && show_content.node_id == id
+    return if persisted? && outgoing_content_links.where(target_content_id: show_content.id).exists?
+
+    errors.add(:show_content, "deve appartenere al Node o essere collegato esplicitamente")
+  end
 
   def normalize_line_and_offer_slugs
     self.line_slugs = normalize_reference_slugs(line_slugs)

@@ -1,0 +1,29 @@
+<% label = local_assigns.fetch(:label, "Programma") %>
+<div class="pc-intro-program-list" role="table" aria-label="<%= label %>">
+  <div class="pc-intro-program-list__head" role="row">
+    <span role="columnheader">Corso / lezione</span>
+    <span role="columnheader">Data e ora</span>
+    <span role="columnheader">Centro</span>
+    <span role="columnheader">Insegnante</span>
+    <span role="columnheader">Firma</span>
+  </div>
+
+  <% groups.each_with_index do |group, group_index| %>
+    <div class="pc-intro-program-list__row is-course" role="row">
+      <span class="pc-intro-program-list__course-title" role="cell">
+        <small><span class="pc-intro-program-list__number"><%= group_index + 1 %></span> · Corso · Iscrizione</small>
+        <%= link_to group.fetch(:course_title), group.fetch(:course_path) %>
+      </span>
+    </div>
+
+    <% group.fetch(:lessons).each_with_index do |lesson, lesson_index| %>
+      <div class="pc-intro-program-list__row is-lesson" role="row">
+        <span class="pc-intro-program-list__lesson-title" role="cell">
+          <small><span class="pc-intro-program-list__number"><%= group_index + 1 %>.<%= lesson_index + 1 %></span> · Lezione</small>
+          <%= link_to lesson.fetch(:title).delete_prefix("Lezione · "), lesson.fetch(:path) %>
+        </span>
+        <span role="cell"></span><span role="cell"></span><span role="cell"></span><span role="cell"></span>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -1,8 +1,12 @@
 # Contenuto editoriale indipendente dalla piattaforma: articolo, corso, capitolo o scheda.
-# Struttura e testo arrivano dai YAML con l'import; lo stato di pubblicazione è dell'ambiente e si modifica
-# direttamente (admin del brand, barra editoriale). Gli impegni di pubblicazione restano solo come storia.
+# Il database è la fonte ufficiale di struttura, testo e stato editoriale. YAML e Markdown
+# sono copie storiche/di sicurezza e fixture d'importazione. Gli impegni restano solo come storia.
 class Content < ApplicationRecord
   FORMATS = %w[course chapter post insegnante professionista founder centro scuola metodica].freeze
+  ROLES = %w[introduction chapter material attachment].freeze
+  PLACEMENTS = %w[before_body after_body after_chapters].freeze
+  EDITORS = %w[markdown lexxy].freeze
+  SYNC_STATUSES = %w[clean markdown_changed lexxy_changed conflict].freeze
   PUBLICATION_STATUSES = Brands::Impegno::Commitment::PUBLICATION_STATUSES
   PUBLICATION_VISIBILITIES = Brands::Impegno::Commitment::PUBLICATION_VISIBILITIES
   ACCESS_MODES = Brands::Impegno::Commitment::ACCESS_MODES
@@ -11,6 +15,8 @@ class Content < ApplicationRecord
   # Titolare: chi gestisce il Content, anche dall'admin del proprio brand. Gli autori sono le contributions.
   belongs_to :profile, optional: true
   belongs_to :parent, class_name: "Content", optional: true, inverse_of: :children
+  belongs_to :show_publication, class_name: "ContentPublication", optional: true
+  has_rich_text :body
   has_many :children, -> { order(:position, :id) }, class_name: "Content", foreign_key: :parent_id,
            inverse_of: :parent, dependent: :restrict_with_error
   has_many :publications, -> { order(:position, :id) }, class_name: "ContentPublication",
@@ -30,12 +36,18 @@ class Content < ApplicationRecord
   validates :title, presence: true
   validates :format, inclusion: { in: FORMATS }
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :role, inclusion: { in: ROLES }
+  validates :placement, inclusion: { in: PLACEMENTS }
+  validates :editor, inclusion: { in: EDITORS }
+  validates :sync_status, inclusion: { in: SYNC_STATUSES }
   validates :publication_status, inclusion: { in: PUBLICATION_STATUSES }
   validates :publication_visibility, inclusion: { in: PUBLICATION_VISIBILITIES }
   validate :access_modes_are_valid
   validate :parent_is_not_self
+  validate :show_publication_belongs_to_content
 
   before_save :set_published_at
+  before_validation :set_editorial_defaults
 
   scope :in_tree_of, ->(node) { where(node_id: node.self_and_descendants.select(:id)) }
 
@@ -54,6 +66,15 @@ class Content < ApplicationRecord
 
   private
 
+    def set_editorial_defaults
+      self.role ||= case format
+      when "course" then "introduction"
+      when "chapter" then "chapter"
+      else "material"
+      end
+      self.placement ||= (role == "chapter" ? "after_chapters" : "after_body")
+    end
+
     # Alla prima pubblicazione la data è quella del momento, se non è stata indicata.
     def set_published_at
       self.published_at ||= Time.current if published?
@@ -66,5 +87,11 @@ class Content < ApplicationRecord
 
     def parent_is_not_self
       errors.add(:parent, "non può essere il contenuto stesso") if parent_id.present? && parent_id == id
+    end
+
+    def show_publication_belongs_to_content
+      return if show_publication.blank? || show_publication.content_id == id
+
+      errors.add(:show_publication, "deve appartenere allo stesso contenuto")
     end
 end

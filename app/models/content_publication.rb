@@ -5,6 +5,8 @@ class ContentPublication < ApplicationRecord
   FORMATS = %w[articolo post newsletter video reel short thread live].freeze
 
   belongs_to :content, inverse_of: :publications
+  has_one :displaying_content, class_name: "Content", foreign_key: :show_publication_id,
+    inverse_of: :show_publication, dependent: :restrict_with_error
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", inverse_of: :content_publication,
            dependent: :restrict_with_error
 

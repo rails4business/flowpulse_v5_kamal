@@ -14,6 +14,32 @@ class ContentTest < ActiveSupport::TestCase
     assert_equal "private", @course.publication_visibility
     assert_equal [], @course.access_modes
     assert_not @course.published_for_public?
+    assert_equal "introduction", @course.role
+    assert_equal "after_body", @course.placement
+    assert_equal "markdown", @course.editor
+    assert_equal "clean", @course.sync_status
+  end
+
+  test "show publication must belong to the same content" do
+    own = @course.publications.create!(key: "video", platform: "youtube", format: "video")
+    other = Content.create!(node: @node, key: "altro", slug: "altro", format: "post", title: "Altro")
+    foreign = other.publications.create!(key: "video", platform: "vimeo", format: "video")
+
+    @course.show_publication = own
+    assert @course.valid?, @course.errors.full_messages.to_sentence
+
+    @course.show_publication = foreign
+    assert_not @course.valid?
+    assert @course.errors[:show_publication].any?
+  end
+
+  test "content has a Lexxy body alongside markdown" do
+    @course.body_md = "# Titolo"
+    @course.body = "<p>Testo Lexxy</p>"
+    @course.save!
+
+    assert_equal "# Titolo", @course.reload.body_md
+    assert_includes @course.body.to_s, "Testo Lexxy"
   end
 
   test "key is unique across all contents" do

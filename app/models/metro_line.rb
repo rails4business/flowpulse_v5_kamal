@@ -12,6 +12,9 @@ class MetroLine < ApplicationRecord
     format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/ }
   validates :title, presence: true
   validates :status, inclusion: { in: STATUSES }
+  validate :station_references_are_consistent
+
+  before_validation :synchronize_station_references
 
   scope :published, -> { where(status: "published") }
 
@@ -63,6 +66,30 @@ class MetroLine < ApplicationRecord
   end
 
   private
+
+    def synchronize_station_references
+      if will_save_change_to_station_node_slugs?
+        normalized = Array(station_node_slugs).filter_map { |slug| slug.to_s.strip.presence }.uniq
+        self.station_node_slugs = normalized
+        self.station_node_ids = Node.where(slug: normalized).index_by(&:slug).values_at(*normalized).compact.map(&:id)
+      elsif will_save_change_to_station_node_ids?
+        ids = Array(station_node_ids).map(&:to_i).uniq
+        self.station_node_ids = ids
+        self.station_node_slugs = Node.where(id: ids).index_by(&:id).values_at(*ids).compact.map(&:slug)
+      end
+    end
+
+    def station_references_are_consistent
+      return if station_node_slugs.empty? && station_node_ids.empty?
+
+      if station_node_slugs.size != station_node_ids.size
+        errors.add(:station_node_slugs, "contiene Node inesistenti")
+        return
+      end
+
+      expected_ids = Node.where(slug: station_node_slugs).index_by(&:slug).values_at(*station_node_slugs).compact.map(&:id)
+      errors.add(:station_node_ids, "non corrisponde all'ordine degli slug") unless expected_ids == station_node_ids
+    end
 
     def explicitly_ordered_nodes
       ordered = Node.where(id: station_node_ids).index_by(&:id).values_at(*station_node_ids).compact

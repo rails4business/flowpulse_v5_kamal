@@ -4,7 +4,7 @@
       <% if local_assigns[:sheet_label].present? %>
         <div class="pc-journey-footer__identity">
           <span class="pc-sheet__eyebrow">PosturaCorretta · Il mio percorso</span>
-          <span class="pc-sheet__meta"><%= sheet_label %> · scheda del <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></span>
+          <span class="pc-sheet__meta"><%= sheet_label %> · <span class="pc-sheet__date-label--screen">scheda del</span><span class="pc-sheet__date-label--print">scaricata il</span> <span data-print-date-target="date"><%= l(Time.current, format: "%-d %B %Y, ore %H:%M", locale: :it) %></span></span>
         </div>
       <% end %>
       <% if local_assigns[:print_label].present? %>

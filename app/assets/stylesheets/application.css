@@ -6034,6 +6034,7 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .pc-sheet__eyebrow { margin: 0; color: #2563eb; font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .pc-sheet__head h2 { margin: .25rem 0 0; font-size: 1.2rem; font-weight: 650; }
 .pc-sheet__meta { margin: .15rem 0 0; color: #64748b; font-size: .85rem; }
+.pc-sheet__date-label--print { display: none; }
 .pc-sheet__print { border: 1px solid #cbd5e1; border-radius: .6rem; background: #fff; padding: .4rem .85rem; color: #0f172a; font-size: .82rem; font-weight: 700; }
 .pc-sheet__print:hover { border-color: #93c5fd; color: #1d4ed8; }
 .pc-sheet__person { display: grid; max-width: 32rem; margin: 1rem 0 0; }
@@ -6068,6 +6069,8 @@ body[data-layout="dashboard"] [data-dashboard-main] {
   .pc-sheet, .pc-sheet * { visibility: visible; }
   .pc-sheet { position: absolute; top: 0; left: 0; width: 100%; color: #000; }
   .pc-sheet__print, .pc-sheet__login { display: none; }
+  .pc-sheet__date-label--screen { display: none; }
+  .pc-sheet__date-label--print { display: inline; }
   .pc-sheet__scroll { overflow: visible; }
   .pc-sheet__table { min-width: 0; font-size: 9pt; }
   .pc-sheet__table tr { break-inside: avoid; }
@@ -6473,18 +6476,23 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .pc-intro-sheet__principles h3 { margin: 0; font-size: 1.05rem; font-weight: 800; }
 .pc-intro-sheet__principles p { margin: .45rem 0 0; color: #64748b; font-size: .84rem; line-height: 1.6; }
 .pc-intro-sheet__program { margin-top: clamp(3rem, 6vw, 5rem); border-top: 3px solid #0f172a; padding-top: 2rem; }
-.pc-intro-program-list { margin-top: 1.25rem; border-block: 1px solid #cbd5e1; }
-.pc-intro-program-list__head, .pc-intro-program-list__row { display: grid; align-items: center; gap: .75rem; grid-template-columns: minmax(14rem, 2.3fr) minmax(6rem, .8fr) minmax(5rem, .7fr) minmax(6rem, .8fr); }
-.pc-intro-program-list__head { padding: .55rem .75rem; color: #64748b; font-size: .66rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-.pc-intro-program-list__row { position: relative; min-height: 3.65rem; border-top: 1px solid #e2e8f0; padding: .55rem .75rem .55rem 3.25rem; color: #475569; font-size: .76rem; }
+.pc-intro-program-list { margin-top: 1.25rem; overflow: hidden; border: 1px solid #cbd5e1; border-radius: .75rem; background: #fff; }
+.pc-intro-program-list__head, .pc-intro-program-list__row { display: grid; align-items: center; gap: 0; grid-template-columns: minmax(14rem, 2.3fr) minmax(6rem, .8fr) minmax(5rem, .7fr) minmax(6rem, .8fr) minmax(5rem, .7fr); }
+.pc-intro-program-list__head { background: #f8fafc; padding: .55rem 0; color: #64748b; font-size: .66rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.pc-intro-program-list__head > span { padding-inline: .75rem; }
+.pc-intro-program-list__row { position: relative; min-height: 3.65rem; border-top: 1px solid #e2e8f0; padding: .55rem .75rem; color: #475569; font-size: .76rem; }
 .pc-intro-program-list__row.is-course { background: #f8fbff; }
-.pc-intro-program-list__row.is-lesson { background: #fcfaff; }
-.pc-intro-program-list__row > span:not(:first-child) { min-height: 1.65rem; border-bottom: 1px solid #cbd5e1; }
-.pc-intro-program-list__row > span:nth-child(2) { border-bottom: 0; }
+.pc-intro-program-list__row.is-lesson { gap: 0; background: #fff; padding: 0; }
+.pc-intro-program-list__row.is-lesson .pc-intro-program-list__lesson-title { padding: .55rem .75rem .55rem 1.25rem; }
+.pc-intro-program-list__row.is-lesson > span:not(:first-child) { align-self: stretch; min-height: 3.65rem; border-left: 1px solid #d7dee8; background: #fff; }
+.pc-intro-program-list__course-title { display: block; grid-column: 1 / -1; }
+.pc-intro-program-list__lesson-title { display: block; }
+.pc-intro-program-list__number { color: #64748b; font-size: .72rem; font-weight: 850; font-variant-numeric: tabular-nums; }
 .pc-intro-program-list__row small { display: block; color: #64748b; font-size: .6rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
 .pc-intro-program-list__row a { display: block; margin-top: .12rem; color: #0f172a; font-size: .84rem; font-weight: 800; line-height: 1.25; text-decoration: none; }
-.pc-intro-program-list__marker { position: absolute; left: .85rem; display: grid; width: 1.45rem; height: 1.45rem; place-items: center; border: 2px solid #2563eb !important; border-radius: 999px; background: #fff; color: #1d4ed8; font-size: .62rem; font-weight: 900; }
-.pc-intro-program-list__row.is-lesson .pc-intro-program-list__marker { width: 1.05rem; height: 1.05rem; margin-left: .2rem; border-color: #7c3aed !important; }
+.pc-intro-program-list__row.is-lesson .pc-intro-program-list__number { font-weight: 600; }
+.pc-intro-program-list__row.is-lesson small { font-weight: 650; }
+.pc-intro-program-list__row.is-lesson a { font-weight: 400; }
 .pc-intro-sheet__table { min-width: 42rem; }
 .pc-intro-sheet__table th:first-child, .pc-intro-sheet__table td:first-child { width: 42%; }
 .pc-intro-sheet__table .pc-sheet__course a { position: relative; z-index: 1; color: inherit; text-decoration: none; }
@@ -6573,12 +6581,18 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 
 @media print {
   @page { size: A4 portrait; margin: .7cm; }
-  .pc-intro-sheet { max-width: none; margin: 0; border: 0; border-radius: 0; padding: 0; box-shadow: none; }
+  body.pc-printing-sheet { min-height: 0 !important; }
+  body.pc-printing-sheet > *:not(.is-print-target) { display: none !important; }
+  body.pc-printing-sheet > .is-print-target,
+  body.pc-printing-sheet > .is-print-target * { visibility: visible; }
+  body.pc-printing-sheet > .is-print-target { position: relative; width: auto; }
+  .pc-intro-sheet { max-width: none; margin: 0; border: 0; border-radius: 0; padding: .65cm 0 0; box-shadow: none; }
   .pc-intro-sheet .pc-intro-actions { display: none; }
   .pc-intro-sheet__hero { gap: .5cm; padding: .15cm 0 .35cm; grid-template-columns: minmax(0, 1fr) 3.2cm; }
   .pc-intro-sheet__hero h1 { font-size: 21pt; }
   .pc-intro-sheet__hero p { margin-top: .15cm; font-size: 9pt; line-height: 1.25; }
   .pc-intro-sheet__hero img { max-height: 2.8cm; }
+  .pc-intro-sheet .pc-program-sheet__intro > .pc-sheet__eyebrow { display: none; }
   .pc-intro-sheet__path { break-inside: avoid; padding-top: .3cm; }
   .pc-intro-sheet__path > h2, .pc-intro-sheet__program > h2 { font-size: 15pt; }
   .pc-intro-sheet__path > p { margin-top: .15cm; font-size: 8pt; line-height: 1.3; }
@@ -6586,13 +6600,17 @@ body[data-layout="dashboard"] [data-dashboard-main] {
   .pc-intro-sheet__principles li { gap: .15cm; padding-top: .15cm; }
   .pc-intro-sheet__principles h3 { font-size: 9pt; }
   .pc-intro-sheet__principles p { margin-top: .08cm; font-size: 7pt; line-height: 1.25; }
-  .pc-intro-sheet__program { break-inside: avoid; margin-top: .35cm; padding-top: .3cm; }
-  .pc-intro-program-list { margin-top: .2cm; }
+  .pc-intro-sheet__program { break-inside: auto; margin-top: .35cm; padding-top: .3cm; }
+  .pc-program-sheet__intro { break-after: avoid-page; }
+  .pc-intro-program-list { overflow: visible; margin-top: .2cm; border-radius: 0; }
+  .pc-intro-program-list__head,
+  .pc-intro-program-list__row { grid-template-columns: minmax(0, 2.3fr) minmax(0, .8fr) minmax(0, .7fr) minmax(0, .8fr) minmax(0, .7fr); }
   .pc-intro-program-list__head { padding-block: .08cm; font-size: 6pt; }
-  .pc-intro-program-list__row { min-height: .85cm; padding-block: .08cm; font-size: 6.5pt; }
+  .pc-intro-program-list__row { break-inside: avoid; min-height: .85cm; padding-block: .08cm; font-size: 6.5pt; }
+  .pc-intro-program-list__row.is-lesson > span:not(:first-child) { min-height: .85cm; }
   .pc-intro-program-list__row a { font-size: 7.5pt; }
   .pc-intro-program-list__row small { font-size: 5.5pt; }
-  .pc-intro-sheet .pc-journey-footer { margin-top: .25cm; padding-top: .2cm; }
+  .pc-intro-sheet .pc-journey-footer { position: absolute; top: 0; left: 0; width: 100%; margin: 0; border-top: 0; border-bottom: 1px solid #cbd5e1; padding: 0 0 .15cm; }
   .pc-intro-sheet .pc-journey-footer__utility { margin-bottom: 0; font-size: 6.5pt; }
   .pc-intro-sheet .pc-journey-footer__nav { display: none; }
   .pc-intro-sheet__table { min-width: 0; }

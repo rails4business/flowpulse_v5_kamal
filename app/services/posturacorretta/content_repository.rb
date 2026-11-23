@@ -50,6 +50,7 @@ module Posturacorretta
       record.data.merge(
         "id" => record.key,
         "parent_id" => record.parent&.key,
+        "lesson_node_slug" => record.node.slug,
         "format" => record.format,
         "slug" => record.slug,
         "position" => record.position,

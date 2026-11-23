@@ -1,11 +1,11 @@
 require "digest"
 
-# Importa i contenuti canonici dei YAML nel database:
+# Importatore legacy dei cataloghi YAML/Markdown nel database. I Content nel DB
+# sono la fonte ufficiale; questi file restano copie di sicurezza e fixture per i test.
 # - brands/<node>/courses/<corso>/course.yml  → raccolte ordinate per posizione (corsi e capitoli)
 # - brands/<node>/contents/<slug>/content.yml + content.md → raccolte ordinate per data (articoli, schede)
 #
-# Il YAML è la fonte di struttura e testo. Lo stato di pubblicazione invece è dell'ambiente:
-# l'import non lo legge e non lo tocca mai, e un contenuto nuovo parte in bozza.
+# L'import non modifica lo stato editoriale dell'ambiente e un contenuto nuovo parte in bozza.
 # L'import non cancella nulla: contenuti, pubblicazioni, contributi e legami assenti dal YAML restano.
 # I legami verso altri Content (ContentLink) si scrivono come `links: { <tipo>: [<chiave>, ...] }`; quelli che
 # arrivano da un Node (es. corso introduttivo → metodica) come `links_from_nodes: { <tipo>: [<slug>, ...] }`.

@@ -46,7 +46,7 @@ class LineOfferCatalog
           line.domain = Domain.find_for_host(attributes.fetch("domain_hostname")).canonical_domain_record
           line.start_node = Node.find_by!(slug: attributes.fetch("start_node_slug"))
           line.end_node = Node.find_by!(slug: attributes.fetch("end_node_slug"))
-          line.station_node_ids = Array(attributes["station_node_slugs"]).map { |node_slug| Node.find_by!(slug: node_slug).id }
+          line.station_node_slugs = Array(attributes["station_node_slugs"])
           line.save!
         end
       end

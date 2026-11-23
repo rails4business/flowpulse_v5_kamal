@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -196,6 +196,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "profile_id"
+    t.bigint "show_publication_id"
+    t.string "role", null: false
+    t.string "placement", null: false
+    t.string "editor", default: "markdown", null: false
+    t.string "sync_status", default: "clean", null: false
+    t.string "markdown_checksum"
+    t.string "lexxy_checksum"
+    t.datetime "markdown_updated_at"
+    t.datetime "lexxy_updated_at"
     t.index ["format"], name: "index_contents_on_format"
     t.index ["key"], name: "index_contents_on_key", unique: true
     t.index ["node_id", "parent_id", "slug"], name: "index_contents_on_node_id_and_parent_id_and_slug", unique: true, nulls_not_distinct: true
@@ -203,6 +212,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
     t.index ["parent_id"], name: "index_contents_on_parent_id"
     t.index ["profile_id"], name: "index_contents_on_profile_id"
     t.index ["publication_status"], name: "index_contents_on_publication_status"
+    t.index ["show_publication_id"], name: "index_contents_on_show_publication_id"
+    t.check_constraint "editor::text = ANY (ARRAY['markdown'::character varying, 'lexxy'::character varying]::text[])", name: "contents_editor_allowed"
+    t.check_constraint "placement::text = ANY (ARRAY['before_body'::character varying, 'after_body'::character varying, 'after_chapters'::character varying]::text[])", name: "contents_placement_allowed"
+    t.check_constraint "role::text = ANY (ARRAY['introduction'::character varying, 'chapter'::character varying, 'material'::character varying, 'attachment'::character varying]::text[])", name: "contents_role_allowed"
+    t.check_constraint "sync_status::text = ANY (ARRAY['clean'::character varying, 'markdown_changed'::character varying, 'lexxy_changed'::character varying, 'conflict'::character varying]::text[])", name: "contents_sync_status_allowed"
   end
 
   create_table "data_commitment_imports", force: :cascade do |t|
@@ -463,6 +477,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "station_node_ids", default: [], null: false, array: true
+    t.string "station_node_slugs", default: [], null: false, array: true
     t.index ["domain_id"], name: "index_metro_lines_on_domain_id"
     t.index ["end_node_id"], name: "index_metro_lines_on_end_node_id"
     t.index ["slug"], name: "index_metro_lines_on_slug", unique: true
@@ -580,6 +595,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
     t.boolean "lane_container", default: false, null: false
     t.string "line_slugs", default: [], null: false, array: true
     t.string "offer_slugs", default: [], null: false, array: true
+    t.bigint "show_content_id"
     t.index ["lane_container"], name: "index_nodes_on_lane_container"
     t.index ["line_slugs"], name: "index_nodes_on_line_slugs", using: :gin
     t.index ["link_node_id"], name: "index_nodes_on_link_node_id"
@@ -588,6 +604,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
     t.index ["parent_id"], name: "index_nodes_on_parent_id"
     t.index ["professional_owner_node_id"], name: "index_nodes_on_professional_owner_node_id"
     t.index ["role_assignment_id"], name: "index_nodes_on_role_assignment_id"
+    t.index ["show_content_id"], name: "index_nodes_on_show_content_id"
     t.index ["status"], name: "index_nodes_on_status"
     t.index ["view_type"], name: "index_nodes_on_view_type"
     t.index ["visibility"], name: "index_nodes_on_visibility"
@@ -947,6 +964,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
   add_foreign_key "content_links", "contents", column: "target_content_id"
   add_foreign_key "content_links", "nodes", column: "source_node_id"
   add_foreign_key "content_publications", "contents"
+  add_foreign_key "contents", "content_publications", column: "show_publication_id"
   add_foreign_key "contents", "contents", column: "parent_id"
   add_foreign_key "contents", "nodes"
   add_foreign_key "contents", "profiles"
@@ -1003,6 +1021,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
   add_foreign_key "node_processes", "profiles", column: "created_by_profile_id"
   add_foreign_key "node_processes", "profiles", column: "responsible_profile_id"
   add_foreign_key "node_processes", "users", column: "created_by_user_id"
+  add_foreign_key "nodes", "contents", column: "show_content_id"
   add_foreign_key "nodes", "nodes", column: "link_node_id"
   add_foreign_key "nodes", "nodes", column: "parent_id"
   add_foreign_key "nodes", "nodes", column: "professional_owner_node_id"

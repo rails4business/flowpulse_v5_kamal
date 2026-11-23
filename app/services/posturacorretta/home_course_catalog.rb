@@ -16,8 +16,17 @@ module Posturacorretta
       course_key = definition["course_key"]
       program_course_key = definition["program_course_key"] || course_key
       academy_module_key = definition["academy_module_key"]
-      course_data = course_key.present? ? load_yaml(course_path(course_key)).fetch("contents") : []
-      course = course_data.find { |entry| entry["format"] == "course" && entry["id"] == course_key }
+      # I Content nel database sono la fonte ufficiale. I vecchi course.yml restano
+      # disponibili soltanto come copia/fallback per tappe non ancora migrate.
+      database_course = course_key.present? ? content_repository.course_by_id(course_key) : nil
+      course_data = if database_course
+        [database_course, *database_course.fetch("chapters", [])]
+      elsif course_key.present?
+        load_yaml(course_path(course_key)).fetch("contents")
+      else
+        []
+      end
+      course = database_course || course_data.find { |entry| entry["format"] == "course" && entry["id"] == course_key }
       course ||= {
         "id" => program_course_key || node_slug,
         "slug" => node_slug,
@@ -28,7 +37,9 @@ module Posturacorretta
         "status" => definition.fetch("status", "published")
       }
 
-      lesson_slugs = course_data.filter_map { |entry| entry["lesson_node_slug"] }.uniq
+      lesson_slugs = course_data.filter_map do |entry|
+        entry["lesson_node_slug"] if entry["format"] == "chapter"
+      end.uniq
       if course_data.any? && !lesson_slugs.one?
         raise KeyError, "Il corso #{course_key} deve riferire un solo Node lezione"
       end
@@ -59,6 +70,10 @@ module Posturacorretta
     private
 
       attr_reader :node_slug
+
+      def content_repository
+        @content_repository ||= ContentRepository.new(include_scheduled: true)
+      end
 
       def node_definitions
         @node_definitions ||= begin

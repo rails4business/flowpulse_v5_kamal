@@ -11,7 +11,7 @@ module Posturacorretta
     }.freeze
 
     STATIONS = [
-      ["introduzione-al-percorso-integrato", "Introduzione al Percorso Integrato"],
+      ["introduzione-al-percorso-integrato", "Inizia il percorso"],
       ["la-prima-settimana-con-posturacorretta", "Prima settimana"],
       ["introduzione-postura-e-fisiologia", "Postura e fisiologia"],
       ["area-massaggio-terapie-manuali-tecniche-corporee", "Area Recupero e terapie manuali"],

@@ -70,6 +70,7 @@ module Admin
         station_node_ids: [@root.id, @child.id, @second_child.id],
         settings: { "color" => "#E11D48" }
       )
+      assert_equal [@root.slug, @child.slug, @second_child.slug], line.station_node_slugs
       [@root, @child, @second_child].each { |node| node.update!(line_slugs: [line.slug]) }
       Offer.create!(metro_line: line, slug: "avvio", title: "Avvio", start_node: @root, end_node: @root)
       Offer.create!(metro_line: line, slug: "completa", title: "Completa", start_node: @root, end_node: @second_child,

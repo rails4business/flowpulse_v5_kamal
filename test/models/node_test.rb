@@ -281,4 +281,18 @@ class NodeTest < ActiveSupport::TestCase
     assert_equal "Introduzione al Percorso Integrato", Node.new(title: "Lezione · Introduzione al Percorso Integrato").short_title
     assert_equal "I 5 elementi e il ciclo stagionale", Node.new(title: "I 5 elementi e il ciclo stagionale").short_title
   end
+
+  test "show content belongs to the node or is explicitly linked" do
+    own = Content.create!(node: @node_a, key: "node-a-intro", slug: "intro", format: "post", title: "Introduzione")
+    foreign = Content.create!(node: @node_b, key: "node-b-intro", slug: "intro", format: "post", title: "Introduzione B")
+
+    @node_a.show_content = own
+    assert @node_a.valid?, @node_a.errors.full_messages.to_sentence
+
+    @node_a.show_content = foreign
+    assert_not @node_a.valid?
+
+    @node_a.outgoing_content_links.create!(target_content: foreign, kind: "material")
+    assert @node_a.valid?, @node_a.errors.full_messages.to_sentence
+  end
 end

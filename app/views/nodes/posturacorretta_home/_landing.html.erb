@@ -10,7 +10,7 @@
   selected_part = local_assigns[:selected_part].to_s.presence_in(available_parts.map { |part| part.fetch(:slug) }) || params[:parte].presence_in(program_parts.map { |part| part.fetch(:slug) }) || "recupero-massaggio"
   show_navigation = local_assigns.fetch(:show_navigation, true)
   intro_sessions = [
-    { course: Node.find_by(slug: "corso-introduzione-al-percorso-integrato"), course_title: "Introduzione al Percorso Integrato", lesson: Node.find_by(slug: "introduzione-al-percorso-integrato"), lesson_title: "Lezione · Introduzione al Percorso Integrato", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-al-percorso-integrato" } },
+    { course: Node.find_by(slug: "corso-introduzione-al-percorso-integrato"), course_title: "Inizia il percorso", lesson: Node.find_by(slug: "introduzione-al-percorso-integrato"), lesson_title: "Lezione · Inizia il percorso", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-al-percorso-integrato" } },
     { course: Node.find_by(slug: "corso-la-prima-settimana-con-posturacorretta"), course_title: "La prima settimana con PosturaCorretta", lesson: Node.find_by(slug: "la-prima-settimana-con-posturacorretta"), lesson_title: "Lezione · La prima settimana con PosturaCorretta", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "la-prima-settimana-con-posturacorretta" } },
     { course: Node.find_by(slug: "postura-e-fisiologia"), course_title: "Postura e fisiologia", lesson: Node.find_by(slug: "introduzione-postura-e-fisiologia"), lesson_title: "Introduzione a Postura e fisiologia", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-postura-e-fisiologia" } }
   ]
@@ -48,7 +48,7 @@
 
     <div class="pc-intro-sheet__path" id="scopri">
      
-      <p class="text-2xl">Percorso educativo PosturaCorretta</p>
+      <p class="text-2xl font-bold">Percorso educativo PosturaCorretta</p>
       <p class="text-2xl">10 minuti al giorno per fare la revisione del tuo corpo!</p>
       
      
@@ -64,35 +64,26 @@
     </div>
 
     <div class="pc-intro-sheet__program">
-      <h2>Programma Intro</h2>
+      <h2>Inizia il Programma</h2>
       <% unless authenticated? %>
         <p class="pc-sheet__login"><%= link_to "Accedi", new_session_path(return_to: request.fullpath) %> per vedere il tuo avanzamento.</p>
       <% end %>
 
-      <div class="pc-intro-program-list" role="table" aria-label="Programma Intro">
-        <div class="pc-intro-program-list__head" role="row">
-          <span role="columnheader">Corso / lezione</span><span role="columnheader">Data e ora</span><span role="columnheader">Centro</span><span role="columnheader">Insegnante</span>
-        </div>
-        <% intro_sessions.each_with_index do |session, index| %>
-          <% station_slug = session.fetch(:station).fetch("slug") %>
-          <div class="pc-intro-program-list__row is-course" role="row">
-            <span class="pc-intro-program-list__marker"><%= index + 1 %></span>
-            <span role="cell"><small>Corso online</small><%= link_to session.fetch(:course)&.title || session.fetch(:course_title), posturacorretta_postura_recupero_path(tappa: station_slug, tab: "online") %></span>
-            <span role="cell">Iscrizione</span><span role="cell"></span><span role="cell"></span>
-          </div>
-          <div class="pc-intro-program-list__row is-lesson" role="row">
-            <span class="pc-intro-program-list__marker"></span>
-            <span role="cell"><small>Lezione</small><%= link_to (session.fetch(:lesson)&.title || session.fetch(:lesson_title)).delete_prefix("Lezione · "), posturacorretta_postura_recupero_path(tappa: station_slug, tab: "lezioni") %></span>
-            <span role="cell"></span><span role="cell"></span><span role="cell"></span>
-          </div>
-        <% end %>
-      </div>
+      <% intro_groups = intro_sessions.map do |session|
+        station_slug = session.fetch(:station).fetch("slug")
+        {
+          course_title: session.fetch(:course)&.title || session.fetch(:course_title),
+          course_path: posturacorretta_postura_recupero_path(tappa: station_slug, tab: "online"),
+          lessons: [{ title: session.fetch(:lesson)&.title || session.fetch(:lesson_title), path: posturacorretta_postura_recupero_path(tappa: station_slug, tab: "lezioni") }]
+        }
+      end %>
+      <%= render "nodes/posturacorretta_home/program_sheet", groups: intro_groups, label: "Inizia il programma" %>
     </div>
 
     <%= render "nodes/posturacorretta_home/journey_footer",
       part_number: 1,
-      sheet_label: "Intro",
-      print_label: "Intro",
+      sheet_label: "Inizia il programma",
+      print_label: "Inizia il programma",
       next_path: posturacorretta_path(area: "espressione", parte: "recupero-massaggio"),
       next_label: "Recupero e terapie manuali" %>
   </section>
@@ -105,27 +96,17 @@
         <p>La parte del programma dedicata alle terapie manuali, alle tecniche corporee e al recupero.</p>
       </header>
 
-      <div class="pc-intro-sheet__program pc-program-sheet__table pc-sheet__scroll">
-        <table class="pc-sheet__table pc-intro-sheet__table">
-          <thead>
-            <tr><th scope="col">Corso / lezione</th><th scope="col">Data e ora</th><th scope="col">Centro</th><th scope="col">Insegnante</th></tr>
-          </thead>
-          <% recovery_courses.each_with_index do |course, index| %>
-            <% destination = course.station ? posturacorretta_postura_recupero_path(tappa: course.station.fetch("slug"), tab: "online") : flowtree_public_node_path(course.node) %>
-            <tbody>
-              <tr class="pc-sheet__course">
-                <th scope="rowgroup"><%= index + 1 %> · <%= link_to course.node.title, destination %></th>
-                <td></td><td></td><td></td>
-              </tr>
-              <% course.lessons.each do |lesson| %>
-                <tr>
-                  <td><%= link_to lesson.title, destination %></td>
-                  <td class="pc-sheet__blank"></td><td class="pc-sheet__blank"></td><td class="pc-sheet__blank"></td>
-                </tr>
-              <% end %>
-            </tbody>
-          <% end %>
-        </table>
+      <div class="pc-intro-sheet__program pc-program-sheet__table">
+        <% recovery_groups = recovery_courses.map do |course|
+          course_path = course.station ? posturacorretta_postura_recupero_path(tappa: course.station.fetch("slug"), tab: "online") : flowtree_public_node_path(course.node)
+          lesson_path = course.station ? posturacorretta_postura_recupero_path(tappa: course.station.fetch("slug"), tab: "lezioni") : nil
+          {
+            course_title: course.node.title,
+            course_path: course_path,
+            lessons: course.lessons.map { |lesson| { title: lesson.title, path: lesson_path || flowtree_public_node_path(lesson) } }
+          }
+        end %>
+        <%= render "nodes/posturacorretta_home/program_sheet", groups: recovery_groups, label: "Programma Recupero e terapie manuali" %>
       </div>
 
       <%= render "nodes/posturacorretta_home/journey_footer",
