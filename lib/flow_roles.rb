@@ -8,7 +8,7 @@ module FlowRoles
   ASIDE_CONTEXTS = {
     "traveler" => { eyebrow: "Workspace", title: "Esperienze", subtitle: "Eventi, categorie e brand" },
     "ideatore" => { eyebrow: "Workspace", title: "Ideatore", subtitle: "Brand, progetti e spazi" },
-    "creator" => { eyebrow: "Workspace", title: "Creator", subtitle: "Contenuti, eventi e cicli" },
+    "creator" => { eyebrow: "Workspace", title: "Imprenditore", subtitle: "Il tuo Brand: contenuti, eventi e cicli" },
     "digital" => { eyebrow: "Workspace", title: "Digital", subtitle: "Strumenti e produzione digitale" },
     "admin" => { eyebrow: "Admin", title: "Admin", subtitle: "Strumenti operativi" },
     "superadmin" => { eyebrow: "Superadmin", title: "Superadmin", subtitle: "Governo app, domini e audit" }

@@ -43,7 +43,7 @@ class RoleAssignment < ApplicationRecord
     elsif operator?
       "#{role_operator.to_s.humanize} (#{display})"
     else
-      "#{role.to_s.humanize} (#{display})"
+      "#{User::ROLE_LABELS.fetch(role.to_s, role.to_s.humanize)} (#{display})"
     end
   end
 

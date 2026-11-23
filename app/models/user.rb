@@ -47,7 +47,7 @@ class User < ApplicationRecord
   ROLE_LABELS = {
     "traveler" => "Viaggiatore",
     "ideatore" => "Ideatore",
-    "creator" => "Creator",
+    "creator" => "Imprenditore",
     "digital" => "Digital",
     "admin" => "Admin",
     "superadmin" => "Superadmin"

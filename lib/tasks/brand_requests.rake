@@ -1,7 +1,7 @@
 namespace :brand_requests do
   # Prova:   bin/rails brand_requests:link_profiles
   # Applica: APPLY=1 bin/rails brand_requests:link_profiles
-  # In produzione kamal app exec non usa una shell: bin/kamal app exec "env APPLY=1 bin/rails brand_requests:link_profiles"
+  # In produzione (kamal app exec non usa una shell): bin/kamal app exec "env APPLY=1 bin/rails brand_requests:link_profiles"
   desc "Collega al profilo le richieste senza profilo (invito accettato o email affidabile)"
   task link_profiles: :environment do
     apply = ENV["APPLY"] == "1"

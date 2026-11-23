@@ -54,6 +54,23 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
     assert_select "#proposta-prezzi", count: 0
   end
 
+  test "Elisa sees the reserved panel without the changelog link, other users do not" do
+    elisa = User.create!(email_address: "elisa.panel@example.com", password: "password123")
+    elisa.create_profile!(display_name: "Elisa", username: "elisa_corubolo")
+    other = User.create!(email_address: "other.panel@example.com", password: "password123")
+    other.create_profile!(display_name: "Other", username: "other_panel")
+
+    post session_url, params: { email_address: elisa.email_address, password: "password123" }
+    get "/generaimpresa/brand/radioestesia"
+    assert_select "#pannello-superadmin #da-confermare li", minimum: 1
+    assert_select "#pannello-superadmin a[href='/generaimpresa/brand/radioestesia/changelog']", count: 0
+
+    delete session_url
+    post session_url, params: { email_address: other.email_address, password: "password123" }
+    get "/generaimpresa/brand/radioestesia"
+    assert_select "#pannello-superadmin", count: 0
+  end
+
   test "chi sono presents Elisa with portrait, diploma and link to percorsi" do
     get "/generaimpresa/brand/radioestesia/chi-sono"
 

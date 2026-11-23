@@ -17,11 +17,12 @@
         <a href="<%= @radioestesia.dig('site', 'booking_url') %>" target="_blank" rel="noopener" class="inline-flex border border-[#516747] px-7 py-3 text-sm tracking-[.08em] transition hover:opacity-90" style="background-color: #516747; color: #fff"><%= @radioestesia_page_data.fetch('booking_cta') %></a>
       </div>
     </section>
-    <% if Current.user&.superadmin_user? %>
+    <% superadmin = Current.user&.superadmin_user? %>
+    <% if superadmin || Current.user&.profile&.username.to_s.in?(Array(@radioestesia['panel_usernames'])) %>
       <aside id="pannello-superadmin" class="mx-auto mb-16 max-w-3xl space-y-8 rounded-2xl border border-dashed border-[#d9b44a] bg-[#fdf8e8] p-6 text-sm leading-6 text-[#4a3f1c] sm:p-8">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <p class="text-xs font-black uppercase tracking-[.18em] text-[#84671c]">Solo superadmin · Da aggiornare</p>
-          <a href="<%= radioestesia_changelog_path %>" class="text-xs font-bold underline" style="color: #84671c">Changelog →</a>
+          <p class="text-xs font-black uppercase tracking-[.18em] text-[#84671c]">Area riservata · Da aggiornare</p>
+          <% if superadmin %><a href="<%= radioestesia_changelog_path %>" class="text-xs font-bold underline" style="color: #84671c">Changelog →</a><% end %>
         </div>
         <% if @radioestesia['to_do'].present? %>
           <section id="da-fare"><h2 class="font-bold">Da fare</h2><ol class="mt-2 list-decimal space-y-2 pl-5"><% @radioestesia.fetch('to_do').each do |item| %><li><%= item %></li><% end %></ol></section>
