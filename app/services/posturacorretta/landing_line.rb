@@ -28,6 +28,5 @@ module Posturacorretta
     private
 
       attr_reader :line, :nodes
-
   end
 end
