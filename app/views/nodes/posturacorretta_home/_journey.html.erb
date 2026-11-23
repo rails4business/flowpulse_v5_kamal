@@ -13,8 +13,12 @@
 
   <div class="pc-home-journey__layout">
     <aside class="pc-home-journey__aside">
-      <p class="pc-home-journey__aside-title">Prima linea · Per iniziare</p>
-      <%= render "nodes/posturacorretta_home/program_stepper", journey: journey, limit: 3 %>
+      <header class="pc-journey-aside__header"><p class="pc-home-journey__aside-title">Postura e recupero</p><strong>Il percorso</strong><span><%= journey.sheet_courses.size %> corsi · <%= journey.stations.size %> tappe</span></header>
+      <%= render "nodes/posturacorretta_home/program_stepper", journey: journey %>
+      <nav class="pc-journey-aside__pager" aria-label="Procedi nel percorso">
+        <% if journey.previous_station %><%= link_to posturacorretta_postura_recupero_path(tappa: journey.previous_station.fetch("slug"), tab: "online"), class: "is-previous" do %><span aria-hidden="true">←</span><span><small>Indietro</small><strong><%= journey.previous_station.fetch("title") %></strong></span><% end %><% else %><span></span><% end %>
+        <% if journey.next_station %><%= link_to posturacorretta_postura_recupero_path(tappa: journey.next_station.fetch("slug"), tab: "online"), class: "is-next" do %><span><small>Procedi</small><strong><%= journey.next_station.fetch("title") %></strong></span><span aria-hidden="true">→</span><% end %><% end %>
+      </nav>
     </aside>
 
     <div class="pc-home-journey__content">

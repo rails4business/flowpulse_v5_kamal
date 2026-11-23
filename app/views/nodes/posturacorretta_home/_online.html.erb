@@ -1,6 +1,11 @@
 <% if data.present? %>
   <% course = data.fetch(:course) %>
   <% chapters = data.fetch(:chapters) %>
+  <% if @journey_lesson_node %>
+    <%= render "nodes/posturacorretta_home/lesson_show",
+      lesson_node: @journey_lesson_node,
+      chapters: chapters %>
+  <% else %>
   <article class="overflow-hidden bg-white">
     <details class="group/course" open>
       <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
@@ -42,6 +47,7 @@
       <% end %>
     </details>
   </article>
+  <% end %>
 <% else %>
   <%= render "nodes/posturacorretta_home/unavailable", journey: journey, label: "Il percorso online di questa tappa è in preparazione." %>
 <% end %>

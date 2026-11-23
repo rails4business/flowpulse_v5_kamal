@@ -150,17 +150,17 @@ Rails.application.routes.draw do
       constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
   get "generaimpresa/brand/radioestesia/contenuti/:slug" => "landing#radioestesia_content", as: :radioestesia_content
   get "generaimpresa/brand/radioestesia/:page" => "landing#radioestesia", as: :radioestesia_page,
-      constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
+      constraints: { page: /chi-sono|percorsi|percorso-evoluzione-personale|mappa-energetica-degli-alimenti|riequilibrio-radiestesico|rimozione-blocchi-e-credenze-limitanti|contatti|contenuti|eventi/ }
   get "flowpulse/radioestesia" => redirect("/generaimpresa/brand/radioestesia", status: 301)
   get "flowpulse/radioestesia/changelog" => redirect("/generaimpresa/brand/radioestesia/changelog", status: 301)
   get "flowpulse/radioestesia/changelog/:slug" => redirect("/generaimpresa/brand/radioestesia/changelog/%{slug}", status: 301)
   get "flowpulse/radioestesia/contenuti/:slug" => redirect("/generaimpresa/brand/radioestesia/contenuti/%{slug}", status: 301)
   get "flowpulse/radioestesia/:page" => redirect("/generaimpresa/brand/radioestesia/%{page}", status: 301),
-      constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
+      constraints: { page: /chi-sono|percorsi|percorso-evoluzione-personale|mappa-energetica-degli-alimenti|riequilibrio-radiestesico|rimozione-blocchi-e-credenze-limitanti|contatti|contenuti|eventi/ }
   get "posturacorretta/radioestesia" => redirect("/generaimpresa/brand/radioestesia", status: 301)
   get "posturacorretta/radioestesia/contenuti/:slug" => redirect("/generaimpresa/brand/radioestesia/contenuti/%{slug}", status: 301)
   get "posturacorretta/radioestesia/:page" => redirect("/generaimpresa/brand/radioestesia/%{page}", status: 301),
-      constraints: { page: /chi-sono|percorsi|contatti|contenuti/ }
+      constraints: { page: /chi-sono|percorsi|percorso-evoluzione-personale|mappa-energetica-degli-alimenti|riequilibrio-radiestesico|rimozione-blocchi-e-credenze-limitanti|contatti|contenuti|eventi/ }
   get "cantachetipassa" => "landing#cantachetipassa", as: :cantachetipassa
   get "cantachetipassa/musica/fisarmonica/casa-di-riposo-2066" => "landing#cantachetipassa_retirement_home", as: :cantachetipassa_retirement_home
   get "cantachetipassa/musica/fisarmonica(/:page)" => "landing#cantachetipassa_accordion",
@@ -364,6 +364,7 @@ Rails.application.routes.draw do
     root "dashboard#show"
     resources :role_assignments, only: [:index, :new, :create, :destroy] do
       resources :nodes, except: [:show] do
+        resources :contents, only: [:edit, :update]
         member do
           patch :move
           get :tree

@@ -60,6 +60,43 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "course overview renders the selected show Content and public video publication" do
+    content = Content.find_by!(key: "introduzione-percorso-integrato-posturacorretta")
+    ContentEditing::BodySynchronizer.new(content).import_markdown!("## Presentazione editoriale\n\nCorpo dello show Content.")
+    content.update!(publication_status: "published", publication_visibility: "public")
+    publication = content.publications.create!(
+      key: "video-show", platform: "youtube", format: "video", external_id: "abc123",
+      title: "Video di presentazione", publication_status: "published", publication_visibility: "public"
+    )
+    content.update!(show_publication: publication)
+    brand = content.node
+    node = Node.create!(slug: "corso-show-content-test", title: "Corso show", view_type: "course",
+      role_assignment: brand.role_assignment, parent: brand)
+    node.outgoing_content_links.create!(target_content: content, kind: "show")
+    node.update!(show_content: content)
+
+    get posturacorretta_course_path(corso: content.slug)
+
+    assert_response :success
+    assert_select "section[aria-labelledby='course-show-content-title']", count: 1 do
+      assert_select "h2", text: content.title
+      assert_select ".node-public-content", text: /Corpo dello show Content/
+      assert_select "iframe[data-privacy-embed-src='https://www.youtube-nocookie.com/embed/abc123']", count: 1
+      assert_select ".privacy-embed__placeholder", text: /Carica il video/
+    end
+  end
+
+  test "course overview keeps the current fallback without a show Content" do
+    content = Content.find_by!(key: "inizia-con-posturacorretta")
+    Node.where(show_content_id: content.id).update_all(show_content_id: nil)
+
+    get posturacorretta_course_path(corso: content.slug)
+
+    assert_response :success
+    assert_select "section[aria-labelledby='course-show-content-title']", count: 0
+    assert_select "#capitoli", count: 1
+  end
+
   test "keeps program activities sequential and redirects a locked activity" do
     get posturacorretta_course_lesson_path(corso: "postura-corretta-in-un-mese", attivita: "pratica-guidata-primo-mese")
 

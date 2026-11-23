@@ -4,7 +4,7 @@
 <header class="border-b border-[#d8dfd4] bg-[#f3f5ef]">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
     <%= link_to radioestesia_path, class: "flex items-center gap-3", aria: { label: "#{radioestesia.dig('site', 'name')}, home" } do %>
-      <img src="<%= radioestesia.dig('site', 'logo_url') %>" alt="Logo <%= radioestesia.dig('site', 'name') %>" class="size-12 rounded-full object-cover" referrerpolicy="no-referrer">
+      <img src="<%= asset_path(radioestesia.dig('site', 'logo_path')) %>" alt="Logo <%= radioestesia.dig('site', 'name') %>" class="size-12 rounded-full object-cover">
       <span><span class="block font-serif text-2xl italic leading-none text-[#53654b]"><%= radioestesia.dig('site', 'name') %></span><span class="mt-1 block text-[10px] font-bold uppercase tracking-[.13em] text-[#738069]"><%= radioestesia.dig('site', 'tagline') %></span></span>
     <% end %>
     <nav class="hidden items-center gap-5 text-sm font-semibold text-[#4a594d] md:flex" aria-label="Navigazione Radioestesia">

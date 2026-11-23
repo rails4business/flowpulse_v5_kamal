@@ -137,6 +137,21 @@ module PublicNodePresentation
         risorsa: params[:risorsa],
         completed_chapters: posturacorretta_completed_chapters
       )
+      prepare_posturacorretta_lesson_show
+    end
+
+    def prepare_posturacorretta_lesson_show
+      @journey_lesson_node = Node.includes(show_content: [:show_publication, :rich_text_body])
+        .find_by(slug: @posturacorretta_home.station.fetch("slug"), view_type: "course_lesson")
+      return unless @journey_lesson_node
+
+      content = @journey_lesson_node.show_content
+      preview = Current.user&.superadmin_user?
+      return unless content && (content.published_for_public? || preview)
+
+      @journey_lesson_content = content
+      publication = content.show_publication
+      @journey_lesson_publication = publication if publication && (publication.published_for_public? || preview)
     end
 
     def prepare_posturacorretta_consapevolezza(node)

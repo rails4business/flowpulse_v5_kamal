@@ -1,62 +1,249 @@
 site:
   name: "Armonia"
   tagline: "La Radiestesia al servizio del tuo Benessere"
-  logo_url: "https://static.wixstatic.com/media/235e28_562c3332474c4a1d86610522b496d23e~mv2.png/v1/crop/x_61,y_340,w_892,h_877/fill/w_238,h_238,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo%20pendolo.png"
+  logo_path: "radiestesia/logo-pendolo.png"
+  icon_path: "radiestesia/logo-pendolo-icona.png"
+  vat_number: "03185790304"
+  booking_url: "https://calendly.com/elisa-corubolo/30min"
   membership:
     name: "Accesso annuale"
     price_eur: 79
     event_discount_percent: 20
     description: "Uno spazio riservato per approfondire con video, articoli e materiali di conferenze."
+# Pannello superadmin in home: tutto ciò che è da aggiornare sta qui, non sparso nelle pagine.
+to_do:
+  - "Percorso di evoluzione personale: preparare la pagina show di ogni corso (lezioni e capitoli) e fissare le date di uscita."
+  - "Contenuti: preparare la pagina show dei contenuti (articoli, video, materiali) e decidere quali pubblicare."
+  - "Eventi: preparare la pagina show degli eventi e inserire le prossime date (oggi non ce ne sono in programma)."
+# Registro ore di lavoro sul Brand.
+work_log:
+  - { date: "2026-09-25", hours: 4, note: "Prima anteprima del Brand tra i Brand in costruzione (vedi changelog)." }
+  - { date: "2026-11-23", hours: 4, note: "Home, Chi sono, Percorsi e 3 schede, Contatti come su Wix; immagini in locale; percorso di evoluzione personale; Contenuti ed Eventi separati; pannello superadmin (compreso il back end)." }
+# Proposta di prezzi del percorso da discutere con Elisa.
+price_proposal:
+  rows:
+    - { corso: "1. Cos'è la radioestesia", lezioni: "8", prezzo: "150 € (porta d'ingresso, da tenere basso)" }
+    - { corso: "2. Medicina cinese e stagioni", lezioni: "7", prezzo: "160 €" }
+    - { corso: "3. Meridiani e ritmo circadiano", lezioni: "10", prezzo: "220 €, oppure tre moduli da circa 80 € (uno per famiglia di meridiani)" }
+    - { corso: "4. I primi 7 chakra", lezioni: "8", prezzo: "180 €" }
+    - { corso: "5. Gli altri chakra con la cabala", lezioni: "11", prezzo: "240 €" }
+    - { corso: "6. I registri akashici", lezioni: "4", prezzo: "100 €" }
+    - { corso: "7. I maestri invisibili", lezioni: "4", prezzo: "100 €" }
+    - { corso: "Totale comprando i corsi separati", lezioni: "52", prezzo: "1.150 €" }
+    - { corso: "Livello 1 · corsi 1–3 (radiestesia e medicina cinese)", lezioni: "25", prezzo: "470 €" }
+    - { corso: "Livello 2 · corsi 4–7 (chakra, cabala, akashici, maestri)", lezioni: "27", prezzo: "540 €" }
+    - { corso: "Percorso completo", lezioni: "52", prezzo: "960 €, oppure a rate mensili (da definire in base ai tempi scelti da Elisa)" }
+  notes:
+    - "Base del calcolo: lezioni dal vivo online in piccolo gruppo a 20–25 € a lezione (52 lezioni = 1.040–1.300 €). Se il corso è solo registrato vale circa un terzo."
+    - "Il percorso completo è lungo (52 lezioni): conviene proporlo anche a livelli (Livello 1 e Livello 2), più facili da scegliere e da pagare. I tempi delle lezioni li decide Elisa."
+    - "Chi finisce il corso 1 passa al Livello 1 o al percorso completo scalando quanto ha già pagato."
+    - "L'accesso annuale a 79 € (Contenuti) non deve includere materiali del percorso, altrimenti gli fa concorrenza."
+    - "Da sapere da Elisa: prezzo di una seduta individuale, durata di ogni lezione, dal vivo o registrata."
+# Domande da confermare con Elisa.
+to_confirm:
+  - "Email: su Wix il testo dice elisa.corubolo@outlook.it, l'icona della busta manda a elisa@radiestesiaebenessere.com. Quale usiamo?"
+  - "Sedute: in presenza, online o entrambe? Se in presenza, in quale città o indirizzo?"
+  - "Prezzi: vuole mostrarli sul sito o lasciarli alla call? In particolare i pacchetti della Mappa (60, 100 o 150 alimenti) e la Consulenza personalizzata."
+  - "Home: va bene il nuovo pulsante \"Prenota una call gratuita\" accanto a \"Scopri di più\"?"
+  - "Typo corretti rispetto a Wix: \"con con amore\", \"il tempo è voltato\", \"non c'è dure senza tre\", \"te e eil tuo lavoro\", \"strumento potenti\", \"le energia di frutta\", \"serenità\"?\". Approva? (e li corregge anche su Wix finché resta online)"
+  - "Contatti: ok togliere il pulsante WhatsApp generico (condivideva il sito senza numero) e tenere solo quello con il suo numero?"
+  - "Contenuti: accesso annuale a 79 € e sconto eventi del 20% sono ipotesi nostre. Li conferma? Quali video, articoli ed eventi vuole pubblicare?"
+  - "Percorso di evoluzione personale: conferma i sette corsi (Cos'è la radioestesia; Medicina cinese e stagioni; Meridiani e ritmo circadiano; I primi 7 chakra; Gli altri chakra con la cabala; I registri akashici; I maestri invisibili), titoli e ordine delle lezioni? Online o in presenza, durata e prezzo? Va bene dividerlo in due livelli?"
+  - "Calendly: l'evento \"Consulenza conoscitiva gratuita\" dura 15 minuti su Zoom ma l'indirizzo è /30min. Va bene così o rinomina il link?"
+  - "Privacy: per la privacy policy servono nome del titolare, indirizzo e email da indicare per i dati personali."
 navigation:
   - { key: "home", label: "Home" }
   - { key: "chi-sono", label: "Chi sono" }
   - { key: "percorsi", label: "Percorsi" }
-  - { key: "contatti", label: "Contatti" }
   - { key: "contenuti", label: "Contenuti" }
+  - { key: "eventi", label: "Eventi" }
+  - { key: "contatti", label: "Contatti" }
 pages:
   home:
-    eyebrow: "Benvenuta, benvenuto"
-    title: "Riscopri la tua energia più autentica"
-    lead: "Uno spazio dedicato al benessere, alla centratura e alla riconnessione con sé attraverso la radiestesia."
-    body: "Ogni percorso parte dall'ascolto della persona e dai suoi bisogni del momento."
-    cta: "Scopri i percorsi"
+    # Testi presi dalla home attuale su Wix (radiestesiaebenessere.com).
+    title: "La Radiestesia al servizio del tuo Benessere"
+    welcome:
+      - "Benvenuti in questo spazio"
+      - "dove Radiestesia e Nutrizione energetica entrano in sinergia"
+    signature: "ELISA"
+    cta: "Scopri di più"
     cta_page: "percorsi"
-    cards:
-      - { title: "Riequilibrio radiestesico", text: "Un momento di ascolto e riequilibrio energetico." }
-      - { title: "Blocchi e credenze", text: "Uno spazio per osservare ciò che oggi impedisce di procedere." }
-      - { title: "Alimentazione energetica", text: "Un approfondimento sul rapporto personale con gli alimenti." }
+    booking_cta: "Prenota una call gratuita"
   chi-sono:
-    eyebrow: "Chi sono"
-    title: "Un accompagnamento sensibile e personale"
-    lead: "Con passione e sensibilità accompagno le persone a riscoprire la propria energia più autentica."
-    body: "Qui inseriremo la presentazione, la formazione e il modo in cui Elisa desidera raccontare il proprio lavoro."
-    cta: "Conosci i percorsi"
+    # Testi presi dalla pagina attuale su Wix (radiestesiaebenessere.com/chi-sono).
+    title: "Elisa | Operatrice in Radiestesia per il tuo benessere energetico"
+    greeting: "GRATA CHE TU SIA QUI!"
+    intro: "Mi presento:"
+    paragraphs:
+      - "sono Elisa Corubolo, professionista in Radiestesia e consulente in Nutrizione energetica."
+      - "Il mio percorso è iniziato da una profonda ricerca personale: sentivo il bisogno di ritrovare me stessa e riconoscere chi ero davvero, dopo anni trascorsi in una realtà che non mi rispecchiava."
+      - "Spinta dal desiderio di vivere una vita più autentica e in sintonia con la mia essenza, ho intrapreso un cammino di consapevolezza che mi ha portata a riconoscere la mia verità."
+      - "Il pendolo e la Radiestesia sono strumenti preziosi che mi hanno insegnato a fidarmi del mio sentire, ad accogliere con amore la mia unicità e a rinascere nella donna che sono oggi."
+      - "Dalla mia stessa trasformazione nasce ARMONIA: uno spazio creato con il cuore, con l'intento di guidarti a ristabilire equilibrio tra corpo, mente, emozioni e spirito. È un invito a riconnetterti con te stessa per rifiorire dentro e fuori."
+      - "Credo profondamente che ciascuno di noi meriti di vivere con consapevolezza e autenticità. Io sono qui per accompagnarti in questo cammino, perché il viaggio verso noi stessi è il regalo più prezioso che possiamo farci!"
+    portrait_path: "radiestesia/elisa-ritratto.jpg"
+    portrait_alt: "Ritratto di Elisa, fondatrice di Armonia"
+    diploma_path: "radiestesia/diploma-radiestesia-avanzata-2025.jpg"
+    diploma_alt: "Diploma di corso di secondo livello in Radiestesia avanzata e Radionica conseguito nel 2025"
+    cta: "Scopri le mie proposte per te"
     cta_page: "percorsi"
   percorsi:
-    eyebrow: "Percorsi"
-    title: "Percorsi per ritrovare equilibrio e centratura"
-    lead: "Proposte individuali da scegliere insieme, con tempi e modalità adatti alla persona."
-    body: "Le singole proposte saranno approfondite in schede dedicate quando Elisa avrà validato testi, durata e modalità di incontro."
+    # Testi presi dalla pagina attuale su Wix (radiestesiaebenessere.com/percorsi).
+    title: "Percorsi di radiestesia per il riequilibrio energetico e il benessere interiore"
+    heading: "I miei percorsi per te:"
+    # page: slug della scheda di dettaglio; il link "Scopri di più" compare quando la scheda esiste.
     cards:
-      - { title: "Riequilibrio radiestesico", text: "Per dedicare attenzione all'equilibrio energetico personale." }
-      - { title: "Rimozione di blocchi e credenze limitanti", text: "Per esplorare nodi e schemi che si desidera trasformare." }
-      - { title: "Mappa energetica degli alimenti", text: "Un percorso di osservazione del proprio rapporto con l'alimentazione." }
-    cta: "Contatta Elisa"
+      - number: 1
+        title: "NUTRIZIONE ENERGETICA"
+        subtitle: "\"Mappa energetica degli alimenti\" e Consulenza personalizzata"
+        text: "Quando il tuo corpo continua a parlarti attraverso gonfiore, stanchezza, fame emotiva o cali energetici, nonostante un'alimentazione sana."
+        page: "mappa-energetica-degli-alimenti"
+      - number: 2
+        title: "Riequilibrio Radiestesico Clinico"
+        text: "Per affrontare senso di instabilità, stanchezza persistente, blocchi emotivi, difficoltà relazionali, paura di esprimersi e stati di sovraccarico mentale ed emotivo."
+        page: "riequilibrio-radiestesico"
+      - number: 3
+        title: "Rimozione dei blocchi e delle credenze limitanti"
+        text: "Quando senti di voler andare avanti, ma qualcosa dentro continua a trattenerti, tra autosabotaggio, paure profonde e difficoltà a lasciar andare."
+        page: "rimozione-blocchi-e-credenze-limitanti"
+    # Riquadro a parte, sotto le tre schede: il percorso formativo in più corsi.
+    journey:
+      title: "Percorso di evoluzione personale alla scoperta dei tuoi aspetti energetici"
+      page: "percorso-evoluzione-personale"
+    cta: "Contattami"
+    cta_page: "contatti"
+  # Percorso formativo: per ora un insieme di corsi letto dal file in docs, poi diventerà una metro line.
+  percorso-evoluzione-personale:
+    section: "percorsi"
+    title: "Percorso di evoluzione personale alla scoperta dei tuoi aspetti energetici"
+    source: "docs/radiestesiaebenessere/percorso_radioestesia.yaml"
+    # Data di uscita di ogni lezione (id del file in docs, es. lez_1_1: "2027-01-15"); se manca: "In preparazione · da programmare".
+    release_dates: {}
+    cta: "Contattami"
+    cta_page: "contatti"
+  # Schede di dettaglio dei percorsi: testi presi dalle pagine attuali su Wix.
+  # blocks: { p: paragrafo } | { ul: elenco puntato } | { ol: elenco numerato } | { quote: citazione }
+  mappa-energetica-degli-alimenti:
+    section: "percorsi"
+    title: "Mappa energetica degli alimenti"
+    subtitle: "e Consulenza personalizzata"
+    banner_path: "radiestesia/percorso-mappa-energetica.jpg"
+    banner_alt: "Olive che scendono in un sacco di juta"
+    blocks:
+      - p: "So bene quanto possa essere difficile e frustrante vivere l'alimentazione come un costante interrogativo. Nutrirsi dovrebbe essere un gesto naturale e sereno, eppure ogni pasto può trasformarsi in un momento carico di dubbi e insicurezze."
+      - p: "Per me è stato a lungo così: una continua fonte di tensione, fatta di tentativi e rinunce."
+      - p: "Solo col tempo ho compreso che anche cibi considerati \"sani\" possono, in realtà, non essere adatti al nostro campo energetico e al nostro corpo."
+      - p: "Grazie alla Radiestesia ho potuto valutare energeticamente gli alimenti e trovare finalmente risposte certe rispetto a ciò che mi fa stare bene e ciò che invece mi danneggia."
+      - p: "Da qui l'idea di dar vita alla \"Mappa energetica degli alimenti\", un percorso completamente personalizzato, dedicato a chi, come me, ha vissuto a lungo nel dubbio:"
+      - quote: "\"Perché questo alimento mi fa sentire così?\"\n\"Cosa posso davvero mangiare in serenità?\""
+      - p: "Ecco cosa riceverai:"
+      - ul:
+          - "un report creato interamente su misura per te;"
+          - "l'analisi energetica di 60, 100 o 150 alimenti (in base al pacchetto scelto);"
+          - "risultati espressi su una scala da -10 a +10;"
+          - "interpretazione chiara del grado di compatibilità energetica tra te e ciascun alimento, per ogni fascia di valore (ad esempio se un alimento è valutato +10 significa che per te è estremamente benefico)."
+      - p: "Puoi completare la tua \"Mappa energetica degli alimenti\" con una Consulenza personalizzata, durante la quale integrerò i principi della Medicina Tradizionale Cinese per fornirti un quadro alimentare energetico completo. Il risultato è un percorso unico e su misura che va oltre la semplice nutrizione: ti permetterà di conoscere meglio te stessa, comprendere come gli alimenti interagiscono con i tuoi organi e la tua energia vitale, e connetterti sempre più a fondo con i ritmi naturali del tuo corpo."
+      - p: "Questi percorsi di Nutrizione Energetica nascono dal mio vissuto personale e sono strumenti potenti di conoscenza di sé, costruiti con profonda empatia per aiutarti a:"
+      - ul:
+          - "individuare i cibi più o meno benefici per TE;"
+          - "compiere scelte alimentari più consapevoli;"
+          - "migliorare la tua vitalità, la tua digestione e il tuo benessere generale;"
+          - "nutrirti con amore, in armonia con il tuo corpo e il tuo campo energetico."
+    decorations:
+      - "radiestesia/decorazione-mirtilli.png"
+      - "radiestesia/decorazione-lamponi.png"
+    testimonials:
+      - author: "SILVIA C."
+        text: "Grazie di cuore per tutto il lavoro che hai fatto per me e per mia figlia. Ho sentito tantissimo la tua pazienza, la tua umanità e la tua gentilezza. Ho trovato un grande riscontro in tutto quello che mi hai detto, e la tua spiegazione è stata fondamentale: mi hai chiarito dubbi che mi portavo dietro da tempo. In più mi hai aiutata concretamente su una situazione importante per mia figlia, e per questo ti ringrazio ancora di più. Sentivo già di essere sulla strada giusta, ma mi mancava proprio quel tassello legato alla carenza e all'elemento... ora so come aggiustare il tiro e mi sento molto più centrata. Grazie davvero per questa esperienza."
+      - author: "SANDRA S."
+        text: "Sto contando i giorni per la nostra consulenza, non vedo l'ora di avere le idee più chiare. Il risultato dopo la Mappa è già sorprendente. Sto bene come non stavo da tantissimo. Niente più coliche o dissenteria o difficoltà a digerire. Ritrovato il sonno e l'energia. Le mie gambe si sono già sgonfiate! Dopo tre giorni l'infiammazione stava già diminuendo."
+      - author: "MARA S."
+        text: "Ho avuto il piacere di fare con Elisa due consulenze, una per la Mappa energetica e una nutrizionale, e mi sono trovata davvero molto bene. È una professionista preparata, attenta e bravissima nel suo lavoro. Mi ha creato una mappa personalizzata con i cibi più adatti a me e alla mia costituzione, secondo i principi della Medicina Tradizionale Cinese, spiegandomi tutto in modo chiaro e comprensibile. Ho apprezzato tantissimo anche la sua disponibilità dopo le consulenze: non ti lascia mai sola, resta presente per dubbi, domande e chiarimenti. È una persona che trasmette competenza, ma anche grande attenzione verso chi ha davanti. La straconsiglio a chi vuole conoscersi meglio e imparare a nutrire e ad ascoltare il proprio corpo in modo più attento e consapevole. Grazie Elisa."
+      - author: "SILVIA A."
+        text: "Ti ringrazio per la gentile accoglienza durante la consulenza: ho sempre dato valore al cibo, rispettandolo, ma non avevo mai attribuito un valore energetico più o meno compatibile con me. Grazie a te ho imparato ad ascoltarmi e di conseguenza, ad ascoltare le energie di frutta, verdura... Ora quando guardo un alimento, ricordo ciò che è risultato dal tuo lavoro di analisi energetica e prendo la direzione più giusta per me. Ora i cibi processati non mi attirano più e non mi trasmettono energie buone per il mio fisico e per la mia anima. Grazie di cuore."
+      - author: "ANNA Z."
+        text: "È stata un'esperienza più profonda di quello che pensavo. Mi sono sentita capita, soprattutto quando parlavamo di come mi sento dopo aver mangiato certe cose. Hai messo insieme tutti i pezzi e questo mi ha colpita molto, perché hai fatto dei collegamenti che io da sola non avrei mai visto, come quello sulla frutta. È come se ora mi fidassi di più del mio corpo e del fatto che posso davvero imparare ad ascoltarlo. Grazie Elisa. Si sente che fai tutto questo con tanta passione. Sei stata preziosa."
+    cta: "Contattami"
+    cta_page: "contatti"
+  riequilibrio-radiestesico:
+    section: "percorsi"
+    title: "Riequilibrio Radiestesico Clinico"
+    banner_path: "radiestesia/percorso-riequilibrio.jpg"
+    banner_alt: "Raggi del sole che filtrano tra i rami degli alberi"
+    blocks:
+      - p: "Il Riequilibrio Radiestesico Clinico è un trattamento profondo, un momento prezioso di riconnessione con se stessi e con la propria essenza. È un processo volto a ristabilire un flusso armonioso dell'energia vitale all'interno del sistema corpo-mente-spirito."
+      - p: "Durante il trattamento, attraverso l'utilizzo del pendolo radiestesico, guido il tuo corpo e la tua energia:"
+      - ol:
+          - "nel riequilibrio dei chakra principali;"
+          - "nel riallineamento energetico della colonna vertebrale, asse portante del nostro benessere emotivo, mentale e fisico."
+      - p: "Mi piace pensare a questo trattamento come a un viaggio condotto dall'ascolto, dall'intuizione e da un profondo amore per il lavoro sul campo sottile."
+      - p: "Gli obiettivi principali sono:"
+      - ul:
+          - "ripristinare centratura;"
+          - "favorire un reale cambiamento interiore;"
+          - "permettere all'energia vitale di tornare a fluire liberamente;"
+          - "armonizzare corpo, emozioni e pensieri;"
+          - "generare un senso profondo di pace e benessere."
+      - quote: "Tutti noi meritiamo equilibrio, chiarezza e autenticità!"
+    testimonials:
+      - author: "EMANUELA B."
+        text: "È stato tutto così semplice ma preciso, diretto e magnetico... Un gran bene provato e sorriso nel cuore. Senso di benessere. E quindi grazie per avermi accolta e guidata passo passo in questo mondo divino."
+      - author: "GIADA F."
+        text: "Secondo riequilibrio che faccio con te e che dirti? Conferma totale! Anche questa volta è stato intenso, ma allo stesso tempo delicato. La cosa che mi colpisce sempre è la tua sensibilità e la tua naturalezza. Mi fai sentire meglio già solo con la tua presenza, anche se online. Non so, è una cosa che arriva davvero e ti mette subito a tuo agio. Il tempo è volato. Una di quelle esperienze che è difficile spiegare, perché va proprio oltre le parole. Si sente e basta. Dicono che non c'è due senza tre. Quindi direi proprio che ci rivediamo presto. Grazie Elisa."
+    cta: "Contattami"
+    cta_page: "contatti"
+  rimozione-blocchi-e-credenze-limitanti:
+    section: "percorsi"
+    title: "Rimozione dei blocchi e delle credenze limitanti"
+    banner_path: "radiestesia/percorso-blocchi-credenze.jpg"
+    banner_alt: "Alba con panorama"
+    blocks:
+      - p: "Il trattamento di Rimozione di blocchi e credenze limitanti è fortemente trasformativo. Permette di individuare quegli schemi interiori, radicati nel subconscio, che:"
+      - ul:
+          - "condizionano le tue scelte;"
+          - "ti sabotano e limitano il tuo potenziale;"
+          - "ti fanno sentire lontana da ciò che desideri;"
+          - "non ti permettono di capire cosa vuoi davvero."
+      - p: "La Radiestesia consente una profonda riconnessione con la propria libertà interiore, per riscoprire chi sei davvero, oltre le maschere e i condizionamenti."
+      - p: "Attraverso questo processo:"
+      - ul:
+          - "ti senti più lucida e centrata nelle scelte quotidiane;"
+          - "smetti di ripetere dinamiche che ti fanno stare male;"
+          - "impari a gestire le reazioni emotive automatiche;"
+          - "diventa più semplice esprimere ciò che senti e ciò di cui hai bisogno;"
+          - "recuperi fiducia in te stessa e nella tua direzione;"
+          - "inizi a orientarti verso ciò che desideri davvero."
+      - quote: "Sciogliere i miei blocchi ha trasformato profondamente il mio modo di stare nel mondo: mi ha permesso di guardarmi dentro con occhi nuovi e soprattutto, scegliere finalmente la vita che sento di meritare. Ed è proprio da questo cambiamento che nasce il mio desiderio di accompagnare anche te, affinché tu possa riscoprirti, liberarti da ciò che ti limita e aprirti con fiducia al tuo pieno potenziale!"
+    testimonials:
+      - author: "DIANA R."
+        text: "Mi hai regalato una leggerezza che non provavo da tempo. Non avevo mai fatto trattamenti del genere, ma il tuo pendolo mi ha conquistata. E tu sei unica! Hai una delicatezza incredibile! Grazie per quello che fai."
+      - author: "STEFANIA C."
+        text: "Mi sono presa del tempo per accogliere quello che è emerso ieri. Sono davvero felice. Fin da subito sentivo di doverti dare fiducia e ho fatto proprio bene. Grazie per come mi hai fatta sentire, coccolata e capita. Felice di aver conosciuto te e il tuo lavoro."
+    cta: "Contattami"
     cta_page: "contatti"
   contatti:
-    eyebrow: "Contatti"
-    title: "Parliamone insieme"
-    lead: "Per informazioni o per capire quale percorso può essere più adatto a te."
-    body: "I riferimenti pubblici di Elisa saranno inseriti qui dopo la sua revisione: email, WhatsApp e modalità di appuntamento."
-    cta: "Vai ai percorsi"
-    cta_page: "percorsi"
+    # Testi presi dalla pagina attuale su Wix (radiestesiaebenessere.com/contatti).
+    title: "CONTATTAMI:"
+    paragraphs:
+      - "Lasciati guidare da ciò che senti dentro di te."
+      - "Ogni percorso di trasformazione inizia con un ascolto sincero."
+      - "Scrivimi: io sono qui pronta ad accoglierti con sensibilità, empatia e verità."
+    # Su Wix l'icona email punta a elisa@radiestesiaebenessere.com, il testo a outlook: da confermare con Elisa.
+    channels:
+      - { label: "WhatsApp", value: "+39 352 022 5930", href: "https://wa.me/393520225930" }
+      - { label: "Email", value: "elisa.corubolo@outlook.it", href: "mailto:elisa.corubolo@outlook.it" }
+      - { label: "Instagram", value: "@elisa.armonia", href: "https://www.instagram.com/elisa.armonia" }
+    signature: "Con amore, Elisa"
+    booking_cta: "Prenota la tua call gratuita e scopri come posso aiutarti: clicca qui!"
+  # Contenuti = materiali già pubblicati (anche gli eventi passati); Eventi = date future.
   contenuti:
-    eyebrow: "Contenuti"
-    title: "Approfondire, con i propri tempi"
+    title: "Contenuti"
     lead: "Articoli, video e materiali di conferenze per continuare la ricerca anche da casa."
-    body: "Alcuni contenuti restano liberi; altri saranno disponibili con l'accesso annuale. Pagamento e area riservata verranno attivati solo dopo aver definito l'offerta con Elisa."
-    cta: "Scopri l'accesso annuale"
-    cta_page: "contenuti"
+    empty: "Nessun contenuto pubblicato per ora."
+  eventi:
+    title: "Eventi"
+    lead: "Incontri e masterclass in programma."
+    empty: "Nessun evento in programma per ora."
 contents:
   - slug: "introduzione-alla-radiestesia"
     title: "Introduzione alla radiestesia"

@@ -73,6 +73,10 @@
         </div>
       </header>
 
+      <% if @course_show_content %>
+        <%= render "posturacorretta/learning/course_show_content", content: @course_show_content, publication: @course_show_publication %>
+      <% end %>
+
       <div>
         <section id="capitoli" class="rounded-2xl border border-slate-200 bg-white px-5 py-9 shadow-sm sm:px-8 lg:px-12">
           <p class="text-xs font-extrabold uppercase tracking-[.15em] text-indigo-700">Studio in autonomia</p>

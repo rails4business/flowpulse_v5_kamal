@@ -347,3 +347,42 @@ Vincoli da aggiungere:
 - [ ] Esportazione e reimportazione ricostruiscono la linea dagli slug.
 - [ ] Superadmin vede bozze e materiali; il pubblico vede soltanto quelli autorizzati.
 - [ ] Test e report confermano che nessun testo è stato perso.
+
+## Stato di implementazione
+
+### Fase 1 completata — struttura non distruttiva
+
+- aggiunti `Node#show_content` e `Content#show_publication`;
+- aggiunti ruolo, placement, editor, stato e metadati di sincronizzazione a Content;
+- aggiunto Lexxy a Content tramite Action Text;
+- aggiunti slug portabili e ID locali sincronizzati a MetroLine;
+- salvata la linea `postura-recupero` con 45 slug e 45 ID nello stesso ordine.
+
+### Fase 2 avviata — sincronizzazione e pilota
+
+- `ContentEditing::BodySynchronizer` gestisce inizializzazione, Markdown, Lexxy, conflitto e risoluzione;
+- nessun conflitto viene risolto automaticamente;
+- `ContentEditing::NodeContentBackfill` conserva sempre il vecchio NodeContent;
+- pilota Node 314: collegato il Content 99 `introduzione-percorso-integrato-posturacorretta`, senza creare
+  duplicati e senza cancellare NodeContent;
+- le pagine pubbliche non sono ancora state spostate sul nuovo show Content.
+
+### Fase 3 avviata — editor Content
+
+- il Node editor permette di scegliere `show_content` tra Content propri e collegati;
+- mostra ruolo, posizione, stato, visibilità, conflitti e pubblicazione selezionata;
+- ogni Content ha un editor dedicato per metadati, Markdown e Lexxy;
+- `show_publication` si sceglie esplicitamente tra le pubblicazioni del Content;
+- Markdown e Lexxy hanno azioni di salvataggio separate;
+- in conflitto compaiono le azioni esplicite “Usa Markdown” e “Usa Lexxy”;
+- l'accesso è limitato ai Content appartenenti o collegati al Node amministrato.
+
+### Fase 4 avviata — show pubblico del corso
+
+- la pagina canonica `/posturacorretta/corsi/:corso` legge il Content selezionato dal relativo Node corso;
+- senza `Node#show_content` mantiene il rendering precedente come fallback;
+- Lexxy ha precedenza nel rendering, con Markdown come fallback;
+- `Content#show_publication` seleziona esplicitamente il video;
+- sono supportati embed YouTube e Vimeo con consenso privacy;
+- Content e pubblicazioni non pubblici sono visibili soltanto in anteprima al superadmin;
+- la presentazione viene mostrata tra testata del corso e indice dei capitoli.

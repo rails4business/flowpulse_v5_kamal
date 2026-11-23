@@ -406,6 +406,36 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
+  test "journey online view renders lesson show Content video row and chapters" do
+    import_posturacorretta_contents
+    Node.find_by!(slug: "posturacorretta").update!(status: "published", visibility: "public")
+    lesson_node = Node.find_by!(slug: "introduzione-al-percorso-integrato")
+    lesson_node.update!(title: "Lezione · Inizia il percorso", description: "Presentazione della lezione", status: "published")
+    content = Content.create!(
+      node: lesson_node, key: "lesson-show-test", slug: "introduzione-lezione", format: "post",
+      role: "introduction", title: "Prima di iniziare", publication_status: "published", publication_visibility: "public"
+    )
+    ContentEditing::BodySynchronizer.new(content).import_markdown!("Testo introduttivo della lezione.")
+    publication = content.publications.create!(
+      key: "video", platform: "vimeo", format: "video", external_id: "12345", title: "Video della lezione",
+      publication_status: "published", publication_visibility: "public"
+    )
+    content.update!(show_publication: publication)
+    lesson_node.update!(show_content: content)
+
+    get posturacorretta_postura_recupero_url(tappa: lesson_node.slug, tab: "online")
+
+    assert_response :success
+    assert_select "section[aria-labelledby='journey-lesson-title']", count: 1 do
+      assert_select "h2", text: "Inizia il percorso"
+      assert_select ".node-public-content", text: /Testo introduttivo/
+      assert_select "iframe[data-privacy-embed-src='https://player.vimeo.com/video/12345']", count: 1
+      assert_select ".pc-lesson-session-row", text: /Data e ora.*Centro.*Insegnante.*Firma/m
+    end
+    assert_select ".pc-intro-program-list", count: 0
+    assert_select "ol", text: /Percorso Integrato · Tre percorsi complementari/
+  end
+
   test "traveler with ancestor brand access can view a subscription node" do
     traveler = User.create!(
       email_address: "free-subscription-traveler@example.com",

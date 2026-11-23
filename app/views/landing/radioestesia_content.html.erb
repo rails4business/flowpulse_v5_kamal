@@ -1,8 +1,10 @@
 <% content_for :title, "#{@radioestesia_content.fetch('title')} · #{@radioestesia.dig('site', 'name')}" %>
+<% content_for :favicon_url, asset_path(@radioestesia.dig('site', 'icon_path')) %>
 <% content_for :head do %><meta name="robots" content="noindex,nofollow"><% end %>
+<% upcoming_event = @radioestesia_content['content_type'] == 'event' && Date.iso8601(@radioestesia_content.fetch('date')) >= Date.current %>
 
 <main class="min-h-screen bg-[#fbfaf7] text-[#27342d]">
-  <%= render "landing/radioestesia_nav", active: "contenuti", radioestesia: @radioestesia %>
+  <%= render "landing/radioestesia_nav", active: upcoming_event ? "eventi" : "contenuti", radioestesia: @radioestesia %>
 
   <div class="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_17rem] lg:py-20">
     <article class="min-w-0">

@@ -416,7 +416,24 @@ module Posturacorretta
     @reader_course_slug = course_slug
     @selected_course = didactic_course
     @course_lessons = didactic_course.fetch("chapters", []).map { |chapter| learning_lesson(chapter) }
+    load_course_show_content(didactic_course)
     load_learning_progress(course_slug, @course_lessons)
+  end
+
+  def load_course_show_content(course)
+    content_key = course["id"].presence
+    content = Content.includes(:show_publication, :rich_text_body).find_by(key: content_key) if content_key
+    return unless content
+
+    @course_show_node = Node.find_by(show_content_id: content.id, view_type: "course")
+    return unless @course_show_node
+
+    preview = Current.user&.superadmin_user?
+    return unless content.published_for_public? || preview
+
+    @course_show_content = content
+    publication = content.show_publication
+    @course_show_publication = publication if publication && (publication.published_for_public? || preview)
   end
 
   def decorate_program_steps(steps)

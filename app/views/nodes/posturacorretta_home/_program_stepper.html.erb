@@ -29,33 +29,34 @@
       <% end %>
     <% end %>
     <% courses.each_with_index do |course, course_index| %>
-      <% station = course.station %>
-      <% course_selected = station == journey.station && journey.tab == "online" %>
-      <li class="pc-program-stepper__group">
-        <% if station %>
-          <%= link_to posturacorretta_postura_recupero_path(tappa: station.fetch("slug"), tab: "online"), class: "pc-program-stepper__step pc-program-stepper__step--course #{'is-selected' if course_selected}", aria: { current: ("step" if course_selected) } do %>
+      <% lesson_stations = course.lessons.filter_map { |lesson| journey.station_for_node(lesson) } %>
+      <% course_selected = lesson_stations.include?(journey.station) %>
+      <% course_content = course.node.show_content %>
+      <li class="pc-program-stepper__group <%= 'is-current-group' if course_selected %>">
+        <% if course_content %>
+          <%= link_to posturacorretta_course_path(corso: course_content.slug), class: "pc-program-stepper__step pc-program-stepper__step--course #{'is-parent-selected' if course_selected}" do %>
             <span class="pc-program-stepper__marker"><%= course_index + 1 %></span>
-            <span><small>Corso online</small><strong><%= course.node.title %></strong></span>
+            <span><small>Corso</small><strong><%= course.node.title %></strong></span><span class="pc-program-stepper__open" aria-hidden="true">↗</span>
           <% end %>
         <% else %>
           <div class="pc-program-stepper__step pc-program-stepper__step--course is-unavailable">
             <span class="pc-program-stepper__marker"><%= course_index + 1 %></span>
-            <span><small>Corso online</small><strong><%= course.node.title %></strong></span>
+            <span><small>Corso</small><strong><%= course.node.title %></strong></span>
           </div>
         <% end %>
 
         <% course.lessons.each do |lesson| %>
-          <% lesson_selected = station == journey.station && journey.tab == "lezioni" %>
-          <% lesson_available = station && journey.station_data(station)&.fetch(:program_lessons, [])&.any? %>
-          <% if lesson_available %>
-            <%= link_to posturacorretta_postura_recupero_path(tappa: station.fetch("slug"), tab: "lezioni"), class: "pc-program-stepper__step pc-program-stepper__step--lesson #{'is-selected' if lesson_selected}", aria: { current: ("step" if lesson_selected) } do %>
+          <% lesson_station = journey.station_for_node(lesson) %>
+          <% lesson_selected = lesson_station == journey.station %>
+          <% if lesson_station %>
+            <%= link_to posturacorretta_postura_recupero_path(tappa: lesson_station.fetch("slug"), tab: "online"), class: "pc-program-stepper__step pc-program-stepper__step--lesson #{'is-selected' if lesson_selected}", aria: { current: ("step" if lesson_selected) } do %>
               <span class="pc-program-stepper__marker"></span>
-              <span><small>Lezione · prenotazione</small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
+              <span><small>Lezione</small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
             <% end %>
           <% else %>
             <div class="pc-program-stepper__step pc-program-stepper__step--lesson is-unavailable">
               <span class="pc-program-stepper__marker"></span>
-              <span><small>Lezione</small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
+              <span><small>Lezione in preparazione</small><strong><%= lesson.title.delete_prefix("Lezione · ") %></strong></span>
             </div>
           <% end %>
         <% end %>

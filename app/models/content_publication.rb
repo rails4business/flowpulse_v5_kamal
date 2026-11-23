@@ -16,4 +16,8 @@ class ContentPublication < ApplicationRecord
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :publication_status, inclusion: { in: Content::PUBLICATION_STATUSES }
   validates :publication_visibility, inclusion: { in: Content::PUBLICATION_VISIBILITIES }
+
+  def published_for_public?
+    publication_status == "published" && publication_visibility == "public"
+  end
 end

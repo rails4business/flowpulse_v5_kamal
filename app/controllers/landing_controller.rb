@@ -143,7 +143,11 @@ class LandingController < ApplicationController
     load_radioestesia
     @radioestesia_page = params[:page].presence || "home"
     @radioestesia_page_data = @radioestesia.fetch("pages").fetch(@radioestesia_page)
-    load_radioestesia_timeline if @radioestesia_page == "contenuti"
+    # I vecchi link con le tab puntano ora alla pagina Eventi.
+    return redirect_to(radioestesia_page_path("eventi"), status: :moved_permanently) if @radioestesia_page == "contenuti" && params[:tab] == "eventi"
+
+    load_radioestesia_timeline if @radioestesia_page.in?(%w[contenuti eventi])
+    @radioestesia_journey = YAML.safe_load_file(Rails.root.join(@radioestesia_page_data.fetch("source")), permitted_classes: [], aliases: false).fetch("percorso") if @radioestesia_page_data["source"]
   end
 
   def radioestesia_content
@@ -325,7 +329,6 @@ class LandingController < ApplicationController
     end
     @radioestesia_future_contents.sort_by! { |content| content.fetch("date") }
     @radioestesia_past_contents.sort_by! { |content| content.fetch("date") }.reverse!
-    @radioestesia_timeline_tab = %w[contenuti passati].include?(params[:tab].to_s) ? "contenuti" : "eventi"
   end
 
   def radioestesia_purchase_for(content)

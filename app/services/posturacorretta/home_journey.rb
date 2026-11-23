@@ -48,6 +48,12 @@ module Posturacorretta
     end
     def stations = STATIONS
     def station_number = STATIONS.index(station) + 1
+    def previous_station = STATIONS[station_number - 2] if station_number > 1
+    def next_station = STATIONS[station_number] if station_number < STATIONS.size
+
+    def station_for_node(node)
+      STATIONS.find { |item| item.fetch("slug") == node.slug }
+    end
 
     # Metà online del pallino: tutti i capitoli del corso della tappa sono completati.
     def online_completed?(item)

@@ -46,6 +46,22 @@ module CreatorWorld
       assert_select "script[type='importmap']", text: /lexxy/
     end
 
+    test "edit lists available Contents and saves the show Content" do
+      content = Content.create!(node: @node, key: "existing-node-intro", slug: "intro", format: "post", title: "Introduzione")
+      sign_in(@user)
+
+      get edit_creator_world_role_assignment_node_url(@assignment, @node)
+      assert_response :success
+      assert_select "select[name='node[show_content_id]'] option[value='#{content.id}']"
+      assert_select "a[href='#{edit_creator_world_role_assignment_node_content_path(@assignment, @node, content)}']", text: "Modifica"
+
+      patch creator_world_role_assignment_node_url(@assignment, @node), params: {
+        node: { title: @node.title, show_content_id: content.id }
+      }
+
+      assert_equal content, @node.reload.show_content
+    end
+
     test "creator can configure an inherited public navigation" do
       target = Node.create!(title: "Target", slug: "target", role_assignment: @assignment)
       sign_in(@user)

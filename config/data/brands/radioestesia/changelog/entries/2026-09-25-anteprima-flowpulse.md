@@ -11,3 +11,5 @@ changelog è riservato al superadmin fino all'attivazione del dominio definitivo
 
 Quando il dominio verrà associato, la cronologia resterà del Brand
 Radioestesia e sarà disponibile sul relativo `/changelog`.
+
+Tempo di lavoro: 4 ore.

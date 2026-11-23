@@ -55,6 +55,7 @@ module CreatorWorld
       end
 
       @node = @role_assignment.nodes.new(parent: @parent)
+      set_editorial_context
       @node.build_content if @node.content.blank?
       @node.content.prepare_lexxy_body!
       @tree = tree_for(@parent)
@@ -108,6 +109,7 @@ module CreatorWorld
       @return_to = safe_return_to
       @node.build_content if @node.content.blank?
       @node.content.prepare_lexxy_body!
+      set_editorial_context
       set_tree_context_for(@node)
     end
 
@@ -136,6 +138,7 @@ module CreatorWorld
         end
       else
         set_tree_context_for(@node)
+        set_editorial_context
         render :edit, status: :unprocessable_entity
       end
     end
@@ -330,6 +333,7 @@ module CreatorWorld
         :offer_slugs_input,
         :navigation_mode,
         :navigation_input,
+        :show_content_id,
         content_attributes: [
           :id,
           :editor,
@@ -345,6 +349,16 @@ module CreatorWorld
     def node_layout
       return "application" if action_name == "index"
       "flowtree_editor"
+    end
+
+    def set_editorial_context
+      @available_show_contents = if @node.persisted?
+        direct = @node.editorial_contents
+        linked = Content.where(id: @node.outgoing_content_links.select(:target_content_id))
+        direct.or(linked).includes(:show_publication, :publications).order(:position, :title).to_a
+      else
+        []
+      end
     end
   end
 end

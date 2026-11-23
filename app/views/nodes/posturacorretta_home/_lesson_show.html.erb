@@ -1,0 +1,38 @@
+<% lesson_node = local_assigns.fetch(:lesson_node) %>
+<% chapters = local_assigns.fetch(:chapters, []) %>
+
+<section class="mb-5 overflow-hidden rounded-xl border border-violet-200 bg-white" aria-labelledby="journey-lesson-title">
+  <header class="border-b border-violet-100 bg-violet-50/60 p-5 sm:p-7">
+    <div class="flex flex-wrap items-center gap-2"><span class="text-[11px] font-black uppercase tracking-[.14em] text-violet-700">Lezione</span><span class="text-[10px] font-bold uppercase tracking-wide text-slate-500"><%= lesson_node.status %></span></div>
+    <h2 id="journey-lesson-title" class="mt-2 text-2xl font-semibold tracking-tight text-slate-950"><%= lesson_node.title.delete_prefix("Lezione · ") %></h2>
+    <% if lesson_node.description.present? %><p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600"><%= lesson_node.description %></p><% end %>
+  </header>
+
+  <div class="border-t border-slate-200 p-5 sm:p-7">
+    <p class="mb-3 text-xs font-black uppercase tracking-[.12em] text-slate-500">Dati della lezione</p>
+    <div class="overflow-x-auto">
+      <div class="pc-lesson-session-row grid min-w-[42rem] grid-cols-[minmax(14rem,2.3fr)_minmax(6rem,.8fr)_minmax(5rem,.7fr)_minmax(6rem,.8fr)_minmax(5rem,.7fr)] border border-slate-300 text-xs">
+        <% ["Lezione", "Data e ora", "Centro", "Insegnante", "Firma"].each { |label| %><span class="border-b border-r border-slate-200 bg-slate-50 px-3 py-2 font-black uppercase tracking-wide text-slate-500 last:border-r-0"><%= label %></span><% } %>
+        <strong class="border-r border-slate-200 px-3 py-4 text-sm text-slate-900"><%= lesson_node.short_title %></strong>
+        <span class="border-r border-slate-200 px-3 py-4"></span><span class="border-r border-slate-200 px-3 py-4"></span><span class="border-r border-slate-200 px-3 py-4"></span><span class="px-3 py-4"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-slate-200 p-5 sm:p-7">
+    <div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-[.12em] text-blue-700">Materiale della lezione</p><h3 class="mt-1 text-xl font-semibold text-slate-950">Indice dei capitoli</h3></div><span class="text-xs font-bold text-slate-500"><%= pluralize(chapters.size, "capitolo", "capitoli") %></span></div>
+    <% if chapters.any? %>
+      <ol class="mt-5 divide-y divide-slate-200 border-y border-slate-200">
+        <% chapters.each_with_index do |chapter, index| %>
+          <li><%= link_to chapter.fetch("url"), class: "group grid gap-3 px-1 py-4 transition hover:bg-slate-50 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:px-3" do %>
+            <span class="text-[11px] font-black uppercase tracking-[.12em] text-slate-500">Capitolo <%= format("%02d", index + 1) %></span>
+            <strong class="text-sm leading-6 text-slate-900 group-hover:text-blue-800"><%= chapter.fetch("title") %></strong>
+            <span aria-hidden="true" class="text-blue-700">→</span>
+          <% end %></li>
+        <% end %>
+      </ol>
+    <% else %>
+      <p class="mt-5 rounded-xl border border-dashed border-slate-300 p-5 text-sm text-slate-500">I capitoli di questa lezione sono in preparazione.</p>
+    <% end %>
+  </div>
+</section>
