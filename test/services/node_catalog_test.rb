@@ -165,7 +165,8 @@ class NodeCatalogTest < ActiveSupport::TestCase
     assert_equal genera_impresa, inside_adventure.parent
     assert_equal mark, postura.professional_owner_node
     assert_equal "#2563EB", postura.map_color
-    assert_equal "Educazione 1 · Come si esprime il corpo", apprendimento_espressione.title
+    assert_equal "Percorso educativo · Come si esprime il corpo", apprendimento_espressione.title
+    assert_equal "Percorso educativo", apprendimento_espressione.navigation_label
     assert_equal "#38BDF8", apprendimento_espressione.map_color
     assert apprendimento_espressione.lane_container?
     assert_equal intro_line, postura_fisiologia.parent

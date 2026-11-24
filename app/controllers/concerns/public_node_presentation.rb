@@ -131,6 +131,7 @@ module PublicNodePresentation
     def prepare_posturacorretta_home(node)
       return unless node.slug == "posturacorretta"
 
+      @posturacorretta_education_node = node.self_and_descendants.find_by(slug: "apprendimento-1-espressione")
       @posturacorretta_home = Posturacorretta::HomeJourney.new(
         tappa: params[:tappa],
         tab: params[:tab],

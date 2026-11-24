@@ -15,7 +15,7 @@ module Posturacorretta
       journey = HomeJourney.new(tappa: "igiene-posturale", tab: "online")
 
       assert_equal "Recupero e terapie manuali", journey.line.fetch("title")
-      assert_equal "Espressione", journey.line.fetch("area")
+      assert_equal "Percorso educativo", journey.line.fetch("area")
       assert_equal "area-massaggio-terapie-manuali-tecniche-corporee", journey.stations.first.fetch("slug")
     end
 

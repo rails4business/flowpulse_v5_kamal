@@ -77,6 +77,8 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
       role_assignment: brand.role_assignment, parent: line)
     node.outgoing_content_links.create!(target_content: content, kind: "show")
     node.update!(show_content: content)
+    lesson = Node.create!(slug: "lezione-show-content-test", title: "Lezione · Prova show", view_type: "course_lesson",
+      role_assignment: brand.role_assignment, parent: node)
 
     get posturacorretta_course_path(corso: content.slug)
 
@@ -87,8 +89,10 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     end
     assert_select "section[aria-label='Video del corso'] iframe[data-privacy-embed-src='https://www.youtube-nocookie.com/embed/abc123']", count: 1
     assert_select "section[aria-label='Video del corso'] .privacy-embed__placeholder", text: /Carica il video/
-    assert_select "#course-overview-aside", text: /Linea educativa.*Corso show/m
+    assert_select "#line-learning-aside", text: /Linea educativa.*Corso show.*Prova show/m
     assert_select "nav[aria-label='Programma della linea'] a[aria-current='page']", text: /Corso show/
+    assert_select "#capitoli a[href='#{posturacorretta_postura_recupero_path(tappa: lesson.slug, tab: "online")}']", text: /Prova show/
+    assert_select "#capitoli", text: /Lezioni del corso/
   end
 
   test "course overview keeps the current fallback without a show Content" do
@@ -100,6 +104,27 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "section[aria-labelledby='course-show-content-title']", count: 0
     assert_select "#capitoli", count: 1
+  end
+
+  test "every course node in a line uses the shared course layout without requiring show content" do
+    brand = Node.find_by!(slug: "posturacorretta")
+    line = Node.create!(slug: "linea-generic-course-test", title: "Linea generica", view_type: "course_line",
+      role_assignment: brand.role_assignment, parent: brand)
+    course = Node.create!(slug: "corso-generico-test", title: "Corso generico", view_type: "course",
+      description: "Introduzione del corso generico.", role_assignment: brand.role_assignment, parent: line)
+    lesson = Node.create!(slug: "lezione-generica-test", title: "Lezione · Generica", view_type: "course_lesson",
+      role_assignment: brand.role_assignment, parent: course)
+
+    get posturacorretta_course_path(corso: course.slug)
+
+    assert_response :success
+    assert_select "#line-learning-aside", text: /Linea generica.*Corso generico.*Generica/m
+    assert_select "[data-course-video-placeholder]", count: 1
+    assert_select "h1", text: "Corso generico"
+    assert_select "p", text: "Introduzione del corso generico."
+    assert_select "#capitoli a[href='#{posturacorretta_postura_recupero_path(tappa: lesson.slug, tab: "online")}']", text: /Generica/
+    assert_select "form[action='#{posturacorretta_course_enrollment_path(corso: course.slug)}']", count: 0
+    assert_select "a", text: "Accedi per iscriverti"
   end
 
   test "keeps program activities sequential and redirects a locked activity" do

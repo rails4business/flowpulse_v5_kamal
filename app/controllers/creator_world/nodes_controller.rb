@@ -318,6 +318,7 @@ module CreatorWorld
     def node_params
       params.require(:node).permit(
         :title,
+        :navigation_label,
         :slug,
         :content_type,
         :description,

@@ -1,3 +1,15 @@
+<% if @journey_lesson_node && journey.tab == "online" && journey.line_node %>
+  <% lesson_main = capture do %>
+    <%= render "nodes/posturacorretta_home/lesson_show",
+      lesson_node: @journey_lesson_node,
+      chapters: (@journey_lesson_chapters.presence || journey.course_data&.fetch(:chapters, nil) || []) %>
+  <% end %>
+  <%= render "posturacorretta/learning/line_learning_layout",
+    active_node: @journey_lesson_node,
+    line: journey.line_node,
+    courses: journey.line_node.ordered_line_nodes,
+    main_content: lesson_main %>
+<% else %>
 <section id="mappa" class="pc-home-journey" aria-label="Percorso PosturaCorretta">
   <header class="pc-home-journey__header">
     <nav class="pc-home-journey__breadcrumb" aria-label="Breadcrumb">
@@ -54,3 +66,4 @@
     </div>
   </div>
 </section>
+<% end %>

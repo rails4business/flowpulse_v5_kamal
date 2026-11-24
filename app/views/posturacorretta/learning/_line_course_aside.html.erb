@@ -1,9 +1,11 @@
 <% active_node = local_assigns.fetch(:active_node) %>
 <% line = local_assigns.fetch(:line) %>
 <% courses = local_assigns.fetch(:courses) %>
+<% active_course = active_node.view_type == "course" ? active_node : active_node.self_and_ancestors.find { |node| node.view_type == "course" } %>
+<% journey_node = active_node.view_type == "course_lesson" ? active_node : active_node.children.where(view_type: "course_lesson").order(:position, :id).first %>
 
 <header class="border-b border-slate-200 pb-4">
-  <%= link_to posturacorretta_postura_recupero_path(tappa: active_node.slug, tab: "online"), class: "group inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-blue-700" do %>
+  <%= link_to posturacorretta_postura_recupero_path(tappa: journey_node&.slug, tab: "online"), class: "group inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-blue-700" do %>
     <span aria-hidden="true" class="transition group-hover:-translate-x-0.5">←</span>
     <span>Torna al percorso</span>
   <% end %>
@@ -15,8 +17,8 @@
 <nav aria-label="Programma della linea" class="mt-4 space-y-3" data-controller="scroll-selected">
   <% courses.each_with_index do |course_node, course_index| %>
     <% lessons = course_node.children.where(view_type: "course_lesson").order(:position, :id) %>
-    <% selected = course_node == active_node %>
-    <% course_path = course_node.show_content ? posturacorretta_course_path(corso: course_node.show_content.slug) : flowtree_public_node_path(course_node) %>
+    <% selected = course_node == active_course %>
+    <% course_path = posturacorretta_course_path(corso: course_node.show_content&.slug || course_node.slug) %>
     <section class="overflow-hidden rounded-xl border <%= selected ? 'border-blue-300 bg-blue-50/40 shadow-sm' : 'border-slate-200 bg-white' %>" <%= "data-scroll-selected-target=item" if selected %>>
       <div class="flex items-start gap-3 border-b px-3 py-3 <%= selected ? 'border-blue-200 bg-blue-50/80' : 'border-slate-100 bg-slate-50/70' %>">
         <span class="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-black <%= selected ? 'bg-blue-600 text-white' : 'bg-white text-slate-500 ring-1 ring-slate-200' %>"><%= format("%02d", course_index + 1) %></span>
@@ -29,8 +31,9 @@
         <ol class="space-y-0.5 p-2">
           <% lessons.each_with_index do |lesson, lesson_index| %>
             <li>
-              <%= link_to posturacorretta_postura_recupero_path(tappa: lesson.slug, tab: "online"), class: "group flex items-center gap-2 rounded-lg px-2 py-2 text-xs text-slate-600 transition hover:bg-white hover:text-violet-800" do %>
-                <span class="size-2 shrink-0 rounded-full border-2 border-violet-300 bg-white group-hover:border-violet-600"></span>
+              <% lesson_selected = lesson == active_node %>
+              <%= link_to posturacorretta_postura_recupero_path(tappa: lesson.slug, tab: "online"), aria: { current: ("page" if lesson_selected) }, class: "group flex items-center gap-2 rounded-lg px-2 py-2 text-xs transition #{lesson_selected ? 'bg-white font-bold text-violet-800 shadow-sm' : 'text-slate-600 hover:bg-white hover:text-violet-800'}" do %>
+                <span class="size-2 shrink-0 rounded-full border-2 <%= lesson_selected ? 'border-violet-600 bg-violet-600' : 'border-violet-300 bg-white group-hover:border-violet-600' %>"></span>
                 <span class="min-w-0"><small class="mr-1 font-bold text-slate-400"><%= course_index + 1 %>.<%= lesson_index + 1 %></small><%= lesson.short_title %></span>
               <% end %>
             </li>

@@ -9,6 +9,14 @@ class NodeTest < ActiveSupport::TestCase
     assert_equal ["postura-recupero"], @node_a.line_slugs
   end
 
+  test "uses the optional navigation label as the short public title" do
+    assert_equal "Node A", @node_a.public_navigation_label
+
+    @node_a.navigation_label = "Etichetta breve"
+
+    assert_equal "Etichetta breve", @node_a.public_navigation_label
+  end
+
   setup do
     @user = User.create!(email_address: "creator@flowpulse.test", password: "password123", password_confirmation: "password123")
     @user.create_profile!(display_name: "Creator")

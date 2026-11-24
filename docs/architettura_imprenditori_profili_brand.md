@@ -1,238 +1,431 @@
-# Imprenditori, profili e Brand
+# Profili, BrandAccess, ruoli e Node
 
-Stato analizzato il 23 novembre 2026, con caso guida Elisa Corubolo / Radioestesia e Benessere.
+Documento architetturale unico di riferimento.
 
-## Decisione sui ruoli
+- Prima analisi: 23 novembre 2026.
+- Revisione completa: 24 novembre 2026.
+- Caso guida: Elisa Corubolo / Radioestesia e Benessere.
+- Incorpora e sostituisce `docs/creator_node_profile_ruoli.md`.
 
-Non si usa un ruolo generico **Imprenditore** o `creator_of_worlds`. Si assegnano ruoli
-espliciti e contestuali all'ecosistema:
+## Decisione sintetica
 
-- `creator_generaimpresa`;
-- `insegnante_posturacorretta`;
-- `professionista_percorso_integrato`;
-- `professionista_rails4business`;
-- `organizzatore_eventi_ilgiardinodelcorpo`.
+Il modello distingue quattro elementi:
 
-Non conviene reintrodurre `creator_of_worlds` perché:
+1. `User` autentica la persona e conserva soltanto i privilegi di sistema, come `superadmin`.
+2. `Profile` identifica la persona che riceve accessi e incarichi.
+3. `BrandAccess` autorizza quel profilo a entrare nel perimetro di un Brand.
+4. `RoleAssignment` stabilisce cosa può fare quel profilo, su quale Node e attraverso quale
+   `BrandAccess`.
 
-- nel codice attuale è un valore legacy convertito automaticamente in `ideatore`;
-- confonde il ruolo che governa l'intero ecosistema con chi governa uno o più Brand;
-- non distingue la persona professionista dal perimetro che può amministrare;
-- è poco adatto a GeneraImpresa e alla futura delega di responsabilità.
+Regola fondamentale:
 
-Questi ruoli usano `RoleAssignment(role: :operator, role_operator: codice)` con
-`context` uguale al Node dell'ecosistema e `parent` uguale al suo Ideatore. La capacità
-deriva quindi dal codice e dal perimetro assegnato, non da un titolo generico.
+> Nessun `RoleAssignment` operativo può esistere senza un `BrandAccess` attivo e compatibile.
 
-## Concetti da tenere separati
+`BrandAccess` risponde a «può entrare nel Brand?»; `RoleAssignment` risponde a «che cosa può fare
+e su quale Node?». Nessuno dei due sostituisce l'altro.
 
-### Profilo
+Il ruolo generico `creator_flowpulse` non viene introdotto. `creator_generaimpresa` viene rinominato
+`imprenditore_generaimpresa`. I ruoli strutturali legacy `ideatore`, `admin` e `responsabile`
+devono essere migrati e rimossi; `superadmin` resta un privilegio di sistema.
 
-`Profile` rappresenta la persona e appartiene a un `User`.
+---
 
+## 1. Entità e responsabilità
+
+### User
+
+`User` gestisce autenticazione e privilegi globali.
+
+- conserva `superadmin`;
+- non è la fonte dei ruoli di Brand;
+- non deve contenere duplicati come `role`, `active_role`, `creator` o `digital`;
+- può mantenere temporaneamente `current_role_assignment_id` come selezione del contesto attivo,
+  non come sorgente del permesso.
+
+Il superadmin può configurare qualsiasi risorsa senza dipendere da un `BrandAccess`, ma le
+assegnazioni create per altre persone devono rispettare il nuovo modello.
+
+### Profile
+
+`Profile` rappresenta la persona nel dominio applicativo.
+
+- appartiene a un `User`;
 - può essere pubblico o privato;
-- identifica username, nome e dati personali;
-- può essere collegato a un Node professionale tramite `primary_node`;
-- non concede da solo il governo di un Brand progetto.
+- riceve `BrandAccess` e `RoleAssignment`;
+- può essere associato a un Node professionale principale;
+- non diventa proprietario di un Node per la sola presenza di `Profile#primary_node`;
+- la visibilità pubblica è indipendente dai permessi.
 
-### Brand professionale
+### Node
 
-È un `Node` con `node_type: professional`.
+`Node` rappresenta Brand, progetti, attività, corsi e altri oggetti della rete.
 
-- rappresenta l'identità e l'attività pubblica della persona;
-- può esistere senza dominio;
-- può avere `Profile#primary_node` come profilo professionale principale;
-- può essere collegato come `professional_owner_node` a più Brand progetto;
-- non implica automaticamente il ruolo Imprenditore.
+- un progetto o un profilo professionale può esistere senza dominio;
+- il dominio è una porta di pubblicazione, non una prova di proprietà;
+- ogni Node può avere un `responsible_profile_id`, cioè il responsabile corrente e trasferibile;
+- i permessi concreti del responsabile restano espressi dalle assegnazioni contestuali.
 
-### Brand progetto
+### BrandAccess
 
-È un `Node` con `node_type: project` usato come perimetro operativo.
+`BrandAccess` collega un `Profile` al Node radice di un Brand e contiene almeno:
 
-- può essere in costruzione e non avere ancora un dominio;
-- in futuro può ricevere uno o più domini;
-- contiene progetti, contenuti, processi, richieste e ruoli;
-- deve avere un amministratore/proprietario esplicito, non dedotto dal dominio.
+- `profile_id` e `brand_node_id`;
+- stato (`pending`, `active`, `revoked` o equivalente);
+- origine della concessione/richiesta;
+- eventuali scope e dati di audit.
 
-### Ruolo contestuale
+Un accesso revocato rende immediatamente inefficaci tutte le assegnazioni che ne dipendono, anche se
+restano registrate per la storia.
 
-È la capacità di governo e delega.
+### RoleAssignment
 
-- viene assegnato a un `Profile` (per Elisa: `creator_generaimpresa`);
-- deve avere come parent l'`ideatore` che lo abilita;
-- deve essere collegato al Brand o ai Brand amministrati;
-- può assegnare soltanto ruoli subordinati entro quei Brand;
-- non deve poter assegnare `ideatore`, `superadmin` o ruoli fuori dal proprio perimetro.
+`RoleAssignment` è l'unica fonte dei permessi operativi e contestuali.
 
-## Gerarchia proposta
+| Campo | Significato |
+|---|---|
+| `profile_id` | persona che riceve l'incarico |
+| `brand_access_id` | accesso attivo da cui deriva l'incarico; obbligatorio |
+| `node_id` / `context` | Node sul quale si può operare |
+| `role_code` | funzione assegnata |
+| `assigned_by_profile_id` | chi ha assegnato il ruolo |
+| `status` | attivo, sospeso o revocato |
+| `starts_at`, `ends_at` | validità temporale opzionale |
+| audit | autore, date e motivazione delle modifiche |
+
+Vincoli:
+
+- Profile dell'assegnazione e del BrandAccess devono coincidere;
+- il Node contestuale deve appartenere al Brand del BrandAccess;
+- il BrandAccess deve essere attivo quando il ruolo viene usato;
+- il codice deve essere ammesso nel Brand e nel tipo di Node;
+- database, modello e servizio devono impedire assegnazioni incompatibili;
+- l'assegnante non può delegare privilegi superiori ai propri;
+- la revoca dell'accesso prevale sullo stato del ruolo.
+
+Durante la migrazione `context` può restare polimorfico, ma il contesto operativo deve essere un
+Node verificabile.
+
+---
+
+## 2. Tassonomia definitiva
+
+### Ruolo di sistema
+
+| Codice | Collocazione | Significato |
+|---|---|---|
+| `superadmin` | `users.superadmin` | governo globale della piattaforma |
+
+Non è un `RoleAssignment`, non è delegabile da un Brand e non richiede BrandAccess.
+
+### Ruoli contestuali di ecosistema
+
+| Codice | Brand principale | Significato |
+|---|---|---|
+| `imprenditore_generaimpresa` | GeneraImpresa | sviluppa e amministra progetti affidati |
+| `insegnante_posturacorretta` | PosturaCorretta | insegna e gestisce attività abilitate |
+| `professionista_percorso_integrato` | Percorso Integrato | opera professionalmente nel perimetro |
+| `professionista_rails4business` | Rails4Business | svolge attività digitali abilitate |
+| `organizzatore_eventi_ilgiardinodelcorpo` | Il Giardino del Corpo | organizza eventi nel perimetro |
+
+`creator_generaimpresa` è un nome legacy da migrare a `imprenditore_generaimpresa` in dati,
+configurazione, interfaccia e controlli.
+
+Non si introduce `creator_flowpulse`: sarebbe un permesso globale ambiguo e duplicherebbe
+BrandAccess + ruolo contestuale sul Node.
+
+### Ruoli condivisi
+
+In futuro possono esistere codici riutilizzabili, per esempio `segreteria`, purché siano sempre
+assegnati con BrandAccess e Node. «Condiviso» significa stessa funzione in più Brand, non permesso
+globale.
+
+### Ruoli legacy da eliminare
+
+- enum strutturali `ideatore`, `admin`, `responsabile`;
+- enum `creator` e `digital`;
+- alias `creator_of_worlds`;
+- codici ambigui `creator`, `insegnante`, `professionista`, `teacher`, `professional`, `tutor`
+  quando non sono legati a una semantica Brand esplicita;
+- `users.role` e `users.active_role`;
+- helper che controllano soltanto il nome del ruolo.
+
+I valori numerici rimossi dagli enum non devono essere riutilizzati.
+
+---
+
+## 3. Proprietà e governo dei Node
+
+Si aggiunge al Node `responsible_profile_id`, non il generico `profile_id`. Il campo indica il
+**responsabile principale corrente** e può essere trasferito a un altro Profile. Serve per mostrare
+rapidamente il referente, costruire gli indici dei progetti e rappresentare il passaggio di
+responsabilità.
+
+Il trasferimento deve essere un'operazione applicativa esplicita e sottoposta ad audit. Nella stessa
+transazione si aggiornano il responsabile e, quando necessario, i relativi RoleAssignment. Il solo
+valore di `responsible_profile_id` non concede però un permesso: evita che un campo diretto sul Node
+diventi una seconda sorgente autorizzativa in contrasto con BrandAccess e RoleAssignment.
+
+Il governo è espresso tramite `RoleAssignment`:
+
+- l'assegnazione sulla radice GeneraImpresa indica la funzione nell'ecosistema;
+- quella sul progetto affidato indica il perimetro concreto amministrabile;
+- i permessi sui discendenti possono essere ereditati secondo policy esplicita;
+- più profili possono ricevere incarichi diversi sul medesimo Node;
+- trasferire un progetto significa chiudere/revocare un incarico e crearne un altro conservando
+  l'audit.
+
+`nodes.role_assignment_id`, oggi usato per l'appartenenza storica al mondo dell'ideatore, non deve
+essere confuso con l'incarico operativo; verrà trasformato solo dopo la migrazione legacy.
+
+### Caratteristiche specifiche dei RoleAssignment
+
+Ogni tipo di RoleAssignment potrà avere progressivamente regole particolari: azioni consentite,
+possibilità di delega, profondità nel sottoalbero, durata, limiti e workflow specifici. Queste
+differenze non devono produrre subito una colonna diversa per ogni ruolo.
+
+La base comune resta normalizzata (`profile`, `brand_access`, `node`, `role_code`, stato e audit),
+mentre le particolarità vengono definite da una matrice/policy per `role_code`. Solo quando emerge
+un dato realmente persistente e strutturato si aggiunge una configurazione o un record associato.
+In questo modo i ruoli si possono affinare uno alla volta senza modificare il significato comune di
+RoleAssignment.
+
+### Regola di autorizzazione
+
+Un profilo può amministrare un Node se:
+
+1. possiede BrandAccess attivo sul Brand che contiene il Node;
+2. possiede RoleAssignment attivo sul Node o su un antenato ereditabile;
+3. il ruolo include l'azione richiesta;
+4. non esistono revoche o limiti più restrittivi.
+
+Il controllo riceve almeno azione, profilo e Node. Non basta mai
+`user.has_role?(codice)` senza contesto.
+
+---
+
+## 4. Flusso GeneraImpresa
+
+### Ingresso
+
+1. La persona si registra e ottiene User e Profile.
+2. Presenta o accetta una richiesta per GeneraImpresa.
+3. Il superadmin verifica identità, richiesta e perimetro.
+4. L'accettazione crea o attiva il BrandAccess GeneraImpresa.
+5. Soltanto dopo può essere creato un RoleAssignment.
+
+La richiesta accettata non assegna automaticamente un incarico amministrativo: accesso e ruolo
+restano due decisioni esplicite e tracciate.
+
+### Affidamento di un progetto
+
+1. Il superadmin crea il Node progetto sotto GeneraImpresa.
+2. Verifica il BrandAccess attivo della persona.
+3. Assegna `imprenditore_generaimpresa` sulla radice, se serve a identificarne la funzione.
+4. Assegna lo stesso ruolo sul Node progetto affidato.
+5. Imposta `responsible_profile_id` del progetto sul Profile affidatario.
+6. Il profilo può amministrare il progetto e, secondo policy, i figli.
+7. Un dominio può essere collegato in seguito senza cambiare accesso o ruoli.
+
+Nella prima fase l'imprenditore non crea progetti direttamente sotto la radice GeneraImpresa: può
+creare discendenti di progetti già affidati. Una futura estensione richiederà una capability
+esplicita, non `creator_flowpulse`.
+
+### Delega futura
+
+L'imprenditore potrà assegnare altri ruoli soltanto:
+
+- a profili con BrandAccess attivo sul medesimo Brand;
+- sul proprio Node o sottoalbero;
+- entro una matrice di ruoli delegabili;
+- senza concedere privilegi globali;
+- tramite un servizio unico con audit.
+
+---
+
+## 5. Caso Elisa / Radioestesia e Benessere
 
 ```text
-Ideatore GeneraImpresa
-└── creator_generaimpresa: Elisa Corubolo
-    └── Brand progetto: Radioestesia e Benessere
-        ├── Responsabile
-        ├── Digital
-        ├── Operatori configurati dal Brand
-        └── Collaboratori futuri
+User Elisa
+└── Profile Elisa
+    ├── BrandAccess attivo: GeneraImpresa
+    ├── RoleAssignment: imprenditore_generaimpresa su GeneraImpresa
+    └── RoleAssignment: imprenditore_generaimpresa su Radioestesia e Benessere
+        └── Node progetto (`responsible_profile_id`: Elisa) e figli amministrabili
 ```
 
-Il Brand professionale può essere aggiunto, ma non è obbligatorio. I poteri concreti
-devono sempre essere verificati sul contesto amministrato.
+Decisioni:
 
-## Caso Elisa Corubolo
+- il Node progetto è sufficiente per far parte di GeneraImpresa;
+- un Node professionale personale è facoltativo;
+- il progetto può inizialmente non avere dominio;
+- aggiungere un dominio non cambia ruolo o proprietà logica;
+- il profilo può restare privato senza perdere i permessi;
+- collegare una richiesta per email non concede automaticamente accesso o ruolo;
+- l'eccezione YAML `panel_usernames` va sostituita dalle autorizzazioni database.
 
-### Stato attuale
+La scheda superadmin aperta da `👤 Profilo: Elisa Corubolo (@elisa_corubolo)` deve mostrare User,
+Profile, verifica email, richieste, BrandAccess, ruoli, Node professionale facoltativo e progetti
+amministrati anche senza dominio, con azioni esplicite di concessione e revoca.
 
-- la richiesta può essere collegata a `requester_profile` tramite invito accettato o
-  `BrandRequestProfileLinker`;
-- nella pagina richieste compare `👤 Profilo: Elisa Corubolo (@elisa_corubolo)`;
-- per il superadmin questa indicazione apre la scheda amministrativa della persona;
-- il ruolo previsto per Elisa è `creator_generaimpresa`;
-- nessun utente usa ancora quel ruolo nel piano originario;
-- `radioestesia` è attualmente un solo Node `professional`, privato e figlio di
-  `brand-in-costruzione`;
-- il catalogo GeneraImpresa descrive Radioestesia e Benessere come Brand personale;
-- il pannello Radioestesia autorizza temporaneamente `elisa_corubolo` tramite YAML;
-- la sezione “I tuoi Brand” di GeneraImpresa usa `Node#brand?`, quindi mostra soltanto
-  Node con dominio e scarta quelli in costruzione senza dominio.
+---
 
-### Struttura desiderata
+## 6. Pannello GeneraImpresa
 
-Elisa deve avere:
+La sezione va chiamata **Imprenditori GeneraImpresa**, non Creator of World o Creator GeneraImpresa.
 
-1. il proprio `Profile`;
-2. un `RoleAssignment` operatore `creator_generaimpresa` nel contesto GeneraImpresa;
-3. il Node progetto `radioestesiaebenessere`, amministrato da Elisa;
-4. inizialmente nessun dominio sul Brand progetto;
-5. in futuro il dominio collegato al Brand progetto senza cambiare profilo o ruolo;
-6. la possibilità futura di assegnare ruoli subordinati soltanto nel proprio perimetro.
+La query non parte da `Node#brand?`, perché tende a coincidere con la presenza di un dominio. Parte
+da BrandAccess attivi, RoleAssignment `imprenditore_generaimpresa` e relativi Node, anche senza
+dominio.
 
-Il Node professionale è facoltativo. Se verrà creato, non dovrà essere usato
-contemporaneamente come Brand progetto.
+Ogni scheda distingue:
 
-## Pannello GeneraImpresa
+- persona e visibilità del profilo;
+- accesso al Brand e stato;
+- Node professionale facoltativo;
+- progetti amministrati;
+- domini o stato «in costruzione»;
+- incarichi ricevuti e delegabili.
 
-La sezione consigliata è **Creator GeneraImpresa**, non “Creator of World”.
+---
 
-Ogni scheda Imprenditore dovrebbe mostrare:
+## 7. Servizio e policy unici
 
-- profilo e stato pubblico/privato;
-- Brand professionale, anche senza dominio;
-- Brand progetto amministrati, anche senza dominio;
-- domini presenti o stato “in costruzione”;
-- ruoli ricevuti e ruoli delegabili;
-- collegamento al pannello del Brand e alla gestione delle persone.
+Un servizio, per esempio `BrandRoleAssignmentService`, è l'unico punto ordinario di scrittura. Deve
+verificare assegnante, destinatario, BrandAccess attivo, compatibilità Profile/Brand/Node, ruolo
+ammesso, perimetro, assenza di escalation, idempotenza e audit.
 
-La query non deve partire da `Node#brand?`, perché oggi `brand?` significa “possiede un
-dominio attivo”. Deve partire dalle assegnazioni di ruolo e dai Node amministrabili,
-includendo esplicitamente i Node senza dominio.
+Le letture passano da una policy unica, per esempio:
 
-## Collegamento dalla richiesta al profilo
+```ruby
+profile.allowed_on?(action, node)
+```
 
-Nella pagina:
+La policy risolve accesso, assegnazioni dirette, ereditarietà dagli antenati e stati.
 
-`/generaimpresa/admin/requests?state=closed`
+---
 
-il testo `👤 Profilo: (@elisa_corubolo)` deve diventare un link a una scheda superadmin.
-La scheda deve essere una vista amministrativa distinta da `/profile`, che mostra soltanto
-il profilo dell'utente corrente.
+## 8. Debito tecnico noto
 
-Azioni previste nella scheda amministrativa:
+- `RoleAssignment` usa enum `admin`, `ideatore`, `creator`, `digital`, `responsabile`, `operator`.
+- `User` usa `active_role`, label e switcher legacy.
+- `creator_of_worlds` viene convertito in `ideatore`.
+- `Node#role_assignment_id` è obbligatorio e propagato ai discendenti.
+- alcuni controlli verificano soltanto `insegnante`, `professionista`, `teacher`, `tutor` o
+  `professional`, senza Node.
+- `domains.yml#operational_roles` duplica `nodes.yml#operator_roles` e può sovrascriverlo.
+- la scheda superadmin assegna ancora `creator_generaimpresa` sotto l'Ideatore GeneraImpresa.
 
-- vedere User, Profile e verifica email;
-- vedere richieste e accessi ai Brand;
-- collegare o correggere il Node professionale principale;
-- assegnare/revocare il ruolo `creator_generaimpresa`;
-- collegare i Brand progetto amministrati;
-- non modificare automaticamente proprietà o gerarchie dei Node.
+Da sostituire almeno: `creator_user?`, `digital_user?`, `responsabile_user?`, `teacher_user?`,
+`tutor_user?`, `professional_user?`, `operator_access?` senza contesto, dashboard basate su
+`active_role` e autorizzazioni Node basate sul ruolo strutturale.
 
-L'assegnazione deve essere esplicita e confermata: il semplice collegamento per email di
-una richiesta non è sufficiente per concedere poteri amministrativi.
+---
 
-## Delega dei ruoli
+## 9. Piano di migrazione
 
-L'attuale `CreatorWorld::RoleAssignmentsController` non soddisfa ancora il requisito:
+La migrazione è incrementale: nuovo modello accanto al legacy, spostamento di dati e letture,
+eliminazione finale delle colonne obsolete.
 
-- è accessibile soltanto a `ideatore` o superadmin;
-- richiede che il canale attivo sia `ideatore`;
-- crea tutti i ruoli children direttamente sotto l'Ideatore;
-- il ruolo `creator`/Imprenditore viene mandato alla dashboard viaggiatore;
-- non limita la delega a uno specifico Brand amministrato dall'Imprenditore.
+### Fase 0 — Inventario di produzione
 
-Serve un servizio unico, per esempio `BrandRoleAssignmentService`, che verifichi:
+```ruby
+RoleAssignment.group(:role, :role_operator).count
+User.group(:active_role, :role).count
+User.where.not(current_role_assignment_id: nil).count
+BrandAccess.group(:status).count
+```
 
-1. chi assegna è superadmin, Ideatore oppure Imprenditore amministratore del Brand;
-2. il ruolo è previsto da `brand.operator_roles` o dalla matrice di delega;
-3. `context` coincide con il Brand;
-4. il profilo destinatario esiste ed è visibile nel perimetro;
-5. non si possono elevare privilegi oltre quelli dell'assegnante;
-6. assegnazione e revoca sono registrate in un audit.
+Verificare inoltre assegnazioni senza Profile, contesti non Node, duplicati, accessi revocati ancora
+usati e Node dipendenti da ruoli strutturali.
 
-## Interventi proposti
+### Fase 1 — Schema compatibile
 
-### Fase 1 — Scheda profilo superadmin (implementata)
+- aggiungere `brand_access_id` inizialmente nullable;
+- normalizzare Node contestuale, stato e audit;
+- aggiungere `nodes.responsible_profile_id`, nullable, indicizzato e con FK a `profiles`;
+- introdurre `imprenditore_generaimpresa`;
+- creare indici e vincoli compatibili col legacy;
+- implementare servizio e policy;
+- impedire nuove assegnazioni legacy dalla UI.
 
-- aggiungere route e controller per la scheda amministrativa del profilo;
-- rendere cliccabile il profilo dalla tabella delle richieste;
-- mostrare ruoli, Node professionale, BrandAccess e Brand amministrati;
-- aggiungere test di autorizzazione superadmin.
+### Fase 2 — BrandAccess e richieste
 
-### Fase 2 — Assegnazione Creator GeneraImpresa (implementata per il superadmin)
+- una richiesta approvata produce BrandAccess, non direttamente un ruolo;
+- separare «Concedi accesso» da «Assegna incarico»;
+- vietare nuovi ruoli senza accesso attivo;
+- rendere parametrica la scheda oggi cablata su GeneraImpresa.
 
-- usare `operator` con `role_operator: creator_generaimpresa`;
-- aggiungere l'azione superadmin per assegnare il ruolo sotto l'Ideatore di GeneraImpresa;
-- non usare `creator_of_worlds`, che resta alias legacy di `ideatore`;
-- assegnare Elisa soltanto dopo aver verificato il suo Profile reale.
+### Fase 3 — Backfill
 
-### Fase 3 — Node Radioestesia
+- collegare o creare BrandAccess mancanti dopo verifica;
+- rinominare `creator_generaimpresa`;
+- tradurre codici specifici dei Brand;
+- ricondurre `ideatore`, `admin`, `responsabile` a incarichi contestuali;
+- produrre un report manuale per i casi dubbi.
 
-- decidere se mantenere il Node professionale esistente, che resta facoltativo;
-- creare o consolidare il Node progetto Radioestesia e Benessere;
-- collegare il progetto a Elisa tramite amministrazione/ownership esplicita;
-- mantenere il progetto in costruzione e senza dominio;
-- sostituire gradualmente l'eccezione YAML `panel_usernames` con autorizzazioni database.
+### Fase 4 — Autorizzazioni e UI
 
-### Fase 4 — GeneraImpresa / Imprenditori
+- migrare controller, helper e policy ad azione + Node;
+- aggiornare dashboard e selettore del contesto;
+- aggiornare Imprenditori e «I tuoi Brand»;
+- permettere al superadmin di affidare un Node;
+- implementare il trasferimento atomico del responsabile e degli incarichi collegati;
+- introdurre la delega solo dopo i test della matrice.
 
-- creare l'indice degli Imprenditori;
-- includere Brand professionali e Brand progetto senza dominio;
-- modificare “I tuoi Brand” affinché usi `administered_by?` sui Node candidati, non solo
-  sui Node con dominio;
-- distinguere visivamente Persona, Brand professionale, Brand progetto e Dominio.
+### Fase 5 — Vincoli e rimozione legacy
 
-### Fase 5 — Delega contestuale
+- rendere BrandAccess obbligatorio per i ruoli contestuali;
+- rimuovere `users.role`, `users.active_role`, enum e alias obsoleti;
+- rimuovere eventuali dati sperimentali `creator_flowpulse`;
+- rimuovere la duplicazione Domain → Node;
+- valutare `nodes.role_assignment_id` solo quando nessuna gerarchia ne dipende;
+- mantenere redirect legacy soltanto temporaneamente.
 
-- permettere all'Imprenditore di aprire il pannello persone del proprio Brand;
-- assegnare ruoli contestuali consentiti;
-- impedire assegnazioni fuori perimetro;
-- aggiungere audit e test completi.
+### Test indispensabili
 
-### Fase 6 — Rinominare il codice legacy
+- ruolo senza BrandAccess o con accesso pending/revoked: rifiutato/inefficace;
+- Profile diverso da quello dell'accesso: rifiutato;
+- Node fuori Brand o ruolo non ammesso: rifiutato;
+- delega fuori sottoalbero o escalation: rifiutata;
+- revoca accesso: permessi rimossi subito;
+- superadmin configura ma produce assegnazioni valide;
+- progetto senza dominio resta amministrabile;
+- profilo privato mantiene i permessi;
+- trasferimento conserva audit;
+- cambiare il responsabile senza incarico compatibile non produce autorizzazioni implicite;
+- nessuna contaminazione tra Brand.
 
-Solo dopo aver stabilizzato permessi e dati:
+---
 
-- valutare la migrazione enum `creator` → `entrepreneur`;
-- mantenere redirect dalle route `/creator_world`;
-- rinominare namespace e testi tecnici;
-- rimuovere progressivamente l'alias `creator_of_worlds` dopo aver aggiornato fixture,
-  test e import storici.
+## 10. Stato delle attività
 
-## Regole generali per tutti i Brand
+| Attività | Stato |
+|---|---|
+| Scheda profilo superadmin | implementata |
+| Link profilo dalle richieste GeneraImpresa | implementato |
+| Assegnazione legacy `creator_generaimpresa` | implementata, da migrare |
+| Inventario dati di produzione | da eseguire |
+| RoleAssignment con BrandAccess obbligatorio | da implementare |
+| Rinomina `imprenditore_generaimpresa` | da implementare |
+| Eliminazione `creator_flowpulse` dal disegno | decisa |
+| Migrazione `ideatore/admin/responsabile` | da progettare sui dati reali |
+| Policy unica azione + Node | da implementare |
+| `nodes.responsible_profile_id` e trasferimento | da implementare |
+| Affidamento Node tramite incarico contestuale | da implementare |
+| Indice Imprenditori GeneraImpresa | da implementare |
+| Delega controllata | futura, dopo la migrazione base |
 
-Questa architettura deve valere per ogni persona e ogni Brand:
+## 11. Questioni non bloccanti
 
-- un profilo può esistere senza Node;
-- un Brand professionale può esistere senza dominio;
-- un Brand progetto può esistere senza dominio;
-- il dominio è una pubblicazione/porta d'ingresso, non la prova di proprietà;
-- essere professionista non significa automaticamente essere Imprenditore;
-- essere Imprenditore non rende automaticamente pubblico il profilo;
-- proprietà, amministrazione e visibilità sono dimensioni separate;
-- la delega è sempre contestuale a un Brand e non globale.
+1. capability precise dell'imprenditore sulla radice e sul progetto;
+2. ruoli delegabili e profondità massima;
+3. quali eventi e note conservare nello storico dei trasferimenti di responsabilità;
+4. mantenimento di `current_role_assignment_id` o contesto in sessione;
+5. quando consentire nuovi progetti autonomi sotto GeneraImpresa;
+6. eventuale Node professionale distinto per Radioestesia e Benessere.
 
-## Decisioni ancora da confermare
+## Regola finale
 
-1. Se mantenere e collegare anche un Node professionale per Elisa.
-2. Slug definitivo del Brand progetto: proposta `radioestesiaebenessere`.
-3. Quali ruoli un `creator_generaimpresa` potrà delegare autonomamente.
-4. Se un Brand progetto possa avere più creator con pari responsabilità.
+Una persona non governa un progetto perché è «creator», possiede un dominio o ha il proprio Profile
+scritto sul Node. Lo governa perché dispone di un accesso attivo al Brand e di un incarico esplicito,
+contestuale, verificabile e revocabile sul Node interessato.

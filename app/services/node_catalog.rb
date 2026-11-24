@@ -2,7 +2,7 @@ class NodeCatalog
   Result = Data.define(:nodes, :profiles, :pruned)
 
   ALLOWED_ATTRIBUTES = %w[
-    title description node_type view_type status visibility
+    title navigation_label description node_type view_type status visibility
     operator_roles map_color position lane_container line_slugs
   ].freeze
 

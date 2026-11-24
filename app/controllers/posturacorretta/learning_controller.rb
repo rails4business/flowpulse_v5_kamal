@@ -50,6 +50,12 @@ module Posturacorretta
       return redirect_to(book_chapter_path(book_slug: "postura-corretta-in-un-mese", id: "copertina"), status: :moved_permanently)
     end
 
+    if (line_course_node = Node.find_by(slug: params[:corso], view_type: "course")) && line_course_node.self_and_ancestors.any?(&:course_line?)
+      load_line_node_course_overview(line_course_node)
+      render :show
+      return
+    end
+
     load_curriculum_sources
     course_slug = params[:corso].presence_in(@all_didactic_courses.map { |item| item.fetch("slug") })
     return redirect_to(percorso_posturacorretta_path, alert: "Corso non trovato") unless course_slug
@@ -69,6 +75,10 @@ module Posturacorretta
   def enroll
     load_curriculum_sources
     course = @all_didactic_courses.find { |item| item.fetch("slug") == params[:corso] }
+    line_course_node = Node.find_by(slug: params[:corso], view_type: "course")
+    if course.blank? && line_course_node&.self_and_ancestors&.any?(&:course_line?)
+      course = { "slug" => line_course_node.slug, "title" => line_course_node.title, "chapters" => [] }
+    end
     return redirect_to(percorso_posturacorretta_path, alert: "Corso non trovato") unless course
     return redirect_to(posturacorretta_course_path(corso: course.fetch("slug")), alert: "Il dominio PosturaCorretta non è configurato.") unless posturacorretta_domain
 
@@ -96,7 +106,12 @@ module Posturacorretta
     requested_chapter = course.fetch("chapters", []).find do |chapter|
       chapter.fetch("slug") == params[:capitolo] && chapter.fetch("show_available", false)
     end
-    destination = if requested_chapter
+    show_content = Content.find_by(key: course["id"].presence || course.fetch("slug"))
+    line_course_node ||= Node.find_by(show_content_id: show_content&.id, view_type: "course")
+    first_line_lesson = line_course_node&.children&.where(view_type: "course_lesson")&.order(:position, :id)&.first
+    destination = if first_line_lesson
+      posturacorretta_postura_recupero_path(tappa: first_line_lesson.slug, tab: "online")
+    elsif requested_chapter
       posturacorretta_course_chapter_path(corso: course.fetch("slug"), capitolo: requested_chapter.fetch("slug"))
     else
       posturacorretta_course_path(corso: course.fetch("slug"))
@@ -420,6 +435,38 @@ module Posturacorretta
     load_learning_progress(course_slug, @course_lessons)
   end
 
+  def load_line_node_course_overview(course_node)
+    load_curriculum_sources
+    @course_overview = true
+    @course_show_node = course_node
+    @course_line_node = course_node.self_and_ancestors.find(&:course_line?)
+    @course_line_courses = @course_line_node.ordered_line_nodes
+    @course_line_lessons = course_node.children.where(view_type: "course_lesson").order(:position, :id)
+    @reader_course_slug = course_node.slug
+    @selected_course = @all_didactic_courses.find { |course| course.fetch("slug") == course_node.slug } || {
+      "slug" => course_node.slug,
+      "title" => course_node.title,
+      "description" => course_node.description,
+      "status" => course_node.status,
+      "chapters" => []
+    }
+    @course_lessons = []
+    @completed_chapter_slugs = []
+    @completed_chapter_commitments = {}
+    @course_progress_percent = 0
+    @course_enrollment = learning_commitments.find do |commitment|
+      course_enrollment?(commitment) && commitment.learning_slug == course_node.slug && commitment.status != "cancelled"
+    end if authenticated?
+
+    content = course_node.show_content
+    preview = Current.user&.superadmin_user?
+    if content && (content.published_for_public? || preview)
+      @course_show_content = content
+      publication = content.show_publication
+      @course_show_publication = publication if publication && (publication.published_for_public? || preview)
+    end
+  end
+
   def load_course_show_content(course)
     content_key = course["id"].presence
     content = Content.includes(:show_publication, :rich_text_body).find_by(key: content_key) if content_key
@@ -430,6 +477,7 @@ module Posturacorretta
 
     @course_line_node = @course_show_node.self_and_ancestors.find(&:course_line?)
     @course_line_courses = @course_line_node&.ordered_line_nodes || []
+    @course_line_lessons = @course_show_node.children.where(view_type: "course_lesson").order(:position, :id)
 
     preview = Current.user&.superadmin_user?
     return unless content.published_for_public? || preview

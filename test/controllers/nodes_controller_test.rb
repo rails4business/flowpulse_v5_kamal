@@ -311,16 +311,16 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_url(area: "espressione")
     assert_response :success
-    assert_select ".pc-index-cabinet__tab.is-active", text: "Espressione"
-    assert_select "nav[aria-label='Sezioni di Espressione'] > a", count: 4
-    assert_select "nav[aria-label='Sezioni di Espressione'] > a[aria-current='page']", text: "Recupero e terapie manuali"
+    assert_select ".pc-index-cabinet__tab.is-active", text: "Percorso educativo"
+    assert_select "nav[aria-label='Sezioni del percorso educativo'] > a", count: 4
+    assert_select "nav[aria-label='Sezioni del percorso educativo'] > a[aria-current='page']", text: "Recupero e terapie manuali"
     assert_select ".pc-program-sheet__intro h1", text: "Recupero e terapie manuali"
     assert_select "a[href='#{posturacorretta_path(area: "espressione", parte: "movimento-allenamento")}']", text: /Continua.*Movimento e allenamento/
     assert_select "a[href='#{posturacorretta_path(area: "intro")}']", text: /Indietro.*Intro/
 
     get posturacorretta_url(area: "espressione", parte: "mente")
     assert_response :success
-    assert_select "nav[aria-label='Sezioni di Espressione'] > a[aria-current='page']", text: "Mente e aspetti emotivi e mentali"
+    assert_select "nav[aria-label='Sezioni del percorso educativo'] > a[aria-current='page']", text: "Mente e aspetti emotivi e mentali"
     assert_select ".pc-program-placeholder h1", text: "Mente e aspetti emotivi e mentali"
     assert_select ".pc-journey-footer__progress", text: "4 / 7"
 
@@ -346,7 +346,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".pc-landing-home", count: 1
-    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Percorso.*Espressione/
+    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Percorso.*Percorso educativo/
     assert_select ".pc-expression-tabs .pc-expression-tab", count: 4
     assert_select ".pc-expression-tab.is-selected", text: "Recupero e terapie manuali"
     assert_select ".pc-expression-tab", text: "Il corpo, un mondo da scoprire", count: 0

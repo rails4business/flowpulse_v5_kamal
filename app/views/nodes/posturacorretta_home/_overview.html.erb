@@ -1,6 +1,7 @@
 <%
   active_area = params[:area].to_s.presence_in(%w[intro espressione consapevolezza connessione]) || "intro"
-  areas = [["intro", "Inizia con PosturaCorretta"], ["espressione", "Espressione"], ["consapevolezza", "Consapevolezza"], ["connessione", "Connessione"]]
+  education_label = @posturacorretta_education_node&.public_navigation_label || "Percorso educativo"
+  areas = [["intro", "Inizia con PosturaCorretta"], ["espressione", education_label], ["consapevolezza", "Consapevolezza"], ["connessione", "Connessione"]]
   expression_parts = [
     ["recupero-massaggio", "Recupero e terapie manuali"],
     ["movimento-allenamento", "Movimento e allenamento"],
@@ -23,8 +24,8 @@
     <% if active_area == "intro" %>
       <%= render "nodes/posturacorretta_home/landing", selected_part: "intro", show_navigation: false %>
     <% elsif active_area == "espressione" %>
-      <section class="pc-index-cabinet__panel" aria-label="Espressione">
-        <nav class="relative z-10 mx-auto grid w-full max-w-[70rem] grid-cols-4 items-end px-3 sm:px-8" aria-label="Sezioni di Espressione">
+      <section class="pc-index-cabinet__panel" aria-label="Percorso educativo">
+        <nav class="relative z-10 mx-auto grid w-full max-w-[70rem] grid-cols-4 items-end px-3 sm:px-8" aria-label="Sezioni del percorso educativo">
           <% expression_parts.each_with_index do |(key, label), index| %>
             <% selected = key == active_expression_part %>
             <%= link_to posturacorretta_path(area: "espressione", parte: key),

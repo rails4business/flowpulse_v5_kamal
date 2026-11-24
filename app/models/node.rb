@@ -110,6 +110,10 @@ class Node < ApplicationRecord
   def short_title
     title.delete_prefix("Lezione · ").split(":").first.strip
   end
+
+  def public_navigation_label
+    navigation_label.presence || title
+  end
   scope :published_free, -> { where(status: "published", visibility: %w[public subscription]) }
   scope :lane_containers, -> { where(lane_container: true) }
 

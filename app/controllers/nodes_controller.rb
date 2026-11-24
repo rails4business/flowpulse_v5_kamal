@@ -79,7 +79,7 @@ class NodesController < ApplicationController
       destination = if requested_node.show_content
         posturacorretta_course_path(corso: requested_node.show_content.slug)
       else
-        flowtree_public_node_path(requested_node)
+        posturacorretta_course_path(corso: requested_node.slug)
       end
       redirect_to destination, status: :moved_permanently
       return

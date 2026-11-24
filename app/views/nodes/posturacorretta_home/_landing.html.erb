@@ -9,6 +9,7 @@
   program_parts = available_parts.reject { |part| part.fetch(:slug) == "intro" }
   selected_part = local_assigns[:selected_part].to_s.presence_in(available_parts.map { |part| part.fetch(:slug) }) || params[:parte].presence_in(program_parts.map { |part| part.fetch(:slug) }) || "recupero-massaggio"
   show_navigation = local_assigns.fetch(:show_navigation, true)
+  education_label = @posturacorretta_education_node&.public_navigation_label || "Percorso educativo"
   intro_sessions = [
     { course: Node.find_by(slug: "corso-introduzione-al-percorso-integrato"), course_title: "Inizia il percorso", lesson: Node.find_by(slug: "introduzione-al-percorso-integrato"), lesson_title: "Lezione · Inizia il percorso", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-al-percorso-integrato" } },
     { course: Node.find_by(slug: "corso-la-prima-settimana-con-posturacorretta"), course_title: "La prima settimana con PosturaCorretta", lesson: Node.find_by(slug: "la-prima-settimana-con-posturacorretta"), lesson_title: "Lezione · La prima settimana con PosturaCorretta", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "la-prima-settimana-con-posturacorretta" } },
@@ -18,8 +19,8 @@
 
 <div class="pc-landing-home">
   <% if show_navigation %>
-    <%= render "nodes/posturacorretta_home/path_breadcrumb", current: "Espressione" %>
-    <nav class="pc-expression-tabs" aria-label="Aree di Espressione">
+    <%= render "nodes/posturacorretta_home/path_breadcrumb", current: education_label %>
+    <nav class="pc-expression-tabs" aria-label="Aree del percorso educativo">
       <% program_parts.each do |part| %>
         <% if part.fetch(:slug) == selected_part %>
           <span class="pc-expression-tab is-selected" aria-current="page"><%= part.fetch(:label) %></span>
