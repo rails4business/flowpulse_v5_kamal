@@ -44,7 +44,7 @@ class RadioestesiaControllerTest < ActionDispatch::IntegrationTest
     assert_select "#pannello-superadmin a[href='/generaimpresa/brand/radioestesia/changelog']"
     assert_select "#da-fare li", /pagina show degli eventi/
     assert_select "#da-confermare", /elisa@radiestesiaebenessere.com/
-    assert_select "#proposta-prezzi tbody tr", 11
+    assert_select "#proposta-prezzi tbody tr", 12
     assert_select "#registro-ore", /totale 8 h/
     assert_select "#registro-ore", /23\/11\/2026 · 4 h/
     assert_select "#registro-ore", /25\/09\/2026 · 4 h/
