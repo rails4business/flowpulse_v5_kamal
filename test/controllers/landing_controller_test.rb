@@ -71,19 +71,20 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='GeneraImpresa'] a[href=?]", rails4b_ideas_path, text: "Idee"
   end
 
-  test "Flowpulse presents MarkPostura as one world rather than the whole platform" do
+  test "Flowpulse home presents rhythm, flow and relation with the entry doors" do
     get flowpulse_url
 
     assert_response :success
-    assert_select "h1", text: /Segui il tuo battito.*Entra nel flusso/m
-    assert_select "figure[aria-labelledby='personal-flow-title personal-flow-caption']"
-    assert_select "svg[aria-labelledby='personal-flow-title personal-flow-description']"
-    assert_select "svg title", text: "Costruisci il tuo mondo con FlowPulse"
-    assert_select "#come-funziona", text: /Ogni apprendimento è una linea metropolitana/
-    assert_select "#mondo-markpostura", text: /Il FlowPulse costruito da MarkPostura/
-    assert_select "#mondo-markpostura img[alt='Il FlowPulse costruito da MarkPostura']"
-    assert_select "#mondo-markpostura", text: /Un’altra persona può partire da sfere completamente diverse/
-    assert_select "a[href='#{genera_impresa_path}']", text: /Dai forma a un’idea/
+    assert_select "h1", text: /La vita è ritmo,.*flusso e relazione\./m
+    assert_select "svg[aria-label^='Battito cardiaco']"
+    assert_select "#progetti a[href='#{giardino_del_corpo_path}']", text: /Esplora il progetto/
+    assert_select "#progetti a[href='#{rails4b_path}']", text: /Esplora il progetto/
+    assert_select "a[href='#{percorso_integrato_path}']", text: /Scopri la rete/
+    assert_select "a[href='#{cantachetipassa_path}']", text: /Scopri/
+    assert_select "a[href='#{inside_adventure_path}']", text: /Scopri/
+    assert_select "#luoghi", text: /La cascina corale/
+    assert_select "#partecipa a[href='#{genera_impresa_path}']", text: /Ho un’idea o un progetto da costruire/
+    assert_select "#partecipa a[href='#{flowpulse_global_network_path}']", text: /Voglio conoscere la rete/
   end
 
   test "Flowpulse navigation exposes one network directory and changelog" do

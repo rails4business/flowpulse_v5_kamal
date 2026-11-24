@@ -1,9 +1,8 @@
 <% content = local_assigns.fetch(:content) %>
-<% publication = local_assigns[:publication] %>
 
-<section class="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="course-show-content-title">
-  <div class="grid gap-0 <%= publication ? 'lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.8fr)]' : '' %>">
-    <article class="p-5 sm:p-8 lg:p-10">
+<section aria-labelledby="course-show-content-title">
+  <div>
+    <article>
       <div class="flex flex-wrap items-center gap-2">
         <p class="text-xs font-extrabold uppercase tracking-[.15em] text-blue-700">Presentazione del corso</p>
         <% if Current.user&.superadmin_user? && !content.published_for_public? %><span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black uppercase text-amber-800">Anteprima <%= content.publication_status %></span><% end %>
@@ -18,12 +17,5 @@
         <div class="node-public-content mt-6"><%= render_node_markdown(content.body_md) %></div>
       <% end %>
     </article>
-    <% if publication %>
-      <aside class="border-t border-slate-200 bg-slate-50 p-5 lg:border-l lg:border-t-0 sm:p-8">
-        <p class="mb-3 text-xs font-extrabold uppercase tracking-[.13em] text-red-700"><%= publication.title.presence || "Video del corso" %></p>
-        <%= content_publication_embed(publication) %>
-        <% if Current.user&.superadmin_user? && !publication.published_for_public? %><p class="mt-3 text-xs font-bold text-amber-700">Pubblicazione visibile soltanto in anteprima.</p><% end %>
-      </aside>
-    <% end %>
   </div>
 </section>

@@ -1,3 +1,6 @@
+<% if @course_line_node && @course_line_courses.present? %>
+  <%= render "posturacorretta/learning/line_course_aside", active_node: @course_show_node, line: @course_line_node, courses: @course_line_courses %>
+<% else %>
 <% active_course = local_assigns.fetch(:course) %>
 <% direct_course_slugs = @didactic_courses.map { |course| course.fetch("slug") } %>
 <% groups = [{ "title" => "Inizia da qui", "courses" => @all_didactic_courses.select { |course| direct_course_slugs.include?(course.fetch("slug")) } }] %>
@@ -33,3 +36,4 @@
     </section>
   <% end %>
 </nav>
+<% end %>

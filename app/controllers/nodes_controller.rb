@@ -74,6 +74,17 @@ class NodesController < ApplicationController
       return
     end
 
+    requested_node = node.self_and_descendants.find_by(slug: params[:tappa]) if params[:tappa].present?
+    if requested_node&.view_type == "course"
+      destination = if requested_node.show_content
+        posturacorretta_course_path(corso: requested_node.show_content.slug)
+      else
+        flowtree_public_node_path(requested_node)
+      end
+      redirect_to destination, status: :moved_permanently
+      return
+    end
+
     response.set_header("X-Robots-Tag", "noindex, nofollow")
     prepare_public_node(node, navigation_domain: domain, domain_root: true)
     prepare_posturacorretta_home(node)

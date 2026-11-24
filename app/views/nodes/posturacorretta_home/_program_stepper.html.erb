@@ -37,11 +37,15 @@
         <details class="pc-program-module" <%= "open" if course_selected %>>
           <summary class="pc-program-stepper__step pc-program-stepper__step--course <%= 'is-parent-selected' if course_selected %>">
             <span class="pc-program-stepper__marker"><%= course_index + 1 %></span>
-            <span><small>Corso <%= format("%02d", course_index + 1) %></small><strong><%= course.node.title %></strong></span>
+            <%= link_to course_path,
+              class: "pc-program-module__show-link",
+              aria: { label: "Apri il corso #{course.node.title}" } do %>
+              <small>Corso <%= format("%02d", course_index + 1) %></small>
+              <strong><%= course.node.title %></strong>
+            <% end %>
             <span class="pc-program-stepper__chevron" aria-hidden="true"></span>
           </summary>
           <div class="pc-program-module__body">
-            <%= link_to "Apri il corso", course_path, class: "pc-program-module__course-link" %>
             <div class="pc-program-module__lessons">
               <% course.lessons.each_with_index do |lesson, lesson_index| %>
                 <% lesson_station = journey.station_for_node(lesson) %>

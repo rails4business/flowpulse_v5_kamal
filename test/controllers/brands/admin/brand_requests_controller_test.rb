@@ -38,6 +38,25 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     get brand_admin_requests_url(@brand.slug)
 
     assert_select "#brand-request-#{@brand_request.id} [data-requester-profile]", text: /Profilo: Mario Rossi \(@mario_rossi\)/
+    assert_select "#brand-request-#{@brand_request.id} [data-requester-profile] a", count: 0
+  end
+
+  test "superadmin can open the requester profile management page" do
+    person = User.create!(email_address: "elisa@example.com", password: "password123")
+    requester = person.create_profile!(display_name: "Elisa Corubolo", username: "elisa_corubolo")
+    @brand_request.update!(requester_profile: requester)
+    superadmin = User.create!(
+      email_address: "requests-superadmin@example.com",
+      password: "password123",
+      superadmin: true,
+      active_role: :superadmin
+    )
+    sign_in(superadmin)
+
+    get brand_admin_requests_url(@brand.slug)
+
+    assert_response :success
+    assert_select "#brand-request-#{@brand_request.id} [data-requester-profile] a[href='#{admin_profile_path(requester)}']", text: /Elisa Corubolo/
   end
 
   test "owner moves a request through waiting and accepted states" do

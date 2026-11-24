@@ -71,8 +71,10 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     )
     content.update!(show_publication: publication)
     brand = content.node
+    line = Node.create!(slug: "linea-show-content-test", title: "Linea educativa", view_type: "course_line",
+      content_type: "Percorso educativo", role_assignment: brand.role_assignment, parent: brand)
     node = Node.create!(slug: "corso-show-content-test", title: "Corso show", view_type: "course",
-      role_assignment: brand.role_assignment, parent: brand)
+      role_assignment: brand.role_assignment, parent: line)
     node.outgoing_content_links.create!(target_content: content, kind: "show")
     node.update!(show_content: content)
 
@@ -82,9 +84,11 @@ class Posturacorretta::LearningControllerTest < ActionDispatch::IntegrationTest
     assert_select "section[aria-labelledby='course-show-content-title']", count: 1 do
       assert_select "h2", text: content.title
       assert_select ".node-public-content", text: /Corpo dello show Content/
-      assert_select "iframe[data-privacy-embed-src='https://www.youtube-nocookie.com/embed/abc123']", count: 1
-      assert_select ".privacy-embed__placeholder", text: /Carica il video/
     end
+    assert_select "section[aria-label='Video del corso'] iframe[data-privacy-embed-src='https://www.youtube-nocookie.com/embed/abc123']", count: 1
+    assert_select "section[aria-label='Video del corso'] .privacy-embed__placeholder", text: /Carica il video/
+    assert_select "#course-overview-aside", text: /Linea educativa.*Corso show/m
+    assert_select "nav[aria-label='Programma della linea'] a[aria-current='page']", text: /Corso show/
   end
 
   test "course overview keeps the current fallback without a show Content" do

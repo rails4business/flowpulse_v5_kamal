@@ -1,66 +1,241 @@
-<% content_for :title, "FlowPulse — Segui il tuo battito, entra nel flusso" %>
-<% content_for :description, "I creatori costruiscono linee di apprendimento; gli utenti le percorrono online o accompagnati da professionisti formati, collegando stazioni e nuovi mondi." %>
+<% content_for :title, "FlowPulse — Ritmo, flusso e relazione" %>
+<% content_for :description, "FlowPulse: una rete aperta di persone, luoghi, competenze e progetti, ispirata ai ritmi della vita." %>
 
-<main class="min-h-screen bg-white text-slate-950">
+<style>
+  .fp-wave path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .fp-pulse { stroke-dasharray: 10 4; animation: fp-flow 6s linear infinite; }
+  .fp-breath { transform-origin: center; animation: fp-breathe 5s ease-in-out infinite; }
+  .fp-dot { transform-origin: center; transform-box: fill-box; animation: fp-beat 1.3s infinite; }
+  @keyframes fp-flow { to { stroke-dashoffset: -140; } }
+  @keyframes fp-breathe { 50% { opacity: .4; transform: scaleY(.72); } }
+  @keyframes fp-beat { 40% { transform: scale(1.6); } }
+  @media (prefers-reduced-motion: reduce) { .fp-pulse, .fp-breath, .fp-dot { animation: none; } }
+</style>
+
+<main class="min-h-screen bg-[#f8f8f2] text-[#233b35]">
   <%= render "landing/flowpulse_nav" %>
 
-  <header class="overflow-hidden bg-gradient-to-b from-blue-50 to-white">
-    <div class="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 lg:grid-cols-[1fr_0.75fr] lg:py-24">
-      <div><p class="text-xs font-black uppercase tracking-[0.22em] text-blue-700">Flusso e battito · molti mondi collegati</p><h1 class="mt-5 text-5xl font-black tracking-[-0.055em] sm:text-7xl">Segui il tuo battito.<br><span class="text-blue-700">Entra nel flusso.</span></h1><p class="mt-6 max-w-3xl text-xl leading-9 text-slate-600">FlowPulse permette ai creatori di trasformare conoscenze e competenze in linee di apprendimento fatte di contenuti, corsi online, schede, quiz, lezioni, servizi ed esperienze.</p><p class="mt-4 max-w-3xl text-base font-bold leading-7 text-slate-800">Ogni persona può percorrerle in autonomia oppure farsi accompagnare da professionisti formati. Ogni stazione raggiunta entra nel suo mondo e può aprire nuove linee.</p><div class="mt-9 flex flex-wrap gap-3"><%= link_to "Scopri come funziona", "#come-funziona", class: "rounded-full bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-700" %><%= link_to "Esplora le linee", flowpulse_global_network_path(vista: "brand"), class: "rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-black text-slate-700 hover:border-blue-300 hover:text-blue-700" %><%= link_to "Trova una guida", flowpulse_global_network_path(vista: "professional"), class: "rounded-full border border-violet-200 bg-violet-50 px-6 py-3 text-sm font-black text-violet-800 hover:border-violet-400" %></div></div>
-      <%= render "landing/flowpulse_personal_world" %>
-    </div>
-  </header>
-
-  <section id="come-funziona" class="scroll-mt-24 border-y border-slate-200 bg-slate-950 text-white">
-    <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-      <p class="text-xs font-black uppercase tracking-[0.2em] text-blue-300">Come funziona</p>
-      <h2 class="mt-3 max-w-4xl text-3xl font-black tracking-tight sm:text-4xl">Ogni apprendimento è una linea metropolitana da percorrere.</h2>
-      <p class="mt-5 max-w-4xl text-lg leading-8 text-slate-300">Il creatore disegna la linea e le sue stazioni. L’utente sceglie il proprio viaggio. Il professionista accompagna i tratti nei quali servono relazione, adattamento e pratica. Le stazioni di scambio collegano apprendimenti e Brand diversi.</p>
-      <div class="mt-10 grid gap-5 md:grid-cols-3">
-        <article class="rounded-3xl border border-slate-700 bg-slate-900 p-7"><span class="text-xs font-black uppercase tracking-[0.16em] text-blue-300">01 · Crea la linea</span><h3 class="mt-3 text-2xl font-black">Conoscenza che diventa percorso</h3><p class="mt-3 leading-7 text-slate-300">Contenuti, corsi online, schede, quiz e programmi di lezioni danno una direzione all’apprendimento.</p></article>
-        <article class="rounded-3xl border border-slate-700 bg-slate-900 p-7"><span class="text-xs font-black uppercase tracking-[0.16em] text-violet-300">02 · Percorri le stazioni</span><h3 class="mt-3 text-2xl font-black">Autonomia o accompagnamento</h3><p class="mt-3 leading-7 text-slate-300">L’utente avanza online con i propri tempi oppure incontra professionisti formati per lezioni, servizi ed esperienze.</p></article>
-        <article class="rounded-3xl border border-slate-700 bg-slate-900 p-7"><span class="text-xs font-black uppercase tracking-[0.16em] text-emerald-300">03 · Cambia linea</span><h3 class="mt-3 text-2xl font-black">Nuovi mondi si collegano</h3><p class="mt-3 leading-7 text-slate-300">Una Skill, un’esperienza o un bisogno diventano stazioni di scambio verso altri percorsi e altri Brand.</p></article>
+  <section id="visione" class="scroll-mt-24 border-b border-[#dce2d8] bg-[radial-gradient(ellipse_at_50%_40%,#e5eee3,transparent_65%)]">
+    <div class="mx-auto max-w-6xl px-5 py-12 text-center sm:px-8 sm:py-20">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">Un ecosistema aperto, in evoluzione</p>
+      <h1 class="mx-auto mt-4 max-w-4xl text-5xl font-semibold leading-[1.05] tracking-[-0.055em] sm:text-7xl lg:text-8xl">La vita è ritmo,<br>flusso e relazione.</h1>
+      <svg class="fp-wave mx-auto mt-6 block h-auto w-full max-w-3xl" viewBox="0 0 850 140" role="img" aria-label="Battito cardiaco, flusso circolatorio e respiro, rappresentati da tre onde stilizzate">
+        <path class="fp-breath" stroke="#8bb6b0" d="M0 85 Q106 10 212 85 T425 85 T638 85 T850 85" />
+        <path class="fp-pulse" stroke="#4382b4" d="M0 105 C140 105 140 42 280 42 S420 105 560 105 S700 42 850 42" />
+        <path stroke="#b64c4b" d="M0 72 H165 L180 60 L192 72 H222 L235 91 L250 18 L265 121 L280 72 H385 L400 60 L412 72 H442 L455 91 L470 18 L485 121 L500 72 H605 L620 60 L632 72 H662 L675 91 L690 18 L705 121 L720 72 H850" />
+        <circle class="fp-dot" cx="470" cy="18" r="4" fill="#b64c4b" />
+      </svg>
+      <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-[#65736b] sm:text-xl">Dal battito del cuore al respiro, dalla circolazione del sangue ai ritmi della natura. FlowPulse si ispira alla vita per connettere persone, luoghi, competenze, risorse e progetti.</p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <%= link_to "Esplora la rete →", flowpulse_global_network_path, class: "rounded-lg border border-[#233b35] bg-[#233b35] px-6 py-3 text-sm font-bold text-white hover:bg-[#426654]" %>
+        <a href="#partecipa" class="rounded-lg border border-[#233b35] px-6 py-3 text-sm font-bold hover:text-[#347452]">Dai vita a un progetto</a>
       </div>
     </div>
   </section>
 
-  <section class="border-b border-slate-200 bg-white">
-    <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-      <div class="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
-        <div><p class="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Le stazioni</p><h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Dall’informazione all’esperienza.</h2><p class="mt-5 text-lg leading-8 text-slate-600">Una linea può essere percorsa interamente online oppure alternare apprendimento autonomo e presenza professionale. Ogni passaggio conserva il filo del viaggio.</p></div>
-        <ol class="grid gap-3 sm:grid-cols-2" aria-label="Stazioni di una linea di apprendimento">
-          <% [["1", "Contenuto", "Scopri e comprendi un’idea."], ["2", "Corso online", "Segui moduli, schede e quiz."], ["3", "Programma lezioni", "Porta la conoscenza nella didattica."], ["4", "Servizio", "Incontra un professionista formato."], ["5", "Esperienza", "Trasforma l’apprendimento in pratica."], ["↗", "Scambio", "Collegati a una nuova linea."]].each do |number, title, description| %>
-            <li class="flex gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5"><span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-black text-white"><%= number %></span><div><h3 class="font-black text-slate-950"><%= title %></h3><p class="mt-1 text-sm leading-6 text-slate-600"><%= description %></p></div></li>
-          <% end %>
-        </ol>
+  <section class="border-b border-[#dce2d8]">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">Il significato di FlowPulse</p>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">Dal corpo alla rete</h2>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <% [
+          ["Pulse", "#b64c4b", "Il battito", "I ritmi del corpo, l’alternanza di attività e recupero, i cicli quotidiani e stagionali."],
+          ["Flow", "#3468a2", "La circolazione", "Come il sangue nell’organismo, risorse, conoscenze, competenze e valore possono circolare nella rete."],
+          ["Breath", "#478d87", "Il respiro", "Scambio tra interno ed esterno, espansione e contrazione, accogliere e lasciare andare."],
+          ["Network", "#347452", "La relazione", "Parti differenti che collaborano, mantenendo la propria autonomia e capacità di adattamento."]
+        ].each do |tag, color, title, description| %>
+          <article>
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.13em]" style="color: <%= color %>"><%= tag %></p>
+            <h3 class="mt-2 text-xl font-semibold tracking-tight"><%= title %></h3>
+            <p class="mt-2 text-sm leading-6 text-[#65736b]"><%= description %></p>
+          </article>
+        <% end %>
       </div>
     </div>
   </section>
 
-  <section id="mondo-markpostura" class="scroll-mt-24 border-b border-slate-200 bg-slate-50">
-    <div class="mx-auto grid max-w-6xl items-center gap-10 px-5 pt-16 sm:px-8 lg:grid-cols-[1fr_.65fr]">
+  <section id="progetti" class="scroll-mt-24 border-b border-[#dce2d8]">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">01 / Le fondamenta</p>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">Vivere. Comprendere. Costruire.</h2>
+      <div class="mt-8 grid gap-5 md:grid-cols-3">
+        <% [
+          ["Vivere", "#347452", "Il Giardino del Corpo", "Eventi, esperienze, attività, luoghi e incontri per l’evoluzione armonica dell’essere umano.", giardino_del_corpo_path],
+          ["Comprendere", "#3468a2", "PosturaCorretta", "Scoprire i nostri sistemi fisiologici attraverso la postura e sviluppare consapevolezza del funzionamento del corpo.", "https://posturacorretta.org"],
+          ["Costruire", "#b96b32", "Rails4Business", "La porta per chi lavora nel digitale e vuole collaborare. Sviluppo di software, strumenti, protocolli e infrastrutture per tutti i progetti.", rails4b_path]
+        ].each do |tag, color, title, description, url| %>
+          <article class="flex min-w-0 flex-col rounded-xl border border-t-4 border-[#dce2d8] bg-white p-6" style="border-top-color: <%= color %>">
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.13em]" style="color: <%= color %>"><%= tag %></p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight"><%= title %></h3>
+            <p class="mt-3 flex-1 leading-7 text-[#65736b]"><%= description %></p>
+            <%= link_to "Esplora il progetto →", url, class: "mt-4 text-sm font-bold hover:text-[#347452]" %>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-[#dce2d8]">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">02 / Collaborare e generare</p>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">Dalle competenze alle iniziative</h2>
+      <div class="mt-8 grid gap-5 md:grid-cols-2">
+        <% [
+          ["Lavorare insieme", "#438b90", "Percorso Integrato", "Permette ai professionisti della salute e del benessere di lavorare insieme, mettendo in relazione competenze, centri e servizi.", "Scopri la rete →", percorso_integrato_path],
+          ["Dare vita alle idee", "#8558a0", "GeneraImpresa", "Accoglie e supporta chi ha un’idea o un progetto e vuole costruirlo, incontrando persone, competenze e risorse.", "Scopri il progetto →", genera_impresa_path]
+        ].each do |tag, color, title, description, label, url| %>
+          <article class="flex min-w-0 flex-col rounded-xl border border-t-4 border-[#dce2d8] bg-white p-6" style="border-top-color: <%= color %>">
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.13em]" style="color: <%= color %>"><%= tag %></p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight"><%= title %></h3>
+            <p class="mt-3 flex-1 leading-7 text-[#65736b]"><%= description %></p>
+            <%= link_to label, url, class: "mt-4 text-sm font-bold hover:text-[#347452]" %>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-[#dce2d8]">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">03 / Progetti in evoluzione</p>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">Una rete che continua a crescere</h2>
+      <p class="mt-4 max-w-3xl text-lg leading-8 text-[#65736b]">Le iniziative nascono da bisogni concreti. Quelle che vedi sono i primi nodi, non i confini dell’ecosistema.</p>
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <% [
+          ["Ritmi naturali", "Calendario Contadino", "Eventi stagionali, fare il formaggio, lavorare il maiale, coltivare l’orto, conoscere il cibo e l’ambiente.", nil],
+          ["Armonia", "Canta che ti passa", "Musica, canto, teatro e arti per sviluppare armonia e compensare le attività razionali.", cantachetipassa_path],
+          ["Risorse e responsabilità", "Impegno", "Sorreggere gli impegni individuali e collettivi: tempo, energia, attenzione, denaro e relazioni.", "https://impegno.it"],
+          ["Esplorazione", "Inside Adventure", "Sviluppare le facoltà cognitive e scoprire il nostro ambiente interno.", inside_adventure_path]
+        ].each do |tag, title, description, url| %>
+          <article class="flex min-w-0 flex-col rounded-xl border border-[#dce2d8] bg-white p-6">
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.13em] text-[#347452]"><%= tag %></p>
+            <h3 class="mt-2 text-2xl font-semibold tracking-tight"><%= title %></h3>
+            <p class="mt-3 flex-1 leading-7 text-[#65736b]"><%= description %></p>
+            <%= link_to "Scopri →", url, class: "mt-4 text-sm font-bold hover:text-[#347452]" if url %>
+          </article>
+        <% end %>
+        <article class="flex min-w-0 flex-col items-center justify-center rounded-xl border border-dashed border-[#9aa99c] p-6 text-center">
+          <span class="text-4xl leading-none text-[#347452]" aria-hidden="true">+</span>
+          <h3 class="mt-2 text-2xl font-semibold tracking-tight">Il tuo progetto</h3>
+          <p class="mt-3 leading-7 text-[#65736b]">Hai un’idea, una competenza, un luogo o una risorsa? C’è spazio per nuove iniziative.</p>
+          <a href="#partecipa" class="mt-4 rounded-lg border border-[#233b35] px-5 py-2.5 text-sm font-bold hover:text-[#347452]">Entra nella rete</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="luoghi" class="scroll-mt-24 border-b border-[#dce2d8] bg-[#e9eee3]">
+    <div class="mx-auto grid max-w-6xl items-center gap-8 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-2 lg:gap-12">
       <div>
-        <p class="text-xs font-black uppercase tracking-[0.2em] text-violet-700">Un esempio reale</p>
-        <h2 class="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">Il FlowPulse costruito da MarkPostura.</h2>
-        <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-600">Questa immagine racconta il mondo che MarkPostura sta costruendo collegando salute, lavoro, stile di vita, tecnologia e creatività. Non è un modello da copiare: è un esempio concreto di ciò che si può fare.</p>
-        <p class="mt-4 max-w-3xl font-bold leading-7 text-slate-800">La mappa può continuare ad ampliarsi. Un’altra persona può partire da sfere completamente diverse e costruire il proprio FlowPulse.</p>
-        <div class="mt-6 flex flex-wrap gap-3"><%= link_to "Esplora questo mondo →", flowpulse_global_network_path(vista: "professional", node: "markpostura"), class: "rounded-full bg-violet-700 px-5 py-3 text-sm font-black text-white hover:bg-violet-800" %><%= link_to "Confrontalo con i Brand", flowpulse_global_network_path(vista: "brand"), class: "rounded-full border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:border-blue-300 hover:text-blue-700" %></div>
+        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">04 / Dal digitale al territorio</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">La cascina corale</h2>
+        <p class="mt-4 leading-7">Un’idea di luogo multifunzionale dove recuperare i ritmi naturali, i mestieri e le relazioni, senza rinunciare all’innovazione. Uno spazio da costruire insieme.</p>
+        <ul class="mt-5 flex flex-wrap gap-2" aria-label="Attività della cascina">
+          <% ["Agricoltura e artigianato", "Ospitalità", "Educazione alla salute", "Professionisti del benessere", "Coworking e digitale", "Musica e teatro", "Nuove imprese"].each do |chip| %>
+            <li class="rounded-full border border-[#b7c6b7] px-3 py-1.5 text-sm"><%= chip %></li>
+          <% end %>
+        </ul>
       </div>
-      <figure class="mx-auto max-w-xs">
-        <a href="https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-3xl border border-violet-200 bg-white p-2 shadow-xl"><img src="https://ik.imagekit.io/posturacorretta/flowpulse-ilgdc-21-08-2026.png?tr=w-700,q-80,f-webp" alt="Il FlowPulse costruito da MarkPostura" width="700" height="1023" class="max-h-[30rem] w-full rounded-[1.2rem] object-contain" loading="lazy"></a>
-        <figcaption class="mt-3 text-center text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Mappa di MarkPostura · apri per ingrandire</figcaption>
-      </figure>
-    </div>
-    <div class="mx-auto grid max-w-6xl gap-5 px-5 py-12 md:grid-cols-3 sm:px-8">
-    <article class="rounded-3xl border border-blue-200 bg-white p-7 shadow-sm"><span class="text-2xl">🌱</span><p class="mt-5 text-xs font-black uppercase tracking-[0.18em] text-blue-700">Salute e corpo</p><h2 class="mt-3 text-2xl font-black">Partire dalla persona</h2><p class="mt-3 leading-7 text-slate-600">PosturaCorretta e i percorsi professionali trasformano conoscenza e pratica in esperienze accessibili.</p><%= link_to "PosturaCorretta →", posturacorretta_path, class: "mt-5 inline-flex text-sm font-black text-blue-700" %></article>
-    <article class="rounded-3xl border border-amber-200 bg-white p-7 shadow-sm"><span class="text-2xl">🛠️</span><p class="mt-5 text-xs font-black uppercase tracking-[0.18em] text-amber-700">Risorse e lavoro</p><h2 class="mt-3 text-2xl font-black">Dall’idea al processo</h2><p class="mt-3 leading-7 text-slate-600">Rails4Business costruisce il software; GeneraImpresa e 1Impegno aiutano a chiarire progetti, responsabilità e tempo.</p><%= link_to "Rails4Business →", rails4b_path, class: "mt-5 inline-flex text-sm font-black text-amber-700" %></article>
-    <article class="rounded-3xl border border-violet-200 bg-white p-7 shadow-sm"><span class="text-2xl">🌳</span><p class="mt-5 text-xs font-black uppercase tracking-[0.18em] text-violet-700">Esperienze e comunità</p><h2 class="mt-3 text-2xl font-black">Collegare ciò che viviamo</h2><p class="mt-3 leading-7 text-slate-600">Il Giardino del Corpo apre spazi per natura, musica, filosofia, apprendimento e relazioni sul territorio.</p><%= link_to "Il Giardino del Corpo →", giardino_del_corpo_path, class: "mt-5 inline-flex text-sm font-black text-violet-700" %></article>
+      <svg class="h-auto w-full rounded-2xl bg-[#dce8d5]" viewBox="0 0 480 300" role="img" aria-label="Illustrazione stilizzata di una cascina con orti e alberi">
+        <rect width="480" height="300" fill="#dce8d5" />
+        <circle cx="383" cy="58" r="30" fill="#efce86" />
+        <path d="M0 145 Q100 56 220 145 T480 135 V300 H0" fill="#b5cca9" />
+        <path d="M0 202 Q140 150 480 190 V300 H0" fill="#8eaf81" />
+        <path d="M65 132 L177 70 L289 132 V225 H65Z" fill="#f3e7cd" />
+        <path d="M48 136 L177 60 L306 136" fill="none" stroke="#93634b" stroke-width="15" stroke-linejoin="round" />
+        <rect x="147" y="155" width="60" height="70" rx="28" fill="#806b50" />
+        <rect x="87" y="154" width="34" height="35" fill="#627b72" />
+        <rect x="234" y="154" width="34" height="35" fill="#627b72" />
+        <path d="M303 160 L363 117 L423 160 V224 H303Z" fill="#e9d6ae" />
+        <path d="M290 163 L363 108 L437 163" stroke="#93634b" stroke-width="11" fill="none" />
+        <rect x="346" y="175" width="37" height="49" fill="#806b50" />
+        <path d="M0 279 L127 232 M75 300 L202 239 M180 300 L269 242 M290 300 L335 243" stroke="#5f8053" stroke-width="9" />
+        <path d="M35 220 V157 M448 220 V145" stroke="#786747" stroke-width="9" />
+        <circle cx="35" cy="148" r="28" fill="#5f8053" />
+        <circle cx="448" cy="138" r="30" fill="#5f8053" />
+      </svg>
     </div>
   </section>
 
+  <section class="border-b border-[#dce2d8]">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">05 / Sperimentazioni</p>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">La doppia economia</h2>
+      <p class="mt-4 max-w-3xl text-lg leading-8 text-[#65736b]">Affiancare all’euro strumenti di scambio complementari, sperimentando microeconomie circolari locali.</p>
+      <div class="mt-8 grid gap-5 md:grid-cols-2">
+        <article class="rounded-xl border border-[#dce2d8] bg-white p-6">
+          <span class="text-3xl leading-none text-[#3468a2]" aria-hidden="true">€</span>
+          <h3 class="mt-3 text-2xl font-semibold tracking-tight">Economia in euro</h3>
+          <p class="mt-3 leading-7 text-[#65736b]">Scambi ordinari e relazioni con il mercato esterno.</p>
+        </article>
+        <article class="rounded-xl border border-[#dce2d8] bg-white p-6">
+          <span class="text-3xl leading-none text-[#438b90]" aria-hidden="true">⇄</span>
+          <h3 class="mt-3 text-2xl font-semibold tracking-tight">Economia complementare</h3>
+          <p class="mt-3 leading-7 text-[#65736b]">Test di Dash e altre criptovalute, buoni, crediti e scambi di beni, servizi e competenze tra partecipanti.</p>
+        </article>
+      </div>
+      <p class="mt-5 text-sm text-[#65736b]">Sperimentazioni volontarie, non sostitutive dell’euro, nel rispetto degli obblighi fiscali e tenendo conto della volatilità delle criptovalute.</p>
+    </div>
+  </section>
 
+  <section class="border-b border-[#dce2d8]">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">06 / Autonomia e partecipazione</p>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">Le cinque sovranità</h2>
+      <ol class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <% [
+          ["Monetaria", "Comprendere la moneta e sperimentare strumenti di scambio."],
+          ["Politica", "Partecipare alle decisioni della comunità."],
+          ["Territoriale", "Valorizzare i luoghi e le risorse locali."],
+          ["Alimentare", "Conoscere, produrre, trasformare e scegliere il cibo."],
+          ["Della salute", "Conoscere il corpo e partecipare alla tutela della propria salute."]
+        ].each_with_index do |(title, description), index| %>
+          <li class="border-t-2 border-[#347452] px-1.5 py-4">
+            <span class="text-sm font-bold text-[#347452]"><%= format("%02d", index + 1) %></span>
+            <h3 class="mt-2 text-lg font-semibold tracking-tight"><%= title %></h3>
+            <p class="mt-1 text-sm leading-6 text-[#65736b]"><%= description %></p>
+          </li>
+        <% end %>
+      </ol>
+      <p class="mt-4 text-sm text-[#65736b]">Spunto di approfondimento: <a href="https://www.scecservice.org/wp/wp-content/uploads/2011/06/Pierluigi-Paoletti-Leconomia-per-tutti.pdf" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#347452]">Pierluigi Paoletti, L’economia per tutti</a>.</p>
+    </div>
+  </section>
 
-  <section class="border-t border-slate-200 bg-blue-50"><div class="mx-auto max-w-4xl px-5 py-16 text-center"><p class="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Il tuo mondo può essere il prossimo</p><h2 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">FlowPulse sostiene la struttura. La direzione, le persone e i contenuti restano tuoi.</h2><p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Puoi partire come professionista, dare forma a un progetto oppure collegare qualcosa che esiste già. GeneraImpresa aiuta a chiarire l’idea; Rails4Business costruisce strumenti e processi digitali; FlowPulse rende il mondo navigabile e lo collega alla rete.</p><div class="mt-7 flex flex-wrap justify-center gap-3"><%= link_to "Dai forma a un’idea →", genera_impresa_path, class: "inline-flex rounded-full bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-700" %><%= link_to "Scopri Rails4Business", rails4b_path, class: "inline-flex rounded-full border border-blue-200 bg-white px-6 py-3 text-sm font-black text-blue-800 hover:border-blue-400" %></div></div></section>
+  <section id="partecipa" class="scroll-mt-24 border-b border-[#dce2d8]">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#65736b]">07 / Le porte di ingresso</p>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">Da dove vuoi partire?</h2>
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
+        <% [
+          ["Voglio partecipare o proporre attività e luoghi →", "Il Giardino del Corpo", giardino_del_corpo_path],
+          ["Voglio comprendere il mio corpo →", "PosturaCorretta", "https://posturacorretta.org"],
+          ["Lavoro nel digitale e voglio collaborare →", "Rails4Business", rails4b_path],
+          ["Opero nella salute o nel benessere →", "Percorso Integrato", percorso_integrato_path],
+          ["Ho un’idea o un progetto da costruire →", "GeneraImpresa", genera_impresa_path],
+          ["Voglio conoscere la rete →", "FlowPulse", flowpulse_global_network_path]
+        ].each do |label, brand, url| %>
+          <%= link_to url, class: "flex flex-col gap-1 rounded-xl border border-[#dce2d8] bg-white p-6 hover:border-[#347452] hover:text-[#347452]" do %>
+            <strong><%= label %></strong>
+            <span class="text-sm text-[#65736b]"><%= brand %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </section>
 
-  <footer class="border-t border-slate-200 px-5 py-6"><div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-5 text-sm"><%= render "shared/changelog_footer_link" %><a href="https://github.com/rails4business/flowpulse_v5_kamal" target="_blank" rel="noopener noreferrer" class="font-bold text-slate-600 hover:text-blue-700">Codice su GitHub ↗</a><% if Current.user&.superadmin_user? %><%= link_to "Prototipo progetti e sovranità", admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html"), class: "font-bold text-violet-700 hover:text-violet-900" %><% end %></div></footer>
+  <section class="bg-[#233b35] text-center text-white">
+    <div class="mx-auto max-w-4xl px-5 py-14 sm:px-8 sm:py-20">
+      <h2 class="text-3xl font-semibold tracking-tight sm:text-5xl">La vita non è un progetto già scritto.</h2>
+      <p class="mx-auto mt-5 max-w-3xl leading-7 text-[#d8e4d8]">FlowPulse non vuole organizzare la vita delle persone, ma creare le condizioni affinché possa organizzarsi, esprimersi ed evolvere. Nuove persone, nuovi luoghi, nuove collaborazioni e nuovi progetti possono contribuire alla vitalità dell’insieme.</p>
+      <%= link_to "Esplora la rete FlowPulse →", flowpulse_global_network_path, class: "mt-7 inline-flex rounded-lg border border-white bg-white px-6 py-3 text-sm font-bold text-[#233b35] hover:bg-[#e9eee3]" %>
+    </div>
+  </section>
+
+  <footer class="px-5 py-8 text-sm text-[#65736b]">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5">
+      <strong class="text-[#233b35]">FlowPulse · Ritmo, flusso e relazione</strong>
+      <span>Infrastruttura digitale sviluppata da <%= link_to "Rails4Business", rails4b_path, class: "underline hover:text-[#347452]" %></span>
+      <div class="flex flex-wrap items-center gap-5"><%= render "shared/changelog_footer_link" %><a href="https://github.com/rails4business/flowpulse_v5_kamal" target="_blank" rel="noopener noreferrer" class="font-bold hover:text-[#347452]">Codice su GitHub ↗</a><% if Current.user&.superadmin_user? %><%= link_to "Prototipo progetti e sovranità", admin_prototype_path(path: "viste_html/flowpulse_sovranita_progetti_community.html"), class: "font-bold text-violet-700 hover:text-violet-900" %><% end %></div>
+    </div>
+  </footer>
 </main>

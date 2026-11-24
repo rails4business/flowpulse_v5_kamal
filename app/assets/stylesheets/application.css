@@ -5983,6 +5983,9 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .pc-program-stepper__step strong { display: block; margin-top: .08rem; font-size: .76rem; line-height: 1.25; }
 .pc-program-stepper__step.is-selected { background: #eff6ff; color: #1d4ed8; }
 .pc-program-stepper__step.is-parent-selected { color: #1d4ed8; }
+.pc-program-module__show-link { min-width: 0; color: inherit; text-decoration: none; }
+.pc-program-module__show-link:hover strong { color: #1d4ed8; text-decoration: underline; text-underline-offset: .18em; }
+.pc-program-module__show-link:focus-visible { border-radius: .35rem; outline: 2px solid #2563eb; outline-offset: 3px; }
 .pc-program-stepper__step--lesson { margin-left: .8rem; grid-template-columns: 1.15rem minmax(0, 1fr); }
 .pc-program-stepper__open { color: #94a3b8; font-size: .7rem; }
 .pc-program-stepper__step--lesson.is-selected { background: #f5f3ff; color: #6d28d9; }

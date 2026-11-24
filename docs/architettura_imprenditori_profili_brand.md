@@ -2,24 +2,27 @@
 
 Stato analizzato il 23 novembre 2026, con caso guida Elisa Corubolo / Radioestesia e Benessere.
 
-## Decisione terminologica
+## Decisione sui ruoli
 
-Nell'interfaccia il ruolo si chiama **Imprenditore**.
+Non si usa un ruolo generico **Imprenditore** o `creator_of_worlds`. Si assegnano ruoli
+espliciti e contestuali all'ecosistema:
 
-Non conviene reintrodurre `creator_of_worlds`:
+- `creator_generaimpresa`;
+- `insegnante_posturacorretta`;
+- `professionista_percorso_integrato`;
+- `professionista_rails4business`;
+- `organizzatore_eventi_ilgiardinodelcorpo`.
+
+Non conviene reintrodurre `creator_of_worlds` perché:
 
 - nel codice attuale è un valore legacy convertito automaticamente in `ideatore`;
 - confonde il ruolo che governa l'intero ecosistema con chi governa uno o più Brand;
 - non distingue la persona professionista dal perimetro che può amministrare;
 - è poco adatto a GeneraImpresa e alla futura delega di responsabilità.
 
-Nel codice il valore è ancora `creator`; può restare temporaneamente come chiave tecnica
-compatibile, mostrando ovunque l'etichetta **Imprenditore**. In una migrazione successiva
-potrà diventare `entrepreneur`/`imprenditore`, mantenendo gli alias delle vecchie route.
-
-La capacità importante non deriva dal nome del ruolo ma dal perimetro assegnato:
-l'Imprenditore amministra determinati Brand e può assegnare ruoli subordinati al loro
-interno. Non diventa proprietario indistinto di tutti i Node dell'Ideatore.
+Questi ruoli usano `RoleAssignment(role: :operator, role_operator: codice)` con
+`context` uguale al Node dell'ecosistema e `parent` uguale al suo Ideatore. La capacità
+deriva quindi dal codice e dal perimetro assegnato, non da un titolo generico.
 
 ## Concetti da tenere separati
 
@@ -51,11 +54,11 @@ interno. Non diventa proprietario indistinto di tutti i Node dell'Ideatore.
 - contiene progetti, contenuti, processi, richieste e ruoli;
 - deve avere un amministratore/proprietario esplicito, non dedotto dal dominio.
 
-### Ruolo Imprenditore
+### Ruolo contestuale
 
 È la capacità di governo e delega.
 
-- viene assegnato a un `Profile`;
+- viene assegnato a un `Profile` (per Elisa: `creator_generaimpresa`);
 - deve avere come parent l'`ideatore` che lo abilita;
 - deve essere collegato al Brand o ai Brand amministrati;
 - può assegnare soltanto ruoli subordinati entro quei Brand;
@@ -64,9 +67,8 @@ interno. Non diventa proprietario indistinto di tutti i Node dell'Ideatore.
 ## Gerarchia proposta
 
 ```text
-Ideatore FlowPulse / MarkPostura
-└── Imprenditore: Elisa Corubolo
-    ├── Brand professionale: Elisa / Radioestesia professionista
+Ideatore GeneraImpresa
+└── creator_generaimpresa: Elisa Corubolo
     └── Brand progetto: Radioestesia e Benessere
         ├── Responsabile
         ├── Digital
@@ -74,10 +76,8 @@ Ideatore FlowPulse / MarkPostura
         └── Collaboratori futuri
 ```
 
-L'assegnazione Imprenditore è globale soltanto come identità attivabile; i poteri concreti
-devono essere verificati sui Brand amministrati. Per la delega è preferibile usare
-`RoleAssignment.context = brand_node` per i ruoli subordinati, mantenendo il parent verso
-l'assegnazione Imprenditore o verso l'Ideatore secondo la migrazione scelta.
+Il Brand professionale può essere aggiunto, ma non è obbligatorio. I poteri concreti
+devono sempre essere verificati sul contesto amministrato.
 
 ## Caso Elisa Corubolo
 
@@ -86,8 +86,8 @@ l'assegnazione Imprenditore o verso l'Ideatore secondo la migrazione scelta.
 - la richiesta può essere collegata a `requester_profile` tramite invito accettato o
   `BrandRequestProfileLinker`;
 - nella pagina richieste compare `👤 Profilo: Elisa Corubolo (@elisa_corubolo)`;
-- questa indicazione è ancora testo e non apre una scheda amministrativa;
-- il ruolo interno `creator` esiste ed è mostrato come Imprenditore;
+- per il superadmin questa indicazione apre la scheda amministrativa della persona;
+- il ruolo previsto per Elisa è `creator_generaimpresa`;
 - nessun utente usa ancora quel ruolo nel piano originario;
 - `radioestesia` è attualmente un solo Node `professional`, privato e figlio di
   `brand-in-costruzione`;
@@ -101,19 +101,18 @@ l'assegnazione Imprenditore o verso l'Ideatore secondo la migrazione scelta.
 Elisa deve avere:
 
 1. il proprio `Profile`;
-2. un Node professionale collegato tramite `Profile#primary_node`;
-3. un `RoleAssignment` Imprenditore sotto l'Ideatore;
-4. un distinto Node progetto `radioestesiaebenessere`, amministrato da Elisa;
-5. inizialmente nessun dominio sul Brand progetto;
-6. in futuro il dominio collegato al Brand progetto senza cambiare profilo o ruolo;
-7. la possibilità di assegnare ruoli subordinati soltanto dentro Radioestesia e Benessere.
+2. un `RoleAssignment` operatore `creator_generaimpresa` nel contesto GeneraImpresa;
+3. il Node progetto `radioestesiaebenessere`, amministrato da Elisa;
+4. inizialmente nessun dominio sul Brand progetto;
+5. in futuro il dominio collegato al Brand progetto senza cambiare profilo o ruolo;
+6. la possibilità futura di assegnare ruoli subordinati soltanto nel proprio perimetro.
 
-Il Node professionale non deve essere usato contemporaneamente come Brand progetto. Il
-nome pubblico può coincidere, ma le responsabilità e i collegamenti sono diversi.
+Il Node professionale è facoltativo. Se verrà creato, non dovrà essere usato
+contemporaneamente come Brand progetto.
 
 ## Pannello GeneraImpresa
 
-La sezione consigliata è **Imprenditori**, non “Creator of World”.
+La sezione consigliata è **Creator GeneraImpresa**, non “Creator of World”.
 
 Ogni scheda Imprenditore dovrebbe mostrare:
 
@@ -143,7 +142,7 @@ Azioni previste nella scheda amministrativa:
 - vedere User, Profile e verifica email;
 - vedere richieste e accessi ai Brand;
 - collegare o correggere il Node professionale principale;
-- assegnare/revocare il ruolo Imprenditore;
+- assegnare/revocare il ruolo `creator_generaimpresa`;
 - collegare i Brand progetto amministrati;
 - non modificare automaticamente proprietà o gerarchie dei Node.
 
@@ -171,26 +170,24 @@ Serve un servizio unico, per esempio `BrandRoleAssignmentService`, che verifichi
 
 ## Interventi proposti
 
-### Fase 1 — Scheda profilo superadmin
+### Fase 1 — Scheda profilo superadmin (implementata)
 
 - aggiungere route e controller per la scheda amministrativa del profilo;
 - rendere cliccabile il profilo dalla tabella delle richieste;
 - mostrare ruoli, Node professionale, BrandAccess e Brand amministrati;
 - aggiungere test di autorizzazione superadmin.
 
-### Fase 2 — Assegnazione Imprenditore
+### Fase 2 — Assegnazione Creator GeneraImpresa (implementata per il superadmin)
 
-- mantenere temporaneamente la chiave tecnica `creator`;
-- mostrare esclusivamente “Imprenditore” nell'interfaccia;
-- aggiungere azione superadmin per assegnare il ruolo sotto un Ideatore;
+- usare `operator` con `role_operator: creator_generaimpresa`;
+- aggiungere l'azione superadmin per assegnare il ruolo sotto l'Ideatore di GeneraImpresa;
 - non usare `creator_of_worlds`, che resta alias legacy di `ideatore`;
 - assegnare Elisa soltanto dopo aver verificato il suo Profile reale.
 
-### Fase 3 — Separazione dei due Node Radioestesia
+### Fase 3 — Node Radioestesia
 
-- rinominare/chiarire il Node professionale esistente;
-- collegarlo a `elisa_corubolo` come `primary_node`;
-- creare un distinto Node progetto Radioestesia e Benessere;
+- decidere se mantenere il Node professionale esistente, che resta facoltativo;
+- creare o consolidare il Node progetto Radioestesia e Benessere;
 - collegare il progetto a Elisa tramite amministrazione/ownership esplicita;
 - mantenere il progetto in costruzione e senza dominio;
 - sostituire gradualmente l'eccezione YAML `panel_usernames` con autorizzazioni database.
@@ -235,10 +232,7 @@ Questa architettura deve valere per ogni persona e ogni Brand:
 
 ## Decisioni ancora da confermare
 
-1. Nome tecnico futuro: `entrepreneur` oppure `brand_owner`; nell'interfaccia resta
-   **Imprenditore**.
-2. Se il Node professionale di Elisa debba chiamarsi “Elisa Corubolo” oppure
-   “Radioestesia e Benessere · professionista”.
-3. Slug del nuovo Brand progetto: proposta `radioestesiaebenessere`.
-4. Quali ruoli un Imprenditore può delegare autonomamente.
-5. Se un Brand progetto possa avere più Imprenditori con pari responsabilità.
+1. Se mantenere e collegare anche un Node professionale per Elisa.
+2. Slug definitivo del Brand progetto: proposta `radioestesiaebenessere`.
+3. Quali ruoli un `creator_generaimpresa` potrà delegare autonomamente.
+4. Se un Brand progetto possa avere più creator con pari responsabilità.

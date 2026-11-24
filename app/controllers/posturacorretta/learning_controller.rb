@@ -428,6 +428,9 @@ module Posturacorretta
     @course_show_node = Node.find_by(show_content_id: content.id, view_type: "course")
     return unless @course_show_node
 
+    @course_line_node = @course_show_node.self_and_ancestors.find(&:course_line?)
+    @course_line_courses = @course_line_node&.ordered_line_nodes || []
+
     preview = Current.user&.superadmin_user?
     return unless content.published_for_public? || preview
 

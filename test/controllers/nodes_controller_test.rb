@@ -385,6 +385,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".pc-home-journey__aside", text: /Inizia con PosturaCorretta/
     assert_select ".pc-home-journey__aside .pc-program-stepper__step--course", count: 3
     assert_select ".pc-home-journey__aside .pc-program-stepper__step--lesson", count: 3
+    assert_select ".pc-home-journey__aside a[aria-label='Apri il corso Inizia il percorso'][href='#{posturacorretta_course_path(corso: "introduzione-percorso-integrato-posturacorretta")}']", count: 1
     assert_select ".pc-home-panel--lezioni", text: /Lezione 1/
     assert_select ".pc-program-stepper__step[href^='#{posturacorretta_postura_recupero_path}']", minimum: 1
     assert_select ".node-public-reading-nav-static", count: 0
@@ -430,6 +431,36 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     end
     assert_select ".pc-intro-program-list", count: 0
     assert_select "ol", text: /Percorso Integrato · Tre percorsi complementari/
+  end
+
+  test "journey course slugs redirect to the canonical course show while lessons stay in the journey" do
+    import_posturacorretta_contents
+    brand = Node.find_by!(slug: "posturacorretta")
+    brand.update!(status: "published", visibility: "public")
+    Domain.create!(
+      hostname: "posturacorretta-course-redirect.test", node: brand, role_assignment: brand.role_assignment,
+      path_slug: "posturacorretta", home_mode: "node", locale: "it"
+    ) unless Domain.find_for_path_slug("posturacorretta")
+    line = Node.find_or_create_by!(slug: "linea-course-redirect-test") do |node|
+      node.title = "Linea test"
+      node.view_type = "course_line"
+      node.parent = brand
+      node.role_assignment = brand.role_assignment
+    end
+    course = Node.find_or_create_by!(slug: "corso-introduzione-al-percorso-integrato") do |node|
+      node.title = "Inizia il percorso"
+      node.view_type = "course"
+      node.parent = line
+      node.role_assignment = brand.role_assignment
+    end
+    content = Content.find_by!(key: "introduzione-percorso-integrato-posturacorretta")
+    course.outgoing_content_links.find_or_create_by!(target_content: content, kind: "show")
+    course.update!(show_content: content)
+
+    get posturacorretta_postura_recupero_url(tappa: course.slug, tab: "online")
+
+    assert_redirected_to posturacorretta_course_url(corso: content.slug)
+    assert_response :moved_permanently
   end
 
   test "traveler with ancestor brand access can view a subscription node" do
