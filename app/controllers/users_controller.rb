@@ -2,28 +2,27 @@ class UsersController < ApplicationController
   layout "landing"
 
   allow_unauthenticated_access only: %i[ new create ]
+  before_action :remember_pending_invitation!, only: %i[new create]
   before_action :redirect_authenticated_user_from_authentication!, only: %i[new create]
   before_action :require_registration_invitation!, only: :new
 
   def new
     persist_authentication_context!
     persist_authentication_return_to!
-    remember_pending_invitation!
-    @user = User.new
-    @user.email_address = pending_invitation.email_address if pending_invitation.present?
-    @user.build_profile
+    @user = User.find_by(email_address: pending_invitation&.email_address) || User.new(email_address: pending_invitation&.email_address)
+    @user.build_profile unless @user.profile
     @subscription_domain = pending_subscription_domain
   end
 
   def create
     persist_authentication_context!
     persist_authentication_return_to!
-    remember_pending_invitation!
-    @user = User.new(user_params)
-    @user.build_profile
+    submitted = user_params
     brand_domain = authentication_context_domain
     domain = pending_subscription_domain
     invitation = pending_invitation
+    @user = User.find_by(email_address: invitation&.email_address) || User.new(email_address: submitted[:email_address])
+    @user.build_profile unless @user.profile
     unless invitation&.pending?
       @user.errors.add(:base, "Per creare un account serve un invito personale valido.")
       @subscription_domain = pending_subscription_domain
@@ -34,24 +33,44 @@ class UsersController < ApplicationController
     target_brand_node = invitation&.brand_node || target_domain&.node
 
     begin
-      if invitation.present? && !invitation.email_address.casecmp?(@user.email_address)
+      if invitation.present? && !invitation.email_address.casecmp?(submitted[:email_address].to_s)
         @user.errors.add(:email_address, "deve coincidere con l’indirizzo invitato")
         raise ActiveRecord::RecordInvalid, @user
       end
 
       brand_access = nil
+      brand_credential = nil
       User.transaction do
-        @user.registration_status = "active"
-        @user.email_verified_at = nil
-        @user.save!
+        if @user.new_record?
+          generated_password = SecureRandom.base58(48)
+          @user.password = generated_password
+          @user.password_confirmation = generated_password
+          @user.registration_status = "active"
+          @user.email_verified_at = nil
+          @user.save!
+        elsif !@user.active_registration?
+          @user.errors.add(:base, "Questo account globale è sospeso.")
+          raise ActiveRecord::RecordInvalid, @user
+        end
         profile = @user.create_profile!(display_name: @user.email_address.to_s.split("@").first) unless @user.profile
         profile ||= @user.profile
         brand_access = grant_profile_brand_access_for_node!(profile, target_brand_node, source_domain: target_domain)
+        if brand_access.brand_credential.present?
+          @user.errors.add(:base, "Esiste già una credenziale per questo Brand. Accedi con la password esistente.")
+          raise ActiveRecord::RecordInvalid, @user
+        end
+        brand_credential = brand_access.create_brand_credential!(
+          brand_node: target_brand_node,
+          email_address: invitation.email_address,
+          password: submitted[:password],
+          password_confirmation: submitted[:password_confirmation],
+          email_verified_at: Time.current
+        )
         invitation.accept!(@user)
         complete_access_request_for!(invitation)
       end
 
-      start_new_session_for(@user, brand_access:, authentication_method: "invitation")
+      start_new_session_for(@user, brand_access:, brand_credential:, authentication_method: "brand_invitation")
       session.delete(:pending_brand_invitation_token)
       redirect_to(safe_authentication_return_to(session.delete(:return_to_after_authenticating)) || target_domain&.auth_default_path.presence || root_path,
         notice: "Account creato. Ora hai accesso a #{target_domain&.authentication_sender_name || target_brand_node.title}.")

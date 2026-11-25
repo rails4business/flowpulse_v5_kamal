@@ -304,6 +304,12 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     admin = User.create!(email_address: "posturacorretta-admin-publication@example.com", password: "password123", password_confirmation: "password123")
     admin_profile = admin.create_profile!(display_name: "Admin PosturaCorretta", username: "pc_admin_pub")
     RoleAssignment.create!(profile: admin_profile, context: brand, role: :admin, parent: brand_owner)
+    admin_access = BrandAccess.create!(profile: admin_profile, source_domain: @domain)
+    admin_access.create_brand_credential!(
+      brand_node: brand,
+      email_address: admin.email_address,
+      password: "password123"
+    )
     delete session_url
     post session_url, params: { email_address: admin.email_address, password: "password123" }
 
@@ -330,7 +336,12 @@ class DataCommitmentsControllerTest < ActionDispatch::IntegrationTest
     creator_profile = creator.create_profile!(display_name: "Responsabile editoriale", username: "pc_manager_pub")
     editorial_node = Node.create!(title: "Nodo editoriale delegato", slug: "capitolo-manager-publication", parent: brand, role_assignment: brand_owner, node_type: :project)
     RoleAssignment.create!(profile: creator_profile, role: :responsabile, context: editorial_node, parent: brand_owner)
-    BrandAccess.create!(profile: creator_profile, source_domain: @domain)
+    creator_access = BrandAccess.create!(profile: creator_profile, source_domain: @domain)
+    creator_access.create_brand_credential!(
+      brand_node: brand,
+      email_address: creator.email_address,
+      password: "password123"
+    )
     assert editorial_node.administered_by?(creator)
     delete session_url
     post session_url, params: { email_address: creator.email_address, password: "password123" }

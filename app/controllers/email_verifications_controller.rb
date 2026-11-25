@@ -16,6 +16,7 @@ class EmailVerificationsController < ApplicationController
   def update
     user = @verification.user
     brand_access = nil
+    brand_credential = nil
 
     User.transaction do
       @verification.lock!
@@ -29,6 +30,16 @@ class EmailVerificationsController < ApplicationController
           @verification.brand_node,
           source_domain: @verification.requested_domain
         )
+        brand_credential = brand_access.brand_credential
+        if brand_credential&.status == "pending_verification"
+          unless brand_credential.email_address.casecmp?(user.email_address)
+            raise ActiveRecord::RecordInvalid, brand_credential
+          end
+          brand_credential.update!(
+            status: "active",
+            email_verified_at: Time.current
+          )
+        end
       end
       invitation = BrandInvitation.find_by(id: @verification.metadata["brand_invitation_id"])
       invitation&.accept!(user)
@@ -38,7 +49,8 @@ class EmailVerificationsController < ApplicationController
     start_new_session_for(
       user,
       brand_access: brand_access,
-      authentication_method: "verified_email"
+      brand_credential: brand_credential&.active? ? brand_credential : nil,
+      authentication_method: brand_credential&.active? ? "brand_verified_email" : "verified_email"
     )
     session.delete(:pending_brand_invitation_token)
     redirect_to verification_destination, notice: verification_notice

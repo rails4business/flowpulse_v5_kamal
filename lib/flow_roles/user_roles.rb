@@ -43,6 +43,14 @@ module FlowRoles
     end
 
     def superadmin_user?
+      system_superadmin? || legacy_superadmin?
+    end
+
+    def system_superadmin?
+      profile&.system_role_assignments&.currently_effective&.superadmin&.exists? || false
+    end
+
+    def legacy_superadmin?
       self[:superadmin] == true || self[:superadmin] == 1
     end
 

@@ -33,7 +33,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get brand_invitation_path(raw_token)
 
     assert_no_emails do
-      assert_difference [-> { User.count }, -> { Profile.count }, -> { BrandAccess.count }, -> { Session.count }], 1 do
+      assert_difference [-> { User.count }, -> { Profile.count }, -> { BrandAccess.count }, -> { BrandCredential.count }, -> { Session.count }], 1 do
         assert_no_difference -> { EmailVerification.count } do
           post users_path, params: { invitation: raw_token, user: { email_address: "invited-new@example.com", password: "password123", password_confirmation: "password123" } }
         end
@@ -44,13 +44,48 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert user.active_registration?
     assert_not user.email_verified?
     assert_equal "accepted", invitation.reload.status
-    assert_equal @node, user.profile.brand_accesses.active.first.brand_node
-    assert_equal "invitation", user.sessions.last.authentication_method
+    access = user.profile.brand_accesses.active.first
+    assert_equal @node, access.brand_node
+    assert access.brand_credential.authenticate("password123")
+    assert_not user.authenticate("password123")
+    assert_equal "brand_invitation", user.sessions.last.authentication_method
+    assert_equal access.brand_credential, user.sessions.last.brand_credential
     assert_equal "accepted", access_request.reload.status
     assert access_request.resolved_at.present?
     assert_equal user.profile, access_request.requester_profile
     assert_equal contact, access_request.participant_contact
     assert_redirected_to "/posturacorretta/dashboard"
+  end
+
+
+  test "existing global user creates a separate credential for the invited brand" do
+    existing = User.create!(email_address: "existing-global@example.com", password: "global-password")
+    existing.create_profile!(display_name: "Existing global")
+    invitation, raw_token = BrandInvitation.issue!(
+      brand_node: @node,
+      source_domain: @domain,
+      email_address: existing.email_address,
+      invited_by_user: @owner
+    )
+    get brand_invitation_path(raw_token)
+
+    assert_no_difference -> { User.count } do
+      assert_difference [-> { BrandAccess.count }, -> { BrandCredential.count }, -> { Session.count }], 1 do
+        post users_path, params: {
+          invitation: raw_token,
+          user: {
+            email_address: existing.email_address,
+            password: "brand-password",
+            password_confirmation: "brand-password"
+          }
+        }
+      end
+    end
+
+    credential = existing.profile.brand_accesses.find_by!(brand_node: @node).brand_credential
+    assert credential.authenticate("brand-password")
+    assert existing.authenticate("global-password")
+    assert_equal "accepted", invitation.reload.status
   end
 
   test "invitation email cannot be replaced during registration" do

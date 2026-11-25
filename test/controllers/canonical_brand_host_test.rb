@@ -43,7 +43,12 @@ class CanonicalBrandHostTest < ActionDispatch::IntegrationTest
       active: true,
       auth_slug: "posturacorretta"
     )
-    BrandAccess.create!(profile:, brand_node: node, source_domain: domain, status: :active, joined_at: Time.current)
+    access = BrandAccess.create!(profile:, brand_node: node, source_domain: domain, status: :active, joined_at: Time.current)
+    access.create_brand_credential!(
+      brand_node: node,
+      email_address: profile_user.email_address,
+      password: "password123"
+    )
     host! "posturacorretta.org"
     post session_url, params: { email_address: profile_user.email_address, password: "password123" }
 

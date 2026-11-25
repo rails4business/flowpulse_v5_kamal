@@ -1,5 +1,12 @@
 class Profile < ApplicationRecord
   belongs_to :user
+  has_one :platform_credential, dependent: :destroy
+  has_many :system_role_assignments, dependent: :destroy
+  has_many :assigned_system_role_assignments,
+           class_name: "SystemRoleAssignment",
+           foreign_key: :assigned_by_profile_id,
+           dependent: :nullify
+  has_many :sessions, dependent: :nullify
   belongs_to :primary_node, class_name: "Node", optional: true, inverse_of: :primary_professional_profile
   has_many :role_assignments, dependent: :destroy
   has_many :assigned_role_assignments,

@@ -56,6 +56,13 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
   private
 
   def sign_in(user)
+    domain = Domain.find_by!(hostname: URI.parse(session_url).host)
+    access = user.profile.brand_accesses.find_by!(brand_node: domain.node)
+    access.create_brand_credential!(
+      brand_node: domain.node,
+      email_address: user.email_address,
+      password: "password123"
+    ) unless access.brand_credential
     post session_url, params: { email_address: user.email_address, password: "password123" }
   end
 end

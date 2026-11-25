@@ -1,6 +1,7 @@
-# Profili, BrandAccess, ruoli e Node
+# Identità, autenticazione, BrandAccess, ruoli e Node
 
-Documento architetturale unico di riferimento.
+Documento architetturale unico di riferimento. Autenticazione, autorizzazione, ruoli e navigazione
+devono evolvere con un solo piano di migrazione.
 
 - Prima analisi: 23 novembre 2026.
 - Revisione completa: 24 novembre 2026.
@@ -9,13 +10,16 @@ Documento architetturale unico di riferimento.
 
 ## Decisione sintetica
 
-Il modello distingue quattro elementi:
+Il modello distingue sette elementi:
 
-1. `User` autentica la persona e conserva soltanto i privilegi di sistema, come `superadmin`.
-2. `Profile` identifica la persona che riceve accessi e incarichi.
-3. `BrandAccess` autorizza quel profilo a entrare nel perimetro di un Brand.
-4. `RoleAssignment` stabilisce cosa può fare quel profilo, su quale Node e attraverso quale
+1. `Profile` è l'identità globale e identifica la persona.
+2. `User` è un contenitore tecnico transitorio; per ora conserva login e privilegio del superadmin.
+3. `BrandAccess` autorizza un Profile a entrare nel perimetro di un Brand.
+4. `BrandCredential` autentica quel Profile con email e password specifiche del Brand.
+5. `RoleAssignment` stabilisce cosa può fare quel Profile, su quale Node e attraverso quale
    `BrandAccess`.
+6. `Session` registra Profile, credenziale e perimetro autenticato.
+7. `Node` rappresenta Brand, progetti e risorse governate.
 
 Regola fondamentale:
 
@@ -32,11 +36,12 @@ devono essere migrati e rimossi; `superadmin` resta un privilegio di sistema.
 
 ## 1. Entità e responsabilità
 
-### User
+### User — transitorio
 
-`User` gestisce autenticazione e privilegi globali.
+`User` resta temporaneamente per compatibilità con associazioni e codice legacy.
 
-- conserva `superadmin`;
+- conserva per ora `superadmin` e la relativa password di piattaforma;
+- la password diventa opzionale e non viene generata per gli utenti ordinari;
 - non è la fonte dei ruoli di Brand;
 - non deve contenere duplicati come `role`, `active_role`, `creator` o `digital`;
 - può mantenere temporaneamente `current_role_assignment_id` come selezione del contesto attivo,
@@ -45,11 +50,14 @@ devono essere migrati e rimossi; `superadmin` resta un privilegio di sistema.
 Il superadmin può configurare qualsiasi risorsa senza dipendere da un `BrandAccess`, ma le
 assegnazioni create per altre persone devono rispettare il nuovo modello.
 
-### Profile
+Quando `superadmin` sarà migrato a una credenziale e a un ruolo di sistema, le dipendenze residue
+potranno essere spostate su Profile e User potrà essere eliminato.
+
+### Profile — identità globale
 
 `Profile` rappresenta la persona nel dominio applicativo.
 
-- appartiene a un `User`;
+- durante la transizione appartiene a un `User`; questa dipendenza non fa parte del modello finale;
 - può essere pubblico o privato;
 - riceve `BrandAccess` e `RoleAssignment`;
 - può essere associato a un Node professionale principale;
@@ -76,6 +84,63 @@ assegnazioni create per altre persone devono rispettare il nuovo modello.
 
 Un accesso revocato rende immediatamente inefficaci tutte le assegnazioni che ne dipendono, anche se
 restano registrate per la storia.
+
+### BrandCredential
+
+`BrandCredential` autentica un Profile nel perimetro di un singolo Brand.
+
+- appartiene a un solo BrandAccess;
+- conserva email normalizzata, password cifrata, stato, verifica e ultimo accesso;
+- l'email è unica nel Brand, non globalmente e non per singolo hostname;
+- domini canonici, `www` e alias dello stesso Brand condividono la credenziale;
+- la stessa email può avere password differenti in Brand differenti;
+- sospensione o revoca della credenziale invalida le Session collegate.
+
+`BrandAccess` risponde «può entrare?»; `BrandCredential` risponde «ha dimostrato la propria
+identità per questo Brand?». Le password non vanno conservate sul BrandAccess.
+
+### Session
+
+La Session Brand collega:
+
+- `profile_id`, identità autenticata;
+- `brand_access_id`, perimetro autorizzato;
+- `brand_credential_id`, credenziale utilizzata;
+- temporaneamente `user_id`, finché il codice legacy lo richiede.
+
+Il dominio determina automaticamente il Brand. La Session non può essere riutilizzata in un Brand
+diverso e diventa inefficace quando BrandAccess o BrandCredential non sono più attivi. Il login
+FlowPulse del superadmin resta temporaneamente una Session di piattaforma basata su User.
+
+### Modello finale dell'identità
+
+```text
+Profile
+├── ProfileEmail / identità verificata
+├── BrandAccess
+│   ├── BrandCredential
+│   └── RoleAssignment
+├── eventuale PlatformCredential
+└── eventuale SystemRoleAssignment
+```
+
+`PlatformCredential` e `SystemRoleAssignment` costituiscono il primo passaggio della nuova
+migrazione. Servono a isolare subito password e privilegio del superadmin senza trasferire
+credenziali Brand sul Profile. La migrazione è inizialmente additiva: il vecchio accesso User resta
+come fallback finché il nuovo login di piattaforma non è stato verificato in locale e produzione.
+
+Il Profile necessita inoltre di un'identità verificata indipendente dalle credenziali Brand. Il
+nome definitivo (`ProfileEmail`, `ProfileIdentity` o equivalente) va confermato nel relativo gate,
+ma la responsabilità è già stabilita:
+
+- collegare uno o più indirizzi email verificati alla stessa persona;
+- impedire che la sola uguaglianza testuale di un'email non verificata unisca due Profile;
+- permettere a BrandCredential differenti di usare lo stesso indirizzo o indirizzi differenti;
+- sostituire il vincolo globale oggi nascosto in `users.email_address` prima di eliminare User.
+
+Durante la prima transizione `users.email_address` resta il ponte legacy per riconoscere il Profile.
+Non va ancora reso nullable né privato del vincolo univoco. La sua eliminazione avverrà soltanto
+dopo l'introduzione e il backfill dell'identità verificata del Profile.
 
 ### RoleAssignment
 
@@ -113,7 +178,7 @@ Node verificabile.
 
 | Codice | Collocazione | Significato |
 |---|---|---|
-| `superadmin` | `users.superadmin` | governo globale della piattaforma |
+| `superadmin` | temporaneamente `users.superadmin` | governo globale della piattaforma |
 
 Non è un `RoleAssignment`, non è delegabile da un Brand e non richiede BrandAccess.
 
@@ -235,7 +300,8 @@ Il controllo riceve almeno azione, profilo e Node. Non basta mai
 
 ### Ingresso
 
-1. La persona si registra e ottiene User e Profile.
+1. La persona accetta un invito e ottiene Profile e, durante la transizione, uno User tecnico senza
+   password globale.
 2. Presenta o accetta una richiesta per GeneraImpresa.
 3. Il superadmin verifica identità, richiesta e perimetro.
 4. L'accettazione crea o attiva il BrandAccess GeneraImpresa.
@@ -383,18 +449,31 @@ Da sostituire almeno: `creator_user?`, `digital_user?`, `responsabile_user?`, `t
 La migrazione è incrementale: nuovo modello accanto al legacy, spostamento di dati e letture,
 eliminazione finale delle colonne obsolete.
 
-### Sequenza operativa concordata
+### Sequenza operativa unificata
 
-1. analizzare schema, modelli, configurazioni, chiamanti e dati locali/produzione;
-2. scrivere test di caratterizzazione sui comportamenti legacy indispensabili;
-3. introdurre il registro unico dei nuovi ruoli e gli alias temporanei;
-4. aggiungere lo schema compatibile (`responsible_profile_id`, `brand_access_id`, stato e audit);
-5. introdurre manager unico e policy, mantenendo il bypass del superadmin;
-6. aggiornare la scheda superadmin per accesso, incarico, affidamento e trasferimento;
-7. migrare per primo il caso Elisa / Radioestesia e Benessere;
-8. migrare progressivamente letture, scritture e dati degli altri Brand;
-9. rendere obbligatori i nuovi vincoli;
-10. eliminare ruoli, colonne, helper e configurazioni legacy soltanto a migrazione conclusa.
+Le parti già implementate restano in funzione. Il lavoro nuovo segue questi blocchi, senza iniziare
+la rimozione di User o dei ruoli legacy prima che il blocco precedente sia verificato.
+
+1. **Fondazioni di accesso e ruoli — eseguito:** BrandAccess, registro ruoli, RoleAssignment
+   contestuali, manager/policy, responsabile Node e pannelli iniziali.
+2. **Isolamento superadmin — implementato localmente, da collaudare in produzione:**
+   PlatformCredential, SystemRoleAssignment e Session di piattaforma; backfill dell'attuale
+   superadmin e doppio accesso temporaneo anti-lockout.
+3. **Autenticazione Brand — già iniziata localmente, da riprendere dopo il superadmin:**
+   BrandCredential, login e inviti per Brand, Session collegata
+   a Profile/accesso/credenziale, User ordinario senza password globale.
+4. **Verifica end-to-end:** migrazione e backfill, invito nuovo/esistente, login separato per due
+   Brand, revoca immediata, superadmin invariato, suite completa.
+5. **Identità verificata del Profile:** introdurre ProfileEmail/ProfileIdentity, collegare gli
+   indirizzi verificati e sostituire la ricerca globale basata su `users.email_address`.
+6. **Recupero credenziali:** reset e verifica email separati per BrandCredential; percorso distinto
+   per il superadmin.
+7. **Migrazione autorizzazioni legacy:** letture e aside solo da dominio, BrandAccess,
+   RoleAssignment corrente e capability; rimozione progressiva di `active_role`.
+8. **Consolidamento dei dati:** vincoli DB definitivi, classificazione dei record legacy e
+   cancellazione di alias/helper/configurazioni obsolete.
+9. **Eliminazione User:** rimuovere il fallback superadmin e le dipendenze residue soltanto dopo
+   tutti i backfill e i collaudi precedenti.
 
 ### Fase 0 — Inventario di produzione
 
@@ -524,7 +603,8 @@ Le interfacce amministrative non devono mostrare gli stessi dati in tutti i domi
 | `generaimpresa.it` | `imprenditore_generaimpresa` | soltanto progetti affidati, discendenti consentiti, persone e richieste comprese nel proprio perimetro |
 | altro Brand | responsabile delegato futuro | richieste, persone e accessi del solo Brand o sottoalbero autorizzato |
 
-La tabella globale **User + Profile** appartiene quindi a FlowPulse. La scheda globale della persona
+La tabella globale **Profile** appartiene quindi a FlowPulse e, durante la transizione, mostra anche
+lo User tecnico associato. La scheda globale della persona
 deve permettere al superadmin di tornare all'indice e di consultare separatamente:
 
 - dati dell'account User e stato della registrazione;
@@ -543,12 +623,12 @@ originale (dashboard, produzione, risorse, pagine, appunti, contenuti, mappe ruo
 import e strumenti). Questa pagina funziona da contenitore di migrazione: nessun collegamento viene
 perso mentre l'aside viene semplificato.
 
-### Ruolo globale dello User durante la migrazione
+### User e privilegi globali durante la migrazione
 
 La destinazione architetturale resta:
 
 - `users.superadmin` per il solo privilegio globale di sistema;
-- tutti gli altri User trattati come utenti ordinari (`traveler`) a livello globale;
+- tutti gli altri User sono contenitori tecnici senza password e senza ruolo operativo globale;
 - accesso ai Brand espresso da `BrandAccess`;
 - poteri operativi espressi da `RoleAssignment` contestuali.
 
@@ -557,12 +637,12 @@ migrazione può restare valorizzato a `superadmin` per il superadmin e a `travel
 altri, esclusivamente per compatibilità con codice legacy. Alla fine va rimosso insieme allo
 switcher dei vecchi ruoli.
 
-### Registrazione, invito e approvazione: comportamento attuale
+### Registrazione, invito e approvazione
 
 La registrazione pubblica libera è già disabilitata: `UsersController#new` e `#create` richiedono un
 `BrandInvitation` personale ancora valido e l'email inserita deve coincidere con quella invitata.
 
-Il comportamento corrente, però, considera l'invito come autorizzazione definitiva:
+Il comportamento legacy considera l'invito come autorizzazione definitiva:
 
 1. l'invito viene emesso per un indirizzo email e un Brand;
 2. la persona usa il link e crea User e Profile;
@@ -570,7 +650,9 @@ Il comportamento corrente, però, considera l'invito come autorizzazione definit
 4. crea o riattiva il BrandAccess;
 5. accetta l'invito e apre la sessione.
 
-Per questo possono esistere User attivi che il superadmin non ricorda di aver approvato
+La migrazione in corso sostituisce la password User ordinaria con BrandCredential e deve mantenere
+separati approvazione, BrandAccess e autenticazione. Per i dati storici possono comunque esistere
+User attivi che il superadmin non ricorda di aver approvato
 direttamente: possono provenire da inviti già emessi o da dati legacy/importati. Non significa che
 la registrazione fosse necessariamente aperta, ma l'indice globale deve rendere verificabile
 l'origine di ogni account.
@@ -593,8 +675,9 @@ Tenere distinti quattro eventi:
 
 1. **richiesta**: una persona domanda accesso a un Brand;
 2. **approvazione**: chi governa quel perimetro approva la richiesta;
-3. **invito/registrazione**: la persona crea o collega User e Profile;
-4. **accesso**: viene creato o attivato il BrandAccess approvato.
+3. **invito/identificazione**: la persona crea o collega il Profile e sceglie la credenziale Brand;
+4. **accesso**: viene creato o attivato il BrandAccess approvato;
+5. **sessione**: la BrandCredential autentica il Profile esclusivamente nel Brand richiesto.
 
 Una richiesta può essere eliminata definitivamente da chi amministra il relativo perimetro soltanto
 se non ha prodotto BrandAccessGrant, attività o inviti accettati. La cancellazione è destinata a spam
@@ -691,7 +774,8 @@ da conservare.
 
 ### Sequenza di implementazione della dashboard
 
-1. creare sotto FlowPulse l'indice globale User + Profile con filtri per stato, verifica e origine;
+1. creare sotto FlowPulse l'indice globale Profile, mostrando lo User tecnico durante la transizione,
+   con filtri per stato, verifica e origine;
 2. collegare indice, scheda globale Profile, BrandAccess e Node tramite breadcrumb coerenti;
 3. mostrare richieste e inviti di origine nella scheda della persona;
 4. aggiungere sospensione/riattivazione e soltanto dopo la cancellazione completa protetta;
@@ -727,13 +811,163 @@ da conservare.
 | Sezione “Persone del progetto” | implementata con revoca scoped |
 | Area superadmin Profile a tab | implementata: Riepilogo, BrandAccess e Node |
 | Index/show BrandAccess e Node con breadcrumb | implementati |
+| Modello BrandCredential | implementato localmente, non ancora consolidato |
+| Migrazione e backfill BrandCredential | implementati localmente, da verificare |
+| Login e inviti per Brand | implementati localmente; test mirati verdi |
+| Password User ordinaria rimossa | da completare |
+| `sessions.profile_id` | da implementare e sottoporre a backfill |
+| Reset password Brand | da implementare dopo il consolidamento del login |
+
+#### Pulizia dati di produzione — 25 novembre 2026
+
+Prima del rollout sono stati rimossi in una transazione gli User/Profile di prova 2, 3, 4 e 6,
+insieme a quattro Session e ai BrandAccess 2, 3 e 6. Richieste e inviti con valore storico sono
+rimasti conservati, scollegando i riferimenti alle persone eliminate.
+
+In produzione restano:
+
+- User/Profile 1, superadmin verificato;
+- User/Profile 5, Elisa Corubolo, email ancora da verificare;
+- BrandAccess 1 e 4 del superadmin;
+- BrandAccess 5 GeneraImpresa di Elisa.
+
+Il backfill BrandCredential assegna `pending_verification`, non `active`, agli accessi appartenenti
+a un indirizzo non ancora verificato. Elisa non potrà quindi autenticarsi con la nuova credenziale
+finché la verifica non sarà completata.
+
+### Gate di verifica prima dell'esecuzione
+
+Il piano non autorizza ancora l'esecuzione automatica delle modifiche elencate sotto. Prima occorre
+produrre una verifica del repository e dei dati, senza aggiungere nuove migrazioni o cambiare il
+comportamento applicativo:
+
+1. censire schema, vincoli e associazioni correnti di User, Profile, Session, BrandAccess,
+   BrandCredential, inviti, verifiche email e reset password;
+2. trovare tutti i punti che riconoscono `users.superadmin`, autenticano lo User globale o creano
+   Session di sistema, inclusi test, task, seed, console amministrative e import;
+3. verificare che ogni Profile abbia uno User coerente durante la transizione e definire i casi
+   senza Profile o con duplicati;
+4. verificare sui dati locali e di produzione quanti User ordinari dipendono ancora dalla password
+   globale e quanti BrandAccess devono ricevere una BrandCredential;
+5. simulare il backfill e identificare collisioni email nello stesso Brand, accessi revocati,
+   credenziali mancanti e Session non riconducibili a un Profile;
+6. verificare Profile, email verificata, password, Session attive e percorso di recupero
+   dell'attuale superadmin;
+7. controllare reversibilità e ordine delle migrazioni, evitando vincoli `NOT NULL` prematuri;
+8. eseguire la suite di riferimento prima delle modifiche e annotare eventuali errori preesistenti.
+9. verificare tutti gli usi di `users.email_address` come identità globale e confermare che resti il
+   ponte transitorio fino all'introduzione di ProfileEmail/ProfileIdentity.
+
+Il gate produce un breve report con esito **GO**, **GO con correzioni** oppure **STOP**. Soltanto
+`GO` o `GO con correzioni` consentono di iniziare il blocco esecutivo; le correzioni richieste
+devono essere inserite nel piano prima di modificare il codice.
+
+#### Esito del gate — 25 novembre 2026
+
+**Esito: GO con correzione preliminare.**
+
+Verifiche concluse:
+
+- `users.superadmin`, `users.password_digest`, `users.email_address`, `profiles.user_id` e
+  `sessions.user_id` sono ancora obbligatori nello schema corrente;
+- il privilegio superadmin viene letto direttamente da User in helper, policy, resolver, menu,
+  controller e servizi: la compatibilità deve essere centralizzata, non sostituita in un solo passo;
+- il reset password e la verifica email correnti appartengono ancora a User;
+- il working tree contiene già una migrazione BrandCredential e modifiche locali a login, inviti e
+  Session, ma non contiene ancora PlatformCredential o SystemRoleAssignment;
+- in locale esiste un solo superadmin e il suo backfill è deterministico: Profile presente, account
+  attivo, email verificata e password presente;
+- in produzione esiste un solo superadmin (`User` 1), con Profile, account attivo, email verificata,
+  password presente e tre Session attive; nessuno User di produzione è privo di Profile;
+- i test mirati superadmin/Session/policy sono verdi salvo un test di reset di un utente ordinario;
+- la suite indispensabile non costituisce una baseline verde perché il nuovo
+  `SessionsController` locale accetta sul login globale soltanto il superadmin: numerosi test e
+  flussi legacy degli utenti ordinari vengono quindi reindirizzati al login.
+
+Correzione preliminare obbligatoria:
+
+1. mantenere temporaneamente il login User ordinario come fallback legacy quando non è disponibile
+   un'autenticazione Brand completa;
+2. marcare le Session così aperte con un metodo di autenticazione distinguibile;
+3. non concedere nuovi BrandAccess o ruoli attraverso il fallback;
+4. ripristinare la suite di riferimento prima di introdurre PlatformCredential;
+5. rimuovere il fallback soltanto dopo backfill e collaudo di BrandCredential.
+
+Questa correzione non cambia il modello finale: evita soltanto di sovrapporre la migrazione del
+superadmin a una baseline già incompatibile con i flussi esistenti.
+
+**Correzione completata localmente il 25 novembre 2026:**
+
+- il login fuori da un contesto Brand conserva il fallback `legacy_user_password`;
+- sui domini Brand gli utenti ordinari devono usare BrandCredential;
+- il superadmin può usare la credenziale globale di piattaforma anche da un host Brand;
+- il fallback ordinario non crea BrandAccess né assegna ruoli;
+- i test che simulano un accesso Brand ora creano esplicitamente BrandAccess e BrandCredential;
+- test mirati finali: 30 test e 116 asserzioni, nessun errore;
+- suite indispensabile conclusa senza failure o errori riportati;
+- RuboCop sui dieci file coinvolti: nessuna violazione.
+
+Il gate locale e la verifica aggregata di produzione sono quindi conclusi. È possibile iniziare il
+primo blocco additivo PlatformCredential/SystemRoleAssignment mantenendo il fallback anti-lockout.
+
+### Prossimo blocco esecutivo dopo il gate
+
+Superato il gate, il primo blocco isola il superadmin e va completato in modo additivo:
+
+1. introdurre `PlatformCredential` collegata al Profile, con email, password cifrata, stato,
+   verifica e audit dell'ultimo accesso;
+2. introdurre `SystemRoleAssignment` collegato al Profile con il solo codice iniziale
+   `superadmin`, stato e audit;
+3. aggiungere alla Session i riferimenti opzionali a Profile e PlatformCredential;
+4. eseguire il backfill dell'attuale `users.superadmin`, riutilizzando inizialmente l'hash della
+   password senza richiedere un cambio immediato;
+5. autenticare il superadmin tramite PlatformCredential e verificare il privilegio tramite
+   SystemRoleAssignment;
+6. mantenere temporaneamente `users.superadmin`, `users.password_digest` e il vecchio login come
+   fallback anti-lockout, registrando quale percorso ha aperto la Session;
+7. testare login, logout, scadenza, revoca, recupero, policy e accesso a tutti i domini;
+8. distribuire e verificare il nuovo percorso in produzione prima di disattivare il fallback;
+9. eseguire test mirati, `test:indispensabili`, RuboCop e controllo delle migrazioni.
+
+Il blocco successivo riprende BrandCredential e rende opzionale la password degli User ordinari.
+Non rende ancora nullable `users.email_address`: email e vincolo univoco restano temporaneamente il
+ponte per ricondurre inviti e dati legacy allo stesso Profile.
+
+#### Stato del primo blocco additivo — 25 novembre 2026
+
+Implementato localmente:
+
+- tabelle `platform_credentials` e `system_role_assignments`;
+- riferimenti opzionali `sessions.profile_id` e `sessions.platform_credential_id`;
+- backfill dell'unico superadmin e dei Profile delle Session esistenti;
+- autenticazione primaria tramite PlatformCredential + SystemRoleAssignment;
+- fallback tramite `users.superadmin` e password User, distinto come
+  `legacy_platform_password`;
+- accesso di piattaforma valido anche quando il login parte da un host Brand;
+- lettura centrale `superadmin_user?` dal ruolo di sistema con fallback al flag legacy;
+- separazione e validazione fra Session di piattaforma e Session Brand.
+
+Verifiche locali:
+
+- backfill: una PlatformCredential, un SystemRoleAssignment superadmin e tutte le Session collegate
+  al Profile;
+- 28 test mirati, 104 asserzioni, nessun errore;
+- suite indispensabile conclusa senza failure o errori riportati;
+- RuboCop sui dieci file del blocco: nessuna violazione.
+
+Non ancora eseguito:
+
+- deploy e backfill in produzione;
+- login reale con PlatformCredential in produzione;
+- revoca del fallback legacy;
+- rimozione di `users.superadmin` o della password User.
 
 ## 12. Questioni non bloccanti
 
 1. capability precise dell'imprenditore sulla radice e sul progetto;
 2. ruoli delegabili e profondità massima;
 3. quali eventi e note conservare nello storico dei trasferimenti di responsabilità;
-4. mantenimento di `current_role_assignment_id` o contesto in sessione;
+4. tempi di rimozione dei riferimenti legacy allo User dopo il consolidamento delle Session;
 5. quando consentire nuovi progetti autonomi sotto GeneraImpresa;
 6. eventuale Node professionale distinto per Radioestesia e Benessere.
 

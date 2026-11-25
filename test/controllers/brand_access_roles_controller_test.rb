@@ -15,6 +15,11 @@ class BrandAccessRolesControllerTest < ActionDispatch::IntegrationTest
     @user = User.create!(email_address: "role-switch-user@example.com", password: "password123")
     @profile = @user.create_profile!(display_name: "Role switch user")
     @access = BrandAccess.create!(profile: @profile, source_domain: @domain)
+    @access.create_brand_credential!(
+      brand_node: @brand,
+      email_address: @user.email_address,
+      password: "password123"
+    )
     @assignment = RoleAssignment.create!(
       profile: @profile,
       role: :operator,

@@ -252,6 +252,16 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
   private
 
     def sign_in(user)
+      domain = Domain.find_by(hostname: URI.parse(session_url).host)
+      if domain&.node
+        access = BrandAccess.find_by(profile: user.profile, brand_node: domain.node) ||
+          BrandAccess.create!(profile: user.profile, source_domain: domain)
+        access.create_brand_credential!(
+          brand_node: domain.node,
+          email_address: user.email_address,
+          password: "password123"
+        ) unless access.brand_credential
+      end
       post session_url, params: { email_address: user.email_address, password: "password123" }
     end
 end

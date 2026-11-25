@@ -60,9 +60,33 @@ class BrandInvitationsControllerTest < ActionDispatch::IntegrationTest
     assert invitation.pending?
   end
 
-  test "invitation sends an existing FlowPulse account directly to login" do
+  test "invitation sends an existing global account without this Brand credential to setup" do
     existing_user = User.create!(email_address: "existing-invited@example.com", password: "password123")
     existing_user.create_profile!(display_name: "Existing invited")
+    invitation, raw_token = BrandInvitation.issue!(
+      brand_node: @node,
+      source_domain: @domain,
+      email_address: existing_user.email_address,
+      invited_by_user: @owner
+    )
+
+    host! @domain.hostname
+    get brand_invitation_path(raw_token)
+
+    assert_redirected_to new_user_path(invitation: raw_token)
+    assert invitation.pending?
+  end
+
+  test "invitation sends an existing Brand credential directly to login" do
+    existing_user = User.create!(email_address: "existing-brand@example.com", password: "global-password")
+    profile = existing_user.create_profile!(display_name: "Existing brand")
+    access = BrandAccess.create!(profile:, source_domain: @domain)
+    BrandCredential.create!(
+      brand_access: access,
+      brand_node: @node,
+      email_address: existing_user.email_address,
+      password: "brand-password"
+    )
     invitation, raw_token = BrandInvitation.issue!(
       brand_node: @node,
       source_domain: @domain,

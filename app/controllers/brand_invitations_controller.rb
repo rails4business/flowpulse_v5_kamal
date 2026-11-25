@@ -29,7 +29,10 @@ class BrandInvitationsController < ApplicationController
     end
 
     session[:pending_brand_invitation_token] = params[:token]
-    destination = if User.exists?(email_address: @invitation.email_address)
+    destination = if BrandCredential.exists?(
+      brand_node: @invitation.brand_node,
+      email_address: @invitation.email_address
+    )
       new_session_path(invitation: params[:token])
     else
       new_user_path(invitation: params[:token])

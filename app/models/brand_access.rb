@@ -6,6 +6,7 @@ class BrandAccess < ApplicationRecord
   belongs_to :brand_node, class_name: "Node", inverse_of: :brand_accesses
   belongs_to :current_role_assignment, class_name: "RoleAssignment", optional: true
   has_many :sessions, dependent: :destroy
+  has_one :brand_credential, dependent: :destroy
   has_many :role_assignments, dependent: :restrict_with_error
   has_many :grants, class_name: "BrandAccessGrant", dependent: :destroy
 

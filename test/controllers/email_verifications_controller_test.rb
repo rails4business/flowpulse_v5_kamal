@@ -57,4 +57,23 @@ class EmailVerificationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to new_user_path
   end
+
+  test "confirmation activates an existing pending Brand credential" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    credential = access.create_brand_credential!(
+      brand_node: @node,
+      email_address: @user.email_address,
+      password: "brand-password",
+      status: "pending_verification"
+    )
+    host! "verified.example"
+
+    patch email_verification_path(@raw_token)
+
+    assert credential.reload.active?
+    assert credential.email_verified_at.present?
+    authenticated_session = @user.sessions.order(:created_at).last
+    assert_equal credential, authenticated_session.brand_credential
+    assert_equal "brand_verified_email", authenticated_session.authentication_method
+  end
 end

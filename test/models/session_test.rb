@@ -31,4 +31,17 @@ class SessionTest < ActiveSupport::TestCase
     assert_not session.valid?
     assert_includes session.errors[:brand_access_id], "deve appartenere allo stesso utente della sessione"
   end
+
+  test "a brand session accepts only the credential belonging to its access" do
+    credential = BrandCredential.create!(
+      brand_access: @access,
+      brand_node: @node,
+      email_address: @user.email_address,
+      password: "brand-password"
+    )
+    session = @user.sessions.create!(brand_access: @access, brand_credential: credential)
+
+    assert session.active?
+    assert_equal credential, session.brand_credential
+  end
 end

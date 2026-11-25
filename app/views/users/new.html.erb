@@ -26,7 +26,7 @@
         </div>
       <% end %>
 
-      <%= form_with model: @user, url: users_path, class: "space-y-5" do |form| %>
+      <%= form_with model: @user, url: users_path, method: :post, class: "space-y-5" do |form| %>
         <% if params[:invitation].present? || session[:pending_brand_invitation_token].present? %>
           <%= form.hidden_field :invitation, value: params[:invitation].presence || session[:pending_brand_invitation_token] %>
         <% end %>
@@ -45,7 +45,7 @@
         </div>
 
         <div>
-          <%= form.label :password, "Scegli una password", class: "block text-sm font-bold text-slate-800" %>
+          <%= form.label :password, "Scegli la password per questo Brand", class: "block text-sm font-bold text-slate-800" %>
           <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "Crea una password", maxlength: 72, class: "mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
         </div>
 

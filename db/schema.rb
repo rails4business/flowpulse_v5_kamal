@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_143000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -87,6 +87,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
     t.index ["profile_id"], name: "index_brand_accesses_on_profile_id"
     t.index ["source_domain_id"], name: "index_brand_accesses_on_source_domain_id"
     t.index ["status"], name: "index_brand_accesses_on_status"
+  end
+
+  create_table "brand_credentials", force: :cascade do |t|
+    t.bigint "brand_access_id", null: false
+    t.bigint "brand_node_id", null: false
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "email_verified_at"
+    t.datetime "last_authenticated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_access_id"], name: "index_brand_credentials_on_brand_access_id", unique: true
+    t.index ["brand_node_id", "email_address"], name: "index_brand_credentials_on_brand_node_id_and_email_address", unique: true
+    t.index ["brand_node_id"], name: "index_brand_credentials_on_brand_node_id"
+    t.index ["status"], name: "index_brand_credentials_on_status"
   end
 
   create_table "brand_invitations", force: :cascade do |t|
@@ -679,6 +695,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
     t.index ["status"], name: "index_places_on_status"
   end
 
+  create_table "platform_credentials", force: :cascade do |t|
+    t.bigint "profile_id", null: false
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "email_verified_at"
+    t.datetime "last_authenticated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_platform_credentials_on_email_address", unique: true
+    t.index ["profile_id"], name: "index_platform_credentials_on_profile_id", unique: true
+    t.index ["status"], name: "index_platform_credentials_on_status"
+  end
+
   create_table "posturacorretta_directory_people", force: :cascade do |t|
     t.bigint "domain_id", null: false
     t.bigint "profile_id"
@@ -893,8 +923,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
     t.datetime "expires_at", null: false
     t.datetime "revoked_at"
     t.string "authentication_method", default: "password", null: false
+    t.bigint "brand_credential_id"
+    t.bigint "profile_id"
+    t.bigint "platform_credential_id"
     t.index ["brand_access_id"], name: "index_sessions_on_brand_access_id"
+    t.index ["brand_credential_id"], name: "index_sessions_on_brand_credential_id"
     t.index ["expires_at"], name: "index_sessions_on_expires_at"
+    t.index ["platform_credential_id"], name: "index_sessions_on_platform_credential_id"
+    t.index ["profile_id"], name: "index_sessions_on_profile_id"
     t.index ["revoked_at"], name: "index_sessions_on_revoked_at"
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
@@ -933,6 +969,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
     t.index ["source_path"], name: "index_skill_products_on_source_path", unique: true, where: "(source_path IS NOT NULL)"
   end
 
+  create_table "system_role_assignments", force: :cascade do |t|
+    t.bigint "profile_id", null: false
+    t.bigint "assigned_by_profile_id"
+    t.string "role_code", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_by_profile_id"], name: "index_system_role_assignments_on_assigned_by_profile_id"
+    t.index ["profile_id", "role_code"], name: "index_system_role_assignments_on_profile_id_and_role_code", unique: true
+    t.index ["profile_id"], name: "index_system_role_assignments_on_profile_id"
+    t.index ["role_code", "status"], name: "index_system_role_assignments_on_role_code_and_status"
+  end
+
   create_table "users", force: :cascade do |t|
     t.integer "active_role", default: 0, null: false
     t.datetime "created_at", null: false
@@ -960,6 +1011,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
   add_foreign_key "brand_accesses", "nodes", column: "brand_node_id"
   add_foreign_key "brand_accesses", "profiles"
   add_foreign_key "brand_accesses", "role_assignments", column: "current_role_assignment_id", on_delete: :nullify
+  add_foreign_key "brand_credentials", "brand_accesses", on_delete: :cascade
+  add_foreign_key "brand_credentials", "nodes", column: "brand_node_id"
   add_foreign_key "brand_invitations", "brand_requests"
   add_foreign_key "brand_invitations", "domains", column: "source_domain_id"
   add_foreign_key "brand_invitations", "nodes", column: "brand_node_id"
@@ -1046,6 +1099,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
   add_foreign_key "place_domains", "domains"
   add_foreign_key "place_domains", "places"
   add_foreign_key "places", "profiles", column: "created_by_profile_id"
+  add_foreign_key "platform_credentials", "profiles"
   add_foreign_key "posturacorretta_directory_people", "domains"
   add_foreign_key "posturacorretta_directory_people", "profiles"
   add_foreign_key "posturacorretta_directory_places", "domains"
@@ -1074,11 +1128,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
   add_foreign_key "services", "nodes"
   add_foreign_key "services", "users", column: "created_by_user_id"
   add_foreign_key "sessions", "brand_accesses"
+  add_foreign_key "sessions", "brand_credentials", on_delete: :nullify
+  add_foreign_key "sessions", "platform_credentials", on_delete: :nullify
+  add_foreign_key "sessions", "profiles"
   add_foreign_key "sessions", "users"
   add_foreign_key "skill_product_links", "skill_products", column: "source_product_id"
   add_foreign_key "skill_product_links", "skill_products", column: "target_product_id"
   add_foreign_key "skill_products", "data_experiences"
   add_foreign_key "skill_products", "profiles", column: "created_by_profile_id"
   add_foreign_key "skill_products", "reusable_skill_nodes"
+  add_foreign_key "system_role_assignments", "profiles"
+  add_foreign_key "system_role_assignments", "profiles", column: "assigned_by_profile_id"
   add_foreign_key "users", "role_assignments", column: "current_role_assignment_id"
 end

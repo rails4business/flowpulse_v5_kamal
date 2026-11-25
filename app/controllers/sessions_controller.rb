@@ -17,55 +17,15 @@ class SessionsController < ApplicationController
     persist_authentication_context!
     persist_authentication_return_to!
     remember_pending_invitation!
-    if user = User.authenticate_by(params.permit(:email_address, :password))
-      invitation = pending_invitation
-      unless user.active_registration?
-        if user.registration_status == "pending_email_verification" && invitation&.pending? && invitation.email_address.casecmp?(user.email_address)
-          user.activate_verified_email!
-        else
-          redirect_to new_session_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating])),
-            alert: user.registration_status == "suspended" ? "Questo account è sospeso. Contatta l’amministrazione per verificare l’accesso." : "Per completare questo account serve un invito personale valido."
-          return
-        end
-      end
+    invitation = pending_invitation
+    requested_domain = invitation&.source_domain || pending_subscription_domain || authentication_context_domain
 
-      begin
-        brand_domain = authentication_context_domain
-        domain = pending_subscription_domain
-        if invitation.present? && !invitation.email_address.casecmp?(user.email_address)
-          redirect_to new_session_path(authentication_context_link_params), alert: "L’invito appartiene a un altro indirizzo email."
-          return
-        end
-        domain = invitation.source_domain if invitation&.source_domain.present?
-        requested_domain = domain || brand_domain
-        profile = user.profile || user.create_profile!(display_name: user.email_address.to_s.split("@").first)
-        if requested_domain.present? && !invitation_or_administration_allows_access?(profile, requested_domain, invitation)
-          redirect_to new_brand_access_request_path(authentication_context_link_params),
-            alert: "Non hai ancora accesso a questo Brand. Puoi richiedere un invito al suo responsabile."
-          return
-        end
-        brand_access = nil
-        User.transaction do
-          brand_access = grant_profile_brand_access!(profile, requested_domain) if requested_domain.present?
-          if invitation.present?
-            brand_access = grant_profile_brand_access_for_node!(profile, invitation.brand_node, source_domain: invitation.source_domain)
-            invitation.accept!(user)
-            complete_access_request_for!(invitation)
-          end
-        end
-        start_new_session_for user, brand_access: brand_access
-        notice = if brand_domain.present?
-          "Benvenuto in #{brand_domain.site_title}."
-        elsif domain.present?
-          "Ora hai accesso a #{domain.site_title.presence || domain.display_hostname}."
-        end
-        redirect_to after_authentication_url, notice: notice
-        session.delete(:pending_brand_invitation_token)
-      rescue ActiveRecord::RecordInvalid
-        redirect_to new_session_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating]).merge(subscription: params[:subscription])), alert: "Non è stato possibile completare l’accesso al sito. Riprova."
-      end
+    if requested_domain&.resolved_node&.slug == "flowpulse"
+      authenticate_superadmin!
+    elsif requested_domain&.resolved_node
+      authenticate_brand!(requested_domain, invitation)
     else
-      redirect_to new_session_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating]).merge(subscription: params[:subscription])), alert: "Try another email address or password."
+      authenticate_platform_or_legacy_user!
     end
   end
 
@@ -76,6 +36,107 @@ class SessionsController < ApplicationController
   end
 
   private
+
+  def authenticate_brand!(domain, invitation)
+    credential = BrandCredential.active.find_by(
+      brand_node: domain.resolved_node,
+      email_address: params[:email_address].to_s.strip.downcase
+    )
+    unless credential&.authenticate(params[:password])
+      return if authenticate_superadmin_from_brand!
+
+      redirect_to new_session_path(authentication_context_link_params(return_to: session[:return_to_after_authenticating])),
+        alert: "Email o password non valide per questo Brand."
+      return
+    end
+
+    user = credential.brand_access.profile.user
+    unless user.active_registration?
+      redirect_to new_session_path(authentication_context_link_params),
+        alert: "Questo account è sospeso. Contatta l’amministrazione per verificare l’accesso."
+      return
+    end
+    if invitation.present? && !invitation.email_address.casecmp?(credential.email_address)
+      redirect_to new_session_path(authentication_context_link_params), alert: "L’invito appartiene a un altro indirizzo email."
+      return
+    end
+
+    User.transaction do
+      if invitation&.pending?
+        invitation.accept!(user)
+        complete_access_request_for!(invitation)
+      end
+      credential.record_authentication!
+    end
+    start_new_session_for(
+      user,
+      brand_access: credential.brand_access,
+      brand_credential: credential,
+      authentication_method: "brand_password"
+    )
+    session.delete(:pending_brand_invitation_token)
+    redirect_to after_authentication_url, notice: "Benvenuto in #{domain.site_title.presence || domain.display_hostname}."
+  rescue ActiveRecord::RecordInvalid
+    redirect_to new_session_path(authentication_context_link_params), alert: "Non è stato possibile completare l’accesso al Brand."
+  end
+
+  def authenticate_superadmin!
+    return if authenticate_platform_credential!
+    return if authenticate_legacy_superadmin!
+
+    redirect_to new_session_path, alert: "Email o password non valide."
+  end
+
+  def authenticate_superadmin_from_brand!
+    authenticate_platform_credential! || authenticate_legacy_superadmin!
+  end
+
+  def authenticate_platform_credential!
+    credential = PlatformCredential.active.find_by(
+      email_address: params[:email_address].to_s.strip.downcase
+    )
+    return false unless credential&.authenticate(params[:password])
+
+    profile = credential.profile
+    return false unless profile.system_role_assignments.currently_effective.superadmin.exists?
+
+    user = profile.user
+    return false unless user.active_registration?
+
+    credential.record_authentication!
+    start_new_session_for(
+      user,
+      profile:,
+      platform_credential: credential,
+      authentication_method: "platform_credential"
+    )
+    redirect_to after_authentication_url, notice: "Accesso superadmin effettuato."
+    true
+  end
+
+  def authenticate_legacy_superadmin!
+    user = User.authenticate_by(params.permit(:email_address, :password))
+    return false unless user&.legacy_superadmin? && user.active_registration?
+
+    start_new_session_for(user, authentication_method: "legacy_platform_password")
+    redirect_to after_authentication_url, notice: "Accesso superadmin effettuato."
+    true
+  end
+
+  def authenticate_platform_or_legacy_user!
+    return if authenticate_platform_credential!
+
+    user = User.authenticate_by(params.permit(:email_address, :password))
+    unless user&.active_registration?
+      redirect_to new_session_path, alert: "Email o password non valide."
+      return
+    end
+
+    authentication_method = user.superadmin_user? ? "platform_password" : "legacy_user_password"
+    start_new_session_for(user, authentication_method:)
+    notice = user.superadmin_user? ? "Accesso superadmin effettuato." : "Accesso effettuato."
+    redirect_to after_authentication_url, notice: notice
+  end
 
   def pending_subscription_domain
     subscription_token = params[:subscription].presence

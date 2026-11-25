@@ -83,8 +83,12 @@ module AuthenticationBrandContext
     def redirect_authenticated_user_from_authentication!
       return unless authenticated?
 
+      invitation = BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
+      if invitation.present? && !BrandCredential.exists?(brand_node: invitation.brand_node, email_address: invitation.email_address)
+        return
+      end
+
       if authentication_context?
-        invitation = BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
         profile = Current.user.profile
         unless invitation_or_administration_allows_access?(profile, authentication_context_domain, invitation)
           redirect_to new_brand_access_request_path(authentication_context_link_params),

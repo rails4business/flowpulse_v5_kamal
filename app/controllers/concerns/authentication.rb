@@ -62,9 +62,13 @@ module Authentication
       safe_authentication_return_to(session.delete(:return_to_after_authenticating)) || authentication_context_default_return_to
     end
 
-    def start_new_session_for(user, brand_access: nil, authentication_method: "password")
+    def start_new_session_for(user, profile: user.profile, brand_access: nil, brand_credential: nil,
+      platform_credential: nil, authentication_method: "password")
       user.sessions.create!(
+        profile:,
         brand_access: brand_access,
+        brand_credential: brand_credential,
+        platform_credential:,
         user_agent: request.user_agent,
         ip_address: request.remote_ip,
         authentication_method:

@@ -15,6 +15,11 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
     @manager = User.create!(email_address: "brand-people-manager@example.com", password: "password123")
     manager_profile = @manager.create_profile!(display_name: "Manager")
     manager_access = BrandAccess.create!(profile: manager_profile, source_domain: @domain)
+    manager_access.create_brand_credential!(
+      brand_node: @brand,
+      email_address: @manager.email_address,
+      password: "password123"
+    )
     manager_assignment = RoleAssignment.create!(
       profile: manager_profile,
       role: :operator,
@@ -63,6 +68,11 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
     entrepreneur = User.create!(email_address: "brand-people-entrepreneur@example.com", password: "password123")
     profile = entrepreneur.create_profile!(display_name: "Entrepreneur")
     access = BrandAccess.create!(profile:, source_domain: @domain)
+    access.create_brand_credential!(
+      brand_node: @brand,
+      email_address: entrepreneur.email_address,
+      password: "password123"
+    )
     assignment = RoleAssignment.create!(
       profile:,
       role: :operator,
@@ -81,6 +91,7 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
 
   test "superadmin sees the link to the global profile" do
     superadmin = User.create!(email_address: "brand-people-superadmin@example.com", password: "password123", superadmin: true)
+    superadmin.create_profile!(display_name: "Superadmin")
     sign_in(superadmin)
 
     get genera_impresa_people_url
