@@ -1,7 +1,29 @@
 <% content_for :title, "#{@brand_access.brand_node.title} · #{@profile.display_name}" %>
 <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-  <nav class="mb-6 text-sm font-semibold text-slate-500"><%= link_to @profile.display_name, admin_profile_path(@profile), class: "text-blue-700 hover:underline" %><span class="mx-2">/</span><%= link_to "BrandAccess", admin_profile_brand_accesses_path(@profile), class: "text-blue-700 hover:underline" %><span class="mx-2">/</span><%= @brand_access.brand_node.title %></nav>
+  <nav class="mb-6 text-sm font-semibold text-slate-500"><%= link_to @profile.display_name, domain_admin_path(admin_profile_path(@profile), brand_slug: "flowpulse"), class: "text-blue-700 hover:underline" %><span class="mx-2">/</span><%= link_to "BrandAccess", domain_admin_path(admin_profile_brand_accesses_path(@profile), brand_slug: "flowpulse"), class: "text-blue-700 hover:underline" %><span class="mx-2">/</span><%= @brand_access.brand_node.title %></nav>
   <%= render "admin/profiles/header", profile: @profile, active_tab: "brand_accesses" %>
+  <% if flash[:verification_url].present? %>
+    <% credential = @brand_access.brand_credential %>
+    <% email_subject = "Attiva il tuo accesso a #{@brand_access.brand_node.title}" %>
+    <% email_body = "Ciao,\n\nusa questo collegamento personale per confermare la tua email e attivare l’accesso a #{@brand_access.brand_node.title}:\n#{flash[:verification_url]}\n\nIl collegamento è utilizzabile una sola volta e scade tra 30 minuti." %>
+    <section class="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+      <h2 class="font-black text-blue-950">Nuovo collegamento di verifica</h2>
+      <p class="mt-1 text-sm text-blue-800">Copia il collegamento oppure apri l’email precompilata. Il link è personale e valido per 30 minuti.</p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <input type="text" readonly value="<%= flash[:verification_url] %>" class="min-w-0 flex-1 rounded-xl border border-blue-200 bg-white px-3 py-2 font-mono text-xs">
+        <button type="button" data-controller="clipboard" data-clipboard-text-value="<%= flash[:verification_url] %>" data-action="clipboard#copy" class="rounded-xl bg-blue-700 px-4 py-2 text-sm font-black text-white">Copia link</button>
+        <%= mail_to credential.email_address, "Apri email", subject: email_subject, body: email_body, class: "rounded-xl border border-blue-300 bg-white px-4 py-2 text-sm font-black text-blue-800" %>
+      </div>
+    </section>
+  <% end %>
   <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><p class="text-xs font-black uppercase tracking-wider text-slate-400">BrandAccess #<%= @brand_access.id %></p><div class="mt-2 flex flex-wrap items-start justify-between gap-4"><div><h2 class="text-2xl font-black"><%= @brand_access.brand_node.title %></h2><p class="mt-1 text-sm text-slate-500"><%= @brand_access.source_domain.hostname %></p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black uppercase"><%= @brand_access.status %></span></div><dl class="mt-6 grid gap-4 sm:grid-cols-3"><div><dt class="text-xs font-black text-slate-400">Dal</dt><dd class="mt-1 text-sm"><%= l @brand_access.joined_at, format: :short %></dd></div><div><dt class="text-xs font-black text-slate-400">Concessioni progetto</dt><dd class="mt-1 text-sm"><%= @brand_access.grants.size %></dd></div><div><dt class="text-xs font-black text-slate-400">Ruoli collegati</dt><dd class="mt-1 text-sm"><%= @role_assignments.size %></dd></div></dl></section>
+  <% if @brand_access.brand_credential.present? %>
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div><h2 class="text-xl font-black">Credenziale del Brand</h2><p class="mt-1 text-sm text-slate-500"><%= @brand_access.brand_credential.email_address %> · <%= @brand_access.brand_credential.status.humanize %></p></div>
+        <% if @brand_access.brand_credential.status == "pending_verification" %><%= button_to "Genera nuovo link", domain_admin_path(resend_verification_admin_profile_brand_access_path(@profile, @brand_access), brand_slug: "flowpulse"), method: :post, class: "rounded-xl bg-blue-700 px-4 py-2 text-sm font-black text-white hover:bg-blue-800" %><% end %>
+      </div>
+    </section>
+  <% end %>
   <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><h2 class="text-xl font-black">Concessioni per progetto</h2><% if @brand_access.grants.any? %><ul class="mt-4 divide-y divide-slate-100 border-y"><% @brand_access.grants.each do |grant| %><li class="py-3"><strong class="text-sm"><%= grant.node.title %></strong><p class="mt-1 text-xs text-slate-500"><%= grant.status %><%= " · richiesta ##{grant.brand_request_id}" if grant.brand_request_id %></p></li><% end %></ul><% else %><p class="mt-3 text-sm text-slate-500">Accesso globale o legacy, senza concessioni scoped.</p><% end %></section>
 </main>

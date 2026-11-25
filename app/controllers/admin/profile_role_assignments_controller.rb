@@ -10,7 +10,7 @@ module Admin
       raise ArgumentError, "Ruolo GeneraImpresa non valido" unless role_code
 
       unless brand_access
-        redirect_to admin_profile_path(@profile), alert: "Prima di assegnare il ruolo serve un accesso attivo a GeneraImpresa."
+        redirect_to domain_admin_path(admin_profile_path(@profile), brand_slug: "flowpulse"), alert: "Prima di assegnare il ruolo serve un accesso attivo a GeneraImpresa."
         return
       end
 
@@ -21,15 +21,15 @@ module Admin
         role_code:
       )
       role_label = RoleDefinitions::Registry.fetch(role_code).label
-      redirect_to admin_profile_path(@profile), notice: "Ruolo #{role_label} assegnato."
+      redirect_to domain_admin_path(admin_profile_path(@profile), brand_slug: "flowpulse"), notice: "Ruolo #{role_label} assegnato."
     rescue ActiveRecord::RecordInvalid, ArgumentError => error
-      redirect_to admin_profile_path(@profile), alert: error.message
+      redirect_to domain_admin_path(admin_profile_path(@profile), brand_slug: "flowpulse"), alert: error.message
     end
 
     def destroy
       assignment = @profile.role_assignments.operator.find(params[:role_assignment_id])
       RoleAssignments::Manager.new(actor: Current.user).revoke!(assignment)
-      redirect_to admin_profile_path(@profile), notice: "Ruolo revocato."
+      redirect_to domain_admin_path(admin_profile_path(@profile), brand_slug: "flowpulse"), notice: "Ruolo revocato."
     end
 
     private

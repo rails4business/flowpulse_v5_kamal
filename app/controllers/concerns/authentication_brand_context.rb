@@ -122,7 +122,10 @@ module AuthenticationBrandContext
     end
 
     def flowpulse_platform_authentication_context?
-      authentication_context_domain&.resolved_node&.slug == "flowpulse"
+      domain = authentication_context_domain
+      return false if domain.blank?
+
+      domain.auth_slug == "flowpulse" || domain.site_key == "flowpulse" || domain.resolved_node&.slug == "flowpulse"
     end
 
     def local_authentication_domain

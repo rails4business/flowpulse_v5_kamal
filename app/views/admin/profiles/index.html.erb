@@ -45,7 +45,7 @@
               </td>
               <td class="px-5 py-4 font-bold text-slate-800"><%= profile.brand_accesses.size %></td>
               <td class="px-5 py-4 font-bold text-slate-800"><%= profile.role_assignments.size %></td>
-              <td class="px-5 py-4 text-right"><%= link_to "Apri scheda", admin_profile_path(profile), class: "font-extrabold text-blue-700 hover:text-blue-900" %></td>
+              <td class="px-5 py-4 text-right"><%= link_to "Apri scheda", domain_admin_path(admin_profile_path(profile), brand_slug: "flowpulse"), class: "font-extrabold text-blue-700 hover:text-blue-900" %></td>
             </tr>
           <% end %>
         </tbody>

@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
   helper_method :public_node_visible?, :public_node_navigable?, :public_node_accessible_children
   helper_method :pwa_site_config
   helper_method :privacy_preferences_config
+  helper_method :domain_admin_path, :domain_admin_profiles_path
   before_action :resume_session
   before_action :ensure_active_role_assignment
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
@@ -29,6 +30,18 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+    def domain_admin_path(path, brand_slug:)
+      return path unless local_request?
+      return path if path.to_s.start_with?("/#{brand_slug}/admin")
+      return path unless path.to_s.start_with?("/admin")
+
+      "/#{brand_slug}#{path}"
+    end
+
+    def domain_admin_profiles_path
+      domain_admin_path(admin_profiles_path, brand_slug: "flowpulse")
+    end
 
     def pwa_site_config
       @pwa_site_config ||= Pwa::SiteConfig.for(request:, domain: current_domain)

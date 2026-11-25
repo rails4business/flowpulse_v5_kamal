@@ -307,6 +307,7 @@ Rails.application.routes.draw do
   get "generaimpresa/miei-progetti" => "brands/genera_impresa_projects#index", as: :genera_impresa_my_projects
   get "generaimpresa/persone" => "brands/genera_impresa_brand_people#index", as: :genera_impresa_people
   delete "generaimpresa/persone/:id" => "brands/genera_impresa_brand_people#destroy", as: :genera_impresa_person
+  post "generaimpresa/persone/:id/reinvia-verifica" => "brands/genera_impresa_brand_people#resend_verification", as: :resend_genera_impresa_person_verification
   post "generaimpresa/miei-progetti" => "brands/genera_impresa_projects#create"
   patch "generaimpresa/miei-progetti/:id" => "brands/genera_impresa_projects#update", as: :genera_impresa_my_project
   get "generaimpresa/miei-progetti/:project_id/persone" => "brands/genera_impresa_people#index", as: :genera_impresa_project_people
@@ -409,7 +410,9 @@ Rails.application.routes.draw do
     resources :profiles, only: %i[index show] do
       resources :role_assignments, only: :create, controller: "profile_role_assignments"
       delete "role_assignments/:role_assignment_id", to: "profile_role_assignments#destroy", as: :role_assignment
-      resources :brand_accesses, only: %i[index show create destroy], controller: "profile_brand_accesses"
+      resources :brand_accesses, only: %i[index show create destroy], controller: "profile_brand_accesses" do
+        member { post :resend_verification }
+      end
       resources :nodes, only: %i[index show], controller: "profile_nodes"
       resources :node_responsibilities, only: %i[create destroy], controller: "profile_node_responsibilities"
     end
@@ -441,6 +444,21 @@ Rails.application.routes.draw do
       member { patch :apply }
     end
     resources :risorse, controller: "/resources", only: [:index, :show]
+  end
+
+  # Su localhost il prefisso identifica FlowPulse, dato che tutti i Brand
+  # condividono lo stesso host. Sui domini dedicati restano canoniche /admin/*.
+  scope ":admin_brand_slug/admin", module: "admin", as: :local_domain_admin,
+      constraints: { admin_brand_slug: /flowpulse/ } do
+    resources :profiles, only: %i[index show] do
+      resources :role_assignments, only: :create, controller: "profile_role_assignments"
+      delete "role_assignments/:role_assignment_id", to: "profile_role_assignments#destroy", as: :role_assignment
+      resources :brand_accesses, only: %i[index show create destroy], controller: "profile_brand_accesses" do
+        member { post :resend_verification }
+      end
+      resources :nodes, only: %i[index show], controller: "profile_nodes"
+      resources :node_responsibilities, only: %i[create destroy], controller: "profile_node_responsibilities"
+    end
   end
 
   # Alias esplicito: la mappa globale di Brand e Node appartiene a FlowPulse.

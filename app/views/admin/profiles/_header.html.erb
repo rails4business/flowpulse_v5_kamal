@@ -6,6 +6,7 @@
   </div>
   <nav class="mt-6 flex gap-1 overflow-x-auto border-b border-slate-200" aria-label="Gestione profilo">
     <% [["profile", "Riepilogo", admin_profile_path(profile)], ["brand_accesses", "BrandAccess", admin_profile_brand_accesses_path(profile)], ["nodes", "Node", admin_profile_nodes_path(profile)]].each do |key, label, path| %>
+      <% path = domain_admin_path(path, brand_slug: "flowpulse") %>
       <%= link_to label, path, aria: { current: ("page" if active_tab == key) }, class: "whitespace-nowrap border-b-2 px-4 py-3 text-sm font-black #{active_tab == key ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-900'}" %>
     <% end %>
   </nav>

@@ -17,6 +17,14 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
       operator_roles: %w[gestore_generaimpresa imprenditore_generaimpresa]
     )
     @domain = Domain.create!(hostname: "generaimpresa-#{SecureRandom.hex(3)}.example", node: @brand, role_assignment: @brand_assignment, locale: "it")
+    flowpulse = Node.create!(
+      role_assignment: @brand_assignment,
+      title: "FlowPulse",
+      slug: "flowpulse",
+      node_type: "project",
+      status: "published"
+    )
+    @flowpulse_domain = Domain.create!(hostname: "flowpulse-#{SecureRandom.hex(3)}.example", node: flowpulse, role_assignment: @brand_assignment, locale: "it", primary: true)
     @project = Node.create!(title: "Radioestesia e Benessere", slug: "radioestesiaebenessere", parent: @brand, role_assignment: @brand_assignment, operator_roles: %w[legacy_collaborator])
 
     person = User.create!(
@@ -54,6 +62,18 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", "Persone e Profile"
     assert_select "a[href='#{admin_profile_path(@profile)}']", text: "Apri scheda"
     assert_select "tbody", text: /Elisa Corubolo/
+    assert_select "aside", text: /FlowPulse.*Superadmin.*Persone e Profile/m
+  end
+
+  test "localhost keeps the FlowPulse domain prefix across the Profile area" do
+    host! "localhost"
+    sign_in(@superadmin)
+
+    get local_domain_admin_profiles_url(admin_brand_slug: "flowpulse")
+
+    assert_response :success
+    assert_select "a[href='#{local_domain_admin_profile_path(admin_brand_slug: "flowpulse", id: @profile)}']", text: "Apri scheda"
+    assert_select "aside a[href='#{local_domain_admin_profiles_path(admin_brand_slug: "flowpulse")}']", text: /Persone e Profile/
   end
 
   test "ordinary user cannot access the global Profile index" do
@@ -82,6 +102,28 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-role-assignment-id='#{operator.id}']", text: /Imprenditore GeneraImpresa/
     assert_select "[data-role-assignment-id='#{operator.id}']", text: /BrandAccess ##{@brand_access.id}/
     assert_select "[data-role-assignment-id='#{structural.id}']", text: /Ideatore/
+  end
+
+  test "superadmin generates a manual verification email from the global BrandAccess page" do
+    @brand_access.create_brand_credential!(
+      brand_node: @brand,
+      email_address: @profile.user.email_address,
+      password: "password123",
+      status: "pending_verification"
+    )
+    sign_in(@superadmin)
+
+    assert_no_enqueued_emails do
+      assert_difference -> { EmailVerification.count }, 1 do
+        post resend_verification_admin_profile_brand_access_url(@profile, @brand_access)
+      end
+    end
+
+    assert_redirected_to admin_profile_brand_access_path(@profile, @brand_access)
+    follow_redirect!
+    assert_select "input[value^='https://#{@domain.hostname}/email-verification/']", count: 1
+    assert_select "a[href^='mailto:#{@profile.user.email_address}']", text: "Apri email"
+    assert_select "form[action='#{resend_verification_admin_profile_brand_access_path(@profile, @brand_access)}']", count: 1
   end
 
   test "ordinary user cannot access the person management page" do

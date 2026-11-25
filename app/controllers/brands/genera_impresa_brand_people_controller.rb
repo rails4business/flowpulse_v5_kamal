@@ -10,8 +10,19 @@ module Brands
 
     def index
       @brand_accesses = @brand.brand_accesses
-        .includes(:current_role_assignment, profile: :user)
+        .includes(:brand_credential, :current_role_assignment, profile: :user)
         .order(status: :asc, joined_at: :desc, id: :desc)
+    end
+
+    def resend_verification
+      access = @brand.brand_accesses.find(params[:id])
+      result = BrandCredentials::VerificationIssuer.new.issue!(access)
+      flash[:verification_url] = result.confirmation_url
+      flash[:verification_email] = access.brand_credential.email_address
+      redirect_to genera_impresa_people_path,
+        notice: "Nuovo link di attivazione generato. Copialo oppure apri l’email precompilata."
+    rescue ArgumentError, ActiveRecord::RecordInvalid => error
+      redirect_to genera_impresa_people_path, alert: error.message
     end
 
     def destroy

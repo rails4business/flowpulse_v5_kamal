@@ -22,15 +22,25 @@ module Admin
     def create
       domain = Domain.active.where.not(node_id: nil).find(params.require(:domain_id))
       access = BrandAccesses::Manager.new(actor: Current.user).grant!(profile: @profile, domain: domain)
-      redirect_to admin_profile_brand_accesses_path(@profile), notice: "Accesso a #{access.brand_node.title} concesso."
+      redirect_to domain_admin_path(admin_profile_brand_accesses_path(@profile), brand_slug: "flowpulse"), notice: "Accesso a #{access.brand_node.title} concesso."
     rescue ActiveRecord::RecordInvalid, ArgumentError => error
-      redirect_to admin_profile_brand_accesses_path(@profile), alert: error.message
+      redirect_to domain_admin_path(admin_profile_brand_accesses_path(@profile), brand_slug: "flowpulse"), alert: error.message
     end
 
     def destroy
       access = @profile.brand_accesses.find(params[:id])
       BrandAccesses::Manager.new(actor: Current.user).revoke!(access)
-      redirect_to admin_profile_brand_accesses_path(@profile), notice: "Accesso a #{access.brand_node.title} revocato."
+      redirect_to domain_admin_path(admin_profile_brand_accesses_path(@profile), brand_slug: "flowpulse"), notice: "Accesso a #{access.brand_node.title} revocato."
+    end
+
+    def resend_verification
+      access = @profile.brand_accesses.find(params[:id])
+      result = BrandCredentials::VerificationIssuer.new.issue!(access)
+      flash[:verification_url] = result.confirmation_url
+      redirect_to domain_admin_path(admin_profile_brand_access_path(@profile, access), brand_slug: "flowpulse"),
+        notice: "Nuovo link di attivazione generato. Copialo oppure apri l’email precompilata."
+    rescue ArgumentError, ActiveRecord::RecordInvalid => error
+      redirect_to domain_admin_path(admin_profile_brand_access_path(@profile, params[:id]), brand_slug: "flowpulse"), alert: error.message
     end
 
     private

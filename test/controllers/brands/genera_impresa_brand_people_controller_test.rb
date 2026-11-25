@@ -64,6 +64,29 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
     assert_equal "cancelled", @person_access.reload.status
   end
 
+  test "manager generates a manual verification email for a pending Brand credential" do
+    credential = @person_access.create_brand_credential!(
+      brand_node: @brand,
+      email_address: @person.email_address,
+      password: "password123",
+      status: "pending_verification"
+    )
+    sign_in(@manager)
+
+    assert_no_enqueued_emails do
+      assert_difference -> { EmailVerification.count }, 1 do
+        post resend_genera_impresa_person_verification_url(@person_access)
+      end
+    end
+
+    assert_redirected_to genera_impresa_people_path
+    assert_equal credential, @person_access.reload.brand_credential
+    assert_equal "pending_verification", credential.reload.status
+    follow_redirect!
+    assert_select "input[value^='https://#{@domain.hostname}/email-verification/']", count: 1
+    assert_select "a[href^='mailto:#{@person.email_address}']", text: "Apri email"
+  end
+
   test "entrepreneur cannot open the Brand people index" do
     entrepreneur = User.create!(email_address: "brand-people-entrepreneur@example.com", password: "password123")
     profile = entrepreneur.create_profile!(display_name: "Entrepreneur")
