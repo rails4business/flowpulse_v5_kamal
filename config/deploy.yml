@@ -9,6 +9,8 @@ deployment_hosts = production_domains.filter_map do |hostname, settings|
 end.reject(&:empty?).uniq.sort
 
 raise "Nessun dominio attivo trovato in #{domains_path}" if deployment_hosts.empty?
+
+server_ip = ENV.fetch("FLOWPULSE_SERVER_IP") { raise "Imposta FLOWPULSE_SERVER_IP prima del deploy" }
 %>
 service: flowpulse_v_5
 image: rails4business/flowpulse_v5_kamal
@@ -16,7 +18,7 @@ deploy_timeout: 180
 
 servers:
   web:
-    - 178.105.106.247
+    - <%= server_ip %>
 
 registry:
   server: ghcr.io
@@ -69,12 +71,12 @@ builder:
   context: .
   # L'immagine si costruisce sul server Hetzner (amd64, senza emulazione) e da lì va su ghcr.io:
   # dal Mac parte solo il codice.
-  remote: ssh://root@178.105.106.247
+  remote: ssh://root@<%= server_ip %>
 
 accessories:
   db:
     image: postgres:16
-    host: 178.105.106.247
+    host: <%= server_ip %>
     env:
       clear:
         POSTGRES_DB: flowpulse_v_5_production

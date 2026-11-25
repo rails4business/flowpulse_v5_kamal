@@ -3,6 +3,29 @@
 Le modifiche a dipendenze, CI, deploy e infrastruttura passano attraverso una
 pull request e vengono integrate una alla volta.
 
+## Proporre una modifica
+
+1. Per modifiche non banali apri prima una issue, così ne discutiamo
+   l'approccio prima di scrivere codice.
+2. Fai un fork del repository e lavora in un branch dedicato.
+3. Mantieni ogni pull request su un solo argomento.
+4. Prima di aprirla esegui `bin/ci_checks`.
+5. Commit, issue e pull request si scrivono in italiano.
+6. Inviando una pull request accetti che il tuo contributo sia distribuito con
+   la licenza del progetto, la [AGPL-3.0](LICENSE).
+
+Per avviare il progetto in locale vedi il [README](README.md).
+
+## Contenuti e dati
+
+- I file `.yml` e `.md` in `docs/` sono la sorgente dei contenuti: per
+  modificarli si cambia il file e poi lo si importa nel database.
+- Le modifiche fatte direttamente nel database vanno riesportate nei file.
+- Non eliminare file `.yml` o `.md` da `docs/`, anche quando il contenuto è già
+  nel database: restano come sorgente e archivio.
+- Non inserire dati personali reali di clienti o utenti nei file del
+  repository.
+
 ## Configurazione locale
 
 Installa il hook Git incluso nel repository:
@@ -56,6 +79,10 @@ Le worktree e i nuovi clone non contengono i file ignorati. Per questo motivo
 si possono usare per test, lint e build, ma il deploy deve partire soltanto
 dalla cartella principale configurata e dopo aver verificato i prerequisiti
 locali.
+
+L'indirizzo del server non è nel repository: `config/deploy.yml` lo legge dalla
+variabile d'ambiente `FLOWPULSE_SERVER_IP`, da impostare sulla macchina da cui
+parte il deploy.
 
 Il deploy resta manuale e separato dal merge della pull request.
 
