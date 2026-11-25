@@ -46,10 +46,12 @@ class DashboardAside::BuilderTest < ActiveSupport::TestCase
   test "adds the global administration link only for the superadmin" do
     superadmin = User.create!(email_address: "aside-superadmin@example.com", password: "password123", superadmin: true)
 
-    keys = item_keys_for(superadmin)
+    items = items_for(superadmin)
+    keys = items.map(&:key)
 
     assert_includes keys, :genera_impresa_requests
     assert_includes keys, :flowpulse_admin
+    assert_equal :canonical_flowpulse_admin_dashboard_url, items.find { |item| item.key == :flowpulse_admin }.path
   end
 
   test "reduces the FlowPulse superadmin aside to the administration entry" do
@@ -66,8 +68,12 @@ class DashboardAside::BuilderTest < ActiveSupport::TestCase
   private
 
     def item_keys_for(user)
+      items_for(user).map(&:key)
+    end
+
+    def items_for(user)
       context = AccessContext::Resolver.new(user:, domain: @domain).resolve
-      described_class.new(context:).groups.fetch(:brand).map(&:key)
+      described_class.new(context:).groups.fetch(:brand)
     end
 
     def described_class

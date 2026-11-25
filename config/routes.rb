@@ -406,7 +406,7 @@ Rails.application.routes.draw do
     get "assigned_role_map" => "assigned_role_maps#show", as: :assigned_role_map
     get "assigned_role_map/new" => "assigned_role_maps#new", as: :new_assigned_role_map
     post "assigned_role_map" => "assigned_role_maps#create"
-    resources :profiles, only: :show do
+    resources :profiles, only: %i[index show] do
       resources :role_assignments, only: :create, controller: "profile_role_assignments"
       delete "role_assignments/:role_assignment_id", to: "profile_role_assignments#destroy", as: :role_assignment
       resources :brand_accesses, only: %i[index show create destroy], controller: "profile_brand_accesses"

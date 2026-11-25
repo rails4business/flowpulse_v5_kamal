@@ -1,0 +1,55 @@
+<% content_for :title, "Persone e Profile · FlowPulse" %>
+
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+  <nav class="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
+    <%= link_to "Amministrazione FlowPulse", admin_dashboard_path, class: "text-blue-700 hover:text-blue-900" %>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page" class="text-slate-900">Persone e Profile</span>
+  </nav>
+
+  <header class="mt-6 border-b border-slate-200 pb-6">
+    <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-700">Controllo globale</p>
+    <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-black tracking-tight text-slate-950">Persone e Profile</h1>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Tutte le identità della piattaforma, con stato dell'account, accessi ai Brand e incarichi contestuali.</p>
+      </div>
+      <span class="rounded-full bg-blue-50 px-3 py-1.5 text-sm font-extrabold text-blue-800"><%= @profiles.size %> Profile</span>
+    </div>
+  </header>
+
+  <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-extrabold uppercase tracking-wider text-slate-500">
+          <tr>
+            <th class="px-5 py-3">Profile</th>
+            <th class="px-5 py-3">Account</th>
+            <th class="px-5 py-3">BrandAccess</th>
+            <th class="px-5 py-3">Incarichi</th>
+            <th class="px-5 py-3 text-right">Azione</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% @profiles.each do |profile| %>
+            <% user = profile.user %>
+            <tr class="align-top">
+              <td class="px-5 py-4">
+                <strong class="block text-slate-950"><%= profile.display_name.presence || profile.username %></strong>
+                <span class="mt-1 block text-xs text-slate-500">@<%= profile.username %> · Profile <%= profile.id %></span>
+              </td>
+              <td class="px-5 py-4">
+                <span class="block font-semibold text-slate-800"><%= user.email_address %></span>
+                <span class="mt-1 block text-xs <%= user.email_verified? ? 'text-emerald-700' : 'text-amber-700' %>"><%= user.email_verified? ? "Email verificata" : "Email da verificare" %> · <%= user.registration_status.humanize %></span>
+                <% if user.superadmin_user? %><span class="mt-2 inline-flex rounded-full bg-violet-50 px-2 py-1 text-[11px] font-extrabold text-violet-800">Superadmin</span><% end %>
+              </td>
+              <td class="px-5 py-4 font-bold text-slate-800"><%= profile.brand_accesses.size %></td>
+              <td class="px-5 py-4 font-bold text-slate-800"><%= profile.role_assignments.size %></td>
+              <td class="px-5 py-4 text-right"><%= link_to "Apri scheda", admin_profile_path(profile), class: "font-extrabold text-blue-700 hover:text-blue-900" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

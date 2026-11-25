@@ -55,7 +55,7 @@ module DashboardAside
         end
 
         if context.superadmin?
-          result << item(:flowpulse_admin, "Amministrazione FlowPulse", "User, Profile e controllo globale", :admin_dashboard_path, "SYS")
+          result << item(:flowpulse_admin, "Amministrazione FlowPulse", "User, Profile e controllo globale", :canonical_flowpulse_admin_dashboard_url, "SYS")
         elsif context.current_role_assignment.nil?
           result << item(:profile, "Profilo", "Dati personali e accessi", :profile_path, "USR")
         end

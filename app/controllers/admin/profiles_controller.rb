@@ -2,6 +2,12 @@ module Admin
   class ProfilesController < BaseController
     before_action :require_superadmin!
 
+    def index
+      @profiles = Profile
+        .includes(:user, :primary_node, :brand_accesses, :role_assignments)
+        .order(:username)
+    end
+
     def show
       @profile = Profile.includes(:user, :primary_node).find(params[:id])
       @role_assignments = @profile.role_assignments

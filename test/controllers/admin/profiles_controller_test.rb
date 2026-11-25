@@ -45,6 +45,25 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{admin_profile_nodes_path(@profile)}']", text: /Node/
   end
 
+  test "superadmin sees the global Profile index" do
+    sign_in(@superadmin)
+
+    get admin_profiles_url
+
+    assert_response :success
+    assert_select "h1", "Persone e Profile"
+    assert_select "a[href='#{admin_profile_path(@profile)}']", text: "Apri scheda"
+    assert_select "tbody", text: /Elisa Corubolo/
+  end
+
+  test "ordinary user cannot access the global Profile index" do
+    sign_in(@profile.user)
+
+    get admin_profiles_url
+
+    assert_redirected_to viaggiatori_path
+  end
+
   test "superadmin sees every assigned role with access and status" do
     operator = @profile.role_assignments.create!(
       role: :operator,

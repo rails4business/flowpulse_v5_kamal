@@ -119,6 +119,12 @@ module NavigationHelper
     path
   end
 
+  def canonical_flowpulse_admin_dashboard_url
+    return admin_dashboard_path if local_request?
+
+    admin_dashboard_url(host: "flowpulse.net", protocol: "https")
+  end
+
   private
 
     def dashboard_menu_item(item)
