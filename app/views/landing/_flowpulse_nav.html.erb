@@ -41,6 +41,14 @@
         <%= link_to "Sviluppo", flowpulse_development_path, class: "rounded-full px-3 py-2 #{controller_path == 'flowpulse/development' ? 'bg-amber-50 text-amber-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'}" %>
       <% end %>
       <%= link_to "Changelog", changelog_path, class: "rounded-full px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+      <% if Current.user.present? %>
+        <% if Current.user.superadmin_user? %>
+          <%= link_to "Amministrazione", admin_dashboard_path, class: "rounded-full bg-blue-600 px-3 py-2 text-white hover:bg-blue-500" %>
+        <% end %>
+        <%= button_to "Esci", session_path, method: :delete, class: "w-full rounded-full px-3 py-2 text-left text-red-700 hover:bg-red-50 #{vertical ? '' : 'sm:w-auto'}" %>
+      <% else %>
+        <%= link_to "Accedi", new_session_path(return_to: "/admin/dashboard"), class: "rounded-full bg-blue-600 px-3 py-2 text-white hover:bg-blue-500" %>
+      <% end %>
     </div>
     <% if vertical %>
         </div>

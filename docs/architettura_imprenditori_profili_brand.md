@@ -303,7 +303,8 @@ Il controllo riceve almeno azione, profilo e Node. Non basta mai
 1. La persona accetta un invito e ottiene Profile e, durante la transizione, uno User tecnico senza
    password globale.
 2. Presenta o accetta una richiesta per GeneraImpresa.
-3. Il superadmin verifica identità, richiesta e perimetro.
+3. Il superadmin o il `gestore_generaimpresa` verifica identità, richiesta e perimetro sulla radice
+   GeneraImpresa.
 4. L'accettazione crea o attiva il BrandAccess GeneraImpresa.
 5. Soltanto dopo può essere creato un RoleAssignment.
 
@@ -341,9 +342,10 @@ Nella prima versione l'imprenditore:
 - può creare e gestire al massimo **7 Node per Brand** nel proprio perimetro;
 - il conteggio riguarda i Node dei quali è responsabile nel Brand, inclusi quelli creati o affidati;
 - può operare soltanto sul proprio Node affidato e sui relativi discendenti;
-- per ora non approva gli accessi dalla radice GeneraImpresa: la conferma resta al superadmin;
-- in futuro potrà approvare richieste e concedere/revocare BrandAccess nei domini delegati e nel
-  proprio perimetro;
+- non approva gli accessi dalla radice GeneraImpresa: la conferma spetta al superadmin o al
+  `gestore_generaimpresa`;
+- approva richieste e concede/revoca BrandAccess esclusivamente nei domini o progetti che gli sono
+  stati affidati, entro il proprio perimetro;
 - il BrandAccess rappresenta già l'utente ordinario e non genera un RoleAssignment `utente`;
 - per ora non può assegnare alcun ruolo ad altri profili;
 - non può assegnare `imprenditore_generaimpresa`, ruoli professionali, ruoli strutturali o
@@ -600,6 +602,7 @@ Le interfacce amministrative non devono mostrare gli stessi dati in tutti i domi
 |---|---|---|
 | `flowpulse.net` | superadmin | tutti gli User, tutti i Profile, stato di registrazione e verifica, BrandAccess, RoleAssignment, Node e richieste di tutti i Brand |
 | `generaimpresa.it` | superadmin | richieste rivolte a GeneraImpresa e BrandAccess GeneraImpresa; collegamento alla scheda globale FlowPulse della persona |
+| `generaimpresa.it` | `gestore_generaimpresa` | richieste e BrandAccess della radice GeneraImpresa, persone e progetti del Brand; nessun accesso all'amministrazione globale FlowPulse |
 | `generaimpresa.it` | `imprenditore_generaimpresa` | soltanto progetti affidati, discendenti consentiti, persone e richieste comprese nel proprio perimetro |
 | altro Brand | responsabile delegato futuro | richieste, persone e accessi del solo Brand o sottoalbero autorizzato |
 
@@ -684,8 +687,8 @@ se non ha prodotto BrandAccessGrant, attività o inviti accettati. La cancellazi
 e duplicati, richiede conferma esplicita e revoca gli eventuali inviti pendenti. Le richieste con
 storia operativa vengono invece chiuse, rifiutate o archiviate per conservarne l'audit.
 
-Per la radice GeneraImpresa l'approvatore resta per ora il superadmin. Nei domini o progetti
-delegati l'approvatore sarà l'imprenditore soltanto nel proprio perimetro. Un invito emesso dopo
+Per la radice GeneraImpresa l'approvatore è il superadmin oppure un `gestore_generaimpresa`. Nei
+domini o progetti delegati l'approvatore è l'imprenditore soltanto nel proprio perimetro. Un invito emesso dopo
 l'approvazione può completare automaticamente la registrazione, ma deve conservare il riferimento
 alla richiesta e all'approvatore che lo hanno autorizzato.
 
@@ -805,8 +808,8 @@ da conservare.
 | Area GeneraImpresa “I miei progetti” | implementata nella prima versione |
 | Limite di 7 Node | applicato dalla policy e dal manager di creazione |
 | Approvazione richieste di accesso | implementata: crea/riattiva BrandAccess senza ruolo `utente` |
-| Approvazione accessi root GeneraImpresa | riservata al superadmin |
-| Scope richieste dell'imprenditore | predisposto per futuri domini delegati, non attivo sulla root GeneraImpresa |
+| Approvazione accessi root GeneraImpresa | superadmin o `gestore_generaimpresa` |
+| Scope richieste dell'imprenditore | limitato ai domini/progetti delegati; esclusa la root GeneraImpresa |
 | Concessioni BrandAccess per progetto | implementate con `BrandAccessGrant` |
 | Sezione “Persone del progetto” | implementata con revoca scoped |
 | Area superadmin Profile a tab | implementata: Riepilogo, BrandAccess e Node |

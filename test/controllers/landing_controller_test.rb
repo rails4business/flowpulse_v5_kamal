@@ -100,6 +100,7 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label='Navigazione Flowpulse'] a", text: "Mondi e Brand", count: 0
     assert_select "nav[aria-label='Navigazione Flowpulse'] a", text: "Professionisti", count: 0
     assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{changelog_path}']", text: "Changelog"
+    assert_select "nav[aria-label='Navigazione Flowpulse'] a[href='#{new_session_path(return_to: '/admin/dashboard')}']", text: "Accedi"
     assert_select "footer a[href='https://github.com/rails4business/flowpulse_v5_kamal'][target='_blank']", text: /GitHub/
   end
 
