@@ -14,14 +14,17 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
       slug: "generaimpresa",
       node_type: "project",
       status: "published",
-      operator_roles: [ "creator_generaimpresa" ]
+      operator_roles: [ "imprenditore_generaimpresa" ]
     )
+    @domain = Domain.create!(hostname: "generaimpresa-#{SecureRandom.hex(3)}.example", node: @brand, role_assignment: @brand_assignment, locale: "it")
+    @project = Node.create!(title: "Radioestesia e Benessere", slug: "radioestesiaebenessere", parent: @brand, role_assignment: @brand_assignment, operator_roles: %w[legacy_collaborator])
 
     person = User.create!(
       email_address: "elisa-#{SecureRandom.hex(4)}@example.com",
       password: "password123"
     )
     @profile = person.create_profile!(display_name: "Elisa Corubolo", username: "elisa_corubolo_#{SecureRandom.hex(3)}")
+    @brand_access = BrandAccess.create!(profile: @profile, source_domain: @domain)
     @superadmin = User.create!(
       email_address: "profile-superadmin-#{SecureRandom.hex(4)}@example.com",
       password: "password123",
@@ -38,6 +41,29 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Elisa Corubolo"
     assert_select "form[action='#{admin_profile_role_assignments_path(@profile)}']", count: 1
+    assert_select "[data-brand-access-id='#{@brand_access.id}']", count: 1
+    assert_select "[data-brand-access-id='#{@brand_access.id}']", text: /#{Regexp.escape(@brand.title)}/
+  end
+
+  test "superadmin sees every assigned role with access and status" do
+    operator = @profile.role_assignments.create!(
+      role: :operator,
+      role_operator: "imprenditore_generaimpresa",
+      context: @brand,
+      parent: @brand_assignment,
+      brand_access: @brand_access,
+      status: "active"
+    )
+    structural = @profile.role_assignments.create!(role: :ideatore)
+    sign_in(@superadmin)
+
+    get admin_profile_url(@profile)
+
+    assert_response :success
+    assert_select "[data-role-assignment-id='#{operator.id}']", text: /Imprenditore GeneraImpresa/
+    assert_select "[data-role-assignment-id='#{operator.id}']", text: /Accesso: #{@brand.title}/
+    assert_select "[data-role-assignment-id='#{structural.id}']", text: /Ideatore/
+    assert_select "[data-role-assignment-id='#{structural.id}']", text: /BrandAccess non collegato/
   end
 
   test "ordinary user cannot access the person management page" do
@@ -48,7 +74,7 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to viaggiatori_path
   end
 
-  test "superadmin assigns creator generaimpresa once" do
+  test "superadmin assigns imprenditore generaimpresa once" do
     sign_in(@superadmin)
 
     assert_difference -> { @profile.role_assignments.count }, 1 do
@@ -57,9 +83,11 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
 
     assignment = @profile.role_assignments.last
     assert assignment.operator?
-    assert_equal "creator_generaimpresa", assignment.role_operator
+    assert_equal "imprenditore_generaimpresa", assignment.role_operator
     assert_equal @brand, assignment.context
     assert_equal @brand_assignment, assignment.parent
+    assert_equal @brand_access, assignment.brand_access
+    assert_equal "active", assignment.status
 
     assert_no_difference -> { @profile.role_assignments.count } do
       post admin_profile_role_assignments_url(@profile)
@@ -69,9 +97,10 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
   test "superadmin revokes an operator role without exposing structural roles" do
     operator = @profile.role_assignments.create!(
       role: :operator,
-      role_operator: "creator_generaimpresa",
+      role_operator: "imprenditore_generaimpresa",
       context: @brand,
-      parent: @brand_assignment
+      parent: @brand_assignment,
+      brand_access: @brand_access
     )
     structural = @profile.role_assignments.create!(role: :ideatore)
     sign_in(@superadmin)
@@ -80,10 +109,92 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select "form[action='#{admin_profile_role_assignment_path(@profile, operator)}']", count: 1
     assert_select "form[action='#{admin_profile_role_assignment_path(@profile, structural)}']", count: 0
 
-    assert_difference -> { @profile.role_assignments.count }, -1 do
+    assert_no_difference -> { @profile.role_assignments.count } do
       delete admin_profile_role_assignment_url(@profile, operator)
     end
+    assert_equal "revoked", operator.reload.status
+    assert operator.ends_at.present?
     assert structural.reload.persisted?
+  end
+
+  test "superadmin cannot assign the role without a brand access" do
+    @brand_access.destroy!
+    sign_in(@superadmin)
+
+    assert_no_difference -> { @profile.role_assignments.count } do
+      post admin_profile_role_assignments_url(@profile)
+    end
+
+    assert_redirected_to admin_profile_path(@profile)
+    assert_equal "Prima di assegnare il ruolo serve un accesso attivo a GeneraImpresa.", flash[:alert]
+  end
+
+  test "superadmin revokes and reactivates a brand access" do
+    sign_in(@superadmin)
+
+    delete admin_profile_brand_access_url(@profile, @brand_access)
+    assert_redirected_to admin_profile_path(@profile)
+    assert_equal "cancelled", @brand_access.reload.status
+
+    assert_no_difference -> { @profile.brand_accesses.count } do
+      post admin_profile_brand_accesses_url(@profile), params: { domain_id: @domain.id }
+    end
+    assert_equal "active", @brand_access.reload.status
+  end
+
+  test "superadmin assigns and removes responsibility for a project" do
+    sign_in(@superadmin)
+
+    post admin_profile_node_responsibilities_url(@profile), params: {
+      node_id: @project.id,
+      role_code: "imprenditore_generaimpresa"
+    }
+
+    assert_redirected_to admin_profile_path(@profile)
+    assert_equal @profile, @project.reload.responsible_profile
+    assignment = @profile.role_assignments.find_by!(context: @project, role_operator: "imprenditore_generaimpresa")
+    assert_equal @brand_access, assignment.brand_access
+    assert_equal "active", assignment.status
+
+    collaborator = User.create!(email_address: "project-collaborator@example.com", password: "password123")
+    collaborator_profile = collaborator.create_profile!(display_name: "Collaboratore")
+    collaborator_assignment = RoleAssignment.create!(
+      profile: collaborator_profile,
+      role: :operator,
+      role_operator: "legacy_collaborator",
+      context: @project,
+      parent: @brand_assignment
+    )
+
+    delete admin_profile_node_responsibility_url(@profile, @project)
+    assert_nil @project.reload.responsible_profile
+    assert_equal "revoked", assignment.reload.status
+    assert_equal "active", collaborator_assignment.reload.status
+  end
+
+  test "assigning a project to a new profile transfers responsibility and revokes the old assignment" do
+    old_assignment = RoleAssignments::Manager.new(actor: @superadmin).assign_operator!(
+      profile: @profile,
+      brand_access: @brand_access,
+      node: @project,
+      role_code: "imprenditore_generaimpresa"
+    )
+    @project.update!(responsible_profile: @profile)
+
+    new_user = User.create!(email_address: "new-responsible@example.com", password: "password123")
+    new_profile = new_user.create_profile!(display_name: "Nuovo responsabile")
+    new_access = BrandAccess.create!(profile: new_profile, source_domain: @domain)
+    sign_in(@superadmin)
+
+    post admin_profile_node_responsibilities_url(new_profile), params: {
+      node_id: @project.id,
+      role_code: "imprenditore_generaimpresa"
+    }
+
+    assert_equal new_profile, @project.reload.responsible_profile
+    assert_equal "revoked", old_assignment.reload.status
+    assert_equal "active", new_profile.role_assignments.find_by!(context: @project).status
+    assert_equal new_access, new_profile.role_assignments.find_by!(context: @project).brand_access
   end
 
   private

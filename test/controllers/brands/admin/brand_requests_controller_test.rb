@@ -135,6 +135,62 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     assert_select "input#brand-invitation-url[value*='/brand-invitations/']"
   end
 
+  test "owner approves a linked access request and creates the brand access" do
+    person = User.create!(email_address: "access-requester@example.com", password: "password123")
+    requester = person.create_profile!(display_name: "Access Requester")
+    @brand_request.update!(kind: "access", requester_profile: requester)
+    sign_in(@owner)
+
+    assert_difference -> { requester.brand_accesses.count }, 1 do
+      post brand_admin_request_approve_access_url(@brand.slug, @brand_request)
+    end
+
+    assert_equal "accepted", @brand_request.reload.status
+    assert_equal @profile, @brand_request.assigned_to_profile
+    assert @brand_request.resolved_at.present?
+    assert_equal @brand, requester.brand_accesses.active.first.brand_node
+    assert_empty requester.role_assignments
+  end
+
+  test "entrepreneur sees and approves only access requests in the assigned project" do
+    @brand.update!(slug: "generaimpresa", operator_roles: %w[imprenditore_generaimpresa])
+    entrepreneur = User.create!(email_address: "requests-entrepreneur@example.com", password: "password123")
+    entrepreneur_profile = entrepreneur.create_profile!(display_name: "Entrepreneur")
+    entrepreneur_access = BrandAccess.create!(profile: entrepreneur_profile, source_domain: @domain)
+    project = Node.create!(title: "Assigned project", parent: @brand, role_assignment: @brand.role_assignment, responsible_profile: entrepreneur_profile)
+    outside = Node.create!(title: "Outside project", parent: @brand, role_assignment: @brand.role_assignment)
+    RoleAssignment.create!(
+      profile: entrepreneur_profile,
+      role: :operator,
+      role_operator: "imprenditore_generaimpresa",
+      context: project,
+      parent: @brand.role_assignment,
+      brand_access: entrepreneur_access
+    )
+    inside_person = User.create!(email_address: "inside-request@example.com", password: "password123")
+    inside_profile = inside_person.create_profile!(display_name: "Inside person")
+    outside_person = User.create!(email_address: "outside-request@example.com", password: "password123")
+    outside_profile = outside_person.create_profile!(display_name: "Outside person")
+    inside_request = BrandRequest.create!(domain: @domain, brand_node: @brand, subject: project, requester_profile: inside_profile, title: "Inside", kind: "access", audience: "user")
+    outside_request = BrandRequest.create!(domain: @domain, brand_node: @brand, subject: outside, requester_profile: outside_profile, title: "Outside", kind: "access", audience: "user")
+    sign_in(entrepreneur)
+
+    get brand_admin_requests_url(@brand.slug)
+    assert_response :success
+    assert_select "#brand-request-#{inside_request.id}", count: 1
+    assert_select "#brand-request-#{outside_request.id}", count: 0
+
+    post brand_admin_request_approve_access_url(@brand.slug, inside_request)
+    assert_equal "accepted", inside_request.reload.status
+    assert inside_profile.brand_accesses.active.exists?(brand_node: @brand)
+    assert_empty inside_profile.role_assignments
+
+    post brand_admin_request_approve_access_url(@brand.slug, outside_request)
+    assert_response :not_found
+    assert_equal "open", outside_request.reload.status
+    assert_not outside_profile.brand_accesses.exists?
+  end
+
   private
 
     def sign_in(user)

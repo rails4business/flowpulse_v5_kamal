@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "brand_access_grants", force: :cascade do |t|
+    t.bigint "brand_access_id", null: false
+    t.bigint "node_id", null: false
+    t.bigint "brand_request_id"
+    t.bigint "granted_by_profile_id"
+    t.string "status", default: "active", null: false
+    t.datetime "granted_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_access_id", "node_id"], name: "index_brand_access_grants_on_brand_access_id_and_node_id", unique: true
+    t.index ["brand_access_id"], name: "index_brand_access_grants_on_brand_access_id"
+    t.index ["brand_request_id"], name: "index_brand_access_grants_on_brand_request_id"
+    t.index ["granted_by_profile_id"], name: "index_brand_access_grants_on_granted_by_profile_id"
+    t.index ["node_id"], name: "index_brand_access_grants_on_node_id"
+    t.index ["status"], name: "index_brand_access_grants_on_status"
+  end
+
   create_table "brand_accesses", force: :cascade do |t|
     t.bigint "profile_id", null: false
     t.bigint "source_domain_id", null: false
@@ -60,6 +78,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
     t.datetime "joined_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "grant_managed", default: false, null: false
     t.index ["brand_node_id"], name: "index_brand_accesses_on_brand_node_id"
     t.index ["profile_id", "brand_node_id"], name: "index_brand_accesses_on_profile_id_and_brand_node_id", unique: true
     t.index ["profile_id", "source_domain_id"], name: "index_brand_accesses_on_profile_id_and_source_domain_id", unique: true
@@ -596,12 +615,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
     t.string "line_slugs", default: [], null: false, array: true
     t.bigint "show_content_id"
     t.string "navigation_label"
+    t.bigint "responsible_profile_id"
     t.index ["lane_container"], name: "index_nodes_on_lane_container"
     t.index ["line_slugs"], name: "index_nodes_on_line_slugs", using: :gin
     t.index ["link_node_id"], name: "index_nodes_on_link_node_id"
     t.index ["node_type"], name: "index_nodes_on_node_type"
     t.index ["parent_id"], name: "index_nodes_on_parent_id"
     t.index ["professional_owner_node_id"], name: "index_nodes_on_professional_owner_node_id"
+    t.index ["responsible_profile_id"], name: "index_nodes_on_responsible_profile_id"
     t.index ["role_assignment_id"], name: "index_nodes_on_role_assignment_id"
     t.index ["show_content_id"], name: "index_nodes_on_show_content_id"
     t.index ["status"], name: "index_nodes_on_status"
@@ -826,6 +847,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
     t.bigint "parent_id"
     t.bigint "profile_id", null: false
     t.string "role_operator"
+    t.bigint "brand_access_id"
+    t.bigint "assigned_by_profile_id"
+    t.string "status", default: "active", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.index ["assigned_by_profile_id"], name: "index_role_assignments_on_assigned_by_profile_id"
+    t.index ["brand_access_id"], name: "index_role_assignments_on_brand_access_id"
     t.index ["context_type", "context_id"], name: "index_role_assignments_on_context_type_and_context_id"
     t.index ["parent_id"], name: "index_role_assignments_on_parent_id"
     t.index ["profile_id", "role", "context_type", "context_id"], name: "index_role_assignments_on_context_role", unique: true, where: "((context_type IS NOT NULL) AND (context_id IS NOT NULL) AND (role <> 11))"
@@ -833,6 +861,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
     t.index ["profile_id", "role"], name: "index_role_assignments_on_global_role", unique: true, where: "((context_type IS NULL) AND (context_id IS NULL))"
     t.index ["profile_id"], name: "index_role_assignments_on_profile_id"
     t.index ["role"], name: "index_role_assignments_on_role"
+    t.index ["status"], name: "index_role_assignments_on_status"
     t.check_constraint "context_type IS NULL AND context_id IS NULL OR context_type IS NOT NULL AND context_id IS NOT NULL", name: "role_assignments_context_presence"
   end
 
@@ -921,6 +950,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "brand_access_grants", "brand_accesses"
+  add_foreign_key "brand_access_grants", "brand_requests"
+  add_foreign_key "brand_access_grants", "nodes"
+  add_foreign_key "brand_access_grants", "profiles", column: "granted_by_profile_id"
   add_foreign_key "brand_accesses", "domains", column: "source_domain_id"
   add_foreign_key "brand_accesses", "nodes", column: "brand_node_id"
   add_foreign_key "brand_accesses", "profiles"
@@ -1003,6 +1036,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
   add_foreign_key "nodes", "nodes", column: "link_node_id"
   add_foreign_key "nodes", "nodes", column: "parent_id"
   add_foreign_key "nodes", "nodes", column: "professional_owner_node_id"
+  add_foreign_key "nodes", "profiles", column: "responsible_profile_id"
   add_foreign_key "nodes", "role_assignments"
   add_foreign_key "password_reset_requests", "users"
   add_foreign_key "place_domains", "contents"
@@ -1030,7 +1064,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
   add_foreign_key "reusable_skill_nodes", "reusable_skills"
   add_foreign_key "reusable_skills", "profiles", column: "owner_profile_id"
   add_foreign_key "reusable_skills", "profiles", column: "responsible_profile_id"
+  add_foreign_key "role_assignments", "brand_accesses"
   add_foreign_key "role_assignments", "profiles"
+  add_foreign_key "role_assignments", "profiles", column: "assigned_by_profile_id"
   add_foreign_key "role_assignments", "role_assignments", column: "parent_id"
   add_foreign_key "services", "nodes"
   add_foreign_key "services", "users", column: "created_by_user_id"

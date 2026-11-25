@@ -145,6 +145,14 @@
                       <%= button_to(brand_request.brand_invitations.pending.exists? ? "Rigenera invito" : "Genera invito", brand_admin_request_invitation_path(@brand.slug, brand_request), method: :post, class: "brand-admin-action brand-admin-action--primary brand-admin-action--sm") %>
                     <% end %>
 
+                    <% if brand_request.kind == "access" %>
+                      <% if brand_request.requester_profile %>
+                        <%= button_to "Approva accesso", brand_admin_request_approve_access_path(@brand.slug, brand_request), method: :post, class: "brand-admin-action brand-admin-action--primary brand-admin-action--sm", data: { turbo_confirm: "Concedere l'accesso a #{brand_request.requester_profile.display_name}?" } %>
+                      <% else %>
+                        <span class="text-xs font-bold text-amber-700">Collega un Profile per approvare</span>
+                      <% end %>
+                    <% end %>
+
                     <% if brand_request.status == "open" %>
                       <%= button_to "In carico", brand_admin_request_state_path(@brand.slug, brand_request), method: :patch, params: { transition: "take_charge" }, class: "brand-admin-action brand-admin-action--sm" %>
                     <% end %>

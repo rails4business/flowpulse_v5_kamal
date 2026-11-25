@@ -26,8 +26,13 @@ module Brands
 
         def require_brand_administrator!
           return if @brand.administered_by?(Current.user)
+          return if brand_section_access?
 
           head :forbidden
+        end
+
+        def brand_section_access?
+          false
         end
 
         def brand_owner?

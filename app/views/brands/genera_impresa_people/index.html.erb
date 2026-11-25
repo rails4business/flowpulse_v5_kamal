@@ -1,0 +1,31 @@
+<% content_for :title, "Persone · #{@project.title} — GeneraImpresa" %>
+<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+
+<main class="min-h-screen bg-slate-50 py-10 text-slate-950">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+    <nav class="text-sm font-bold text-slate-500"><%= link_to "I miei progetti", genera_impresa_my_projects_path, class: "text-orange-700 hover:underline" %> <span class="mx-2">/</span> <%= @project.title %></nav>
+    <header class="mt-5 rounded-3xl bg-slate-950 p-7 text-white shadow-xl sm:p-9">
+      <p class="text-xs font-black uppercase tracking-[.16em] text-orange-300">Persone del progetto</p>
+      <h1 class="mt-2 text-3xl font-black"><%= @project.title %></h1>
+      <p class="mt-3 max-w-3xl leading-7 text-slate-300">Le persone compaiono dopo l’approvazione di una richiesta di accesso. Revocare una concessione di questo progetto non rimuove quelle ricevute da altri progetti.</p>
+    </header>
+
+    <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="flex items-end justify-between gap-4"><div><p class="text-xs font-black uppercase tracking-wider text-slate-400">BrandAccess scoped</p><h2 class="mt-1 text-xl font-black">Accessi concessi</h2></div><span class="text-sm font-black text-slate-400"><%= @grants.size %></span></div>
+      <% if @grants.any? %>
+        <ul class="mt-5 divide-y divide-slate-100 border-y border-slate-200">
+          <% @grants.each do |grant| %>
+            <% profile = grant.brand_access.profile %>
+            <li class="flex flex-wrap items-start justify-between gap-4 py-4" data-brand-access-grant-id="<%= grant.id %>">
+              <div><div class="flex flex-wrap items-center gap-2"><strong class="text-sm"><%= profile.display_name %></strong><span class="rounded-full px-2 py-0.5 text-[10px] font-black uppercase <%= grant.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>"><%= grant.status.humanize %></span></div><p class="mt-1 text-xs text-slate-500">@<%= profile.username %> · <%= grant.node.title %></p><p class="mt-1 text-[11px] text-slate-400">Concesso <%= l grant.granted_at, format: :short %><% if grant.brand_request_id %> · richiesta #<%= grant.brand_request_id %><% end %></p></div>
+              <% if grant.active? %><%= button_to "Revoca dal progetto", genera_impresa_project_person_path(@project, grant), method: :delete, data: { turbo_confirm: "Revocare l'accesso di #{profile.display_name} da questo progetto?" }, class: "text-xs font-black text-red-700 hover:underline" %><% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="mt-5 rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">Nessuna persona è ancora entrata attraverso una richiesta di questo progetto.</p>
+      <% end %>
+      <%= link_to "Apri le richieste del Brand", brand_admin_requests_path(@brand.slug), class: "mt-5 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-black text-white hover:bg-slate-700" %>
+    </section>
+  </div>
+</main>

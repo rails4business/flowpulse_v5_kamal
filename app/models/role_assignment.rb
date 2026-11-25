@@ -21,6 +21,8 @@ class RoleAssignment < ApplicationRecord
 
   belongs_to :profile
   delegate :user, to: :profile, allow_nil: true
+  belongs_to :brand_access, optional: true
+  belongs_to :assigned_by_profile, class_name: "Profile", optional: true
   belongs_to :context, polymorphic: true, optional: true
   belongs_to :parent, class_name: "RoleAssignment", optional: true
   has_many :children, class_name: "RoleAssignment", foreign_key: :parent_id, dependent: :destroy
@@ -48,21 +50,24 @@ class RoleAssignment < ApplicationRecord
   end
 
   validates :role, presence: true
+  validates :status, presence: true, inclusion: { in: %w[active suspended revoked] }
   validates :role, uniqueness: { scope: [ :profile_id, :context_type, :context_id, :parent_id ] }, unless: :operator?
   validates :role_operator, presence: true, uniqueness: { scope: [ :profile_id, :context_type, :context_id ], case_sensitive: false }, if: :operator?
   validate :context_fields_match
   validate :parent_role_assignment_constraints
   validate :operator_assignment_matches_brand
+  validate :brand_access_matches_assignment, if: -> { brand_access.present? }
 
   before_validation :normalize_role_operator
 
   scope :global, -> { where(context_type: nil, context_id: nil) }
   scope :for_context, ->(context) { where(context: context) }
+  scope :active, -> { where(status: "active") }
 
   private
 
     def normalize_role_operator
-      self.role_operator = role_operator.to_s.strip.downcase.presence
+      self.role_operator = RoleDefinitions::Registry.canonical_code(role_operator)
     end
 
     def context_fields_match
@@ -96,8 +101,20 @@ class RoleAssignment < ApplicationRecord
 
       errors.add(:parent, "deve essere l'ideatore del Brand") if parent != context.role_assignment
 
-      unless context.operator_role?(role_operator)
+      role_source = brand_access&.brand_node || context
+      registered_role_allowed = brand_access.present? &&
+        RoleDefinitions::Registry.compatible_with_brand?(role_operator, role_source)
+      unless registered_role_allowed || role_source.operator_role?(role_operator)
         errors.add(:role_operator, "non è previsto per questo Brand")
       end
+    end
+
+    def brand_access_matches_assignment
+      errors.add(:brand_access, "deve appartenere allo stesso profilo") if brand_access.profile_id != profile_id
+      errors.add(:brand_access, "deve essere attivo") unless brand_access.active?
+      return unless context.is_a?(Node)
+      return if context == brand_access.brand_node || context.ancestors.exists?(brand_access.brand_node_id)
+
+      errors.add(:brand_access, "non comprende il Node del ruolo")
     end
 end

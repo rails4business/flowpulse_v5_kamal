@@ -18,6 +18,7 @@ class BrandRequest < ApplicationRecord
   belongs_to :legacy_data_commitment, class_name: "Brands::Impegno::Commitment", optional: true
 
   has_many :brand_invitations, dependent: :nullify
+  has_many :brand_access_grants, dependent: :nullify
   has_many :data_commitments, class_name: "Brands::Impegno::Commitment", dependent: :nullify
 
   validates :title, presence: true

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Giro del Cavallo - Knight's Tour</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    margin: 0 0 5px;
+    font-size: 1.8em;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,0.5);
+  }
+  .subtitle { color: #aaa; margin-bottom: 20px; font-size: 0.95em; }
+
+  #board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: min(90vw, 480px);
+    aspect-ratio: 1 / 1;
+    border: 4px solid #ffd700;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(255,215,0,0.3);
+    overflow: hidden;
+  }
+
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+    min-width: 0;
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+  }
+  .light { background: #f0d9b5; color: #333; text-shadow: none; }
+  .dark  { background: #b58863; }
+
+  .cell .num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72%;
+    height: 72%;
+    border-radius: 50%;
+    font-size: clamp(0.6em, 1.8vw, 1em);
+    font-weight: bold;
+    color: transparent;
+    text-shadow: none;
+  }
+
+  .cell.visited .num {
+    background: rgba(30, 144, 255, 0.85);
+    color: #fff;
+    animation: pop 0.25s ease-out;
+  }
+  @keyframes pop {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  .cell.current .num {
+    background: #ffd700;
+    color: #000;
+    box-shadow: 0 0 12px #ffd700;
+  }
+
+  .cell.knight::after {
+    content: "♞";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.1em, 3.5vw, 1.8em);
+    color: #111;
+    text-shadow: 0 0 3px #fff, 0 0 6px #fff;
+    pointer-events: none;
+  }
+
+  .cell.valid-move {
+    outline: 3px solid #00ff88;
+    outline-offset: -3px;
+    z-index: 2;
+  }
+  .cell.hint {
+    box-shadow: inset 0 0 0 3px #00ff88;
+    z-index: 2;
+  }
+
+  #controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  button {
+    padding: 10px 18px;
+    font-size: 0.95em;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+    color: #fff;
+  }
+  button:hover:not(:disabled) { transform: translateY(-2px); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #reset { background: #e74c3c; }
+  #undo  { background: #f39c12; }
+  #solve { background: #27ae60; }
+  #hint  { background: #3498db; }
+
+  #status {
+    margin-top: 15px;
+    font-size: 1.05em;
+    min-height: 1.5em;
+    text-align: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+  }
+  .win  { color: #00ff88; font-weight: bold; text-shadow: 0 0 10px #00ff88; }
+  .lose { color: #ff6b6b; }
+  .info { color: #ffd700; }
+</style>
+</head>
+<body>
+
+<h1>♞ Il Giro del Cavallo ♞</h1>
+<div class="subtitle">Visita tutte le 64 caselle senza passare due volte sulla stessa</div>
+
+<div id="board"></div>
+
+<div id="controls">
+  <button id="reset">🔄 Ricomincia</button>
+  <button id="undo">↩️ Annulla mossa</button>
+  <button id="hint">💡 Suggerimento</button>
+  <button id="solve">✨ Risolvi</button>
+</div>
+
+<div id="status" class="info">Clicca una casella verde per muovere il cavallo.</div>
+
+<script>
+const SIZE = 8;
+const boardEl = document.getElementById('board');
+const statusEl = document.getElementById('status');
+
+let tour = [];
+let knightPos = null;
+let playing = true;
+let solving = false;
+
+const moves = [
+  [-2,-1],[-2,1],[-1,-2],[-1,2],
+  [1,-2],[1,2],[2,-1],[2,1]
+];
+
+const inBounds = (r,c) => r>=0 && r<SIZE && c>=0 && c<SIZE;
+const key = (r,c) => r*SIZE+c;
+
+function validMoves(r,c, visitedSet){
+  const res = [];
+  for(const [dr,dc] of moves){
+    const nr=r+dr, nc=c+dc;
+    if(inBounds(nr,nc) && !visitedSet.has(key(nr,nc))) res.push([nr,nc]);
+  }
+  return res;
+}
+
+function buildBoard(){
+  boardEl.innerHTML = '';
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      const cell = document.createElement('div');
+      cell.className = 'cell ' + ((r+c)%2===0 ? 'light' : 'dark');
+      cell.dataset.r = r;
+      cell.dataset.c = c;
+      cell.innerHTML = '<span class="num"></span>';
+      cell.addEventListener('click', () => onCellClick(r,c));
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+const getCell = (r,c) => boardEl.children[r*SIZE + c];
+
+function render(){
+  const visitedSet = new Set(tour.map(([r,c])=>key(r,c)));
+  const orderMap = new Map();
+  tour.forEach(([r,c], i) => orderMap.set(key(r,c), i+1));
+
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      const cell = getCell(r,c);
+      cell.classList.remove('visited','current','knight','valid-move','hint');
+      const numEl = cell.querySelector('.num');
+      numEl.textContent = '';
+      const k = key(r,c);
+      if(orderMap.has(k)){
+        cell.classList.add('visited');
+        numEl.textContent = orderMap.get(k);
+        if(knightPos && knightPos[0]===r && knightPos[1]===c){
+          cell.classList.add('current','knight');
+        }
+      }
+    }
+  }
+
+  if(knightPos && playing && !solving){
+    const vm = validMoves(knightPos[0], knightPos[1], visitedSet);
+    for(const [r,c] of vm) getCell(r,c).classList.add('valid-move');
+    if(vm.length===0 && tour.length < SIZE*SIZE && tour.length>0){
+      statusEl.textContent = "😵 Nessuna mossa valida! Il cavallo è bloccato. Hai visitato " + tour.length + "/64 caselle.";
+      statusEl.className = 'lose';
+    }
+  }
+}
+
+function resetGame(){
+  tour = [];
+  knightPos = [0,0];
+  tour.push([0,0]);
+  playing = true;
+  solving = false;
+  statusEl.textContent = "Clicca una casella valida (evidenziata in verde) per muovere il cavallo.";
+  statusEl.className = 'info';
+  render();
+}
+
+function onCellClick(r,c){
+  if(!playing || solving) return;
+  if(knightPos && r===knightPos[0] && c===knightPos[1]) return;
+
+  const visitedSet = new Set(tour.map(([rr,cc])=>key(rr,cc)));
+  if(visitedSet.has(key(r,c))){
+    statusEl.textContent = "❌ Casella già visitata! Scegli una casella verde.";
+    statusEl.className = 'lose';
+    return;
+  }
+  if(knightPos){
+    const dr = Math.abs(r-knightPos[0]);
+    const dc = Math.abs(c-knightPos[1]);
+    const isKnightMove = (dr===2&&dc===1)||(dr===1&&dc===2);
+    if(!isKnightMove){
+      statusEl.textContent = "❌ Mossa non valida: il cavallo si muove a L!";
+      statusEl.className = 'lose';
+      return;
+    }
+  }
+  knightPos = [r,c];
+  tour.push([r,c]);
+  if(tour.length === SIZE*SIZE){
+    playing = false;
+    statusEl.textContent = "🏆 COMPLIMENTI! Hai completato il giro del cavallo in 64 caselle!";
+    statusEl.className = 'win';
+  } else {
+    statusEl.textContent = `Mosse fatte: ${tour.length-1}. Caselle visitate: ${tour.length}/64`;
+    statusEl.className = 'info';
+  }
+  render();
+}
+
+function undo(){
+  if(solving || tour.length<=1) return;
+  tour.pop();
+  knightPos = tour[tour.length-1];
+  playing = true;
+  statusEl.textContent = `Mossa annullata. Caselle visitate: ${tour.length}/64`;
+  statusEl.className = 'info';
+  render();
+}
+
+function solveTour(startR, startC){
+  const visited = Array.from({length:SIZE},()=>Array(SIZE).fill(false));
+  const path = [];
+  visited[startR][startC] = true;
+  path.push([startR,startC]);
+
+  function degree(r,c){
+    let d=0;
+    for(const [dr,dc] of moves){
+      const nr=r+dr,nc=c+dc;
+      if(inBounds(nr,nc) && !visited[nr][nc]) d++;
+    }
+    return d;
+  }
+
+  function bt(r,c){
+    if(path.length === SIZE*SIZE) return true;
+    const candidates = [];
+    for(const [dr,dc] of moves){
+      const nr=r+dr,nc=c+dc;
+      if(inBounds(nr,nc) && !visited[nr][nc]){
+        candidates.push([nr,nc,degree(nr,nc)]);
+      }
+    }
+    candidates.sort((a,b)=>a[2]-b[2]);
+    for(const [nr,nc] of candidates){
+      visited[nr][nc] = true;
+      path.push([nr,nc]);
+      if(bt(nr,nc)) return true;
+      path.pop();
+      visited[nr][nc] = false;
+    }
+    return false;
+  }
+
+  return bt(startR,startC) ? path.slice() : null;
+}
+
+function solve(){
+  if(solving) return;
+  solving = true;
+  playing = false;
+  statusEl.textContent = "⏳ Calcolo della soluzione...";
+  statusEl.className = 'info';
+  setTimeout(()=>{
+    const sol = solveTour(0,0);
+    if(sol){
+      tour = sol.slice();
+      knightPos = tour[tour.length-1];
+      statusEl.textContent = "✨ Soluzione trovata! Il cavallo visita tutte le 64 caselle.";
+      statusEl.className = 'win';
+    } else {
+      statusEl.textContent = "Nessuna soluzione trovata.";
+      statusEl.className = 'lose';
+    }
+    render();
+    solving = false;
+  }, 30);
+}
+
+function hint(){
+  if(solving || !playing) return;
+  solving = true;
+
+  const path = tour.map(p=>p.slice());
+  const visitedB = Array.from({length:SIZE},()=>Array(SIZE).fill(false));
+  path.forEach(([r,c])=>visitedB[r][c]=true);
+  const p = path.map(x=>x.slice());
+
+  function degree(r,c){
+    let d=0;
+    for(const [dr,dc] of moves){
+      const nr=r+dr,nc=c+dc;
+      if(inBounds(nr,nc) && !visitedB[nr][nc]) d++;
+    }
+    return d;
+  }
+  function bt(){
+    if(p.length===SIZE*SIZE) return true;
+    const [r,c] = p[p.length-1];
+    const cand = [];
+    for(const [dr,dc] of moves){
+      const nr=r+dr,nc=c+dc;
+      if(inBounds(nr,nc) && !visitedB[nr][nc]) cand.push([nr,nc,degree(nr,nc)]);
+    }
+    cand.sort((a,b)=>a[2]-b[2]);
+    for(const [nr,nc] of cand){
+      visitedB[nr][nc]=true; p.push([nr,nc]);
+      if(bt()) return true;
+      p.pop(); visitedB[nr][nc]=false;
+    }
+    return false;
+  }
+  const solvedPath = bt() ? p : null;
+
+  solving = false;
+  if(solvedPath && solvedPath.length > path.length){
+    const next = solvedPath[path.length];
+    getCell(next[0],next[1]).classList.add('hint');
+    statusEl.textContent = "💡 Prova la casella con bordo verde!";
+    statusEl.className = 'info';
+    setTimeout(()=>getCell(next[0],next[1]).classList.remove('hint'), 2500);
+  } else {
+    statusEl.textContent = "🤔 Da questa posizione non sembra esserci una soluzione completa.";
+    statusEl.className = 'lose';
+  }
+}
+
+document.getElementById('reset').addEventListener('click', resetGame);
+document.getElementById('undo').addEventListener('click', undo);
+document.getElementById('solve').addEventListener('click', solve);
+document.getElementById('hint').addEventListener('click', hint);
+
+buildBoard();
+resetGame();
+</script>
+</body>
+</html>

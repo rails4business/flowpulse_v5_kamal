@@ -2,7 +2,19 @@ class Profile < ApplicationRecord
   belongs_to :user
   belongs_to :primary_node, class_name: "Node", optional: true, inverse_of: :primary_professional_profile
   has_many :role_assignments, dependent: :destroy
+  has_many :assigned_role_assignments,
+           class_name: "RoleAssignment",
+           foreign_key: :assigned_by_profile_id,
+           dependent: :nullify
+  has_many :responsible_nodes,
+           class_name: "Node",
+           foreign_key: :responsible_profile_id,
+           dependent: :nullify
   has_many :brand_accesses, dependent: :destroy
+  has_many :granted_brand_access_grants,
+           class_name: "BrandAccessGrant",
+           foreign_key: :granted_by_profile_id,
+           dependent: :nullify
   has_many :submitted_brand_requests,
            class_name: "BrandRequest",
            foreign_key: :requester_profile_id,

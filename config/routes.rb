@@ -304,6 +304,11 @@ Rails.application.routes.draw do
   get "posturacorretta/collabora/professionisti/:slug" => "brands/posturacorretta#collabora_professionisti_guida", as: :posturacorretta_collabora_professionisti_guida
   get "posturacorretta/collabora/digital" => "brands/posturacorretta#collabora_digital", as: :posturacorretta_collabora_digital
   get "generaimpresa" => "brands/genera_impresa#index", as: :genera_impresa
+  get "generaimpresa/miei-progetti" => "brands/genera_impresa_projects#index", as: :genera_impresa_my_projects
+  post "generaimpresa/miei-progetti" => "brands/genera_impresa_projects#create"
+  patch "generaimpresa/miei-progetti/:id" => "brands/genera_impresa_projects#update", as: :genera_impresa_my_project
+  get "generaimpresa/miei-progetti/:project_id/persone" => "brands/genera_impresa_people#index", as: :genera_impresa_project_people
+  delete "generaimpresa/miei-progetti/:project_id/persone/:id" => "brands/genera_impresa_people#destroy", as: :genera_impresa_project_person
   get "generaimpresa/brand/:slug" => "brands/genera_impresa#brand", as: :genera_impresa_brand
   get "generaimpresa/brand/:slug/materiali/:material" => "brands/genera_impresa#material", as: :genera_impresa_brand_material
   get "generaimpresa/brand/:slug/materiali/:material/esercizi/:position" => "brands/genera_impresa#exercise", as: :genera_impresa_brand_material_exercise
@@ -401,6 +406,8 @@ Rails.application.routes.draw do
     resources :profiles, only: :show do
       resources :role_assignments, only: :create, controller: "profile_role_assignments"
       delete "role_assignments/:role_assignment_id", to: "profile_role_assignments#destroy", as: :role_assignment
+      resources :brand_accesses, only: %i[create destroy], controller: "profile_brand_accesses"
+      resources :node_responsibilities, only: %i[create destroy], controller: "profile_node_responsibilities"
     end
     resources :domains do
       collection do
@@ -461,6 +468,7 @@ Rails.application.routes.draw do
     get "privacy", to: "privacy#index", as: :privacy
     get "requests", to: "brand_requests#index", as: :requests
     patch "requests/:id/state", to: "brand_requests#update_state", as: :request_state
+    post "requests/:id/approve-access", to: "brand_requests#approve_access", as: :request_approve_access
     post "requests/:id/invitation", to: "brand_requests#create_invitation", as: :request_invitation
     get "data-commitments", to: "data_commitments#index", as: :data_commitments
     resources :contents, only: %i[index update]

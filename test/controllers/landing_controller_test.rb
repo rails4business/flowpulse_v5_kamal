@@ -56,10 +56,11 @@ class LandingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "nav[aria-label='Navigazione Rails4Business'] a[href=?]", rails4b_ideas_path, text: "Idee"
-    assert_select "#rails4b-ideas li", count: 6
+    assert_select "#rails4b-ideas li", count: 7
     assert_select "#idea-ripartire-con-dash a[href=?]", "/generaimpresa/progetti/ripartire-con-dash"
     assert_select "#idea-posturacorretta-in-lombardia", text: /In arrivo/
     assert_select "#idea-raccolte-dati-protocollo-plugin", text: /applicazioni indipendenti/
+    assert_select "#idea-giro-del-cavallo", text: /64 caselle/
     assert_select "a[href^='/admin/prototipi']", count: 0
   end
 

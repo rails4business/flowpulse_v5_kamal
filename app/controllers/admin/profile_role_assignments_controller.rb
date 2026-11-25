@@ -5,23 +5,27 @@ module Admin
 
     def create
       brand = Node.find_by!(slug: "generaimpresa")
-      assignment = @profile.role_assignments.new(
-        role: :operator,
-        role_operator: "creator_generaimpresa",
-        context: brand,
-        parent: brand.role_assignment
-      )
+      brand_access = @profile.brand_accesses.active.find_by(brand_node: brand)
 
-      if assignment.save
-        redirect_to admin_profile_path(@profile), notice: "Ruolo Creatore GeneraImpresa assegnato."
-      else
-        redirect_to admin_profile_path(@profile), alert: assignment.errors.full_messages.to_sentence
+      unless brand_access
+        redirect_to admin_profile_path(@profile), alert: "Prima di assegnare il ruolo serve un accesso attivo a GeneraImpresa."
+        return
       end
+
+      RoleAssignments::Manager.new(actor: Current.user).assign_operator!(
+        profile: @profile,
+        brand_access: brand_access,
+        node: brand,
+        role_code: "imprenditore_generaimpresa"
+      )
+      redirect_to admin_profile_path(@profile), notice: "Ruolo Imprenditore GeneraImpresa assegnato."
+    rescue ActiveRecord::RecordInvalid, ArgumentError => error
+      redirect_to admin_profile_path(@profile), alert: error.message
     end
 
     def destroy
       assignment = @profile.role_assignments.operator.find(params[:role_assignment_id])
-      assignment.destroy!
+      RoleAssignments::Manager.new(actor: Current.user).revoke!(assignment)
       redirect_to admin_profile_path(@profile), notice: "Ruolo revocato."
     end
 

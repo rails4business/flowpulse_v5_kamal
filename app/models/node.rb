@@ -11,6 +11,7 @@ class Node < ApplicationRecord
   }.freeze
 
   belongs_to :role_assignment
+  belongs_to :responsible_profile, class_name: "Profile", optional: true
   belongs_to :parent, class_name: "Node", optional: true
   belongs_to :link_node, class_name: "Node", optional: true
   belongs_to :professional_owner_node, class_name: "Node", optional: true
@@ -40,9 +41,14 @@ class Node < ApplicationRecord
            foreign_key: :brand_node_id,
            inverse_of: :brand_node,
            dependent: :destroy
+  has_many :brand_access_grants, dependent: :restrict_with_error
   has_many :brand_requests,
     foreign_key: :brand_node_id,
     inverse_of: :brand_node,
+    dependent: :restrict_with_error
+  has_many :role_assignments_for_responsibility,
+    class_name: "RoleAssignment",
+    as: :context,
     dependent: :restrict_with_error
   has_many :professionally_owned_nodes,
     class_name: "Node",
@@ -214,6 +220,7 @@ class Node < ApplicationRecord
 
   def administered_by?(user)
     return false unless user
+    return true if RoleAssignments::AccessPolicy.allowed?(user: user, action: :manage, node: self)
     return true if user.superadmin_user? || owned_by?(user)
     return true if professional? && primary_professional_profile&.user == user
     return true if professional_owner_node&.owned_by?(user)

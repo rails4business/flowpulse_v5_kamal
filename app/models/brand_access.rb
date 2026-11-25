@@ -5,6 +5,8 @@ class BrandAccess < ApplicationRecord
   belongs_to :source_domain, class_name: "Domain", inverse_of: :originating_brand_accesses
   belongs_to :brand_node, class_name: "Node", inverse_of: :brand_accesses
   has_many :sessions, dependent: :destroy
+  has_many :role_assignments, dependent: :restrict_with_error
+  has_many :grants, class_name: "BrandAccessGrant", dependent: :destroy
 
   before_validation :sync_brand_node_from_source_domain
   before_validation :set_defaults
@@ -45,6 +47,10 @@ class BrandAccess < ApplicationRecord
       update!(status: "cancelled")
       sessions.where(revoked_at: nil).update_all(revoked_at: Time.current, updated_at: Time.current)
     end
+  end
+
+  def activate!
+    update!(status: "active", joined_at: Time.current)
   end
 
   def active?

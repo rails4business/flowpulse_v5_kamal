@@ -1,0 +1,48 @@
+<% content_for :title, "I miei progetti — GeneraImpresa" %>
+<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
+
+<main class="min-h-screen bg-slate-50 py-10 text-slate-950">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <header class="rounded-3xl bg-slate-950 p-7 text-white shadow-xl sm:p-9">
+      <p class="text-xs font-black uppercase tracking-[.16em] text-orange-300"><%= Current.user.superadmin_user? ? "Vista superadmin" : "Cabina di regia" %></p>
+      <div class="mt-3 flex flex-wrap items-end justify-between gap-5">
+        <div><h1 class="text-3xl font-black sm:text-4xl">I miei progetti</h1><p class="mt-3 max-w-2xl leading-7 text-slate-300">Qui compaiono soltanto i Node affidati al tuo Profile. Puoi lavorare nel tuo ramo senza accedere alla configurazione globale di FlowPulse.</p></div>
+        <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-center"><strong class="block text-2xl"><%= @managed_count %><%= "/#{@managed_limit}" if @managed_limit %></strong><span class="text-xs font-bold text-slate-300">Node gestiti</span></div>
+      </div>
+    </header>
+
+    <% if @parents.any? %>
+      <section class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-6">
+        <h2 class="text-lg font-black">Crea un Node nel tuo progetto</h2>
+        <%= form_with url: genera_impresa_my_projects_path, method: :post, class: "mt-4 grid gap-3 md:grid-cols-2" do |form| %>
+          <div><%= form.label :parent_id, "Dentro", class: "block text-xs font-black text-slate-700" %><%= select_tag :parent_id, options_from_collection_for_select(@parents, :id, :title), prompt: "Scegli il progetto o il Node padre", required: true, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+          <div><%= form.label :title, "Titolo", class: "block text-xs font-black text-slate-700" %><%= form.text_field :title, name: "node[title]", required: true, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+          <div class="md:col-span-2"><%= form.label :description, "Descrizione", class: "block text-xs font-black text-slate-700" %><%= form.text_area :description, name: "node[description]", rows: 3, class: "mt-1 w-full rounded-xl border-slate-300 bg-white" %></div>
+          <%= hidden_field_tag "node[status]", "draft" %><%= hidden_field_tag "node[visibility]", "private" %>
+          <div class="md:col-span-2"><%= form.submit "Crea Node", class: "rounded-xl bg-blue-700 px-5 py-2.5 text-sm font-black text-white hover:bg-blue-800" %></div>
+        <% end %>
+      </section>
+    <% elsif @managed_limit && @managed_count >= @managed_limit %>
+      <p class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-bold text-amber-900">Hai raggiunto il limite di <%= @managed_limit %> Node. Il superadmin può trasferire o archiviare una responsabilità.</p>
+    <% end %>
+
+    <section class="mt-6">
+      <div class="flex items-end justify-between"><div><p class="text-xs font-black uppercase tracking-wider text-slate-400">Perimetro assegnato</p><h2 class="mt-1 text-2xl font-black">Node gestiti</h2></div><span class="text-sm font-bold text-slate-500"><%= @nodes.size %></span></div>
+      <% if @nodes.any? %>
+        <div class="mt-5 grid gap-4 md:grid-cols-2">
+          <% @nodes.each do |node| %>
+            <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" data-managed-node-id="<%= node.id %>">
+              <div class="flex items-start justify-between gap-3"><div><h3 class="font-black"><%= node.title %></h3><p class="mt-1 font-mono text-xs text-slate-400"><%= node.slug %></p></div><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600"><%= node.status.humanize %></span></div>
+              <p class="mt-3 text-sm leading-6 text-slate-600"><%= node.description.presence || "Nessuna descrizione." %></p>
+              <p class="mt-3 text-xs text-slate-400">Dentro: <%= node.parent&.title || "—" %> · <%= node.domains.exists? ? "con dominio" : "senza dominio" %></p>
+              <%= link_to "Persone del progetto", genera_impresa_project_people_path(node), class: "mt-3 inline-flex text-xs font-black text-orange-700 hover:underline" %>
+              <details class="mt-4 border-t border-slate-100 pt-3"><summary class="cursor-pointer text-xs font-black text-blue-700">Modifica</summary><%= form_with model: node, url: genera_impresa_my_project_path(node), method: :patch, class: "mt-3 space-y-3" do |form| %><%= form.text_field :title, class: "w-full rounded-xl border-slate-300 text-sm" %><%= form.text_area :description, rows: 3, class: "w-full rounded-xl border-slate-300 text-sm" %><div class="grid grid-cols-2 gap-2"><%= form.select :status, Node::STATUSES.map { |status| [status.humanize, status] }, {}, class: "rounded-xl border-slate-300 text-sm" %><%= form.select :visibility, Node::VISIBILITIES.map { |visibility| [Node.visibility_label(visibility), visibility] }, {}, class: "rounded-xl border-slate-300 text-sm" %></div><%= form.submit "Salva", class: "rounded-xl bg-slate-900 px-4 py-2 text-xs font-black text-white" %><% end %></details>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="mt-5 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center"><h3 class="font-black">Nessun progetto affidato</h3><p class="mt-2 text-sm text-slate-500">Il superadmin deve prima assegnarti un progetto dalla scheda del Profile.</p></div>
+      <% end %>
+    </section>
+  </div>
+</main>

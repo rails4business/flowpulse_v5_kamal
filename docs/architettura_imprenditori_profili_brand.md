@@ -139,6 +139,24 @@ In futuro possono esistere codici riutilizzabili, per esempio `segreteria`, purc
 assegnati con BrandAccess e Node. «Condiviso» significa stessa funzione in più Brand, non permesso
 globale.
 
+### Registro unico dei ruoli
+
+I codici e le loro regole devono avere una sola fonte applicativa, per esempio
+`RoleDefinitions::Registry`. Non devono più essere definiti in modo concorrente fra enum,
+`nodes.yml`, `domains.yml`, helper e controller.
+
+Per ogni `role_code` il registro descrive almeno:
+
+- etichetta e Brand compatibili;
+- tipi di Node sui quali è assegnabile;
+- azioni/capability consentite;
+- possibilità e limiti di delega;
+- ereditarietà eventuale nel sottoalbero;
+- requisiti specifici e stato legacy del codice.
+
+Il registro definisce le regole; `RoleAssignment` conserva l'assegnazione concreta. Eventuali dati
+variabili per una singola assegnazione restano nel database e non nel registro.
+
 ### Ruoli legacy da eliminare
 
 - enum strutturali `ideatore`, `admin`, `responsabile`;
@@ -240,6 +258,24 @@ L'imprenditore potrà assegnare altri ruoli soltanto:
 - senza concedere privilegi globali;
 - tramite un servizio unico con audit.
 
+### Policy iniziale di `imprenditore_generaimpresa`
+
+Nella prima versione l'imprenditore:
+
+- può creare e gestire al massimo **7 Node per Brand** nel proprio perimetro;
+- il conteggio riguarda i Node dei quali è responsabile nel Brand, inclusi quelli creati o affidati;
+- può operare soltanto sul proprio Node affidato e sui relativi discendenti;
+- può approvare richieste e concedere/revocare BrandAccess nel proprio perimetro;
+- il BrandAccess rappresenta già l'utente ordinario e non genera un RoleAssignment `utente`;
+- per ora non può assegnare alcun ruolo ad altri profili;
+- non può assegnare `imprenditore_generaimpresa`, ruoli professionali, ruoli strutturali o
+  `superadmin`;
+- non può superare il limite creando Node indirettamente o spostandoli tra rami.
+
+Il limite e l'elenco, attualmente vuoto, dei ruoli delegabili vivono nel registro unico dei ruoli e
+vengono applicati dal manager e dalla policy, non direttamente dai controller. Ruoli futuri come
+`segreteria` verranno abilitati soltanto quando saranno definite capability e responsabilità reali.
+
 ---
 
 ## 5. Caso Elisa / Radioestesia e Benessere
@@ -302,6 +338,15 @@ profile.allowed_on?(action, node)
 
 La policy risolve accesso, assegnazioni dirette, ereditarietà dagli antenati e stati.
 
+### Compatibilità del superadmin
+
+Durante tutte le fasi il superadmin conserva l'accesso completo alle funzioni esistenti. La policy
+restituisce quindi accesso consentito per `user.superadmin?` prima di valutare BrandAccess e ruoli.
+
+Il bypass vale per l'accesso del superadmin, non per la qualità dei dati che crea: quando assegna un
+ruolo a un altro Profile deve comunque usare il servizio unico, collegare un BrandAccess valido e
+produrre un RoleAssignment coerente e verificabile.
+
 ---
 
 ## 8. Debito tecnico noto
@@ -326,6 +371,19 @@ Da sostituire almeno: `creator_user?`, `digital_user?`, `responsabile_user?`, `t
 La migrazione è incrementale: nuovo modello accanto al legacy, spostamento di dati e letture,
 eliminazione finale delle colonne obsolete.
 
+### Sequenza operativa concordata
+
+1. analizzare schema, modelli, configurazioni, chiamanti e dati locali/produzione;
+2. scrivere test di caratterizzazione sui comportamenti legacy indispensabili;
+3. introdurre il registro unico dei nuovi ruoli e gli alias temporanei;
+4. aggiungere lo schema compatibile (`responsible_profile_id`, `brand_access_id`, stato e audit);
+5. introdurre manager unico e policy, mantenendo il bypass del superadmin;
+6. aggiornare la scheda superadmin per accesso, incarico, affidamento e trasferimento;
+7. migrare per primo il caso Elisa / Radioestesia e Benessere;
+8. migrare progressivamente letture, scritture e dati degli altri Brand;
+9. rendere obbligatori i nuovi vincoli;
+10. eliminare ruoli, colonne, helper e configurazioni legacy soltanto a migrazione conclusa.
+
 ### Fase 0 — Inventario di produzione
 
 ```ruby
@@ -337,6 +395,50 @@ BrandAccess.group(:status).count
 
 Verificare inoltre assegnazioni senza Profile, contesti non Node, duplicati, accessi revocati ancora
 usati e Node dipendenti da ruoli strutturali.
+
+#### Risultato del 24 novembre 2026
+
+Inventario locale:
+
+- due RoleAssignment: `ideatore` (`role = 6`) e un record legacy `role = 2` non riconosciuto
+  dall'enum corrente;
+- nessun utente con `current_role_assignment_id`;
+- un BrandAccess attivo;
+- `BrandAccess#source_domain_id` è oggi obbligatorio;
+- nessun `responsible_profile_id` sulla tabella Node.
+
+Inventario produzione:
+
+- un RoleAssignment `ideatore` (`role = 6`), globale;
+- un RoleAssignment operatore `creator_generaimpresa` (`role = 11`, Profile 5, Node 9, parent 1);
+- tutti i 185 Node dipendono dall'unica assegnazione strutturale `ideatore`;
+- nessun utente usa `current_role_assignment_id`;
+- cinque BrandAccess, tutti attivi;
+- `active_role`: tre utenti con valore `0`, uno con valore legacy non riconosciuto `1`, uno con
+  valore `7` (`superadmin` nell'enum corrente);
+- la colonna legacy `users.role` non esiste più in produzione.
+
+Conseguenze:
+
+- la migrazione dei RoleAssignment operativi è piccola e può partire dal solo caso GeneraImpresa;
+- `nodes.role_assignment_id` non può essere eliminato nella prima fase perché è richiesto da tutti
+  i Node di produzione;
+- `active_role = 1` deve essere classificato/corretto prima di eliminare `active_role`;
+- il vincolo BrandAccess può essere introdotto inizialmente nullable e applicato subito alle nuove
+  assegnazioni tramite il manager, quindi reso `NOT NULL` dopo il backfill;
+- occorre verificare che Profile 5 possieda uno dei cinque BrandAccess compatibile con Node 9.
+
+Verifica conclusiva di produzione:
+
+- il Profile 5 possiede il BrandAccess attivo 5 sul Node GeneraImpresa 9, tramite il Domain 11;
+- il RoleAssignment `creator_generaimpresa` esistente e il BrandAccess indicano quindi lo stesso
+  Profile e lo stesso Brand: il backfill di `brand_access_id = 5` è deterministico;
+- l'utente con `active_role = 1` non è superadmin e non possiede alcun
+  `current_role_assignment_id`; il valore non appartiene all'enum corrente e va normalizzato a
+  `traveler` durante la migrazione, conservandone traccia nel report;
+- l'utente con `active_role = 7` è il superadmin reale e mantiene il proprio accesso completo.
+
+**Fase 0 conclusa:** non risultano blocchi per lo schema additivo della Fase 1.
 
 ### Fase 1 — Schema compatibile
 
@@ -404,16 +506,24 @@ usati e Node dipendenti da ruoli strutturali.
 | Scheda profilo superadmin | implementata |
 | Link profilo dalle richieste GeneraImpresa | implementato |
 | Assegnazione legacy `creator_generaimpresa` | implementata, da migrare |
-| Inventario dati di produzione | da eseguire |
-| RoleAssignment con BrandAccess obbligatorio | da implementare |
-| Rinomina `imprenditore_generaimpresa` | da implementare |
+| Inventario dati di produzione | completato il 24/11/2026 |
+| Schema additivo RoleAssignment + BrandAccess | implementato; vincolo DB ancora nullable |
+| Registro unico dei nuovi ruoli | implementato nella base applicativa |
+| Manager unico di assegnazione/revoca | implementato per il flusso superadmin |
+| Rinomina `imprenditore_generaimpresa` | implementata con alias legacy e backfill |
 | Eliminazione `creator_flowpulse` dal disegno | decisa |
 | Migrazione `ideatore/admin/responsabile` | da progettare sui dati reali |
-| Policy unica azione + Node | da implementare |
-| `nodes.responsible_profile_id` e trasferimento | da implementare |
-| Affidamento Node tramite incarico contestuale | da implementare |
+| Policy unica azione + Node | implementata nella base applicativa |
+| `nodes.responsible_profile_id` | schema, associazioni e trasferimento implementati |
+| Affidamento Node tramite incarico contestuale | implementato per il superadmin |
 | Indice Imprenditori GeneraImpresa | da implementare |
-| Delega controllata | futura, dopo la migrazione base |
+| Delega controllata | nessun ruolo delegabile per ora; utente ordinario = BrandAccess |
+| Area GeneraImpresa “I miei progetti” | implementata nella prima versione |
+| Limite di 7 Node | applicato dalla policy e dal manager di creazione |
+| Approvazione richieste di accesso | implementata: crea/riattiva BrandAccess senza ruolo `utente` |
+| Scope richieste dell'imprenditore | implementato sul progetto affidato e relativi discendenti |
+| Concessioni BrandAccess per progetto | implementate con `BrandAccessGrant` |
+| Sezione “Persone del progetto” | implementata con revoca scoped |
 
 ## 11. Questioni non bloccanti
 

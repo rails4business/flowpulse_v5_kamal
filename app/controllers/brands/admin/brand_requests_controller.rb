@@ -77,9 +77,24 @@ module Brands
         redirect_to brand_admin_requests_path(@brand.slug, state: "open", anchor: "brand-request-#{brand_request.id}"), notice: "Invito generato. Copia il collegamento e invialo personalmente."
       end
 
+      def approve_access
+        brand_request = brand_requests.find(params[:id])
+        access = BrandRequests::AccessApprover.new(actor: Current.user).approve!(brand_request)
+        redirect_to brand_admin_requests_path(@brand.slug, state: "closed", status: "accepted", anchor: "brand-request-#{brand_request.id}"), notice: "Accesso a #{access.brand_node.title} concesso."
+      rescue ActiveRecord::RecordInvalid, ArgumentError, BrandRequests::AccessApprover::NotAuthorized, BrandAccesses::Manager::NotAuthorized => error
+        redirect_to brand_admin_requests_path(@brand.slug, state: "open", anchor: "brand-request-#{params[:id]}"), alert: error.message
+      end
+
       private
 
         def brand_requests
+          return all_brand_requests if full_brand_request_access?
+
+          BrandRequest.where(subject_type: "Node", subject_id: managed_request_node_ids)
+            .where(brand_node: @brand)
+        end
+
+        def all_brand_requests
           domain_ids = @brand.domains.select(:id)
           node_ids = @brand.self_and_descendants.select(:id)
 
@@ -88,6 +103,30 @@ module Brands
           ).or(
             BrandRequest.where(subject_type: "Node", subject_id: node_ids)
           )
+        end
+
+        def brand_section_access?
+          managed_request_node_ids.any?
+        end
+
+        def full_brand_request_access?
+          Current.user&.superadmin_user? || @brand.owned_by?(Current.user)
+        end
+
+        def managed_request_node_ids
+          @managed_request_node_ids ||= begin
+            assignments = Current.user&.profile&.role_assignments
+              &.active
+              &.where(role: :operator, role_operator: "imprenditore_generaimpresa")
+              &.includes(:context, :brand_access) || []
+            assignments.flat_map do |assignment|
+              next [] unless assignment.brand_access&.active?
+              next [] unless assignment.brand_access.brand_node_id == @brand.id
+              next [] unless assignment.context.is_a?(Node)
+
+              assignment.context.self_and_descendants.pluck(:id)
+            end.uniq
+          end
         end
 
         def invitation_link(invitation, raw_token)
