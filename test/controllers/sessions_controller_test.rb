@@ -85,11 +85,11 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
       superadmin: true
     )
     superadmin.create_profile!(display_name: "Connected superadmin")
+    host! "flowpulse.test"
     post session_path, params: {
       email_address: superadmin.email_address,
       password: "password123"
     }
-    host! "flowpulse.test"
 
     get new_session_path
 
