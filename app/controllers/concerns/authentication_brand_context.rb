@@ -83,6 +83,11 @@ module AuthenticationBrandContext
     def redirect_authenticated_user_from_authentication!
       return unless authenticated?
 
+      if flowpulse_platform_authentication_context? && Current.user&.superadmin_user?
+        redirect_to admin_dashboard_path, notice: "Hai già effettuato l’accesso."
+        return
+      end
+
       invitation = BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
       if invitation.present? && !BrandCredential.exists?(brand_node: invitation.brand_node, email_address: invitation.email_address)
         return
@@ -114,6 +119,10 @@ module AuthenticationBrandContext
       return true if domain.auth_enabled.nil?
 
       ActiveModel::Type::Boolean.new.cast(domain.auth_enabled)
+    end
+
+    def flowpulse_platform_authentication_context?
+      authentication_context_domain&.resolved_node&.slug == "flowpulse"
     end
 
     def local_authentication_domain

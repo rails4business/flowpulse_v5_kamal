@@ -68,6 +68,35 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "platform_credential", authenticated_session.authentication_method
   end
 
+  test "an authenticated superadmin opening the FlowPulse login returns to administration" do
+    flowpulse = Node.create!(title: "FlowPulse", slug: "flowpulse", role_assignment: @assignment)
+    Domain.create!(
+      hostname: "flowpulse.test",
+      node: flowpulse,
+      role_assignment: @assignment,
+      locale: "it",
+      auth_slug: "flowpulse",
+      auth_enabled: true,
+      auth_default_path: "/admin/dashboard"
+    )
+    superadmin = User.create!(
+      email_address: "connected-superadmin@example.com",
+      password: "password123",
+      superadmin: true
+    )
+    superadmin.create_profile!(display_name: "Connected superadmin")
+    post session_path, params: {
+      email_address: superadmin.email_address,
+      password: "password123"
+    }
+    host! "flowpulse.test"
+
+    get new_session_path
+
+    assert_redirected_to admin_dashboard_path
+    assert_equal "Hai già effettuato l’accesso.", flash[:notice]
+  end
+
   test "existing user accepts a personal invitation while logging in" do
     invitation, raw_token = BrandInvitation.issue!(brand_node: @node, source_domain: @domain, email_address: @user.email_address, invited_by_user: @owner)
     get brand_invitation_path(raw_token)

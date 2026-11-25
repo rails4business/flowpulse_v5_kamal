@@ -67,6 +67,7 @@ module DashboardAside
         result = [item(:flowpulse_home, "FlowPulse", "Home della piattaforma", "/", "FP")]
         if context.superadmin?
           result << item(:flowpulse_administration, "Amministrazione", "Tutte le funzioni di sistema", :admin_dashboard_path, "SYS")
+        result << item(:flowpulse_profiles, "Persone e Profile", "User, BrandAccess e incarichi", :admin_profiles_path, "PER")
         else
           result << item(:profile, "Profilo", "Dati personali e accessi", :profile_path, "USR")
         end

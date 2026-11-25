@@ -62,7 +62,7 @@ class DashboardAside::BuilderTest < ActiveSupport::TestCase
 
     keys = described_class.new(context:).groups.fetch(:brand).map(&:key)
 
-    assert_equal %i[flowpulse_home flowpulse_administration], keys
+    assert_equal %i[flowpulse_home flowpulse_administration flowpulse_profiles], keys
   end
 
   private
