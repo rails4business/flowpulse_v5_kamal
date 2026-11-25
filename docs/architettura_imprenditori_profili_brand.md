@@ -458,15 +458,15 @@ la rimozione di User o dei ruoli legacy prima che il blocco precedente sia verif
 
 1. **Fondazioni di accesso e ruoli — eseguito:** BrandAccess, registro ruoli, RoleAssignment
    contestuali, manager/policy, responsabile Node e pannelli iniziali.
-2. **Isolamento superadmin — implementato localmente, da collaudare in produzione:**
+2. **Isolamento superadmin — implementato e verificato in produzione:**
    PlatformCredential, SystemRoleAssignment e Session di piattaforma; backfill dell'attuale
    superadmin e doppio accesso temporaneo anti-lockout.
-3. **Autenticazione Brand — già iniziata localmente, da riprendere dopo il superadmin:**
+3. **Autenticazione Brand — implementata e sottoposta a backfill in produzione:**
    BrandCredential, login e inviti per Brand, Session collegata
    a Profile/accesso/credenziale, User ordinario senza password globale.
-4. **Verifica end-to-end:** migrazione e backfill, invito nuovo/esistente, login separato per due
-   Brand, revoca immediata, superadmin invariato, suite completa.
-5. **Identità verificata del Profile:** introdurre ProfileEmail/ProfileIdentity, collegare gli
+4. **Verifica end-to-end — parziale:** superadmin e backfill verificati; resta da completare la
+   verifica email e il login Brand di Elisa.
+5. **Identità verificata del Profile — prossimo blocco:** introdurre ProfileEmail/ProfileIdentity, collegare gli
    indirizzi verificati e sostituire la ricerca globale basata su `users.email_address`.
 6. **Recupero credenziali:** reset e verifica email separati per BrandCredential; percorso distinto
    per il superadmin.
@@ -814,11 +814,11 @@ da conservare.
 | Sezione “Persone del progetto” | implementata con revoca scoped |
 | Area superadmin Profile a tab | implementata: Riepilogo, BrandAccess e Node |
 | Index/show BrandAccess e Node con breadcrumb | implementati |
-| Modello BrandCredential | implementato localmente, non ancora consolidato |
-| Migrazione e backfill BrandCredential | implementati localmente, da verificare |
-| Login e inviti per Brand | implementati localmente; test mirati verdi |
+| Modello BrandCredential | implementato e distribuito |
+| Migrazione e backfill BrandCredential | completati e verificati in produzione |
+| Login e inviti per Brand | implementati; Elisa resta in `pending_verification` |
 | Password User ordinaria rimossa | da completare |
-| `sessions.profile_id` | da implementare e sottoporre a backfill |
+| `sessions.profile_id` | implementato; backfill completo, nessuna Session senza Profile |
 | Reset password Brand | da implementare dopo il consolidamento del login |
 
 #### Pulizia dati di produzione — 25 novembre 2026
@@ -938,7 +938,7 @@ ponte per ricondurre inviti e dati legacy allo stesso Profile.
 
 #### Stato del primo blocco additivo — 25 novembre 2026
 
-Implementato localmente:
+Implementato e distribuito:
 
 - tabelle `platform_credentials` e `system_role_assignments`;
 - riferimenti opzionali `sessions.profile_id` e `sessions.platform_credential_id`;
@@ -958,12 +958,21 @@ Verifiche locali:
 - suite indispensabile conclusa senza failure o errori riportati;
 - RuboCop sui dieci file del blocco: nessuna violazione.
 
+Verificato in produzione:
+
+- una PlatformCredential attiva;
+- un SystemRoleAssignment `superadmin` attivo;
+- due BrandCredential attive del superadmin;
+- una BrandCredential GeneraImpresa di Elisa in `pending_verification`;
+- nessuna Session priva di Profile;
+- accesso del superadmin all'amministrazione FlowPulse.
+
 Non ancora eseguito:
 
-- deploy e backfill in produzione;
-- login reale con PlatformCredential in produzione;
+- verifica email e login Brand di Elisa;
 - revoca del fallback legacy;
-- rimozione di `users.superadmin` o della password User.
+- migrazione degli indirizzi verificati su ProfileIdentity/ProfileEmail;
+- rimozione di `users.superadmin`, password User e tabella User.
 
 ## 12. Questioni non bloccanti
 
