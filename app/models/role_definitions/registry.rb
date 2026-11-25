@@ -12,6 +12,16 @@ module RoleDefinitions
     )
 
     DEFINITIONS = {
+      "gestore_generaimpresa" => Definition.new(
+        code: "gestore_generaimpresa",
+        label: "Gestore GeneraImpresa",
+        brand_slugs: %w[generaimpresa],
+        capabilities: %i[read manage manage_access manage_requests manage_projects],
+        delegatable: false,
+        inheritable: true,
+        delegatable_role_codes: [],
+        limits: {}
+      ),
       "imprenditore_generaimpresa" => Definition.new(
         code: "imprenditore_generaimpresa",
         label: "Imprenditore GeneraImpresa",

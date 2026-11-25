@@ -14,7 +14,7 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
       slug: "generaimpresa",
       node_type: "project",
       status: "published",
-      operator_roles: [ "imprenditore_generaimpresa" ]
+      operator_roles: %w[gestore_generaimpresa imprenditore_generaimpresa]
     )
     @domain = Domain.create!(hostname: "generaimpresa-#{SecureRandom.hex(3)}.example", node: @brand, role_assignment: @brand_assignment, locale: "it")
     @project = Node.create!(title: "Radioestesia e Benessere", slug: "radioestesiaebenessere", parent: @brand, role_assignment: @brand_assignment, operator_roles: %w[legacy_collaborator])
@@ -40,9 +40,9 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", "Elisa Corubolo"
-    assert_select "form[action='#{admin_profile_role_assignments_path(@profile)}']", count: 1
-    assert_select "[data-brand-access-id='#{@brand_access.id}']", count: 1
-    assert_select "[data-brand-access-id='#{@brand_access.id}']", text: /#{Regexp.escape(@brand.title)}/
+    assert_select "form[action='#{admin_profile_role_assignments_path(@profile)}']", count: 2
+    assert_select "a[href='#{admin_profile_brand_accesses_path(@profile)}']", text: /BrandAccess/
+    assert_select "a[href='#{admin_profile_nodes_path(@profile)}']", text: /Node/
   end
 
   test "superadmin sees every assigned role with access and status" do
@@ -61,9 +61,8 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "[data-role-assignment-id='#{operator.id}']", text: /Imprenditore GeneraImpresa/
-    assert_select "[data-role-assignment-id='#{operator.id}']", text: /Accesso: #{@brand.title}/
+    assert_select "[data-role-assignment-id='#{operator.id}']", text: /BrandAccess ##{@brand_access.id}/
     assert_select "[data-role-assignment-id='#{structural.id}']", text: /Ideatore/
-    assert_select "[data-role-assignment-id='#{structural.id}']", text: /BrandAccess non collegato/
   end
 
   test "ordinary user cannot access the person management page" do
@@ -78,7 +77,7 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     sign_in(@superadmin)
 
     assert_difference -> { @profile.role_assignments.count }, 1 do
-      post admin_profile_role_assignments_url(@profile)
+      post admin_profile_role_assignments_url(@profile), params: { role_code: "imprenditore_generaimpresa" }
     end
 
     assignment = @profile.role_assignments.last
@@ -90,8 +89,21 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "active", assignment.status
 
     assert_no_difference -> { @profile.role_assignments.count } do
-      post admin_profile_role_assignments_url(@profile)
+      post admin_profile_role_assignments_url(@profile), params: { role_code: "imprenditore_generaimpresa" }
     end
+  end
+
+  test "superadmin assigns the GeneraImpresa manager role" do
+    sign_in(@superadmin)
+
+    assert_difference -> { @profile.role_assignments.count }, 1 do
+      post admin_profile_role_assignments_url(@profile), params: { role_code: "gestore_generaimpresa" }
+    end
+
+    assignment = @profile.role_assignments.last
+    assert_equal "gestore_generaimpresa", assignment.role_operator
+    assert_equal @brand_access, assignment.brand_access
+    assert_equal @brand, assignment.context
   end
 
   test "superadmin revokes an operator role without exposing structural roles" do
@@ -122,7 +134,7 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     sign_in(@superadmin)
 
     assert_no_difference -> { @profile.role_assignments.count } do
-      post admin_profile_role_assignments_url(@profile)
+      post admin_profile_role_assignments_url(@profile), params: { role_code: "imprenditore_generaimpresa" }
     end
 
     assert_redirected_to admin_profile_path(@profile)
@@ -132,8 +144,16 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
   test "superadmin revokes and reactivates a brand access" do
     sign_in(@superadmin)
 
+    get admin_profile_brand_accesses_url(@profile)
+    assert_response :success
+    assert_select "[data-brand-access-id='#{@brand_access.id}'] a[href='#{admin_profile_brand_access_path(@profile, @brand_access)}']", text: @brand.title
+
+    get admin_profile_brand_access_url(@profile, @brand_access)
+    assert_response :success
+    assert_select "nav", text: /#{Regexp.escape(@profile.display_name)}.*BrandAccess.*#{Regexp.escape(@brand.title)}/m
+
     delete admin_profile_brand_access_url(@profile, @brand_access)
-    assert_redirected_to admin_profile_path(@profile)
+    assert_redirected_to admin_profile_brand_accesses_path(@profile)
     assert_equal "cancelled", @brand_access.reload.status
 
     assert_no_difference -> { @profile.brand_accesses.count } do
@@ -150,7 +170,7 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
       role_code: "imprenditore_generaimpresa"
     }
 
-    assert_redirected_to admin_profile_path(@profile)
+    assert_redirected_to admin_profile_nodes_path(@profile)
     assert_equal @profile, @project.reload.responsible_profile
     assignment = @profile.role_assignments.find_by!(context: @project, role_operator: "imprenditore_generaimpresa")
     assert_equal @brand_access, assignment.brand_access
@@ -170,6 +190,19 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_nil @project.reload.responsible_profile
     assert_equal "revoked", assignment.reload.status
     assert_equal "active", collaborator_assignment.reload.status
+  end
+
+  test "superadmin opens the profile node index and show with breadcrumbs" do
+    @project.update!(responsible_profile: @profile)
+    sign_in(@superadmin)
+
+    get admin_profile_nodes_url(@profile)
+    assert_response :success
+    assert_select "[data-profile-node-id='#{@project.id}'] a[href='#{admin_profile_node_path(@profile, @project)}']", text: @project.title
+
+    get admin_profile_node_url(@profile, @project)
+    assert_response :success
+    assert_select "nav", text: /#{Regexp.escape(@profile.display_name)}.*Node.*#{Regexp.escape(@project.title)}/m
   end
 
   test "assigning a project to a new profile transfers responsibility and revokes the old assignment" do

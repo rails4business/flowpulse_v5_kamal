@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_25_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -79,7 +79,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_100000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "grant_managed", default: false, null: false
+    t.bigint "current_role_assignment_id"
     t.index ["brand_node_id"], name: "index_brand_accesses_on_brand_node_id"
+    t.index ["current_role_assignment_id"], name: "index_brand_accesses_on_current_role_assignment_id"
     t.index ["profile_id", "brand_node_id"], name: "index_brand_accesses_on_profile_id_and_brand_node_id", unique: true
     t.index ["profile_id", "source_domain_id"], name: "index_brand_accesses_on_profile_id_and_source_domain_id", unique: true
     t.index ["profile_id"], name: "index_brand_accesses_on_profile_id"
@@ -957,6 +959,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_100000) do
   add_foreign_key "brand_accesses", "domains", column: "source_domain_id"
   add_foreign_key "brand_accesses", "nodes", column: "brand_node_id"
   add_foreign_key "brand_accesses", "profiles"
+  add_foreign_key "brand_accesses", "role_assignments", column: "current_role_assignment_id", on_delete: :nullify
   add_foreign_key "brand_invitations", "brand_requests"
   add_foreign_key "brand_invitations", "domains", column: "source_domain_id"
   add_foreign_key "brand_invitations", "nodes", column: "brand_node_id"

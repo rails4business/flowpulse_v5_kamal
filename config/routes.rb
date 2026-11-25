@@ -305,6 +305,8 @@ Rails.application.routes.draw do
   get "posturacorretta/collabora/digital" => "brands/posturacorretta#collabora_digital", as: :posturacorretta_collabora_digital
   get "generaimpresa" => "brands/genera_impresa#index", as: :genera_impresa
   get "generaimpresa/miei-progetti" => "brands/genera_impresa_projects#index", as: :genera_impresa_my_projects
+  get "generaimpresa/persone" => "brands/genera_impresa_brand_people#index", as: :genera_impresa_people
+  delete "generaimpresa/persone/:id" => "brands/genera_impresa_brand_people#destroy", as: :genera_impresa_person
   post "generaimpresa/miei-progetti" => "brands/genera_impresa_projects#create"
   patch "generaimpresa/miei-progetti/:id" => "brands/genera_impresa_projects#update", as: :genera_impresa_my_project
   get "generaimpresa/miei-progetti/:project_id/persone" => "brands/genera_impresa_people#index", as: :genera_impresa_project_people
@@ -351,6 +353,7 @@ Rails.application.routes.draw do
   get "dashboard/viaggiatore" => "pages#viaggiatori", as: :viaggiatori
   patch "dashboard_role" => "home#dashboard_role", as: :dashboard_role
   patch "dashboard_channel" => "home#dashboard_channel", as: :dashboard_channel
+  patch "dashboard/brand_accesses/:brand_access_id/current_role" => "brand_access_roles#update", as: :dashboard_brand_access_current_role
   resources :brand_accesses, only: [:create, :destroy]
   resource :profile, only: %i[show update] do
     patch :details
@@ -406,7 +409,8 @@ Rails.application.routes.draw do
     resources :profiles, only: :show do
       resources :role_assignments, only: :create, controller: "profile_role_assignments"
       delete "role_assignments/:role_assignment_id", to: "profile_role_assignments#destroy", as: :role_assignment
-      resources :brand_accesses, only: %i[create destroy], controller: "profile_brand_accesses"
+      resources :brand_accesses, only: %i[index show create destroy], controller: "profile_brand_accesses"
+      resources :nodes, only: %i[index show], controller: "profile_nodes"
       resources :node_responsibilities, only: %i[create destroy], controller: "profile_node_responsibilities"
     end
     resources :domains do

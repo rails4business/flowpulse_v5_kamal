@@ -6,6 +6,8 @@ module Admin
     def create
       brand = Node.find_by!(slug: "generaimpresa")
       brand_access = @profile.brand_accesses.active.find_by(brand_node: brand)
+      role_code = params[:role_code].presence_in(%w[gestore_generaimpresa imprenditore_generaimpresa])
+      raise ArgumentError, "Ruolo GeneraImpresa non valido" unless role_code
 
       unless brand_access
         redirect_to admin_profile_path(@profile), alert: "Prima di assegnare il ruolo serve un accesso attivo a GeneraImpresa."
@@ -16,9 +18,10 @@ module Admin
         profile: @profile,
         brand_access: brand_access,
         node: brand,
-        role_code: "imprenditore_generaimpresa"
+        role_code:
       )
-      redirect_to admin_profile_path(@profile), notice: "Ruolo Imprenditore GeneraImpresa assegnato."
+      role_label = RoleDefinitions::Registry.fetch(role_code).label
+      redirect_to admin_profile_path(@profile), notice: "Ruolo #{role_label} assegnato."
     rescue ActiveRecord::RecordInvalid, ArgumentError => error
       redirect_to admin_profile_path(@profile), alert: error.message
     end

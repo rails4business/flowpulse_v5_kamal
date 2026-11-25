@@ -48,6 +48,12 @@ module BrandRequests
 
       def authorize!(brand_request, authorization_node)
         return if actor&.superadmin_user?
+        if brand_request.brand_node.slug == "generaimpresa"
+          context = AccessContext::Resolver.new(user: actor, domain: brand_request.domain).resolve
+          return if context.current_role_code == "gestore_generaimpresa" && context.capability?(:manage_access)
+
+          raise NotAuthorized, "Gli accessi a GeneraImpresa sono approvati dal gestore o dal superadmin"
+        end
         return if brand_request.brand_node.administered_by?(actor)
         return if RoleAssignments::AccessPolicy.allowed?(user: actor, action: :manage_access, node: authorization_node)
 

@@ -47,6 +47,9 @@ gem "thruster", require: false
 gem "image_processing", "~> 2.0"
 gem "ruby-vips", "~> 2.3", require: false
 
+# XML parsing for lib/tasks/youtube.rake (no longer pulled in by selenium-webdriver)
+gem "rexml"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

@@ -106,10 +106,14 @@ module Brands
         end
 
         def brand_section_access?
+          return genera_impresa_manager? if @brand.slug == "generaimpresa"
+
           managed_request_node_ids.any?
         end
 
         def full_brand_request_access?
+          return Current.user&.superadmin_user? || genera_impresa_manager? if @brand.slug == "generaimpresa"
+
           Current.user&.superadmin_user? || @brand.owned_by?(Current.user)
         end
 
@@ -127,6 +131,12 @@ module Brands
               assignment.context.self_and_descendants.pluck(:id)
             end.uniq
           end
+        end
+
+        def genera_impresa_manager?
+          domain = current_domain&.resolved_node == @brand ? current_domain : @brand.domains.active.first
+          context = AccessContext::Resolver.new(user: Current.user, domain: domain).resolve
+          context.current_role_code == "gestore_generaimpresa"
         end
 
         def invitation_link(invitation, raw_token)

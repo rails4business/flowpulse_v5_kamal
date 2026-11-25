@@ -1,97 +1,25 @@
 <% content_for :title, "Profilo · #{@profile.display_name}" %>
 
 <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-  <nav class="mb-6 text-sm font-semibold text-slate-500"><%= link_to "Assigned roles", admin_assigned_role_map_path, class: "text-blue-700 hover:underline" %> <span class="mx-2">/</span> Profilo</nav>
+  <nav class="mb-6 text-sm font-semibold text-slate-500"><%= link_to "Assigned roles", admin_assigned_role_map_path, class: "text-blue-700 hover:underline" %> <span class="mx-2">/</span> <%= @profile.display_name %></nav>
+  <%= render "admin/profiles/header", profile: @profile, active_tab: "profile" %>
 
-  <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <p class="text-[11px] font-extrabold uppercase tracking-[.14em] text-blue-600">Superadmin · Persona</p>
-    <div class="mt-2 flex flex-wrap items-start justify-between gap-4">
-      <div><h1 class="text-3xl font-black text-slate-950"><%= @profile.display_name %></h1><p class="mt-1 text-sm text-slate-500">@<%= @profile.username %> · <%= @profile.user.email_address %></p></div>
-      <span class="rounded-full px-3 py-1 text-xs font-black <%= @profile.user.email_verified? ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' %>"><%= @profile.user.email_verified? ? "Email verificata" : "Email non verificata" %></span>
-    </div>
-  </header>
-
-  <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,.65fr)]">
-    <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-3"><div><p class="text-[11px] font-black uppercase tracking-wider text-slate-400">Assigned role</p><h2 class="mt-1 text-xl font-black">Ruoli assegnati</h2></div>
-        <% if @genera_impresa && !@creator_assignment %><%= button_to "Assegna Imprenditore GeneraImpresa", admin_profile_role_assignments_path(@profile), method: :post, class: "rounded-xl bg-orange-600 px-4 py-2 text-sm font-black text-white hover:bg-orange-700" %><% end %>
-      </div>
-      <% if @role_assignments.any? %>
-        <ul class="mt-5 divide-y divide-slate-100 border-y border-slate-200">
-          <% @role_assignments.each do |assignment| %>
-            <% definition = RoleDefinitions::Registry.find(assignment.role_operator) if assignment.operator? %>
-            <li class="py-4" data-role-assignment-id="<%= assignment.id %>">
-              <div class="flex flex-wrap items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <strong class="text-sm text-slate-950"><%= definition&.label || assignment.role_operator&.humanize || assignment.role.humanize %></strong>
-                    <span class="rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide <%= assignment.status == 'active' ? 'bg-emerald-100 text-emerald-800' : assignment.status == 'suspended' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600' %>"><%= assignment.status.humanize %></span>
-                  </div>
-                  <p class="mt-1 text-xs text-slate-500"><%= assignment.context.try(:title) || "Globale" %> · <%= assignment.context_type || "senza contesto" %></p>
-                  <% if assignment.brand_access %><p class="mt-1 text-xs text-blue-700">Accesso: <%= assignment.brand_access.brand_node.title %> · #<%= assignment.brand_access_id %></p><% else %><p class="mt-1 text-xs font-bold text-amber-700">Legacy · BrandAccess non collegato</p><% end %>
-                  <p class="mt-1 text-[11px] text-slate-400">Assegnato da <%= assignment.assigned_by_profile&.display_name || "sistema/legacy" %><% if assignment.starts_at %> · dal <%= l assignment.starts_at, format: :short %><% end %><% if assignment.ends_at %> · fino al <%= l assignment.ends_at, format: :short %><% end %></p>
-                </div>
-                <% if assignment.operator? && assignment.status == "active" %><%= button_to "Revoca", admin_profile_role_assignment_path(@profile, assignment), method: :delete, data: { turbo_confirm: "Revocare questo ruolo?" }, class: "text-xs font-black text-red-700 hover:underline" %><% elsif !assignment.operator? %><span class="text-xs font-bold text-slate-400">Ruolo strutturale</span><% end %>
-              </div>
-            </li>
-          <% end %>
-        </ul>
-      <% else %><p class="mt-5 rounded-xl border border-dashed border-slate-300 p-5 text-sm text-slate-500">Nessun ruolo assegnato.</p><% end %>
-    </section>
-
-    <aside class="space-y-6">
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p class="text-[11px] font-black uppercase tracking-wider text-slate-400">Brand professionale</p><h2 class="mt-1 text-lg font-black"><%= @profile.primary_node&.title || "Non collegato" %></h2><p class="mt-2 text-xs leading-5 text-slate-500">Facoltativo: non serve per creare o amministrare un Brand progetto.</p></section>
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="flex items-end justify-between gap-3"><div><p class="text-[11px] font-black uppercase tracking-wider text-slate-400">BrandAccess</p><h2 class="mt-1 text-lg font-black">Accessi ai Brand</h2></div><span class="text-sm font-black text-slate-400"><%= @brand_accesses.size %></span></div>
-        <% if @brand_accesses.any? %>
-          <ul class="mt-4 divide-y divide-slate-100 border-y border-slate-200">
-            <% @brand_accesses.each do |access| %>
-              <li class="py-3" data-brand-access-id="<%= access.id %>">
-                <div class="flex items-start justify-between gap-2"><strong class="text-sm text-slate-950"><%= access.brand_node.title %></strong><span class="rounded-full px-2 py-0.5 text-[10px] font-black uppercase <%= access.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>"><%= access.status.humanize %></span></div>
-                <p class="mt-1 break-all text-xs text-slate-500"><%= access.source_domain.hostname %></p>
-                <p class="mt-1 text-[11px] text-slate-400">Accesso #<%= access.id %><% if access.joined_at %> · dal <%= l access.joined_at, format: :short %><% end %></p>
-                <% if access.active? %><%= button_to "Revoca accesso", admin_profile_brand_access_path(@profile, access), method: :delete, data: { turbo_confirm: "Revocare l'accesso a #{access.brand_node.title}? I ruoli collegati diventeranno inefficaci." }, class: "mt-2 text-xs font-black text-red-700 hover:underline" %><% end %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <p class="mt-4 rounded-xl border border-dashed border-slate-300 p-4 text-xs leading-5 text-slate-500">Nessun accesso ai Brand. Prima di assegnare un ruolo contestuale occorre concedere un BrandAccess.</p>
-        <% end %>
-        <% if @available_domains.any? %>
-          <%= form_with url: admin_profile_brand_accesses_path(@profile), method: :post, class: "mt-4 space-y-2" do |form| %>
-            <%= form.label :domain_id, "Concedi o riattiva", class: "block text-xs font-black text-slate-700" %>
-            <%= form.select :domain_id, options_from_collection_for_select(@available_domains, :id, ->(domain) { "#{domain.node.title} · #{domain.hostname}" }), { prompt: "Scegli il Brand" }, required: true, class: "w-full rounded-xl border-slate-300 text-xs" %>
-            <%= form.submit "Concedi accesso", class: "w-full rounded-xl bg-slate-900 px-3 py-2 text-xs font-black text-white hover:bg-slate-700" %>
-          <% end %>
-        <% end %>
-        <p class="mt-3 text-xs leading-5 text-slate-500">Il BrandAccess consente l'ingresso; i permessi operativi sono indicati separatamente nei ruoli assegnati.</p>
-      </section>
-    </aside>
+  <div class="mt-6 grid gap-6 md:grid-cols-3">
+    <%= link_to admin_profile_brand_accesses_path(@profile), class: "rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-blue-300" do %><p class="text-xs font-black uppercase tracking-wider text-slate-400">BrandAccess</p><strong class="mt-2 block text-3xl"><%= @profile.brand_accesses.count %></strong><span class="mt-2 block text-sm text-blue-700">Apri elenco →</span><% end %>
+    <%= link_to admin_profile_nodes_path(@profile), class: "rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-blue-300" do %><p class="text-xs font-black uppercase tracking-wider text-slate-400">Node responsabili</p><strong class="mt-2 block text-3xl"><%= @profile.responsible_nodes.count %></strong><span class="mt-2 block text-sm text-blue-700">Apri elenco →</span><% end %>
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p class="text-xs font-black uppercase tracking-wider text-slate-400">Profilo professionale</p><strong class="mt-2 block text-lg"><%= @profile.primary_node&.title || "Non collegato" %></strong><p class="mt-2 text-xs text-slate-500"><%= @profile.primary_node ? (@profile.primary_node.visibility == "public" ? "Pubblico" : "Privato") : "Facoltativo" %></p></section>
   </div>
 
   <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <p class="text-[11px] font-black uppercase tracking-wider text-slate-400">Node associati</p><h2 class="mt-1 text-xl font-black">Brand e contesti amministrati</h2>
-    <% nodes = ([@profile.primary_node] + @context_nodes + @owned_nodes.to_a).compact.uniq %>
-    <% if nodes.any? %><ul class="mt-5 grid gap-3 sm:grid-cols-2"><% nodes.each do |node| %><li class="rounded-xl border border-slate-200 p-4"><strong class="text-sm text-slate-950"><%= node.title %></strong><p class="mt-1 text-xs text-slate-500"><%= node.node_type %> · <%= node.slug %><%= node.domains.exists? ? " · con dominio" : " · senza dominio" %></p></li><% end %></ul><% else %><p class="mt-5 rounded-xl border border-dashed border-slate-300 p-5 text-sm text-slate-500">Nessun Node ancora associato. La creazione verrà collegata al catalogo Node per essere persistente nei deploy.</p><% end %>
-  </section>
-
-  <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[11px] font-black uppercase tracking-wider text-slate-400">Responsabilità</p><h2 class="mt-1 text-xl font-black">Node affidati</h2></div><span class="text-sm font-black text-slate-400"><%= @profile.responsible_nodes.count %></span></div>
-    <% if @profile.responsible_nodes.any? %>
-      <ul class="mt-5 grid gap-3 sm:grid-cols-2">
-        <% @profile.responsible_nodes.order(:title).each do |node| %>
-          <li class="rounded-xl border border-slate-200 p-4" data-responsible-node-id="<%= node.id %>"><strong class="text-sm text-slate-950"><%= node.title %></strong><p class="mt-1 text-xs text-slate-500"><%= node.slug %> · <%= node.domains.exists? ? "con dominio" : "senza dominio" %></p><%= button_to "Rimuovi responsabilità", admin_profile_node_responsibility_path(@profile, node), method: :delete, data: { turbo_confirm: "Rimuovere la responsabilità di #{node.title}?" }, class: "mt-3 text-xs font-black text-red-700 hover:underline" %></li>
-        <% end %>
-      </ul>
-    <% else %><p class="mt-5 rounded-xl border border-dashed border-slate-300 p-5 text-sm text-slate-500">Nessun Node affidato come responsabile principale.</p><% end %>
-    <% if @responsibility_nodes.any? && @responsibility_role_options.any? %>
-      <%= form_with url: admin_profile_node_responsibilities_path(@profile), method: :post, class: "mt-5 grid gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end" do |form| %>
-        <div><%= form.label :node_id, "Progetto", class: "block text-xs font-black text-slate-700" %><%= form.select :node_id, options_from_collection_for_select(@responsibility_nodes, :id, :title), { prompt: "Scegli il Node" }, required: true, class: "mt-1 w-full rounded-xl border-slate-300 bg-white text-sm" %></div>
-        <div><%= form.label :role_code, "Ruolo", class: "block text-xs font-black text-slate-700" %><%= form.select :role_code, options_for_select(@responsibility_role_options.map { |definition| [definition.label, definition.code] }), { prompt: "Scegli il ruolo" }, required: true, class: "mt-1 w-full rounded-xl border-slate-300 bg-white text-sm" %></div>
-        <%= form.submit "Affida o trasferisci", class: "rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-black text-white hover:bg-blue-800" %>
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div><p class="text-[11px] font-black uppercase tracking-wider text-slate-400">Assigned role</p><h2 class="mt-1 text-xl font-black">Ruoli assegnati</h2></div>
+      <% if @genera_impresa %>
+        <div class="flex flex-wrap justify-end gap-2">
+          <% unless @genera_impresa_assignments.key?("gestore_generaimpresa") %><%= button_to "Assegna Gestore GeneraImpresa", admin_profile_role_assignments_path(@profile), method: :post, params: { role_code: "gestore_generaimpresa" }, class: "rounded-xl bg-violet-700 px-4 py-2 text-sm font-black text-white hover:bg-violet-800" %><% end %>
+          <% unless @genera_impresa_assignments.key?("imprenditore_generaimpresa") %><%= button_to "Assegna Imprenditore GeneraImpresa", admin_profile_role_assignments_path(@profile), method: :post, params: { role_code: "imprenditore_generaimpresa" }, class: "rounded-xl bg-orange-600 px-4 py-2 text-sm font-black text-white hover:bg-orange-700" %><% end %>
+        </div>
       <% end %>
-    <% elsif @brand_accesses.none?(&:active?) %>
-      <p class="mt-4 text-xs font-bold text-amber-700">Per affidare un Node serve prima un BrandAccess attivo.</p>
-    <% end %>
+    </div>
+    <% if @role_assignments.any? %><ul class="mt-5 divide-y divide-slate-100 border-y border-slate-200"><% @role_assignments.each do |assignment| %><% definition = RoleDefinitions::Registry.find(assignment.role_operator) if assignment.operator? %><li class="flex flex-wrap items-start justify-between gap-3 py-4" data-role-assignment-id="<%= assignment.id %>"><div><div class="flex items-center gap-2"><strong class="text-sm"><%= definition&.label || assignment.role_operator&.humanize || assignment.role.humanize %></strong><span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-black uppercase"><%= assignment.status %></span></div><p class="mt-1 text-xs text-slate-500"><%= assignment.context.try(:title) || "Globale" %><%= " · BrandAccess ##{assignment.brand_access_id}" if assignment.brand_access_id %></p></div><% if assignment.operator? && assignment.status == "active" %><%= button_to "Revoca", admin_profile_role_assignment_path(@profile, assignment), method: :delete, data: { turbo_confirm: "Revocare questo ruolo?" }, class: "text-xs font-black text-red-700 hover:underline" %><% else %><span class="text-xs font-bold text-slate-400"><%= assignment.operator? ? "Storico" : "Ruolo strutturale" %></span><% end %></li><% end %></ul><% else %><p class="mt-5 rounded-xl border border-dashed border-slate-300 p-5 text-sm text-slate-500">Nessun ruolo assegnato.</p><% end %>
   </section>
 </main>

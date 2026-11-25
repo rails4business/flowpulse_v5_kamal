@@ -7,15 +7,15 @@ module Admin
       node = Node.find(params.require(:node_id))
       role_code = params.require(:role_code)
       NodeResponsibilities::Manager.new(actor: Current.user).assign!(node: node, profile: @profile, role_code: role_code)
-      redirect_to admin_profile_path(@profile), notice: "#{node.title} affidato a #{@profile.display_name}."
+      redirect_to admin_profile_nodes_path(@profile), notice: "#{node.title} affidato a #{@profile.display_name}."
     rescue ActiveRecord::RecordInvalid, ArgumentError => error
-      redirect_to admin_profile_path(@profile), alert: error.message
+      redirect_to admin_profile_nodes_path(@profile), alert: error.message
     end
 
     def destroy
       node = @profile.responsible_nodes.find(params[:id])
       NodeResponsibilities::Manager.new(actor: Current.user).remove!(node: node, profile: @profile)
-      redirect_to admin_profile_path(@profile), notice: "Responsabilità di #{node.title} rimossa."
+      redirect_to admin_profile_nodes_path(@profile), notice: "Responsabilità di #{node.title} rimossa."
     end
 
     private

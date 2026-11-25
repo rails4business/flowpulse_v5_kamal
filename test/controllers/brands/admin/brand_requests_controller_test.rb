@@ -152,8 +152,8 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     assert_empty requester.role_assignments
   end
 
-  test "entrepreneur sees and approves only access requests in the assigned project" do
-    @brand.update!(slug: "generaimpresa", operator_roles: %w[imprenditore_generaimpresa])
+  test "entrepreneur cannot administer access requests from the GeneraImpresa root yet" do
+    @brand.update!(slug: "generaimpresa", operator_roles: %w[gestore_generaimpresa imprenditore_generaimpresa])
     entrepreneur = User.create!(email_address: "requests-entrepreneur@example.com", password: "password123")
     entrepreneur_profile = entrepreneur.create_profile!(display_name: "Entrepreneur")
     entrepreneur_access = BrandAccess.create!(profile: entrepreneur_profile, source_domain: @domain)
@@ -176,19 +176,45 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     sign_in(entrepreneur)
 
     get brand_admin_requests_url(@brand.slug)
-    assert_response :success
-    assert_select "#brand-request-#{inside_request.id}", count: 1
-    assert_select "#brand-request-#{outside_request.id}", count: 0
+    assert_response :forbidden
 
     post brand_admin_request_approve_access_url(@brand.slug, inside_request)
-    assert_equal "accepted", inside_request.reload.status
-    assert inside_profile.brand_accesses.active.exists?(brand_node: @brand)
-    assert_empty inside_profile.role_assignments
-
-    post brand_admin_request_approve_access_url(@brand.slug, outside_request)
-    assert_response :not_found
+    assert_response :forbidden
+    assert_equal "open", inside_request.reload.status
+    assert_not inside_profile.brand_accesses.exists?
     assert_equal "open", outside_request.reload.status
     assert_not outside_profile.brand_accesses.exists?
+  end
+
+  test "GeneraImpresa manager sees and approves root access requests" do
+    @brand.update!(slug: "generaimpresa", operator_roles: %w[gestore_generaimpresa imprenditore_generaimpresa])
+    manager = User.create!(email_address: "requests-manager@example.com", password: "password123")
+    manager_profile = manager.create_profile!(display_name: "Manager")
+    manager_access = BrandAccess.create!(profile: manager_profile, source_domain: @domain)
+    manager_assignment = RoleAssignment.create!(
+      profile: manager_profile,
+      role: :operator,
+      role_operator: "gestore_generaimpresa",
+      context: @brand,
+      parent: @brand.role_assignment,
+      brand_access: manager_access
+    )
+    manager_access.select_role_assignment!(manager_assignment)
+    requester_user = User.create!(email_address: "manager-approved@example.com", password: "password123")
+    requester = requester_user.create_profile!(display_name: "Manager approved")
+    @brand_request.update!(kind: "access", requester_profile: requester)
+    host! @domain.hostname
+    sign_in(manager)
+
+    get brand_admin_requests_url(@brand.slug)
+    assert_response :success
+    assert_select "#brand-request-#{@brand_request.id}"
+
+    assert_difference -> { requester.brand_accesses.count }, 1 do
+      post brand_admin_request_approve_access_url(@brand.slug, @brand_request)
+    end
+    assert_equal "accepted", @brand_request.reload.status
+    assert_equal manager_profile, @brand_request.assigned_to_profile
   end
 
   private

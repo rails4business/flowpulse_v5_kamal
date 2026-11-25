@@ -15,15 +15,17 @@ class BrandRequests::AccessApproverTest < ActiveSupport::TestCase
     person = User.create!(email_address: "approver-person@example.com", password: "password123")
     @profile = person.create_profile!(display_name: "Person")
     @request = BrandRequest.create!(domain: @domain, brand_node: @brand, subject: @project, requester_profile: @profile, title: "Access", kind: "access", audience: "user")
+    @superadmin = User.create!(email_address: "approver-superadmin@example.com", password: "password123", superadmin: true)
+    @superadmin.create_profile!(display_name: "Superadmin")
   end
 
-  test "approves access without creating a role" do
-    access = BrandRequests::AccessApprover.new(actor: @entrepreneur).approve!(@request)
+  test "superadmin approves GeneraImpresa access without creating a role" do
+    access = BrandRequests::AccessApprover.new(actor: @superadmin).approve!(@request)
 
     assert access.active?
     assert_equal @brand, access.brand_node
     assert_equal "accepted", @request.reload.status
-    assert_equal @entrepreneur.profile, @request.assigned_to_profile
+    assert_equal @superadmin.profile, @request.assigned_to_profile
     assert_empty @profile.role_assignments
     grant = access.grants.find_by!(node: @project)
     assert_equal @request, grant.brand_request
@@ -31,11 +33,20 @@ class BrandRequests::AccessApproverTest < ActiveSupport::TestCase
     assert access.grant_managed?
   end
 
+  test "entrepreneur cannot approve access from the GeneraImpresa root yet" do
+    error = assert_raises(BrandRequests::AccessApprover::NotAuthorized) do
+      BrandRequests::AccessApprover.new(actor: @entrepreneur).approve!(@request)
+    end
+
+    assert_equal "Gli accessi a GeneraImpresa sono approvati dal gestore o dal superadmin", error.message
+    assert_equal "open", @request.reload.status
+  end
+
   test "requires a linked profile" do
     @request.update_column(:requester_profile_id, nil)
 
     error = assert_raises(ArgumentError) do
-      BrandRequests::AccessApprover.new(actor: @entrepreneur).approve!(@request)
+      BrandRequests::AccessApprover.new(actor: @superadmin).approve!(@request)
     end
 
     assert_equal "Collega prima la richiesta a un Profile", error.message

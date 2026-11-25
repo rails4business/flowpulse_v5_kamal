@@ -21,4 +21,13 @@ class RoleDefinitions::RegistryTest < ActiveSupport::TestCase
     assert_empty definition.delegatable_role_codes
     assert_equal 7, definition.limits.fetch(:managed_nodes_per_brand)
   end
+
+  test "defines the GeneraImpresa manager without role delegation" do
+    definition = RoleDefinitions::Registry.fetch("gestore_generaimpresa")
+
+    assert_equal "Gestore GeneraImpresa", definition.label
+    assert_includes definition.capabilities, :manage_requests
+    assert_includes definition.capabilities, :manage_access
+    assert_not definition.delegatable
+  end
 end

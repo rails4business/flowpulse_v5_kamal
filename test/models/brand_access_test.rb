@@ -43,4 +43,57 @@ class BrandAccessTest < ActiveSupport::TestCase
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:brand_node_id], "ha già un accesso per questo brand"
   end
+
+  test "accepts only a current role assignment belonging to the same access" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    assignment = RoleAssignment.create!(
+      profile: @user.profile,
+      role: :operator,
+      role_operator: "segreteria",
+      context: @node,
+      parent: @assignment,
+      brand_access: access
+    )
+
+    access.select_role_assignment!(assignment)
+
+    assert_equal assignment, access.reload.current_role_assignment
+  end
+
+  test "rejects a current role assignment belonging to another access" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    other_user = User.create!(email_address: "other-access@example.com", password: "password123")
+    other_profile = other_user.create_profile!(display_name: "Other")
+    other_access = BrandAccess.create!(profile: other_profile, source_domain: @domain)
+    other_assignment = RoleAssignment.create!(
+      profile: other_profile,
+      role: :operator,
+      role_operator: "segreteria",
+      context: @node,
+      parent: @assignment,
+      brand_access: other_access
+    )
+
+    access.current_role_assignment = other_assignment
+
+    assert_not access.valid?
+    assert_includes access.errors[:current_role_assignment], "deve appartenere a questo accesso al Brand"
+  end
+
+  test "clears the current role assignment when the access is cancelled" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    assignment = RoleAssignment.create!(
+      profile: @user.profile,
+      role: :operator,
+      role_operator: "segreteria",
+      context: @node,
+      parent: @assignment,
+      brand_access: access
+    )
+    access.select_role_assignment!(assignment)
+
+    access.cancel!
+
+    assert_nil access.reload.current_role_assignment
+  end
 end

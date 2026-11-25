@@ -121,6 +121,7 @@ Non è un `RoleAssignment`, non è delegabile da un Brand e non richiede BrandAc
 
 | Codice | Brand principale | Significato |
 |---|---|---|
+| `gestore_generaimpresa` | GeneraImpresa | amministra richieste, accessi, persone e progetti dell'intero Brand |
 | `imprenditore_generaimpresa` | GeneraImpresa | sviluppa e amministra progetti affidati |
 | `insegnante_posturacorretta` | PosturaCorretta | insegna e gestisce attività abilitate |
 | `professionista_percorso_integrato` | Percorso Integrato | opera professionalmente nel perimetro |
@@ -132,6 +133,15 @@ configurazione, interfaccia e controlli.
 
 Non si introduce `creator_flowpulse`: sarebbe un permesso globale ambiguo e duplicherebbe
 BrandAccess + ruolo contestuale sul Node.
+
+`gestore_generaimpresa` è assegnato sulla radice GeneraImpresa, richiede un BrandAccess attivo ed è
+assegnabile e revocabile soltanto dal superadmin. Non può vedere l'indice globale degli User
+FlowPulse, creare superadmin o cancellare User/Profile.
+
+Come estensione futura si annota `gestore_node_project`: un incarico assegnato su uno specifico
+Node progetto, limitato al relativo sottoalbero, che potrebbe approvare BrandAccess e attivare un
+`imprenditore_generaimpresa` sul proprio Node. **Non viene implementato nella fase corrente**:
+prima vanno consolidati audit, limiti di delega e protezione dall'escalation dei privilegi.
 
 ### Ruoli condivisi
 
@@ -265,7 +275,9 @@ Nella prima versione l'imprenditore:
 - può creare e gestire al massimo **7 Node per Brand** nel proprio perimetro;
 - il conteggio riguarda i Node dei quali è responsabile nel Brand, inclusi quelli creati o affidati;
 - può operare soltanto sul proprio Node affidato e sui relativi discendenti;
-- può approvare richieste e concedere/revocare BrandAccess nel proprio perimetro;
+- per ora non approva gli accessi dalla radice GeneraImpresa: la conferma resta al superadmin;
+- in futuro potrà approvare richieste e concedere/revocare BrandAccess nei domini delegati e nel
+  proprio perimetro;
 - il BrandAccess rappresenta già l'utente ordinario e non genera un RoleAssignment `utente`;
 - per ora non può assegnare alcun ruolo ad altri profili;
 - non può assegnare `imprenditore_generaimpresa`, ruoli professionali, ruoli strutturali o
@@ -499,7 +511,184 @@ Verifica conclusiva di produzione:
 
 ---
 
-## 10. Stato delle attività
+## 10. Dashboard, registrazione e navigazione per perimetro
+
+### Separazione delle dashboard
+
+Le interfacce amministrative non devono mostrare gli stessi dati in tutti i domini.
+
+| Perimetro | Utente | Contenuto della dashboard |
+|---|---|---|
+| `flowpulse.net` | superadmin | tutti gli User, tutti i Profile, stato di registrazione e verifica, BrandAccess, RoleAssignment, Node e richieste di tutti i Brand |
+| `generaimpresa.it` | superadmin | richieste rivolte a GeneraImpresa e BrandAccess GeneraImpresa; collegamento alla scheda globale FlowPulse della persona |
+| `generaimpresa.it` | `imprenditore_generaimpresa` | soltanto progetti affidati, discendenti consentiti, persone e richieste comprese nel proprio perimetro |
+| altro Brand | responsabile delegato futuro | richieste, persone e accessi del solo Brand o sottoalbero autorizzato |
+
+La tabella globale **User + Profile** appartiene quindi a FlowPulse. La scheda globale della persona
+deve permettere al superadmin di tornare all'indice e di consultare separatamente:
+
+- dati dell'account User e stato della registrazione;
+- dati del Profile;
+- BrandAccess attivi, pendenti o revocati;
+- incarichi contestuali (`RoleAssignment`);
+- Node affidati o associati;
+- richieste e inviti che spiegano l'origine degli accessi.
+
+GeneraImpresa non deve duplicare questo pannello: mostra una proiezione limitata ai dati di
+GeneraImpresa e, soltanto al superadmin, offre il collegamento alla scheda globale FlowPulse.
+
+### Ruolo globale dello User durante la migrazione
+
+La destinazione architetturale resta:
+
+- `users.superadmin` per il solo privilegio globale di sistema;
+- tutti gli altri User trattati come utenti ordinari (`traveler`) a livello globale;
+- accesso ai Brand espresso da `BrandAccess`;
+- poteri operativi espressi da `RoleAssignment` contestuali.
+
+`users.active_role` non deve più determinare autorizzazioni o contenuto dell'aside. Durante la
+migrazione può restare valorizzato a `superadmin` per il superadmin e a `traveler` per tutti gli
+altri, esclusivamente per compatibilità con codice legacy. Alla fine va rimosso insieme allo
+switcher dei vecchi ruoli.
+
+### Registrazione, invito e approvazione: comportamento attuale
+
+La registrazione pubblica libera è già disabilitata: `UsersController#new` e `#create` richiedono un
+`BrandInvitation` personale ancora valido e l'email inserita deve coincidere con quella invitata.
+
+Il comportamento corrente, però, considera l'invito come autorizzazione definitiva:
+
+1. l'invito viene emesso per un indirizzo email e un Brand;
+2. la persona usa il link e crea User e Profile;
+3. `UsersController#create` imposta immediatamente `registration_status = active`;
+4. crea o riattiva il BrandAccess;
+5. accetta l'invito e apre la sessione.
+
+Per questo possono esistere User attivi che il superadmin non ricorda di aver approvato
+direttamente: possono provenire da inviti già emessi o da dati legacy/importati. Non significa che
+la registrazione fosse necessariamente aperta, ma l'indice globale deve rendere verificabile
+l'origine di ogni account.
+
+Gli indirizzi Gmail che differiscono soltanto per i punti nella parte locale possono raggiungere la
+stessa casella, pur risultando User distinti per il vincolo univoco applicativo. La normalizzazione
+attuale esegue soltanto `strip` e `downcase`. Non va applicata una riscrittura globale degli indirizzi,
+perché le regole non sono uguali per tutti i provider: l'indice FlowPulse deve invece segnalare i
+**possibili alias duplicati** e demandare al superadmin una verifica e un'eventuale unione,
+sospensione o cancellazione controllata.
+
+L'email può inoltre risultare non verificata (`email_verified_at = nil`) nel flusso a invito, perché
+il possesso del link personale è attualmente considerato sufficiente. Il flusso separato di verifica
+email, invece, attiva lo User tramite `activate_verified_email!`. Questa differenza va resa esplicita
+nella UI e successivamente uniformata.
+
+### Flusso obiettivo
+
+Tenere distinti quattro eventi:
+
+1. **richiesta**: una persona domanda accesso a un Brand;
+2. **approvazione**: chi governa quel perimetro approva la richiesta;
+3. **invito/registrazione**: la persona crea o collega User e Profile;
+4. **accesso**: viene creato o attivato il BrandAccess approvato.
+
+Per la radice GeneraImpresa l'approvatore resta per ora il superadmin. Nei domini o progetti
+delegati l'approvatore sarà l'imprenditore soltanto nel proprio perimetro. Un invito emesso dopo
+l'approvazione può completare automaticamente la registrazione, ma deve conservare il riferimento
+alla richiesta e all'approvatore che lo hanno autorizzato.
+
+### Aside basato sul contesto, non sul vecchio ruolo attivo
+
+L'aside deve essere composto in base a host, Profile corrente, BrandAccess e incarichi:
+
+1. se `User#superadmin?`, mostra il gruppo **Sistema FlowPulse** con User/Profile, Brand, ruoli e
+   strumenti globali;
+2. se il dominio corrente è GeneraImpresa, mostra richieste, progetti e persone consentiti dal
+   contesto GeneraImpresa;
+3. per gli altri Brand, mostra soltanto funzioni autorizzate dal BrandAccess e dai RoleAssignment
+   validi nel Brand corrente;
+4. il semplice BrandAccess consente l'ingresso, ma non fa comparire strumenti gestionali;
+5. il selettore futuro cambia **contesto/Brand o incarico**, non un ruolo globale sullo User.
+
+Il codice attuale usa ancora `FlowRoles.active_role_for`, `active_dashboard_role`, lo switcher di
+`users.active_role` e blocchi legacy per `ideatore/creator/digital`. Va migrato per gruppi, iniziando
+dalla dashboard globale FlowPulse e dalla proiezione GeneraImpresa.
+
+#### Matrice iniziale delle voci dell'aside
+
+| Contesto attivo | Voci principali |
+|---|---|
+| superadmin su FlowPulse | Dashboard di sistema; User e Profile; Brand e domini; richieste globali; ruoli e accessi; Node; strumenti tecnici |
+| superadmin su GeneraImpresa | Home GeneraImpresa; richieste; persone con BrandAccess; gestori; imprenditori; progetti; collegamento all'amministrazione globale |
+| `gestore_generaimpresa` | Riepilogo; richieste GeneraImpresa; persone; BrandAccess; imprenditori; progetti |
+| `imprenditore_generaimpresa` | I miei progetti; persone del progetto; richieste del perimetro quando abilitate; impostazioni consentite |
+| semplice BrandAccess GeneraImpresa | Home; profilo; contenuti o servizi accessibili, senza voci amministrative |
+| ruolo professionale di un altro Brand | voci definite dalle capability del ruolo e limitate al Brand/Node attivo |
+
+La matrice descrive famiglie di voci, non URL cablati nel ruolo. Il registro dei ruoli espone le
+capability; un menu registry traduce capability e contesto in sezioni dell'aside. Ogni controller
+continua comunque ad applicare la policy: nascondere una voce non è una misura di sicurezza.
+
+#### Dove conservare il ruolo corrente nel Brand
+
+Non esiste un Brand globale da selezionare: in produzione il dominio determina il Brand corrente e
+il sistema trova il `BrandAccess` attivo del Profile compatibile con quel Brand. Non servono quindi
+`users.active_brand_access_id` o `profiles.active_brand_access_id`.
+
+Un Profile può però avere più `RoleAssignment` nello stesso Brand. In quel caso serve una preferenza
+persistente per decidere con quale funzione sta operando e quale aside mostrare. La collocazione
+coerente è il `BrandAccess`, perché rappresenta già la relazione Profile + Brand:
+
+- aggiungere `brand_accesses.current_role_assignment_id`, nullable;
+- il riferimento deve indicare un RoleAssignment attivo appartenente allo stesso Profile e allo
+  stesso BrandAccess;
+- se esiste un solo ruolo valido, può essere selezionato automaticamente;
+- se ne esistono più di uno, l'aside mostra un selettore di funzione;
+- se non ne esiste nessuno, la persona opera come semplice utente del Brand;
+- se il ruolo corrente viene revocato o scade, il riferimento viene azzerato o sostituito con
+  l'unico ruolo ancora valido;
+- il superadmin non ha bisogno di questa selezione per il proprio bypass globale, ma può usarla in
+  anteprima per verificare l'esperienza di un ruolo.
+
+`users.active_role` e `users.current_role_assignment_id` restano quindi legacy da eliminare: sono
+globali e non possono rappresentare correttamente una persona che è, per esempio, gestore in
+GeneraImpresa e insegnante in PosturaCorretta.
+
+Il ruolo corrente governa presentazione, navigazione e azioni eseguite in quel momento; non
+cancella gli altri incarichi posseduti. La policy deve ricevere il RoleAssignment corrente e
+verificare sempre:
+
+1. dominio e BrandAccess compatibili;
+2. stesso Profile fra BrandAccess e RoleAssignment;
+3. RoleAssignment attivo e collegato a quel BrandAccess;
+4. Node contestuale compreso nel Brand o sottoalbero consentito;
+5. capability richiesta presente nel ruolo corrente.
+
+In questo modo il cambio nel selettore dell'aside significa **opera come**, mentre il dominio
+continua a stabilire automaticamente **dove** si sta operando.
+
+### Gestione degli account dalla dashboard FlowPulse
+
+Il superadmin deve poter sospendere e riattivare un account. La cancellazione definitiva deve
+essere un'azione separata, protetta da conferma esplicita e non disponibile sul proprio account
+superadmin.
+
+Non va proposta la cancellazione del solo User lasciando un Profile orfano: User e Profile formano
+l'identità della persona e il modello corrente usa `User has_one :profile, dependent: :destroy`.
+Prima della cancellazione completa vanno mostrati e verificati BrandAccess, incarichi, responsabilità,
+inviti e altri record soggetti a vincoli. Per gli account con storia operativa la sospensione è la
+scelta ordinaria; la cancellazione completa è riservata a duplicati, errori o account privi di dati
+da conservare.
+
+### Sequenza di implementazione della dashboard
+
+1. creare sotto FlowPulse l'indice globale User + Profile con filtri per stato, verifica e origine;
+2. collegare indice, scheda globale Profile, BrandAccess e Node tramite breadcrumb coerenti;
+3. mostrare richieste e inviti di origine nella scheda della persona;
+4. aggiungere sospensione/riattivazione e soltanto dopo la cancellazione completa protetta;
+5. restringere GeneraImpresa alla propria proiezione di richieste e BrandAccess;
+6. sostituire nell'aside le decisioni basate su `active_role` con contesto e policy;
+7. normalizzare gli User non superadmin a `traveler` e infine rimuovere il legacy.
+
+## 11. Stato delle attività
 
 | Attività | Stato |
 |---|---|
@@ -521,11 +710,14 @@ Verifica conclusiva di produzione:
 | Area GeneraImpresa “I miei progetti” | implementata nella prima versione |
 | Limite di 7 Node | applicato dalla policy e dal manager di creazione |
 | Approvazione richieste di accesso | implementata: crea/riattiva BrandAccess senza ruolo `utente` |
-| Scope richieste dell'imprenditore | implementato sul progetto affidato e relativi discendenti |
+| Approvazione accessi root GeneraImpresa | riservata al superadmin |
+| Scope richieste dell'imprenditore | predisposto per futuri domini delegati, non attivo sulla root GeneraImpresa |
 | Concessioni BrandAccess per progetto | implementate con `BrandAccessGrant` |
 | Sezione “Persone del progetto” | implementata con revoca scoped |
+| Area superadmin Profile a tab | implementata: Riepilogo, BrandAccess e Node |
+| Index/show BrandAccess e Node con breadcrumb | implementati |
 
-## 11. Questioni non bloccanti
+## 12. Questioni non bloccanti
 
 1. capability precise dell'imprenditore sulla radice e sul progetto;
 2. ruoli delegabili e profondità massima;

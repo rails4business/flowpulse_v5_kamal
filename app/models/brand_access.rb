@@ -4,6 +4,7 @@ class BrandAccess < ApplicationRecord
   belongs_to :profile
   belongs_to :source_domain, class_name: "Domain", inverse_of: :originating_brand_accesses
   belongs_to :brand_node, class_name: "Node", inverse_of: :brand_accesses
+  belongs_to :current_role_assignment, class_name: "RoleAssignment", optional: true
   has_many :sessions, dependent: :destroy
   has_many :role_assignments, dependent: :restrict_with_error
   has_many :grants, class_name: "BrandAccessGrant", dependent: :destroy
@@ -15,6 +16,7 @@ class BrandAccess < ApplicationRecord
   validates :brand_node_id, uniqueness: { scope: :profile_id, message: "ha già un accesso per questo brand" }
   validate :source_domain_has_node
   validate :brand_node_matches_source_domain
+  validate :current_role_assignment_matches_access
 
   scope :active, -> { where(status: "active") }
 
@@ -44,7 +46,7 @@ class BrandAccess < ApplicationRecord
 
   def cancel!
     transaction do
-      update!(status: "cancelled")
+      update!(status: "cancelled", current_role_assignment: nil)
       sessions.where(revoked_at: nil).update_all(revoked_at: Time.current, updated_at: Time.current)
     end
   end
@@ -55,6 +57,10 @@ class BrandAccess < ApplicationRecord
 
   def active?
     status == "active"
+  end
+
+  def select_role_assignment!(assignment)
+    update!(current_role_assignment: assignment)
   end
 
   private
@@ -79,5 +85,19 @@ class BrandAccess < ApplicationRecord
       return if source_domain.node_id == brand_node_id
 
       errors.add(:brand_node_id, "deve corrispondere al nodo del dominio di provenienza")
+    end
+
+    def current_role_assignment_matches_access
+      return if current_role_assignment.blank?
+
+      if current_role_assignment.brand_access != self
+        errors.add(:current_role_assignment, "deve appartenere a questo accesso al Brand")
+      end
+      if current_role_assignment.profile_id != profile_id
+        errors.add(:current_role_assignment, "deve appartenere allo stesso profilo")
+      end
+      unless current_role_assignment.status == "active"
+        errors.add(:current_role_assignment, "deve essere attivo")
+      end
     end
 end

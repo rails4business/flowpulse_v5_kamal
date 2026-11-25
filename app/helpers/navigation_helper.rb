@@ -29,6 +29,13 @@ module NavigationHelper
   end
 
   def dashboard_aside_menu_groups(current_section)
+    contextual_builder = DashboardAside::Builder.new(context: dashboard_access_context)
+    if contextual_builder.applicable?
+      return contextual_builder.groups.transform_values do |items|
+        items.map { |item| dashboard_menu_item(item.to_h) }
+      end
+    end
+
     grouped_items = FlowRoles.grouped_menu_for(
       Current.user,
       active_role: active_dashboard_role,
@@ -45,6 +52,9 @@ module NavigationHelper
   end
 
   def dashboard_aside_context(current_section)
+    contextual_builder = DashboardAside::Builder.new(context: dashboard_access_context)
+    return contextual_builder.heading if contextual_builder.applicable?
+
     FlowRoles.aside_context_for(
       active_dashboard_role,
       admin: admin_dashboard_section?(current_section)

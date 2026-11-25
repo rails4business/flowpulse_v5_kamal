@@ -16,7 +16,9 @@ class Brands::GeneraImpresaPeopleControllerTest < ActionDispatch::IntegrationTes
     person = User.create!(email_address: "people-person@example.com", password: "password123")
     @profile = person.create_profile!(display_name: "Project person")
     request = BrandRequest.create!(domain: @domain, brand_node: @brand, subject: @project, requester_profile: @profile, title: "Access", kind: "access", audience: "user")
-    @access = BrandRequests::AccessApprover.new(actor: @entrepreneur).approve!(request)
+    superadmin = User.create!(email_address: "people-superadmin@example.com", password: "password123", superadmin: true)
+    superadmin.create_profile!(display_name: "Superadmin")
+    @access = BrandRequests::AccessApprover.new(actor: superadmin).approve!(request)
     @grant = @access.grants.find_by!(node: @project)
   end
 

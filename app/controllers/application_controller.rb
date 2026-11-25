@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   include EditorialRendering
   include FlowRoles::ControllerHelpers
   helper_method :dashboard_current_section
+  helper_method :dashboard_access_context
   helper_method :active_data_commitment
   helper_method :public_node_visible?, :public_node_navigable?, :public_node_accessible_children
   helper_method :pwa_site_config
@@ -56,6 +57,10 @@ class ApplicationController < ActionController::Base
 
     def dashboard_current_section
       @dashboard_current_section || :dashboard
+    end
+
+    def dashboard_access_context
+      @dashboard_access_context ||= AccessContext::Resolver.new(user: Current.user, domain: current_domain).resolve
     end
 
     def available_commitment_nodes

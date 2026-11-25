@@ -1,0 +1,43 @@
+<% content_for :title, "GeneraImpresa · Persone" %>
+
+<main class="mx-auto max-w-6xl">
+  <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
+    <%= link_to "GeneraImpresa", genera_impresa_path, class: "text-orange-700 hover:underline" %>
+    <span aria-hidden="true">/</span><span>Persone</span>
+  </nav>
+
+  <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <p class="text-[11px] font-black uppercase tracking-[0.16em] text-orange-600">Gestione del Brand</p>
+    <h1 class="mt-2 text-3xl font-black text-slate-950">Persone GeneraImpresa</h1>
+    <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Profile che possiedono o hanno posseduto un BrandAccess GeneraImpresa. Questa vista non espone gli account degli altri Brand di FlowPulse.</p>
+  </header>
+
+  <section class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <% if @brand_accesses.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[760px] text-left text-sm">
+          <thead class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr><th class="px-5 py-3">Profile</th><th class="px-5 py-3">Contatto</th><th class="px-5 py-3">Accesso</th><th class="px-5 py-3">Opera come</th><th class="px-5 py-3 text-right">Azioni</th></tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @brand_accesses.each do |access| %>
+              <% assignment = access.current_role_assignment %>
+              <tr data-brand-access-id="<%= access.id %>">
+                <td class="px-5 py-4"><strong class="block text-slate-950"><%= access.profile.display_name %></strong><span class="text-xs text-slate-500"><%= access.profile.username.present? ? "@#{access.profile.username}" : "Profile ##{access.profile_id}" %></span></td>
+                <td class="px-5 py-4 text-slate-600"><%= access.profile.user.email_address %></td>
+                <td class="px-5 py-4"><span class="rounded-full px-2.5 py-1 text-xs font-black <%= access.active? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' %>"><%= access.status.humanize %></span><span class="mt-1 block text-xs text-slate-400"><%= l access.joined_at, format: :short %></span></td>
+                <td class="px-5 py-4 text-slate-700"><%= assignment ? (RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.humanize) : "Utente" %></td>
+                <td class="px-5 py-4 text-right">
+                  <% if Current.user.superadmin_user? %><%= link_to "Scheda globale", admin_profile_path(access.profile), class: "mr-3 text-xs font-black text-blue-700 hover:underline" %><% end %>
+                  <% if access.active? %><%= button_to "Revoca accesso", genera_impresa_person_path(access), method: :delete, data: { turbo_confirm: "Revocare l’accesso GeneraImpresa di #{access.profile.display_name}?" }, class: "inline text-xs font-black text-red-700 hover:underline" %><% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="p-8 text-sm text-slate-500">Nessuna persona collegata a GeneraImpresa.</p>
+    <% end %>
+  </section>
+</main>

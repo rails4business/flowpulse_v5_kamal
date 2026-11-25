@@ -1,7 +1,28 @@
+<% access_context = dashboard_access_context %>
 <% aside_context = dashboard_aside_context(local_assigns[:current_section]) %>
 
 <div class="flex-none border-t border-slate-100 p-4 space-y-2">
-  <% if Current.user&.can_switch_roles? %>
+  <% if access_context.brand_access.present? %>
+    <% assignments = access_context.available_role_assignments %>
+    <% if assignments.many? %>
+      <%= form_with url: dashboard_brand_access_current_role_path(access_context.brand_access), method: :patch, class: "block", data: { turbo: false } do %>
+        <%= label_tag :role_assignment_id, "Opera come", class: "mb-1.5 block text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400" %>
+        <%= select_tag :role_assignment_id,
+          options_for_select(
+            [["Utente", ""]] + assignments.map { |assignment| [RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.to_s.humanize, assignment.id] },
+            access_context.current_role_assignment&.id
+          ),
+          class: "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500",
+          onchange: "this.form.submit()" %>
+      <% end %>
+    <% elsif access_context.current_role_assignment.present? %>
+      <% assignment = access_context.current_role_assignment %>
+      <div class="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2">
+        <span class="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-blue-500">Opera come</span>
+        <strong class="mt-1 block truncate text-xs text-blue-800"><%= RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.to_s.humanize %></strong>
+      </div>
+    <% end %>
+  <% elsif Current.user&.can_switch_roles? %>
     <%= form_with url: dashboard_role_path, method: :patch, class: "block", data: { turbo: false } do %>
       <%= select_tag :role,
         options_for_select(Current.user.ruoli_attivabili.map { |role| [ruolo_label(role), role] }, Current.user.active_role),
@@ -10,7 +31,7 @@
     <% end %>
   <% end %>
 
-  <% if Current.user %>
+  <% if Current.user && access_context.brand_access.blank? %>
     <%
       mapped_role = FlowRoles.active_role_for(Current.user)
       role_assignment_role = case mapped_role
