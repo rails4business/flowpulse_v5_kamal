@@ -214,13 +214,14 @@ module Admin
       assert_redirected_to viaggiatori_url
     end
 
-    test "superadmin with traveler active role cannot view domains" do
+    test "superadmin can view domains independently from the legacy active role" do
       @superadmin.update!(active_role: :traveler)
 
       post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
       get admin_domains_url
 
-      assert_redirected_to viaggiatori_url
+      assert_response :success
+      assert_select "h1", text: /Domini/
     end
 
     test "standard admin cannot access domain actions" do
