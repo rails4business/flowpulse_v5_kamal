@@ -79,13 +79,33 @@ module Admin
       assert_redirected_to viaggiatori_url
     end
 
-    test "superadmin with traveler active role cannot see dashboard" do
+    test "superadmin can see dashboard independently from the legacy active role" do
       @superadmin.update!(active_role: :traveler)
 
       post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
       get admin_dashboard_url
 
-      assert_redirected_to viaggiatori_url
+      assert_response :success
+      assert_select "h1", "Regia tecnica"
+    end
+
+    test "FlowPulse aside exposes one administration entry and the main keeps legacy links" do
+      owner = User.create!(email_address: "flowpulse-owner@example.com", password: "password123")
+      owner.create_profile!(display_name: "FlowPulse owner")
+      assignment = RoleAssignment.create!(profile: owner.profile, role: :ideatore)
+      node = Node.create!(title: "FlowPulse", slug: "flowpulse", role_assignment: assignment)
+      Domain.create!(hostname: "flowpulse.test", node:, role_assignment: assignment, locale: "it")
+      host! "flowpulse.test"
+      post session_url, params: { email_address: @superadmin.email_address, password: "password123" }
+
+      get admin_dashboard_url
+
+      assert_response :success
+      assert_select "aside nav a[href='#{admin_dashboard_path}']", text: /Amministrazione/
+      assert_select "aside nav", text: /Assigned roles/, count: 0
+      assert_select "#admin-index-title", text: "Amministrazione FlowPulse"
+      assert_select "main a[href='#{admin_assigned_role_map_path}']", text: /Assigned roles/
+      assert_select "main a[href='#{admin_notes_path}']", text: /Appunti/
     end
 
     test "anonymous user cannot see dashboard" do

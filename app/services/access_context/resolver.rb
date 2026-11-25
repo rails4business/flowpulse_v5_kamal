@@ -26,6 +26,12 @@ module AccessContext
         current_role_assignment&.role_operator
       end
 
+      def access_role_code
+        return "superadmin" if superadmin?
+
+        current_role_code
+      end
+
       def capabilities
         RoleDefinitions::Registry.find(current_role_code)&.capabilities || []
       end

@@ -1,12 +1,21 @@
 <% access_context = dashboard_access_context %>
+<% contextual_aside = DashboardAside::Builder.new(context: access_context).applicable? %>
 <% aside_context = dashboard_aside_context(local_assigns[:current_section]) %>
+<% contextual_role_controls = contextual_aside && (access_context.superadmin? || access_context.available_role_assignments.any?) %>
+<% legacy_role_controls = !contextual_aside && Current.user && (Current.user.can_switch_roles? || Current.user.current_role_assignment.present?) %>
 
+<% if contextual_role_controls || legacy_role_controls %>
 <div class="flex-none border-t border-slate-100 p-4 space-y-2">
-  <% if access_context.brand_access.present? %>
+  <% if contextual_aside && access_context.superadmin? %>
+    <div class="rounded-xl border border-violet-100 bg-violet-50 px-3 py-2">
+      <span class="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-violet-500">Access role</span>
+      <strong class="mt-1 block text-xs text-violet-800">Superadmin</strong>
+    </div>
+  <% elsif access_context.brand_access.present? %>
     <% assignments = access_context.available_role_assignments %>
     <% if assignments.many? %>
       <%= form_with url: dashboard_brand_access_current_role_path(access_context.brand_access), method: :patch, class: "block", data: { turbo: false } do %>
-        <%= label_tag :role_assignment_id, "Opera come", class: "mb-1.5 block text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400" %>
+        <%= label_tag :role_assignment_id, "Access role", class: "mb-1.5 block text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400" %>
         <%= select_tag :role_assignment_id,
           options_for_select(
             [["Utente", ""]] + assignments.map { |assignment| [RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.to_s.humanize, assignment.id] },
@@ -18,11 +27,11 @@
     <% elsif access_context.current_role_assignment.present? %>
       <% assignment = access_context.current_role_assignment %>
       <div class="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2">
-        <span class="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-blue-500">Opera come</span>
+        <span class="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-blue-500">Access role</span>
         <strong class="mt-1 block truncate text-xs text-blue-800"><%= RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.to_s.humanize %></strong>
       </div>
     <% end %>
-  <% elsif Current.user&.can_switch_roles? %>
+  <% elsif !contextual_aside && Current.user&.can_switch_roles? %>
     <%= form_with url: dashboard_role_path, method: :patch, class: "block", data: { turbo: false } do %>
       <%= select_tag :role,
         options_for_select(Current.user.ruoli_attivabili.map { |role| [ruolo_label(role), role] }, Current.user.active_role),
@@ -31,7 +40,7 @@
     <% end %>
   <% end %>
 
-  <% if Current.user && access_context.brand_access.blank? %>
+  <% if Current.user && access_context.brand_access.blank? && !contextual_aside %>
     <%
       mapped_role = FlowRoles.active_role_for(Current.user)
       role_assignment_role = case mapped_role
@@ -63,3 +72,4 @@
     <% end %>
   <% end %>
 </div>
+<% end %>

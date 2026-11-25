@@ -42,6 +42,13 @@ class BrandRequest < ApplicationRecord
     update!(status: target_status, resolved_at: Time.current)
   end
 
+  def safely_destroyable?
+    brand_access_grants.none? &&
+      data_commitments.none? &&
+      legacy_data_commitment.nil? &&
+      brand_invitations.where(status: "accepted").none?
+  end
+
   private
 
     def domain_belongs_to_brand

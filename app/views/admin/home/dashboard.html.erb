@@ -38,6 +38,21 @@
     <% end %>
   </section>
 
+  <section class="mt-10 rounded-2xl border border-blue-100 bg-blue-50/40 p-5 sm:p-6" aria-labelledby="admin-index-title">
+    <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Indice completo</p>
+    <h2 id="admin-index-title" class="mt-1 text-xl font-black text-slate-950">Amministrazione FlowPulse</h2>
+    <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Tutte le voci del precedente aside rimangono disponibili qui durante la migrazione al nuovo menu contestuale.</p>
+    <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <% @legacy_admin_items.each do |item| %>
+        <%= render "admin/home/dashboard_link",
+          path: resolve_dashboard_menu_path(item.path),
+          title: item.title,
+          description: item.subtitle,
+          code: item.badge %>
+      <% end %>
+    </div>
+  </section>
+
   <section class="mt-10">
     <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Gestione</p>
     <h2 class="mt-1 text-xl font-black text-slate-950">Cosa vuoi gestire?</h2>

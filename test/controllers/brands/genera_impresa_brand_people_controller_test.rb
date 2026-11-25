@@ -44,6 +44,7 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
     get genera_impresa_people_url
 
     assert_response :success
+    assert_select "aside", text: /Access role.*Gestore GeneraImpresa/m
     assert_select "[data-brand-access-id='#{@person_access.id}']", text: /Brand Person/
     assert_select "body", text: /Outsider/, count: 0
     assert_select "a[href='#{admin_profile_path(@person_profile)}']", count: 0
@@ -85,6 +86,7 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
     get genera_impresa_people_url
 
     assert_response :success
+    assert_select "aside", text: /Access role.*Superadmin/m
     assert_select "a[href='#{admin_profile_path(@person_profile)}']", text: "Scheda globale"
   end
 

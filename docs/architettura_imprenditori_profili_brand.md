@@ -537,6 +537,12 @@ deve permettere al superadmin di tornare all'indice e di consultare separatament
 GeneraImpresa non deve duplicare questo pannello: mostra una proiezione limitata ai dati di
 GeneraImpresa e, soltanto al superadmin, offre il collegamento alla scheda globale FlowPulse.
 
+L'aside FlowPulse futuro espone una voce sintetica **Amministrazione**. La relativa pagina index nel
+main conserva e organizza tutte le voci del menu legacy con titolo, descrizione e collegamento
+originale (dashboard, produzione, risorse, pagine, appunti, contenuti, mappe ruoli, reset password,
+import e strumenti). Questa pagina funziona da contenitore di migrazione: nessun collegamento viene
+perso mentre l'aside viene semplificato.
+
 ### Ruolo globale dello User durante la migrazione
 
 La destinazione architetturale resta:
@@ -589,6 +595,11 @@ Tenere distinti quattro eventi:
 2. **approvazione**: chi governa quel perimetro approva la richiesta;
 3. **invito/registrazione**: la persona crea o collega User e Profile;
 4. **accesso**: viene creato o attivato il BrandAccess approvato.
+
+Una richiesta può essere eliminata definitivamente da chi amministra il relativo perimetro soltanto
+se non ha prodotto BrandAccessGrant, attività o inviti accettati. La cancellazione è destinata a spam
+e duplicati, richiede conferma esplicita e revoca gli eventuali inviti pendenti. Le richieste con
+storia operativa vengono invece chiuse, rifiutate o archiviate per conservarne l'audit.
 
 Per la radice GeneraImpresa l'approvatore resta per ora il superadmin. Nei domini o progetti
 delegati l'approvatore sarà l'imprenditore soltanto nel proprio perimetro. Un invito emesso dopo

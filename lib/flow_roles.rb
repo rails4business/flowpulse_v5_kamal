@@ -44,6 +44,7 @@ module FlowRoles
 
   def dashboard_path_for(user, routes)
     return routes.root_path unless user
+    return routes.admin_dashboard_path if user.superadmin_user?
 
     case active_role_for(user)
     when "superadmin", "admin"

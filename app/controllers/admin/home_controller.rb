@@ -52,6 +52,7 @@ module Admin
       @total_contents = NodeContent.count
       @total_domains = Domain.count
       @brand_count = Node.joins(:domains).distinct.count
+      @legacy_admin_items = FlowRoles::MenuRegistry.admin_items
     end
 
     def set_override

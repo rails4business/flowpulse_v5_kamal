@@ -45,7 +45,7 @@ class BrandInvitationsControllerTest < ActionDispatch::IntegrationTest
     assert_match %r{/brand-invitations/}, flash[:invitation_url]
   end
 
-  test "invitation page offers login and registration" do
+  test "invitation sends a new person directly to registration" do
     invitation, raw_token = BrandInvitation.issue!(
       brand_node: @node,
       source_domain: @domain,
@@ -56,10 +56,24 @@ class BrandInvitationsControllerTest < ActionDispatch::IntegrationTest
     host! @domain.hostname
     get brand_invitation_path(raw_token)
 
-    assert_response :success
-    assert_select "h1", text: "PosturaCorretta"
-    assert_select "a", text: "Accedi"
-    assert_select "a", text: "Crea account"
+    assert_redirected_to new_user_path(invitation: raw_token)
+    assert invitation.pending?
+  end
+
+  test "invitation sends an existing FlowPulse account directly to login" do
+    existing_user = User.create!(email_address: "existing-invited@example.com", password: "password123")
+    existing_user.create_profile!(display_name: "Existing invited")
+    invitation, raw_token = BrandInvitation.issue!(
+      brand_node: @node,
+      source_domain: @domain,
+      email_address: existing_user.email_address,
+      invited_by_user: @owner
+    )
+
+    host! @domain.hostname
+    get brand_invitation_path(raw_token)
+
+    assert_redirected_to new_session_path(invitation: raw_token)
     assert invitation.pending?
   end
 end

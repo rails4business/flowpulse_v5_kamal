@@ -1,23 +1,28 @@
 module DashboardAside
   class Builder
     GENERA_IMPRESA_SLUG = "generaimpresa"
+    FLOWPULSE_SLUG = "flowpulse"
 
     def initialize(context:)
       @context = context
     end
 
     def applicable?
-      context.brand&.slug == GENERA_IMPRESA_SLUG
+      context.brand&.slug.in?([GENERA_IMPRESA_SLUG, FLOWPULSE_SLUG])
     end
 
     def groups
       return {} unless applicable?
 
-      { brand: items }
+      { brand: flowpulse? ? flowpulse_items : genera_impresa_items }
     end
 
     def heading
       return unless applicable?
+
+      if flowpulse?
+        return { eyebrow: "FlowPulse", title: context.superadmin? ? "Superadmin" : "Il tuo spazio", subtitle: context.superadmin? ? "Governo della piattaforma" : "Profilo e accessi" }
+      end
 
       if context.superadmin?
         { eyebrow: "GeneraImpresa", title: "Assistenza superadmin", subtitle: "Gestione del Brand e controllo globale" }
@@ -34,7 +39,7 @@ module DashboardAside
 
       attr_reader :context
 
-      def items
+      def genera_impresa_items
         result = [item(:genera_impresa_home, "GeneraImpresa", "Home del Brand", "/generaimpresa", "GI")]
 
         if context.superadmin? || capabilities.include?(:manage_requests)
@@ -56,6 +61,20 @@ module DashboardAside
         end
 
         result
+      end
+
+      def flowpulse_items
+        result = [item(:flowpulse_home, "FlowPulse", "Home della piattaforma", "/", "FP")]
+        if context.superadmin?
+          result << item(:flowpulse_administration, "Amministrazione", "Tutte le funzioni di sistema", :admin_dashboard_path, "SYS")
+        else
+          result << item(:profile, "Profilo", "Dati personali e accessi", :profile_path, "USR")
+        end
+        result
+      end
+
+      def flowpulse?
+        context.brand&.slug == FLOWPULSE_SLUG
       end
 
       def capabilities

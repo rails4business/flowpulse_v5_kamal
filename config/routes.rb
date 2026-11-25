@@ -471,6 +471,7 @@ Rails.application.routes.draw do
         constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
     get "privacy", to: "privacy#index", as: :privacy
     get "requests", to: "brand_requests#index", as: :requests
+    delete "requests/:id", to: "brand_requests#destroy", as: :request
     patch "requests/:id/state", to: "brand_requests#update_state", as: :request_state
     post "requests/:id/approve-access", to: "brand_requests#approve_access", as: :request_approve_access
     post "requests/:id/invitation", to: "brand_requests#create_invitation", as: :request_invitation

@@ -52,6 +52,17 @@ class DashboardAside::BuilderTest < ActiveSupport::TestCase
     assert_includes keys, :flowpulse_admin
   end
 
+  test "reduces the FlowPulse superadmin aside to the administration entry" do
+    flowpulse = Node.create!(title: "FlowPulse", slug: "flowpulse", role_assignment: @root_assignment)
+    domain = Domain.create!(hostname: "aside-flowpulse.example", node: flowpulse, role_assignment: @root_assignment, locale: "it")
+    superadmin = User.create!(email_address: "aside-flowpulse-superadmin@example.com", password: "password123", superadmin: true)
+    context = AccessContext::Resolver.new(user: superadmin, domain:).resolve
+
+    keys = described_class.new(context:).groups.fetch(:brand).map(&:key)
+
+    assert_equal %i[flowpulse_home flowpulse_administration], keys
+  end
+
   private
 
     def item_keys_for(user)

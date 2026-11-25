@@ -169,6 +169,9 @@
                   <% else %>
                     <%= button_to "Riapri", brand_admin_request_state_path(@brand.slug, brand_request), method: :patch, params: { transition: "reopen" }, class: "brand-admin-action brand-admin-action--sm" %>
                   <% end %>
+                  <% if brand_request.safely_destroyable? %>
+                    <%= button_to "Elimina", brand_admin_request_path(@brand.slug, brand_request), method: :delete, class: "brand-admin-action brand-admin-action--danger brand-admin-action--sm", data: { turbo_confirm: "Eliminare definitivamente questa richiesta? L’operazione non può essere annullata." } %>
+                  <% end %>
                 </div>
               </td>
             </tr>

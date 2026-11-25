@@ -85,6 +85,19 @@ module Brands
         redirect_to brand_admin_requests_path(@brand.slug, state: "open", anchor: "brand-request-#{params[:id]}"), alert: error.message
       end
 
+      def destroy
+        brand_request = brand_requests.find(params[:id])
+        unless brand_request.safely_destroyable?
+          redirect_to brand_admin_requests_path(@brand.slug, state: "all", anchor: "brand-request-#{brand_request.id}"),
+            alert: "La richiesta ha già prodotto accessi o attività: conservala nello storico."
+          return
+        end
+
+        brand_request.brand_invitations.pending.update_all(status: "revoked", updated_at: Time.current)
+        brand_request.destroy!
+        redirect_to brand_admin_requests_path(@brand.slug, state: "all"), notice: "Richiesta eliminata definitivamente."
+      end
+
       private
 
         def brand_requests

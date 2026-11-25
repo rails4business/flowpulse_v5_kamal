@@ -81,6 +81,38 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     assert_redirected_to brand_admin_requests_url(@brand.slug, state: "open")
   end
 
+  test "brand administrator permanently deletes a request without operational history" do
+    sign_in(@owner)
+
+    assert_difference -> { BrandRequest.count }, -1 do
+      delete brand_admin_request_url(@brand.slug, @brand_request)
+    end
+
+    assert_redirected_to brand_admin_requests_url(@brand.slug, state: "all")
+    assert_equal "Richiesta eliminata definitivamente.", flash[:notice]
+  end
+
+  test "brand administrator cannot delete a request that produced an access grant" do
+    person = User.create!(email_address: "request-history@example.com", password: "password123")
+    profile = person.create_profile!(display_name: "Request history")
+    access = BrandAccess.create!(profile:, source_domain: @domain)
+    BrandAccessGrant.create!(
+      brand_access: access,
+      node: @brand,
+      brand_request: @brand_request,
+      granted_by_profile: @profile,
+      status: "active",
+      granted_at: Time.current
+    )
+    sign_in(@owner)
+
+    assert_no_difference -> { BrandRequest.count } do
+      delete brand_admin_request_url(@brand.slug, @brand_request)
+    end
+
+    assert_equal "La richiesta ha già prodotto accessi o attività: conservala nello storico.", flash[:alert]
+  end
+
   test "closed requests use outcome filters and table layout is used for all views" do
     @brand_request.update!(status: "accepted", resolved_at: Time.current)
     BrandRequest.create!(
