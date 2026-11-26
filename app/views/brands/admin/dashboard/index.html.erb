@@ -10,15 +10,11 @@
   </header>
 
   <% if @sections.any? %>
-    <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Funzioni amministrative">
-      <% @sections.each do |section| %>
-        <%= link_to section[:path], class: "brand-admin-card block p-6 transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md" do %>
-          <span class="inline-flex rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-black tracking-wider text-slate-500"><%= section[:code] %></span>
-          <h2 class="mt-4 text-xl font-black text-slate-950"><%= section[:title] %></h2>
-          <p class="mt-2 text-sm leading-6 text-slate-600"><%= section[:description] %></p>
-          <span class="mt-5 inline-flex text-sm font-black text-blue-700">Apri →</span>
-        <% end %>
-      <% end %>
+    <%= render "shared/dashboard/section_grid", sections: @sections %>
+  <% elsif dashboard_access_context.selection_required? %>
+    <section class="brand-admin-card mt-6 p-6">
+      <h2 class="text-lg font-black">Scegli con quale ruolo operare</h2>
+      <p class="mt-2 text-sm text-slate-600">Seleziona il tuo incarico dal menu laterale per aprire le relative funzioni.</p>
     </section>
   <% else %>
     <section class="brand-admin-card mt-6 p-6">

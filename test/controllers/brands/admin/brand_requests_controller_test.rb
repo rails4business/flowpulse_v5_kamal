@@ -56,7 +56,7 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     get brand_admin_requests_url(@brand.slug)
 
     assert_response :success
-    assert_select ".brand-admin-site-link[href='/']", text: "Torna al sito"
+    assert_select ".brand-admin-site-link[href='/corpo-e-coscienza']", text: "Torna al sito"
   end
 
   test "requests linked to a profile show it next to the contact" do

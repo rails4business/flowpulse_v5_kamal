@@ -1,8 +1,19 @@
 module Admin
   class BaseController < ApplicationController
+    before_action :use_platform_host
     before_action :require_admin!
 
     private
+
+    def use_platform_host
+      return if local_request? || current_domain&.resolved_node.nil? || current_domain.resolved_node.slug == "flowpulse"
+
+      if request.get? || request.head?
+        redirect_to "https://flowpulse.net#{request.fullpath}", allow_other_host: true
+      else
+        head :not_found
+      end
+    end
 
     def dashboard_access_context
       @dashboard_access_context ||= AccessContext::Resolver.new(

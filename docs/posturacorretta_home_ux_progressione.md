@@ -1,108 +1,48 @@
-# Home PosturaCorretta — UX e progressione Scopri → Pratica → Approfondisci
+# Home PosturaCorretta — UX: stato dei lavori
 
-## Obiettivo
+Un punto alla volta: si discute, si implementa, si verifica in locale, si segna `[x]`.
 
-Rendere `posturacorretta.org` (in locale `/posturacorretta`) una home che una persona capisce al primo sguardo: **da dove inizio, cosa faccio dopo, chi mi segue**. La progressione è già scritta nella pagina e diventa la struttura della home:
+Documenti collegati: [`ecosistema_persona_tre_progetti.md`](ecosistema_persona_tre_progetti.md) (Il Giardino del
+Corpo è un progetto distinto), [`posturacorretta_home_valutazione_interventi.md`](posturacorretta_home_valutazione_interventi.md),
+[`richieste_profili_iscrizioni.md`](richieste_profili_iscrizioni.md).
 
-1. **Scopri** — corso online, 10 minuti al giorno;
-2. **Pratica** — lezioni con un insegnante PosturaCorretta, nei centri;
-3. **Approfondisci** — metodiche posturali e professionisti formati.
+## Fatto (26/11/2026, non committato, test non ancora lanciati)
 
-Documenti collegati, da rispettare:
+- [x] **Capitolo 2 nuovo** "Come si affronta il programma: Scopri, Pratica, Approfondisci" nel corso
+  `inizia-con-posturacorretta` (`course.yml` + `chapters/come-si-affronta-il-programma.md`, `demo: true`).
+  Importato e pubblicato in sviluppo. **In produzione: dopo il deploy pubblicarlo subito con "Pubblica"**, altrimenti
+  blocca il "Segna come letto" dei capitoli successivi.
+- [x] **Home senza barra delle schede.** Tolto il blocco Scopri/Pratica/Approfondisci (ora nel capitolo 2); "Scopri di
+  più" porta al capitolo. Sotto la scheda tre sezioni con "Vai" (Percorso educativo, Consapevolezza, Connessione).
+- [x] **Pagine `?area=…`**: breadcrumb "Home › Area" al posto delle schede; `?area=intro` → 301 alla home.
+- [x] **Scheda del programma** (`_program_sheet.html.erb`), una sola per schermo e stampa: il corso è un titolo nel
+  cerchio; ogni lezione ha due righe (☐ Online/Centro/Domicilio, icone singolo/gruppo; data `__/__/__ __:__`, centro,
+  firma del professionista); legenda delle icone. I capitoli non compaiono in home (sono materiale della lezione e
+  stanno nello show).
+- [x] **Riquadro "I tuoi dati"** in fondo alla scheda (`_participant_box.html.erb`): modulo Nome e cognome, Email,
+  Telefono facoltativo + privacy, che invia la richiesta PosturaCorretta esistente (`BrandRequest`, `kind: access`);
+  per chi ha fatto l'accesso mostra i dati; in stampa diventa righe da compilare.
+- [x] **Pagina bianca nel PDF**: `print_date_controller.js` non annulla più lo spostamento della scheda quando
+  Stimulus lo stacca e riattacca.
 
-- [`ecosistema_persona_tre_progetti.md`](ecosistema_persona_tre_progetti.md) — la persona al centro; Il Giardino del Corpo è un progetto distinto, non una sezione interna di PosturaCorretta.
-- [`posturacorretta_home_valutazione_interventi.md`](posturacorretta_home_valutazione_interventi.md) — interventi già fatti (Inizia, Corso 1 di 6, avanzamento, stati dei capitoli) e criteri di decisione.
+## Da fare, un punto alla volta
 
-## Metodo
+1. [ ] Lanciare `bin/rails test test/controllers/nodes_controller_test.rb`.
+2. [ ] Tipo di richiesta distinto per le iscrizioni al programma (es. `iscrizione_programma`): prima verificare i
+   `kind` usati e il pannello del Brand.
+3. [ ] Dopo "Iscriviti" tornare alla home con un messaggio (oggi si finisce su "Richiedi un invito").
+4. [ ] Hero: togliere o riformulare "Salute perfetta con PosturaCorretta".
+5. [ ] Telefono: "1 / 7" si sovrappone a "Continua" nel piè di pagina della scheda.
+6. [ ] Decidere: approvazione delle iscrizioni a mano o automatica; "Richiedi accesso" nel menu sì/no.
+7. [ ] Testi delle tre sezioni da completare (Percorso educativo).
+8. [ ] Più avanti: precompilare la scheda con prenotazioni e conferma dell'insegnante; data di completamento.
 
-Un punto alla volta: si presenta il punto, si decide insieme, si implementa, si verifica in locale, si segna `[x]`. Gli altri punti restano in attesa.
+## Questioni aperte collegate
 
-## Stato attuale (26/11/2026)
-
-File principali:
-
-- [`app/views/nodes/posturacorretta_home/_overview.html.erb`](../app/views/nodes/posturacorretta_home/_overview.html.erb) — schede Inizia / Percorso educativo / Consapevolezza / Connessione;
-- [`app/views/nodes/posturacorretta_home/_landing.html.erb`](../app/views/nodes/posturacorretta_home/_landing.html.erb) — hero, tre principi, tabella programma, parti del percorso educativo;
-- [`app/controllers/nodes_controller.rb`](../app/controllers/nodes_controller.rb) `domain_home` e `prepare_posturacorretta_home` in [`public_node_presentation.rb`](../app/controllers/concerns/public_node_presentation.rb).
-
-Cosa vede oggi un visitatore:
-
-- **tre livelli di navigazione**: menu in alto (Home, Insegnanti, Centri, Servizi, About), schede della home (Inizia, Percorso educativo, Consapevolezza, Connessione), sotto-schede del percorso educativo (Recupero, Movimento, Mente, Fisiologia);
-- nomi interni (“Espressione”, “Consapevolezza”, “Connessione”) che non dicono cosa si trova;
-- Movimento, Mente e Fisiologia aprono “Questa parte del programma è in preparazione”;
-- “Richiedi accesso” in alto per tutti: è il flusso per chi lavora sul brand;
-- “Inizia”, “Inizia il percorso” e le due colonne della tabella programma puntano quasi tutti a `/posturacorretta/percorsi/postura-recupero`, cambia solo `tab=online|lezioni`;
-- chi ha già fatto l'accesso vede la stessa vetrina;
-- testi da rivedere: “Salute perfetta”; “Ogni metodica ha una scuola” (le scuole oggi non esistono).
-
-## Punti
-
-### 1. Home senza schede — [ ]
-
-**Proposta.** La home diventa una pagina unica, senza `pc-index-cabinet__tabs`:
-
-1. hero: titolo, una frase, **un solo pulsante principale** “Inizia il corso online” (porta alla prima tappa) e un secondario “Come funziona” (ancora `#come-funziona`);
-2. i tre passi Scopri / Pratica / Approfondisci come blocchi cliccabili, ognuno con una destinazione;
-3. anteprima del programma: i primi corsi (Corso 1 di N…) e “Vedi tutto il programma”;
-4. fiducia: chi cura il progetto (rimando alla pagina persone, quando esisterà);
-5. footer.
-
-**Destinazioni dei tre passi:**
-
-| Passo | Destinazione proposta | Rotta esistente |
-|---|---|---|
-| Scopri | prima tappa del corso online | `posturacorretta_postura_recupero_path(tappa: "introduzione-al-percorso-integrato", tab: "online")` |
-| Pratica | insegnanti e centri | `posturacorretta_insegnanti_path`, `posturacorretta_centres_path` |
-| Approfondisci | metodiche, poi professionisti | `posturacorretta_metodiche_path`, `posturacorretta_professionisti_path` |
-
-**Da decidere:**
-
-- il link `?area=…` resta valido (redirect alla nuova sezione) o lo togliamo?
-- nell'anteprima i corsi sono 3 (come oggi in “Inizia il programma”) o i 6 di “Corso 1 di 6”?
-
-### 2. Menu in alto e accesso — [ ]
-
-**Proposta.** Menu: **Percorso · Insegnanti · Centri · Metodiche · Accedi**. “Servizi” e “About” passano nel footer. “Richiedi accesso” esce dal menu pubblico e va nel footer come “Collabora con PosturaCorretta”.
-
-**Da decidere:** il menu viene dai Node (`_public_navigation_items`): si cambia nel database/YAML dei nodi (vedi flusso nodes.yml → import) o nel codice?
-
-### 3. Consapevolezza e Connessione — [ ]
-
-**Proposta.** Escono dalla home come schede.
-
-- **Consapevolezza** (corso, metodiche, percorsi): confluisce in Approfondisci.
-- **Connessione** (`dalla-posturacorretta-al-giardino-del-corpo`): appartiene al Giardino del Corpo, quindi diventa un rimando distinto in fondo alla home o nel footer (“Il Giardino del Corpo”), non un passo del percorso.
-
-**Da decidere:** le pagine `/posturacorretta/consapevolezza` e `/posturacorretta/connessione` restano come pagine autonome?
-
-### 4. Parti del programma in preparazione — [ ]
-
-**Proposta.** Movimento, Mente e Fisiologia non sono più cliccabili: nell'indice del programma compaiono con l'etichetta “In arrivo”, come già succede per i capitoli non pubblicati. Quando una parte ha contenuti pubblicati diventa cliccabile da sola.
-
-**Da decidere:** mostrarle “In arrivo” oppure nasconderle del tutto?
-
-### 5. Un link per ogni voce del programma — [ ]
-
-**Proposta.** Nella tabella programma ogni riga ha un solo link (il corso online). Le lezioni con insegnante si raggiungono dal passo **Pratica**, non da una seconda colonna.
-
-### 6. Home per chi ha già fatto l'accesso — [ ]
-
-**Proposta.** In cima alla home, al posto dell'hero, un blocco “Continua da dove eri”: prossimo capitolo da leggere, avanzamento del corso, link al programma. Si riusa l'avanzamento già calcolato (capitoli segnati come letti). Senza corsi iniziati si vede l'hero normale.
-
-### 7. Testi — [ ]
-
-**Proposta.**
-
-- sostituire “Salute perfetta con PosturaCorretta” con una frase senza promesse sanitarie;
-- “Approfondisci”: togliere “Ogni metodica ha una scuola”, parlare di professionisti formati nella metodica;
-- correggere “Impara come funziona il tuo corpo quali sono…” e “Pronto ad iniziare?”.
-
-**Da decidere:** i testi nuovi li scrivi tu o propongo io una bozza da correggere?
-
-### 8. Link sul dominio reale — [ ]
-
-**Proposta.** Verificare che su `posturacorretta.org` i link della home puntino alla radice (`/insegnanti`), non a `/posturacorretta/insegnanti`. Riguarda il routing per host, non la UX: va fatto prima di pubblicare la nuova home.
-
-## Ordine proposto
-
-1 → 2 → 4 → 5 → 3 → 6 → 7 → 8. Il punto 1 viene prima perché gli altri dipendono dalla struttura della home.
+- Pagine doppie: `/posturacorretta/espressione`, `/consapevolezza`, `/connessione` e `?area=…` mostrano lo stesso
+  contenuto; decidere quale tenere.
+- Link sul dominio reale: su `posturacorretta.org` i link devono puntare alla radice, non a `/posturacorretta/...`.
+- Flusso dati sviluppo/produzione: revisione rimasta aperta in
+  [`prompts/flusso_dati_sviluppo_produzione_db_yml_md.md`](prompts/flusso_dati_sviluppo_produzione_db_yml_md.md)
+  (lavoro coi file in locale, registro in entrambi i DB, conflitti, scarico della produzione, passaggio da
+  `config/data` a `docs/dati`).

@@ -1,0 +1,32 @@
+<%
+  # Ultimo riquadro della scheda: a schermo è la richiesta PosturaCorretta (la stessa di "Richiedi accesso"),
+  # in stampa diventa "I tuoi dati" da compilare a penna; per chi ha fatto l'accesso i dati sono già scritti.
+  profile = Current.user&.profile
+  participant_name = [profile&.first_name, profile&.last_name].compact_blank.join(" ").presence || profile&.display_name
+%>
+<section class="pc-participant" aria-labelledby="pc-participant-title">
+  <h3 id="pc-participant-title" class="pc-participant__title">I tuoi dati</h3>
+
+  <% if Current.user %>
+    <dl class="pc-participant__fields">
+      <div class="pc-participant__field"><dt>Nome e cognome</dt><dd><%= participant_name %></dd></div>
+      <div class="pc-participant__field"><dt>Email</dt><dd><%= Current.user.email_address %></dd></div>
+      <div class="pc-participant__field"><dt>Telefono</dt><dd></dd></div>
+    </dl>
+  <% else %>
+    <p class="pc-participant__intro">Vuoi iniziare il programma? Lascia i tuoi recapiti: ti contatteremo per l’iscrizione.</p>
+    <%= form_with url: brand_access_request_path, scope: :access_request, class: "pc-participant__form" do |form| %>
+      <%= render "shared/public_submission_protection", form_key: "brand_access_request" %>
+      <% if local_request? %><%= hidden_field_tag :site, "posturacorretta" %><% end %>
+      <div class="pc-participant__fields">
+        <label class="pc-participant__field"><span>Nome e cognome</span><%= form.text_field :name, required: true, autocomplete: "name" %></label>
+        <label class="pc-participant__field"><span>Email</span><%= form.email_field :email, required: true, autocomplete: "email" %></label>
+        <label class="pc-participant__field"><span>Telefono <small>(facoltativo)</small></span><%= form.telephone_field :phone, autocomplete: "tel" %></label>
+      </div>
+      <div class="pc-participant__actions">
+        <label class="pc-participant__consent"><%= form.check_box :privacy_consent, required: true %><span>Ho letto l’informativa privacy del sito e autorizzo l’uso dei recapiti per rispondere alla richiesta.</span></label>
+        <%= form.submit "Iscriviti", class: "pc-participant__submit" %>
+      </div>
+    <% end %>
+  <% end %>
+</section>

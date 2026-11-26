@@ -101,7 +101,7 @@ module CreatorWorld
       assert_not_includes main, "www.flowpulse.net"
     end
 
-    test "creator dashboard aside only shows creator workspace link" do
+    test "legacy creator dashboard uses the compact contextual aside" do
       user = create_user("creator-dashboard-aside@example.com")
       assignment = RoleAssignment.create!(profile: user.profile, role: :ideatore)
       user.update!(active_role: :ideatore, current_role_assignment: assignment)
@@ -110,7 +110,9 @@ module CreatorWorld
       get creator_world_root_url
 
       assert_response :success
-      assert_select "nav[aria-label='Navigazione dashboard'] strong", text: "Ideatore"
+      assert_select "nav[aria-label='Navigazione dashboard'] strong", text: "FlowPulse"
+      assert_select "nav[aria-label='Navigazione dashboard'] strong", text: "Profilo"
+      assert_select "nav[aria-label='Navigazione dashboard'] strong", text: "Ideatore", count: 0
       assert_not_includes response.body, "Esperienze, categorie e brand"
       assert_not_includes response.body, "Teacher"
       assert_not_includes response.body, "Tutor"

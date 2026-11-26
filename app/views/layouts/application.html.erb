@@ -40,7 +40,7 @@
   </script>
   </head>
 
-  <body data-layout="dashboard" class="bg-slate-50 text-slate-900">
+  <body data-layout="dashboard" class="bg-slate-50 text-slate-900 <%= content_for(:body_class) %>">
     <% dashboard_context = dashboard_aside_context(dashboard_current_section) %>
 
     <div class="min-h-screen">
@@ -54,7 +54,7 @@
       <aside
         id="sidebar"
         data-dashboard-sidebar
-        class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0"
+        class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white font-sans transition-transform duration-300 ease-in-out lg:translate-x-0"
         aria-label="Sidebar"
       >
         <%= render "shared/dashboard/sidebar", current_section: dashboard_current_section %>
@@ -62,7 +62,7 @@
       
 
       <div data-dashboard-frame class="min-w-0 lg:pl-72">
-        <header data-dashboard-topbar class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:px-6 lg:px-8">
+        <header data-dashboard-topbar class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 font-sans backdrop-blur md:px-6 lg:px-8">
           <%= render "shared/dashboard/topbar", dashboard_context: dashboard_context %>
         </header>
 
@@ -79,6 +79,7 @@
         <% end %>
 
         <main data-dashboard-main class="min-h-[calc(100vh-4rem)] min-w-0 p-4 md:p-6 lg:p-8">
+          <%= yield :dashboard_before_main %>
           <%= yield %>
         </main>
       </div>

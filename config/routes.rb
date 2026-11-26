@@ -393,8 +393,48 @@ Rails.application.routes.draw do
     root "dashboard#show"
   end
 
-  # Area Admin / Superadmin
-  namespace :admin do
+  concern :brand_administration do
+    get "", to: "dashboard#index", as: :root
+    get "dashboard", to: "dashboard#index", as: :dashboard
+    resources :nodes, only: %i[index show create update destroy] do
+      member do
+        patch :lifecycle
+        post :processes, action: :create_process
+        post :skills, action: :activate_skill
+        patch "skills/:activation_id", action: :update_skill, as: :skill
+      end
+      resources :processes, controller: "node_processes", only: %i[show update] do
+        member { post :experiences, action: :create_experience }
+      end
+      resources :events, only: %i[show update], controller: "node_events", param: :public_id
+    end
+    get "development", to: "development#index", as: :development
+    get "development/:slug", to: "development#show", as: :development_entry,
+        constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
+    get "privacy", to: "privacy#index", as: :privacy
+    get "requests", to: "brand_requests#index", as: :requests
+    delete "requests/:id", to: "brand_requests#destroy", as: :request
+    patch "requests/:id/state", to: "brand_requests#update_state", as: :request_state
+    post "requests/:id/approve-access", to: "brand_requests#approve_access", as: :request_approve_access
+    post "requests/:id/invitation", to: "brand_requests#create_invitation", as: :request_invitation
+    get "data-commitments", to: "data_commitments#index", as: :data_commitments
+    resources :contents, only: %i[index update]
+    get "people", to: "/brands/genera_impresa_brand_people#index", as: :people
+    get "projects", to: "/brands/genera_impresa_projects#index", as: :projects
+  end
+
+  # Sui domini Brand /admin appartiene al Brand; FlowPulse conserva il controllo globale.
+  constraints ->(request) {
+    domain = Domain.find_for_host(request.host)
+    domain&.resolved_node.present? && domain.resolved_node.slug != "flowpulse"
+  } do
+    scope "admin", module: "brands/admin", as: :domain_brand_admin do
+      concerns :brand_administration
+    end
+  end
+
+  concern :platform_administration do
+    get "", to: "home#dashboard", as: :root
     get "dashboard" => "home#dashboard", as: :dashboard
     post "set_override" => "home#set_override", as: :set_override
     get "elenco_pagine" => "home#elenco_pagine", as: :elenco_pagine
@@ -447,19 +487,15 @@ Rails.application.routes.draw do
     resources :risorse, controller: "/resources", only: [:index, :show]
   end
 
+  namespace :admin do
+    concerns :platform_administration
+  end
+
   # Su localhost il prefisso identifica FlowPulse, dato che tutti i Brand
   # condividono lo stesso host. Sui domini dedicati restano canoniche /admin/*.
   scope ":admin_brand_slug/admin", module: "admin", as: :local_domain_admin,
       constraints: { admin_brand_slug: /flowpulse/ } do
-    resources :profiles, only: %i[index show] do
-      resources :role_assignments, only: :create, controller: "profile_role_assignments"
-      delete "role_assignments/:role_assignment_id", to: "profile_role_assignments#destroy", as: :role_assignment
-      resources :brand_accesses, only: %i[index show create destroy], controller: "profile_brand_accesses" do
-        member { post :resend_verification }
-      end
-      resources :nodes, only: %i[index show], controller: "profile_nodes"
-      resources :node_responsibilities, only: %i[create destroy], controller: "profile_node_responsibilities"
-    end
+    concerns :platform_administration
   end
 
   # Alias esplicito: la mappa globale di Brand e Node appartiene a FlowPulse.
@@ -473,30 +509,7 @@ Rails.application.routes.draw do
 
   scope ":brand_slug/admin", module: "brands/admin", as: :brand_admin,
       constraints: { brand_slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ } do
-    get "", to: "dashboard#index", as: :root
-      resources :nodes, only: %i[index show create update destroy] do
-        member do
-          patch :lifecycle
-          post :processes, action: :create_process
-          post :skills, action: :activate_skill
-          patch "skills/:activation_id", action: :update_skill, as: :skill
-        end
-        resources :processes, controller: "node_processes", only: %i[show update] do
-          member { post :experiences, action: :create_experience }
-        end
-        resources :events, only: %i[show update], controller: "node_events", param: :public_id
-      end
-    get "development", to: "development#index", as: :development
-    get "development/:slug", to: "development#show", as: :development_entry,
-        constraints: { slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
-    get "privacy", to: "privacy#index", as: :privacy
-    get "requests", to: "brand_requests#index", as: :requests
-    delete "requests/:id", to: "brand_requests#destroy", as: :request
-    patch "requests/:id/state", to: "brand_requests#update_state", as: :request_state
-    post "requests/:id/approve-access", to: "brand_requests#approve_access", as: :request_approve_access
-    post "requests/:id/invitation", to: "brand_requests#create_invitation", as: :request_invitation
-    get "data-commitments", to: "data_commitments#index", as: :data_commitments
-    resources :contents, only: %i[index update]
+    concerns :brand_administration
   end
 
   namespace :sync do

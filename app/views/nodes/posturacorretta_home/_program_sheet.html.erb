@@ -1,29 +1,62 @@
-<% label = local_assigns.fetch(:label, "Programma") %>
-<div class="pc-intro-program-list" role="table" aria-label="<%= label %>">
-  <div class="pc-intro-program-list__head" role="row">
-    <span role="columnheader">Corso / lezione</span>
-    <span role="columnheader">Data e ora</span>
-    <span role="columnheader">Centro</span>
-    <span role="columnheader">Insegnante</span>
-    <span role="columnheader">Firma</span>
-  </div>
-
-  <% groups.each_with_index do |group, group_index| %>
-    <div class="pc-intro-program-list__row is-course" role="row">
-      <span class="pc-intro-program-list__course-title" role="cell">
-        <small><span class="pc-intro-program-list__number"><%= group_index + 1 %></span> · Corso · Iscrizione</small>
-        <%= link_to group.fetch(:course_title), group.fetch(:course_path) %>
-      </span>
-    </div>
-
-    <% group.fetch(:lessons).each_with_index do |lesson, lesson_index| %>
-      <div class="pc-intro-program-list__row is-lesson" role="row">
-        <span class="pc-intro-program-list__lesson-title" role="cell">
-          <small><span class="pc-intro-program-list__number"><%= group_index + 1 %>.<%= lesson_index + 1 %></span> · Lezione</small>
-          <%= link_to lesson.fetch(:title).delete_prefix("Lezione · "), lesson.fetch(:path) %>
-        </span>
-        <span role="cell"></span><span role="cell"></span><span role="cell"></span><span role="cell"></span>
-      </div>
-    <% end %>
+<%
+  label = local_assigns.fetch(:label, "Programma")
+  # Icone outline 24×24 (stesso tratto delle altre icone del sito), leggibili anche stampate in bianco e nero.
+  icon_paths = {
+    singolo: "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z",
+    gruppo: "M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z",
+    centro: "M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21",
+    firma: "m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+  }
+  icon_labels = { singolo: "Singolo", gruppo: "Gruppo", centro: "Centro", firma: "Firma del professionista" }
+  icon = ->(name) do
+    tag.svg(tag.path(d: icon_paths.fetch(name), "stroke-linecap": "round", "stroke-linejoin": "round"),
+      class: "pc-intro-program-list__icon", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "1.6",
+      role: "img", "aria-label": icon_labels.fetch(name))
+  end
+  box = tag.span(class: "pc-intro-program-list__box", "aria-hidden": true)
+  blank = ->(extra = nil) { tag.span(class: ["pc-intro-program-list__blank", extra], "aria-hidden": true) }
+%>
+<%# Una sola scheda per schermo e stampa: caselle e righe vuote si compilano a penna. I capitoli restano nello show della lezione. %>
+<p class="pc-intro-program-list__legend">
+  <% %i[singolo gruppo centro firma].each do |name| %>
+    <span><%= icon.(name) %><%= icon_labels.fetch(name) %></span>
   <% end %>
-</div>
+</p>
+<ol class="pc-intro-program-list" aria-label="<%= label %>">
+  <% groups.each_with_index do |group, group_index| %>
+    <li class="pc-intro-program-list__group">
+      <h3 class="pc-intro-program-list__row is-course">
+        <span class="pc-intro-program-list__number"><%= group_index + 1 %></span>
+        <%= link_to group.fetch(:course_title), group.fetch(:course_path) %>
+      </h3>
+
+      <% group.fetch(:lessons).each_with_index do |lesson, lesson_index| %>
+        <div class="pc-intro-program-list__row is-lesson">
+          <div class="pc-intro-program-list__lesson-head">
+            <%= link_to lesson.fetch(:path), class: "pc-intro-program-list__lesson-title" do %>
+              <%= box %>
+              <span>Lezione <%= group_index + 1 %>.<%= lesson_index + 1 %> · <%= lesson.fetch(:title).delete_prefix("Lezione · ") %></span>
+            <% end %>
+            <span class="pc-intro-program-list__options">
+              <% %w[Online Centro Domicilio].each do |place| %>
+                <span class="pc-intro-program-list__option"><%= box %><%= place %></span>
+              <% end %>
+              <span class="pc-intro-program-list__divider" aria-hidden="true"></span>
+              <% %i[singolo gruppo].each do |format| %>
+                <span class="pc-intro-program-list__option"><%= icon.(format) %><%= box %></span>
+              <% end %>
+            </span>
+          </div>
+          <div class="pc-intro-program-list__fill">
+            <span class="pc-intro-program-list__date" aria-label="Data e ora">
+              <%= blank.() %>/<%= blank.() %>/<%= blank.() %><%= blank.("is-gap") %>:<%= blank.() %>
+            </span>
+            <span class="pc-intro-program-list__field"><%= icon.(:centro) %><%= blank.() %></span>
+            <span class="pc-intro-program-list__field"><%= icon.(:firma) %><%= blank.() %></span>
+          </div>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+</ol>
+<%= render "nodes/posturacorretta_home/participant_box" %>

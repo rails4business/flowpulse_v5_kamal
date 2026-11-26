@@ -135,7 +135,112 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
 
     assert_response :success
     assert_select "aside", text: /Access role.*Superadmin/m
-    assert_select "a[href='#{admin_profile_path(@person_profile)}']", text: "Scheda globale"
+    assert_select "a[href='https://flowpulse.net#{admin_profile_path(@person_profile)}']", text: "Scheda globale"
+  end
+
+  test "canonical Brand dashboard uses the same policy as direct section access" do
+    sign_in(@manager)
+    get "/admin"
+
+    assert_response :success
+    assert_select "body[data-layout='dashboard'].brand-admin-body"
+    assert_select "aside nav a[href='/admin'][aria-current='page']", text: /Dashboard/
+    assert_select "[data-dashboard-section]", count: 3
+    assert_select "[data-dashboard-section='requests'][href='/admin/requests']"
+    assert_select "[data-dashboard-section='brand_people'][href='/admin/people']"
+    assert_select "[data-dashboard-section='projects'][href='/admin/projects']"
+
+    get "/admin/requests"
+    assert_response :success
+    assert_select "aside nav a[href='/admin'][aria-current='page']", text: /Dashboard/
+    assert_select "nav[aria-label='Breadcrumb'] a[href='/admin']"
+    get "/admin/nodes"
+    assert_response :forbidden
+    get brand_admin_privacy_path(@brand.slug)
+    assert_response :forbidden
+  end
+
+  test "localhost keeps the Brand prefix for dashboard sections and breadcrumbs" do
+    host! "localhost"
+    post session_path, params: { site: @brand.slug, email_address: @manager.email_address, password: "password123" }
+    get "/generaimpresa/admin"
+
+    assert_response :success
+    assert_select "[data-dashboard-section='requests'][href='/generaimpresa/admin/requests']"
+    assert_select "[data-dashboard-section='brand_people'][href='/generaimpresa/admin/people']"
+    get "/generaimpresa/admin/requests"
+    assert_response :success
+    assert_select "nav[aria-label='Breadcrumb'] a[href='/generaimpresa/admin']"
+  end
+
+  test "entrepreneur dashboard links to project people instead of the whole Brand people index" do
+    assignment = @manager.profile.role_assignments.operator.first
+    assignment.update!(role_operator: "imprenditore_generaimpresa")
+    project = Node.create!(title: "Entrepreneur project", parent: @brand, role_assignment: @root_assignment,
+      responsible_profile: @manager.profile)
+    sign_in(@manager)
+
+    get "/admin"
+
+    assert_response :success
+    assert_select "[data-dashboard-section]", count: 1
+    assert_select "[data-dashboard-section='projects'][href='/admin/projects']"
+    assert_select "aside nav", text: /Persone GeneraImpresa/, count: 0
+    get "/admin/people"
+    assert_response :forbidden
+    get "/admin/projects"
+    assert_response :success
+    assert_select "[data-managed-node-id='#{project.id}'] a", text: "Persone del progetto"
+    get genera_impresa_project_people_path(project)
+    assert_response :success
+    assert_select "a", text: "Apri le richieste del Brand", count: 0
+  end
+
+  test "ordinary Brand access exposes no administrative navigation or dashboard" do
+    @person_access.create_brand_credential!(brand_node: @brand, email_address: @person.email_address, password: "password123")
+    sign_in(@person)
+
+    get profile_path
+
+    assert_response :success
+    assert_select "aside nav a[href*='/admin']", count: 0
+    get "/admin"
+    assert_response :forbidden
+    get "/admin/projects"
+    assert_response :forbidden
+  end
+
+  test "a manager can read projects covered by the role even when another person is responsible" do
+    project = Node.create!(title: "Other responsible person", parent: @brand,
+      role_assignment: @root_assignment, responsible_profile: @person_profile)
+    sign_in(@manager)
+
+    get "/admin/projects"
+
+    assert_response :success
+    assert_select "[data-managed-node-id='#{project.id}']"
+    assert_select "nav[aria-label='Breadcrumb'] a[href='/admin']"
+  end
+
+  test "multiple roles require a selection and changing it updates the dashboard sections" do
+    access = @manager.profile.brand_accesses.find_by!(brand_node: @brand)
+    manager_role = access.current_role_assignment
+    entrepreneur = RoleAssignment.create!(profile: @manager.profile, role: :operator,
+      role_operator: "imprenditore_generaimpresa", context: @brand, parent: @root_assignment, brand_access: access)
+    access.select_role_assignment!(nil)
+    sign_in(@manager)
+    get "/admin"
+
+    assert_response :success
+    assert_select "h2", "Scegli con quale ruolo operare"
+    assert_select "[data-dashboard-section]", count: 0
+    patch dashboard_brand_access_current_role_path(access), params: { role_assignment_id: entrepreneur.id }
+    get "/admin"
+    assert_select "[data-dashboard-section]", count: 1
+
+    patch dashboard_brand_access_current_role_path(access), params: { role_assignment_id: manager_role.id }
+    get "/admin"
+    assert_select "[data-dashboard-section]", count: 3
   end
 
   private

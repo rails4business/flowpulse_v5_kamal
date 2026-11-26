@@ -13,12 +13,13 @@ module Brands
       before_action :set_brand
       before_action :require_brand_administrator!
 
-      helper_method :brand_owner?, :brand_support_access?, :brand_public_path
+      helper_method :brand_owner?, :brand_support_access?, :brand_public_path, :brand_navigation_paths, :navigation_section
 
       private
 
         def set_brand
-          requested_slug = params[:brand_slug].to_s
+          requested_slug = request.path_parameters[:brand_slug].presence || current_domain&.resolved_node&.slug
+          requested_slug = requested_slug.to_s
           canonical_slug = BRAND_SLUG_ALIASES.fetch(requested_slug, requested_slug)
           @brand = Node.includes(:domains, role_assignment: :profile).find_by!(slug: canonical_slug)
           raise ActiveRecord::RecordNotFound, "Brand non trovato" unless @brand.brand?
@@ -28,14 +29,29 @@ module Brands
         end
 
         def require_brand_administrator!
-          return if @brand.administered_by?(Current.user)
-          return if brand_section_access?
+          return if DashboardNavigation::Policy.new(context: dashboard_access_context).allowed?(navigation_section)
 
           head :forbidden
         end
 
-        def brand_section_access?
-          false
+        def navigation_section
+          {
+            "dashboard" => :dashboard, "brand_requests" => :requests,
+            "node_processes" => :nodes, "node_events" => :nodes
+          }.fetch(controller_name, controller_name.to_sym)
+        end
+
+        def dashboard_access_context
+          context = super
+          return context if context.brand || @brand.nil?
+          return context unless @brand.administered_by?(Current.user)
+
+          @dashboard_access_context = AccessContext::Resolver.new(user: Current.user, domain: @brand.domains.active.first).resolve
+        end
+
+        def brand_navigation_paths
+          DashboardNavigation::Paths.new(context: dashboard_access_context,
+            local: local_request? || current_domain&.resolved_node.nil?)
         end
 
         def brand_owner?
@@ -47,11 +63,7 @@ module Brands
         end
 
         def brand_public_path
-          return "/" if current_domain&.resolved_node == @brand
-
-          {
-            "corpoecoscienza" => corpo_e_coscienza_path
-          }.fetch(@brand.slug, "/#{@brand.slug}")
+          brand_navigation_paths.home
         end
     end
   end

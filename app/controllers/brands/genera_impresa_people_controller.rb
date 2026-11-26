@@ -1,6 +1,6 @@
 module Brands
   class GeneraImpresaPeopleController < ApplicationController
-    layout "landing"
+    layout "application"
 
     before_action :require_authentication
     before_action :set_brand

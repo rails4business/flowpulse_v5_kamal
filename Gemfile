@@ -51,7 +51,7 @@ gem "ruby-vips", "~> 2.3", require: false
 gem "rexml"
 
 group :development, :test do
-  gem 'rails4b_ai_flow', path: '../rails4b_ai_flow'
+  gem "rails4b_ai_flow", git: "https://github.com/marcobeffa/rails4b_ai_flow.git", ref: "1bcf1507f949ef45a59da92d5b7ed4fc03f1fb88"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 

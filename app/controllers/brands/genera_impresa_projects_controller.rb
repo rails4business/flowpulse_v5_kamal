@@ -1,9 +1,10 @@
 module Brands
   class GeneraImpresaProjectsController < ApplicationController
-    layout "landing"
+    layout "application"
 
     before_action :require_authentication
     before_action :set_brand
+    before_action :require_projects_access!
     before_action :set_node, only: :update
 
     def index
@@ -31,17 +32,25 @@ module Brands
         @brand = Node.find_by!(slug: "generaimpresa")
       end
 
+      def require_projects_access!
+        head :forbidden unless DashboardNavigation::Policy.new(context: dashboard_access_context).allowed?(:projects)
+      end
+
       def set_node
         @node = accessible_nodes.find(params[:id])
       end
 
       def accessible_nodes
-        scope = @brand.self_and_descendants
-        return scope if Current.user.superadmin_user?
-
-        candidates = scope.where(responsible_profile: Current.user.profile)
+        scope = @brand.self_and_descendants.where.not(id: @brand.id)
+        policy = DashboardNavigation::Policy.new(context: dashboard_access_context)
+        candidates = if policy.full_brand_access? || dashboard_access_context.capability?(:manage_projects)
+          scope
+        else
+          scope.where(responsible_profile: Current.user.profile)
+        end
         permitted_ids = candidates.select do |node|
-          RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage, node: node, context: dashboard_access_context)
+          node.site_node == @brand && (policy.full_brand_access? ||
+            RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage, node: node, context: dashboard_access_context))
         end.map(&:id)
         scope.where(id: permitted_ids)
       end
@@ -56,9 +65,7 @@ module Brands
         else
           @nodes.count
         end
-        @managed_limit = if Current.user.superadmin_user?
-          nil
-        else
+        @managed_limit = if dashboard_access_context.current_role_code == "imprenditore_generaimpresa"
           RoleDefinitions::Registry.fetch("imprenditore_generaimpresa").limits[:managed_nodes_per_brand]
         end
       end

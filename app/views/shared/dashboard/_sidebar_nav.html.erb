@@ -6,13 +6,13 @@
       <h3 class="px-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400"><%= dashboard_aside_group_label(group) %></h3>
       <div class="mt-2 grid gap-2">
         <% items.each do |item| %>
-          <% active = current_section == item[:key] %>
+          <% active = dashboard_navigation_active?(item, current_section) %>
           <% item_classes = [
             "group flex items-start gap-3 rounded-xl px-3 py-2.5 text-sm transition",
             active ? "bg-blue-50 font-semibold text-blue-700" : "font-medium text-slate-700 hover:bg-slate-100"
           ].join(" ") %>
 
-          <%= verified_link_to item[:path], class: item_classes do %>
+          <%= dashboard_navigation_link_to item[:path], class: item_classes, aria: { current: ("page" if active) } do %>
             <span class="mt-0.5 inline-flex h-7 min-w-9 items-center justify-center rounded-lg bg-slate-100 px-2 text-[10px] font-extrabold tracking-[0.08em] text-slate-600 <%= active ? 'bg-white text-blue-700' : '' %>"><%= item[:badge] %></span>
             <span class="min-w-0 flex-1">
               <strong class="block text-sm font-bold leading-5"><%= item[:title] %></strong>
@@ -39,7 +39,7 @@
     </section>
   <% end %>
 
-  <% if active_dashboard_role != "creator" && Current.user && Current.user.current_role_assignment.present? %>
+  <% if !DashboardAside::Builder.new(context: dashboard_access_context).applicable? && active_dashboard_role != "creator" && Current.user && Current.user.current_role_assignment.present? %>
     <% ra = Current.user.current_role_assignment %>
     <section class="mt-4 mb-6 border-t border-slate-150 pt-4">
       <h3 class="px-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">Canale Attivo</h3>

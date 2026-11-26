@@ -1,6 +1,6 @@
 <% content_for :title, "Node · #{@profile.display_name}" %>
 <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-  <nav class="mb-6 text-sm font-semibold text-slate-500"><%= link_to "Assigned roles", admin_assigned_role_map_path, class: "text-blue-700 hover:underline" %><span class="mx-2">/</span><%= link_to @profile.display_name, domain_admin_path(admin_profile_path(@profile), brand_slug: "flowpulse"), class: "text-blue-700 hover:underline" %><span class="mx-2">/</span>Node</nav>
+  <nav class="mb-6 text-sm font-semibold text-slate-500" aria-label="Breadcrumb"><%= link_to "Persone e Profile", domain_admin_profiles_path, class: "text-blue-700 hover:underline" %><span class="mx-2">/</span><%= link_to @profile.display_name, domain_admin_path(admin_profile_path(@profile), brand_slug: "flowpulse"), class: "text-blue-700 hover:underline" %><span class="mx-2">/</span>Node</nav>
   <%= render "admin/profiles/header", profile: @profile, active_tab: "nodes" %>
   <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
     <div class="flex items-end justify-between"><div><p class="text-xs font-black uppercase tracking-wider text-slate-400">Index</p><h2 class="mt-1 text-xl font-black">Node associati</h2></div><span class="font-black text-slate-400"><%= @nodes.size %></span></div>

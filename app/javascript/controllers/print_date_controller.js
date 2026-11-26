@@ -15,7 +15,8 @@ export default class extends Controller {
   disconnect() {
     window.removeEventListener("beforeprint", this.preparePrint)
     window.removeEventListener("afterprint", this.restorePrint)
-    this.restorePrint()
+    // Spostare la scheda nel body per la stampa la stacca e la riattacca: in quel caso non va ripristinata.
+    if (!this.element.isConnected) this.restorePrint()
   }
 
   print() {

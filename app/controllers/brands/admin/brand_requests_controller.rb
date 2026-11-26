@@ -115,12 +115,6 @@ module Brands
           )
         end
 
-        def brand_section_access?
-          return genera_impresa_manager? if @brand.slug == "generaimpresa"
-
-          managed_request_node_ids.any?
-        end
-
         def full_brand_request_access?
           return Current.user&.superadmin_user? || genera_impresa_manager? if @brand.slug == "generaimpresa"
 
@@ -139,8 +133,7 @@ module Brands
         end
 
         def genera_impresa_manager?
-          dashboard_access_context.current_role_code == "gestore_generaimpresa" &&
-            RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage_requests, node: @brand, context: dashboard_access_context)
+          DashboardNavigation::Policy.new(context: dashboard_access_context).allowed?(:requests)
         end
 
         def invitation_link(invitation, raw_token)

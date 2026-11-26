@@ -33,7 +33,12 @@ class ApplicationController < ActionController::Base
   private
 
     def domain_admin_path(path, brand_slug:)
-      return path unless local_request?
+      unless local_request?
+        if brand_slug == "flowpulse" && current_domain&.resolved_node && current_domain.resolved_node.slug != "flowpulse"
+          return "https://flowpulse.net#{path}"
+        end
+        return path
+      end
       return path if path.to_s.start_with?("/#{brand_slug}/admin")
       return path unless path.to_s.start_with?("/admin")
 

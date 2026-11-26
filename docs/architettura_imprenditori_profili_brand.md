@@ -9,9 +9,11 @@ devono evolvere con un solo piano di migrazione.
 - Caso guida: Elisa Corubolo / Radioestesia e Benessere.
 - Incorpora e sostituisce `docs/creator_node_profile_ruoli.md`.
 
-**Stato corrente:** passi 1–4 del [piano operativo unico](#piano-operativo-unico) implementati e
-verificati in locale il 26 novembre; resta il collaudo dopo il deploy. Il prossimo intervento è il
-passo 5, dashboard e aside. Prima consolidare registrazione, Profile e BrandAccess; poi uniformare
+**Stato corrente:** passi 1–5 del [piano operativo unico](#piano-operativo-unico) implementati e
+verificati in locale il 26 novembre; per il passo 5 sono conclusi i test mirati, mentre resta
+da concludere la suite indispensabile completa (dettagli sotto).
+Resta il collaudo dopo il deploy. Il prossimo intervento pianificato è il
+passo 6, migrazione dei consumatori legacy. Prima consolidare registrazione, Profile e BrandAccess; poi uniformare
 ruoli, autorizzazioni e navigazione; soltanto alla fine rimuovere i campi legacy.
 Gli inventari datati sono storici: non certificano lo stato attuale della produzione e non sono
 ulteriori sequenze da eseguire.
@@ -560,7 +562,7 @@ Non si parte cancellando colonne o ricreando le funzionalità esistenti.
 | 2. Contratto dei ruoli | un registro definisce azioni, Brand e ruoli assegnabili | consolidato e verificato in locale |
 | 3. Contesto corrente | dominio + accesso + incarico corrente determinano il contesto | consolidato e verificato in locale |
 | 4. Autorizzazioni e assegnazioni | la stessa policy protegge azioni e concessione dei ruoli | implementato e verificato in locale |
-| 5. Dashboard e aside | stessa struttura, contenuti limitati a Brand e ruolo corrente | pannelli parzialmente uniformati |
+| 5. Dashboard e aside | stessa struttura, contenuti limitati a Brand e ruolo corrente | implementato; 103 test mirati verdi, suite completa da concludere |
 | 6. Sostituzione del legacy | nessuna lettura o scrittura dei vecchi selettori User | migrazione per area, colonne ancora conservate |
 | 7. Rimozione dei campi | eliminare i due selettori User ormai inutilizzati | solo dopo distribuzione e verifica del passo 6 |
 
@@ -835,6 +837,51 @@ non duplichi l'incarico e che il login/amministrazione del superadmin restino di
 
 **Verifica di uscita:** la stessa matrice di accesso vale per localhost e host reali, inclusi
 collegamenti, breadcrumb, cambio ruolo e tentativi di apertura diretta di pagine vietate.
+
+**Intervento del 26 novembre — implementato e verificato con test mirati:**
+
+- `DashboardNavigation::Registry` definisce le sezioni, i titoli e le destinazioni; `Policy`
+  riusa `AccessContext` e `RoleAssignments::AccessPolicy`. Dashboard, aside e guardie dei
+  controller amministrativi Brand consultano queste regole comuni.
+- Aside breve per tutti i Brand: home e dashboard quando consentita; il normale utente vede
+  il proprio profilo. Il superadmin può raggiungere anche l'amministrazione globale FlowPulse.
+  I collegamenti storici restano raccolti nell'index principale FlowPulse, senza dipendere
+  dal selettore legacy per comporre l'aside.
+- Le pagine Brand adottano il layout condiviso con selettore, aside e breadcrumb. I pannelli
+  principali usano lo stesso partial delle sezioni. Il cambio sito propone al normale utente
+  soltanto i Brand accessibili; il superadmin conserva tutti i domini.
+- Sul dominio dedicato l'ingresso Brand è `/admin`; su localhost è `/:brand_slug/admin`.
+  Le route riusano i medesimi controller attraverso concern comuni; gli alias precedenti
+  restano validi. Anche il pannello globale ha l'alias completo `/flowpulse/admin` in locale.
+  I link globali da altri domini puntano a `https://flowpulse.net/admin/...`.
+- Il gestore GeneraImpresa vede richieste, persone e progetti nel perimetro autorizzato;
+  l'imprenditore raggiunge le persone attraverso il proprio progetto. I pannelli tecnici
+  richiedono assistenza superadmin o autorità legacy sul Brand, non il solo incarico gestore.
+- Gli amministratori strutturali legacy conservano l'accesso durante la transizione; la loro
+  mappatura e la rimozione dei selettori User restano nel passo 6. Nessuna nuova delega di ruolo
+  e nessuna migrazione del database introdotte da questo passo.
+
+Verifiche: **103 test, 790 asserzioni, nessun fallimento, errore o skip**. Coperti dashboard
+FlowPulse e Brand, Profile, persone e progetti, richieste, nodi e pannello legacy Ideatore,
+oltre a registry e builder. RuboCop pulito sui **22 file Ruby** interessati, con ricontrollo
+dei cinque file ritoccati per ultimi; `git diff --check` senza errori.
+
+La suite indispensabile è stata interrotta dopo circa 576 secondi durante il test
+`MetroLineCatalogTest#test_imports_the_explicitly_ordered_compatibility_line_idempotently`,
+impegnato nella ricostruzione delle gerarchie del catalogo. Aveva eseguito 237 test con due
+fallimenti: aspettativa del vecchio menu Ideatore e compatibilità dell'amministratore delegato.
+Entrambi corretti e ricontrollati nei 103 test conclusi. **La suite completa non è certificata
+verde da questo intervento**: va conclusa prima della distribuzione; il rallentamento del
+catalogo resta da approfondire separatamente.
+
+**Ripristino CI del 26 novembre:** nel run GitHub `45822816806` tutti e quattro i job
+(`scan_ruby`, `scan_js`, `lint`, `test`) fallivano prima dei controlli, nel passo Set up Ruby:
+Bundler non trovava `../rails4b_ai_flow`. La dipendenza locale è sostituita con il repository
+pubblico `https://github.com/marcobeffa/rails4b_ai_flow.git`, bloccato alla revisione
+`1bcf1507f949ef45a59da92d5b7ed4fc03f1fb88` (0.5.0), in Gemfile e lockfile. Le versioni
+delle altre gemme restano invariate. Installazione con `BUNDLE_FROZEN=true` riuscita;
+RuboCop completo, Brakeman, bundler-audit e importmap audit conclusi con esito positivo
+in locale. La conferma dei quattro job remoti richiede il push e una nuova esecuzione CI.
 
 #### Passo 6 — Migrare gli usi legacy, una zona alla volta
 
@@ -1210,7 +1257,8 @@ e cancellazioni non sono prerequisiti per uniformare contesto e navigazione e re
 ## 11. Stato delle attività
 
 La tabella registra componenti presenti e lavoro residuo; non certifica il collaudo completo del
-nuovo contratto. I passi 1–4 sono implementati e verificati in locale; i passi 5–7 restano da eseguire.
+nuovo contratto. I passi 1–5 sono implementati e verificati in locale, con la limitazione della
+suite completa indicata nel passo 5; i passi 6–7 restano da eseguire.
 I risultati di produzione più sotto sono fotografie datate.
 
 | Attività | Stato |
@@ -1245,7 +1293,7 @@ I risultati di produzione più sotto sono fotografie datate.
 | Login e inviti per Brand | passo 1 implementato e verificato in locale; collaudo dopo il deploy |
 | Autorizzazione inviti e approvazioni | regola condivisa in `BrandAccesses::Authorization` |
 | Accettazione invito e concessioni | transazione condivisa in `BrandInvitations::Acceptance`; Profile/accesso riutilizzati |
-| Standard dominio + ruolo corrente | passo 3 consolidato e verificato in locale; migrazione policy e menu residui nei passi 4–5 |
+| Standard dominio + ruolo corrente | passi 3–5 verificati localmente; dashboard e aside condivise, suite completa passo 5 da concludere |
 | Rimozione selettori User | pianificata nei passi 6–7; nessuna rimozione in questo aggiornamento |
 | Password User ordinaria rimossa | da completare |
 | `sessions.profile_id` | implementato; backfill completo, nessuna Session senza Profile |

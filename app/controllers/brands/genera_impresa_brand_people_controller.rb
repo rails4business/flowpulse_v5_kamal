@@ -40,9 +40,7 @@ module Brands
       end
 
       def require_manager!
-        return if Current.user.superadmin_user?
-        return if dashboard_access_context.current_role_code == "gestore_generaimpresa" &&
-          RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage_access, node: @brand, context: dashboard_access_context)
+        return if DashboardNavigation::Policy.new(context: dashboard_access_context).allowed?(:brand_people)
 
         head :forbidden
       end

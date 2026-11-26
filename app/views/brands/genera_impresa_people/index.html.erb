@@ -1,9 +1,13 @@
 <% content_for :title, "Persone · #{@project.title} — GeneraImpresa" %>
-<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
 
 <main class="min-h-screen bg-slate-50 py-10 text-slate-950">
   <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-    <nav class="text-sm font-bold text-slate-500"><%= link_to "I miei progetti", genera_impresa_my_projects_path, class: "text-orange-700 hover:underline" %> <span class="mx-2">/</span> <%= @project.title %></nav>
+    <% navigation_paths = DashboardNavigation::Paths.new(context: dashboard_access_context, local: local_request?) %>
+    <nav class="flex flex-wrap items-center gap-2 text-sm font-bold text-slate-500" aria-label="Breadcrumb">
+      <%= link_to "Dashboard GeneraImpresa", navigation_paths.dashboard, class: "text-orange-700 hover:underline" %>
+      <span aria-hidden="true">/</span><%= link_to "Progetti", navigation_paths.brand("projects"), class: "text-orange-700 hover:underline" %>
+      <span aria-hidden="true">/</span><span aria-current="page"><%= @project.title %></span>
+    </nav>
     <header class="mt-5 rounded-3xl bg-slate-950 p-7 text-white shadow-xl sm:p-9">
       <p class="text-xs font-black uppercase tracking-[.16em] text-orange-300">Persone del progetto</p>
       <h1 class="mt-2 text-3xl font-black"><%= @project.title %></h1>
@@ -25,7 +29,9 @@
       <% else %>
         <p class="mt-5 rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">Nessuna persona è ancora entrata attraverso una richiesta di questo progetto.</p>
       <% end %>
-      <%= link_to "Apri le richieste del Brand", brand_admin_requests_path(@brand.slug), class: "mt-5 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-black text-white hover:bg-slate-700" %>
+      <% if DashboardNavigation::Policy.new(context: dashboard_access_context).allowed?(:requests) %>
+        <%= link_to "Apri le richieste del Brand", navigation_paths.brand("requests"), class: "mt-5 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-black text-white hover:bg-slate-700" %>
+      <% end %>
     </section>
   </div>
 </main>

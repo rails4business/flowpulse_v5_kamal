@@ -1,12 +1,15 @@
 <% content_for :title, "I miei progetti — GeneraImpresa" %>
-<% content_for :landing_nav do %><%= render "brands/genera_impresa/header" %><% end %>
 
 <main class="min-h-screen bg-slate-50 py-10 text-slate-950">
   <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
+      <%= link_to "Dashboard GeneraImpresa", dashboard_entry_path, class: "text-orange-700 hover:underline" %>
+      <span aria-hidden="true">/</span><span aria-current="page">Progetti</span>
+    </nav>
     <header class="rounded-3xl bg-slate-950 p-7 text-white shadow-xl sm:p-9">
       <p class="text-xs font-black uppercase tracking-[.16em] text-orange-300"><%= Current.user.superadmin_user? ? "Vista superadmin" : "Cabina di regia" %></p>
       <div class="mt-3 flex flex-wrap items-end justify-between gap-5">
-        <div><h1 class="text-3xl font-black sm:text-4xl">I miei progetti</h1><p class="mt-3 max-w-2xl leading-7 text-slate-300">Qui compaiono soltanto i Node affidati al tuo Profile. Puoi lavorare nel tuo ramo senza accedere alla configurazione globale di FlowPulse.</p></div>
+        <div><h1 class="text-3xl font-black sm:text-4xl">Progetti</h1><p class="mt-3 max-w-2xl leading-7 text-slate-300">Qui compaiono i progetti consentiti dal tuo incarico corrente. Da ciascun progetto puoi gestire le persone del relativo perimetro.</p></div>
         <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-center"><strong class="block text-2xl"><%= @managed_count %><%= "/#{@managed_limit}" if @managed_limit %></strong><span class="text-xs font-bold text-slate-300">Node gestiti</span></div>
       </div>
     </header>

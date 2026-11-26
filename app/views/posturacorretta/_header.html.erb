@@ -33,7 +33,7 @@
       <img src="https://ik.imagekit.io/posturacorretta/logo_pc_scontornato.png?updatedAt=1747975596766" alt="PosturaCorretta" class="block h-8 w-auto max-w-[138px] object-contain object-left sm:h-10 sm:max-w-[190px]">
     <% end %>
 
-    <nav class="pc-site-header__desktop-nav min-w-0 items-center justify-start gap-1 overflow-x-auto" aria-label="Navigazione principale PosturaCorretta">
+    <nav class="pc-site-header__desktop-nav min-w-0 flex-wrap items-center justify-start gap-1" aria-label="Navigazione principale PosturaCorretta">
       <%= link_to "Home", posturacorretta_path, aria: { current: ("page" if home_active) }, class: nav_link_class.call(home_active) %>
       <%= link_to "Insegnanti", posturacorretta_insegnanti_path, aria: { current: ("page" if teachers_active) }, class: nav_link_class.call(teachers_active) %>
       <%= link_to "Centri", posturacorretta_centres_path, aria: { current: ("page" if centres_active) }, class: nav_link_class.call(centres_active) %>

@@ -35,7 +35,7 @@ module Admin
       assert_select "h1", "Regia tecnica"
       assert_select "a[href='#{admin_brands_path}']", text: /Brand e domini/
       assert_select "a[href='#{admin_brands_path(tab: "domains")}']"
-      assert_select "a[href='#{admin_assigned_role_map_path}']", text: /Ruoli assegnati/
+      assert_select "a[href='#{admin_assigned_role_map_path}']", text: /Assigned roles/
       assert_select "a[href='#{admin_profiles_path}']", text: /Persone e Profile/
       assert_select "header[data-dashboard-topbar] a[href='#{admin_note_path(source: "docs", path: "flowpulse_monitoraggio_sicurezza_e_richieste.md")}']", text: "Sicurezza"
     end
@@ -45,7 +45,8 @@ module Admin
 
       get admin_percorso_insegnanti_path
       assert_response :success
-      assert_select "aside nav a[href='#{admin_percorso_insegnanti_path}']", text: /Percorso didattico/
+      assert_select "aside nav a[href='#{admin_dashboard_path}']", text: /Amministrazione/
+      assert_select "aside nav a[href='#{admin_percorso_insegnanti_path}']", count: 0
       assert_select "h2", text: "Percorso didattico"
       assert_select "a[href='#{admin_note_path(source: "docs", path: "appunti/avvio_piattaforma_posturacorretta.md")}']", text: /Avvio della piattaforma PosturaCorretta/
       assert_select "a[href='#{admin_note_path(source: "docs", path: "appunti/programma_didattico_ruoli_e_partecipazioni.md")}']"
@@ -157,6 +158,20 @@ module Admin
       assert_response :success
       assert_not_includes response.body, "Simulazione attiva"
       assert_not_includes response.body, "Simulatore dominio"
+    end
+
+    test "localhost platform navigation preserves the FlowPulse prefix" do
+      host! "localhost"
+      post session_path, params: { email_address: @superadmin.email_address, password: "password123" }
+      get "/flowpulse/admin/dashboard"
+
+      assert_response :success
+      assert_select "aside nav a[href='/flowpulse/admin/dashboard']", text: /Amministrazione/
+      assert_select "[data-dashboard-section='profiles'][href='/flowpulse/admin/profiles']"
+      assert_select "[data-dashboard-section='notes'][href='/flowpulse/admin/appunti']"
+      get "/flowpulse/admin/profiles"
+      assert_response :success
+      assert_select "nav[aria-label='Breadcrumb'] a[href='/flowpulse/admin/dashboard']"
     end
   end
 end

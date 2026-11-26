@@ -2,7 +2,7 @@
 
 <main class="mx-auto max-w-6xl">
   <nav class="mb-6 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
-    <%= link_to "GeneraImpresa", genera_impresa_path, class: "text-orange-700 hover:underline" %>
+    <%= link_to "Dashboard GeneraImpresa", dashboard_entry_path, class: "text-orange-700 hover:underline" %>
     <span aria-hidden="true">/</span><span>Persone</span>
   </nav>
 
@@ -44,7 +44,7 @@
                 <td class="px-5 py-4"><span class="rounded-full px-2.5 py-1 text-xs font-black <%= access.active? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' %>"><%= access.status.humanize %></span><span class="mt-1 block text-xs text-slate-400"><%= l access.joined_at, format: :short %></span></td>
                 <td class="px-5 py-4 text-slate-700"><%= assignment ? (RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.humanize) : "Utente" %></td>
                 <td class="px-5 py-4 text-right">
-                  <% if Current.user.superadmin_user? %><%= link_to "Scheda globale", admin_profile_path(access.profile), class: "mr-3 text-xs font-black text-blue-700 hover:underline" %><% end %>
+                  <% if Current.user.superadmin_user? %><%= link_to "Scheda globale", domain_admin_path(admin_profile_path(access.profile), brand_slug: "flowpulse"), class: "mr-3 text-xs font-black text-blue-700 hover:underline" %><% end %>
                   <% if access.brand_credential&.status == "pending_verification" %><%= button_to "Genera nuovo link", resend_genera_impresa_person_verification_path(access), method: :post, class: "mr-3 inline text-xs font-black text-orange-700 hover:underline" %><% end %>
                   <% if access.active? %><%= button_to "Revoca accesso", genera_impresa_person_path(access), method: :delete, data: { turbo_confirm: "Revocare l’accesso GeneraImpresa di #{access.profile.display_name}?" }, class: "inline text-xs font-black text-red-700 hover:underline" %><% end %>
                 </td>

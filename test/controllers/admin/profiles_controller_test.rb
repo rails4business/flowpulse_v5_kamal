@@ -62,7 +62,7 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", "Persone e Profile"
     assert_select "a[href='#{admin_profile_path(@profile)}']", text: "Apri scheda"
     assert_select "tbody", text: /Elisa Corubolo/
-    assert_select "aside", text: /FlowPulse.*Superadmin.*Persone e Profile/m
+    assert_select "aside", text: /FlowPulse.*Superadmin.*Amministrazione/m
   end
 
   test "localhost keeps the FlowPulse domain prefix across the Profile area" do
@@ -73,7 +73,7 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "a[href='#{local_domain_admin_profile_path(admin_brand_slug: "flowpulse", id: @profile)}']", text: "Apri scheda"
-    assert_select "aside a[href='#{local_domain_admin_profiles_path(admin_brand_slug: "flowpulse")}']", text: /Persone e Profile/
+    assert_select "aside a[href='#{local_domain_admin_dashboard_path(admin_brand_slug: "flowpulse")}']", text: /Amministrazione/
   end
 
   test "ordinary user cannot access the global Profile index" do

@@ -6492,23 +6492,42 @@ body[data-layout="dashboard"] [data-dashboard-main] {
 .pc-intro-sheet__principles h3 { margin: 0; font-size: 1.05rem; font-weight: 800; }
 .pc-intro-sheet__principles p { margin: .45rem 0 0; color: #64748b; font-size: .84rem; line-height: 1.6; }
 .pc-intro-sheet__program { margin-top: clamp(3rem, 6vw, 5rem); border-top: 3px solid #0f172a; padding-top: 2rem; }
-.pc-intro-program-list { margin-top: 1.25rem; overflow: hidden; border: 1px solid #cbd5e1; border-radius: .75rem; background: #fff; }
-.pc-intro-program-list__head, .pc-intro-program-list__row { display: grid; align-items: center; gap: 0; grid-template-columns: minmax(14rem, 2.3fr) minmax(6rem, .8fr) minmax(5rem, .7fr) minmax(6rem, .8fr) minmax(5rem, .7fr); }
-.pc-intro-program-list__head { background: #f8fafc; padding: .55rem 0; color: #64748b; font-size: .66rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-.pc-intro-program-list__head > span { padding-inline: .75rem; }
-.pc-intro-program-list__row { position: relative; min-height: 3.65rem; border-top: 1px solid #e2e8f0; padding: .55rem .75rem; color: #475569; font-size: .76rem; }
-.pc-intro-program-list__row.is-course { background: #f8fbff; }
-.pc-intro-program-list__row.is-lesson { gap: 0; background: #fff; padding: 0; }
-.pc-intro-program-list__row.is-lesson .pc-intro-program-list__lesson-title { padding: .55rem .75rem .55rem 1.25rem; }
-.pc-intro-program-list__row.is-lesson > span:not(:first-child) { align-self: stretch; min-height: 3.65rem; border-left: 1px solid #d7dee8; background: #fff; }
-.pc-intro-program-list__course-title { display: block; grid-column: 1 / -1; }
-.pc-intro-program-list__lesson-title { display: block; }
-.pc-intro-program-list__number { color: #64748b; font-size: .72rem; font-weight: 850; font-variant-numeric: tabular-nums; }
-.pc-intro-program-list__row small { display: block; color: #64748b; font-size: .6rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-.pc-intro-program-list__row a { display: block; margin-top: .12rem; color: #0f172a; font-size: .84rem; font-weight: 800; line-height: 1.25; text-decoration: none; }
-.pc-intro-program-list__row.is-lesson .pc-intro-program-list__number { font-weight: 600; }
-.pc-intro-program-list__row.is-lesson small { font-weight: 650; }
-.pc-intro-program-list__row.is-lesson a { font-weight: 400; }
+.pc-intro-program-list { display: grid; gap: 1rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.pc-intro-program-list__legend { display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; margin: 1rem 0 0; color: #64748b; font-size: .75rem; }
+.pc-intro-program-list__legend > span { display: inline-flex; align-items: center; gap: .3rem; }
+.pc-intro-program-list__group { border: 1px solid #cbd5e1; border-radius: .75rem; background: #fff; padding: .9rem 1rem 1rem; }
+.pc-intro-program-list__row.is-course { display: flex; align-items: center; gap: .65rem; margin: 0; font-size: 1.05rem; font-weight: 850; letter-spacing: -.01em; }
+.pc-intro-program-list__row.is-course a { color: #0f172a; text-decoration: none; }
+.pc-intro-program-list__number { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; border: 1.5px solid #0f172a; border-radius: 999px; color: #0f172a; font-size: .8rem; font-weight: 850; font-variant-numeric: tabular-nums; }
+.pc-intro-program-list__row.is-lesson { margin-top: .75rem; border-top: 1px solid #e2e8f0; padding-top: .65rem; }
+.pc-intro-program-list__lesson-head { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem 1rem; }
+.pc-intro-program-list__lesson-title { display: inline-flex; flex: 1 1 16rem; align-items: center; gap: .55rem; color: #0f172a; font-size: .9rem; font-weight: 650; text-decoration: none; }
+.pc-intro-program-list__lesson-title:hover { color: #1d4ed8; }
+.pc-intro-program-list__options { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .3rem .8rem; color: #334155; font-size: .78rem; }
+.pc-intro-program-list__option { display: inline-flex; align-items: center; gap: .3rem; }
+.pc-intro-program-list__divider { width: 1px; height: 1rem; background: #cbd5e1; }
+.pc-intro-program-list__box { display: inline-block; flex: none; width: .85rem; height: .85rem; border: 1.5px solid #475569; border-radius: .15rem; background: #fff; }
+.pc-intro-program-list__icon { flex: none; width: 1.05rem; height: 1.05rem; color: #475569; }
+.pc-intro-program-list__fill { display: grid; align-items: end; gap: .6rem 1.5rem; margin: .65rem 0 0 1.4rem; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); }
+.pc-intro-program-list__date { display: inline-flex; align-items: flex-end; gap: .15rem; color: #64748b; font-size: .85rem; }
+.pc-intro-program-list__field { display: flex; align-items: flex-end; gap: .45rem; }
+.pc-intro-program-list__blank { display: inline-block; width: 1.5rem; height: 1.4rem; border-bottom: 1px solid #94a3b8; }
+.pc-intro-program-list__blank.is-gap { margin-left: .75rem; }
+.pc-intro-program-list__field .pc-intro-program-list__blank { flex: 1; width: auto; }
+.pc-participant { margin-top: 1rem; border: 1px solid #bfdbfe; border-radius: .75rem; background: #f8fbff; padding: 1rem 1.1rem 1.1rem; }
+.pc-participant__title { margin: 0; color: #0f172a; font-size: 1.05rem; font-weight: 850; letter-spacing: -.01em; }
+.pc-participant__intro { margin: .3rem 0 0; color: #475569; font-size: .86rem; }
+.pc-participant__fields { display: grid; gap: .75rem 1.5rem; margin: .85rem 0 0; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 1fr); }
+.pc-participant__field { display: flex; flex-direction: column; gap: .25rem; margin: 0; }
+.pc-participant__field > span, .pc-participant__field dt { color: #64748b; font-size: .66rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.pc-participant__field small { font-weight: 600; letter-spacing: 0; text-transform: none; }
+.pc-participant__field input, .pc-participant__field dd { min-height: 1.9rem; margin: 0; border: 0; border-bottom: 1px solid #94a3b8; border-radius: 0; background: transparent; padding: .2rem .1rem; color: #0f172a; font-size: .9rem; }
+.pc-participant__field input:focus { border-bottom-color: #1d4ed8; outline: none; box-shadow: 0 1px 0 #1d4ed8; }
+.pc-participant__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1.25rem; margin-top: 1rem; }
+.pc-participant__consent { display: flex; flex: 1 1 20rem; align-items: flex-start; gap: .55rem; color: #475569; font-size: .8rem; line-height: 1.45; }
+.pc-participant__consent input { margin-top: .2rem; }
+.pc-participant__submit { cursor: pointer; border: 0; border-radius: .6rem; background: #2563eb; padding: .65rem 1.4rem; color: #fff; font-size: .88rem; font-weight: 800; }
+.pc-participant__submit:hover { background: #1d4ed8; }
 .pc-intro-sheet__table { min-width: 42rem; }
 .pc-intro-sheet__table th:first-child, .pc-intro-sheet__table td:first-child { width: 42%; }
 .pc-intro-sheet__table .pc-sheet__course a { position: relative; z-index: 1; color: inherit; text-decoration: none; }
@@ -6576,8 +6595,8 @@ body[data-layout="dashboard"] [data-dashboard-main] {
   .pc-intro-sheet__hero img { max-height: 22rem; }
   .pc-intro-sheet__principles { grid-template-columns: 1fr; }
   .pc-intro-sheet__principles li + li { margin-top: 1.5rem; border-left: 0; padding-left: 0; }
-  .pc-intro-program-list { overflow-x: auto; }
-  .pc-intro-program-list__head, .pc-intro-program-list__row { min-width: 42rem; }
+  .pc-intro-program-list__fill { margin-left: 0; grid-template-columns: 1fr; }
+  .pc-participant__fields { grid-template-columns: 1fr; }
   .pc-sheet__download { justify-items: start; }
   .pc-intro-hero { padding-top: 2.5rem; }
   .pc-intro-hero h1 { font-size: 3rem; }
@@ -6618,14 +6637,24 @@ body[data-layout="dashboard"] [data-dashboard-main] {
   .pc-intro-sheet__principles p { margin-top: .08cm; font-size: 7pt; line-height: 1.25; }
   .pc-intro-sheet__program { break-inside: auto; margin-top: .35cm; padding-top: .3cm; }
   .pc-program-sheet__intro { break-after: avoid-page; }
-  .pc-intro-program-list { overflow: visible; margin-top: .2cm; border-radius: 0; }
-  .pc-intro-program-list__head,
-  .pc-intro-program-list__row { grid-template-columns: minmax(0, 2.3fr) minmax(0, .8fr) minmax(0, .7fr) minmax(0, .8fr) minmax(0, .7fr); }
-  .pc-intro-program-list__head { padding-block: .08cm; font-size: 6pt; }
-  .pc-intro-program-list__row { break-inside: avoid; min-height: .85cm; padding-block: .08cm; font-size: 6.5pt; }
-  .pc-intro-program-list__row.is-lesson > span:not(:first-child) { min-height: .85cm; }
-  .pc-intro-program-list__row a { font-size: 7.5pt; }
-  .pc-intro-program-list__row small { font-size: 5.5pt; }
+  .pc-intro-program-list { gap: .2cm; margin-top: .15cm; }
+  .pc-intro-program-list__legend { margin-top: .15cm; font-size: 6.5pt; }
+  .pc-intro-program-list__group { break-inside: avoid; border-radius: 0; padding: .15cm .25cm .2cm; }
+  .pc-intro-program-list__row.is-course { font-size: 9pt; }
+  .pc-intro-program-list__number { width: .5cm; height: .5cm; font-size: 7pt; }
+  .pc-intro-program-list__row.is-lesson { break-inside: avoid; margin-top: .15cm; padding-top: .12cm; }
+  .pc-intro-program-list__lesson-title { font-size: 8pt; }
+  .pc-intro-program-list__options { font-size: 7pt; }
+  .pc-intro-program-list__icon { width: .38cm; height: .38cm; }
+  .pc-intro-program-list__fill { gap: .2cm .6cm; margin: .15cm 0 0 .45cm; }
+  .pc-intro-program-list__date { font-size: 8pt; }
+  .pc-intro-program-list__blank { width: .6cm; height: .75cm; }
+  .pc-participant { break-inside: avoid; margin-top: .25cm; border-color: #cbd5e1; border-radius: 0; background: #fff; padding: .2cm .25cm .25cm; }
+  .pc-participant__title { font-size: 9pt; }
+  .pc-participant__intro, .pc-participant__actions { display: none; }
+  .pc-participant__fields { gap: .2cm .6cm; margin-top: .15cm; }
+  .pc-participant__field > span, .pc-participant__field dt { font-size: 5.5pt; }
+  .pc-participant__field input, .pc-participant__field dd { min-height: .75cm; font-size: 8pt; }
   .pc-intro-sheet .pc-journey-footer { position: absolute; top: 0; left: 0; width: 100%; margin: 0; border-top: 0; border-bottom: 1px solid #cbd5e1; padding: 0 0 .15cm; }
   .pc-intro-sheet .pc-journey-footer__utility { margin-bottom: 0; font-size: 6.5pt; }
   .pc-intro-sheet .pc-journey-footer__nav { display: none; }

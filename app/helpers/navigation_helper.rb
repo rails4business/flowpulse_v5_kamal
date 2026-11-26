@@ -29,7 +29,7 @@ module NavigationHelper
   end
 
   def dashboard_aside_menu_groups(current_section)
-    contextual_builder = DashboardAside::Builder.new(context: dashboard_access_context)
+    contextual_builder = contextual_dashboard_builder
     if contextual_builder.applicable?
       return contextual_builder.groups.transform_values do |items|
         items.map { |item| dashboard_menu_item(item.to_h) }
@@ -52,7 +52,7 @@ module NavigationHelper
   end
 
   def dashboard_aside_context(current_section)
-    contextual_builder = DashboardAside::Builder.new(context: dashboard_access_context)
+    contextual_builder = contextual_dashboard_builder
     return contextual_builder.heading if contextual_builder.applicable?
 
     FlowRoles.aside_context_for(
@@ -66,6 +66,7 @@ module NavigationHelper
   end
 
   def traveler_dashboard_aside_brand_accesses
+    return [] if contextual_dashboard_builder.applicable?
     return [] unless active_dashboard_role == "traveler"
     return [] unless Current.user&.profile
 
@@ -120,12 +121,58 @@ module NavigationHelper
   end
 
   def canonical_flowpulse_admin_dashboard_url
-    return admin_dashboard_path if local_request?
+    return local_domain_admin_dashboard_path(admin_brand_slug: "flowpulse") if local_request?
 
     admin_dashboard_url(host: "flowpulse.net", protocol: "https")
   end
 
+  def dashboard_navigation_link_to(path, **options, &block)
+    if contextual_dashboard_builder.applicable?
+      link_to(path, **options, &block)
+    else
+      verified_link_to(path, **options, &block)
+    end
+  end
+
+  def dashboard_entry_path
+    paths = dashboard_navigation_paths
+    DashboardNavigation::Policy.new(context: dashboard_access_context).allowed?(:dashboard) ? paths.dashboard : paths.home
+  end
+
+  def dashboard_navigation_active?(item, current_section)
+    return current_section == item[:key] unless contextual_dashboard_builder.applicable?
+    return request.path == item[:path] if item[:key] == :brand_home
+    return current_section == item[:key] unless item[:key] == :brand_dashboard
+
+    if DashboardNavigation::Policy.new(context: dashboard_access_context).platform?
+      controller_path.start_with?("admin/")
+    else
+      controller_path.start_with?("brands/admin/") || controller_path.in?(%w[
+        brands/genera_impresa_projects brands/genera_impresa_people brands/genera_impresa_brand_people
+      ])
+    end
+  end
+
+  def dashboard_navigation_paths
+    prefix = local_request? || (current_domain&.resolved_node.nil? && dashboard_access_context.brand.present? && dashboard_access_context.brand.slug != "flowpulse")
+    DashboardNavigation::Paths.new(context: dashboard_access_context, local: prefix)
+  end
+
+  def dashboard_available_domains
+    return Domain.active.order(:hostname) if dashboard_access_context.superadmin?
+
+    brand_ids = Current.user&.profile&.brand_accesses&.active&.select(:brand_node_id)
+    domain_ids = [dashboard_access_context.domain&.id].compact
+    scope = brand_ids ? Domain.active.where(node_id: brand_ids) : Domain.none
+    scope.or(Domain.active.where(id: domain_ids)).order(:hostname)
+  end
+
   private
+
+    def contextual_dashboard_builder
+      DashboardAside::Builder.new(context: dashboard_access_context,
+        paths: dashboard_navigation_paths)
+    end
 
     def dashboard_menu_item(item)
       item.merge(path: resolve_dashboard_menu_path(item[:path]))

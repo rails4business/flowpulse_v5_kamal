@@ -4,7 +4,7 @@ module Admin
     dashboard_section :pages, only: :elenco_pagine
     dashboard_section :didactic_path, only: :percorso_insegnanti
 
-    before_action :require_superadmin!, only: [:elenco_pagine, :percorso_insegnanti, :set_override]
+    before_action :require_superadmin!, only: [:dashboard, :elenco_pagine, :percorso_insegnanti, :set_override]
 
     def percorso_insegnanti
       sheets_root = Posturacorretta::LearningController::GUIDED_ACTIVITIES_ROOT
@@ -53,7 +53,8 @@ module Admin
       @total_domains = Domain.count
       @brand_count = Node.joins(:domains).distinct.count
       @profile_count = Profile.count
-      @legacy_admin_items = FlowRoles::MenuRegistry.admin_items
+      @sections = DashboardNavigation::Registry.new(context: dashboard_access_context,
+        paths: DashboardNavigation::Paths.new(context: dashboard_access_context, local: local_request?)).sections
     end
 
     def set_override
