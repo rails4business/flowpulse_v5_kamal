@@ -256,6 +256,7 @@ module Posturacorretta
     if params[:capitolo].blank?
       return redirect_to posturacorretta_course_path(corso: @reader_course_slug)
     end
+    load_content_line_context
     render :show
   end
 
@@ -310,6 +311,15 @@ module Posturacorretta
   end
 
   private
+
+  # Contenuto aperto → lezione → linea: serve all'aside comune di corso, lezione e contenuto.
+  def load_content_line_context
+    course_content = Content.find_by(format: "course", slug: @reader_course_slug)
+    @line_content = course_content && Content.includes(:node).find_by(parent: course_content, slug: params[:capitolo])
+    @line_content_lesson = @line_content&.node
+    @line_content_line = @line_content_lesson&.self_and_ancestors&.find(&:course_line?)
+    @line_content_courses = @line_content_line&.ordered_line_nodes
+  end
 
   def legacy_section_for(chapter)
     chapter.to_s.match?(/\A(?:07|08|09|10|11)-/) ? "progetto" : "primo_mese"

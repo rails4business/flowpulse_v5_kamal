@@ -6,6 +6,12 @@
         <%= link_to posturacorretta_path, class: "inline-flex items-center gap-1 rounded-lg px-2 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50", aria: { label: "Torna alla home PosturaCorretta" } do %><span aria-hidden="true">←</span> Home<% end %>
         <button type="button" class="rounded-lg px-3 py-2 text-xl font-bold leading-none text-slate-500 hover:bg-slate-100" data-mobile-aside-target="close" data-action="mobile-aside#close" aria-label="Chiudi indice">×</button>
       </div>
+      <% if @line_content_line %>
+        <%# Stesso aside di corso e lezione, aperto fino ai contenuti della lezione. %>
+        <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-10" data-action="click->mobile-aside#closeFromNavigation">
+          <%= render "posturacorretta/learning/line_course_aside", active_node: @line_content_lesson, line: @line_content_line, courses: @line_content_courses, active_content: @line_content %>
+        </div>
+      <% else %>
       <div class="mb-5 hidden shrink-0 border-b border-slate-200 bg-white pb-4 lg:block" data-course-aside-header>
         <%= link_to posturacorretta_path, aria: { label: "Torna alla home PosturaCorretta" }, class: "mb-4 inline-flex items-center gap-2 text-blue-700 opacity-80 transition hover:opacity-100" do %>
           <span aria-hidden="true">←</span>
@@ -18,6 +24,7 @@
           <%= render "posturacorretta/learning/curriculum_aside", active: :path, course: @selected_course, lesson: @lesson, manage_own_scroll: false %>
         </div>
       </div>
+      <% end %>
     </aside>
 
     <article class="pc-course-main-enter min-w-0 rounded-xl border border-slate-200 bg-white px-5 py-10 shadow-sm sm:px-8 lg:px-12 lg:py-14 xl:px-16">

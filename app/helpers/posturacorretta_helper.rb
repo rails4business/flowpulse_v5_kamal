@@ -14,6 +14,21 @@ module PosturacorrettaHelper
     posturacorretta_course_path(corso: node&.show_content&.slug || node&.slug || fallback_slug)
   end
 
+  # Capitoli segnati come letti dalla persona collegata, come coppie [slug del corso, slug del capitolo].
+  def posturacorretta_completed_chapter_keys
+    @posturacorretta_completed_chapter_keys ||= begin
+      profile = Current.user&.profile
+      domain = Domain.find_for_host("posturacorretta.org")
+      if profile && domain
+        profile.data_commitments.where(domain: domain, kind: "academy", status: "completed").to_a
+          .select(&:chapter_completion?)
+          .to_set { |commitment| [commitment.learning_course_slug, commitment.learning_slug] }
+      else
+        Set.new
+      end
+    end
+  end
+
   def posturacorretta_revision_project
     return unless controller_name == "posturacorretta"
 
