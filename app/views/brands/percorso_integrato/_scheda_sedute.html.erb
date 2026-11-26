@@ -1,0 +1,22 @@
+<%# Elenco delle sedute di una scheda: data, ambito, professionista, dove, cosa. %>
+<% if sedute.any? %>
+  <ol class="pi-sheet-sessions">
+    <% sedute.each do |seduta| %>
+      <% color = color_for.(seduta.fetch("ambito")) %>
+      <li class="pi-sheet-session">
+        <p class="pi-sheet-session__date"><%= format_date.(seduta.fetch("data")) %></p>
+        <div>
+          <p class="pi-sheet-session__head">
+            <span class="size-3 rounded-full <%= color[:dot] %>" aria-hidden="true"></span>
+            <span class="font-black"><%= seduta.fetch("professionista") %></span>
+            <span class="text-slate-500">· <%= seduta.fetch("dove") %></span>
+            <span class="sr-only">(<%= ambiti.fetch(seduta.fetch("ambito")).fetch("etichetta") %>)</span>
+          </p>
+          <p class="pi-sheet-session__what"><%= seduta.fetch("cosa") %></p>
+        </div>
+      </li>
+    <% end %>
+  </ol>
+<% else %>
+  <p class="mt-4 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">Nessuna seduta in questo ambito.</p>
+<% end %>

@@ -229,7 +229,7 @@ class DomainsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :success
-    assert_select "h1", text: "Tre aspetti complementare per lavorare sulla tua salute."
+    assert_select "h1", text: "Come si costruisce il tuo percorso"
     assert_select "title", text: /Percorso Integrato/
   end
 

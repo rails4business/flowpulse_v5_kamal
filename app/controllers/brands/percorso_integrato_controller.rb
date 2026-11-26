@@ -5,35 +5,55 @@ module Brands
 
     def index
       load_site
+      @sheet = PercorsoIntegratoCatalog.example_sheet
+      render :scheda
     end
 
-    # La presentazione del Percorso Integrato che prima era la home.
     def about
-      load_site
-      render :index
+      redirect_to percorso_integrato_guidelines_path, status: :moved_permanently
     end
 
     def model
-      load_site
-      @advanced_model = true
-      render :index
+      redirect_to percorso_integrato_guidelines_path(anchor: "modello"), status: :moved_permanently
     end
 
     def docs
       load_site
       load_docs
+      destination = if params[:doc].present? && @current_doc&.fetch("slug") == params[:doc]
+        percorso_integrato_guidelines_path(doc: @current_doc.fetch("slug"), anchor: "doc-#{@current_doc.fetch('slug')}")
+      else
+        percorso_integrato_guidelines_path(anchor: "documentazione")
+      end
+      redirect_to destination, status: :moved_permanently
+    end
+
+    def guidelines
+      load_site
+      load_docs
+      load_course_chapters
+      @guidelines_chapters = @course_chapters.map do |chapter|
+        chapter.merge("body_md" => load_course_chapter_markdown(chapter))
+      end
+      @guidelines_sections = @docs_sections.map do |section|
+        section.merge("items" => section.fetch("items", []).map do |item|
+          component = docs_component(item)
+          item.merge("component_path" => component, "body_md" => component ? nil : load_doc_markdown(item))
+        end)
+      end
     end
 
     def course
-      load_site
       load_course_chapters
-      load_docs
-      @course_mode = true
-      @course_chapter = @course_chapters.find { |chapter| chapter.fetch("slug") == params[:capitolo] }
-      raise ActiveRecord::RecordNotFound, "Capitolo non trovato" if params[:capitolo].present? && @course_chapter.blank?
+      chapter = @course_chapters.find { |item| item.fetch("slug") == params[:capitolo] }
+      raise ActiveRecord::RecordNotFound, "Capitolo non trovato" if params[:capitolo].present? && chapter.blank?
 
-      @course_chapter_markdown = load_course_chapter_markdown(@course_chapter) if @course_chapter
-      render :docs
+      destination = if chapter
+        percorso_integrato_guidelines_path(capitolo: chapter.fetch("slug"), anchor: "capitolo-#{chapter.fetch('slug')}")
+      else
+        percorso_integrato_guidelines_path(anchor: "corso")
+      end
+      redirect_to destination, status: :moved_permanently
     end
 
     def load_docs

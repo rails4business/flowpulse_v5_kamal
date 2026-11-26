@@ -1,0 +1,113 @@
+# Scheda di esempio mostrata nella home del Percorso Integrato.
+# Persona e professionisti sono di fantasia: la pagina la segna come "Esempio" e non salva nulla.
+# Ambiti: patologia (rosso), benessere (verde), educazione (blu).
+
+ambiti:
+  patologia:
+    etichetta: "Dolore / patologia"
+    colore: rosso
+  benessere:
+    etichetta: "Benessere"
+    colore: verde
+  educazione:
+    etichetta: "Educazione"
+    colore: blu
+
+# Aree su cui lavorare nella proposta di percorso: chiavi della tassonomia
+# config/data/posturacorretta/taxonomies.yml (areas), con le etichette usate nella scheda.
+aree:
+  recupero: "Recupero"
+  movimento: "Movimento"
+  ascolto: "Mente"
+  nutrimento: "Nutrizione"
+  regolazione: "Piante, integratori e medicinali"
+
+persona:
+  nome: "Giulia Esempio"
+  email: "giulia.esempio@example.com"
+  telefono: ""
+
+# Una richiesta ha un solo ambito; professionisti e sedute possono poi toccarne altri.
+richiesta:
+  ambito: patologia
+  data: "2026-11-03"
+  descrizione: >-
+    Da qualche mese ho dolore alla zona lombare quando sto seduta a lungo al lavoro.
+    Vorrei capire da cosa dipende, che cosa posso fare da sola e come organizzare la settimana.
+
+# Presa in carico = apertura del percorso, non un programma. Chi la fa è uno dei professionisti
+# (deve comparire anche in "professionisti"), che poi scrive il suo programma come gli altri.
+presa_in_carico:
+  professionista: "Laura Fisioterapista"
+  ruolo: "Fisioterapista"
+  data: "2026-11-06"
+  valutazione: >-
+    Dolore lombare legato alla posizione seduta prolungata, senza segnali che richiedano un approfondimento
+    medico urgente. Mobilità del bacino ridotta, poca attività fisica durante la settimana.
+  proposta:
+    aree: [recupero, movimento]
+    note: >-
+      Lavorare sul recupero con la terapia manuale e sul movimento, con il supporto dell'educazione alla salute.
+      Verifica dopo un mese.
+
+professionisti:
+  - nome: "Laura Fisioterapista"
+    ruolo: "Fisioterapista"
+    ambito: patologia
+    visita:
+      data: "2026-11-10"
+      note: "Valutazione della mobilità lombare e del bacino; test di flessione e rotazione."
+    programma: "Quattro sedute settimanali di terapia manuale ed esercizio guidato; esercizi di mobilità da fare a casa."
+  - nome: "Paolo Insegnante"
+    ruolo: "Insegnante PosturaCorretta"
+    ambito: educazione
+    visita:
+      data: "2026-11-12"
+      note: "Colloquio iniziale: abitudini al lavoro, pause, posizione alla scrivania."
+    programma: "Corso online \"La prima settimana con PosturaCorretta\" e due lezioni di igiene posturale."
+
+sedute:
+  - data: "2026-11-10"
+    ambito: patologia
+    professionista: "Laura Fisioterapista"
+    dove: "Centro Esempio, Cesena"
+    cosa: "Prima seduta: valutazione e mobilizzazione del bacino."
+  - data: "2026-11-12"
+    ambito: educazione
+    professionista: "Paolo Insegnante"
+    dove: "Online"
+    cosa: "Colloquio iniziale e impostazione del corso online."
+  - data: "2026-11-17"
+    ambito: patologia
+    professionista: "Laura Fisioterapista"
+    dove: "Centro Esempio, Cesena"
+    cosa: "Terapia manuale lombare; esercizi di respirazione e mobilità."
+  - data: "2026-11-19"
+    ambito: educazione
+    professionista: "Paolo Insegnante"
+    dove: "Centro Esempio, Cesena"
+    cosa: "Lezione di igiene posturale: la posizione seduta e le pause."
+  - data: "2026-11-24"
+    ambito: patologia
+    professionista: "Laura Fisioterapista"
+    dove: "Centro Esempio, Cesena"
+    cosa: "Esercizio guidato di stabilità; verifica degli esercizi a casa."
+
+autonomia:
+  ripetizione: settimanale
+  note: "Da ripetere ogni settimana fino alla verifica; adattare se compare dolore."
+  settimana:
+    - giorno: "Lunedì"
+      attivita: ["Esercizi di mobilità del bacino · 10 min", "Pausa in piedi ogni ora al lavoro"]
+    - giorno: "Martedì"
+      attivita: ["Capitolo del corso online · 10 min"]
+    - giorno: "Mercoledì"
+      attivita: ["Esercizi di mobilità del bacino · 10 min", "Camminata · 30 min"]
+    - giorno: "Giovedì"
+      attivita: ["Capitolo del corso online · 10 min"]
+    - giorno: "Venerdì"
+      attivita: ["Esercizi di mobilità del bacino · 10 min", "Pausa in piedi ogni ora al lavoro"]
+    - giorno: "Sabato"
+      attivita: ["Camminata · 45 min"]
+    - giorno: "Domenica"
+      attivita: ["Riposo e respirazione · 5 min"]

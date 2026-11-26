@@ -11,9 +11,9 @@
   show_navigation = local_assigns.fetch(:show_navigation, true)
   education_label = @posturacorretta_education_node&.public_navigation_label || "Percorso educativo"
   intro_sessions = [
-    { course: Node.find_by(slug: "corso-introduzione-al-percorso-integrato"), course_title: "Inizia il percorso", lesson: Node.find_by(slug: "introduzione-al-percorso-integrato"), lesson_title: "Lezione · Inizia il percorso", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-al-percorso-integrato" } },
-    { course: Node.find_by(slug: "corso-la-prima-settimana-con-posturacorretta"), course_title: "La prima settimana con PosturaCorretta", lesson: Node.find_by(slug: "la-prima-settimana-con-posturacorretta"), lesson_title: "Lezione · La prima settimana con PosturaCorretta", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "la-prima-settimana-con-posturacorretta" } },
-    { course: Node.find_by(slug: "postura-e-fisiologia"), course_title: "Postura e fisiologia", lesson: Node.find_by(slug: "introduzione-postura-e-fisiologia"), lesson_title: "Introduzione a Postura e fisiologia", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-postura-e-fisiologia" } }
+    { course: Node.find_by(slug: "corso-introduzione-al-percorso-integrato"), course_slug: "introduzione-percorso-integrato-posturacorretta", course_title: "Inizia il percorso", lesson: Node.find_by(slug: "introduzione-al-percorso-integrato"), lesson_title: "Lezione · Inizia il percorso", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-al-percorso-integrato" } },
+    { course: Node.find_by(slug: "corso-la-prima-settimana-con-posturacorretta"), course_slug: "inizia-con-posturacorretta", course_title: "La prima settimana con PosturaCorretta", lesson: Node.find_by(slug: "la-prima-settimana-con-posturacorretta"), lesson_title: "Lezione · La prima settimana con PosturaCorretta", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "la-prima-settimana-con-posturacorretta" } },
+    { course: Node.find_by(slug: "postura-e-fisiologia"), course_slug: "postura-e-fisiologia", course_title: "Postura e fisiologia", lesson: Node.find_by(slug: "introduzione-postura-e-fisiologia"), lesson_title: "Introduzione a Postura e fisiologia", station: Posturacorretta::HomeJourney::STATIONS.find { |item| item.fetch("slug") == "introduzione-postura-e-fisiologia" } }
   ]
 %>
 
@@ -57,8 +57,8 @@
         station_slug = session.fetch(:station).fetch("slug")
         {
           course_title: session.fetch(:course)&.title || session.fetch(:course_title),
-          course_path: posturacorretta_postura_recupero_path(tappa: station_slug, tab: "online"),
-          lessons: [{ title: session.fetch(:lesson)&.title || session.fetch(:lesson_title), path: posturacorretta_postura_recupero_path(tappa: station_slug, tab: "lezioni") }]
+          course_path: posturacorretta_course_node_path(session.fetch(:course), fallback_slug: session.fetch(:course_slug)),
+          lessons: [{ title: session.fetch(:lesson)&.title || session.fetch(:lesson_title), path: posturacorretta_postura_recupero_path(tappa: session.fetch(:lesson)&.slug || station_slug, tab: "online") }]
         }
       end %>
       <%= render "nodes/posturacorretta_home/program_sheet", groups: intro_groups, label: "Inizia il programma" %>
@@ -82,12 +82,10 @@
 
       <div class="pc-intro-sheet__program pc-program-sheet__table">
         <% recovery_groups = recovery_courses.map do |course|
-          course_path = course.station ? posturacorretta_postura_recupero_path(tappa: course.station.fetch("slug"), tab: "online") : flowtree_public_node_path(course.node)
-          lesson_path = course.station ? posturacorretta_postura_recupero_path(tappa: course.station.fetch("slug"), tab: "lezioni") : nil
           {
             course_title: course.node.title,
-            course_path: course_path,
-            lessons: course.lessons.map { |lesson| { title: lesson.title, path: lesson_path || flowtree_public_node_path(lesson) } }
+            course_path: posturacorretta_course_node_path(course.node),
+            lessons: course.lessons.map { |lesson| { title: lesson.title, path: posturacorretta_postura_recupero_path(tappa: lesson.slug, tab: "online") } }
           }
         end %>
         <%= render "nodes/posturacorretta_home/program_sheet", groups: recovery_groups, label: "Programma Recupero e terapie manuali" %>

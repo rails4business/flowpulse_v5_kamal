@@ -171,7 +171,8 @@ class DomainsController < ApplicationController
         @principles = data.fetch("principles", [])
         @roles = data.fetch("roles", [])
         @steps = data.fetch("steps", [])
-        render "brands/percorso_integrato/index"
+        @sheet = PercorsoIntegratoCatalog.example_sheet
+        render "brands/percorso_integrato/scheda"
       elsif target_controller == "brands/corpo_e_coscienza" && target_action == "index"
         prepare_corpo_e_coscienza
         render "brands/corpo_e_coscienza/index"

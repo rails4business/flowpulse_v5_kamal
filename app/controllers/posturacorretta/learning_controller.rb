@@ -58,6 +58,14 @@ module Posturacorretta
 
     load_curriculum_sources
     course_slug = params[:corso].presence_in(@all_didactic_courses.map { |item| item.fetch("slug") })
+    unless course_slug
+      line_course_node = Node.joins(:show_content).find_by(view_type: "course", contents: { slug: params[:corso] })
+      if line_course_node && line_course_node.self_and_ancestors.any?(&:course_line?)
+        load_line_node_course_overview(line_course_node)
+        render :show
+        return
+      end
+    end
     return redirect_to(percorso_posturacorretta_path, alert: "Corso non trovato") unless course_slug
     return redirect_to(posturacorretta_course_path(corso: course_slug), status: :moved_permanently) if params[:vista].present?
 

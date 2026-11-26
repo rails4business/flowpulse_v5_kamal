@@ -1,0 +1,182 @@
+<% content_for :title, "Percorso Integrato — Scheda della persona" %>
+<% content_for :description, "Come funziona il Percorso Integrato, mostrato con la scheda di esempio di una persona: richiesta, apertura del percorso, professionisti, calendario delle sedute e programma di autonomia." %>
+<% content_for :landing_nav do %><%= render "brands/percorso_integrato/header" %><% end %>
+<%
+  sheet = @sheet
+  # Ambiti (richiesta e sedute): colori chiari. Aree (proposta di percorso): colori pieni della tassonomia.
+  # Classi intere (non composte) perché Tailwind le trovi nel sorgente.
+  colors = {
+    "rosso" => { dot: "bg-red-600", text: "text-red-700", soft: "border-red-200 bg-red-50" },
+    "verde" => { dot: "bg-emerald-600", text: "text-emerald-700", soft: "border-emerald-200 bg-emerald-50" },
+    "blu" => { dot: "bg-blue-600", text: "text-blue-700", soft: "border-blue-200 bg-blue-50" }
+  }
+  ambiti = sheet.fetch("ambiti")
+  color_for = ->(ambito) { colors.fetch(ambiti.fetch(ambito).fetch("colore")) }
+  format_date = ->(value) { value.present? ? Date.iso8601(value.to_s).strftime("%d/%m/%Y") : "" }
+  persona = sheet.fetch("persona")
+  richiesta = sheet.fetch("richiesta")
+  presa = sheet.fetch("presa_in_carico")
+  sedute = sheet.fetch("sedute").sort_by { |seduta| seduta.fetch("data") }
+  autonomia = sheet.fetch("autonomia")
+  label_class = "text-[11px] font-black uppercase tracking-wider text-slate-500"
+  value_class = "mt-1 min-h-7 border-b border-slate-300 pb-1 text-sm font-semibold text-slate-900"
+  number_class = "grid size-7 place-items-center rounded-full border-2 border-slate-900 text-xs"
+  main_tabs = [["info", "Info"], ["professionisti", "Professionisti"], ["calendario", "Calendario"]]
+  calendar_tabs = [["tutte", "Tutte", nil], *ambiti.map { |key, ambito| [key, ambito.fetch("etichetta").split(" / ").last.capitalize, key] }, ["autonomia", "Autonomia", nil]]
+%>
+
+<div class="min-h-screen bg-slate-50 text-slate-950">
+  <main class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+    <header class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Percorso Integrato · Scheda della persona</p>
+        <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Come si costruisce il tuo percorso</h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Una scheda raccoglie la richiesta, l'apertura del percorso, i professionisti coinvolti con i loro programmi, il calendario delle sedute e la settimana da seguire in autonomia.</p>
+      </div>
+      <%= link_to "Come funziona il Percorso Integrato →", percorso_integrato_guidelines_path, class: "text-sm font-black text-emerald-700 hover:text-emerald-900" %>
+    </header>
+
+    <%# Schedario: le etichette stanno sopra il foglio e quella selezionata si unisce al foglio. %>
+    <div class="mt-6" data-controller="sheet-tabs">
+      <div class="pi-sheet-tablist" role="tablist" aria-label="Sezioni della scheda">
+        <% main_tabs.each_with_index do |(key, label), index| %>
+          <button type="button" role="tab" id="pi-tab-<%= key %>" aria-controls="pi-panel-<%= key %>" aria-selected="<%= index.zero? %>" tabindex="<%= index.zero? ? 0 : -1 %>"
+            class="pi-sheet-tab" data-key="<%= key %>" data-sheet-tabs-target="tab" data-action="sheet-tabs#select"><%= label %></button>
+        <% end %>
+      </div>
+
+    <article class="pi-sheet-folder" aria-label="Scheda di esempio">
+
+      <div role="tabpanel" id="pi-panel-info" aria-labelledby="pi-tab-info" data-key="info" data-sheet-tabs-target="panel">
+        <section class="border-b border-slate-200 px-5 py-6 sm:px-7" aria-labelledby="pi-sheet-persona">
+          <h2 id="pi-sheet-persona" class="flex items-center gap-3 text-lg font-black"><span class="<%= number_class %>">1</span>La persona</h2>
+          <dl class="mt-4 grid gap-4 sm:grid-cols-3">
+            <div><dt class="<%= label_class %>">Nome e cognome</dt><dd class="<%= value_class %>"><%= persona["nome"] %></dd></div>
+            <div><dt class="<%= label_class %>">Email</dt><dd class="<%= value_class %>"><%= persona["email"] %></dd></div>
+            <div><dt class="<%= label_class %>">Telefono <span class="font-semibold normal-case tracking-normal">(facoltativo)</span></dt><dd class="<%= value_class %>"><%= persona["telefono"] %></dd></div>
+          </dl>
+        </section>
+
+        <section class="border-b border-slate-200 px-5 py-6 sm:px-7" aria-labelledby="pi-sheet-richiesta">
+          <h2 id="pi-sheet-richiesta" class="flex items-center gap-3 text-lg font-black"><span class="<%= number_class %>">2</span>La richiesta <span class="text-sm font-semibold text-slate-500">· <%= format_date.(richiesta["data"]) %></span></h2>
+          <ul class="mt-4 flex flex-wrap gap-2" aria-label="Ambito della richiesta">
+            <% ambiti.each do |key, ambito| %>
+              <% selected = richiesta.fetch("ambito") == key %>
+              <% color = color_for.(key) %>
+              <li class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-bold <%= selected ? "#{color[:soft]} #{color[:text]}" : 'border-slate-200 bg-white text-slate-400' %>">
+                <span class="size-3 rounded-full <%= selected ? color[:dot] : 'bg-slate-300' %>" aria-hidden="true"></span>
+                <%= ambito.fetch("etichetta") %><span class="sr-only"><%= selected ? " (richiesto)" : " (non richiesto)" %></span>
+              </li>
+            <% end %>
+          </ul>
+          <p class="mt-4 rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-700"><%= richiesta["descrizione"] %></p>
+        </section>
+
+        <section class="px-5 py-6 sm:px-7" aria-labelledby="pi-sheet-presa">
+          <h2 id="pi-sheet-presa" class="flex items-center gap-3 text-lg font-black"><span class="<%= number_class %>">3</span>Apertura del percorso <span class="text-sm font-semibold text-slate-500">· presa in carico</span></h2>
+          <dl class="mt-4 grid gap-4 sm:grid-cols-3">
+            <div class="sm:col-span-2"><dt class="<%= label_class %>">Ha aperto il percorso</dt><dd class="<%= value_class %>"><%= presa["professionista"] %> <span class="font-normal text-slate-500">· <%= presa["ruolo"] %></span></dd></div>
+            <div><dt class="<%= label_class %>">Data</dt><dd class="<%= value_class %>"><%= format_date.(presa["data"]) %></dd></div>
+          </dl>
+          <dl class="mt-4 grid gap-4 md:grid-cols-2">
+            <div><dt class="<%= label_class %>">Valutazione</dt><dd class="mt-1 text-sm leading-6 text-slate-700"><%= presa["valutazione"] %></dd></div>
+            <div>
+              <dt class="<%= label_class %>">Proposta di percorso · aree su cui lavorare</dt>
+              <dd class="mt-2">
+                <ul class="flex flex-wrap gap-2" aria-label="Aree su cui lavorare">
+                  <% area_taxonomy = PosturacorrettaTaxonomies.load.fetch("areas") %>
+                  <% sheet.fetch("aree").each do |key, label| %>
+                    <% selected = presa.dig("proposta", "aree").include?(key) %>
+                    <%# Colori delle aree dalla tassonomia: viola recupero, verde movimento, rosso mente, arancio nutrizione, blu piante. %>
+                    <li class="inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 text-sm font-bold <%= selected ? area_taxonomy.fetch(key).fetch("classes") : 'border-slate-200 text-slate-400' %>">
+                      <span aria-hidden="true"><%= selected ? "☑" : "☐" %></span><%= label %><span class="sr-only"><%= selected ? " (proposta)" : " (non proposta)" %></span>
+                    </li>
+                  <% end %>
+                </ul>
+                <p class="mt-3 text-sm leading-6 text-slate-700"><%= presa.dig("proposta", "note") %></p>
+              </dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+
+      <section role="tabpanel" id="pi-panel-professionisti" aria-labelledby="pi-tab-professionisti" data-key="professionisti" data-sheet-tabs-target="panel" hidden class="px-5 py-6 sm:px-7">
+        <h2 id="pi-sheet-professionisti" class="text-lg font-black">Professionisti</h2>
+        <p class="mt-1 text-sm text-slate-600">Ogni professionista coinvolto scrive la sua valutazione e il programma che propone.</p>
+        <ul class="mt-4 grid gap-3">
+          <% sheet.fetch("professionisti").each do |pro| %>
+            <% color = color_for.(pro.fetch("ambito")) %>
+            <li class="rounded-xl border border-slate-200 p-4">
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span class="size-3 rounded-full <%= color[:dot] %>" aria-hidden="true"></span>
+                <p class="font-black"><%= pro["nome"] %></p>
+                <p class="text-sm text-slate-500"><%= pro["ruolo"] %></p>
+                <% if pro["nome"] == presa["professionista"] %>
+                  <span class="rounded-full border border-slate-300 px-2 py-0.5 text-xs font-bold text-slate-600">Ha aperto il percorso</span>
+                <% end %>
+                <p class="ml-auto text-xs font-black uppercase tracking-wider <%= color[:text] %>"><%= ambiti.fetch(pro.fetch("ambito")).fetch("etichetta") %></p>
+              </div>
+              <dl class="mt-3 grid gap-3 md:grid-cols-2">
+                <div><dt class="<%= label_class %>">Visita · <%= format_date.(pro.dig("visita", "data")) %></dt><dd class="mt-1 text-sm leading-6 text-slate-700"><%= pro.dig("visita", "note") %></dd></div>
+                <div><dt class="<%= label_class %>">Programma proposto</dt><dd class="mt-1 text-sm leading-6 text-slate-700"><%= pro["programma"] %></dd></div>
+              </dl>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+
+      <section role="tabpanel" id="pi-panel-calendario" aria-labelledby="pi-tab-calendario" data-key="calendario" data-sheet-tabs-target="panel" hidden class="px-5 py-6 sm:px-7">
+        <h2 class="text-lg font-black">Calendario</h2>
+        <div data-controller="sheet-tabs">
+          <div class="pi-sheet-filters" role="tablist" aria-label="Filtra il calendario">
+            <% calendar_tabs.each_with_index do |(key, label, ambito), index| %>
+              <% if key == "autonomia" %><span class="pi-sheet-filters__divider" aria-hidden="true"></span><% end %>
+              <button type="button" role="tab" id="pi-calendar-tab-<%= key %>" aria-controls="pi-calendar-<%= key %>" aria-selected="<%= index.zero? %>" tabindex="<%= index.zero? ? 0 : -1 %>"
+                class="pi-sheet-filter" data-key="<%= key %>" data-sheet-tabs-target="tab" data-action="sheet-tabs#select">
+                <% if ambito %><span class="size-3 rounded-full <%= color_for.(ambito)[:dot] %>" aria-hidden="true"></span><% end %><%= label %>
+              </button>
+            <% end %>
+          </div>
+
+          <div role="tabpanel" id="pi-calendar-tutte" aria-labelledby="pi-calendar-tab-tutte" data-key="tutte" data-sheet-tabs-target="panel">
+            <h3 class="pi-sheet-print-title">Sedute</h3>
+            <%= render "brands/percorso_integrato/scheda_sedute", sedute: sedute, ambiti: ambiti, color_for: color_for, format_date: format_date %>
+          </div>
+          <% ambiti.each_key do |ambito| %>
+            <%# Le sedute filtrate per ambito non si stampano: sono già in "Tutte". %>
+            <div role="tabpanel" id="pi-calendar-<%= ambito %>" aria-labelledby="pi-calendar-tab-<%= ambito %>" data-key="<%= ambito %>" data-sheet-tabs-target="panel" hidden class="pi-print-skip">
+              <%= render "brands/percorso_integrato/scheda_sedute", sedute: sedute.select { |seduta| seduta.fetch("ambito") == ambito }, ambiti: ambiti, color_for: color_for, format_date: format_date %>
+            </div>
+          <% end %>
+
+          <div role="tabpanel" id="pi-calendar-autonomia" aria-labelledby="pi-calendar-tab-autonomia" data-key="autonomia" data-sheet-tabs-target="panel" hidden>
+            <h3 class="pi-sheet-print-title">Autonomia</h3>
+            <p class="mt-4 text-sm text-slate-600"><span class="font-black text-slate-900">Settimana tipo da ripetere.</span> <%= autonomia["note"] %></p>
+            <ol class="pi-sheet-week">
+              <% autonomia.fetch("settimana").each do |day| %>
+                <li class="pi-sheet-week__day">
+                  <p class="pi-sheet-week__name"><%= day.fetch("giorno") %></p>
+                  <ul>
+                    <% day.fetch("attivita").each do |attivita| %>
+                      <li><span class="pi-sheet-week__box" aria-hidden="true"></span><%= attivita %></li>
+                    <% end %>
+                  </ul>
+                </li>
+              <% end %>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-amber-200 bg-amber-50 px-5 py-4 sm:px-7">
+        <p class="text-xs font-bold text-amber-900">
+          <span class="mr-2 rounded bg-amber-400 px-1.5 py-0.5 font-black uppercase tracking-wider text-amber-950">Esempio</span>
+          Persona e professionisti sono di fantasia: questa scheda serve a mostrare come funziona il percorso.
+        </p>
+        <%= link_to "Completa anche tu il tuo Percorso Integrato →", percorso_integrato_guidelines_path(anchor: "inizia"), class: "pi-button pi-button--primary rounded-lg px-4 py-2 text-sm font-bold" %>
+      </footer>
+    </article>
+    </div>
+  </main>
+  <%= render "posturacorretta/footer" %>
+</div>

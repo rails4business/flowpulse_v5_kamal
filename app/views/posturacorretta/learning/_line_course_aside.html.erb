@@ -1,40 +1,34 @@
 <% active_node = local_assigns.fetch(:active_node) %>
 <% line = local_assigns.fetch(:line) %>
 <% courses = local_assigns.fetch(:courses) %>
-<% active_course = active_node.view_type == "course" ? active_node : active_node.self_and_ancestors.find { |node| node.view_type == "course" } %>
-<% journey_node = active_node.view_type == "course_lesson" ? active_node : active_node.children.where(view_type: "course_lesson").order(:position, :id).first %>
 
 <header class="border-b border-slate-200 pb-4">
-  <%= link_to posturacorretta_postura_recupero_path(tappa: journey_node&.slug, tab: "online"), class: "group inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-blue-700" do %>
+  <%= link_to posturacorretta_path, class: "group inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-blue-700" do %>
     <span aria-hidden="true" class="transition group-hover:-translate-x-0.5">←</span>
-    <span>Torna al percorso</span>
+    <span>Torna al programma</span>
   <% end %>
   <p class="mt-4 text-[10px] font-black uppercase tracking-[.15em] text-blue-700"><%= line.content_type.presence || "Percorso educativo" %></p>
   <h2 class="mt-1 text-base font-black leading-5 text-slate-950"><%= line.title %></h2>
   <p class="mt-1 text-xs text-slate-500"><%= courses.size %> corsi · <%= courses.sum { |course| course.children.where(view_type: "course_lesson").count } %> lezioni</p>
 </header>
 
-<nav aria-label="Programma della linea" class="mt-4 space-y-3" data-controller="scroll-selected">
+<nav aria-label="Programma della linea" class="mt-4 divide-y divide-slate-200" data-controller="scroll-selected">
   <% courses.each_with_index do |course_node, course_index| %>
     <% lessons = course_node.children.where(view_type: "course_lesson").order(:position, :id) %>
-    <% selected = course_node == active_course %>
-    <% course_path = posturacorretta_course_path(corso: course_node.show_content&.slug || course_node.slug) %>
-    <section class="overflow-hidden rounded-xl border <%= selected ? 'border-blue-300 bg-blue-50/40 shadow-sm' : 'border-slate-200 bg-white' %>" <%= "data-scroll-selected-target=item" if selected %>>
-      <div class="flex items-start gap-3 border-b px-3 py-3 <%= selected ? 'border-blue-200 bg-blue-50/80' : 'border-slate-100 bg-slate-50/70' %>">
-        <span class="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-black <%= selected ? 'bg-blue-600 text-white' : 'bg-white text-slate-500 ring-1 ring-slate-200' %>"><%= format("%02d", course_index + 1) %></span>
-        <%= link_to course_path, aria: { current: ("page" if selected) }, class: "min-w-0 flex-1 group" do %>
-          <small class="block text-[9px] font-black uppercase tracking-[.12em] <%= selected ? 'text-blue-700' : 'text-slate-400' %>">Corso</small>
-          <strong class="mt-0.5 block text-xs leading-4 text-slate-900 group-hover:text-blue-700"><%= course_node.title %></strong>
-        <% end %>
-      </div>
+    <% selected = course_node == active_node %>
+    <section class="py-3 first:pt-0">
+      <%= link_to posturacorretta_course_node_path(course_node), aria: { current: ("page" if selected) }, data: ({ scroll_selected_target: "item" } if selected), class: "group block rounded-lg border-l-[3px] px-3 py-3 transition #{selected ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-transparent text-slate-900 hover:bg-slate-50 hover:text-blue-700'}" do %>
+        <small class="block text-[10px] font-semibold uppercase tracking-wider <%= selected ? 'text-blue-700' : 'text-slate-500' %>">Corso <%= course_index + 1 %></small>
+        <strong class="mt-1 block text-sm leading-5"><%= course_node.title %></strong>
+      <% end %>
       <% if lessons.any? %>
-        <ol class="space-y-0.5 p-2">
+        <ol class="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
           <% lessons.each_with_index do |lesson, lesson_index| %>
             <li>
               <% lesson_selected = lesson == active_node %>
-              <%= link_to posturacorretta_postura_recupero_path(tappa: lesson.slug, tab: "online"), aria: { current: ("page" if lesson_selected) }, class: "group flex items-center gap-2 rounded-lg px-2 py-2 text-xs transition #{lesson_selected ? 'bg-white font-bold text-violet-800 shadow-sm' : 'text-slate-600 hover:bg-white hover:text-violet-800'}" do %>
-                <span class="size-2 shrink-0 rounded-full border-2 <%= lesson_selected ? 'border-violet-600 bg-violet-600' : 'border-violet-300 bg-white group-hover:border-violet-600' %>"></span>
-                <span class="min-w-0"><small class="mr-1 font-bold text-slate-400"><%= course_index + 1 %>.<%= lesson_index + 1 %></small><%= lesson.short_title %></span>
+              <%= link_to posturacorretta_postura_recupero_path(tappa: lesson.slug, tab: "online"), aria: { current: ("page" if lesson_selected) }, data: ({ scroll_selected_target: "item" } if lesson_selected), class: "block rounded-lg border-l-[3px] px-3 py-2.5 transition #{lesson_selected ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-transparent text-slate-600 hover:bg-slate-50 hover:text-blue-700'}" do %>
+                <small class="block text-[10px] font-medium text-slate-500">Lezione <%= course_index + 1 %>.<%= lesson_index + 1 %></small>
+                <span class="mt-1 block text-sm font-normal leading-5"><%= lesson.short_title %></span>
               <% end %>
             </li>
           <% end %>

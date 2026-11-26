@@ -221,8 +221,21 @@ L'ordine dell'aside deriva dai figli diretti `course` del Node linea. Le lezioni
 - il corso è mostrato come intestazione cliccabile;
 - le lezioni sono mostrate sotto il proprio corso;
 - i capitoli non compaiono nell'aside;
-- corso e lezione attivi hanno stati visivi distinti;
+- soltanto il Node aperto ha evidenza e `aria-current="page"`: nello show corso si seleziona il
+  corso, nello show lezione si seleziona esclusivamente la lezione, senza selezionare anche il corso padre;
 - stazioni non pubbliche sono visibili soltanto al superadmin.
+
+La scheda della Home distingue le destinazioni: il titolo del corso apre lo show corso, ogni lezione
+apre lo show del proprio Node. `posturacorretta_course_node_path` usa lo slug del Content introduttivo
+quando presente, altrimenti lo slug del Node corso. Anche un corso non incluso nel catalogo storico
+può essere risolto tramite il proprio `show_content`. Le lezioni usano ciascuna il proprio slug,
+senza riutilizzare la stessa tappa per tutte le lezioni del corso. L'aside condiviso usa intestazioni
+corso e lezioni rientrate; il target di scorrimento coincide con l'unica voce corrente.
+
+Verifica del 26 novembre 2026: cinque test mirati, 73 asserzioni, nessun errore o fallimento.
+Coperti i collegamenti della Home, la selezione esclusiva nell'aside, più lezioni nello stesso corso,
+il corso senza Content introduttivo e lo show con articolo e video. RuboCop pulito sui tre file Ruby
+interessati.
 
 ### Indietro e procedi
 

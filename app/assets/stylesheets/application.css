@@ -6660,3 +6660,40 @@ body[data-layout="dashboard"] [data-dashboard-main] {
   .pc-intro-sheet .pc-journey-footer__nav { display: none; }
   .pc-intro-sheet__table { min-width: 0; }
 }
+
+/* Percorso Integrato · scheda della persona: schede, filtri del calendario, sedute, settimana di autonomia. */
+.pi-sheet-tablist { position: relative; z-index: 1; display: flex; align-items: flex-end; gap: .3rem; overflow-x: auto; padding: 0 1rem; scrollbar-width: none; }
+.pi-sheet-tablist::-webkit-scrollbar { display: none; }
+.pi-sheet-tab { flex: none; border: 1px solid #cbd5e1; border-bottom-color: #e2e8f0; border-radius: .7rem .7rem 0 0; background: #e8eef5; padding: .55rem 1.2rem; color: #475569; font-size: .9rem; font-weight: 800; cursor: pointer; }
+.pi-sheet-tab:hover { background: #f1f5f9; color: #047857; }
+.pi-sheet-tab[aria-selected="true"] { border-color: #e2e8f0; border-bottom-color: #fff; background: #fff; padding-top: .75rem; color: #065f46; }
+.pi-sheet-folder { position: relative; overflow: hidden; margin-top: -1px; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; box-shadow: 0 1px 2px rgb(15 23 42 / 5%); }
+.pi-sheet-filters { display: flex; flex-wrap: nowrap; align-items: center; gap: .4rem; overflow-x: auto; margin-top: 1rem; padding-bottom: .25rem; scrollbar-width: none; }
+.pi-sheet-filters::-webkit-scrollbar { display: none; }
+.pi-sheet-filters__divider { flex: none; width: 1px; height: 1.4rem; margin: 0 .3rem; background: #cbd5e1; }
+.pi-sheet-filter { display: inline-flex; flex: none; align-items: center; gap: .45rem; border: 1px solid #e2e8f0; border-radius: 999px; background: #fff; padding: .4rem .85rem; color: #475569; font-size: .85rem; font-weight: 800; cursor: pointer; }
+.pi-sheet-filter[aria-selected="true"] { border-color: #0f172a; background: #0f172a; color: #fff; }
+.pi-sheet-print-title { display: none; }
+.pi-sheet-sessions { display: grid; gap: .6rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.pi-sheet-session { display: grid; gap: .25rem 1rem; border: 1px solid #e2e8f0; border-radius: .75rem; padding: .75rem 1rem; grid-template-columns: 6.5rem minmax(0, 1fr); }
+.pi-sheet-session__date { margin: 0; color: #0f172a; font-size: .85rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.pi-sheet-session__head { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; margin: 0; font-size: .88rem; }
+.pi-sheet-session__what { margin: .2rem 0 0; color: #334155; font-size: .86rem; line-height: 1.5; }
+.pi-sheet-week { display: grid; gap: .6rem; margin: 1rem 0 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+.pi-sheet-week__day { border: 1px solid #e2e8f0; border-radius: .75rem; padding: .7rem .8rem; }
+.pi-sheet-week__name { margin: 0 0 .4rem; color: #065f46; font-size: .78rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.pi-sheet-week__day ul { display: grid; gap: .35rem; margin: 0; padding: 0; list-style: none; color: #334155; font-size: .82rem; line-height: 1.35; }
+.pi-sheet-week__day li { display: flex; align-items: flex-start; gap: .4rem; }
+.pi-sheet-week__box { flex: none; width: .8rem; height: .8rem; margin-top: .15rem; border: 1.5px solid #64748b; border-radius: .15rem; }
+
+@media (max-width: 640px) {
+  .pi-sheet-session { grid-template-columns: 1fr; }
+}
+
+@media print {
+  .pi-sheet-tablist, .pi-sheet-filters { display: none !important; }
+  [data-sheet-tabs-target="panel"][hidden]:not(.pi-print-skip) { display: block !important; }
+  .pi-print-skip { display: none !important; }
+  .pi-sheet-print-title { display: block; margin: .3cm 0 0; font-size: 10pt; font-weight: 800; }
+  .pi-sheet-session, .pi-sheet-week__day { break-inside: avoid; }
+}

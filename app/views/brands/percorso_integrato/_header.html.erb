@@ -5,17 +5,13 @@
       <span class="truncate">Percorso Integrato</span>
     <% end %>
     <nav class="hidden items-center gap-6 md:flex" aria-label="Navigazione Percorso Integrato">
-      <%= link_to "About", percorso_integrato_about_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
-      <%= link_to "Modello", percorso_integrato_model_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
-      <%= link_to "Corso", percorso_integrato_course_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
-      <%= link_to "Docs", percorso_integrato_docs_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
-      <%= link_to "Chi partecipa", percorso_integrato_model_path(anchor: "ruoli"), class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
+      <%= link_to "Linee guida", percorso_integrato_guidelines_path, aria: { current: ("page" if action_name == "guidelines") }, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Professionisti", percorso_integrato_professionals_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Centri", percorso_integrato_places_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Servizi", percorso_integrato_services_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
       <%= link_to "Comuni", percorso_integrato_municipalities_path, class: "text-sm font-semibold text-slate-600 hover:text-emerald-800" %>
     </nav>
-    <%= link_to "Inizia", percorso_integrato_path(anchor: "inizia"), class: "pi-button pi-button--primary hidden rounded-lg px-4 py-2 text-sm font-bold md:inline-flex" %>
+    <%= link_to "Inizia", percorso_integrato_guidelines_path(anchor: "inizia"), class: "pi-button pi-button--primary hidden rounded-lg px-4 py-2 text-sm font-bold md:inline-flex" %>
 
     <details class="pi-mobile-menu md:hidden">
       <summary class="pi-mobile-menu__trigger" aria-label="Apri il menu di Percorso Integrato">
@@ -26,16 +22,12 @@
       </summary>
       <nav class="pi-mobile-menu__panel" aria-label="Navigazione mobile Percorso Integrato">
         <%= link_to "Home", percorso_integrato_path %>
-        <%= link_to "About", percorso_integrato_about_path %>
-        <%= link_to "Modello esteso", percorso_integrato_model_path %>
-        <%= link_to "Corso", percorso_integrato_course_path %>
-        <%= link_to "Docs", percorso_integrato_docs_path %>
-        <%= link_to "Chi partecipa", percorso_integrato_model_path(anchor: "ruoli") %>
+        <%= link_to "Linee guida", percorso_integrato_guidelines_path, aria: { current: ("page" if action_name == "guidelines") } %>
         <%= link_to "Professionisti", percorso_integrato_professionals_path %>
         <%= link_to "Centri", percorso_integrato_places_path %>
         <%= link_to "Servizi", percorso_integrato_services_path %>
         <%= link_to "Comuni", percorso_integrato_municipalities_path %>
-        <%= link_to "Inizia", percorso_integrato_path(anchor: "inizia"), class: "pi-button pi-button--primary mt-1 w-full rounded-lg px-4 py-2.5 font-bold" %>
+        <%= link_to "Inizia", percorso_integrato_guidelines_path(anchor: "inizia"), class: "pi-button pi-button--primary mt-1 w-full rounded-lg px-4 py-2.5 font-bold" %>
       </nav>
     </details>
   </div>

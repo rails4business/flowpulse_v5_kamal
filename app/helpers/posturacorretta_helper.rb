@@ -10,6 +10,10 @@ module PosturacorrettaHelper
     "progetti" => "piattaforma-flowpulse-rails4business"
   }.freeze
 
+  def posturacorretta_course_node_path(node, fallback_slug: nil)
+    posturacorretta_course_path(corso: node&.show_content&.slug || node&.slug || fallback_slug)
+  end
+
   def posturacorretta_revision_project
     return unless controller_name == "posturacorretta"
 
