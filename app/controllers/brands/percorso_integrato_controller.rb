@@ -7,6 +7,12 @@ module Brands
       load_site
     end
 
+    # La presentazione del Percorso Integrato che prima era la home.
+    def about
+      load_site
+      render :index
+    end
+
     def model
       load_site
       @advanced_model = true

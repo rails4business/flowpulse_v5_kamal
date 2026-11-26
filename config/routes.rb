@@ -169,6 +169,7 @@ Rails.application.routes.draw do
   get "giardino-del-corpo" => redirect("/il-giardino-del-corpo", status: 301)
   direct(:il_giardino_del_corpo) { "/il-giardino-del-corpo" }
   get "percorso-integrato" => "brands/percorso_integrato#index", as: :percorso_integrato
+  get "percorso-integrato/about" => "brands/percorso_integrato#about", as: :percorso_integrato_about
   get "percorso-integrato/modello" => "brands/percorso_integrato#model", as: :percorso_integrato_model
   get "percorso-integrato/corso" => "brands/percorso_integrato#course", as: :percorso_integrato_course
   get "percorso-integrato/corso/:capitolo" => "brands/percorso_integrato#course", as: :percorso_integrato_course_chapter,

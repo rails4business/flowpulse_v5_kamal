@@ -14,8 +14,13 @@ class Admin::PasswordResetRequestsControllerTest < ActionDispatch::IntegrationTe
     assert_response :success
     assert_select "input[readonly][value*='/passwords/']", count: 1
     assert_select "button", text: "Copia il link"
-    assert_select "aside a[href='#{admin_password_reset_requests_path}']", text: /Reset password/
+    assert_select "aside a[href='#{admin_dashboard_path}']", text: /Amministrazione/
+    assert_select "aside a[href='#{admin_password_reset_requests_path}']", count: 0
     assert_select "aside details summary", text: /Cambia sito/
+
+    get admin_dashboard_url
+    assert_response :success
+    assert_select "main a[href='#{admin_password_reset_requests_path}']", text: /Reset password/
   end
 
   test "archives a handled request" do

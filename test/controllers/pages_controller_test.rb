@@ -45,9 +45,10 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
       assert_operator section_html.index("postura.example"), :<, section_html.index("igiene.example")
     end
     assert_select "nav[aria-label='Navigazione dashboard']" do
-      assert_select "h3", text: "Brand accessibili"
-      assert_select "a[href=?]", node_path(posture), text: /postura\.example/
-      assert_select "a[href=?]", node_path(igiene), text: /igiene\.example/
+      assert_select "a[href='/']", text: /Postura Corretta/
+      assert_select "a[href=?]", profile_path, text: /Profilo/
+      assert_select "a", count: 2
+      assert_select "h3", text: "Brand accessibili", count: 0
       assert_select "a[href=?]", node_path(root), count: 0
       assert_select "a[href=?]", node_path(outside), count: 0
     end

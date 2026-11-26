@@ -69,7 +69,7 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Eventi"
     assert_includes response.body, "Transazioni"
     assert_includes response.body, "Attenzione"
-    assert_includes response.body, "Dashboard Admin"
+    assert_select "aside a[href='#{admin_dashboard_path}']", text: /Amministrazione/
     assert_not_includes response.body, "Esperienze, categorie e brand"
     assert_not_includes response.body, "Prototipi e viste sandbox"
   end

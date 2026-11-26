@@ -102,9 +102,13 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get demo_lavoro_url
 
     assert_response :success
-    assert_includes response.body, dashboard_path
-    assert_includes response.body, admin_risorse_index_path
+    assert_select "aside a[href='#{admin_dashboard_path}']", text: /Amministrazione/
+    assert_select "aside a[href='#{admin_risorse_index_path}']", count: 0
     assert_not_includes response.body, "Disponibile quando sbloccato dal superadmin"
+
+    get admin_dashboard_url
+    assert_response :success
+    assert_select "main a[href='#{admin_risorse_index_path}']", text: /Risorse/
   end
 
   test "should get eventi page" do
