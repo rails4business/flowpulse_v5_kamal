@@ -1,12 +1,12 @@
 <% access_context = dashboard_access_context %>
 <% contextual_aside = DashboardAside::Builder.new(context: access_context).applicable? %>
 <% aside_context = dashboard_aside_context(local_assigns[:current_section]) %>
-<% contextual_role_controls = contextual_aside && (access_context.superadmin? || access_context.available_role_assignments.any?) %>
-<% legacy_role_controls = !contextual_aside && Current.user && (Current.user.can_switch_roles? || Current.user.current_role_assignment.present?) %>
+<% contextual_role_controls = access_context.superadmin? || access_context.available_role_assignments.any? %>
+<% legacy_role_controls = access_context.brand_access.blank? && !contextual_aside && Current.user && (Current.user.can_switch_roles? || Current.user.current_role_assignment.present?) %>
 
 <% if contextual_role_controls || legacy_role_controls %>
 <div class="flex-none border-t border-slate-100 p-4 space-y-2">
-  <% if contextual_aside && access_context.superadmin? %>
+  <% if access_context.superadmin? %>
     <div class="rounded-xl border border-violet-100 bg-violet-50 px-3 py-2">
       <span class="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-violet-500">Access role</span>
       <strong class="mt-1 block text-xs text-violet-800">Superadmin</strong>
@@ -18,7 +18,7 @@
         <%= label_tag :role_assignment_id, "Access role", class: "mb-1.5 block text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400" %>
         <%= select_tag :role_assignment_id,
           options_for_select(
-            [["Utente", ""]] + assignments.map { |assignment| [RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.to_s.humanize, assignment.id] },
+            [["Scegli come operare", ""]] + assignments.map { |assignment| [RoleDefinitions::Registry.find(assignment.role_operator)&.label || assignment.role_operator.to_s.humanize, assignment.id] },
             access_context.current_role_assignment&.id
           ),
           class: "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500",

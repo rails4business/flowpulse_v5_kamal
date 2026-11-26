@@ -22,6 +22,9 @@ module Brands
           canonical_slug = BRAND_SLUG_ALIASES.fetch(requested_slug, requested_slug)
           @brand = Node.includes(:domains, role_assignment: :profile).find_by!(slug: canonical_slug)
           raise ActiveRecord::RecordNotFound, "Brand non trovato" unless @brand.brand?
+          if !local_request? && current_domain && current_domain.resolved_node != @brand
+            raise ActiveRecord::RecordNotFound, "Il Brand non appartiene al dominio corrente"
+          end
         end
 
         def require_brand_administrator!

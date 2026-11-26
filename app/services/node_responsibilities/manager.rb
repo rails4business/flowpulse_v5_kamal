@@ -51,7 +51,7 @@ module NodeResponsibilities
 
       def matching_access(profile:, node:)
         profile.brand_accesses.active.includes(:brand_node).find do |access|
-          node == access.brand_node || node.ancestors.exists?(access.brand_node_id)
+          node.site_node == access.brand_node
         end
       end
 

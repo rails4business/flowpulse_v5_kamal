@@ -57,4 +57,19 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert_not assignment.valid?
     assert_includes assignment.errors[:role_operator], "non è previsto per questo Brand"
   end
+
+  test "node configuration cannot enable an unknown disabled or incompatible operational role" do
+    brand = Node.create!(title: "Restricted Brand", slug: "posturacorretta", role_assignment: @ideatore,
+      operator_roles: %w[unknown_role segreteria imprenditore_generaimpresa])
+    domain = Domain.create!(hostname: "restricted-role.example", node: brand, role_assignment: @ideatore)
+    access = BrandAccess.create!(profile: @ideatore_user.profile, source_domain: domain)
+
+    brand.operator_roles.each do |code|
+      assignment = RoleAssignment.new(profile: @ideatore_user.profile, role: :operator,
+        role_operator: code, context: brand, parent: @ideatore, brand_access: access)
+
+      assert_not assignment.valid?, "Il Node non deve abilitare #{code}"
+      assert_includes assignment.errors[:role_operator], "non è previsto per questo Brand"
+    end
+  end
 end

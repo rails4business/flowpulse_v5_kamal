@@ -25,4 +25,24 @@ class BrandAccesses::ManagerTest < ActiveSupport::TestCase
     end
     assert access.reload.active?
   end
+
+  test "a project authorization cannot cancel an entire brand access" do
+    manager = BrandAccesses::Manager.new(actor: @superadmin)
+    access = manager.grant!(profile: @profile, domain: @domain)
+    project = Node.create!(title: "Project", parent: @domain.node, role_assignment: @domain.node.role_assignment)
+
+    assert_raises(BrandAccesses::Manager::NotAuthorized) { manager.revoke!(access, authorization_node: project) }
+    assert access.reload.active?
+  end
+
+  test "a grant cannot combine a domain with an authorization node in another brand" do
+    other = Node.create!(title: "Other Brand", role_assignment: @domain.node.role_assignment)
+    Domain.create!(hostname: "access-manager-other.example", node: other, role_assignment: other.role_assignment)
+
+    assert_no_difference -> { BrandAccess.count } do
+      assert_raises(ArgumentError) do
+        BrandAccesses::Manager.new(actor: @superadmin).grant!(profile: @profile, domain: @domain, authorization_node: other)
+      end
+    end
+  end
 end

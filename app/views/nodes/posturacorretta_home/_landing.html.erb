@@ -36,32 +36,15 @@
     <div class="pc-intro-sheet__hero">
       <div>
         <h1 id="pc-intro-title">Non è solo stare ben dritti con la schiena.</h1>
-        <p>Puoi imparare a usare la postura per mantenerti in salute. Pronto ad iniziare?</p>
-        <h2>Salute perfetta con PosturaCorretta</h2>
+        <p>Salute perfetta con PosturaCorretta</p>
+        <h2>Con le metodiche posturali impara a conoscere come funziona il tuo corpo e come riattivare la tua fisiologia.</h2>
      <div class="pc-intro-actions">
         <%= link_to "Inizia", posturacorretta_postura_recupero_path(tappa: "introduzione-al-percorso-integrato", tab: "online"), class: "pc-landing-primary-action" %>
-        <%= link_to "Scopri di più", "#scopri", class: "pc-landing-secondary-action" %>
+        <%= link_to "Scopri di più", posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "come-si-affronta-il-programma"), class: "pc-landing-secondary-action" %>
       </div>
         <!--p>.</p-->
       </div>
       <img src="https://ik.imagekit.io/posturacorretta/posturacorretta_home.png?updatedAt=1749759675777" alt="Salute perfetta con PosturaCorretta">
-    </div>
-
-    <div class="pc-intro-sheet__path" id="scopri">
-     
-      <p class="text-2xl font-bold">Percorso educativo PosturaCorretta</p>
-      <p class="text-2xl">10 minuti al giorno per fare la revisione del tuo corpo!</p>
-      
-     
-      <p>Impara come funziona il tuo corpo quali sono e come riattivare i tuoi sistemi fisiologici. Un percorso di educazione alla salute basato sui principi delle principali metodiche posturali.</p>
-
-      <ol class="pc-intro-sheet__principles">
-        <li><span>01</span><div><h3>Scopri</h3><p>Con il corso online, impara ad ascoltare il corpo, osserva come funziona e sperimenta come riattivare i suoi sistemi.</p></div></li>
-        <li><span>02</span><div><h3>Pratica</h3><p>Affronta le lezioni con un insegnante PosturaCorretta, che ti accompagna nel percorso educativo, alla scoperta delle metodiche posturali.</p></div></li>
-        <li><span>03</span><div><h3>Approfondisci</h3><p>Hai trovato una metodica che ti piace? Vuoi iniziare un percorso personalizzato? Ogni metodica ha una scuola. Trova un professionista formato che possa seguirti nel tuo percorso.</p></div></li>
-      </ol>
-
-      
     </div>
 
     <div class="pc-intro-sheet__program">
@@ -114,7 +97,7 @@
         part_number: 2,
         sheet_label: "Recupero e terapie manuali",
         print_label: "Recupero e terapie manuali",
-        previous_path: posturacorretta_path(area: "intro"), previous_label: "Inizia con PosturaCorretta",
+        previous_path: posturacorretta_path, previous_label: "Home",
         next_path: posturacorretta_path(area: "espressione", parte: "movimento-allenamento"), next_label: "Movimento e allenamento" %>
     </section>
   <% else %>

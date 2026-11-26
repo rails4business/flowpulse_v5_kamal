@@ -1,0 +1,79 @@
+---
+titolo: DEMO — GeneraImpresa MVP
+descrizione: 'Piano dimostrativo: creare progetti e organizzare gli obiettivi. Nessun
+  codice viene eseguito.'
+steps:
+- id: 01_fondamenta
+  titolo: Fondamenta
+  descrizione: Configurare Rails e il layout generale.
+  stima_minuti: 60
+  esempio: Verificare stack, configurazione locale e pagina iniziale.
+  stato:
+    progettazione: false
+    approvazione: false
+    implementazione: false
+    revisione: false
+    commit_push: false
+    deploy: false
+    pianificazione: true
+  impronte: {}
+  lavorazione:
+    progettazione: in_lavorazione
+  tempo_impiegato: 0
+- id: 02_autenticazione
+  titolo: Autenticazione
+  descrizione: Consentire accesso e uscita degli utenti.
+  stima_minuti: 90
+  esempio: Riutilizzare l’autenticazione esistente e verificare accessi non autorizzati.
+  stato:
+    progettazione: false
+    approvazione: false
+    implementazione: false
+    revisione: false
+    commit_push: false
+    deploy: false
+  impronte: {}
+  lavorazione:
+    progettazione: da_fare
+    approvazione: da_fare
+    implementazione: da_fare
+    revisione: da_fare
+  tempo_impiegato: 0
+- id: 03_progetti
+  titolo: Gestione progetti
+  descrizione: Creare e visualizzare i propri progetti.
+  stima_minuti: 120
+  esempio: Valutare il model Project, associazione utente, validazioni e CRUD.
+  stato:
+    progettazione: false
+    approvazione: false
+    implementazione: false
+    revisione: false
+    commit_push: false
+    deploy: false
+  impronte: {}
+  lavorazione:
+    progettazione: da_fare
+    approvazione: da_fare
+    implementazione: da_fare
+    revisione: da_fare
+  tempo_impiegato: 0
+- id: 04_obiettivi
+  titolo: Gestione obiettivi
+  descrizione: Associare obiettivi ai progetti.
+  stima_minuti: 90
+  esempio: Definire associazioni, autorizzazioni e criteri di accettazione.
+  stato:
+    progettazione: false
+    approvazione: false
+    implementazione: false
+    revisione: false
+    commit_push: false
+    deploy: false
+  impronte: {}
+  lavorazione:
+    progettazione: da_fare
+    approvazione: da_fare
+    implementazione: da_fare
+    revisione: da_fare
+  tempo_impiegato: 0

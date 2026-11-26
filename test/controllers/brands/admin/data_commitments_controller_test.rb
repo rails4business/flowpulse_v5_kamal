@@ -24,10 +24,10 @@ class Brands::Admin::DataCommitmentsControllerTest < ActionDispatch::Integration
     get brand_admin_data_commitments_url(@brand.slug)
 
     assert_response :success
-    assert_select ".brand-admin-nav a[aria-current='page']", text: "Impegni"
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
     assert_select "h1", "Corpo e Coscienza · Impegni"
     assert_select "#data-commitment-#{@commitment.id}", text: /Preparare un incontro/
-    assert_select ".brand-admin-nav a[href='#{brand_admin_requests_path(@brand.slug)}']", text: "Richieste"
+    assert_select ".brand-admin-nav a[href='#{brand_admin_root_path(@brand.slug)}']", text: "Dashboard"
   end
 
   private

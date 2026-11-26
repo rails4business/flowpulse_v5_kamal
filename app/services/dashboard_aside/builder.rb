@@ -79,15 +79,11 @@ module DashboardAside
       end
 
       def capabilities
-        definition&.capabilities || []
-      end
-
-      def definition
-        @definition ||= RoleDefinitions::Registry.find(current_role_code)
+        context.capabilities
       end
 
       def current_role_code
-        context.current_role_assignment&.role_operator
+        context.current_role_code
       end
 
       def item(key, title, subtitle, path, badge)

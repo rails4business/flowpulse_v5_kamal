@@ -14,7 +14,7 @@
       <div class="brand-admin-header__inner">
         <div class="min-w-0">
           <p class="brand-admin-eyebrow">Amministrazione Brand</p>
-          <%= link_to @brand.title, brand_admin_nodes_path(@brand.slug), class: "brand-admin-name" %>
+          <%= link_to @brand.title, brand_admin_root_path(@brand.slug), class: "brand-admin-name" %>
         </div>
         <div class="brand-admin-header__actions">
           <% if brand_support_access? %><span class="brand-admin-support">Assistenza superadmin</span><% end %>
@@ -22,13 +22,7 @@
         </div>
       </div>
       <nav class="brand-admin-nav" aria-label="Amministrazione del Brand">
-        <%= link_to "Nodi", brand_admin_nodes_path(@brand.slug), aria: { current: ("page" if controller_name == "nodes" && params[:view] != "schema") } %>
-        <%= link_to "Schema", brand_admin_nodes_path(@brand.slug, view: "schema"), aria: { current: ("page" if controller_name == "nodes" && params[:view] == "schema") } %>
-        <%= link_to "Sviluppo", brand_admin_development_path(@brand.slug), aria: { current: ("page" if controller_name == "development") } %>
-        <%= link_to "Richieste", brand_admin_requests_path(@brand.slug), aria: { current: ("page" if controller_name == "brand_requests") } %>
-        <%= link_to "Contenuti", brand_admin_contents_path(@brand.slug), aria: { current: ("page" if controller_name == "contents") } %>
-        <%= link_to "Impegni", brand_admin_data_commitments_path(@brand.slug), aria: { current: ("page" if controller_name == "data_commitments") } %>
-        <%= link_to "Privacy", brand_admin_privacy_path(@brand.slug), aria: { current: ("page" if controller_name == "privacy") } %>
+        <%= link_to "Dashboard", brand_admin_root_path(@brand.slug), aria: { current: ("page" if controller_name == "dashboard") } %>
       </nav>
     </header>
 

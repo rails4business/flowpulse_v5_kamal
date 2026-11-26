@@ -161,7 +161,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_url(area: "connessione", tab: "corpo")
     assert_response :success
-    assert_select ".pc-index-cabinet__tab.is-active", text: "Connessione"
+    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Home.*Connessione/
     assert_select "nav[aria-label='Sezioni di Connessione'] a[aria-current='page']", text: "Il corpo"
     assert_select "a[href='#{book_path('il-corpo-un-mondo-da-scoprire')}']", text: /Il corpo, un mondo da scoprire/
 
@@ -299,24 +299,32 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".pc-intro-sheet__hero h1", text: "Non è solo stare ben dritti con la schiena."
-    assert_select ".pc-index-cabinet__tabs > a", count: 4
-    assert_select ".pc-index-cabinet__tab.is-active", text: "Inizia con PosturaCorretta"
+    assert_select ".pc-index-cabinet__tabs", count: 0
+    assert_select "nav[aria-label='Percorso PosturaCorretta']", count: 0
+    assert_select "section[aria-label='Aree del percorso PosturaCorretta'] a[href='#{posturacorretta_path(area: "espressione")}']", text: /Vai/
+    assert_select "section[aria-label='Aree del percorso PosturaCorretta'] a[href='#{posturacorretta_path(area: "consapevolezza")}']", text: /Vai/
+    assert_select "section[aria-label='Aree del percorso PosturaCorretta'] a[href='#{posturacorretta_path(area: "connessione")}']", text: /Vai/
     assert_select ".pc-landing-home", count: 1
     assert_select ".pc-expression-tabs", count: 0
     assert_select ".pc-intro-sheet__hero img[src*='posturacorretta_home.png']", count: 1
-    assert_select ".pc-intro-sheet__principles > li", count: 3
+    assert_select ".pc-intro-sheet__principles", count: 0
+    assert_select "a[href='#{posturacorretta_course_chapter_path(corso: "inizia-con-posturacorretta", capitolo: "come-si-affronta-il-programma")}']", text: "Scopri di più"
     assert_select ".pc-intro-sheet__program .pc-intro-program-list__row.is-course", count: 3
     assert_select ".pc-intro-sheet__program .pc-intro-program-list__row.is-lesson", count: 3
     assert_select ".pc-sheet__print", text: "Scarica o stampa Inizia il programma"
 
     get posturacorretta_url(area: "espressione")
     assert_response :success
-    assert_select ".pc-index-cabinet__tab.is-active", text: "Percorso educativo"
+    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Home.*Percorso educativo/
     assert_select "nav[aria-label='Sezioni del percorso educativo'] > a", count: 4
     assert_select "nav[aria-label='Sezioni del percorso educativo'] > a[aria-current='page']", text: "Recupero e terapie manuali"
     assert_select ".pc-program-sheet__intro h1", text: "Recupero e terapie manuali"
     assert_select "a[href='#{posturacorretta_path(area: "espressione", parte: "movimento-allenamento")}']", text: /Continua.*Movimento e allenamento/
-    assert_select "a[href='#{posturacorretta_path(area: "intro")}']", text: /Indietro.*Intro/
+    assert_select "a[href='#{posturacorretta_path}']", text: /Indietro.*Home/
+
+    get posturacorretta_url(area: "intro")
+    assert_redirected_to posturacorretta_url
+    assert_response :moved_permanently
 
     get posturacorretta_url(area: "espressione", parte: "mente")
     assert_response :success
@@ -326,7 +334,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     get posturacorretta_url(area: "consapevolezza")
     assert_response :success
-    assert_select ".pc-index-cabinet__tab.is-active", text: "Consapevolezza"
+    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Home.*Consapevolezza/
     assert_select "nav[aria-label='Sezioni di Consapevolezza'] a[aria-current='page']", text: "Corso"
     assert_select "p", text: "Corso online"
     assert_select "span", text: "In preparazione"
@@ -346,7 +354,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".pc-landing-home", count: 1
-    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Percorso.*Percorso educativo/
+    assert_select "nav[aria-label='Percorso PosturaCorretta']", text: /Home.*Percorso educativo/
     assert_select ".pc-expression-tabs .pc-expression-tab", count: 4
     assert_select ".pc-expression-tab.is-selected", text: "Recupero e terapie manuali"
     assert_select ".pc-expression-tab", text: "Il corpo, un mondo da scoprire", count: 0
@@ -365,7 +373,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".pc-sheet__print", text: "Scarica o stampa Recupero e terapie manuali"
 
     get posturacorretta_espressione_url(parte: "intro")
-    assert_redirected_to posturacorretta_url(area: "intro")
+    assert_redirected_to posturacorretta_url
     assert_response :moved_permanently
 
     get posturacorretta_url(parte: "recupero-massaggio")
@@ -391,7 +399,7 @@ class NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".node-public-reading-nav-static", count: 0
 
     get posturacorretta_postura_recupero_url(tab: "percorso")
-    assert_redirected_to posturacorretta_url(area: "intro")
+    assert_redirected_to posturacorretta_url
     assert_response :moved_permanently
   end
 

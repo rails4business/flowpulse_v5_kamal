@@ -56,13 +56,26 @@ class RoleAssignment < ApplicationRecord
   validate :context_fields_match
   validate :parent_role_assignment_constraints
   validate :operator_assignment_matches_brand
-  validate :brand_access_matches_assignment, if: -> { brand_access.present? }
+  validate :brand_access_matches_assignment, if: -> { brand_access.present? && status != "revoked" }
 
   before_validation :normalize_role_operator
 
   scope :global, -> { where(context_type: nil, context_id: nil) }
   scope :for_context, ->(context) { where(context: context) }
   scope :active, -> { where(status: "active") }
+  scope :currently_effective, ->(at = Time.current) {
+    active.where("starts_at IS NULL OR starts_at <= ?", at)
+      .where("ends_at IS NULL OR ends_at > ?", at)
+  }
+
+  def effective_for_access?(access, at: Time.current)
+    return false unless operator? && status == "active" && access&.active?
+    return false unless brand_access_id == access.id && profile_id == access.profile_id
+    return false if (starts_at && starts_at > at) || (ends_at && ends_at <= at)
+    return false unless RoleDefinitions::Registry.assignable_to?(role_operator, brand_node: access.brand_node, node: context)
+
+    context.site_node == access.brand_node
+  end
 
   private
 
@@ -92,7 +105,7 @@ class RoleAssignment < ApplicationRecord
     end
 
     def operator_assignment_matches_brand
-      return unless operator?
+      return unless operator? && status != "revoked"
 
       unless context.is_a?(Node)
         errors.add(:context, "deve essere un Brand")
@@ -101,10 +114,12 @@ class RoleAssignment < ApplicationRecord
 
       errors.add(:parent, "deve essere l'ideatore del Brand") if parent != context.role_assignment
 
-      role_source = brand_access&.brand_node || context
-      registered_role_allowed = brand_access.present? &&
-        RoleDefinitions::Registry.compatible_with_brand?(role_operator, role_source)
-      unless registered_role_allowed || role_source.operator_role?(role_operator)
+      role_allowed = if brand_access.present?
+        RoleDefinitions::Registry.assignable_to?(role_operator, brand_node: brand_access.brand_node, node: context)
+      else
+        context.operator_role?(role_operator)
+      end
+      unless role_allowed
         errors.add(:role_operator, "non è previsto per questo Brand")
       end
     end

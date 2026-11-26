@@ -1,0 +1,50 @@
+---
+titolo: DEMO — FlowPulse Notifiche
+descrizione: 'Piano dimostrativo: configurare notifiche email. Nessun invio reale.'
+steps:
+- id: 01_email
+  titolo: Configurazione email
+  descrizione: Studiare Action Mailer e SMTP.
+  stima_minuti: 60
+  esempio: Usare configurazione locale e credenziali di test, senza inviare email.
+  stato:
+    progettazione: false
+    approvazione: false
+    implementazione: false
+    revisione: false
+    commit_push: false
+    deploy: false
+    pianificazione: true
+  impronte: {}
+  lavorazione:
+    progettazione: da_supervisionare
+  tempo_impiegato: 9
+  tempo_precedente_minuti: 0
+  sessioni:
+  - fase: progettazione
+    inizio: '2026-11-26T11:25:08+01:00'
+    fine: '2026-11-26T11:34:37+01:00'
+    modello: ''
+    note: ''
+    esito: pausa
+- id: 02_notifiche
+  titolo: Notifiche
+  descrizione: Progettare notifiche per eventi e impegni.
+  stima_minuti: 120
+  esempio: Definire destinatari, eventi, template e test senza dati personali.
+  stato:
+    progettazione: false
+    approvazione: false
+    implementazione: false
+    revisione: false
+    commit_push: false
+    deploy: false
+  impronte: {}
+  lavorazione:
+    progettazione: da_fare
+    approvazione: da_fare
+    implementazione: da_fare
+    revisione: da_fare
+  tempo_impiegato: 0
+  tempo_precedente_minuti: 0
+  sessioni: []

@@ -20,7 +20,7 @@ class Brands::Admin::PrivacyControllerTest < ActionDispatch::IntegrationTest
     get brand_admin_privacy_url(@brand.slug)
 
     assert_response :success
-    assert_select ".brand-admin-nav a[aria-current='page']", text: "Privacy"
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
     assert_select "h1", "Corpo e Coscienza · Privacy"
     assert_select "li", text: /Titolare e contatti/
     assert_select "strong", text: "corpoecoscienza.org"

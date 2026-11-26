@@ -5,6 +5,11 @@ class NodesController < ApplicationController
   allow_unauthenticated_access only: [:show, :domain_home, :domain_expression, :domain_node, :domain_journey]
 
   def domain_home
+    if params[:area] == "intro"
+      redirect_to posturacorretta_path, status: :moved_permanently
+      return
+    end
+
     if params[:area].blank? && params[:parte].to_s.in?(%w[corpo risorse])
       redirect_to posturacorretta_connessione_path(tab: params[:parte]), status: :moved_permanently
       return
@@ -38,7 +43,7 @@ class NodesController < ApplicationController
 
   def domain_expression
     if params[:parte] == "intro"
-      redirect_to posturacorretta_path(area: "intro"), status: :moved_permanently
+      redirect_to posturacorretta_path, status: :moved_permanently
       return
     end
 
@@ -61,7 +66,7 @@ class NodesController < ApplicationController
 
   def domain_journey
     if params[:tab] == "percorso"
-      redirect_to posturacorretta_path(area: "intro"), status: :moved_permanently
+      redirect_to posturacorretta_path, status: :moved_permanently
       return
     end
 

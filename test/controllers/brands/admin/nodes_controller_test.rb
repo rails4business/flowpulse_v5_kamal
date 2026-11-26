@@ -30,7 +30,7 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     assert_select "#brand-node-map-data", count: 0
     assert_select "body.brand-admin-body"
     assert_select "a", text: "Admin", count: 0
-    assert_select ".brand-admin-nav a[aria-current='page']", text: "Nodi"
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
     assert_select "nav[aria-label='Viste della rete PosturaCorretta'] a[href=?]",
       flowpulse_network_lanes_path("apprendimento-1-espressione", vista: "brand", corsie: "posturacorretta,apprendimento-1-espressione"),
       text: "Vista a corsie"
@@ -44,7 +44,7 @@ class Brands::Admin::NodesControllerTest < ActionDispatch::IntegrationTest
     get brand_admin_nodes_url(@brand.slug, view: "schema")
 
     assert_response :success
-    assert_select ".brand-admin-nav a[aria-current='page']", text: "Schema"
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
     assert_select "#brand-node-map-svg"
     assert_select "#brand-node-map-data", text: /Primo progetto/
     assert_select "#brand-node-map-data", text: /Iscrizione al percorso online/, count: 0

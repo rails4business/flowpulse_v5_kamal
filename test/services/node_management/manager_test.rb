@@ -43,9 +43,18 @@ class NodeManagement::ManagerTest < ActiveSupport::TestCase
     assert_equal "Outside", outside.reload.title
   end
 
+  test "a standalone call without explicit context cannot create a node" do
+    assert_no_difference -> { Node.count } do
+      assert_raises(NodeManagement::Manager::NotAuthorized) do
+        NodeManagement::Manager.new(actor: @user).create_child!(parent: @project, attributes: { title: "Without context" })
+      end
+    end
+  end
+
   private
 
     def manager
-      NodeManagement::Manager.new(actor: @user)
+      NodeManagement::Manager.new(actor: @user,
+        context: AccessContext::Resolver.new(user: @user, domain: @brand.domains.first).resolve)
     end
 end

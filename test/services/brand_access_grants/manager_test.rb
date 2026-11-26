@@ -19,7 +19,7 @@ class BrandAccessGrants::ManagerTest < ActiveSupport::TestCase
   end
 
   test "keeps the brand access active while another project grant remains" do
-    manager = BrandAccessGrants::Manager.new(actor: @entrepreneur)
+    manager = BrandAccessGrants::Manager.new(actor: @entrepreneur, context: context)
     first = manager.grant!(brand_access: @access, node: @project)
     second = manager.grant!(brand_access: @access, node: @child)
 
@@ -31,7 +31,7 @@ class BrandAccessGrants::ManagerTest < ActiveSupport::TestCase
   end
 
   test "cancels a managed brand access after its last grant is revoked" do
-    manager = BrandAccessGrants::Manager.new(actor: @entrepreneur)
+    manager = BrandAccessGrants::Manager.new(actor: @entrepreneur, context: context)
     grant = manager.grant!(brand_access: @access, node: @project)
 
     manager.revoke!(grant)
@@ -42,11 +42,17 @@ class BrandAccessGrants::ManagerTest < ActiveSupport::TestCase
 
   test "does not cancel a legacy global access" do
     @access.update!(grant_managed: false)
-    manager = BrandAccessGrants::Manager.new(actor: @entrepreneur)
+    manager = BrandAccessGrants::Manager.new(actor: @entrepreneur, context: context)
     grant = manager.grant!(brand_access: @access, node: @project)
 
     manager.revoke!(grant)
 
     assert @access.reload.active?
   end
+
+  private
+
+    def context
+      AccessContext::Resolver.new(user: @entrepreneur, domain: @access.source_domain).resolve
+    end
 end

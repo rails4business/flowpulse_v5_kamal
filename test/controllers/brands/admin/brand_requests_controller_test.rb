@@ -20,7 +20,7 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     get brand_admin_requests_url(@brand.slug)
 
     assert_response :success
-    assert_select ".brand-admin-nav a[aria-current='page']", text: "Richieste"
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
     assert_select "h1", "Corpo e Coscienza · Richieste"
     assert_select "#brand-request-#{@brand_request.id}", text: /Mario Rossi.*mario@example.com.*Milano/m
     assert_select "a[href='mailto:mario@example.com']"
@@ -29,6 +29,34 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     assert_select ".brand-admin-badge--request", text: "Ricerca professionista"
     assert_select ".brand-admin-badge--user", text: "Utente"
     assert_select "#brand-request-#{@brand_request.id}", text: /Senza account/
+  end
+
+  test "Brand dashboard moves legacy navigation links into the main page" do
+    sign_in(@owner)
+
+    get brand_admin_root_url(@brand.slug)
+
+    assert_response :success
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
+    assert_select "main a", text: /Nodi/
+    assert_select "main a", text: /Schema/
+    assert_select "main a", text: /Sviluppo/
+    assert_select "main a", text: /Richieste/
+    assert_select "main a", text: /Contenuti/
+    assert_select "main a", text: /Impegni/
+    assert_select "main a", text: /Privacy/
+  end
+
+  test "localhost resolves the current domain from the Brand slug in the route" do
+    access = BrandAccess.create!(profile: @profile, source_domain: @domain)
+    access.create_brand_credential!(brand_node: @brand, email_address: @owner.email_address, password: "password123")
+    host! "localhost"
+    post session_url, params: { site: @brand.slug, email_address: @owner.email_address, password: "password123" }
+
+    get brand_admin_requests_url(@brand.slug)
+
+    assert_response :success
+    assert_select ".brand-admin-site-link[href='/']", text: "Torna al sito"
   end
 
   test "requests linked to a profile show it next to the contact" do
@@ -247,6 +275,17 @@ class Brands::Admin::BrandRequestsControllerTest < ActionDispatch::IntegrationTe
     end
     assert_equal "accepted", @brand_request.reload.status
     assert_equal manager_profile, @brand_request.assigned_to_profile
+  end
+
+  test "a real brand host cannot open another brand administration through the route" do
+    other = Node.create!(title: "Another Brand", slug: "another-admin-brand", role_assignment: @brand.role_assignment)
+    domain = Domain.create!(hostname: "another-admin-brand.example", node: other, role_assignment: @brand.role_assignment)
+    host! domain.hostname
+    sign_in(@owner)
+
+    get brand_admin_requests_url(@brand.slug)
+
+    assert_response :not_found
   end
 
   private

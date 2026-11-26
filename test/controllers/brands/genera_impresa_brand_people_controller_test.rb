@@ -55,6 +55,20 @@ class Brands::GeneraImpresaBrandPeopleControllerTest < ActionDispatch::Integrati
     assert_select "a[href='#{admin_profile_path(@person_profile)}']", count: 0
   end
 
+  test "manager dashboard shows only GeneraImpresa functions allowed by the role" do
+    sign_in(@manager)
+
+    get brand_admin_root_url(@brand.slug)
+
+    assert_response :success
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
+    assert_select "main a", text: /Richieste/
+    assert_select "main a", text: /Persone/
+    assert_select "main a", text: /Progetti/
+    assert_select "main a", text: /Nodi/, count: 0
+    assert_select "main a", text: /Privacy/, count: 0
+  end
+
   test "manager revokes a GeneraImpresa access" do
     sign_in(@manager)
 

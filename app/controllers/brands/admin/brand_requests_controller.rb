@@ -63,23 +63,20 @@ module Brands
           return redirect_to brand_admin_requests_path(@brand.slug), alert: "Questa richiesta non può generare un invito."
         end
 
-        brand_request.brand_invitations.pending.update_all(status: "revoked", updated_at: Time.current)
-        invitation, raw_token = BrandInvitation.issue!(
-          brand_node: @brand,
-          source_domain: brand_request.domain.canonical_domain_record,
-          email_address: brand_request.participant_contact.email,
-          invited_by_user: Current.user,
-          brand_request:
+        invitation, raw_token = BrandInvitations::Issuer.new(actor: Current.user, context: dashboard_access_context).issue!(
+          domain: brand_request.domain, email_address: brand_request.participant_contact.email,
+          brand_request: brand_request
         )
-        brand_request.update!(status: "invited", assigned_to_profile: Current.user.profile)
 
         flash[:invitation_url] = invitation_link(invitation, raw_token)
         redirect_to brand_admin_requests_path(@brand.slug, state: "open", anchor: "brand-request-#{brand_request.id}"), notice: "Invito generato. Copia il collegamento e invialo personalmente."
+      rescue BrandAccesses::Authorization::NotAuthorized, ArgumentError, ActiveRecord::RecordInvalid => error
+        redirect_to brand_admin_requests_path(@brand.slug, state: "open"), alert: error.message
       end
 
       def approve_access
         brand_request = brand_requests.find(params[:id])
-        access = BrandRequests::AccessApprover.new(actor: Current.user).approve!(brand_request)
+        access = BrandRequests::AccessApprover.new(actor: Current.user, context: dashboard_access_context).approve!(brand_request)
         redirect_to brand_admin_requests_path(@brand.slug, state: "closed", status: "accepted", anchor: "brand-request-#{brand_request.id}"), notice: "Accesso a #{access.brand_node.title} concesso."
       rescue ActiveRecord::RecordInvalid, ArgumentError, BrandRequests::AccessApprover::NotAuthorized, BrandAccesses::Manager::NotAuthorized => error
         redirect_to brand_admin_requests_path(@brand.slug, state: "open", anchor: "brand-request-#{params[:id]}"), alert: error.message
@@ -132,24 +129,18 @@ module Brands
 
         def managed_request_node_ids
           @managed_request_node_ids ||= begin
-            assignments = Current.user&.profile&.role_assignments
-              &.active
-              &.where(role: :operator, role_operator: "imprenditore_generaimpresa")
-              &.includes(:context, :brand_access) || []
-            assignments.flat_map do |assignment|
-              next [] unless assignment.brand_access&.active?
-              next [] unless assignment.brand_access.brand_node_id == @brand.id
-              next [] unless assignment.context.is_a?(Node)
-
-              assignment.context.self_and_descendants.pluck(:id)
-            end.uniq
+            context = RoleAssignments::AccessPolicy.current_context(user: Current.user, context: dashboard_access_context)
+            if context&.brand == @brand && context.current_role_code == "imprenditore_generaimpresa"
+              context.current_role_assignment.context.self_and_descendants.select { |node| node.site_node == @brand }.map(&:id)
+            else
+              []
+            end
           end
         end
 
         def genera_impresa_manager?
-          domain = current_domain&.resolved_node == @brand ? current_domain : @brand.domains.active.first
-          context = AccessContext::Resolver.new(user: Current.user, domain: domain).resolve
-          context.current_role_code == "gestore_generaimpresa"
+          dashboard_access_context.current_role_code == "gestore_generaimpresa" &&
+            RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage_requests, node: @brand, context: dashboard_access_context)
         end
 
         def invitation_link(invitation, raw_token)

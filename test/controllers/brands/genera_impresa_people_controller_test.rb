@@ -52,6 +52,9 @@ class Brands::GeneraImpresaPeopleControllerTest < ActionDispatch::IntegrationTes
   private
 
     def sign_in(user)
+      host! @domain.hostname
+      access = user.profile.brand_accesses.find_by!(brand_node: @brand)
+      access.create_brand_credential!(brand_node: @brand, email_address: user.email_address, password: "password123") unless access.brand_credential
       post session_url, params: { email_address: user.email_address, password: "password123" }
     end
 end

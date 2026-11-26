@@ -5,30 +5,30 @@ class BrandInvitationsController < ApplicationController
 
   def create
     domain = Domain.active.where(primary: true).where.not(node_id: nil).find(params[:domain_id])
-    unless Current.user&.superadmin_user? || domain.node.administered_by?(Current.user)
-      head :forbidden
-      return
-    end
-
-    invitation, raw_token = BrandInvitation.issue!(
-      brand_node: domain.node,
-      source_domain: domain,
-      email_address: params.require(:email_address),
-      invited_by_user: Current.user,
-      role_code: params[:role_code]
+    invitation, raw_token = BrandInvitations::Issuer.new(actor: Current.user).issue!(
+      domain: domain, email_address: params.require(:email_address)
     )
     flash[:invitation_url] = invitation_url(invitation, raw_token)
     redirect_back fallback_location: root_path, notice: "Invito generato per #{invitation.email_address}. Copia e invia personalmente il collegamento."
+  rescue BrandAccesses::Authorization::NotAuthorized
+    head :forbidden
+  rescue ActiveRecord::RecordInvalid, ArgumentError => error
+    redirect_back fallback_location: root_path, alert: error.message
   end
 
   def show
     @invitation = BrandInvitation.find_pending_by_token(params[:token])
     unless @invitation
+      session.delete(:pending_brand_invitation_token)
       redirect_to root_path, alert: "L’invito è scaduto o non è più valido."
       return
     end
 
     session[:pending_brand_invitation_token] = params[:token]
+    remove_instance_variable(:@authentication_context_domain) if defined?(@authentication_context_domain)
+    return unless require_matching_invitation_context!
+
+    persist_authentication_context!
     destination = if BrandCredential.exists?(
       brand_node: @invitation.brand_node,
       email_address: @invitation.email_address

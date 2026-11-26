@@ -85,9 +85,120 @@ class RoleAssignments::ManagerTest < ActiveSupport::TestCase
     assert assignment.ends_at.present?
   end
 
+  test "superadmin must use an enabled registered role compatible with the brand" do
+    %w[unknown_role segreteria insegnante_posturacorretta utente superadmin].each do |code|
+      assert_no_difference -> { RoleAssignment.count } do
+        assert_raises(ArgumentError) do
+          manager.assign_operator!(profile: @profile, brand_access: @access, node: @brand, role_code: code)
+        end
+      end
+    end
+  end
+
+  test "repeated assignment is idempotent and preserves author dates and audit" do
+    assignment = assign_role
+    original = assignment.attributes
+
+    travel 1.minute do
+      assert_no_difference -> { RoleAssignment.count } do
+        assert_equal assignment, assign_role
+      end
+    end
+
+    assert_equal original, assignment.reload.attributes
+    assert_equal ["assigned"], assignment.audit_log.pluck("event")
+    assert_equal @superadmin.profile.id, assignment.audit_log.first.fetch("actor_profile_id")
+  end
+
+  test "revocation clears selection and preserves history when the same role is reactivated" do
+    assignment = assign_role
+    @access.select_role_assignment!(assignment)
+    manager.revoke!(assignment)
+
+    assert_nil @access.reload.current_role_assignment
+    assert_equal %w[assigned revoked], assignment.reload.audit_log.pluck("event")
+    assert_equal @superadmin.profile.id, assignment.audit_log.last.fetch("actor_profile_id")
+    snapshot = assignment.attributes
+    manager.revoke!(assignment)
+    assert_equal snapshot, assignment.reload.attributes
+
+    assert_equal assignment, assign_role
+    assert_equal %w[assigned revoked reactivated], assignment.reload.audit_log.pluck("event")
+    assert_nil assignment.ends_at
+  end
+
+  test "superadmin can revoke a historical assignment after the brand access was cancelled" do
+    assignment = assign_role
+    @access.cancel!
+
+    manager.revoke!(assignment)
+
+    assert_equal "revoked", assignment.reload.status
+    assert_equal %w[assigned revoked], assignment.audit_log.pluck("event")
+    assert_equal "cancelled", @access.reload.status
+  end
+
+  test "assigning across a nested brand boundary is invalid even for the superadmin" do
+    nested = Node.create!(title: "Nested Brand", parent: @brand, role_assignment: @root_assignment)
+    Domain.create!(hostname: "nested-role-manager.example", node: nested, role_assignment: @root_assignment)
+
+    assert_no_difference -> { RoleAssignment.count } do
+      assert_raises(ArgumentError) do
+        manager.assign_operator!(profile: @profile, brand_access: @access, node: nested, role_code: "imprenditore_generaimpresa")
+      end
+    end
+  end
+
+  test "a stale access is rechecked before assignment" do
+    stale_access = BrandAccess.find(@access.id)
+    @access.cancel!
+
+    assert_no_difference -> { RoleAssignment.count } do
+      assert_raises(ArgumentError) do
+        manager.assign_operator!(profile: @profile, brand_access: stale_access, node: @brand, role_code: "imprenditore_generaimpresa")
+      end
+    end
+  end
+
+  test "structural roles cannot be revoked through the operational role manager" do
+    assert_no_difference -> { RoleAssignment.count } do
+      assert_raises(ArgumentError) { manager.revoke!(@root_assignment) }
+    end
+    assert_equal "active", @root_assignment.reload.status
+    assert_empty @root_assignment.audit_log
+  end
+
+  test "assignment failure does not leave an audit event or a partial assignment" do
+    child_role = RoleAssignment.create!(profile: @profile, role: :creator, parent: @root_assignment)
+    @brand.update_column(:role_assignment_id, child_role.id)
+
+    assert_no_difference -> { RoleAssignment.count } do
+      assert_raises(ActiveRecord::RecordInvalid) { assign_role }
+    end
+
+    assert_empty RoleAssignment.operator.where(profile: @profile)
+    assert_empty @access.reload.role_assignments
+  end
+
+  test "a legacy superadmin without a profile keeps access and receives an audit identity" do
+    legacy = User.create!(email_address: "legacy-audit-superadmin@example.com", password: "password123", superadmin: true)
+
+    assert_difference -> { Profile.count }, 1 do
+      assignment = RoleAssignments::Manager.new(actor: legacy).assign_operator!(
+        profile: @profile, brand_access: @access, node: @brand, role_code: "imprenditore_generaimpresa"
+      )
+      assert_equal legacy.reload.profile, assignment.assigned_by_profile
+      assert_equal legacy.profile.id, assignment.audit_log.first.fetch("actor_profile_id")
+    end
+  end
+
   private
 
     def manager
       RoleAssignments::Manager.new(actor: @superadmin)
+    end
+
+    def assign_role
+      manager.assign_operator!(profile: @profile, brand_access: @access, node: @brand, role_code: "imprenditore_generaimpresa")
     end
 end

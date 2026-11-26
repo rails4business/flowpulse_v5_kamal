@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   helper_method :privacy_preferences_config
   helper_method :domain_admin_path, :domain_admin_profiles_path
   before_action :resume_session
+  before_action :set_current_access_context
   before_action :ensure_active_role_assignment
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
@@ -73,7 +74,15 @@ class ApplicationController < ActionController::Base
     end
 
     def dashboard_access_context
-      @dashboard_access_context ||= AccessContext::Resolver.new(user: Current.user, domain: current_domain).resolve
+      @dashboard_access_context ||= Current.access_context || AccessContext::Resolver.new(
+        user: Current.user, domain: current_domain || authentication_context_domain
+      ).resolve
+    end
+
+    def set_current_access_context
+      Current.access_context = AccessContext::Resolver.new(
+        user: Current.user, domain: current_domain || authentication_context_domain
+      ).resolve
     end
 
     def available_commitment_nodes
@@ -162,19 +171,6 @@ class ApplicationController < ActionController::Base
       return true if invitation&.pending? && invitation.source_domain&.canonical_domain_record == domain&.canonical_domain_record
 
       domain&.node&.administered_by?(profile&.user) || false
-    end
-
-    def complete_access_request_for!(invitation)
-      return if invitation.blank?
-
-      if (brand_request = invitation.brand_request)
-        # Chi accetta l'invito è la persona della richiesta: la colleghiamo al suo profilo.
-        brand_request.requester_profile ||= invitation.accepted_by_user&.profile
-        brand_request.close_as!("accepted")
-      end
-      Brands::Impegno::Commitment
-        .where("metadata ->> 'brand_invitation_id' = ?", invitation.id.to_s)
-        .update_all(status: "completed", resolved_at: Time.current, updated_at: Time.current)
     end
 
     def ensure_current_user_site_access!(domain)

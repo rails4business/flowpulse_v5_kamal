@@ -2,6 +2,7 @@ require "test_helper"
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
   setup do
+    host! "localhost"
     @owner = User.create!(email_address: "registration-owner@example.com", password: "password123")
     owner_profile = @owner.create_profile!(display_name: "Owner")
     assignment = RoleAssignment.create!(profile: owner_profile, role: :creator_of_worlds)
@@ -69,7 +70,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     )
     get brand_invitation_path(raw_token)
 
-    assert_no_difference -> { User.count } do
+    assert_no_difference [-> { User.count }, -> { Profile.count }, -> { RoleAssignment.count }] do
       assert_difference [-> { BrandAccess.count }, -> { BrandCredential.count }, -> { Session.count }], 1 do
         post users_path, params: {
           invitation: raw_token,
@@ -97,4 +98,60 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_select "li", text: /indirizzo invitato/
   end
+
+  test "registration rejects an invitation submitted on another brand host" do
+    invitation, token = invite("wrong-host@example.com")
+    other = Node.create!(title: "Other Brand", role_assignment: @node.role_assignment)
+    domain = Domain.create!(hostname: "other-registration.example", node: other, role_assignment: @node.role_assignment)
+    host! domain.hostname
+
+    assert_no_difference [-> { User.count }, -> { Profile.count }, -> { BrandAccess.count }, -> { Session.count }] do
+      post users_path, params: { invitation: token, user: registration_attributes(invitation.email_address) }
+    end
+
+    assert_redirected_to new_brand_access_request_path
+    assert invitation.reload.pending?
+  end
+
+  test "an expired explicit invitation does not fall back to a previously remembered invitation" do
+    remembered, remembered_token = invite("remembered@example.com")
+    expired, expired_token = invite("expired@example.com")
+    expired.update!(expires_at: 1.minute.ago)
+    get brand_invitation_path(remembered_token)
+
+    assert_no_difference [-> { User.count }, -> { BrandAccess.count }, -> { Session.count }] do
+      post users_path, params: { invitation: expired_token, user: registration_attributes(remembered.email_address) }
+    end
+
+    assert_redirected_to new_brand_access_request_path(site: "posturacorretta")
+    assert remembered.reload.pending?
+  end
+
+  test "failed password confirmation leaves no partial registration and allows a retry" do
+    invitation, token = invite("retry-registration@example.com")
+    attributes = registration_attributes(invitation.email_address)
+
+    assert_no_difference [-> { User.count }, -> { Profile.count }, -> { BrandAccess.count },
+        -> { BrandCredential.count }, -> { BrandAccessGrant.count }, -> { Session.count }] do
+      post users_path, params: { invitation: token, user: attributes.merge(password_confirmation: "different") }
+    end
+    assert_response :unprocessable_entity
+    assert invitation.reload.pending?
+
+    post users_path, params: { invitation: token, user: attributes }
+
+    assert_redirected_to "/posturacorretta/dashboard"
+    assert_equal "accepted", invitation.reload.status
+    assert_equal 1, User.where(email_address: invitation.email_address).count
+  end
+
+  private
+
+    def invite(email)
+      BrandInvitation.issue!(brand_node: @node, source_domain: @domain, email_address: email, invited_by_user: @owner)
+    end
+
+    def registration_attributes(email)
+      { email_address: email, password: "brand-password", password_confirmation: "brand-password" }
+    end
 end

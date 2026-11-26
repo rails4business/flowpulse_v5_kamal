@@ -16,7 +16,7 @@ module Brands
 
     def destroy
       grant = BrandAccessGrant.where(node_id: @project.self_and_descendants.select(:id)).find(params[:id])
-      BrandAccessGrants::Manager.new(actor: Current.user).revoke!(grant)
+      BrandAccessGrants::Manager.new(actor: Current.user, context: dashboard_access_context).revoke!(grant)
       redirect_to genera_impresa_project_people_path(@project), notice: "Accesso di #{grant.brand_access.profile.display_name} revocato dal progetto."
     rescue BrandAccessGrants::Manager::NotAuthorized, ActiveRecord::RecordInvalid => error
       redirect_to genera_impresa_project_people_path(@project), alert: error.message
@@ -30,7 +30,7 @@ module Brands
 
       def set_project
         @project = @brand.self_and_descendants.find(params[:project_id])
-        return if RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage_access, node: @project)
+        return if RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage_access, node: @project, context: dashboard_access_context)
 
         raise ActiveRecord::RecordNotFound
       end

@@ -21,7 +21,7 @@ class Brands::Admin::ContentsControllerTest < ActionDispatch::IntegrationTest
     get brand_admin_contents_url(@professional.slug)
 
     assert_response :success
-    assert_select ".brand-admin-nav a[aria-current='page']", text: "Contenuti"
+    assert_select ".brand-admin-nav a", count: 1, text: "Dashboard"
     assert_select "tr##{ActionView::RecordIdentifier.dom_id(@article)} td", text: "autrice-contenuti.test"
     assert_select "tr##{ActionView::RecordIdentifier.dom_id(@course)} td", text: "progetto-contenuti.test"
     assert_select "td", text: /Corso di altri/, count: 0

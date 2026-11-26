@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_25_143000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_26_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -884,6 +884,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_143000) do
     t.string "status", default: "active", null: false
     t.datetime "starts_at"
     t.datetime "ends_at"
+    t.jsonb "audit_log", default: [], null: false
     t.index ["assigned_by_profile_id"], name: "index_role_assignments_on_assigned_by_profile_id"
     t.index ["brand_access_id"], name: "index_role_assignments_on_brand_access_id"
     t.index ["context_type", "context_id"], name: "index_role_assignments_on_context_type_and_context_id"

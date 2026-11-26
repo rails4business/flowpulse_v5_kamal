@@ -1,0 +1,12 @@
+progettazione: >-
+  Analizza il codice esistente e compila progettazione.md. Definisci soluzione, database, model, controller, viste e criteri di accettazione. Non modificare il codice applicativo.
+approvazione: >-
+  Analizza progettazione.md e registra criticità e correzioni proposte in approvazione.md. Non approvare il lavoro.
+implementazione: >-
+  Verifica che progettazione e approvazione siano state confermate dall'utente. Leggi i documenti e implementa solo la soluzione approvata. Registra modifiche e test in implementazione.md. Non effettuare commit, push o deploy.
+revisione: >-
+  Analizza git diff ed esegui i test pertinenti. Registra errori, aggiornamenti e risultati in revisione.yml. Non correggere autonomamente il codice.
+commit_push: >-
+  Verifica le modifiche e proponi il messaggio di commit. Attendi un ordine esplicito separato per commit e push. Registra gli esiti in commit_push.md.
+deploy: >-
+  Verifica la configurazione e proponi i comandi di deploy. Non eseguirli senza autorizzazione esplicita. Registra gli esiti in deploy.md.

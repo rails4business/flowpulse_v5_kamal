@@ -2,6 +2,7 @@ require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
   setup do
+    host! "localhost"
     @user = User.create!(email_address: "traveler@example.com", password: "password123")
     @user.create_profile!(display_name: "Traveler")
     @owner = User.create!(email_address: "owner@example.com", password: "password123")
@@ -157,6 +158,72 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "accepted", invitation.reload.status
     assert_equal 2, @user.profile.brand_accesses.active.count
     assert_not_equal first, @user.sessions.last.brand_access
+  end
+
+  test "login on another brand host cannot consume an invitation" do
+    invitation, token = BrandInvitation.issue!(
+      brand_node: @node, source_domain: @domain, email_address: @user.email_address, invited_by_user: @owner
+    )
+    other = Node.create!(title: "Other login Brand", role_assignment: @assignment)
+    domain = Domain.create!(hostname: "other-login.example", node: other, role_assignment: @assignment)
+    host! domain.hostname
+
+    assert_no_difference -> { Session.count } do
+      post session_path, params: { invitation: token, email_address: @user.email_address, password: "password123" }
+    end
+
+    assert_redirected_to new_brand_access_request_path
+    assert invitation.reload.pending?
+  end
+
+  test "an active credential cannot log into a cancelled brand access without a new invitation" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    create_credential(access)
+    access.cancel!
+    host! @domain.hostname
+
+    assert_no_difference -> { Session.count } do
+      post session_path, params: { email_address: @user.email_address, password: "password123" }
+    end
+
+    assert_redirected_to new_session_path
+    assert_equal "cancelled", access.reload.status
+  end
+
+  test "a new invitation allows existing brand credentials to reactivate access during login" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    credential = create_credential(access)
+    access.cancel!
+    travel 1.minute do
+      invitation, token = BrandInvitation.issue!(
+        brand_node: @node, source_domain: @domain, email_address: @user.email_address, invited_by_user: @owner
+      )
+      host! @domain.hostname
+      get brand_invitation_path(token)
+
+      assert_no_difference [-> { User.count }, -> { Profile.count }, -> { BrandAccess.count }, -> { BrandCredential.count }] do
+        assert_difference -> { Session.count }, 1 do
+          post session_path, params: { invitation: token, email_address: @user.email_address, password: "password123" }
+        end
+      end
+
+      assert_equal "accepted", invitation.reload.status
+    end
+
+    assert access.reload.active?
+    assert credential.reload.authenticate("password123")
+    assert @user.sessions.last.active?
+  end
+
+  test "an unknown explicit local brand cannot fall back to the global password" do
+    host! "localhost"
+
+    assert_no_difference -> { Session.count } do
+      post session_path, params: { site: "missing-brand", email_address: @user.email_address, password: "password123" }
+    end
+
+    assert_redirected_to root_path
+    assert_equal "Brand non disponibile.", flash[:alert]
   end
 
   private

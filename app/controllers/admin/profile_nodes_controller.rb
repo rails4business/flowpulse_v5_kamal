@@ -9,9 +9,9 @@ module Admin
       accessible_node_ids = @brand_accesses.flat_map { |access| access.brand_node.self_and_descendants.pluck(:id) }.uniq
       brand_node_ids = @brand_accesses.map(&:brand_node_id)
       @responsibility_nodes = Node.where(id: accessible_node_ids).where.not(id: brand_node_ids).order(:title)
-      @responsibility_role_options = RoleDefinitions::Registry.all.select do |definition|
-        @brand_accesses.any? { |access| RoleDefinitions::Registry.compatible_with_brand?(definition.code, access.brand_node) }
-      end
+      @responsibility_role_options = @brand_accesses.flat_map do |access|
+        RoleDefinitions::Registry.for_brand(access.brand_node)
+      end.uniq(&:code)
     end
 
     def show

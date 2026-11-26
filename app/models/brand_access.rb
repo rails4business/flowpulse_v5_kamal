@@ -12,6 +12,7 @@ class BrandAccess < ApplicationRecord
 
   before_validation :sync_brand_node_from_source_domain
   before_validation :set_defaults
+  before_validation :clear_ineffective_current_role_assignment, unless: :will_save_change_to_current_role_assignment_id?
 
   validates :status, presence: true, inclusion: { in: STATUSES }
   validates :brand_node_id, uniqueness: { scope: :profile_id, message: "ha già un accesso per questo brand" }
@@ -61,7 +62,14 @@ class BrandAccess < ApplicationRecord
   end
 
   def select_role_assignment!(assignment)
-    update!(current_role_assignment: assignment)
+    with_lock do
+      assignment&.reload
+      if assignment && !assignment.effective_for_access?(self)
+        errors.add(:current_role_assignment, "deve essere valido nel Brand e nel periodo corrente")
+        raise ActiveRecord::RecordInvalid, self
+      end
+      update!(current_role_assignment: assignment)
+    end
   end
 
   private
@@ -97,8 +105,14 @@ class BrandAccess < ApplicationRecord
       if current_role_assignment.profile_id != profile_id
         errors.add(:current_role_assignment, "deve appartenere allo stesso profilo")
       end
-      unless current_role_assignment.status == "active"
-        errors.add(:current_role_assignment, "deve essere attivo")
+      unless current_role_assignment.effective_for_access?(self)
+        errors.add(:current_role_assignment, "deve essere valido nel Brand e nel periodo corrente")
+      end
+    end
+
+    def clear_ineffective_current_role_assignment
+      if current_role_assignment && !current_role_assignment.effective_for_access?(self)
+        self.current_role_assignment = nil
       end
     end
 end

@@ -5,15 +5,23 @@ devono evolvere con un solo piano di migrazione.
 
 - Prima analisi: 23 novembre 2026.
 - Revisione completa: 24 novembre 2026.
+- Piano operativo aggiornato: 26 novembre 2026, inclusa la registrazione al Brand.
 - Caso guida: Elisa Corubolo / Radioestesia e Benessere.
 - Incorpora e sostituisce `docs/creator_node_profile_ruoli.md`.
+
+**Stato corrente:** passi 1–4 del [piano operativo unico](#piano-operativo-unico) implementati e
+verificati in locale il 26 novembre; resta il collaudo dopo il deploy. Il prossimo intervento è il
+passo 5, dashboard e aside. Prima consolidare registrazione, Profile e BrandAccess; poi uniformare
+ruoli, autorizzazioni e navigazione; soltanto alla fine rimuovere i campi legacy.
+Gli inventari datati sono storici: non certificano lo stato attuale della produzione e non sono
+ulteriori sequenze da eseguire.
 
 ## Decisione sintetica
 
 Il modello distingue sette elementi:
 
 1. `Profile` è l'identità globale e identifica la persona.
-2. `User` è un contenitore tecnico transitorio; per ora conserva login e privilegio del superadmin.
+2. `User` è un contenitore tecnico transitorio per associazioni e fallback legacy.
 3. `BrandAccess` autorizza un Profile a entrare nel perimetro di un Brand.
 4. `BrandCredential` autentica quel Profile con email e password specifiche del Brand.
 5. `RoleAssignment` stabilisce cosa può fare quel Profile, su quale Node e attraverso quale
@@ -32,6 +40,18 @@ Il ruolo generico `creator_flowpulse` non viene introdotto. `creator_generaimpre
 `imprenditore_generaimpresa`. I ruoli strutturali legacy `ideatore`, `admin` e `responsabile`
 devono essere migrati e rimossi; `superadmin` resta un privilegio di sistema.
 
+Il flusso parte **prima dei ruoli**:
+
+```text
+Domain → Brand Node → richiesta / invito autorizzato
+  → crea o collega il Profile → concede BrandAccess → configura BrandCredential → Session Brand
+  → eventuale RoleAssignment → ruolo corrente → azioni e navigazione consentite
+```
+
+L'approvazione concede l'accesso, non un ruolo `utente`. Profile, accesso e credenziale vengono
+riutilizzati quando già presenti e validi; non si crea una persona nuova per ogni dominio.
+`PlatformCredential` e `SystemRoleAssignment` gestiscono separatamente il superadmin.
+
 ---
 
 ## 1. Entità e responsabilità
@@ -40,18 +60,21 @@ devono essere migrati e rimossi; `superadmin` resta un privilegio di sistema.
 
 `User` resta temporaneamente per compatibilità con associazioni e codice legacy.
 
-- conserva per ora `superadmin` e la relativa password di piattaforma;
-- la password diventa opzionale e non viene generata per gli utenti ordinari;
+- conserva ancora flag e password legacy come fallback; il percorso primario del superadmin usa
+  già `PlatformCredential` e `SystemRoleAssignment`;
+- obiettivo successivo: password opzionale, poi rimossa; oggi la registrazione genera ancora una
+  password tecnica casuale sullo User e salva la password scelta nella BrandCredential;
 - non è la fonte dei ruoli di Brand;
 - non deve contenere duplicati come `role`, `active_role`, `creator` o `digital`;
-- può mantenere temporaneamente `current_role_assignment_id` come selezione del contesto attivo,
-  non come sorgente del permesso.
+- conserva temporaneamente `active_role` e `current_role_assignment_id` per i consumatori legacy;
+  la selezione corretta è sul BrandAccess e non deve dipendere da questi campi globali.
 
 Il superadmin può configurare qualsiasi risorsa senza dipendere da un `BrandAccess`, ma le
 assegnazioni create per altre persone devono rispettare il nuovo modello.
 
-Quando `superadmin` sarà migrato a una credenziale e a un ruolo di sistema, le dipendenze residue
-potranno essere spostate su Profile e User potrà essere eliminato.
+L'isolamento del superadmin è già implementato. User potrà essere eliminato soltanto dopo la
+migrazione delle dipendenze residue e dell'identità email, non insieme alla sola rimozione di
+`active_role`.
 
 ### Profile — identità globale
 
@@ -110,7 +133,8 @@ La Session Brand collega:
 
 Il dominio determina automaticamente il Brand. La Session non può essere riutilizzata in un Brand
 diverso e diventa inefficace quando BrandAccess o BrandCredential non sono più attivi. Il login
-FlowPulse del superadmin resta temporaneamente una Session di piattaforma basata su User.
+FlowPulse del superadmin usa una Session di piattaforma con Profile e PlatformCredential; il
+riferimento a User e il fallback legacy restano temporaneamente.
 
 ### Modello finale dell'identità
 
@@ -124,10 +148,9 @@ Profile
 └── eventuale SystemRoleAssignment
 ```
 
-`PlatformCredential` e `SystemRoleAssignment` costituiscono il primo passaggio della nuova
-migrazione. Servono a isolare subito password e privilegio del superadmin senza trasferire
-credenziali Brand sul Profile. La migrazione è inizialmente additiva: il vecchio accesso User resta
-come fallback finché il nuovo login di piattaforma non è stato verificato in locale e produzione.
+`PlatformCredential` e `SystemRoleAssignment` sono già implementati e il primo collaudo di
+produzione è registrato nello storico del 25 novembre. Isolano password e privilegio del superadmin
+senza trasferire credenziali Brand sul Profile. Il fallback User non è ancora rimosso.
 
 Il Profile necessita inoltre di un'identità verificata indipendente dalle credenziali Brand. Il
 nome definitivo (`ProfileEmail`, `ProfileIdentity` o equivalente) va confermato nel relativo gate,
@@ -164,7 +187,9 @@ Vincoli:
 - il BrandAccess deve essere attivo quando il ruolo viene usato;
 - il codice deve essere ammesso nel Brand e nel tipo di Node;
 - database, modello e servizio devono impedire assegnazioni incompatibili;
-- l'assegnante non può delegare privilegi superiori ai propri;
+- l'assegnante può conferire soltanto i ruoli autorizzati dalla propria regola di delega e nel
+  perimetro previsto; il potere di assegnare un ruolo è esplicito e non deriva da una graduatoria
+  generica fra ruoli;
 - la revoca dell'accesso prevale sullo stato del ruolo.
 
 Durante la migrazione `context` può restare polimorfico, ma il contesto operativo deve essere un
@@ -178,7 +203,7 @@ Node verificabile.
 
 | Codice | Collocazione | Significato |
 |---|---|---|
-| `superadmin` | temporaneamente `users.superadmin` | governo globale della piattaforma |
+| `superadmin` | `SystemRoleAssignment`, con fallback temporaneo a `users.superadmin` | governo globale della piattaforma |
 
 Non è un `RoleAssignment`, non è delegabile da un Brand e non richiede BrandAccess.
 
@@ -216,12 +241,14 @@ globale.
 
 ### Registro unico dei ruoli
 
-I codici e le loro regole devono avere una sola fonte applicativa, per esempio
+I codici e le loro regole devono avere una sola fonte applicativa: l'esistente
 `RoleDefinitions::Registry`. Non devono più essere definiti in modo concorrente fra enum,
 `nodes.yml`, `domains.yml`, helper e controller.
 
 Per ogni `role_code` il registro descrive almeno:
 
+- `scope`: ruolo di uno specifico Brand (`brand`) oppure condiviso (`shared`);
+- `enabled`: se è utilizzabile oppure riservato a un'estensione futura;
 - etichetta e Brand compatibili;
 - tipi di Node sui quali è assegnabile;
 - azioni/capability consentite;
@@ -231,6 +258,74 @@ Per ogni `role_code` il registro descrive almeno:
 
 Il registro definisce le regole; `RoleAssignment` conserva l'assegnazione concreta. Eventuali dati
 variabili per una singola assegnazione restano nel database e non nel registro.
+
+Le definizioni specificano `node_types`, oggi `professional` e `project` per i ruoli esistenti,
+e conservano il limite di sette Node dell'imprenditore. Un ruolo `brand` deve avere una lista
+esplicita di Brand compatibili. `segreteria` è una definizione `shared` **disabilitata**: resta
+consultabile come codice/etichetta, ma non viene proposta per nuove assegnazioni e non concede
+capability. Utente ordinario e superadmin non sono definizioni di ruolo contestuale.
+
+`delegatable_role_codes` è l'unica lista dei ruoli che l'assegnante può conferire: il vecchio flag
+`delegatable` è stato rimosso. Le liste attuali sono tutte vuote. `delegation_allowed?` verifica
+definizione attiva, Brand compatibile e codice destinatario esplicitamente consentito; la policy
+deve inoltre verificare Profile, accesso e perimetro concreto. Le strutture delle definizioni sono
+immutabili, per evitare modifiche accidentali ai permessi durante l'esecuzione.
+
+### Base standard ed estensibilità — decisione del 26 novembre 2026
+
+Prima di sostituire le dipendenze da `users.active_role`, consolidare un comportamento comune:
+dominio corrente → Brand Node → BrandAccess del Profile → RoleAssignment corrente → definizione
+del ruolo e azioni consentite. Il dominio viene risolto dall'host in produzione e dal parametro
+locale; più domini dello stesso Brand condividono le definizioni dei ruoli.
+
+La base distingue:
+
+| Caso | Rappresentazione |
+|---|---|
+| Utente ordinario del Brand | BrandAccess attivo, senza incarico operativo corrente; nessun RoleAssignment `utente` |
+| Ruolo specifico di un Brand | Definizione nel registro con Brand compatibili espliciti |
+| Ruolo condiviso | Definizione riutilizzabile, ma ogni assegnazione resta legata a BrandAccess e Node; `segreteria` è un esempio futuro |
+| Superadmin | SystemRoleAssignment di sistema, separato dai ruoli contestuali |
+
+L'operazione comune è **assegnare un RoleAssignment**. Tra un ruolo gestionale e un eventuale ruolo
+di «mastro insegnante» cambia l'elenco dei ruoli che ciascuno può assegnare. Per questa base non si
+introduce un flusso separato di formazione o promozione: l'esempio formativo esprime una diversa
+regola di assegnazione.
+
+Esempi illustrativi, senza attivare nuovi ruoli o permessi:
+
+| Ruolo dell'assegnante | Ruoli assegnabili, se previsti dalla definizione |
+|---|---|
+| Responsabile incaricato del Brand | Mastro insegnante e/o insegnante nel Brand affidato |
+| Mastro insegnante | Insegnante nel proprio perimetro |
+| Insegnante | Soltanto gli eventuali ruoli esplicitamente abilitati; lista vuota in assenza di delega |
+
+Il registro esprime questa relazione tramite `delegatable_role_codes`; la policy verifica
+l'incarico concreto dell'assegnante, il Node di destinazione e il BrandAccess del destinatario.
+Un ruolo può autorizzare l'assegnazione di un ruolo differente senza che l'assegnante debba possedere
+personalmente anche quel ruolo. Non esiste una scala fissa «superiore/inferiore» che conceda
+automaticamente tutti i permessi dei ruoli successivi.
+
+L'esempio MarkPostura / PosturaCorretta indica un requisito di estensione: un
+`imprenditore_generaimpresa` incaricato del governo di uno specifico Brand Node potrà ricevere
+la facoltà di assegnare determinati ruoli di quel Brand. La facoltà dovrà essere dichiarata dalla
+policy per il Brand affidato, senza estendersi a tutti i Brand di GeneraImpresa. Il solo
+`responsible_profile_id` o una relazione padre/figlio tra Node non concede tale facoltà.
+
+Quando Brand di origine dell'incarico e Brand di destinazione sono diversi, occorrerà una regola
+esplicita che riconosca l'incarico di governo sul Brand affidato. Il RoleAssignment creato resta
+collegato al BrandAccess attivo del destinatario nel Brand di destinazione e deve essere compatibile
+con quel Brand e Node. Non basta aggiungere un codice alla lista per abilitare una delega tra Brand:
+il caso va prima supportato e verificato dalla policy.
+
+L'identità rimane sempre un Profile: un utente già ammesso al Brand potrà ricevere successivamente
+il ruolo di insegnante, senza creare un'altra persona o un altro tipo di account. Nomi dei ruoli,
+relazioni di delega e gerarchie degli esempi non sono decisioni operative definitive.
+
+Stato: requisito progettuale documentato. La policy corrente dell'imprenditore mantiene la lista
+dei ruoli delegabili vuota. In questa fase non vengono attivati mastro insegnante, segreteria o
+deleghe tra Brand. Dopo il consolidamento della base comune, la ricerca del legacy servirà a
+migrare ogni utilizzo verso questo comportamento standard.
 
 ### Ruoli legacy da eliminare
 
@@ -248,7 +343,7 @@ I valori numerici rimossi dagli enum non devono essere riutilizzati.
 
 ## 3. Proprietà e governo dei Node
 
-Si aggiunge al Node `responsible_profile_id`, non il generico `profile_id`. Il campo indica il
+Il Node dispone già di `responsible_profile_id`, non del generico `profile_id`. Il campo indica il
 **responsabile principale corrente** e può essere trasferito a un altro Profile. Serve per mostrare
 rapidamente il referente, costruire gli indici dei progetti e rappresentare il passaggio di
 responsabilità.
@@ -287,11 +382,11 @@ RoleAssignment.
 Un profilo può amministrare un Node se:
 
 1. possiede BrandAccess attivo sul Brand che contiene il Node;
-2. possiede RoleAssignment attivo sul Node o su un antenato ereditabile;
-3. il ruolo include l'azione richiesta;
+2. opera con un RoleAssignment corrente valido sul Node o su un antenato ereditabile;
+3. il ruolo corrente include l'azione richiesta;
 4. non esistono revoche o limiti più restrittivi.
 
-Il controllo riceve almeno azione, profilo e Node. Non basta mai
+Il controllo riceve azione, Node e contesto risolto del Profile nel Brand. Non basta mai
 `user.has_role?(codice)` senza contesto.
 
 ---
@@ -300,13 +395,13 @@ Il controllo riceve almeno azione, profilo e Node. Non basta mai
 
 ### Ingresso
 
-1. La persona accetta un invito e ottiene Profile e, durante la transizione, uno User tecnico senza
-   password globale.
-2. Presenta o accetta una richiesta per GeneraImpresa.
-3. Il superadmin o il `gestore_generaimpresa` verifica identità, richiesta e perimetro sulla radice
-   GeneraImpresa.
-4. L'accettazione crea o attiva il BrandAccess GeneraImpresa.
-5. Soltanto dopo può essere creato un RoleAssignment.
+1. La persona richiede accesso a GeneraImpresa, oppure riceve un invito diretto autorizzato.
+2. Il superadmin o il `gestore_generaimpresa` verifica la richiesta sulla radice GeneraImpresa.
+3. Se il Profile è già collegato, può approvare il BrandAccess; altrimenti emette l'invito che
+   permette di creare o collegare il Profile e attivare l'accesso durante la registrazione.
+4. La persona configura la BrandCredential mancante oppure accede con quella esistente. User
+   resta un ponte tecnico durante la transizione; non è la credenziale scelta per il Brand.
+5. Soltanto con BrandAccess attivo può essere assegnato un eventuale RoleAssignment.
 
 La richiesta accettata non assegna automaticamente un incarico amministrativo: accesso e ruolo
 restano due decisioni esplicite e tracciate.
@@ -315,11 +410,13 @@ restano due decisioni esplicite e tracciate.
 
 1. Il superadmin crea il Node progetto sotto GeneraImpresa.
 2. Verifica il BrandAccess attivo della persona.
-3. Assegna `imprenditore_generaimpresa` sulla radice, se serve a identificarne la funzione.
-4. Assegna lo stesso ruolo sul Node progetto affidato.
+3. Individua il perimetro concreto dell'incarico; un ruolo sulla radice concede poteri sulla radice
+   e non va usato come semplice etichetta identificativa.
+4. Assegna `imprenditore_generaimpresa` sul Node progetto affidato.
 5. Imposta `responsible_profile_id` del progetto sul Profile affidatario.
 6. Il profilo può amministrare il progetto e, secondo policy, i figli.
-7. Un dominio può essere collegato in seguito senza cambiare accesso o ruoli.
+7. Un dominio può essere collegato in seguito; se introduce un Brand distinto, accessi e incarichi
+   nel nuovo perimetro vanno definiti esplicitamente, senza estensione automatica dei permessi.
 
 Nella prima fase l'imprenditore non crea progetti direttamente sotto la radice GeneraImpresa: può
 creare discendenti di progetti già affidati. Una futura estensione richiederà una capability
@@ -327,13 +424,17 @@ esplicita, non `creator_flowpulse`.
 
 ### Delega futura
 
-L'imprenditore potrà assegnare altri ruoli soltanto:
+La delega ordinaria dell'imprenditore all'interno dello stesso Brand sarà ammessa soltanto:
 
 - a profili con BrandAccess attivo sul medesimo Brand;
 - sul proprio Node o sottoalbero;
 - entro una matrice di ruoli delegabili;
 - senza concedere privilegi globali;
 - tramite un servizio unico con audit.
+
+L'eventuale delega verso un Brand affidato distinto è l'estensione descritta in «Base standard ed
+estensibilità»: richiede una regola esplicita di governo del Brand di destinazione e non è ancora
+abilitata.
 
 ### Policy iniziale di `imprenditore_generaimpresa`
 
@@ -406,22 +507,19 @@ Ogni scheda distingue:
 
 ## 7. Servizio e policy unici
 
-Un servizio, per esempio `BrandRoleAssignmentService`, è l'unico punto ordinario di scrittura. Deve
+L'esistente `RoleAssignments::Manager` diventa l'unico punto ordinario di scrittura. Deve
 verificare assegnante, destinatario, BrandAccess attivo, compatibilità Profile/Brand/Node, ruolo
 ammesso, perimetro, assenza di escalation, idempotenza e audit.
 
-Le letture passano da una policy unica, per esempio:
-
-```ruby
-profile.allowed_on?(action, node)
-```
-
-La policy risolve accesso, assegnazioni dirette, ereditarietà dagli antenati e stati.
+Le letture passano dall'esistente `RoleAssignments::AccessPolicy`, ricevendo il contesto risolto
+da `AccessContext::Resolver`: accesso, incarico corrente, Node, ereditarietà consentita e stati.
+Non serve introdurre un secondo modello `AccessRole` o un altro manager concorrente.
 
 ### Compatibilità del superadmin
 
 Durante tutte le fasi il superadmin conserva l'accesso completo alle funzioni esistenti. La policy
-restituisce quindi accesso consentito per `user.superadmin?` prima di valutare BrandAccess e ruoli.
+riconosce il superadmin tramite il controllo centrale `superadmin_user?`, già basato sul ruolo di
+sistema con fallback legacy, prima di valutare BrandAccess e ruoli.
 
 Il bypass vale per l'accesso del superadmin, non per la qualità dei dati che crea: quando assegna un
 ruolo a un altro Profile deve comunque usare il servizio unico, collegare un BrandAccess valido e
@@ -438,7 +536,8 @@ produrre un RoleAssignment coerente e verificabile.
 - alcuni controlli verificano soltanto `insegnante`, `professionista`, `teacher`, `tutor` o
   `professional`, senza Node.
 - `domains.yml#operational_roles` duplica `nodes.yml#operator_roles` e può sovrascriverlo.
-- la scheda superadmin assegna ancora `creator_generaimpresa` sotto l'Ideatore GeneraImpresa.
+- restano alias e dati storici `creator_generaimpresa`; il nome corrente è
+  `imprenditore_generaimpresa`, da preservare nei flussi nuovi.
 
 Da sostituire almeno: `creator_user?`, `digital_user?`, `responsabile_user?`, `teacher_user?`,
 `tutor_user?`, `professional_user?`, `operator_access?` senza contesto, dashboard basate su
@@ -448,40 +547,351 @@ Da sostituire almeno: `creator_user?`, `digital_user?`, `responsabile_user?`, `t
 
 ## 9. Piano di migrazione
 
-La migrazione è incrementale: nuovo modello accanto al legacy, spostamento di dati e letture,
-eliminazione finale delle colonne obsolete.
+<a id="piano-operativo-unico"></a>
+### Piano operativo unico — 26 novembre 2026
 
-### Sequenza operativa unificata
+**Obiettivo:** un ingresso al Brand e un comportamento amministrativo comuni, riusando il codice
+già presente. Ogni passo produce una modifica circoscritta, verificabile prima del successivo.
+Non si parte cancellando colonne o ricreando le funzionalità esistenti.
 
-Le parti già implementate restano in funzione. Il lavoro nuovo segue questi blocchi, senza iniziare
-la rimozione di User o dei ruoli legacy prima che il blocco precedente sia verificato.
+| Passo | Risultato atteso | Punto di partenza |
+|---|---|---|
+| 1. Registrazione al Brand | Profile, BrandAccess, credenziale e richiesta collegati correttamente | implementato e verificato in locale; collaudo di produzione dopo il deploy |
+| 2. Contratto dei ruoli | un registro definisce azioni, Brand e ruoli assegnabili | consolidato e verificato in locale |
+| 3. Contesto corrente | dominio + accesso + incarico corrente determinano il contesto | consolidato e verificato in locale |
+| 4. Autorizzazioni e assegnazioni | la stessa policy protegge azioni e concessione dei ruoli | implementato e verificato in locale |
+| 5. Dashboard e aside | stessa struttura, contenuti limitati a Brand e ruolo corrente | pannelli parzialmente uniformati |
+| 6. Sostituzione del legacy | nessuna lettura o scrittura dei vecchi selettori User | migrazione per area, colonne ancora conservate |
+| 7. Rimozione dei campi | eliminare i due selettori User ormai inutilizzati | solo dopo distribuzione e verifica del passo 6 |
 
-1. **Fondazioni di accesso e ruoli — eseguito:** BrandAccess, registro ruoli, RoleAssignment
-   contestuali, manager/policy, responsabile Node e pannelli iniziali.
-2. **Isolamento superadmin — implementato e verificato in produzione:**
-   PlatformCredential, SystemRoleAssignment e Session di piattaforma; backfill dell'attuale
-   superadmin e doppio accesso temporaneo anti-lockout.
-3. **Autenticazione Brand — implementata e sottoposta a backfill in produzione:**
-   BrandCredential, login e inviti per Brand, Session collegata
-   a Profile/accesso/credenziale, User ordinario senza password globale.
-4. **Verifica end-to-end — parziale:** superadmin e backfill verificati; resta da completare la
-   verifica email e il login Brand di Elisa.
-5. **Identità verificata del Profile — prossimo blocco:** introdurre ProfileEmail/ProfileIdentity, collegare gli
-   indirizzi verificati e sostituire la ricerca globale basata su `users.email_address`.
-6. **Recupero credenziali:** reset e verifica email separati per BrandCredential; percorso distinto
-   per il superadmin.
-7. **Migrazione autorizzazioni legacy:** letture e aside solo da dominio, BrandAccess,
-   RoleAssignment corrente e capability; rimozione progressiva di `active_role`.
-8. **Consolidamento dei dati:** vincoli DB definitivi, classificazione dei record legacy e
-   cancellazione di alias/helper/configurazioni obsolete.
-9. **Eliminazione User:** rimuovere il fallback superadmin e le dipendenze residue soltanto dopo
-   tutti i backfill e i collaudi precedenti.
+#### Passo 1 — Completare l'ingresso nel Brand
 
-### Fase 0 — Inventario di produzione
+**Riutilizzare:** `BrandAccessRequestsController`, `BrandInvitationsController`, `UsersController`,
+`AuthenticationBrandContext`, `BrandRequests::AccessApprover`, `BrandAccesses::Manager` e
+`BrandAccessGrants::Manager`.
+
+- Prima fotografare con i test esistenti i due casi: persona nuova e Profile già esistente.
+  Correggere soltanto le differenze rispetto al [flusso obiettivo](#flusso-obiettivo).
+- Risolvere un solo Brand coerente fra pagina, richiesta, invito e login: host canonico in
+  produzione, parametro locale riconosciuto su localhost. Un parametro o un token di un altro
+  Brand non deve cambiare silenziosamente il perimetro della richiesta.
+- Richiesta con Profile collegato: l'approvazione autorizzata concede o riattiva il BrandAccess.
+  Senza Profile: invito autorizzato, poi creazione o collegamento del Profile alla registrazione.
+  Non creare persone soltanto perché è stato compilato il modulo di richiesta.
+- Riutilizzare il Profile solo con una prova dell'identità; il solo confronto fra email inserite
+  non è sufficiente. Per ora mantenere il ponte User e i flussi di verifica esistenti; casi ambigui
+  richiedono riconciliazione, senza unire automaticamente persone o duplicarle.
+- Garantire un accesso per Profile e Brand, credenziale specifica del Brand, audit della richiesta
+  e dell'approvatore; nessun ruolo `utente`. L'invito non deve assegnare ruoli operativi impliciti.
+- Invito e approvazione devono applicare lo stesso limite: root GeneraImpresa a superadmin/gestore;
+  imprenditore soltanto nei progetti o Brand esplicitamente affidati. La via dell'invito non può
+  aggirare un divieto della via «Approva accesso».
+- Completare ciascuna operazione in transazione, aprire la Session dopo il commit, impedire
+  duplicati e riuso concorrente dell'invito. Non sovrascrivere una credenziale esistente e non
+  riattivare un accesso revocato senza una nuova autorizzazione valida.
+
+**Verifica di uscita:** nuova persona, persona esistente in un altro Brand, credenziale già
+presente, invito scaduto/revocato/già usato, email o Brand errati, approvatore fuori perimetro,
+errore a metà registrazione e doppio invio. L'accesso ordinario non produce incarichi né strumenti
+amministrativi. Il login di piattaforma del superadmin continua a funzionare.
+
+**Esito del 26 novembre — implementato e verificato in locale:**
+
+- `BrandAccesses::Authorization` applica la stessa regola a inviti e approvazioni: GeneraImpresa
+  richiede superadmin o gestore; gli altri Brand mantengono il perimetro autorizzato e i proprietari
+  legacy compatibili. Il solo referente del Node non acquisisce nuovi poteri.
+- `BrandInvitations::Issuer` emette e rigenera l'invito nella transazione della richiesta. Se la
+  rigenerazione fallisce, il precedente invito resta valido; una richiesta chiusa non genera inviti.
+- `BrandInvitations::Acceptance` riusa o crea Profile/accesso/credenziale, registra il grant e
+  collega la richiesta nella stessa transazione. Registrazione, login con invito e accettazione da
+  una Session Brand già autenticata usano questo punto comune. Non viene creato alcun ruolo.
+- Il token deve corrispondere al Brand della pagina; un token esplicito non valido non ripiega su
+  un altro invito ricordato. I domini alias dello stesso Brand restano utilizzabili.
+- L'accettazione blocca i record di richiesta/invito e lo User esistente durante l'operazione;
+  rilegge lo stato prima di procedere. L'invito usato non concede un secondo accesso e una password
+  già configurata non viene sostituita. Gli indici univoci esistenti impediscono i duplicati.
+- Un invito precedente alla revoca dell'accesso non lo riattiva. Un nuovo invito autorizzato può
+  riattivarlo usando la credenziale esistente; senza invito un accesso cancellato non apre Session.
+- La concessione conserva progetto, richiesta e autore. Revocare una concessione di progetto
+  mantiene le altre concessioni attive, secondo la gestione già presente.
+- Verifiche mirate: **61 test, 384 asserzioni**, nessun errore o fallimento.
+- Suite indispensabile: **763 test, 4.681 asserzioni**, nessun errore o fallimento, 4 skip.
+  Eseguita con `PARALLEL_WORKERS=1`: il driver PostgreSQL locale su macOS ha avuto un crash nel
+  fork dei processi paralleli. RuboCop completo: **576 file, nessuna violazione**.
+- Allineate cinque aspettative dei test alla navigazione già implementata: i collegamenti legacy
+  stanno nel main della Dashboard e l'aside conserva il solo collegamento Dashboard.
+
+Non sono state aggiunte migrazioni né modificati dati di produzione. Il ponte verso User e la
+relativa email restano fino al blocco successivo dedicato all'identità verificata del Profile.
+
+**Collaudo dopo il deploy:** su un Brand di prova autorizzato, inviare una richiesta, generare
+l'invito come gestore/superadmin e aprirlo in una finestra privata. Completare la registrazione,
+verificare la presenza del Profile e del relativo BrandAccess nella scheda amministrativa e
+provare logout/login con la password del Brand. Ripetere con una persona già esistente e
+controllare il riuso del Profile. Controllare anche il login superadmin FlowPulse. Il deploy e
+queste verifiche manuali non sono stati eseguiti in questo intervento.
+
+#### Passo 2 — Consolidare il contratto dei ruoli
+
+**Riutilizzare:** `RoleDefinitions::Registry` e `RoleAssignment`.
+
+- Esplicitare per ogni ruolo: codice, Brand compatibili, azioni, ereditarietà, limiti e
+  `delegatable_role_codes`; eliminare il flag duplicato `delegatable` per mantenere un'unica
+  regola di delega.
+- Separare utente ordinario (nessun incarico), ruoli specifici, ruoli condivisi e ruolo di sistema.
+  «Capability» significa soltanto un'azione consentita, per esempio gestire richieste.
+- Un solo meccanismo assegna gli incarichi: fra imprenditore e futuro mastro insegnante cambia
+  l'elenco dei ruoli assegnabili e il perimetro. Non servono un modello `AccessRole`, gerarchie
+  numeriche o un secondo flusso di «formazione».
+- Mantenere le deleghe attuali vuote. Non attivare nuovi ruoli, incluso un uso operativo di
+  `segreteria`, né deleghe fra Brand in questo lavoro.
+
+**Verifica di uscita:** codici sconosciuti, Brand incompatibili e deleghe non dichiarate sono
+rifiutati. Le definizioni attuali conservano le sole facoltà già autorizzate.
+
+**Esito del 26 novembre — implementato e verificato in locale:**
+
+- `RoleDefinitions::Registry` definisce scope, stato di abilitazione e tipi di Node, oltre ad
+  azioni, ereditarietà, limiti e lista delle deleghe. `find`/`fetch` conservano la consultazione
+  delle definizioni riservate; `for_brand` e `assignable_to?` espongono quelle utilizzabili.
+- Modello e manager applicano il registro alle assegnazioni operative con BrandAccess: la lista
+  `operator_roles` del Node non può abilitare un codice sconosciuto, disabilitato o di un altro Brand.
+  La compatibilità dei vecchi record senza BrandAccess resta nel ramo legacy da migrare: non
+  conferisce permessi tramite la nuova policy e non costituisce il modello per nuovi incarichi.
+- La policy ignora anche eventuali assegnazioni storiche con definizioni disabilitate o
+  incompatibili. Resolver e aside non ne ricavano capability. Le opzioni di affidamento Node
+  mostrano soltanto ruoli abilitati e compatibili.
+- Nessun nuovo ruolo è stato attivato; tutte le deleghe restano vuote. Il test dell'esempio
+  «mastro insegnante → insegnante» usa una definizione temporanea, senza registrarla né salvarla.
+- Aggiornati i test del contesto e del selettore: usano Brand compatibili e i due ruoli reali
+  GeneraImpresa, invece della futura segreteria o di slug arbitrari.
+- Test mirati iniziali: **44 test, 174 asserzioni**, nessun errore o fallimento. Suite finale
+  indispensabile con `PARALLEL_WORKERS=1`: **774 test, 4.761 asserzioni**, nessun errore o
+  fallimento, 4 skip. RuboCop sui **14 file del blocco**: nessuna violazione.
+- RuboCop globale segnala soltanto due violazioni `Style/StringLiterals` nel `Gemfile`, aggiunto
+  alla modifica in corso da un lavoro parallelo. Il Gemfile non è stato modificato da questo passo.
+
+Questo passo non aggiunge migrazioni. La selezione e validazione completa dell'incarico corrente
+restano il passo 3; la migrazione dei consumatori legacy resta nei passi successivi.
+
+#### Passo 3 — Unificare il contesto corrente
+
+**Riutilizzare:** `CurrentDomain`, `AccessContext::Resolver` e `BrandAccessRolesController`.
+
+- Il resolver restituisce Profile, Domain/Brand, BrandAccess, ruoli validi e ruolo corrente;
+  autenticazione, controller e menu devono concordare sullo stesso Brand.
+- La preferenza è `brand_accesses.current_role_assignment_id`: unico ruolo valido selezionabile
+  automaticamente; più ruoli richiedono una scelta valida; nessun ruolo significa utente ordinario
+  soltanto se il BrandAccess è attivo. Un visitatore senza accesso è un caso diverso.
+- Scadenza, revoca, incompatibilità del ruolo o revoca dell'accesso invalidano il contesto operativo.
+  Il cambio ruolo resta limitato al Profile e al BrandAccess correnti.
+- Il ruolo corrente determina le azioni svolte in quel momento, senza sommare i poteri di tutti
+  gli altri incarichi. Il superadmin mantiene il bypass di sistema.
+
+**Verifica di uscita:** due Brand e due ruoli nello stesso Brand rimangono separati; cambiare ruolo
+cambia sia le azioni ammesse sia la navigazione. URL e selezioni manipolati non allargano l'accesso.
+
+**Esito del 26 novembre — implementato e verificato in locale:**
+
+- `RoleAssignment#effective_for_access?` verifica insieme stato e date, Profile, BrandAccess,
+  definizione abilitata, tipo di Node e appartenenza al Brand. Il primo Domain attivo risalendo
+  dal Node determina il confine: un sotto-Brand non eredita automaticamente il contesto superiore.
+- Il resolver espone soltanto gli incarichi operativi validi per l'accesso corrente. Esclude
+  record storici incompatibili, incarichi futuri/scaduti/revocati, Profile diversi, contesti non
+  Node o fuori Brand e accessi/account/domìni non attivi. I codici restituiti sono canonici.
+- `user?` indica la persona ammessa con BrandAccess attivo e senza incarichi validi; `guest?`
+  indica l'assenza dell'accesso. Chi ha più incarichi senza scelta è invece in
+  `selection_required?` e non riceve la somma delle loro capability.
+- Un solo ruolo valido viene usato automaticamente. Con più ruoli, il selettore propone
+  «Scegli come operare»; una scelta vuota richiede una nuova selezione. Con un solo ruolo la
+  scelta vuota conserva quell'incarico e non annuncia erroneamente il passaggio a utente.
+- Il selettore usa gli stessi incarichi del resolver e rilegge accesso e assegnazione prima di
+  salvare. Una selezione divenuta invalida viene ignorata in lettura; se resta un solo incarico
+  valido viene usato quello. Alla successiva modifica dell'accesso il riferimento invalido viene
+  pulito. Non viene aggiunta una scrittura automatica a ogni lettura della pagina.
+- Il controllo dei ruoli contestuali nella vista condivisa è utilizzabile anche fuori dalle due
+  aside già uniformate. Le capability e le voci dell'aside seguono l'incarico corrente; con due
+  ruoli GeneraImpresa, la voce Richieste compare soltanto scegliendo il gestore.
+- Su localhost i parametri di percorso `admin_brand_slug`, `brand_slug` e `path_slug` hanno
+  precedenza sul parametro `site`. Un parametro query omonimo non sostituisce quello della route;
+  un Brand esplicito sconosciuto non ripiega su un altro Brand ricordato o sul login globale.
+- In produzione l'host resta autorevole; alias dello stesso Brand risolvono lo stesso contesto.
+  La sessione locale può ricordare il sito per login/dashboard privi di prefisso, ma il fallback
+  non viene usato per scegliere un altro Brand su un host reale. L'admin Brand rifiuta una route
+  riferita a un Brand diverso da quello dell'host conosciuto.
+- Rimossa la risoluzione di autenticazione locale cablata su due soli Brand: usa la ricerca
+  comune dei Domain. `dashboard_access_context` mantiene coerenti contesto di autenticazione e
+  contesto della dashboard anche negli URL locali senza prefisso.
+- Verifiche mirate: **86 test, 434 asserzioni**, nessun errore o fallimento. Suite indispensabile
+  con `PARALLEL_WORKERS=1`: **795 test, 4.843 asserzioni**, nessun errore o fallimento, 4 skip.
+  RuboCop sui **16 file Ruby del blocco**: nessuna violazione.
+
+Nessuna migrazione, commit o distribuzione in questo passo. Il bypass superadmin resta di sistema.
+All'uscita del solo passo 3 la policy generale non usava ancora il ruolo corrente. Il passo 4
+descritto sotto ha completato questa conversione per policy e manager operativi; i vecchi ruoli
+strutturali e i relativi consumatori restano nella migrazione legacy del passo 6.
+
+**Collaudo dopo il deploy:** con un Profile di prova già abilitato ai due incarichi GeneraImpresa,
+cambiare funzione e verificare selettore e voci dell'aside; revocare o far scadere l'incarico scelto
+e controllare il successivo contesto risolto. Ripetere i controlli su localhost e sul dominio del
+Brand, verificando che non si possa selezionare l'accesso di un altro Brand tramite parametri.
+
+#### Passo 4 — Unificare policy e scritture
+
+**Riutilizzare:** `RoleAssignments::AccessPolicy` e `RoleAssignments::Manager`.
+
+- Passare il contesto corrente alle decisioni operative, sostituendo le autorizzazioni ricavate
+  dall'unione indiscriminata degli incarichi. I task senza richiesta ricevono un contesto esplicito.
+- Il manager verifica assegnante, ruolo delegabile, BrandAccess attivo del destinatario, stesso
+  Profile, compatibilità Brand/Node e sottoalbero autorizzato; ripetere l'operazione non duplica
+  l'incarico. Conservare autore e revoca nell'audit.
+- Distinguere la facoltà di assegnare da quella di revocare: nessun ampliamento implicito.
+  Non attraversare la radice di un altro Brand tramite la sola ereditarietà dei Node.
+- Il futuro governo di PosturaCorretta da un incarico GeneraImpresa richiederà una regola esplicita
+  sul Brand affidato. Per ora la delega fra Brand resta negata, anche se un ruolo è nell'allowlist.
+- Il superadmin conserva l'accesso globale, ma crea soltanto assegnazioni strutturalmente valide.
+
+**Verifica di uscita:** permessi e deleghe fuori perimetro negati anche invocando direttamente
+l'azione; revoca immediatamente efficace. Testare il meccanismo di delega con definizioni di prova,
+senza abilitare ruoli futuri nei dati applicativi.
+
+**Esito del 26 novembre — implementato e verificato in locale:**
+
+- `Current.access_context` viene inizializzato dopo il ripristino della Session e condiviso dalla
+  dashboard e dalla policy. Nei controller i manager ricevono il contesto corrente; la chiamata
+  al modello `Node#administered_by?` può usare lo stesso contesto della richiesta.
+- `RoleAssignments::AccessPolicy` controlla il solo incarico scelto. Prima di autorizzare rilegge
+  dominio, account e contesto: accessi revocati, incarichi scaduti e snapshot di una scelta ormai
+  cambiata vengono rifiutati. Non sceglie il Brand o il ruolo a partire dal Node destinatario.
+- Fuori da HTTP, le operazioni contestuali devono ricevere un contesto esplicito. Esempio:
+
+  ```ruby
+  context = AccessContext::Resolver.new(user: actor, domain: domain).resolve
+  NodeManagement::Manager.new(actor: actor, context: context)
+    .create_child!(parent: project, attributes: { title: "Nuova attività" })
+  ```
+
+- La policy verifica Brand, ramo assegnato ed ereditarietà. La radice di un altro Brand interrompe
+  l'accesso, anche se è discendente nella stessa gerarchia dei Node. Anche il superadmin deve usare
+  il BrandAccess corretto del destinatario quando assegna un ruolo; conserva il bypass operativo
+  di sistema.
+- `RoleAssignments::Manager` esegue controlli e scritture nella transazione, rileggendo e bloccando
+  i record interessati. Ripetere un'assegnazione già efficace non crea duplicati e non riscrive
+  autore, date o audit. Revoca e riattivazione conservano lo stesso incarico con eventi successivi.
+- Assegnare e revocare sono autorizzazioni distinte. Nessuna delega è stata abilitata nel registro
+  reale; la revoca degli incarichi resta riservata al superadmin. Il test della delega usa una
+  definizione temporanea limitata allo stesso Brand/ramo, ripristinata alla fine del test.
+- È possibile revocare un incarico operativo anche se il suo accesso è stato cancellato, senza
+  riattivarlo. Il riferimento al ruolo selezionato viene pulito nella stessa transazione. I ruoli
+  strutturali non possono essere revocati con il manager degli incarichi operativi.
+- `NodeManagement::Manager` ricontrolla permessi e limite di sette Node nella transazione di
+  creazione, serializzando le creazioni del medesimo Profile. Gli aggiornamenti bloccano e
+  rileggono il Node prima della verifica del perimetro.
+- I manager di accessi e concessioni ricevono il contesto e verificano il Brand destinatario.
+  Una concessione di progetto non autorizza a cancellare l'intero BrandAccess; si revoca il grant
+  del progetto e si conservano le altre concessioni valide.
+- Persone del Brand, persone del progetto, richieste e operazioni sui progetti usano il contesto
+  corrente. L'indice dei progetti non espone tutti i rami di cui la persona è responsabile quando
+  opera con un incarico limitato a un solo ramo. Le chiamate dirette agli URL sono verificate
+  indipendentemente dalle voci visibili nell'aside.
+- Resta un ponte esplicito per i proprietari strutturali legacy nei servizi di accesso, limitato
+  al Brand compatibile col contesto. Il solo `responsible_profile_id` o profilo professionale non
+  abilita quel ponte. Il ritiro di questi percorsi resta il passo 6.
+- L'accettazione pubblica di un invito risolve esplicitamente il contesto dell'emittente per il
+  Brand dell'invito: non usa il contesto del visitatore per autorizzare l'emittente. La lettura
+  anticipata del contesto locale viene invalidata quando si apre il token, conservando il sito
+  corretto nei successivi passaggi di registrazione.
+
+**Storico e schema:** aggiunta `role_assignments.audit_log`, JSONB con default `[]`, mediante
+`20261126120000_add_audit_log_to_role_assignments.rb`. Ogni evento registra tipo
+(`assigned`, `revoked`, `reactivated`), `actor_profile_id` e data ISO 8601. I record precedenti
+partono con uno storico vuoto: non vengono inventati eventi o autori per il passato. Se un
+superadmin legacy non ha ancora Profile, la prima operazione tracciata lo crea nella stessa
+transazione; le sue facoltà restano disponibili.
+
+Migrazione applicata ai database locali di sviluppo e test; **da applicare anche in produzione
+al deploy**. Nessun commit, push o deploy eseguito in questo passo.
+
+**Verifiche:** 68 test mirati iniziali e 60 test di regressione sui casi corretti, senza errori o
+fallimenti. Suite indispensabile finale con `PARALLEL_WORKERS=1`: **813 test, 4.918 asserzioni**,
+nessun errore o fallimento, 4 skip. RuboCop sui **27 file del blocco**: nessuna violazione.
+
+**Collaudo dopo il deploy:** verificare il cambio fra due incarichi sullo stesso Brand e provare
+un'operazione diretta sul ramo non selezionato: deve essere negata. Confermare che assegnazione,
+revoca e riattivazione da superadmin registrino gli eventi, che la ripetizione dell'assegnazione
+non duplichi l'incarico e che il login/amministrazione del superadmin restino disponibili.
+
+#### Passo 5 — Collegare dashboard e aside alla stessa policy
+
+- Una definizione comune delle sezioni alimenta dashboard e menu, usando contesto e policy dei
+  controller. La sola presenza di una capability non deve mostrare link a pagine vietate.
+- FlowPulse espone il controllo globale al superadmin; ogni Brand espone persone, accessi,
+  richieste e Node nel perimetro consentito. L'imprenditore vede le persone dei propri progetti,
+  non automaticamente l'intero indice del Brand.
+- Su localhost usare il parametro di Brand nelle route comuni; in produzione usare l'host.
+  Riutilizzare i controller e mantenere gli alias necessari, senza copiare un admin per dominio.
+- Aside breve, voci legacy raccolte nell'index principale. Il normale utente non vede funzioni
+  amministrative; il selettore propone solo i suoi incarichi validi nel Brand corrente.
+
+**Verifica di uscita:** la stessa matrice di accesso vale per localhost e host reali, inclusi
+collegamenti, breadcrumb, cambio ruolo e tentativi di apertura diretta di pagine vietate.
+
+#### Passo 6 — Migrare gli usi legacy, una zona alla volta
+
+- Censire ogni uso di `users.active_role`, `users.current_role_assignment_id` e helper correlati
+  indicando il sostituto concreto. Cercare anche test, task, seed e import, non solo le viste.
+- Sostituire prima letture/autorizzazioni, poi switcher e scritture: `FlowRoles.active_role_for`,
+  `active_dashboard_role`, `HomeController#dashboard_role`/`#dashboard_channel`,
+  `ApplicationController#ensure_active_role_assignment`, enum e costanti User correlate.
+- Gli accessi legati a `ideatore/admin/responsabile` richiedono una mappatura dei dati verso
+  incarichi espliciti: non tradurre un vecchio nome in poteri globali. Conservare i riferimenti
+  strutturali Node ancora necessari finché i relativi consumatori non sono migrati.
+- Lasciare a User soltanto i ponti tecnici ancora necessari. Dopo aver rimosso tutti i consumatori
+  dei due selettori, dichiararli `ignored_columns` e distribuire con le colonne ancora presenti.
+
+**Verifica di uscita:** nessun uso eseguibile residuo dei due selettori, salvo la dichiarazione di
+compatibilità e i file storici. Suite indispensabile e RuboCop verdi; collaudo di login, selezione
+ruolo e amministrazione dopo la distribuzione. `nodes.role_assignment_id` non viene eliminato
+insieme ai selettori User.
+
+#### Passo 7 — Rimuovere i due selettori User
+
+- Solo dopo il passo 6 distribuito e verificato, confermare che processi web, job e task usino
+  codice compatibile. Conservare un inventario dei dati prima della rimozione.
+- Migrazione separata per eliminare `users.active_role` e `users.current_role_assignment_id`.
+  Non eliminare ora User, password, email o flag superadmin.
+- Il rollback applicativo torna alla versione compatibile del passo 6; ricreare una colonna non
+  ripristina i valori cancellati. Un eventuale recupero dei dati richiede la copia precedente.
+
+**Verifica di uscita:** migrazione e suite di riferimento passano; registrazione, login, ruoli e
+dashboard continuano a funzionare senza i due campi.
+
+### Metodo di esecuzione
+
+- Un passo alla volta: verifica del codice interessato, modifica minima, test mirati, aggiornamento
+  dello stato in questa guida. Se un requisito è già soddisfatto, verificarlo senza riscriverlo.
+- Eseguire i test pertinenti a ogni modifica; suite `test:indispensabili` e RuboCop prima della
+  distribuzione del blocco. Ripetere o ampliare i test quando cambiano codice o rischi verificati.
+- Nessuna nuova tabella per standardizzare ruoli e menu; eventuali vincoli mancanti emersi nel
+  passo 1 vanno aggiunti in modo compatibile. La prima attività è il collaudo dell'ingresso Brand.
+- Nessuna rimozione distruttiva per anticipare i tempi. Implementazione, commit e deploy sono
+  attività distinte; registrare per ciascun passo quali sono stati effettivamente eseguiti.
+
+### Lavori successivi, fuori da questa sequenza
+
+Prima di eliminare **User interamente** serviranno identità email verificata del Profile
+(`ProfileEmail`/`ProfileIdentity`), recupero credenziali per Brand e piattaforma, migrazione delle
+associazioni residue e rimozione dei fallback. Il passo 1 deve funzionare col ponte attuale senza
+pretendere che la sola email inserita provi l'identità; non richiede di completare ora tutto questo
+rifacimento. Restano successive anche nuove deleghe, ruoli condivisi e governo esplicito fra Brand.
+
+### Inventario storico di produzione — 24 novembre 2026
+
+I dati seguenti descrivono l'inizio della migrazione. Non sono il punto da cui ripartire oggi.
 
 ```ruby
 RoleAssignment.group(:role, :role_operator).count
-User.group(:active_role, :role).count
+User.group(:active_role).count
 User.where.not(current_role_assignment_id: nil).count
 BrandAccess.group(:status).count
 ```
@@ -531,50 +941,10 @@ Verifica conclusiva di produzione:
   `traveler` durante la migrazione, conservandone traccia nel report;
 - l'utente con `active_role = 7` è il superadmin reale e mantiene il proprio accesso completo.
 
-**Fase 0 conclusa:** non risultano blocchi per lo schema additivo della Fase 1.
-
-### Fase 1 — Schema compatibile
-
-- aggiungere `brand_access_id` inizialmente nullable;
-- normalizzare Node contestuale, stato e audit;
-- aggiungere `nodes.responsible_profile_id`, nullable, indicizzato e con FK a `profiles`;
-- introdurre `imprenditore_generaimpresa`;
-- creare indici e vincoli compatibili col legacy;
-- implementare servizio e policy;
-- impedire nuove assegnazioni legacy dalla UI.
-
-### Fase 2 — BrandAccess e richieste
-
-- una richiesta approvata produce BrandAccess, non direttamente un ruolo;
-- separare «Concedi accesso» da «Assegna incarico»;
-- vietare nuovi ruoli senza accesso attivo;
-- rendere parametrica la scheda oggi cablata su GeneraImpresa.
-
-### Fase 3 — Backfill
-
-- collegare o creare BrandAccess mancanti dopo verifica;
-- rinominare `creator_generaimpresa`;
-- tradurre codici specifici dei Brand;
-- ricondurre `ideatore`, `admin`, `responsabile` a incarichi contestuali;
-- produrre un report manuale per i casi dubbi.
-
-### Fase 4 — Autorizzazioni e UI
-
-- migrare controller, helper e policy ad azione + Node;
-- aggiornare dashboard e selettore del contesto;
-- aggiornare Imprenditori e «I tuoi Brand»;
-- permettere al superadmin di affidare un Node;
-- implementare il trasferimento atomico del responsabile e degli incarichi collegati;
-- introdurre la delega solo dopo i test della matrice.
-
-### Fase 5 — Vincoli e rimozione legacy
-
-- rendere BrandAccess obbligatorio per i ruoli contestuali;
-- rimuovere `users.role`, `users.active_role`, enum e alias obsoleti;
-- rimuovere eventuali dati sperimentali `creator_flowpulse`;
-- rimuovere la duplicazione Domain → Node;
-- valutare `nodes.role_assignment_id` solo quando nessuna gerarchia ne dipende;
-- mantenere redirect legacy soltanto temporaneamente.
+L'inventario consentì lo schema additivo iniziale, in seguito implementato. Le vecchie fasi
+progettuali sono sostituite dai sette passi operativi sopra; non vanno rieseguite come un secondo
+piano. Prima di migrare altri dati occorre una lettura aggiornata, senza dedurne lo stato da questo
+inventario.
 
 ### Test indispensabili
 
@@ -630,8 +1000,9 @@ perso mentre l'aside viene semplificato.
 
 La destinazione architetturale resta:
 
-- `users.superadmin` per il solo privilegio globale di sistema;
-- tutti gli altri User sono contenitori tecnici senza password e senza ruolo operativo globale;
+- `SystemRoleAssignment` per il privilegio globale e `PlatformCredential` per il login di sistema;
+- User come contenitore tecnico residuo, poi eliminabile; flag e password legacy restano solo
+  durante la transizione, finché i relativi consumatori non sono migrati;
 - accesso ai Brand espresso da `BrandAccess`;
 - poteri operativi espressi da `RoleAssignment` contestuali.
 
@@ -642,23 +1013,26 @@ switcher dei vecchi ruoli.
 
 ### Registrazione, invito e approvazione
 
-La registrazione pubblica libera è già disabilitata: `UsersController#new` e `#create` richiedono un
-`BrandInvitation` personale ancora valido e l'email inserita deve coincidere con quella invitata.
+**Stato riscontrato nel codice il 26 novembre 2026; non un nuovo collaudo di produzione:**
 
-Il comportamento legacy considera l'invito come autorizzazione definitiva:
+| Componente | Comportamento già presente | Verifica/completamento richiesto |
+|---|---|---|
+| Richiesta pubblica | crea richiesta e contatto, non concede accesso | origine e perimetro coerenti col Brand corrente |
+| Registrazione | richiede un invito valido e l'email invitata | controlli uniformi su host, token e stato dell'accesso |
+| Apertura invito | porta al login se la credenziale del Brand esiste, altrimenti alla registrazione | nessun passaggio intermedio di scelta, nessuna sostituzione della credenziale |
+| Profile | cerca lo User tramite email e costruisce il Profile se manca | collegamento con identità dimostrata, non semplice corrispondenza testuale |
+| Accettazione invito | `BrandInvitations::Acceptance`: Profile/accesso/credenziale/grant, accettazione e richiesta in transazione; Session successiva | verificata in locale; collaudo dopo il deploy |
+| Approvazione con Profile | `BrandRequests::AccessApprover` concede accesso e grant nella stessa transazione; autorizzazione comune agli inviti | verificata in locale; collaudo dopo il deploy |
+| Password scelta | salvata nella BrandCredential | User conserva ancora una password tecnica casuale per compatibilità |
 
-1. l'invito viene emesso per un indirizzo email e un Brand;
-2. la persona usa il link e crea User e Profile;
-3. `UsersController#create` imposta immediatamente `registration_status = active`;
-4. crea o riattiva il BrandAccess;
-5. accetta l'invito e apre la sessione.
+La registrazione è stata consolidata e verificata localmente come primo passo della base standard.
+Il Profile è unico per la persona; può avere più accessi, ma per ogni Brand usa la relativa
+credenziale. Il suo riconoscimento dipende ancora da User: questa dipendenza è esplicita e verrà
+rimossa in un blocco successivo dedicato all'identità verificata.
 
-La migrazione in corso sostituisce la password User ordinaria con BrandCredential e deve mantenere
-separati approvazione, BrandAccess e autenticazione. Per i dati storici possono comunque esistere
-User attivi che il superadmin non ricorda di aver approvato
-direttamente: possono provenire da inviti già emessi o da dati legacy/importati. Non significa che
-la registrazione fosse necessariamente aperta, ma l'indice globale deve rendere verificabile
-l'origine di ogni account.
+Per i dati storici possono esistere User attivi provenienti da inviti o import. Lo stato attivo
+dello User non prova, da solo, che il BrandAccess o la credenziale di un determinato Brand siano
+validi. La scheda amministrativa deve rendere verificabile l'origine di ciascun accesso.
 
 Gli indirizzi Gmail che differiscono soltanto per i punti nella parte locale possono raggiungere la
 stessa casella, pur risultando User distinti per il vincolo univoco applicativo. La normalizzazione
@@ -667,20 +1041,40 @@ perché le regole non sono uguali per tutti i provider: l'indice FlowPulse deve 
 **possibili alias duplicati** e demandare al superadmin una verifica e un'eventuale unione,
 sospensione o cancellazione controllata.
 
-L'email può inoltre risultare non verificata (`email_verified_at = nil`) nel flusso a invito, perché
-il possesso del link personale è attualmente considerato sufficiente. Il flusso separato di verifica
-email, invece, attiva lo User tramite `activate_verified_email!`. Questa differenza va resa esplicita
-nella UI e successivamente uniformata.
+Alla registrazione tramite invito il codice marca verificata l'email della BrandCredential, mentre
+il nuovo User può conservare `email_verified_at = nil`. Le due verifiche non vanno confuse nella UI:
+una credenziale Brand verificata non certifica automaticamente tutte le identità della persona.
+Il collegamento di un Profile preesistente deve verificare il possesso dell'identità; un caso
+ambiguo resta da riconciliare. Il flusso di verifica delle credenziali importate ancora pendenti
+resta distinto dall'approvazione dell'accesso.
 
 ### Flusso obiettivo
 
-Tenere distinti quattro eventi:
+Tenere distinti questi passaggi, senza obbligare chi ha già un'identità a registrarsi di nuovo:
 
-1. **richiesta**: una persona domanda accesso a un Brand;
-2. **approvazione**: chi governa quel perimetro approva la richiesta;
-3. **invito/identificazione**: la persona crea o collega il Profile e sceglie la credenziale Brand;
-4. **accesso**: viene creato o attivato il BrandAccess approvato;
-5. **sessione**: la BrandCredential autentica il Profile esclusivamente nel Brand richiesto.
+1. **Brand di destinazione**: Domain risolto dall'host o dal parametro locale e collegato al Brand
+   Node. Alias dello stesso Brand non creano credenziali o accessi distinti.
+2. **Richiesta e autorizzazione**: la richiesta pubblica non concede accesso. Un responsabile
+   autorizzato la approva oppure emette l'invito che autorizza l'ingresso. È ammesso anche un invito
+   diretto autorizzato: conservare l'emittente anche quando non esiste una richiesta iniziale.
+3. **Identificazione**: se il Profile manca, viene creato completando l'invito; se esiste, viene
+   collegato dopo la verifica dell'identità. Una richiesta può quindi precedere il Profile.
+4. **BrandAccess**: si crea o si riutilizza il collegamento Profile + Brand. L'approvazione può
+   attivarlo subito per un Profile collegato; l'invito lo attiva alla sua accettazione. Si conserva
+   il legame con richiesta, approvatore e, per i progetti, `BrandAccessGrant`.
+5. **Credenziale e Session**: se manca la BrandCredential si configura con la password del Brand;
+   se esiste si usa il login. Accesso approvato e credenziale verificata/attiva sono condizioni
+   distinte. Non aprire Session Brand finché non sono soddisfatte entrambe.
+6. **Eventuale incarico**: soltanto dopo l'accesso attivo, un assegnante autorizzato può conferire
+   un RoleAssignment. Senza incarichi la persona è un utente ordinario; non si crea un ruolo
+   `utente` e non compare un'amministrazione vuota da gestire.
+
+Il completamento che crea o collega Profile, accesso e credenziale deve essere atomico e
+idempotente. Un invito scaduto o riutilizzato non concede accesso; un errore non lascia un Profile
+nuovo o un accesso parziale. La revoca resta efficace finché non interviene una nuova autorizzazione.
+
+Per le concessioni di progetto, revocare un `BrandAccessGrant` non deve togliere gli accessi concessi
+legittimamente da altri progetti; resta valida la gestione delle concessioni già implementata.
 
 Una richiesta può essere eliminata definitivamente da chi amministra il relativo perimetro soltanto
 se non ha prodotto BrandAccessGrant, attività o inviti accettati. La cancellazione è destinata a spam
@@ -696,20 +1090,21 @@ alla richiesta e all'approvatore che lo hanno autorizzato.
 
 L'aside deve essere composto in base a host, Profile corrente, BrandAccess e incarichi:
 
-1. se `User#superadmin?`, mostra il gruppo **Sistema FlowPulse** con User/Profile, Brand, ruoli e
-   strumenti globali;
+1. se superadmin di sistema, mostra il collegamento **Amministrazione FlowPulse**; le funzioni
+   globali stanno nell'index principale, non tutte replicate nell'aside;
 2. se il dominio corrente è GeneraImpresa, mostra richieste, progetti e persone consentiti dal
    contesto GeneraImpresa;
 3. per gli altri Brand, mostra soltanto funzioni autorizzate dal BrandAccess e dai RoleAssignment
    validi nel Brand corrente;
 4. il semplice BrandAccess consente l'ingresso, ma non fa comparire strumenti gestionali;
-5. il selettore futuro cambia **contesto/Brand o incarico**, non un ruolo globale sullo User.
+5. il selettore cambia l'incarico corrente nel Brand; il Brand è dato dal dominio, non da una
+   selezione globale sullo User.
 
 Il codice attuale usa ancora `FlowRoles.active_role_for`, `active_dashboard_role`, lo switcher di
 `users.active_role` e blocchi legacy per `ideatore/creator/digital`. Va migrato per gruppi, iniziando
 dalla dashboard globale FlowPulse e dalla proiezione GeneraImpresa.
 
-#### Matrice iniziale delle voci dell'aside
+#### Matrice delle funzioni disponibili
 
 | Contesto attivo | Voci principali |
 |---|---|
@@ -720,9 +1115,10 @@ dalla dashboard globale FlowPulse e dalla proiezione GeneraImpresa.
 | semplice BrandAccess GeneraImpresa | Home; profilo; contenuti o servizi accessibili, senza voci amministrative |
 | ruolo professionale di un altro Brand | voci definite dalle capability del ruolo e limitate al Brand/Node attivo |
 
-La matrice descrive famiglie di voci, non URL cablati nel ruolo. Il registro dei ruoli espone le
-capability; un menu registry traduce capability e contesto in sezioni dell'aside. Ogni controller
-continua comunque ad applicare la policy: nascondere una voce non è una misura di sicurezza.
+La matrice descrive funzioni disponibili, non un obbligo di mostrarle tutte nell'aside né URL
+cablati nel ruolo. L'aside resta breve e la dashboard raccoglie i collegamenti. Una definizione
+comune delle sezioni usa contesto e policy per comporre entrambe le viste. Ogni controller continua
+ad applicare la stessa policy: nascondere una voce non è una misura di sicurezza.
 
 #### Dove conservare il ruolo corrente nel Brand
 
@@ -734,7 +1130,7 @@ Un Profile può però avere più `RoleAssignment` nello stesso Brand. In quel ca
 persistente per decidere con quale funzione sta operando e quale aside mostrare. La collocazione
 coerente è il `BrandAccess`, perché rappresenta già la relazione Profile + Brand:
 
-- aggiungere `brand_accesses.current_role_assignment_id`, nullable;
+- usare l'esistente `brand_accesses.current_role_assignment_id`, nullable;
 - il riferimento deve indicare un RoleAssignment attivo appartenente allo stesso Profile e allo
   stesso BrandAccess;
 - se esiste un solo ruolo valido, può essere selezionato automaticamente;
@@ -748,6 +1144,23 @@ coerente è il `BrandAccess`, perché rappresenta già la relazione Profile + Br
 `users.active_role` e `users.current_role_assignment_id` restano quindi legacy da eliminare: sono
 globali e non possono rappresentare correttamente una persona che è, per esempio, gestore in
 GeneraImpresa e insegnante in PosturaCorretta.
+
+#### Rimozione di `users.active_role` — decisione del 26 novembre 2026
+
+La colonna va eliminata, ma non prima di avere rimosso le letture legacy che ancora la rendono
+operativa. Non esiste un modello `AccessRole`: la selezione corretta del ruolo nel Brand è
+`BrandAccess#current_role_assignment`, mentre `BrandAccessRolesController` aggiorna tale
+preferenza verificando dominio, accesso, Profile e validità del RoleAssignment.
+
+La sequenza esecutiva è quella dei passi 6 e 7 del [piano operativo unico](#piano-operativo-unico):
+prima migrare letture e scritture, distribuire il codice compatibile mantenendo le colonne,
+poi rimuoverle con una migrazione separata. Non è un intervento parallelo al consolidamento
+di registrazione, contesto e policy.
+
+Il privilegio `superadmin` non viene trasferito su `active_role`: è già rappresentato da
+`SystemRoleAssignment` con fallback legacy temporaneo. Eliminare anticipatamente la colonna senza
+questa sequenza romperebbe ancora menu, controller Creator World, risorse, demo e diversi test,
+oltre a nascondere dipendenze che devono essere migrate esplicitamente.
 
 Il ruolo corrente governa presentazione, navigazione e azioni eseguite in quel momento; non
 cancella gli altri incarichi posseduti. La policy deve ricevere il RoleAssignment corrente e
@@ -775,32 +1188,45 @@ inviti e altri record soggetti a vincoli. Per gli account con storia operativa l
 scelta ordinaria; la cancellazione completa è riservata a duplicati, errori o account privi di dati
 da conservare.
 
-### Sequenza di implementazione della dashboard
+### Collegamento al piano operativo
 
-1. creare sotto FlowPulse l'indice globale Profile, mostrando lo User tecnico durante la transizione,
-   con filtri per stato, verifica e origine;
-2. collegare indice, scheda globale Profile, BrandAccess e Node tramite breadcrumb coerenti;
-3. mostrare richieste e inviti di origine nella scheda della persona;
-4. aggiungere sospensione/riattivazione e soltanto dopo la cancellazione completa protetta;
-5. restringere GeneraImpresa alla propria proiezione di richieste e BrandAccess;
-6. sostituire nell'aside le decisioni basate su `active_role` con contesto e policy;
-7. normalizzare gli User non superadmin a `traveler` e infine rimuovere il legacy.
+La dashboard rientra nel passo 5, riusando indice e schede già presenti. Controllare breadcrumb,
+provenienza degli accessi e visibilità per ruolo. Ampliamenti della gestione account, filtri avanzati
+e cancellazioni non sono prerequisiti per uniformare contesto e navigazione e restano separati.
+
+#### Stato dashboard per dominio — 25 novembre 2026
+
+- in produzione il dominio corrente continua a essere ricavato dall'host;
+- su localhost `CurrentDomain` ricava il Brand da `:brand_slug`, `:admin_brand_slug` o `:site`;
+- `/:brand_slug/admin` è la dashboard amministrativa comune del Brand;
+- la navigazione amministrativa del Brand espone una sola voce sintetica **Dashboard**;
+- le precedenti voci Nodi, Schema, Sviluppo, Richieste, Contenuti, Impegni e Privacy sono raccolte
+  come schede nel main della dashboard;
+- superadmin e proprietario vedono l'indice completo;
+- `gestore_generaimpresa` vede soltanto Richieste, Persone e Progetti;
+- la visibilità delle schede deriva dalle capability, mentre ogni controller continua ad applicare
+  autonomamente la propria policy.
 
 ## 11. Stato delle attività
+
+La tabella registra componenti presenti e lavoro residuo; non certifica il collaudo completo del
+nuovo contratto. I passi 1–4 sono implementati e verificati in locale; i passi 5–7 restano da eseguire.
+I risultati di produzione più sotto sono fotografie datate.
 
 | Attività | Stato |
 |---|---|
 | Scheda profilo superadmin | implementata |
 | Link profilo dalle richieste GeneraImpresa | implementato |
-| Assegnazione legacy `creator_generaimpresa` | implementata, da migrare |
+| Assegnazione legacy `creator_generaimpresa` | sostituita nel flusso nuovo; alias e storico da ritirare dopo verifica |
 | Inventario dati di produzione | completato il 24/11/2026 |
 | Schema additivo RoleAssignment + BrandAccess | implementato; vincolo DB ancora nullable |
-| Registro unico dei nuovi ruoli | implementato nella base applicativa |
-| Manager unico di assegnazione/revoca | implementato per il flusso superadmin |
+| Registro unico dei nuovi ruoli | passo 2 consolidato e verificato in locale; scope, abilitazione, compatibilità e deleghe espliciti |
+| Manager unico di assegnazione/revoca | passo 4: transazioni, idempotenza, contesto e audit; revoca riservata al superadmin |
 | Rinomina `imprenditore_generaimpresa` | implementata con alias legacy e backfill |
 | Eliminazione `creator_flowpulse` dal disegno | decisa |
 | Migrazione `ideatore/admin/responsabile` | da progettare sui dati reali |
-| Policy unica azione + Node | implementata nella base applicativa |
+| Policy unica azione + Node | passo 4: usa il solo ruolo corrente e rifiuta contesti scaduti, cambiati o fuori perimetro |
+| Storico incarichi | `role_assignments.audit_log`, migrazione applicata in locale; da distribuire |
 | `nodes.responsible_profile_id` | schema, associazioni e trasferimento implementati |
 | Affidamento Node tramite incarico contestuale | implementato per il superadmin |
 | Indice Imprenditori GeneraImpresa | da implementare |
@@ -816,7 +1242,11 @@ da conservare.
 | Index/show BrandAccess e Node con breadcrumb | implementati |
 | Modello BrandCredential | implementato e distribuito |
 | Migrazione e backfill BrandCredential | completati e verificati in produzione |
-| Login e inviti per Brand | implementati; Elisa resta in `pending_verification` |
+| Login e inviti per Brand | passo 1 implementato e verificato in locale; collaudo dopo il deploy |
+| Autorizzazione inviti e approvazioni | regola condivisa in `BrandAccesses::Authorization` |
+| Accettazione invito e concessioni | transazione condivisa in `BrandInvitations::Acceptance`; Profile/accesso riutilizzati |
+| Standard dominio + ruolo corrente | passo 3 consolidato e verificato in locale; migrazione policy e menu residui nei passi 4–5 |
+| Rimozione selettori User | pianificata nei passi 6–7; nessuna rimozione in questo aggiornamento |
 | Password User ordinaria rimossa | da completare |
 | `sessions.profile_id` | implementato; backfill completo, nessuna Session senza Profile |
 | Reset password Brand | da implementare dopo il consolidamento del login |
@@ -827,22 +1257,22 @@ Prima del rollout sono stati rimossi in una transazione gli User/Profile di prov
 insieme a quattro Session e ai BrandAccess 2, 3 e 6. Richieste e inviti con valore storico sono
 rimasti conservati, scollegando i riferimenti alle persone eliminate.
 
-In produzione restano:
+Al controllo del 25 novembre risultavano:
 
 - User/Profile 1, superadmin verificato;
 - User/Profile 5, Elisa Corubolo, email ancora da verificare;
 - BrandAccess 1 e 4 del superadmin;
 - BrandAccess 5 GeneraImpresa di Elisa.
 
-Il backfill BrandCredential assegna `pending_verification`, non `active`, agli accessi appartenenti
-a un indirizzo non ancora verificato. Elisa non potrà quindi autenticarsi con la nuova credenziale
-finché la verifica non sarà completata.
+Il backfill BrandCredential assegnava `pending_verification`, non `active`, alle credenziali con
+indirizzo non ancora verificato. La verifica era quindi necessaria per il login Brand di Elisa;
+lo stato attuale va letto nuovamente, senza ricavarlo da questo resoconto.
 
-### Gate di verifica prima dell'esecuzione
+### Storico del gate iniziale — 25 novembre 2026
 
-Il piano non autorizza ancora l'esecuzione automatica delle modifiche elencate sotto. Prima occorre
-produrre una verifica del repository e dei dati, senza aggiungere nuove migrazioni o cambiare il
-comportamento applicativo:
+Questa verifica precedeva l'isolamento del superadmin, successivamente implementato. È conservata
+come motivazione delle scelte e dei fallback; non è un nuovo gate da ripetere integralmente prima
+del passo 1. Il controllo iniziale riguardava:
 
 1. censire schema, vincoli e associazioni correnti di User, Profile, Session, BrandAccess,
    BrandCredential, inviti, verifiche email e reset password;
@@ -861,9 +1291,8 @@ comportamento applicativo:
 9. verificare tutti gli usi di `users.email_address` come identità globale e confermare che resti il
    ponte transitorio fino all'introduzione di ProfileEmail/ProfileIdentity.
 
-Il gate produce un breve report con esito **GO**, **GO con correzioni** oppure **STOP**. Soltanto
-`GO` o `GO con correzioni` consentono di iniziare il blocco esecutivo; le correzioni richieste
-devono essere inserite nel piano prima di modificare il codice.
+Il gate produsse il report seguente. I nuovi interventi usano invece le verifiche di uscita del
+piano operativo del 26 novembre.
 
 #### Esito del gate — 25 novembre 2026
 
@@ -910,31 +1339,10 @@ superadmin a una baseline già incompatibile con i flussi esistenti.
 - suite indispensabile conclusa senza failure o errori riportati;
 - RuboCop sui dieci file coinvolti: nessuna violazione.
 
-Il gate locale e la verifica aggregata di produzione sono quindi conclusi. È possibile iniziare il
-primo blocco additivo PlatformCredential/SystemRoleAssignment mantenendo il fallback anti-lockout.
-
-### Prossimo blocco esecutivo dopo il gate
-
-Superato il gate, il primo blocco isola il superadmin e va completato in modo additivo:
-
-1. introdurre `PlatformCredential` collegata al Profile, con email, password cifrata, stato,
-   verifica e audit dell'ultimo accesso;
-2. introdurre `SystemRoleAssignment` collegato al Profile con il solo codice iniziale
-   `superadmin`, stato e audit;
-3. aggiungere alla Session i riferimenti opzionali a Profile e PlatformCredential;
-4. eseguire il backfill dell'attuale `users.superadmin`, riutilizzando inizialmente l'hash della
-   password senza richiedere un cambio immediato;
-5. autenticare il superadmin tramite PlatformCredential e verificare il privilegio tramite
-   SystemRoleAssignment;
-6. mantenere temporaneamente `users.superadmin`, `users.password_digest` e il vecchio login come
-   fallback anti-lockout, registrando quale percorso ha aperto la Session;
-7. testare login, logout, scadenza, revoca, recupero, policy e accesso a tutti i domini;
-8. distribuire e verificare il nuovo percorso in produzione prima di disattivare il fallback;
-9. eseguire test mirati, `test:indispensabili`, RuboCop e controllo delle migrazioni.
-
-Il blocco successivo riprende BrandCredential e rende opzionale la password degli User ordinari.
-Non rende ancora nullable `users.email_address`: email e vincolo univoco restano temporaneamente il
-ponte per ricondurre inviti e dati legacy allo stesso Profile.
+Il gate consentì il blocco additivo PlatformCredential/SystemRoleAssignment, mantenendo il fallback
+di accesso. Il blocco fu poi implementato come descritto sotto: non è più il «prossimo passo».
+La successiva eliminazione del ponte `users.email_address` rimane distinta dal ritiro dei selettori
+di ruolo User.
 
 #### Stato del primo blocco additivo — 25 novembre 2026
 
@@ -967,7 +1375,7 @@ Verificato in produzione:
 - nessuna Session priva di Profile;
 - accesso del superadmin all'amministrazione FlowPulse.
 
-Non ancora eseguito:
+Ancora da completare al controllo del 25 novembre:
 
 - verifica email e login Brand di Elisa;
 - revoca del fallback legacy;

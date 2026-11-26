@@ -1,5 +1,11 @@
 # Contribuire a Flowpulse
 
+## Come contribuire
+
+Per proporre un contributo, segnalare un problema o chiedere informazioni
+scrivi a [markpostura@gmail.com](mailto:markpostura@gmail.com) prima di aprire
+una pull request.
+
 Le modifiche a dipendenze, CI, deploy e infrastruttura passano attraverso una
 pull request e vengono integrate una alla volta.
 
@@ -32,7 +38,7 @@ li blocca. Non esegue `stash`, `clean`, `reset` e non modifica file locali.
    ```
 
 5. Apri la pull request e attendi che tutti i job siano verdi:
-   `scan_ruby`, `scan_js`, `lint`, `test` e `system-test`.
+   `scan_ruby`, `scan_js`, `lint` e `test`.
 6. Integra una sola pull request alla volta.
 7. Dopo il merge aggiorna `main` con `git pull --ff-only`.
 8. Lascia che Dependabot aggiorni le altre pull request prima di valutarle.

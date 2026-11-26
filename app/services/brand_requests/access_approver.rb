@@ -1,24 +1,25 @@
 module BrandRequests
   class AccessApprover
-    class NotAuthorized < StandardError; end
+    NotAuthorized = BrandAccesses::Authorization::NotAuthorized
 
-    def initialize(actor:)
+    def initialize(actor:, context: nil)
       @actor = actor
+      @context = context
     end
 
     def approve!(brand_request)
-      validate_request!(brand_request)
-      authorization_node = authorization_node_for(brand_request)
-      authorize!(brand_request, authorization_node)
-
       BrandRequest.transaction do
-        access = BrandAccesses::Manager.new(actor: actor).grant!(
+        brand_request.lock!
+        validate_request!(brand_request)
+        authorization_node = authorization_node_for(brand_request)
+        BrandAccesses::Authorization.authorize!(actor: actor, domain: brand_request.domain, node: authorization_node, context: context)
+        access = BrandAccesses::Manager.new(actor: actor, context: context).grant!(
           profile: brand_request.requester_profile,
           domain: brand_request.domain.canonical_domain_record,
           authorization_node: authorization_node,
           managed_by_grants: true
         )
-        BrandAccessGrants::Manager.new(actor: actor).grant!(
+        BrandAccessGrants::Manager.new(actor: actor, context: context).grant!(
           brand_access: access,
           node: authorization_node,
           brand_request: brand_request
@@ -34,7 +35,7 @@ module BrandRequests
 
     private
 
-      attr_reader :actor
+      attr_reader :actor, :context
 
       def validate_request!(brand_request)
         raise ArgumentError, "La richiesta non è una richiesta di accesso" unless brand_request.kind == "access"
@@ -44,20 +45,6 @@ module BrandRequests
 
       def authorization_node_for(brand_request)
         brand_request.subject.is_a?(Node) ? brand_request.subject : brand_request.brand_node
-      end
-
-      def authorize!(brand_request, authorization_node)
-        return if actor&.superadmin_user?
-        if brand_request.brand_node.slug == "generaimpresa"
-          context = AccessContext::Resolver.new(user: actor, domain: brand_request.domain).resolve
-          return if context.current_role_code == "gestore_generaimpresa" && context.capability?(:manage_access)
-
-          raise NotAuthorized, "Gli accessi a GeneraImpresa sono approvati dal gestore o dal superadmin"
-        end
-        return if brand_request.brand_node.administered_by?(actor)
-        return if RoleAssignments::AccessPolicy.allowed?(user: actor, action: :manage_access, node: authorization_node)
-
-        raise NotAuthorized, "Non puoi approvare questa richiesta"
       end
   end
 end

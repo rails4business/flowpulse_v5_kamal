@@ -27,7 +27,7 @@ module Brands
 
     def destroy
       access = @brand.brand_accesses.find(params[:id])
-      BrandAccesses::Manager.new(actor: Current.user).revoke!(access, authorization_node: @brand)
+      BrandAccesses::Manager.new(actor: Current.user, context: dashboard_access_context).revoke!(access, authorization_node: @brand)
       redirect_to genera_impresa_people_path, notice: "Accesso di #{access.profile.display_name} revocato."
     rescue BrandAccesses::Manager::NotAuthorized, ActiveRecord::RecordInvalid => error
       redirect_to genera_impresa_people_path, alert: error.message
@@ -41,7 +41,8 @@ module Brands
 
       def require_manager!
         return if Current.user.superadmin_user?
-        return if dashboard_access_context.current_role_code == "gestore_generaimpresa"
+        return if dashboard_access_context.current_role_code == "gestore_generaimpresa" &&
+          RoleAssignments::AccessPolicy.allowed?(user: Current.user, action: :manage_access, node: @brand, context: dashboard_access_context)
 
         head :forbidden
       end

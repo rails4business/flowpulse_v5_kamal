@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount Rails4bAiFlow::Engine => "/rails4b_ai_flow" if Rails.env.development?
   get "posturacorrettastart", to: "posturacorrettastart#index"
   get "posturacorrettastart/primo_mese", to: "posturacorrettastart#one_month", as: :posturacorrettastart_primo_mese
   get "posturacorrettastart/primo_mese/:chapter", to: "posturacorrettastart#one_month", as: :posturacorrettastart_primo_mese_chapter
@@ -472,6 +473,7 @@ Rails.application.routes.draw do
 
   scope ":brand_slug/admin", module: "brands/admin", as: :brand_admin,
       constraints: { brand_slug: /[a-z0-9]+(?:-[a-z0-9]+)*/ } do
+    get "", to: "dashboard#index", as: :root
       resources :nodes, only: %i[index show create update destroy] do
         member do
           patch :lifecycle

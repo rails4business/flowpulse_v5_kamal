@@ -65,6 +65,19 @@ class DashboardAside::BuilderTest < ActiveSupport::TestCase
     assert_equal %i[flowpulse_home flowpulse_administration flowpulse_profiles], keys
   end
 
+  test "navigation follows the selected role without combining all assigned roles" do
+    manager = create_assignment("gestore_generaimpresa")
+    entrepreneur = create_assignment("imprenditore_generaimpresa")
+    assert_not_includes item_keys_for(@user), :genera_impresa_requests
+
+    @access.select_role_assignment!(manager)
+    assert_includes item_keys_for(@user), :genera_impresa_requests
+
+    @access.select_role_assignment!(entrepreneur)
+    assert_not_includes item_keys_for(@user), :genera_impresa_requests
+    assert_includes item_keys_for(@user), :genera_impresa_projects
+  end
+
   private
 
     def item_keys_for(user)

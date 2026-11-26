@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 
   allow_unauthenticated_access only: %i[ new create ]
   before_action :remember_pending_invitation!, only: %i[new create]
+  before_action :require_matching_invitation_context!, only: %i[new create]
   before_action :redirect_authenticated_user_from_authentication!, only: %i[new create]
   before_action :require_registration_invitation!, only: :new
 
@@ -18,8 +19,6 @@ class UsersController < ApplicationController
     persist_authentication_context!
     persist_authentication_return_to!
     submitted = user_params
-    brand_domain = authentication_context_domain
-    domain = pending_subscription_domain
     invitation = pending_invitation
     @user = User.find_by(email_address: invitation&.email_address) || User.new(email_address: submitted[:email_address])
     @user.build_profile unless @user.profile
@@ -29,8 +28,8 @@ class UsersController < ApplicationController
       return render :new, status: :unprocessable_entity
     end
 
-    target_domain = invitation.source_domain || domain || brand_domain
-    target_brand_node = invitation&.brand_node || target_domain&.node
+    target_domain = authentication_context_domain
+    target_brand_node = invitation.brand_node
 
     begin
       if invitation.present? && !invitation.email_address.casecmp?(submitted[:email_address].to_s)
@@ -38,45 +37,25 @@ class UsersController < ApplicationController
         raise ActiveRecord::RecordInvalid, @user
       end
 
-      brand_access = nil
-      brand_credential = nil
-      User.transaction do
-        if @user.new_record?
-          generated_password = SecureRandom.base58(48)
-          @user.password = generated_password
-          @user.password_confirmation = generated_password
-          @user.registration_status = "active"
-          @user.email_verified_at = nil
-          @user.save!
-        elsif !@user.active_registration?
-          @user.errors.add(:base, "Questo account globale è sospeso.")
-          raise ActiveRecord::RecordInvalid, @user
-        end
-        profile = @user.create_profile!(display_name: @user.email_address.to_s.split("@").first) unless @user.profile
-        profile ||= @user.profile
-        brand_access = grant_profile_brand_access_for_node!(profile, target_brand_node, source_domain: target_domain)
-        if brand_access.brand_credential.present?
-          @user.errors.add(:base, "Esiste già una credenziale per questo Brand. Accedi con la password esistente.")
-          raise ActiveRecord::RecordInvalid, @user
-        end
-        brand_credential = brand_access.create_brand_credential!(
-          brand_node: target_brand_node,
-          email_address: invitation.email_address,
-          password: submitted[:password],
-          password_confirmation: submitted[:password_confirmation],
-          email_verified_at: Time.current
-        )
-        invitation.accept!(@user)
-        complete_access_request_for!(invitation)
-      end
+      result = BrandInvitations::Acceptance.new(invitation: invitation, domain: target_domain).register!(
+        user: @user, password: submitted[:password], password_confirmation: submitted[:password_confirmation]
+      )
 
-      start_new_session_for(@user, brand_access:, brand_credential:, authentication_method: "brand_invitation")
+      start_new_session_for(@user, brand_access: result.brand_access, brand_credential: result.brand_credential,
+        authentication_method: "brand_invitation")
       session.delete(:pending_brand_invitation_token)
       redirect_to(safe_authentication_return_to(session.delete(:return_to_after_authenticating)) || target_domain&.auth_default_path.presence || root_path,
         notice: "Account creato. Ora hai accesso a #{target_domain&.authentication_sender_name || target_brand_node.title}.")
     rescue ActiveRecord::RecordInvalid => error
       @user.errors.add(:base, error.record.errors.full_messages.to_sentence) unless error.record == @user
       @subscription_domain = pending_subscription_domain
+      render :new, status: :unprocessable_entity
+    rescue BrandInvitations::Acceptance::Invalid, BrandAccesses::Authorization::NotAuthorized,
+        BrandAccesses::Manager::NotAuthorized, BrandAccessGrants::Manager::NotAuthorized => error
+      @user.errors.add(:base, error.message)
+      render :new, status: :unprocessable_entity
+    rescue ActiveRecord::RecordNotUnique
+      @user.errors.add(:base, "La registrazione è già stata completata o aggiornata. Riapri l’invito per accedere.")
       render :new, status: :unprocessable_entity
     end
   end
@@ -93,15 +72,6 @@ class UsersController < ApplicationController
       Domain.find_signed(subscription_token, purpose: :free_subscription)&.then do |domain|
         domain if domain.active? && domain.node_id.present?
       end
-    end
-
-    def remember_pending_invitation!
-      token = params[:invitation].presence || params.dig(:user, :invitation).presence
-      session[:pending_brand_invitation_token] = token if BrandInvitation.find_pending_by_token(token)
-    end
-
-    def pending_invitation
-      BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
     end
 
     def require_registration_invitation!

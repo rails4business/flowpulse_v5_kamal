@@ -17,9 +17,9 @@ module AuthenticationBrandContext
       return @authentication_context_domain if defined?(@authentication_context_domain)
 
       domain = current_domain&.canonical_domain_record
-      domain = local_authentication_domain if domain.blank? || !authentication_enabled?(domain)
-      domain = pending_invitation_authentication_domain if domain.blank?
-      domain = session_authentication_domain if domain.blank?
+      if domain.blank? && local_request? && local_domain_slug.blank?
+        domain = pending_invitation_authentication_domain || session_authentication_domain
+      end
       domain = domain&.canonical_domain_record
       @authentication_context_domain = authentication_enabled?(domain) ? domain : nil
     end
@@ -80,6 +80,41 @@ module AuthenticationBrandContext
       session.delete(:authentication_site)
     end
 
+    def remember_pending_invitation!
+      token = params[:invitation].presence || params.dig(:user, :invitation).presence
+      return if token.blank?
+
+      session.delete(:pending_brand_invitation_token)
+      remove_instance_variable(:@authentication_context_domain) if defined?(@authentication_context_domain)
+      @invalid_invitation_token = BrandInvitation.find_pending_by_token(token).nil?
+      session[:pending_brand_invitation_token] = token unless @invalid_invitation_token
+    end
+
+    def pending_invitation
+      BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
+    end
+
+    def require_matching_invitation_context!
+      if local_request? && local_domain_slug.present? && current_domain.blank?
+        session.delete(:pending_brand_invitation_token)
+        redirect_to root_path, alert: "Brand non disponibile."
+        return false
+      end
+      invitation = pending_invitation
+      unless @invalid_invitation_token
+        return true if invitation.blank?
+
+        domain = current_domain&.canonical_domain_record
+        domain ||= invitation.source_domain&.canonical_domain_record if local_request? && local_domain_slug.blank?
+        return true if domain&.active? && domain.node_id == invitation.brand_node_id
+      end
+
+      session.delete(:pending_brand_invitation_token)
+      redirect_to new_brand_access_request_path(authentication_context_link_params),
+        alert: "L’invito è scaduto o non è valido per questo Brand."
+      false
+    end
+
     def redirect_authenticated_user_from_authentication!
       return unless authenticated?
 
@@ -88,29 +123,27 @@ module AuthenticationBrandContext
         return
       end
 
-      invitation = BrandInvitation.find_pending_by_token(session[:pending_brand_invitation_token])
-      if invitation.present? && !BrandCredential.exists?(brand_node: invitation.brand_node, email_address: invitation.email_address)
-        return
-      end
-
+      invitation = pending_invitation
       if authentication_context?
-        profile = Current.user.profile
-        unless invitation_or_administration_allows_access?(profile, authentication_context_domain, invitation)
-          redirect_to new_brand_access_request_path(authentication_context_link_params),
-            alert: "Non hai ancora accesso a questo Brand. Puoi richiedere un invito al suo responsabile."
-          return
-        end
-        access = grant_current_user_brand_access!(authentication_context_domain)
-        if invitation&.email_address&.casecmp?(Current.user.email_address)
-          invitation.accept!(Current.user)
-          complete_access_request_for!(invitation)
+        credential = Current.session.brand_credential
+        if invitation
+          return unless credential&.active? && credential.brand_node_id == invitation.brand_node_id &&
+            invitation.email_address.casecmp?(credential.email_address)
+
+          BrandInvitations::Acceptance.new(invitation: invitation, domain: authentication_context_domain)
+            .accept!(user: Current.user, credential: credential)
           session.delete(:pending_brand_invitation_token)
+        else
+          return unless Current.user.superadmin_user? || credential&.active?
         end
-        Current.session.update!(brand_access: access) if access.present? && Current.session.brand_access_id != access.id
       end
 
       destination = authentication_context? ? authentication_context_default_return_to : profile_path
       redirect_to destination, notice: "Hai già effettuato l’accesso."
+    rescue BrandInvitations::Acceptance::Invalid, BrandAccesses::Authorization::NotAuthorized,
+        BrandAccesses::Manager::NotAuthorized, BrandAccessGrants::Manager::NotAuthorized, ActiveRecord::RecordInvalid
+      session.delete(:pending_brand_invitation_token)
+      redirect_to new_session_path(authentication_context_link_params), alert: "Non è stato possibile accettare questo invito."
     end
 
     def authentication_enabled?(domain)
@@ -128,26 +161,9 @@ module AuthenticationBrandContext
       domain.auth_slug == "flowpulse" || domain.site_key == "flowpulse" || domain.resolved_node&.slug == "flowpulse"
     end
 
-    def local_authentication_domain
-      return unless local_request?
-
-      site = params[:site].to_s.strip.downcase.presence
-      site ||= "posturacorretta" if request.path.start_with?("/posturacorretta")
-      site ||= "corpoecoscienza" if request.path.start_with?("/corpo-e-coscienza")
-      return if site.blank?
-
-      Domain.active.includes(:node).to_a.find do |domain|
-        [domain.auth_slug, domain.site_key, domain.node&.slug].compact.include?(site)
-      end
-    end
-
     def session_authentication_domain
       site = session[:authentication_site].to_s.presence
-      return if site.blank?
-
-      Domain.active.includes(:node).to_a.find do |domain|
-        [domain.auth_slug, domain.site_key, domain.node&.slug].compact.include?(site)
-      end
+      domain_for_local_slug(site)
     end
 
     def pending_invitation_authentication_domain

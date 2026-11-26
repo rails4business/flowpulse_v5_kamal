@@ -15,7 +15,7 @@ class BrandAccessTest < ActiveSupport::TestCase
     )
     creator.create_profile!(display_name: "Creator")
     @assignment = RoleAssignment.create!(profile: creator.profile, role: :creator_of_worlds)
-    @node = Node.create!(title: "Accessible Brand", role_assignment: @assignment, status: "published", visibility: "public")
+    @node = Node.create!(title: "Accessible Brand", slug: "posturacorretta", role_assignment: @assignment, status: "published", visibility: "public")
     @domain = Domain.create!(hostname: "accessible.example", node: @node, role_assignment: @assignment, locale: "it")
   end
 
@@ -49,7 +49,7 @@ class BrandAccessTest < ActiveSupport::TestCase
     assignment = RoleAssignment.create!(
       profile: @user.profile,
       role: :operator,
-      role_operator: "segreteria",
+      role_operator: "insegnante_posturacorretta",
       context: @node,
       parent: @assignment,
       brand_access: access
@@ -68,7 +68,7 @@ class BrandAccessTest < ActiveSupport::TestCase
     other_assignment = RoleAssignment.create!(
       profile: other_profile,
       role: :operator,
-      role_operator: "segreteria",
+      role_operator: "insegnante_posturacorretta",
       context: @node,
       parent: @assignment,
       brand_access: other_access
@@ -85,7 +85,7 @@ class BrandAccessTest < ActiveSupport::TestCase
     assignment = RoleAssignment.create!(
       profile: @user.profile,
       role: :operator,
-      role_operator: "segreteria",
+      role_operator: "insegnante_posturacorretta",
       context: @node,
       parent: @assignment,
       brand_access: access
@@ -95,5 +95,28 @@ class BrandAccessTest < ActiveSupport::TestCase
     access.cancel!
 
     assert_nil access.reload.current_role_assignment
+  end
+
+  test "selection rejects an assignment that expired after it was loaded" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    assignment = RoleAssignment.create!(profile: @user.profile, role: :operator,
+      role_operator: "insegnante_posturacorretta", context: @node, parent: @assignment, brand_access: access)
+    RoleAssignment.where(id: assignment.id).update_all(ends_at: 1.minute.ago)
+
+    assert_raises(ActiveRecord::RecordInvalid) { access.select_role_assignment!(assignment) }
+    assert_nil access.reload.current_role_assignment
+  end
+
+  test "updating an access clears a stale selection without blocking the update" do
+    access = BrandAccess.create!(profile: @user.profile, source_domain: @domain)
+    assignment = RoleAssignment.create!(profile: @user.profile, role: :operator,
+      role_operator: "insegnante_posturacorretta", context: @node, parent: @assignment, brand_access: access)
+    access.select_role_assignment!(assignment)
+    assignment.update!(ends_at: 1.minute.ago)
+
+    access.reload.update!(joined_at: Time.current)
+
+    assert_nil access.reload.current_role_assignment
+    assert access.active?
   end
 end
