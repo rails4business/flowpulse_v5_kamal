@@ -889,7 +889,9 @@ del precedente aside in `Admin::PasswordResetRequestsControllerTest`, `HomeContr
 `ResourcesControllerTest` e `PagesControllerTest`. I test ora verificano l'aside compatto,
 gli accessi Brand nel main e la raggiungibilità di reset password e risorse attraverso
 l'indice amministrativo. Verifica mirata: **21 test, 137 asserzioni, nessun errore o fallimento**;
-RuboCop pulito sui quattro file. Nuova esecuzione completa locale in corso.
+RuboCop pulito sui quattro file. La nuova esecuzione completa locale è stata interrotta
+dopo oltre cinque minuti sul catalogo delle linee, senza nuovi fallimenti fino a quel punto;
+non costituisce una verifica completa. Il nuovo run GitHub dovrà confermare l'intera suite.
 
 #### Passo 6 — Migrare gli usi legacy, una zona alla volta
 
